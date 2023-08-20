@@ -163,6 +163,10 @@ class Mixer extends EventTarget {
         const state = this.state();
  
         Object.entries(state.channels).forEach(([id, channel]) => {
+            if(!channel?.src){
+                delete this._players[id];
+                return;
+            }
             let player = this._players[id]
 
             // create new player if needed
@@ -173,8 +177,9 @@ class Mixer extends EventTarget {
                     console.log("parse drive audio is converting", url, "to", parsed);
                     url = parsed;
                 }
-                else if (url.includes("dropbox.com") && url.includes("?dl=")) {
-                    const parsed = url.split("?dl=")[0] + "?raw=1";
+                else if(url.includes('dropbox.com')){       
+                    const splitUrl = url.split('dropbox.com');
+                    const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
                     console.log("parse dropbox audio is converting", url, "to", parsed);
                     url = parsed;
                 }
@@ -182,19 +187,21 @@ class Mixer extends EventTarget {
                 player.preload = "metadata";
                 this._players[id] = player;
             }
-
-            // sync player
-            player.volume = state.volume * channel.volume;
-            player.loop = channel.loop;
-            if(channel.currentTime != undefined){
-                player.currentTime = channel.currentTime;
-            }
+            if(player.paused)
+                player.load();
             if (state.paused || channel.paused) {
                 player.pause();
-            } else if (play) {
+            } else if (play) {        
+                player.volume = state.volume * channel.volume;
+                player.loop = channel.loop;
+                if(channel.currentTime != undefined){
+                    player.currentTime = channel.currentTime;
+                }
                 player.addEventListener("canplaythrough", (event) => {
                   /* the audio is now playable; play it if permissions allow */
-                   if(this._players[id] && !(state.paused || channel.paused))
+                    // sync player        
+                    const state = window.MIXER.state();      
+                    if(this._players[id] && !(state.paused || state.channels[id].paused))
                         player.play();
                 }, { once: true });
                 

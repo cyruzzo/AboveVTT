@@ -26,8 +26,10 @@ function parse_img(url) {
 		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 		console.log("parse_img is converting", url, "to", parsed);
 		retval = parsed;
-	} else if (retval.includes("dropbox.com") && retval.includes("?dl=")) {
-		const parsed = retval.split("?dl=")[0] + "?raw=1";
+	} 
+	else if(retval.includes("dropbox.com")){
+		const splitUrl = url.split('dropbox.com');
+		const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
 		console.log("parse_img is converting", url, "to", parsed);
 		retval = parsed;
 	}
@@ -149,6 +151,15 @@ function change_zoom(newZoom, x, y) {
 	$(window).scrollTop(pageY);
 	$("body").css("--window-zoom", window.ZOOM)
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
+		tabCommunicationChannel.postMessage({
+   			msgType: 'projectionZoom',
+   			newZoom: newZoom,
+   			x: x,
+   			y: y,
+   			sceneId: window.CURRENT_SCENE_DATA.id
+   		})
+	}
 	console.groupEnd()
 }
 
@@ -426,12 +437,14 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.attr("src", url);
 		}
 
+		if(UVTTFile && width != null){				
+			newmap.width(width);
+			newmap.height(height);		
+		}
+
 
 		newmap.on("error", map_load_error_cb);
-		if (width != null) {
-			newmap.width(width);
-			newmap.height(height);
-		}
+
 		newmap.on("load", () => {
 			$("#scene_map_container").toggleClass('map-loading', false);
 		});
@@ -661,7 +674,13 @@ function should_use_iframes_for_monsters() {
  * @param {Number} monsterId given monster ID
  * @param {UUID} tokenId selected token ID
  */
-function load_monster_stat(monsterId, tokenId) {
+function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
+	if(customStatBlock){
+		let container = build_draggable_monster_window();
+		display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
+		$(".sidebar-panel-loading-indicator").hide();
+		return;
+	}
 	if(window.TOKEN_OBJECTS[tokenId].options.monster == 'open5e'){
 		let container = build_draggable_monster_window();
 		build_and_display_stat_block_with_id(window.TOKEN_OBJECTS[tokenId].options.stat, container, tokenId, function () {
@@ -1686,6 +1705,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.attr('data-sheet_url',sheet_url);
 	iframe.attr('src', sheet_url);
 
+
+
 	// lock this sheet
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
@@ -1701,6 +1722,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    { src: "DiceContextMenu/DiceContextMenu.js" },
 		    { src: "DiceRoller.js" },
 		    { src: "DDBApi.js" },
+		    { src: "rpg-dice-roller.bundle.min.js" },
 		    // AboveVTT files that execute when loaded
 		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
@@ -1784,6 +1806,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		console.log("removing headers");
 
 
+		
 		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
 			let addedElement = $(addedEvent.target);
 			if (addedElement.hasClass("ct-sidebar__pane")) {
@@ -1831,6 +1854,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		var observer = new MutationObserver(function(mutations) {
 			console.log('scattai');
+			event.target.contentWindow.EXPERIMENTAL_SETTINGS['rpgRoller'] = window.EXPERIMENTAL_SETTINGS['rpgRoller'];
 			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
 			if (sidebar.length > 0 && $(event.target).contents().find("#castbutton").length == 0) {
 				inject_sidebar_send_to_gamelog_button($(event.target).contents().find(".ct-sidebar__pane-content > div"));
@@ -1983,14 +2007,20 @@ function init_character_page_sidebar() {
 	$(".ct-sidebar__pane").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+			$('.ct-condition-manage-pane').css('visibility', 'hidden');
 			$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
-			$(`#switch_gamelog`).click();
+			setTimeout(function(){
+				$(`#switch_gamelog`).click();
+			}, 10)
 	});
 	$(".ct-sidebar__pane").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+			$('.ct-condition-manage-pane').css('visibility', 'hidden');
 			$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
-			$(`#switch_gamelog`).click();
+			setTimeout(function(){
+				$(`#switch_gamelog`).click();
+			}, 10)
 
 	});
 	$("a.ct-character-header-desktop__builder-link").on("click", function(){
@@ -2195,7 +2225,7 @@ function inject_chat_buttons() {
 '/hit 2d20kh1+2 longsword ADV'&#xa;<br/>
 '/dmg 1d8-2 longsword'&#xa;<br/>
 '/save 2d20kl1 DEX DISADV'&#xa;<br/>
-'/skill 1d20+1d4 Theives' Tools + Guidance'&#xa;<br/>
+'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;<br/>
 Advantage: 2d20kh1 (keep highest)&#xa;<br/>
 Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 '/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
@@ -2227,7 +2257,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 	`));
 
 	$(".dice-roller > div img").on("click", function(e) {
-		if ($(".dice-toolbar__dropdown").length > 0) {
+		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// DDB dice are on the screen so let's use those. Ours will synchronize when these change.
 			if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
 				// make sure it's open
@@ -2256,34 +2286,37 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 
 	$(".dice-toolbar__dropdown").on("DOMSubtreeModified", function() {
 		// Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
-		$(".dice-die-button").each(function() {
-			let dieSize = $(this).attr("data-dice");
-			let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
-			let diceCountElement = $(this).find(".dice-die-button__count");
-			ourDiceElement.parent().find("span").remove();
-			if (diceCountElement.length == 0) {
-				ourDiceElement.removeAttr("data-count");
-			} else {
-				let diceCount = parseInt(diceCountElement.text());
-				ourDiceElement.attr("data-count", diceCount);
-				ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
-			}
-		})
+		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+			$(".dice-die-button").each(function() {
+				let dieSize = $(this).attr("data-dice");
+				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+				let diceCountElement = $(this).find(".dice-die-button__count");
+				ourDiceElement.parent().find("span").remove();
+				if (diceCountElement.length == 0) {
+					ourDiceElement.removeAttr("data-count");
+				} else {
+					let diceCount = parseInt(diceCountElement.text());
+					ourDiceElement.attr("data-count", diceCount);
+					ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+				}
+			})
 
-		// make sure our roll button is shown/hidden after all animations have completed
-		setTimeout(function() {
-			if ($(".dice-toolbar").hasClass("rollable")) {
-				$(".roll-button").addClass("show");
-			} else {
-				$(".roll-button").removeClass("show");
-			}
-		}, 0);
+
+			// make sure our roll button is shown/hidden after all animations have completed
+			setTimeout(function() {
+				if ($(".dice-toolbar").hasClass("rollable")) {
+					$(".roll-button").addClass("show");
+				} else {
+					$(".roll-button").removeClass("show");
+				}
+			}, 0);
+		}
 	});
 
 	$(".dice-roller > div img").on("contextmenu", function(e) {
 		e.preventDefault();
 
-		if ($(".dice-toolbar__dropdown").length > 0) {
+		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
 			// the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
 			let dieSize = $(this).attr("alt");
@@ -2313,12 +2346,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		}
 	});
 
-	if ($(".roll-button").length == 0) {
+	if ($(".roll-button").length == 0 || window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
 		$("body").append(rollButton);
 		rollButton.on("click", function (e) {
 
-			if ($(".dice-toolbar").hasClass("rollable")) {
+			if ($(".dice-toolbar").hasClass("rollable") && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 				let theirRollButton = $(".dice-toolbar__target").children().first();
 				if (theirRollButton.length > 0) {
 					// we found a DDB dice roll button. Click it and move on
@@ -2336,6 +2369,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 			let sentAsDDB = send_rpg_dice_to_ddb(rollExpression.join("+"), sendToDM);
 			if (!sentAsDDB) {
 				const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
+				
 				const text = roll.output;
 				const uuid = new Date().getTime();
 				const data = {
@@ -2354,6 +2388,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 						$(this).remove();
 					});
 				}
+						
 			}
 
 			$(".roll-button").removeClass("show");
@@ -2754,6 +2789,7 @@ function init_buttons() {
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_walls_menu(buttons)
+		init_vision_menu(buttons)
 	}
 	init_draw_menu(buttons)
 
@@ -2798,6 +2834,25 @@ function init_zoom_buttons() {
 	zoom_section = $("<div id='zoom_buttons' />");
 
 	if(window.DM) {
+
+		const projector_toggle = $(`<div id='projector_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector mode'></div>`);
+		projector_toggle.click(function (event) {
+			console.log("projector_toggle", event);
+			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+				window.ProjectorEnabled = false;
+			} else {
+				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+				window.ProjectorEnabled = false;
+			}
+		});
+		projector_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
+		zoom_section.append(projector_toggle);
+		if (get_avtt_setting_value("projector")) {
+			projector_toggle.toggleClass('enabled', true);
+		}
+
 		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);
 		cursor_ruler_toggle.click(function (event) {
 			console.log("cursor_ruler_toggle", event);
@@ -2813,7 +2868,7 @@ function init_zoom_buttons() {
 		cursor_ruler_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">left_click</span></div>`);
 		zoom_section.append(cursor_ruler_toggle);
 		if (!get_avtt_setting_value("peerStreaming")) {
-			cursor_ruler_toggle.css("visibility", "collapse");
+			cursor_ruler_toggle.css("display", "none");
 		}
 
 		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
@@ -2936,7 +2991,7 @@ function init_zoom_buttons() {
 
 	$(".avtt-sidebar-controls").append(zoom_section);
 	if (window.DM) {
-		zoom_section.css("left","-236px");
+		zoom_section.css("right","371px");
 	} else {
 		zoom_section.css("left","-198px");
 	}
@@ -2990,7 +3045,19 @@ function init_help_menu() {
 					<ul>
 						<li class="active"><a href="#tab1"> Keyboard shortcuts</a></li>
 						<li><a href="#tab2">FAQ</a></li>
-						<li><a href="#tab3">Get Help</a></li>
+						<li><a href="#tab3">Scene Creation</a></li>
+						<li><a href="#tab4">Player UI</a></li>
+						<li><a href="#tab5">Fog, Light and Vision</a></li>
+						<li><a href="#tab6">Sound</a></li>
+						<li><a href="#tab7">Settings</a></li>
+						<li><a href="#tab8">Tokens and Combat</a></li>
+						<li><a href="#tab9">Map Manipulation</a></li>
+						<li><a href="#tab10">Quick Start</a></li>
+						<li><a href="#tab11">In-person tools</a></li>
+						<!-- some unused numbers here for more tabs -->
+						<li><a href="#tab20">Video Tutorial Playlist</a></li>
+						<li><a href="#tab21">Get Help</a></li>		
+						<li><a href="#tab22">Compatible Tools</a></li>
 					</ul>
 				</div>
 
@@ -3083,11 +3150,23 @@ function init_help_menu() {
 						<dl>
 					</div>
 
-					<div id="tab2">
-						<iframe src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true"></iframe>
+					<div id="tab2" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true">
+						<iframe src=''></iframe>
 					</div>
+					<div id="tab3" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.g7app6ltg7nq"></div>
+					<div id="tab4" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.514yompiqqkv"></div>
+					<div id="tab5" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.5s8va6pc895f"></div>
+					<div id="tab6" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.j0fwkrx8203i"></div>
+					<div id="tab7" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#kix.bqz5eec7dr2a"></div>
+					<div id="tab8" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.vcs37mnw8lej"></div>
+					<div id="tab9" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.l17lakiwxlm6"></div>
+					<div id="tab10" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.it30rzhxilz3"></div>
+					<div id="tab11" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.6jh5zmtqvn3f"></div>
 
-					<div id="tab3">
+					<div id="tab20">
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+					</div>
+					<div id="tab21">
 						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
 						<ul id="help-error-container">
 							<li><a href="https://github.com/cyruzzo/AboveVTT/issues?q=is%3Aissue+label%3Abug" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check Github</a> (Use the search/filter bar at the top of the screen)</li>
@@ -3095,6 +3174,22 @@ function init_help_menu() {
 							<li><a href="https://www.reddit.com/r/AboveVTT/" target="_blank" style="text-decoration:underline;color:-webkit-link;">Check the subreddit</a> The Subreddit is less active, but there's a lot of good info there.</li>
 						</ul>
 						<button id="help-error-container-copy-logs-button">Copy logs to clipboard</button><span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 16px;position: relative;">line_start_arrow_notch</span>Use this button to share logs with developers!
+					</div>
+					<div id="tab22">
+						<div class='help-compatible-tool'>
+							<a href='https://dddice.com' target="_blank">
+								<img class='compatible-tool-icon dddice-icon' src='https://media.discordapp.net/attachments/1131333685908623370/1131333688416817294/logo-light-fs8.png'/>
+								<span class='compatible-tool-title'>dddice</span>
+							</a>
+							<span class='compatible-tool-desc'>A multiplayer dice roller that allows you to roll, create, and collect 3D dice with your party or community.</span>
+						</div>
+						<div class='help-compatible-tool'>
+							<a href='https://www.dungeonalchemist.com/' target="_blank">
+								<img class='compatible-tool-icon da-icon' src='https://cdn.discordapp.com/attachments/1131333685908623370/1131333688693620796/DungeonAlchemist-Logo-Softshadow-0907.png'/>
+								<span class='compatible-tool-title'>Dungeon Alchemist</span>
+							</a>
+							<span class='compatible-tool-desc'>An AI-powered map-making application that enables you to make high-quality content fast! Export maps as a UVTT file to import maps, light and walls into AboveVTT.</span>
+						</div>
 					</div>
 
 				</section>
@@ -3104,11 +3199,19 @@ function init_help_menu() {
 
 	$('#help-container').fadeOut(0);
 
+
 	$('.help-tabs a').on('click', function() {
 		$('.help-tabs li').removeClass('active');
 		$(this).parent().addClass('active');
 		let currentTab = $(this).attr('href');
-		$('.tabs-content div').hide();
+		$('.tabs-content>div').hide();
+		if($(currentTab).hasClass('bookmark')){
+			$('.tabs-content>div#tab2').show();
+			let src = $(currentTab).attr('data-src');
+			$('.tabs-content>div#tab2').find('iframe').attr('src', '');
+			$('.tabs-content>div#tab2').find('iframe').attr('src', src);
+		}
+
 		$(currentTab).show();
 		return false;
 	});

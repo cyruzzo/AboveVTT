@@ -1,5 +1,9 @@
 
-const debounceCombatReorder = combatmydebounce(() => {ct_reorder(window.DM)}, 250); //250ms so this still feels reactive
+const debounceCombatReorder = combatmydebounce((resetCurrent = false) => {
+	ct_reorder(window.DM)
+	if(resetCurrent)
+		$("#combat_area tr").first().attr('data-current','1');
+}, 250); //250ms so this still feels reactive
 const debounceCombatPersist = combatmydebounce(() => {ct_persist()}, 500); //500 ms since doesn't have visible effect on the screen the change takes place.
 
 function combatmydebounce(func, timeout = 800){ // we need to figure out where to put the original debounce somewhere we can access it earlier.
@@ -131,6 +135,7 @@ function init_combat_tracker(){
 	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
+		$(e.target).select();
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		let tokenID = $("#combat_area tr[data-current]").attr('data-target');
@@ -191,13 +196,12 @@ function init_combat_tracker(){
 				if(element.attr("data-target") in window.all_token_objects){
 					window.all_token_objects[element.attr("data-target")].options.init = value;
 				}
-			}, $(this).attr('data-stat'));
+			}, $(this).attr('data-stat'), $(this).attr('data-target'));
 		});
 		
-		debounceCombatReorder()
+		debounceCombatReorder(true);
 
 		ct_update_popout();
-		$("#combat_area tr").first().attr('data-current','1');
 	});
 	
 	clear=$("<button>CLEAR</button>");
@@ -253,8 +257,8 @@ function init_combat_tracker(){
 				next=$("#combat_area tr").first()
 			}
 			next.attr('data-current','1');
-			if($("#resizeDragMon:not(.hideMon)").length>0) {
-				$("[data-current][data-monster] button.openSheetCombatButton").click();
+			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible' && !$('[data-current]').attr('data-target').startsWith('/profile')) {
+				$("[data-current] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -441,7 +445,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		entry.addClass("hasTooltip");
 	}
 
-	if(token.options.monster > 0 || token.options.monster == 'open5e')
+	if(token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat' )
 		entry.attr('data-monster',token.options.monster);
 	
 	if(token.options.stat)
@@ -475,6 +479,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		init.val(token.options.init);
 		init.attr("disabled","disabled");
 	}
+	init.click(function(e) {
+		$(e.target).select();
+	});
 	if(window.DM){
 		init.change(function(){	
 				window.all_token_objects[token.options.id].options.init = init.val()
@@ -487,7 +494,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
-				debounceCombatReorder();
+				ct_reorder(window.DM);
 			}
 		);
 	}
@@ -495,7 +502,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	// auto roll initiative for monsters
 	
-	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e') && (!disablerolling) && token.options.init == undefined){
+	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
 		window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;
@@ -503,7 +510,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
 				debounceCombatReorder();
-			}, token.options.itemId);
+			}, token.options.itemId, token.options.id);
 	}
 	
 	
@@ -651,12 +658,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(!token.isPlayer()){
 		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
-		stat.click(function(){
+		stat.click(function(){			
+			if(token.options.statBlock){
+				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+				load_monster_stat(undefined, undefined, customStatBlock);
+				return;
+			}
 			load_monster_stat(token.options.monster, token.options.id);
 		});
 		if(window.DM){
 			buttons.append(stat);
-			if(!token.isMonster()){
+			if(!token.isMonster() && !token.options.statBlock){
 				stat.css("visibility", "hidden");
 			}
 

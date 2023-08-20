@@ -116,10 +116,13 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		}
 
-		scene.vpps = parseFloat(scene.vpps);
-		scene.hpps = parseFloat(scene.hpps);
-		scene.offsetx = parseFloat(scene.offsetx);
-		scene.offsety = parseFloat(scene.offsety);
+		scene.vpps = parseFloat(scene.vpps) * scene.scale_factor;
+		scene.hpps = parseFloat(scene.hpps) * scene.scale_factor;
+		scene.offsetx = parseFloat(scene.offsetx) * scene.scale_factor;
+		scene.offsety = parseFloat(scene.offsety) * scene.scale_factor;
+
+		scene.scale_factor = 1;
+		scene.grid_subdivided = '0';
 
 		// CALCOLI DI SCALA non dovrebbero servire piu''
 		scene['scale'] = (60.0 / parseInt(scene['hpps'])) * 100; // for backward compatibility, this will be horizonat scale
@@ -161,11 +164,16 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
-		load_scenemap(map_url, map_is_video, null, null, window.CURRENT_SCENE_DATA.UVTTFile, function() {
-			window.CURRENT_SCENE_DATA.scale_factor = 1;
-			scene.scale_factor = 1;
-			var owidth = $("#scene_map").width();
-			var oheight = $("#scene_map").height();
+		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, function() {
+
+
+
+			let mapHeight = $("#scene_map").height();
+			let mapWidth = $("#scene_map").width();
+
+
+			var owidth = mapHeight;
+			var oheight = mapWidth;
 			var max_length = get_canvas_max_length();
 			var max_area = get_canvas_max_area();
 			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
@@ -552,20 +560,48 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	persist_scene(scene_index,isnew=false){ // CLOUD ONLY FUNCTION
 		let sceneData=Object.assign({},this.scenes[scene_index]);
-		sceneData.reveals=[];
-		sceneData.drawings=[];
-		sceneData.tokens={};
+		if(!sceneData.scale_check){
+
+			const scale_factor = (!isNaN(parseInt(sceneData.scale_factor))) ? parseInt(sceneData.scale_factor) : 1;
+			sceneData = {
+				...sceneData,
+				hpps: sceneData.hpps / scale_factor,
+				vpps: sceneData.vpps / scale_factor,
+				offsetx: sceneData.offsetx / scale_factor,
+				offsety: sceneData.offsety / scale_factor
+			}
+		}
+		sceneData ={
+			...sceneData,
+			scale_check: true,
+			reveals: [],
+			drawings:[],
+			tokens: {}
+		}
+
+		
 		if(isnew)
 			sceneData.isnewscene=true;
+
+		this.scenes[scene_index] = sceneData;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
 	}
 
 	persist_current_scene(dontswitch=false){
+		window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = window.CURRENT_SCENE_DATA;
+		window.ScenesHandler.scene = window.CURRENT_SCENE_DATA;
 		let sceneData=Object.assign({},this.scene);
-		sceneData.reveals=[];
-		sceneData.drawings=[];
-		sceneData.tokens={};
+
+		sceneData = {
+			...sceneData,
+			scale_check: true,
+			reveals: [],
+			drawings:[],
+			tokens: {}
+		}
+
+		
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 

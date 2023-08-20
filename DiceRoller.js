@@ -43,7 +43,7 @@ class DiceRoll {
         }
         try {
             let alteredRollType = newRollType.trim().toLowerCase().replace("-", " ");
-            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll"];
+            const validRollTypes = ["to hit", "damage", "save", "check", "heal", "reroll", "initiative", "attack", "roll"];
             if (validRollTypes.includes(alteredRollType)) {
                 this.#diceRollType = alteredRollType;
             } else {
@@ -263,6 +263,24 @@ class DiceRoller {
             if (this.#waitingForRoll) {
                 console.warn("parseAndRoll called while we were waiting for another roll to finish up");
                 return false;
+            }
+            if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+                let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+                let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
+                let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
+                let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
+                
+                let msgdata = {
+                      player: window.PLAYER_NAME,
+                      img: window.PLAYER_IMG,
+                      text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
+                      whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+                      rollType: rollType,
+                      result: roll.total,
+                      playerId: window.PLAYER_ID
+                  };
+                window.MB.inject_chat(msgdata);                 
+                return true;
             }
 
             console.group("DiceRoller.parseAndRoll");

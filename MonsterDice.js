@@ -38,8 +38,8 @@ function scan_monster(target, stats, tokenId) {
 				// clone the element as if it came from an iframe these variables won't be freed from memory
 				let currentElement = $(this).clone()
 				const modMatch = $(currentElement).attr("data-dicenotation")?.match(/(\+|-).*/gm)
-				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "");
-				const dice = $(currentElement).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "")
+				const modifier = (modMatch ? modMatch.shift() : "").replaceAll("(", "").replaceAll(")", "").replace(/\s/g, '');;
+				const dice = $(currentElement).attr("data-dicenotation")?.replace(/(\+|-).*/gm, "").replace(/\s/g, '');
 				const rollType = $(currentElement).attr("data-rolltype")?.replace(" ","-")
 				const actionType = $(currentElement).attr("data-rollaction")?.replace(" ","-") || "custom"
 				const text = $(currentElement)?.text()
@@ -175,7 +175,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	}
 
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
-	target.find(".mon-stat-block__description-block-content > p").each(function() {
+	target.find("p").each(function() {
 		let element = $(this);
 		if ($(this).find(".injected-input").length === 0) {
 			processInput(element, /\(([0-9]) slots?\)/, "slots remaining")
@@ -343,18 +343,35 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	let pressedButton = $(clickEvent.currentTarget).clone();
 	const expression = pressedButton.attr('data-exp');
 	const modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
-	const rollType = pressedButton.attr('data-rolltype');
+	let rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
 
-	window.diceRoller.roll(new DiceRoll(
-		`${expression}${modifier}`,
-		action,
-		rollType,
-		displayName,
-		imgUrl,
-		entityType,
-		entityId
-	));
+
+	if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){     
+	    let fullExpression = `${expression}${modifier}`.replace(/\s/g, '')
+	    let regExpression = new RegExp(`${fullExpression.replace(/[+-]/g, '\\$&')}:\\s`);
+	    let roll = new rpgDiceRoller.DiceRoll(fullExpression); 
+	    if(rollType == 'undefined')
+	    	rollType = 'AboveVTT'
+	    let msgdata = {
+	        player: window.PLAYER_NAME,
+	        img: window.PLAYER_IMG,
+	        text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollType}: <span class='abovevtt-roll-${action}'>${action}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
+	        whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+	    };
+	    window.MB.inject_chat(msgdata);       
+	}
+	else{
+		window.diceRoller.roll(new DiceRoll(
+			`${expression}${modifier}`,
+			action,
+			rollType,
+			displayName,
+			imgUrl,
+			entityType,
+			entityId
+		));
+	}
 	pressedButton = null
 }
 

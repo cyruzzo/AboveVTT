@@ -454,7 +454,7 @@ function check_single_token_visibility(id){
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
 	const inFog = is_token_under_fog(id); // this token is in fog
@@ -517,7 +517,7 @@ async function do_check_token_visibility() {
 
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+			let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 			//Combining some and filter cut down about 140ms for average sized picture
 			let someFilter = function(ctx) {
@@ -698,13 +698,13 @@ function draw_wizarding_box() {
 	startY = Math.round(window.CURRENT_SCENE_DATA.offsety);
 
 	let al1 = {
-		x: parseInt($("#aligner1").css("left")) + 29,
-		y: parseInt($("#aligner1").css("top")) + 29,
+		x: (parseInt($("#aligner1").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt($("#aligner1").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
 	};
 
 	let al2 = {
-		x: parseInt($("#aligner2").css("left")) + 29,
-		y: parseInt($("#aligner2").css("top")) + 29,
+		x: (parseInt($("#aligner2").css("left")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt($("#aligner2").css("top")) + 29)/window.CURRENT_SCENE_DATA.scale_factor,
 	};
 	gridContext.setLineDash([30, 5]);
 
@@ -848,7 +848,7 @@ function redraw_fog() {
 	for (var i = 0; i < window.REVEALED.length; i++) {
 		var d = window.REVEALED[i];
 		let adjustedArray = [];
-		let revealedScale = (d[6] != undefined) ? d[6] : window.CURRENT_SCENE_DATA.scale_factor;
+		let revealedScale = (d[6] != undefined) ? d[6]/window.CURRENT_SCENE_DATA.conversion : window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
@@ -873,7 +873,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// REVEAL POLYGON
-				clearPolygon(ctx, d[0], d[6]);
+				clearPolygon(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion);
 			}
 			if (d[4] == 4) {
 				for(let adjusted = 0; adjusted < 2; adjusted++){
@@ -884,7 +884,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
-				clear3PointRect(ctx, d[0], d[6]);		
+				clear3PointRect(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion);		
 			}
 		}
 		if (d[5] == 1) { // HIDE
@@ -906,7 +906,7 @@ function redraw_fog() {
 			if (d[4] == 3) {
 				// HIDE POLYGON
 				clearPolygon(ctx, d[0], d[6], true);
-				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);
+				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 			
 			}
 			if (d[4] == 4) {
@@ -918,7 +918,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT
-				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6], true);		
+				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);		
 			}
 		}
 	}
@@ -971,7 +971,7 @@ function redraw_drawings() {
 			targetCtx = lightCtx;
 		}
 
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
@@ -1054,7 +1054,7 @@ function  redraw_light_walls(clear=true){
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
 		}
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor : scale;
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
 		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
@@ -1185,7 +1185,7 @@ function drawing_mousedown(e) {
 
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
-	window.DRAWTYPE = data.fill
+	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
@@ -1617,7 +1617,7 @@ function drawing_mouseup(e) {
 		 width,
 		 height,
 		 window.LINEWIDTH,
-		 window.CURRENT_SCENE_DATA.scale_factor];
+		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' )){
@@ -1687,7 +1687,7 @@ function drawing_mouseup(e) {
 				rectLine.rx,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line1);
 
 			let line2 = ['line',
@@ -1698,7 +1698,7 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line2);
 			let line3 = ['line',
 				"wall",
@@ -1708,7 +1708,7 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line3);
 			let line4 = ['line',
 				"wall",
@@ -1718,7 +1718,7 @@ function drawing_mouseup(e) {
 				 rectLine.rx + rectLine.rw,
 				 rectLine.ry + rectLine.rh,
 				 window.LINEWIDTH,
-				 window.CURRENT_SCENE_DATA.scale_factor];
+				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line4);
 		}
 		else{
@@ -1738,7 +1738,7 @@ function drawing_mouseup(e) {
 						window.StoredWalls[walls][2],
 						window.StoredWalls[walls][3],
 						window.LINEWIDTH,
-						window.CURRENT_SCENE_DATA.scale_factor];
+						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 					window.DRAWINGS.push(data);
 			}
 			window.StoredWalls = [];
@@ -1807,7 +1807,7 @@ function drawing_mouseup(e) {
 
 			let wallInitialScale = walls[8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor;
+			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 
 			
 
@@ -1905,7 +1905,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
 					}	
@@ -1929,7 +1929,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);				
 					}
@@ -1952,7 +1952,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
 					
@@ -1976,7 +1976,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 6,
-						 window.CURRENT_SCENE_DATA.scale_factor,
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);					
 					}
@@ -2020,7 +2020,7 @@ function drawing_mouseup(e) {
 						 x2,
 						 y2,
 						 12,
-						 window.CURRENT_SCENE_DATA.scale_factor
+						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 						 ];	
 						window.DRAWINGS.push(data);
 						
@@ -2184,18 +2184,18 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		const centerX = window.BEGIN_MOUSEX;
 		const centerY = window.BEGIN_MOUSEY;
 		const radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
+		data = [centerX, centerY, radius, 0, 1, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
 	} else if (window.DRAWSHAPE == "rect") {
-		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor];
+		data = [window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, width, height, 0, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
 	}
 	else if(window.DRAWSHAPE == "paint-bucket"){
-		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor]
+		data = [mouseX, mouseY, null, null, 4, fog_type_to_int(), window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion]
 		window.REVEALED.push(data);
 		sync_fog();
 		redraw_fog();
@@ -2208,7 +2208,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
-	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button"]
+	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
 	$(".top_menu").removeClass("visible")
 	topButtonIDs.forEach(function(id) {
 		$(`#${id}`).removeClass(buttonSelectedClasses)
@@ -2349,6 +2349,12 @@ function handle_drawing_button_click() {
 		}
 		else{
 			$("#text_div").css("z-index", "20")
+		}
+		if ($("#vision_button").hasClass('ddbc-tab-options__header-heading--is-active')){
+			$("#temp_overlay").css("mix-blend-mode", "soft-light")
+		}
+		else{
+			$("#temp_overlay").css("mix-blend-mode", "")
 		}
 		target.on('mousedown', data, drawing_mousedown);
 		target.on('mouseup',  data, drawing_mouseup);
@@ -2627,7 +2633,7 @@ function save3PointRect(e){
 			null,
 			5,
 			fog_type_to_int(), 
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -2645,7 +2651,7 @@ function save3PointRect(e){
 				polygonPoints[point+1].x,
 				polygonPoints[point+1].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			}
 			else{
 			data = ['line',
@@ -2656,7 +2662,7 @@ function save3PointRect(e){
 				polygonPoints[0].x,
 				polygonPoints[0].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			}
 			window.DRAWINGS.push(data);
 		}
@@ -2674,7 +2680,7 @@ function save3PointRect(e){
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -2700,7 +2706,7 @@ function savePolygon(e) {
 			null,
 			3,
 			fog_type_to_int(), 
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
@@ -2715,7 +2721,7 @@ function savePolygon(e) {
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawings();
@@ -2856,7 +2862,7 @@ function init_fog_menu(buttons){
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
-			window.REVEALED = [[0, 0, $("#scene_map").width()*window.CURRENT_SCENE_DATA.scale_factor, $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor, 0, 0, window.CURRENT_SCENE_DATA.scale_factor]];
+			window.REVEALED = [[0, 0, 0, 0, 2, 0]];
 
 			redraw_fog();
 			sync_fog();
@@ -2991,13 +2997,16 @@ function init_draw_menu(buttons){
 				 	Polygon
 			</button>
 		</div>`);
-	draw_menu.append(
+	if(window.DM){
+		draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
 				 	Bucket Fill
 			</button>
 		</div>`);
+	}
+
 	draw_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
 		redraw_light_walls();
 	});
@@ -3040,15 +3049,6 @@ function init_draw_menu(buttons){
 				FILLED
 			</button>
 		</div>`);
-	if(window.DM){
-		draw_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
-				data-key="fill" data-value='light' data-unique-with="fill">
-				LIGHT
-			</button>
-		</div>`);
-	}
 
 	draw_menu.append("<div class='menu-subtitle'>Line Width</div>");
 	draw_menu.append(`
@@ -3080,12 +3080,6 @@ function init_draw_menu(buttons){
 					CLEAR DRAW
 				</button>
 			</div>`);
-		draw_menu.append(
-			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_light'>
-					CLEAR LIGHT
-				</button>
-			</div>`);
 	}
 
 
@@ -3094,15 +3088,6 @@ function init_draw_menu(buttons){
 		if (r === true) {
 			// keep only text
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall') || d[1].includes('light') );
-			redraw_drawings()
-			sync_drawings()
-		}
-	});
-	draw_menu.find("#delete_light").click(function() {
-		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
-		if (r === true) {
-			// keep only text
-			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
 			redraw_drawings()
 			sync_drawings()
 		}
@@ -3220,6 +3205,174 @@ function init_walls_menu(buttons){
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
+function init_vision_menu(buttons){
+	vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
+
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='vision_settings' class='settings menu-option  ddbc-tab-options__header-heading'
+				data-shape='settings' data-function="settings" data-unique-with="settings">
+					Settings
+			</button>
+		</div>`);
+	vision_menu.append(`<div class='menu-subtitle'>Light Drawing</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape="rect" data-function="draw" data-unique-with="draw">
+					Rectangle
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape="3pointRect" data-function="draw" data-unique-with="draw">
+					3p Rect
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_circle' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='arc' data-function="draw" data-unique-with="draw">
+					Circle
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_cone' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='cone' data-function="draw" data-unique-with="draw">
+					Cone
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="draw" data-unique-with="draw">
+					Line
+			</button>
+			</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush' data-function="draw" data-unique-with="draw">
+					Brush
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_polygon' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='polygon' data-function="draw" data-unique-with="draw">
+				 	Polygon
+			</button>
+		</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
+				 	Bucket Fill
+			</button>
+		</div>`);
+	vision_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
+	vision_menu.append(`
+        <input title='Background color' data-required="background_color" class='spectrum'
+            id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#FFF'}'/>
+        `)
+
+    let colorPickers = vision_menu.find('input.spectrum');
+	colorPickers.spectrum({
+		type: "color",
+		showInput: true,
+		showInitial: true,
+		clickoutFiresChange: true
+	});
+
+    const colorPickerChange = function(e, tinycolor) {
+		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+        $(e.target).val(color)
+
+	};
+	vision_menu.find(".sp-replacer").attr("data-skip",'true')
+	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
+	vision_menu.append("<div class='menu-subtitle'>Line Width</div>");
+	vision_menu.append(`
+		<div>
+			<input id='draw_line_width' data-required="draw_line_width" type='number' style='width:90%' min='1'
+			value='${window.CURRENT_SCENE_DATA.hpps}' class='drawWidthSlider'>
+		</div>`
+	);
+
+
+	vision_menu.append(`<div class='menu-subtitle'>Controls</div>`);
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="eraser" data-unique-with="draw">
+				 	Erase
+			</button>
+		</div>`);
+
+	vision_menu.append(`
+	<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+			UNDO
+		</button>
+	</div>`);
+	vision_menu.append(
+	`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='delete_light'>
+			CLEAR LIGHT
+		</button>
+	</div>`);
+
+	vision_menu.find("#vision_settings").click(function() {
+		let scene_index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
+		edit_scene_vision_settings(scene_index);
+	})
+
+	vision_menu.find("#delete_light").click(function() {
+		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
+		if (r === true) {
+			// keep only text
+			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
+			redraw_drawings()
+			sync_drawings()
+		}
+	});
+
+	vision_menu.find("#draw_undo").click(function() {
+		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (!window.DRAWINGS[currentElement][0].includes("text")){
+                window.DRAWINGS.splice(currentElement, 1)
+                redraw_drawings()
+				sync_drawings()
+                break
+            }
+        }
+	});
+
+	vision_menu.css("position", "fixed");
+	vision_menu.css("top", "50px");
+	vision_menu.css("width", "90px");
+	vision_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+
+	$("body").append(vision_menu);
+
+	vision_button = $("<button style='display:inline;width:75px' id='vision_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>L</u>IGHT/VISION</button>");
+
+	buttons.append(vision_button);
+	vision_menu.css("left",vision_button.position().left);
+}
+
+
 // helper functions
 let degreeToRadian = function(degree) {
   return (degree / 180) * Math.PI;
@@ -3612,6 +3765,8 @@ async function redraw_light(){
 	}
 	await Promise.all(promises);
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	if(!window.DM)
+		check_token_visibility();
 }
 
 

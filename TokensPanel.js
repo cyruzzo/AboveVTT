@@ -11,8 +11,30 @@ open5e_next = '';
 cached_open5e_items = {};
 
 
+
 async function getOpen5e(results = [], search = ''){
-    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
+    let ddbMonsterTypes = {
+        1: 'Aberration',
+        2: 'Beast',
+        3: 'Celestial',
+        4: 'Construct',
+        6: 'Dragon',
+        7: 'Elemental',
+        8: 'Fey',
+        9: 'Fiend',
+        10: 'Giant',
+        11: 'Humanoid',
+        13: 'Monstrosity',
+        14: 'Ooze',
+        15: 'Plant',
+        16: 'Undead'
+    }
+    const maxCR = (monster_search_filters?.challengeRatingMax) ? monster_search_filters?.challengeRatingMax : '';
+    const minCR = (monster_search_filters?.challengeRatingMin) ? monster_search_filters?.challengeRatingMin : '';
+    const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
+    
+
+    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -432,6 +454,20 @@ function inject_open5e_monster_list_items(listItems = open5e_monsters) {
         enable_draggable_token_creation(row);
         list.append(row);
     }
+    if(open5e_next){
+        // add load more button
+        let loadMoreButton = $(`<button class="ddbeb-button open5e-load-more load-more-button">Load More</button>`);
+        loadMoreButton.click(async function(loadMoreClickEvent) {
+            console.log("load more!", loadMoreClickEvent);   
+            open5e_monsters = await getNextOpen5e(open5e_monsters, open5e_next);
+            $('.open5e-load-more').remove();
+            monsterFolder.find('.folder-item-list').empty();
+            inject_open5e_monster_list_items(open5e_monsters);
+        });
+        
+        monsterFolder.find(`> .folder-item-list`).append(loadMoreButton);
+    }
+
 }
 
 /** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
@@ -455,6 +491,7 @@ async function init_tokens_panel() {
         SidebarListItem.Aoe("cone", 1, "acid"),
         SidebarListItem.Aoe("line", 1, "acid")
     ]
+    hiddenFolderItems = (JSON.parse(localStorage.getItem(`${window.gameId}.hiddenFolderItems`)) != null) ? JSON.parse(localStorage.getItem(`${window.gameId}.hiddenFolderItems`)) : [];
 
 
     if(localStorage.getItem('MyTokens') != null){
@@ -476,7 +513,8 @@ async function init_tokens_panel() {
     let header = tokensPanel.header;
     // TODO: remove this warning once tokens are saved in the cloud
     tokensPanel.updateHeader("Tokens");
-    add_expand_collapse_buttons_to_header(tokensPanel);
+    add_expand_collapse_buttons_to_header(tokensPanel, true);
+
     header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
 
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
@@ -941,7 +979,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
             options.armorClass = pc.armorClass;
-            options.color = color_from_pc_object(pc);
+            options = {...options, ...find_token_options_for_list_item(listItem)}
             break;
         case ItemType.Monster:
             switch (options['defaultmaxhptype']) {
@@ -1034,6 +1072,46 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             // specificImage = options.imgsrc; // force it to use what we just built
             break;
     }
+    if(options.statBlock){
+        const statText = window.JOURNAL.notes[options.statBlock].text
+        const hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
+        const averageHP = $(statText).find('.custom-avghp.custom-stat').text();
+         switch (options['defaultmaxhptype']) {
+            case 'max':
+                if(hitDiceData != ''){
+                    const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/g
+                    const regexMatch = hitDiceData.matchAll(regex).next();
+                    hpVal = regexMatch.value[1] * regexMatch.value[2] + parseInt(`${regexMatch.value[3]}${regexMatch.value[4]}`); 
+                }
+                break;
+            case 'roll':
+                if(hitDiceData != ''){
+                    hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).total;
+                }
+                break;
+            case 'average':
+            default:
+                if(averageHP != ''){
+                    hpVal = averageHP;          
+                }
+                break;
+        }
+        if(hpVal){
+            options.hitPointInfo = {
+                current: hpVal,
+                maximum: hpVal,
+                temp: 0
+            };
+        }
+        const newInit = $(statText).find('.custom-initiative.custom-stat').text();
+        if(newInit){
+            options.customInit = newInit
+        }
+
+        const newAC = $(statText).find('.custom-ac.custom-stat').text();
+        options.armorClass = (newAC) ? newAC : options.armorClass;
+        options.monster = 'customStat'
+    }
 
     options.itemType = listItem.type;
     options.itemId = listItem.id;
@@ -1123,11 +1201,18 @@ function token_size_for_item(listItem) {
 function alternative_images_for_item(listItem) {
     if (!listItem) return [];
     let alternativeImages;
+    let customization;
     switch (listItem.type) {
         case ItemType.MyToken:
         case ItemType.PC:
         case ItemType.Monster:
-            let customization = find_token_customization(listItem.type, listItem.id);
+            customization = find_token_customization(listItem.type, listItem.id);
+            if (customization) {
+                alternativeImages = customization.alternativeImages();
+            }
+            break;
+        case ItemType.Open5e:
+            customization = find_token_customization(listItem.type, listItem.id);
             if (customization) {
                 alternativeImages = customization.alternativeImages();
             }
@@ -1252,6 +1337,7 @@ function register_token_row_context_menu() {
                 }
             };
 
+
             if (!rowItem.isTypeFolder() && !rowItem.isTypeEncounter()) {
                 // copy url doesn't make sense for folders
                 menuItems["copyUrl"] = {
@@ -1282,9 +1368,36 @@ function register_token_row_context_menu() {
                 };
             }
 
+            if(rowItem.isTypeFolder() || rowItem.isTypePC()){
+                menuItems["border"] = "---";
+
+                menuItems['Hide/Reveal'] = {
+                    name: (window.hiddenFolderItems.indexOf(rowItem.id) > -1) ? "Reveal in menu" : "Hide in menu",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToHide = find_sidebar_list_item(opt.$trigger);
+                    
+                        const index = window.hiddenFolderItems.indexOf(itemToHide.id);
+                        if (index > -1) { 
+                            window.hiddenFolderItems.splice(index, 1); 
+                        }
+                        else{
+                            window.hiddenFolderItems.push(itemToHide.id);
+                        }
+                           
+                        localStorage.setItem(`${window.gameId}.hiddenFolderItems`, JSON.stringify(window.hiddenFolderItems));
+                        let buttonClicked = $('.temporary-visible').length>0;
+                        redraw_token_list($('[name="token-search"]').val());
+                        if(buttonClicked){
+                            $('.sidebar-panel-body .hidden-sidebar-item').toggleClass('temporary-visible', true);
+                        }
+                    }
+                }
+            }
+
             if (rowItem.canDelete()) {
 
-                menuItems["border"] = "---";
+                if(!rowItem.isTypeFolder() && !rowItem.isTypeEncounter() && !rowItem.isTypePC())
+                    menuItems["border"] = "---";
 
                 // not a built in folder or token, add an option to delete
                 menuItems["delete"] = {
@@ -1561,6 +1674,54 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
     inputWrapper.append(imageUrlInput);
 
+    if(!listItem.isTypePC()){
+        let has_note = customization.tokenOptions.statBlock;
+
+        let editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons">
+                <span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>
+                    Create Custom Statblock
+                </span>
+            </button>`)
+        if(has_note){
+            let viewNoteButton = $(`<button class="custom-stat-buttons icon-view-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>View Custom Statblock</span></button>`)      
+            let deleteNoteButton = $(`<button class="custom-stat-buttons icon-note-delete material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Delete Custom Statblock</span></button>`)
+            editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons"><span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>Edit Custom Statblock</span></button>`)
+            inputWrapper.append(viewNoteButton);
+            inputWrapper.append(editNoteButton);        
+            inputWrapper.append(deleteNoteButton);  
+            viewNoteButton.off().on("click", function(){
+                window.JOURNAL.display_note(customization.id, true);
+            });
+            deleteNoteButton.off().on("click", function(){
+                if(customization.id in window.JOURNAL.notes){
+                    delete window.JOURNAL.notes[customization.id];
+                    window.JOURNAL.persist();
+                }
+                delete customization.tokenOptions.statBlock; 
+                persist_token_customization(customization);
+                display_token_configuration_modal(listItem, placedToken)
+            });
+        }
+        else {
+            inputWrapper.append(editNoteButton);
+        }
+
+        editNoteButton.off().on("click", function(){
+            if (!(customization.id in window.JOURNAL.notes)) {
+                window.JOURNAL.notes[customization.id] = {
+                    title: customization.tokenOptions.name,
+                    text: '',
+                    plain: '',
+                    player: true
+                }
+                customization.tokenOptions.statBlock = customization.id;
+                persist_token_customization(customization);
+                display_token_configuration_modal(listItem, placedToken);
+            }
+            window.JOURNAL.edit_note(customization.id, true);
+        });
+    }
+   
     if (listItem.isTypeMyToken()) {
 
         // MyToken name
@@ -1608,7 +1769,11 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     });
     inputWrapper.append(imageScaleWrapper);
 
+
     // border color
+    if(listItem.isTypePC()){
+        customization.tokenOptions.color = color_from_pc_object(find_pc_by_player_id(listItem.id));
+    }
     const color = customization.tokenOptions.color || random_token_color();
     const borderColorWrapper = build_token_border_color_input(color, function (newColor, eventType) {
         customization.setTokenOption("color", newColor);
@@ -1626,7 +1791,12 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         ],
         defaultValue: false
     };
+
+
+
+
     const specificBorderColorValue = (typeof customization.tokenOptions.color === "string" && customization.tokenOptions.color.length > 0);
+
     const borderColorToggle = build_toggle_input(specificBorderColorSetting, specificBorderColorValue, function (useSpecificColorKey, useSpecificColorValue) {
         if (useSpecificColorValue === true) {
             customization.setTokenOption("color", color);
@@ -2210,20 +2380,20 @@ function did_change_mytokens_items() {
  * creates an iframe that loads a monster stat block for the given item
  * @param listItem {SidebarListItem} the list item representing the monster that you want to display a stat block for
  */
-function open_monster_item(listItem) {
-    if (should_use_iframes_for_monsters()) {
+function open_monster_item(listItem, open5e=false) {
+    if (should_use_iframes_for_monsters() && !open5e) {
         // in case we need a way to fallback quickly
         open_monster_item_iframe(listItem);
         return;
     }
-    if (!listItem.isTypeMonster()) {
+    if (!listItem.isTypeMonster() && !listItem.isTypeOpen5eMonster()) {
         console.warn("open_monster_item was called with the wrong item type", listItem);
         return;
     }
     let sidebarModal = new SidebarPanel("monster-stat-block", true);
     display_sidebar_modal(sidebarModal);
     try {
-        build_and_display_stat_block_with_data(listItem.monsterData, sidebarModal.body, undefined);
+        build_and_display_stat_block_with_data(listItem.monsterData, sidebarModal.body, undefined, open5e);
     } catch (error) {
         console.error("open_monster_item failed to build a stat block locally. Attempting to open an iFrame instead", error);
         close_sidebar_modal();
@@ -2779,8 +2949,15 @@ function convert_open5e_monsterData(monsterData){
 
         if(monsterData.special_abilities?.length>0){
             monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = ``
+                if(action.name == 'Spellcasting'){
+                    actionDesc = action.desc.replace(/Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel/g, '</p><p>$&');
+                    desc = `<p><em><strong>${action.name}.</strong></em> ${actionDesc}</p>`;
+                }
+                else{
+                    desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc.replace(/\n/g, `<br />`)}</p>`
+                }
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2789,8 +2966,8 @@ function convert_open5e_monsterData(monsterData){
                
         if(monsterData.actions?.length>0){
             monsterData.actionsDescription = monsterData.actions.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2799,8 +2976,8 @@ function convert_open5e_monsterData(monsterData){
     
         if(monsterData.bonus_actions?.length>0){
             monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2809,8 +2986,8 @@ function convert_open5e_monsterData(monsterData){
    
         if(monsterData.reactions?.length>0){
             monsterData.reactionsDescription = monsterData.reactions.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
-                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
+                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
+                desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);
                 return desc;
@@ -2819,7 +2996,7 @@ function convert_open5e_monsterData(monsterData){
  
         if(monsterData.legendary_actions?.length>0){
             monsterData.legendaryActionsDescription = monsterData.legendary_actions.map(action => {
-                let desc = `<p><b>${action.name}.</b> ${action.desc}</p>`
+                let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
                 desc = desc.replace(`(<span`, `<span`).replace(`span>)`, `span>`);

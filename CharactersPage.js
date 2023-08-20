@@ -21,6 +21,7 @@ const sendCharacterUpdateEvent = mydebounce(() => {
     update_pc_with_data(window.PLAYER_ID, pcData);
   } else {
     tabCommunicationChannel.postMessage({
+      msgType: 'CharacterData',
       characterId: window.location.href.split('/').slice(-1)[0],
       pcData: pcData
     });
@@ -287,6 +288,114 @@ function init_characters_pages(container = $(document)) {
   init_character_list_page_without_avtt();
 }
 
+const debounceConvertToRPGRoller =  mydebounce(() => {
+    $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+          e.stopPropagation();
+          e.preventDefault();
+
+          let rollData = getRollData(this)
+          
+          if (rollData.rollType === "damage") {
+            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          } else {
+            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          }
+      })
+    $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+      e.stopImmediatePropagation();
+      
+      let rollData = getRollData(this);
+
+
+      let msgdata = {
+          player: window.PLAYER_NAME,
+          img: window.PLAYER_IMG,
+          text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
+          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+          rollType: rollData.rollType,
+          result: rollData.roll.total,
+          playerId: window.PLAYER_ID
+      };
+      if(is_abovevtt_page()){
+        window.MB.inject_chat(msgdata);
+      }
+      else{
+        tabCommunicationChannel.postMessage({
+          msgType: 'roll',
+          msg: msgdata,
+        });
+      }
+
+    });
+}, 1500)
+
+const debounceRemoveRPGRoller =  mydebounce(() => {
+    $('.integrated-dice__container').off('click.rpg-roller'); 
+}, 1500)
+
+function getRollData(rollButton){
+    let expression = '';
+    if($(rollButton).find('.ddbc-damage__value').length>0){
+      expression = $(rollButton).find('.ddbc-damage__value').text().replace(/\s/g, '');
+    }
+    else if($(rollButton).find('.ddbc-signed-number').length>0){
+      expression = `1d20${$(rollButton).find('.ddbc-signed-number').attr('aria-label').replace(/\s/g, '')}`;
+    }
+    else if($(rollButton).find('.ddbc-healing-icon').length > 0){
+      expression = $(rollButton).text().replace(/\s/g, '');
+    }
+
+    let roll = new rpgDiceRoller.DiceRoll(expression); 
+    let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
+    let rollType = 'custom';
+    let rollTitle = 'AboveVTT';
+    if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
+      rollType = 'save'
+      rollTitle = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
+    } else if($(rollButton).parents(`[class*='ability-summary']`).length > 0){
+      rollType = 'check'
+      rollTitle = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
+    } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
+      rollType = 'skill';
+      rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
+    } else if($(rollButton).parents(`[class*='initiative-box']`).length > 0){
+      rollType = 'initiative'
+    } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
+      rollType = 'damage'
+      if($(rollButton).parents(`[class*='damage-effect__healing']`).length > 0){
+        rollType = 'heal'
+      }
+    } else if($(rollButton).parents(`[class*='__tohit']`).length > 0){
+      rollType = 'attack'
+    } 
+    if(rollType == 'damage' || rollType == 'attack' || rollType == 'heal'){
+      if($(rollButton).parents(`.ddbc-combat-attack--spell`).length > 0){
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
+      }
+      else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
+        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
+      }
+      else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
+        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
+      }
+      else if($(rollButton).parents(`.ddbc-combat-attack--item`).length > 0){
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
+      }
+    }
+    const modifier = (roll.rolls.length > 1) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+
+    return {
+      roll: roll,
+      expression: expression.split(/[+-]/g)[0],
+      rollType: rollType,
+      rollTitle: rollTitle,
+      modifier: modifier,
+      regExpression: regExpression
+    }
+}
+
 /** actions to take on the character sheet when AboveVTT is NOT running */
 function init_character_sheet_page() {
   if (!is_characters_page()) return;
@@ -394,6 +503,11 @@ function observe_character_sheet_changes(documentToObserve) {
         console.debug("character_sheet_observer mutation", mutation);
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
+        if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+          debounceConvertToRPGRoller();
+        } else{
+          debounceRemoveRPGRoller();
+        }
         switch (mutation.type) {
           case "attributes":
             if (
@@ -658,7 +772,13 @@ function observe_character_theme_change() {
               update_window_color(newColor);
               if(window.PeerManager != undefined)
                 window.PeerManager.send(PeerEvent.preferencesChange());
-              character_sheet_changed({color: newColor});
+              character_sheet_changed({
+                decorations: {
+                  characterTheme:{ 
+                    themeColor: newColor
+                  }
+                }
+              });
             }
           }
         });

@@ -291,6 +291,16 @@ function avtt_settings() {
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
 				],
 				defaultValue: "all"
+			},
+			{
+				name: "projector",
+				label: "Streaming/TV Projector Mode",
+				type: "toggle",
+				options: [
+					{ value: true, label: "Enable", description: `If you have another tab with the player view open it will receive your scroll and zoom events.` },
+					{ value: false, label: "Disable", description: `If you have another tab with the player view open it will not receive your scroll and zoom events.` }
+				],
+				defaultValue: false
 			}
 		);
 	} else {
@@ -321,6 +331,17 @@ function avtt_settings() {
 			}
 		);
 	}
+	settings.push(
+	{
+		name: "rpgRoller",
+		label: "Disable DDB dice where possible",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Allow", description: `Disables DDB dice and uses a random number generator` },
+			{ value: false, label: "Never", description: `Defaults to DDB dice` }
+		],
+		defaultValue: false
+	})
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool
@@ -388,6 +409,9 @@ function set_avtt_setting_value(name, newValue) {
 		case "peerStreaming":
 			toggle_peer_settings_visibility(newValue);
 			local_peer_setting_changed(name, newValue);
+			break;
+		case "projector":
+			$('#projector_toggle').toggleClass('enabled', newValue);
 			break;
 		case "receiveCursorFromPeers":
 		case "receiveRulerFromPeers":

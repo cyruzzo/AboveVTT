@@ -39,18 +39,15 @@ const availableToAoe = [
 
 
 
-const debounceLightChecks = mydebounce(async () => {		
+const debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		let promise = [redraw_light()];
-		if(!window.DM)
-			promise.push(check_token_visibility());
+		redraw_light();
 		
-		await Promise.all(promise);
 }, 500);
 
 
@@ -210,6 +207,7 @@ class Token {
 			this.options.hidestat = true
 			this.options.disableborder = true
 			this.options.disableaura = true
+			this.options.revealInFog = true
 		}
 	}
 
@@ -223,6 +221,7 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
+		$('.token[data-clone-id^="dragging-"]').remove();
 		debounceLightChecks();
 	}
 
@@ -325,13 +324,23 @@ class Token {
 	        return;
 	    }
 	    if (STANDARD_CONDITIONS.includes(conditionName)) {
-	        if (this.isPlayer()) {
-	            window.MB.inject_chat({
-	                player: window.PLAYER_NAME,
-	                img: window.PLAYER_IMG,
-	                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
-	                whisper: this.options.name
-	            });
+	        if (this.isPlayer()) {	        
+				if(window.PLAYER_NAME == this.options.name){
+					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+					$('.ct-condition-manage-pane').css('visibility', 'hidden');
+					$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+					setTimeout(function(){
+						$(`#switch_gamelog`).click();
+					}, 10)
+				}
+				else{
+				   window.MB.inject_chat({
+		                player: window.PLAYER_NAME,
+		                img: window.PLAYER_IMG,
+		                text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to set <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="set-conditions-button">Toggle ${conditionName} ON</button></div>`,
+		                whisper: this.options.name
+		            });	
+				}        
 	        } else {
 	            this.options.conditions.push({ name: conditionName });
 	        }
@@ -347,12 +356,23 @@ class Token {
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
-				window.MB.inject_chat({
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
-					whisper: this.options.name
-				});
+				if(window.PLAYER_NAME == this.options.name){
+					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+					$('.ct-condition-manage-pane').css('visibility', 'hidden');
+					$(`.ct-sidebar__pane .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+					setTimeout(function(){
+						$(`#switch_gamelog`).click();
+					}, 10)		
+				}
+				else{
+
+					window.MB.inject_chat({
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: `<span class="flex-wrap-center-chat-message">${window.PLAYER_NAME} would like you to remove <span style="font-weight: 700; display: contents;">${conditionName}</span>.<br/><br/><button class="remove-conditions-button">Toggle ${conditionName} OFF</button></div>`,
+						whisper: this.options.name
+					});
+				}
 			} else {
 				this.options.conditions = this.options.conditions.filter(c => {
 					if (typeof c === "string") {
@@ -1297,6 +1317,8 @@ class Token {
 								        </div>
 								    </div>
 								</div>`
+
+
 							
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
 		
@@ -1307,6 +1329,7 @@ class Token {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            const tooltipHtml = $(noteHover);
+					            window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
 					            flyout.append(tooltipHtml);
 					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 					            sendToGamelogButton.css({ "float": "right" });
@@ -1454,6 +1477,7 @@ class Token {
 							await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
 							await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
 						}
+						$('.token[data-clone-id^="dragging-"]').remove();
 					}
 				});
 				
@@ -1485,7 +1509,7 @@ class Token {
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
+				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
 				old.find("img").css({
 					"max-height": this.sizeWidth(),
 					"max-width": this.sizeHeight()
@@ -1750,7 +1774,7 @@ class Token {
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
-				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps)+"px");
+				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px" );
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
@@ -1868,110 +1892,7 @@ class Token {
 						tok.removeAttr("data-dragging")
 						tok.removeAttr("data-drag-x")
 						tok.removeAttr("data-drag-y")
-			
-						// this should be a XOR... (A AND !B) OR (!A AND B)
-						let shallwesnap=  (window.CURRENT_SCENE_DATA.snap == "1"  && !(window.toggleSnap)) || ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
-						console.log("shallwesnap",shallwesnap);
-						console.log("toggleSnap",window.toggleSnap);					
-						if (shallwesnap) {
-
-							// calculate offset in real coordinates
-							const startX = window.CURRENT_SCENE_DATA.offsetx;
-							const startY = window.CURRENT_SCENE_DATA.offsety;
-
-							const selectedOldTop = parseInt($(event.target).css("top"));
-							const selectedOldleft = parseInt($(event.target).css("left"));
-
-							const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
-							const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;				
-
-							console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
-							console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
-
-							if(should_snap_to_grid()){
-								let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);		
-								let tokenPosition = snap_point_to_grid(selectedOldleft, selectedOldTop, undefined, tinyToken);
-								$(event.target).css("top", tokenPosition.y + "px");
-								$(event.target).css("left", tokenPosition.x + "px");
-							}
-							else{
-								$(event.target).css("top", selectedNewtop + "px");
-								$(event.target).css("left", selectedNewleft + "px");
-							}
-
-							///GET
-							const token = $(event.target);
-							let el = token.parent().parent().find("#aura_" + token.attr("data-id").replaceAll("/", ""));
-							if (el.length > 0) {
-								const auraSize = parseInt(el.css("width"));
-
-								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-							}
-							el = token.parent().parent().find("#light_" + token.attr("data-id").replaceAll("/", ""));
-							if (el.length > 0) {
-								const auraSize = parseInt(el.css("width"));
-
-								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-							}
-							el = token.parent().parent().find("#vision_" + token.attr("data-id").replaceAll("/", ""));
-							if (el.length > 0) {
-								const auraSize = parseInt(el.css("width"));
-
-								el.css("top", `${selectedNewtop/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize - self.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-								el.css("left", `${selectedNewleft/window.CURRENT_SCENE_DATA.scale_factor  - ((auraSize  - self.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor ) / 2)}px`);
-							}
-
-							for (let tok of window.dragSelectedTokens){
-								let id = $(tok).attr("data-id");
-								let curr = window.TOKEN_OBJECTS[id];
-								console.log($("[data-id='"+id+"']"));
-
-								if (id != self.options.id) {
-
-									const oldtop = parseInt($(tok).css("top"));
-									const oldleft = parseInt($(tok).css("left"));
-
-
-									const newtop = Math.round((oldtop - startY) / window.CURRENT_SCENE_DATA.vpps) * window.CURRENT_SCENE_DATA.vpps + startY;
-									const newleft = Math.round((oldleft - startX) / window.CURRENT_SCENE_DATA.hpps) * window.CURRENT_SCENE_DATA.hpps + startX;
-									if(should_snap_to_grid()){
-										let tinyToken = (Math.round(curr.options.gridSquares*2)/2 < 1);	
-										let tokenPosition = snap_point_to_grid(oldleft, oldtop, undefined, tinyToken);
-
-										$(tok).css("top", tokenPosition.y + "px");
-										$(tok).css("left", tokenPosition.x + "px");
-									}
-									else{
-										$(tok).css("top", newtop + "px");
-										$(tok).css("left", newleft + "px");
-									}
-
-									let selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
-
-										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-									}
-									selEl = $(tok).parent().parent().find("#light_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
-
-										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-									}
-									selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
-									if (selEl.length > 0) {
-										const auraSize = parseInt(selEl.css("width")/window.CURRENT_SCENE_DATA.scale_factor);
-
-										selEl.css("top", `${newtop/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-										selEl.css("left", `${newleft/window.CURRENT_SCENE_DATA.scale_factor - ((auraSize - window.TOKEN_OBJECTS[id].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px`);
-									}
-								}
-							}
-						}					
+					
 				
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
@@ -2159,9 +2080,11 @@ class Token {
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 
-					// Constrain token within scene
-					tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
-					tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+					if(self.walkableArea.bottom != null && self.walkableArea.right != null){ // need to figure out what's causing these to be null but this is a workaround for the error for now
+						// Constrain token within scene
+						tokenPosition.x = clamp(tokenPosition.x, self.walkableArea.left, self.walkableArea.right);
+						tokenPosition.y = clamp(tokenPosition.y, self.walkableArea.top, self.walkableArea.bottom);
+					}
 
 
 					ui.position = {
@@ -2247,8 +2170,8 @@ class Token {
 					if (self.selected && window.dragSelectedTokens.length>1) {
 						// if dragging on a selected token, we should move also the other selected tokens
 						// try to move other tokens by the same amount
-						let offsetLeft = Math.round(ui.position.left- parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						let offsetLeft = tokenPosition.x - parseInt(self.orig_left);
+						let offsetTop = tokenPosition.y - parseInt(self.orig_top);
 
 						for (let tok of window.dragSelectedTokens){
 							let id = $(tok).attr("data-id");
@@ -2278,7 +2201,8 @@ class Token {
 										  Error(`One of these values is not a number: Size: ${curr.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
-									}									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
+									}									
+									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 									if (pixeldata[2] != 0)
 									{	
@@ -2627,11 +2551,16 @@ function place_token_at_map_point(tokenObject, x, y) {
 	let options = {
 		...default_options(),
 		...window.TOKEN_SETTINGS,
-		...tokenObject,
 		...pc,
+		...tokenObject,
 		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
-
+	if(window.all_token_objects[options.id] !== undefined){
+		options = {
+			...options,
+			...window.all_token_objects[options.id].options
+		};
+	}
 	// aoe tokens have classes instead of images
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
 		options.imgsrc = parse_img(options.imgsrc);
@@ -2661,14 +2590,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 		}
 	}
 
-	if(window.all_token_objects[options.id] !== undefined){
-		if(window.all_token_objects[options.id].options.ct_show !== undefined){
-			options = window.all_token_objects[options.id].options;
-		  	$(`#combat_area tr[data-target='${options.id}'] .findSVG`).remove();
-	       	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
-	        $(`#combat_area tr[data-target='${options.id}'] .findTokenCombatButton`).append(findSVG);
-		}
-	}
+
 	
 	options.left = `${x - options.size/2}px`;
 	options.top = `${y - options.size/2}px`;
@@ -3501,15 +3423,7 @@ function copy_selected_tokens() {
 	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
 		if (token.selected) { 
-			if (token.isPlayer()) {
-				// deselect player tokens to avoid confusion about them being selected but not copy/pasted
-				window.TOKEN_OBJECTS[id].selected = false;
-				window.TOKEN_OBJECTS[id].place_sync_persist();
-				redrawBoundingBox = true;
-			} else {
-				// only allow copy/paste for selected monster tokens
-				window.TOKEN_PASTE_BUFFER.push(id);
-			}
+			window.TOKEN_PASTE_BUFFER.push(id);
 		}
 	}
 	if (redrawBoundingBox) {
@@ -3522,13 +3436,13 @@ function paste_selected_tokens(x, y) {
 	if (window.TOKEN_PASTE_BUFFER == undefined) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
-
+	deselect_all_tokens();
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		let id = window.TOKEN_PASTE_BUFFER[i];
 		let token = window.all_token_objects[id];
-		if (token == undefined || token.isPlayer()) continue; // only allow copy/paste for monster tokens, and protect against pasting deleted tokens
+		if(token == undefined || (token.isPlayer() && window.TOKEN_OBJECTS[id])) continue;
 		let options = $.extend(true, {}, token.options);
-		let newId = uuid();
+		let newId = token.isPlayer() ? id : uuid();
 		options.id = newId;
 		// TODO: figure out the location under the cursor and paste there instead of doing center of view
 		options.init = undefined;

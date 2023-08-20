@@ -81,6 +81,9 @@ function init_mixer() {
         channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
         Object.entries(channels).forEach(([id, channel]) => {
+            if(!channel?.src){
+                return;
+            }
             const item = document.createElement("li");
             item.className = "audio-row";
             let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
@@ -138,6 +141,17 @@ function init_mixer() {
                     channel_play_pause.toggleClass('pressed', true);
                     channel.paused = false;
                     window.MIXER.updateChannel(id, channel);
+                    if(window.MIXER.paused){
+                        window.MIXER.togglePaused();
+                        const playPause = $('.mixer-play-pause-button');s
+                        const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+                        const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+                        pause_svg.css('display', 'block');
+                        mixer_playlist_svg.css('display', 'none');
+                        playPause.toggleClass('playing', true);
+                        playPause.toggleClass('pressed', true);
+                        $('style#mixer-paused').remove();
+                    }
                 }
                 else {
                     pause_svg.css('display', 'none');
@@ -357,6 +371,18 @@ function init_trackLibrary() {
                 channel.paused = false;
                 channel.loop = false;
                 window.MIXER.addChannel(channel);
+                if(window.MIXER.paused){
+                    window.MIXER.togglePaused();
+                    const playPause = $('.mixer-play-pause-button');s
+                    const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+                    const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+                    pause_svg.css('display', 'block');
+                    mixer_playlist_svg.css('display', 'none');
+                    playPause.toggleClass('playing', true);
+                    playPause.toggleClass('pressed', true);
+                    $('style#mixer-paused').remove();
+                }
+                    
             });
             let track_add_button = $('<button class="track-add-to-mixer"></button>');          
             let add_svg = $('<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>');               
@@ -402,22 +428,48 @@ function init_trackLibrary() {
                     const trackSrcInput = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
                     const okButton = $('<button class="add-track-ok-button">OK</button>');  
                     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+                    const trackTags = window.TRACK_LIBRARY.find(trackName, trackSrc)[1].tags;
                     trackNameInput.val(trackName);
                     trackSrcInput.val(trackSrc);
                     
                     cancelButton.off().on("click", function(){
                       trackLibrary.deleteTrack(trackID);
-                      trackLibrary.addTrack(trackName, trackSrc);
+                      trackLibrary.addTrack(trackName, trackSrc, trackTags);
                       importTrackFields.remove();
                     });
                     okButton.off().on("click", function(){
                         trackLibrary.deleteTrack(trackID);
-                        trackLibrary.addTrack(trackNameInput.val(), trackSrcInput.val());
+                        trackLibrary.addTrack(trackNameInput.val(), trackSrcInput.val(), trackTags);
                         importTrackFields.remove();
                     });
                     importTrackFields.append(trackNameInput, trackSrcInput, okButton, cancelButton);
                     rowHtml.after(importTrackFields);
                     rowHtml.remove();
+                }
+            };
+             menuItems["tags"] = {
+                name: "Tags",
+                callback: function() {
+                    const setTrackTagsFields = $("<div id='editTagsFields'></div>")
+                    const trackTagsInput = $(`<textarea class='trackTags trackInput' placeholder='Combat, CoS, Vampire'/>`)
+                    const okButton = $('<button class="add-track-ok-button">OK</button>');  
+                    const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+                    const currentTrack = window.TRACK_LIBRARY.find(trackName, trackSrc);
+
+                    trackTagsInput.val(currentTrack[1].tags.join(', '));
+
+                    
+                    cancelButton.off().on("click", function(){
+                      setTrackTagsFields.remove();
+                    });
+                    okButton.off().on("click", function(){
+                        const tags = trackTagsInput.val().split(', ');
+                        currentTrack[1].tags = tags;
+                        window.TRACK_LIBRARY.update(trackID, currentTrack[1]) 
+                        setTrackTagsFields.remove();
+                    });
+                    setTrackTagsFields.append(trackTagsInput, okButton, cancelButton);
+                    rowHtml.after(setTrackTagsFields);
                 }
             };
     

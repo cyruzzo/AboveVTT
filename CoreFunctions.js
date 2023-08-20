@@ -33,15 +33,28 @@ $(function() {
   window.diceRoller = new DiceRoller();
   if (is_abovevtt_page()) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
-      if(!find_pc_by_player_id(event.data.characterId, false))
+      if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
         return;
-      if(!window.DM){
-         window.MB.sendMessage("custom/myVTT/character-update", {
-          characterId: event.data.characterId,
-          pcData: event.data.pcData
-        });
+      if(event.data.msgType == 'roll'){
+        window.MB.inject_chat(event.data.msg);
+        return;
       }
-      else{
+      if(!window.DM){
+        if(event.data.msgType == 'CharacterData'){
+          window.MB.sendMessage("custom/myVTT/character-update", {
+            characterId: event.data.characterId,
+            pcData: event.data.pcData
+          });
+        }
+        else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
+          window.scroll(event.data.x, event.data.y);
+        }
+        else if(event.data.msgType == 'projectionZoom' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
+          change_zoom(event.data.newZoom, event.data.x, event.data.y);
+        }
+
+      }
+      else if(event.data.msgType == 'CharacterData'){
         update_pc_with_data(event.data.characterId, event.data.pcData);
       }
     })
@@ -859,7 +872,7 @@ function areArraysEqualSets(a1, a2) {
 }
 
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``) {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -906,7 +919,28 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
   });
 
   if (addPopoutButton) {
-    container.append(`<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
+    let popoutButton = $(`<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
+    titleBar.append(popoutButton);
+    popoutButton.off('click.popout').on('click.popout', function(){
+      if($(popoutSelector).is("iframe")){
+        
+        name = titleBarText.replace(/(\r\n|\n|\r)/gm, "").trim();
+        const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
+      width=${container.width()},height=${container.height()},left=100,top=100`;
+        childWindows[name] = window.open(`https://dndbeyond.com${$(popoutSelector).attr('src')}`, '_blank', params);
+        close_title_button.click();
+        childWindows[name].onbeforeunload = function(){
+          closePopout(name);
+        }
+        setTimeout(function(){
+          childWindows[name].document.title = name
+        }, 1000);
+      }
+      else{
+        popoutWindow(titleBarText, $(popoutSelector), container.width(), container.height());
+      }
+
+    })
   }
 
   container.addClass("moveableWindow");
@@ -946,22 +980,22 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     if (titleBar.hasClass("restored")) {
       titleBar.data("prev-height", titleBar.height());
       titleBar.data("prev-width", titleBar.width() - 3);
-      titleBar.data("prev-top", titleBar.css("top"));
-      titleBar.data("prev-left", titleBar.css("left"));
-      titleBar.css("top", titleBar.data("prev-minimized-top"));
-      titleBar.css("left", titleBar.data("prev-minimized-left"));
-      titleBar.height(23);
-      titleBar.width(200);
+      container.data("prev-top", container.css("top"));
+      container.data("prev-left", container.css("left"));
+      container.css("top", container.data("prev-minimized-top"));
+      container.css("left", container.data("prev-minimized-left"));
+      container.height(23);
+      container.width(200);
       titleBar.addClass("minimized");
       titleBar.removeClass("restored");
       titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
     } else if(titleBar.hasClass("minimized")) {
-      titleBar.data("prev-minimized-top", titleBar.css("top"));
-      titleBar.data("prev-minimized-left", titleBar.css("left"));
-      titleBar.height(titleBar.data("prev-height"));
-      titleBar.width(titleBar.data("prev-width"));
-      titleBar.css("top", titleBar.data("prev-top"));
-      titleBar.css("left", titleBar.data("prev-left"));
+      container.data("prev-minimized-top", container.css("top"));
+      container.data("prev-minimized-left", container.css("left"));
+      container.height('80%');
+      container.width('80%');
+      container.css("top", container.data("prev-top"));
+      container.css("left", container.data("prev-left"));
       titleBar.addClass("restored");
       titleBar.removeClass("minimized");
       titleBar.find(".title_bar_text").remove();

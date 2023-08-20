@@ -257,6 +257,35 @@ class MessageBroker {
 		if (trackHistory) {
 			window.MB.track_message_history(data);
 		}
+		if(window.DM && data.data.injected_data?.rollType == 'initiative'){
+			let total = data.data.injected_data?.result;
+			let entityid = data.data.injected_data?.playerId;
+
+			
+			$("#tokens .VTTToken").each(
+				function(){
+					let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+					if(converted==entityid){
+						ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+						window.all_token_objects[$(this).attr('data-id')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+					}
+				}
+			);
+
+			$("#combat_area tr").each(function() {
+				let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+				if (converted == entityid) {
+					$(this).find(".init").val(total);
+					window.all_token_objects[$(this).attr('data-target')].options.init = total;
+					window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+					window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+				}
+			});
+			debounceCombatReorder();
+		}
+
 		// start the task
 		
 		if(self.chat_decipher_task==null){
@@ -1305,10 +1334,14 @@ class MessageBroker {
 		if(window.DM){
 			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
 		}
-		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps);
-		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps);
-		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx);
-		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety);
+
+		if(!window.CURRENT_SCENE_DATA.scale_factor)
+			window.CURRENT_SCENE_DATA.scale_factor = 1;
+		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.scale_factor);
+		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.scale_factor);
+		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.scale_factor);
+		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.scale_factor);
+		$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
 		console.log("SETTO BACKGROUND A " + msg.data);
 		$("#tokens").children().remove();
 		$(".aura-element[id^='aura_'").remove();
@@ -1345,14 +1378,44 @@ class MessageBroker {
 			console.group("load_scenemap callback")
 			if(!window.CURRENT_SCENE_DATA.scale_factor)
 				window.CURRENT_SCENE_DATA.scale_factor = 1;
-			const scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+			let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 			// Store current scene width and height
-			window.CURRENT_SCENE_DATA.width = $("#scene_map").width();
-			window.CURRENT_SCENE_DATA.height = $("#scene_map").height();
+			let mapHeight = $("#scene_map").height();
+			let mapWidth = $("#scene_map").width();
+			window.CURRENT_SCENE_DATA.conversion = 1;
+
+			if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+				let conversion = 2;
+				if(mapWidth >= mapHeight){
+					conversion = 1980 / mapWidth;
+				}
+				else{
+					conversion = 1980 / mapHeight;
+				}
+				mapHeight = mapHeight*conversion;
+				mapWidth = mapWidth*conversion;
+				$("#scene_map").css({
+					'height': mapHeight,
+					'width': mapWidth
+				});
+				scaleFactor = scaleFactor / conversion		
+				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
+				window.CURRENT_SCENE_DATA.conversion = conversion;
+			}
+			else if(!data.scale_check){ //older than 0.98
+				window.CURRENT_SCENE_DATA = {
+					...window.CURRENT_SCENE_DATA,
+					hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+					vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+					offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+					offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
+				}
+			}
+
+			window.CURRENT_SCENE_DATA.width = mapWidth;
+			window.CURRENT_SCENE_DATA.height = mapHeight;
 			// Scale map according to scaleFactor
 
-			$("#scene_map").width(window.CURRENT_SCENE_DATA.width);
-			$("#scene_map").height(window.CURRENT_SCENE_DATA.height);
 			$("#VTT").css("--scene-scale", scaleFactor)
 			
 

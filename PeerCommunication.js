@@ -168,11 +168,11 @@ function toggle_peer_settings_visibility(peerStreamingValue) {
   if (peerStreamingValue) {
     $(`.token-image-modal-footer-select-wrapper[data-option-name="receiveCursorFromPeers"]`).show();
     $(`.token-image-modal-footer-select-wrapper[data-option-name="receiveRulerFromPeers"]`).show();
-    $("#cursor_ruler_toggle").css("visibility", "visible");
+    $("#cursor_ruler_toggle").css("display", "block");
   } else {
     $(`.token-image-modal-footer-select-wrapper[data-option-name="receiveCursorFromPeers"]`).hide();
     $(`.token-image-modal-footer-select-wrapper[data-option-name="receiveRulerFromPeers"]`).hide();
-    $("#cursor_ruler_toggle").css("visibility", "collapse");
+    $("#cursor_ruler_toggle").css("display", "none");
   }
 }
 

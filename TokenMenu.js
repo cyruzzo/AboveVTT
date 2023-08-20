@@ -135,7 +135,20 @@ function token_context_menu_expanded(tokenIds, e) {
 				close_token_context_menu();
 			});
 			body.append(button);
-		} else if (token.isMonster()) {
+		} 
+		else if(token.options.statBlock){
+			let button =$('<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>');
+			
+			button.click(function(){
+				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
+				load_monster_stat(undefined, token.options.id, customStatBlock)
+				close_token_context_menu();
+			});
+			if(token.options.player_owned || window.DM){
+				body.append(button);
+			}
+		}
+		else if (token.isMonster()) {
 			let button = $(`<button>Open Monster Stat Block<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				load_monster_stat(token.options.monster, token.options.id);
@@ -1153,11 +1166,19 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 		let conditionItem = $(`<li class="${determine_condition_item_classname(tokenIds, conditionName)} icon-${conditionName.toLowerCase().replaceAll("(", "-").replaceAll(")", "").replaceAll(" ", "-")}"></li>`);
 		if (conditionName.startsWith("#")) {
+			let lockedConditions = {
+				[conditionName] : '',
+				...JSON.parse(localStorage.getItem(`lockedConditions.${window.gameId}`))
+			}
 			let colorItem = $(`<input type='text' placeholder='custom condition'></input>`);
 			tokens.every(token => {
 				let colorItemArr = token.options.custom_conditions.find(e => e.name === conditionName)
 				if(colorItemArr != undefined){
 					colorItem.val(colorItemArr.text);	
+					return false;
+				}
+				else{
+					colorItem.val(lockedConditions[conditionName]);
 					return false;
 				}
 				return true;
@@ -1182,24 +1203,74 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 				clickedItem.removeClass("single-active all-active some-active active-condition");
 				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
 			});
+
+
+
+			conditionItem.off(`click.customCondition`).on('click.customCondition', function(){
+				let clickedItem = $(this);
+				tokens.forEach(token => {
+						if(token.hasCondition(conditionName)){
+							token.removeCondition(conditionName);
+						}
+						else{
+							token.addCondition(conditionName, $(this).find('input').val());
+						}
+					token.place_sync_persist();	
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
+
+			});
+
+			
+			let conditionLocked = lockedConditions[conditionName] != '';
+
+			const conditionLock = $(`<span class="${conditionLocked ? `locked` : ''} condition-lock material-icons material-symbols-outlined"></span>`)
+			
+			conditionLock.off(`click.lock`).on(`click.lock`, function(e){
+				e.stopPropagation();
+				if($(this).hasClass('locked')){
+					lockedConditions = {
+						...lockedConditions,
+						[conditionName] : '',
+					}
+					$(this).toggleClass('locked', false);
+				}
+				else{
+					lockedConditions = {
+						...lockedConditions,
+						[conditionName] : colorItem.val(),
+					}
+					$(this).toggleClass('locked', true);
+				}
+
+
+				localStorage.setItem(`lockedConditions.${window.gameId}`, JSON.stringify(lockedConditions));
+			})
+
+			conditionItem.append(conditionLock);
+
+
 		} else {
 			conditionItem.append(`<span>${conditionName}</span>`);
+			conditionItem.on("click", function (clickEvent) {
+				let clickedItem = $(clickEvent.currentTarget);
+				let deactivateAll = clickedItem.hasClass("some-active");
+				tokens.forEach(token => {
+					if (deactivateAll || token.hasCondition(conditionName)) {
+						token.removeCondition(conditionName)
+					} else {
+						token.addCondition(conditionName)
+					}
+					token.place_sync_persist();
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
+			});
 		}
 
-		conditionItem.on("click", function (clickEvent) {
-			let clickedItem = $(clickEvent.currentTarget);
-			let deactivateAll = clickedItem.hasClass("some-active");
-			tokens.forEach(token => {
-				if (deactivateAll || token.hasCondition(conditionName)) {
-					token.removeCondition(conditionName)
-				} else {
-					token.addCondition(conditionName)
-				}
-				token.place_sync_persist();
-			});
-			clickedItem.removeClass("single-active all-active some-active active-condition");
-			clickedItem.addClass(determine_condition_item_classname(tokenIds, conditionName));
-		});
+
+	
 		return conditionItem;
 	};
 
@@ -2261,7 +2332,17 @@ function add_to_quick_roll_menu(token){
 	);
 	qrm_entry_buttons.append(remove_from_list);
 	
-	if(token.isMonster() == true){
+	if(token.options.statBlock){
+		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		
+		stat_block.click(function(){
+			window.JOURNAL.display_note(token.options.statBlock);
+		});
+		if(!token.isMonster()){
+			stat_block.css("visibility", "hidden");
+		}
+	}
+	else if(token.isMonster() == true){
 		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat_block.click(function(){

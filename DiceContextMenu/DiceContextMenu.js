@@ -16,8 +16,10 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         modifierString = "";
     }
     let menu = new DiceContextMenu();
-    menu.sendToSection();
-    if (expression === "1d20") {
+    if(window.DM)
+        menu.sendToSection();
+   
+    if (expression === "1d20" || /^1d20[+-]([0-9]+)/g.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
         menu.section("ROLL WITH:", s => s
             .row("Advantage", svg_advantage(), false)
@@ -27,7 +29,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     }
     menu.onRollClick(dcm => {
 
-        let rollWithIndex = dcm.checkedRowIndex(1);
+        let rollWithIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
 
         let diceRoll;
         if (rollWithIndex === 0) { // advantage
@@ -47,8 +49,9 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         diceRoll.entityType = entityType;
         diceRoll.entityId = entityId;
         diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
-
+     
         window.diceRoller.roll(diceRoll);
+        
     });
 
     return menu;
@@ -58,15 +61,18 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
     if (typeof modifierString !== "string") {
         modifierString = "";
     }
-    return new DiceContextMenu()
-        .sendToSection()
-        .section("ROLL AS:", s => s
+    let menu = new DiceContextMenu()
+   
+        if(window.DM)
+            menu.sendToSection()
+        
+        menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
             .row("Flat Roll", "", true)
         )
-        .onRollClick(dcm => {
+        menu.onRollClick(dcm => {
 
-            let rollAsIndex = dcm.checkedRowIndex(1);
+            let rollAsIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
 
             let diceRoll;
             if (rollAsIndex === 0) {
@@ -89,9 +95,12 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             diceRoll.avatarUrl = avatarUrl;
             diceRoll.entityType = entityType;
             diceRoll.entityId = entityId;
-
+           
             window.diceRoller.roll(diceRoll);
+            
         });
+
+    return menu;
 }
 
 class DiceContextMenu {

@@ -466,6 +466,9 @@ class JournalManager{
 		});
 		if(window.DM){
 			let chapterImport = $(`<select id='ddb-source-journal-import'><option value=''>Select a source to import</option></select>`);
+			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
+			chapterImport.append($(`<option value='/feats'>Feats</option>`));
+			chapterImport.append($(`<option value='/spells'>Spells</option>`));
 			window.ScenesHandler.build_adventures(function(){
 				for(let source in window.ScenesHandler.sources){
 					let sourcetitle = window.ScenesHandler.sources[source].title;
@@ -474,28 +477,57 @@ class JournalManager{
 			});
 			chapterImport.on('change', function(){
 				let source = this.value;
-				self.chapters.push({
-					title: window.ScenesHandler.sources[source].title,
-					collapsed: false,
-					notes: [],
-				});
-				window.ScenesHandler.build_chapters(source, function(){
-					for(let chapter in window.ScenesHandler.sources[source].chapters){
-						let new_noteid=uuid();
-						let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
-						self.notes[new_noteid]={
-							title: new_note_title,
-							text: "",
-							player: false,
-							plain: "",
-							ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
-						};
-						self.chapters[self.chapters.length-1].notes.push(new_noteid);
+				
+				if (source == '/magic-items' || source == '/feats' || source == '/spells'){
+					let new_noteid=uuid();
+					let new_note_title = source.replaceAll(/-/g, ' ')
+											.replaceAll(/\//g, '')
+											.replaceAll(/\b\w/g, l => l.toUpperCase());
+
+					self.notes[new_noteid]={
+						title: new_note_title,
+						text: "",
+						player: false,
+						plain: "",
+						ddbsource: `https://dndbeyond.com${source}`
+					};
+					let chapter = self.chapters.find(x => x.title == 'Compendium')
+					if(!chapter){
+						self.chapters.push({
+							title: 'Compendium',
+							collapsed: false,
+							notes: [],
+						});
+						chapter = self.chapters[self.chapters.length-1];
 					}
+					
+					chapter.notes.push(new_noteid);
 					self.persist();
 					self.build_journal();
-				});
-
+				}
+				else{
+					self.chapters.push({
+						title: window.ScenesHandler.sources[source].title,
+						collapsed: false,
+						notes: [],
+					});
+					window.ScenesHandler.build_chapters(source, function(){
+						for(let chapter in window.ScenesHandler.sources[source].chapters){
+							let new_noteid=uuid();
+							let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+							self.notes[new_noteid]={
+								title: new_note_title,
+								text: "",
+								player: false,
+								plain: "",
+								ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+							};
+							self.chapters[self.chapters.length-1].notes.push(new_noteid);
+						}
+						self.persist();
+						self.build_journal();
+					});
+				}
 			})
 
 			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
@@ -503,7 +535,7 @@ class JournalManager{
 	}
 	
 	
-	display_note(id){
+	display_note(id, statBlock = false){
 		let self=this;
 		let note=$("<div class='note'></div>");
 		
@@ -535,7 +567,7 @@ class JournalManager{
 			let edit_btn=$("<button>Edit</button>");
 			edit_btn.click(function(){
 				note.remove();
-				window.JOURNAL.edit_note(id);
+				window.JOURNAL.edit_note(id, statBlock);
 			});
 			
 			visibility_container.append(edit_btn);
@@ -545,6 +577,14 @@ class JournalManager{
 		}
 		let note_text=$("<div class='note-text'/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
+		if(statBlock){
+			this.translateHtmlAndBlocks(note_text);
+		}
+		this.add_journal_roll_buttons(note_text);
+		this.add_journal_tooltip_targets(note_text);
+
+		add_stat_block_hover(note_text);
+		
 		note.append(note_text);
 		note.find("a").attr("target","_blank");
 		note.dialog({
@@ -599,7 +639,320 @@ class JournalManager{
 			event.preventDefault();
 			render_source_chapter_in_iframe(event.target.href);
 		});
+
 	}
+	add_journal_tooltip_targets(target){
+		$(target).find('.tooltip-hover').each(function(){
+			let self = this;
+			if(!$(self).attr('data-tooltip-href'))
+			window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
+				$(self).attr('data-tooltip-href', url);
+				$(self).toggleClass(`${typeClass}-tooltip`, true);
+			});
+		});
+	}
+
+	getDataTooltip(url, callback){
+		if(window.spellIdCache == undefined){
+			window.spellIdCache = {};
+		}
+		const urlRegex = /www\.dndbeyond\.com\/[a-zA-Z\-]+\/([0-9]+)/g;
+		const urlType = /www\.dndbeyond\.com\/([a-zA-Z\-]+)/g;
+		let itemId = (url.matchAll(urlRegex).next().value) ? url.matchAll(urlRegex).next().value[1] : 0;
+		const itemType = url.matchAll(urlType).next().value[1];
+		url = url.toLowerCase();
+		if(itemId == 0){
+			if(window.spellIdCache[url]){
+				callback(`www.dndbeyond.com/${itemType}/${window.spellIdCache[url]}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
+			}
+			else{
+				let spellPage = '';			
+				$.get(url,  function (data) {
+				    spellPage = data;
+				}).done(function(){
+					const regex = /window\.cobaltVcmList\.push\(\{.+id\:([0-9]+)/g;
+					const itemId = spellPage.matchAll(regex).next().value[1];
+					window.spellIdCache[url] = itemId;
+					callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
+				})
+			}
+			
+		}
+		else{
+			callback(`www.dndbeyond.com/${itemType}/${itemId}-tooltip?disable-webm=1`, itemType.slice(0, -1));	
+		}
+		
+	}
+
+	add_journal_roll_buttons(target){
+		console.group("add_journal_roll_buttons")
+		
+		const clickHandler = function(clickEvent) {
+			roll_button_clicked(clickEvent, window.PLAYER_NAME, window.PLAYER_IMG)
+		};
+
+		const rightClickHandler = function(contextmenuEvent) {
+			roll_button_contextmenu_handler(contextmenuEvent, window.PLAYER_NAME, window.PLAYER_IMG);
+		}
+
+		// replace all "to hit" and "damage" rolls
+	
+		let currentElement = $(target).clone()
+
+		// apply most specific regex first matching all possible ways to write a dice notation
+		// to account for all the nuances of DNDB dice notation.
+		// numbers can be swapped for any number in the following comment
+		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
+		const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/g
+		// matches " +1 " or " + 1 "
+		const hitRollRegex = /(\s)([+-]\s?[0-9]+)(\s)|\(([+-]\s?[0-9]+)\)|([^0-9'"][^0-9'"])([+-]\s?[0-9]+)/g
+		const htmlNoSpaceHitRollRegex = />([+-]\s?[0-9]+)</g
+		const dRollRegex = /\s(\s?d[0-9]+)\s/g
+		const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</g
+		const rechargeRegEx = /(Recharge [0-6]?\s?[–-]?\s?[0-6])/g
+		const actionType = "roll"
+		const rollType = "AboveVTT"
+		const updated = currentElement.html()
+			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
+			.replaceAll(hitRollRegex, `$5$1<button data-exp='1d20' data-mod='$2$4$6' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2$4$6</button>$3`)
+			.replaceAll(htmlNoSpaceHitRollRegex, `><button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
+			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
+			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
+			.replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'> $1</button>`)
+			
+		
+
+		$(target).html(updated);
+
+		$(target).find('button[data-rolltype="damage"], button[data-rolltype="to hit"]').each(function(){
+			let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
+			rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
+			if(rollAction == ''){
+				$(this).attr('data-rolltype', 'roll');
+				$(this).attr('data-actiontype', 'AboveVTT');	
+			}
+			else{
+				$(this).attr('data-actiontype', rollAction);
+			}
+			
+		})
+		
+		// terminate the clones reference, overkill but rather be safe when it comes to memory
+		currentElement = null
+	
+		$(target).find(".avtt-roll-button").click(clickHandler);
+		$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+		console.groupEnd()
+	}
+
+    translateHtmlAndBlocks(target) {
+    	data = $(target).clone().html();
+
+        let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
+        lines = lines.map((line, li) => {
+            let input = line;
+            input = input.replace(/&nbsp;/g,' ')
+            // Find name
+            // e.g. Frightful Presence.
+            let name = (
+                input.match(/^(([A-Z][^ ]+ ?){1,7}(\([^\)]+\))?\.)/gim) || []
+            ).toString();
+
+            // Remove period at the end of the name
+            name = name.replace(/\.$/, '');
+            // Remove whitespace from the name
+            name = name.split('(')[0].trim();
+
+            // Remove space between letter ranges
+            // e.g. a- b
+            input = input.replace(/([a-z])- ([a-z])/gi, '$1$2');
+            // Replace with right single quote
+            input = input.replace(/'/g, '’');
+            // e.g. Divine Touch. Melee Spell Attack:
+            input = input.replace(
+                /^(([A-Z0-9][^ .]+ ?){1,2}(\([^\)]+\))?\.)( (Melee|Ranged|Melee or Ranged) (Weapon|Spell) Attack:)?/gim,
+                /(lair|legendary) actions/g.test(data)
+                    ? '<strong>$1</strong>'
+                    : '<em><strong>$1</strong>$4</em>'
+            );
+            // Emphasize hit
+            input = input.replace(/Hit:/g, '<em>Hit:</em>');
+            // Emphasize hit or miss
+            input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
+  
+            // Find attack actions
+            input = input.replace(/(attack) action/gi, 
+            	function(m){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
+                });
+            // Find cover rules
+            input = input.replace(
+                /(?<!\])[\#\>]?(total cover|heavily obscured|lightly obscured)/gi,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/rules/${rulesId}-tooltip" data-tooltip-json-href="/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Find conditions
+            input = input.replace(
+                /(?<!\])[\#\>]?(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)/gi,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].definition.id;
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/appendix-a-conditions#${m}" aria-haspopup="true" data-tooltip-href="/conditions/${conditionId}-tooltip" data-tooltip-json-href="/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Find skills
+            input = input.replace(
+                /(?<!\])[\#\>]?(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)/gi,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="/skills/${skillId}-tooltip" data-tooltip-json-href="/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
+                }
+
+            );
+            // Find opportunity attacks
+            input = input.replace(
+                /(?<!\]|;)[\#\>]?(opportunity attack)s/gi,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // find opportunity attack
+            input = input.replace(
+                /(?<!\]|;)[\#\>]?(opportunity attack)/gi,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+            // Add parens for escape dc
+            input = input.replace(/ escape DC/g, ' (escape DC');
+            input = input.replace(/(DC )(\d+) (\:|\.|,)/g, '$1$2)$3');
+            // Fix parens for dice
+            // e.g. (3d6 + 12) thunder
+            input = input.replace(/\(?(\d+d\d+( \+ \d+)?)\)? ? (\w)/g, '($1) $3');
+            // Try to find spells
+            input = input.replace(
+                / (the|a|an) (([\w]+ ?){1,4}) spell( |\.|\:|,)/g,
+                ' $1 [spell]$2[/spell] spell$4'
+            );
+            // another spell attempt
+            input = input.replace(
+                /casts (([\w]+ ?){1,4}),/g,
+                'casts [spell]$1[/spell],'
+            );
+            // Search for spell casting section
+            const spellcasting = lines.findIndex((l) =>
+                l.match(/Spellcasting([^.]+)?./g)
+            );
+            // If we find the section, loop through the levels
+            if (
+                spellcasting >= 0 &&
+                spellcasting < li &&
+                (input.startsWith('At will:') ||
+                    input.startsWith('Cantrips (at will):') ||
+                    input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
+            ) {
+            	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
+            	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
+            	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
+                let parts = input.split(/:\s(?<!left:\s?)/g);
+                parts[1] = parts[1].split(/,\s(?![^(]*\))/gm);
+                for (let p in parts[1]) {
+                	let spellName = (parts[1][p].startsWith('<a')) ? $(parts[1][p]).text() : parts[1][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
+
+                	if(parts[1][p].startsWith('<') || parts[1][p].startsWith('[spell]') ){
+						parts[1][p] = parts[1][p]
+                            .replace(/^/gm, ``)
+                            .replace(/( \(|(?<!\))$)/gm, '');
+                	}
+                   	else if(parts[1][p] && typeof parts[1][p] === 'string') {
+                        parts[1][p] = parts[1][p].split('<')[0]
+                            .replace(/^/gm, `[spell]`)
+                            .replace(/( \(|(?<!\))$)/gm, '[/spell]');
+                    }
+
+                    if(eachNumberFound){
+                    	parts[1][p] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${parts[1][p]}</span>`
+                    }
+                }
+                parts[1] = parts[1].join(', ');
+                input = parts.join(': ');
+                if(slotsNumberFound){
+                	input = `<span class="add-input slots" data-number="${slotsNumberFound}" data-spell="${spellLevelFound}">${input}</span>`
+                }
+            }
+
+            input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];;
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
+                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            input = input.replace(/\[monster\](.*?)\[\/monster\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];;
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
+                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            input = input.replace(/\[magicItem\](.*?)\[\/magicItem\]/g, function(m){
+            	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[magicItem\]\s?|\s?\[\/magicItem\]\s?/g, '').replace('[/magicItem]', '');   	
+            	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
+            	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
+                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+            // Find senses
+            input = input.replace(
+                /(?<!\])[\#\>]?(truesight|blindsight|darkvision|tremorsense)/gi,
+                 function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+
+            // Find actions
+            input = input.replace(
+                /(?<!\])[\#\>]?((dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell))/gim,
+                function(m){
+                	if(m.startsWith('#') || m.startsWith('>'))
+                		return m;
+                	
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+ 
+            input = input.replace(/\&nbsp\;/g, ' ');
+            // Replace quotes to entity
+            input = input.replace(/\'/g, '&rsquo;');
+            return input;
+        });
+
+        $(target).html(lines.join(``));
+    }
 	
 	note_visibility(id,visibility){
 		this.notes[id].player=visibility;
@@ -618,7 +971,7 @@ class JournalManager{
 		});
 	}
 
-	edit_note(id){
+	edit_note(id, statBlock = false){
 		this.close_all_notes();
 		let self=this;
 		
@@ -653,7 +1006,7 @@ class JournalManager{
 				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
 				btn_view.click(function(){	
 					self.close_all_notes();
-					self.display_note(id);
+					self.display_note(id, statBlock);
 				});
 			},
 			close: function( event, ui ) {
@@ -706,7 +1059,13 @@ class JournalManager{
 			      { title: 'Ripped Paper', block: 'div', wrapper: true, classes: 'block-torn-paper' },
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
-			    ] }
+			    ] },
+			    { title: 'Custom Statblock Stats', items: [
+			      { title: 'AC', inline: 'b', classes: 'custom-ac custom-stat'},
+			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },
+			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
+			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
+			   	]}
 			],
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
 			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
@@ -718,8 +1077,32 @@ class JournalManager{
 			},
 			link_class_list: [
 			   {title: 'External Link', value: 'ext_link'},
-			   {title: 'DNDBeyond Source Link', value: 'int_source_link'}
+			   {title: 'DDB Sourcebook Link', value: 'int_source_link'},
+			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items)', value: 'tooltip-hover'}
 			],
+			setup: function (editor) { 
+				editor.on('NodeChange', function (e) {
+					// When an image is inserted into the editor
+				    if (e.element.tagName === "IMG") { 
+				    	let url = e.element.getAttribute('src');
+				    	if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+		                    const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+		                    console.log("parse drive audio is converting", url, "to", parsed);
+		                    url = parsed;
+		                }
+		                else if(url.includes('dropbox.com')){       
+		                    const splitUrl = url.split('dropbox.com');
+		                    const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+		                    console.log("parse dropbox audio is converting", url, "to", parsed);
+		                    url = parsed;
+		                }
+
+				        e.element.setAttribute("src", url);
+				        return; 
+				    }
+				    return;
+				});
+			},
 			relative_urls : false,
 			remove_script_host : false,
 			convert_urls : true,
@@ -1179,6 +1562,28 @@ class JournalManager{
 				    position: relative;
 				    border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 				}
+				  .custom-stat{
+				  	font-weight:bold;
+				  	border: 1px dotted #666;
+				  }
+				  .custom-avghp.custom-stat
+			      {
+
+			      	color: #F00;
+			      }
+			      
+			      .custom-hp-roll.custom-stat
+			      {
+			      	color: #8f03b3;
+			      }
+			      
+			      .custom-initiative.custom-stat{
+			      	color: #007900;
+			      }
+				  
+			      .custom-ac.custom-stat{
+			      	color: #00F;
+			      }
 				`,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
@@ -1229,14 +1634,18 @@ function init_journal(gameid){
 }
 
 function render_source_chapter_in_iframe(url) {
-	if (typeof url !== "string" || (!url.startsWith('https://www.dndbeyond.com/sources/') && !url.startsWith('/sources/'))) {
+	const sourceChapter = url.startsWith('https://www.dndbeyond.com/sources/') || url.startsWith('/sources/');
+	const compendiumChapter = url.startsWith('https://www.dndbeyond.com/compendium/') || url.startsWith('/compendium/');
+	const attachmentChapter = url.startsWith('https://www.dndbeyond.com/attachments/') || url.startsWith('/attachments/');
+	const rulesChapter = url.startsWith('https://dndbeyond.com/magic-items') || url.startsWith('https://dndbeyond.com/feats') || url.startsWith('https://dndbeyond.com/spells')
+	if (typeof url !== "string" ||  (!sourceChapter && !compendiumChapter && !attachmentChapter && !rulesChapter)) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
 	const chapterHash = url.split("#")?.[1];
 	const iframeId = 'sourceChapterIframe';
 	const containerId = `${iframeId}_resizeDrag`;
-	const container = find_or_create_generic_draggable_window(containerId, 'Source Book');
+	const container = find_or_create_generic_draggable_window(containerId, 'Source Book', true, true, `#${iframeId}`);
 
 	let iframe = $(`#${iframeId}`);
 	if (iframe.length > 0) {
