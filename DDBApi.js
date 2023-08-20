@@ -33,6 +33,9 @@ class DDBApi {
     const type = responseJson?.type || `Unknown Error ${response.status}`;
     const messages = responseJson?.errors?.message?.join("; ") || "";
     console.error(`DDB API Error: ${type} ${messages}`);
+    if(type == 'EncounterLimitException'){
+      alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
+    }
     throw new Error(`DDB API Error: ${type} ${messages}`);
   }
 
