@@ -824,9 +824,8 @@ class JournalManager{
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
-                	
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // find opportunity attack
@@ -835,9 +834,8 @@ class JournalManager{
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
-                	
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+        
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // Add parens for escape dc
