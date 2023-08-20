@@ -47,7 +47,7 @@ function inject_instructions() {
   const campaign_banner = $("<div id='campaign_banner'></div>");
   campaign_banner.append(`
     <h4><img class='above-vtt-right-margin-5px' alt='above vtt logo' width='100px' src='${window.EXTENSION_PATH}assets/logo.png'>Basic Instructions!</h4>
-    <br>If you are the DM, press <b>JOIN AS DM</b> above.<br><br>
+    <br>If you are the DM, press <b>JOIN AS DM</b> above. If you have a free DnDBeyond account make sure you have 1 free encounter slot to join as DM. Free accounts are limited to 8 encounters.<br><br>
     Players, press <b>JOIN AboveVTT</b> next to your character at the bottom, and then wait for your DM to join.<br><br>
     Please check that you do not have any other extensions for DndBeyond (like Beyond20) enabled. <b>Disable them</b> or you will not be able to roll dice!<br><br>
     If you're looking for tutorials, take a look at our <a target='_blank' href='https://www.youtube.com/channel/UCrVm9Al59iHE19IcqaKqqXA'>YouTube Channel!!</a><br>
