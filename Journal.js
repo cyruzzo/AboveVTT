@@ -1063,7 +1063,8 @@ class JournalManager{
 			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },
 			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
-			   	]}
+			   	]},
+			   	{ title: 'Statblock Seperator', block: 'div', wrapper: false, classes:'abovevtt-mon-stat-block__separator'}
 			],
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
 			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
@@ -1120,7 +1121,13 @@ class JournalManager{
 				*{
 					font-family: Roboto, Helvetica, sans-serif;
 				}
-
+				.abovevtt-mon-stat-block__separator{
+		    		max-width: 100%;
+				    min-height: 30px;
+				    margin: 0px;
+				    background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat
+				}
+				
 				.Basic-Text-Frame {
 				    clear: both;
 				    border: 1px solid #d4d0ce;
