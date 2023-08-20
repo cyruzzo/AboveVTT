@@ -1057,7 +1057,7 @@ function  redraw_light_walls(clear=true){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('[data-shape="paint-bucket"]').hasClass('button-enabled'))) {
+		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled'))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 		let type = (color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)" ) ? 1 : 0;
