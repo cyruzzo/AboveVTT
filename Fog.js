@@ -3563,27 +3563,33 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
-	        if (dist < recordLight) {
-	        	if(walls[j].c != 1)
-	          		recordLight = dist;
-	          	recordMove = dist;
+	        if (dist < recordLight && walls[j].c != 1) {
+	          	recordLight = dist;          	
 		        if(dist == lightRadius){
 		          	pt = {
 			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
 			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
 			          }
-	       		}
-	           	if(walls[j].c != 1)
-	          		closestLight = pt;
+	       		}	           	
+	          	closestLight = pt;
 
-	        	closestMove = pt;
-		        if(dist != lightRadius){
-		          	if(!walls[j].c)
-		          		closestWall = walls[j];
-		          	closestBarrier = walls[j];
+		        if(dist != lightRadius){    	
+		          	closestWall = walls[j];
 		        }	         
 	        }
-
+	        if(dist < recordMove){
+	        	recordMove = dist;
+	        	 if(dist == lightRadius){
+		          	pt = {
+			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+			          }
+	       		}
+	       		closestMove = pt;
+	       		 if(dist != lightRadius){
+		          	closestBarrier = walls[j];
+		        }	
+	        }
 	      }
 	    }	    
 	    if (closestLight && closestWall != prevClosestWall) {
