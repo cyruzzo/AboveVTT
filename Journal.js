@@ -786,7 +786,7 @@ class JournalManager{
                 });
             // Find cover rules
             input = input.replace(
-                /(?<!\])[\#\>]?(total cover|heavily obscured|lightly obscured)/gi,
+                /(?<!]|;|#|<[^>]+)(total cover|heavily obscured|lightly obscured)(?![^<]+>|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
@@ -797,7 +797,7 @@ class JournalManager{
             );
             // Find conditions
             input = input.replace(
-                /(?<!\])[\#\>]?(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)/gi,
+                /(?<!]|;|#|<[^>]+)(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)(?![^<]+>|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
@@ -808,10 +808,9 @@ class JournalManager{
             );
             // Find skills
             input = input.replace(
-                /(?<!\])[\#\>]?(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)/gi,
+                /(?<!]|;|#|<[^>]+)(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)(?![^<]+>|\[)/gi,
                 function(m){
-                	if(m.startsWith('#') || m.startsWith('>'))
-                		return m;
+
                 	
                 	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="/skills/${skillId}-tooltip" data-tooltip-json-href="/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
@@ -820,24 +819,33 @@ class JournalManager{
             );
             // Find opportunity attacks
             input = input.replace(
-                /(?<!\]|;)[\#\>]?(opportunity attack)s/gi,
+                /(?<!]|;|#|<[^>]+)(opportunity attack)s(?![^<]+>|\[)|(?<!\]|;|#|<[^>]+)(opportunity attack)(?![^<]+>|\[)/gi,
                 function(m){
-                	if(m.startsWith('#') || m.startsWith('>'))
-                		return m;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
 
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
-                }
-            );
-            // find opportunity attack
+            // Find senses
             input = input.replace(
-                /(?<!\]|;)[\#\>]?(opportunity attack)/gi,
-                function(m){
-                	if(m.startsWith('#') || m.startsWith('>'))
-                		return m;
-        
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
+                /(?<!]|;|#|<[^>]+)(truesight|blindsight|darkvision|tremorsense)(?![^<]+>|\[)/gi,
+                 function(m){
+                	
+                	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
+
+            // Find actions
+            input = input.replace(
+                /(?<!]|;|#|<[^>]+)(dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell)(?![^<]+>|\[)/gim,
+                function(m){
+     
+                	
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+                }
+            );
+
             // Add parens for escape dc
             input = input.replace(/ escape DC/g, ' (escape DC');
             input = input.replace(/(DC )(\d+) (\:|\.|,)/g, '$1$2)$3');
@@ -917,29 +925,7 @@ class JournalManager{
                 return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
-            // Find senses
-            input = input.replace(
-                /(?<!\])[\#\>]?(truesight|blindsight|darkvision|tremorsense)/gi,
-                 function(m){
-                	if(m.startsWith('#') || m.startsWith('>'))
-                		return m;
-                	
-                	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
-                }
-            );
-
-            // Find actions
-            input = input.replace(
-                /(?<!\])[\#\>]?((dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell))/gim,
-                function(m){
-                	if(m.startsWith('#') || m.startsWith('>'))
-                		return m;
-                	
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
-                }
-            );
+      
  
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
