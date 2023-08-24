@@ -37,7 +37,7 @@ class JournalManager{
 		if(window.DM){
 			if(this.statBlocks)
 				localStorage.setItem('JournalStatblocks', JSON.stringify(this.statBlocks));
-			localStorage.setItem('Journal' + this.gameid, JSON.stringify( Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true))));
+			localStorage.setItem('Journal' + this.gameid, JSON.stringify(Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true))));
 			localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(this.chapters));
 		}
 	}
