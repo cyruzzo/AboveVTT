@@ -25,11 +25,19 @@ class JournalManager{
 		else{
 			this.chapters=[];
 		}
+		if(window.DM && (localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
+			this.notes = {
+				...this.notes,
+				...$.parseJSON(localStorage.getItem('JournalStatblocks'))
+			}
+		}
 	}
 	
 	persist(){
 		if(window.DM){
-			localStorage.setItem('Journal' + this.gameid, JSON.stringify(this.notes));
+			if(this.statBlocks)
+				localStorage.setItem('JournalStatblocks', JSON.stringify(this.statBlocks));
+			localStorage.setItem('Journal' + this.gameid, JSON.stringify( Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true))));
 			localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(this.chapters));
 		}
 	}
@@ -1593,6 +1601,8 @@ class JournalManager{
 				let note_id = $(this.getElement()).attr('data-note-id');
 				self.notes[note_id].text =tinymce.activeEditor.getContent();
 				self.notes[note_id].plain=tinymce.activeEditor.getContent({ format: 'text' });
+				self.notes[note_id].statBlock=statBlock;
+				self.statBlocks = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true))
 				self.persist();
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition
@@ -1609,7 +1619,6 @@ class JournalManager{
 				
 	}
 }
-
 
 function init_journal(gameid){
 	
