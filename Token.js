@@ -1878,7 +1878,9 @@ class Token {
 				x: 0,
 				y: 0
 			};
-
+		 	if(window.moveOffscreenCanvasMask == undefined){
+		 		window.moveOffscreenCanvasMask = document.createElement('canvas');
+		 	}
 			let canvas = window.moveOffscreenCanvasMask;
 			let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
