@@ -133,14 +133,14 @@ const MIN_ZOOM = 0.1
 function change_zoom(newZoom, x, y) {
 	console.group("change_zoom")
 	console.log("zoom", newZoom, x , y)
-	var zoomCenterX = x || $(window).width() / 2
-	var zoomCenterY = y || $(window).height() / 2
+	let zoomCenterX = x || $(window).width() / 2
+	let zoomCenterY = y || $(window).height() / 2
 	// window.VTTMargin is the size of the black area to the left and top of the map
-	var centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - window.VTTMargin) * (1.0 / window.ZOOM));
-	var centerY = Math.round((($(window).scrollTop() + zoomCenterY) - window.VTTMargin) * (1.0 / window.ZOOM));
+	let centerX = Math.round((($(window).scrollLeft() + zoomCenterX) - window.VTTMargin) * (1.0 / window.ZOOM));
+	let centerY = Math.round((($(window).scrollTop() + zoomCenterY) - window.VTTMargin) * (1.0 / window.ZOOM));
 	window.ZOOM = newZoom;
-	var pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
-	var pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
+	let pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
+	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
 	$("#tokens").get(0).style.setProperty("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
@@ -173,18 +173,20 @@ function add_zoom_to_storage() {
 	if(window.ZOOM !== get_reset_zoom()) {
 		const zooms = JSON.parse(localStorage.getItem('zoom')) || [];
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
+		const centerView = center_of_view(); 
+		const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		if (zoomIndex !== -1) {
 			zooms[zoomIndex].zoom = window.ZOOM;
-			zooms[zoomIndex].leftOffset = Math.round($(window).scrollLeft());
-			zooms[zoomIndex].topOffset = Math.round($(window).scrollTop());
+			zooms[zoomIndex].leftOffset = window.scrollX + window.innerWidth/2 - sidebarSize/2;
+			zooms[zoomIndex].topOffset = window.scrollY + window.innerHeight/2;
 		}
 		else{
 			// zoom doesn't exist
 			zooms.push({
 				"title": window.CURRENT_SCENE_DATA.title,
 				"zoom":window.ZOOM,
-				"leftOffset": Math.round($(window).scrollLeft()),
-				"topOffset": Math.round($(window).scrollTop())
+				"leftOffset": window.scrollX + window.innerWidth/2 - sidebarSize/2,
+				"topOffset": window.scrollY + window.innerHeight/2
 			});
 		}
 		localStorage.setItem('zoom', JSON.stringify(zooms));
@@ -227,15 +229,9 @@ function apply_zoom_from_storage() {
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
 		if(zoomIndex !== -1) {
 			console.log("restoring zoom level", zooms[zoomIndex]);
-			change_zoom(
-				zooms[zoomIndex].zoom,
-				undefined,
-				undefined,
-				false)
-			// TODO: this bit doesn't work
-			$(window).scrollLeft(zooms[zoomIndex].leftOffset);
-			$(window).scrollTop(zooms[zoomIndex].topOffset);
-
+			change_zoom(zooms[zoomIndex].zoom)
+			const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+			window.scrollTo(zooms[zoomIndex].leftOffset - window.innerWidth/2 + sidebarSize/2, zooms[zoomIndex].topOffset - window.innerHeight/2)
 		}
 		else{
 			// Zooms in storage but not for this scene
@@ -528,9 +524,9 @@ function set_pointer(data, dontscroll = false) {
 	// Calculate pageX and pageY and scroll there!
 
 	if(!dontscroll){
-		var pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
-		var pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
-		var sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+		let pageX = Math.round(data.x * window.ZOOM - ($(window).width() / 2));
+		let pageY = Math.round(data.y * window.ZOOM - ($(window).height() / 2));
+		let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
 		$("html,body").animate({
 			scrollTop: pageY + window.VTTMargin,
 			scrollLeft: pageX + window.VTTMargin + sidebarSize/2,
