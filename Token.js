@@ -391,7 +391,7 @@ class Token {
 	}
 
 	size(newSize) {
-		this.MAX_TOKEN_SIZE = Math.max(window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height);
+		this.MAX_TOKEN_SIZE = Math.max(window.CURRENT_SCENE_DATA.width*window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.height*window.CURRENT_SCENE_DATA.scale_factor);
 
 		// Clamp token size to min/max token size
 		newSize = clamp(newSize, this.MIN_TOKEN_SIZE, this.MAX_TOKEN_SIZE);
@@ -1788,8 +1788,13 @@ class Token {
 			tok.append(tokenImage);
 
 
-			tokenImage.css("max-height", this.sizeHeight());
-			tokenImage.css("max-width", this.sizeWidth());
+			tokenImage.css({
+				"max-height": this.sizeHeight(),
+				"max-width": this.sizeWidth(),
+				"height": "100%",
+				"width": "100%"
+			});
+		
 
 			tok.attr("data-id", this.options.id);
 
