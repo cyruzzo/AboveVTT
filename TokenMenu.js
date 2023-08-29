@@ -1366,7 +1366,6 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let tokenSizes = [];
 	tokens.forEach(t => {
 		tokenSizes.push(t.numberOfGridSpacesWide());
-		tokenSizes.push(t.numberOfGridSpacesTall());
 	});
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);
@@ -1653,7 +1652,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 	console.log("isSizeCustom: ", isSizeCustom, ", forceCustom: ", forceCustom, ", numGridSquares: ", numGridSquares, ", [0.5, 1, 2, 3, 4].includes(numGridSquares):", [0.5, 1, 2, 3, 4].includes(numGridSquares))
 
 	// Limit custom token scale to grid size 
-	const maxScale = Math.max(window.CURRENT_SCENE_DATA.width / window.CURRENT_SCENE_DATA.hpps);
+	const maxScale = Math.max(window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor / window.CURRENT_SCENE_DATA.hpps);
 
 	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
 	const size = (numGridSquares > 0) ? (numGridSquares * window.CURRENT_SCENE_DATA.fpsq) : 1;
@@ -1734,7 +1733,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
  * @returns maximum value for imageScale
  */
  function getTokenMaxImageScale(tokenSize) {
-	return Math.min(6, window.CURRENT_SCENE_DATA.width / parseFloat(tokenSize));
+	return Math.min(6, window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor / parseFloat(tokenSize));
 }
 
 /**
