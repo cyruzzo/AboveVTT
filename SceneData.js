@@ -127985,7 +127985,7 @@ var DDB_EXTRAS =
 		"height": 1980,
 		"conversion": 0.29333333333333333,
 		"grid_subdivided": "1",
-		"scale_factor": 3.409090909090909,
+		"scale_factor": 1,
 		"offsetx": 24.199999999999818,
 		"dm_map_usable": "1",
 		"offsety": 19.999999999999773,
