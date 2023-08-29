@@ -2403,8 +2403,8 @@ function save_type_change(dropdown){
 
 function qrm_fetch_stat(token) {
 	//if its a monster it needs to be calulated.
-	if(token.options.monster > 0){
-		var stat = cached_monster_items[token.options.monster].monsterData;
+	if(token.options.monster > 0 || token.options.monster == 'open5e'){
+		let stat = (cached_monster_items[token.options.monster]?.monsterData) ? cached_monster_items[token.options.monster]?.monsterData : cached_open5e_items[token.options.itemId]?.monsterData;
 
 		if(typeof(stat) != 'undefined'){
 			save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
@@ -2432,12 +2432,11 @@ function qrm_fetch_stat(token) {
 		}
 		console.log(roll_bonus);
 	}
-	else if (token.isPlayer == true) {
+	else if (token.isPlayer() == true) {
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
 		//This relies of player data being loaded, which may take a few seconds after the page opens
 		//if its a player character they have the save stored
-		player_stats = window.PLAYER_STATS[token.options.id]
-		roll_bonus = player_stats.abilities[save_dropdown_value]['save']
+		roll_bonus = token.options.abilities[save_dropdown_value]['save']
 
 		if (roll_bonus >= 0){
 			roll_bonus = "+"+roll_bonus;
