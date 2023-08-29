@@ -938,9 +938,18 @@ function persist_experimental_settings(settings) {
 
 function export_current_scene(){
 	build_import_loading_indicator('Preparing Export File');
+	let currentSceneData = {
+		...window.CURRENT_SCENE_DATA,
+		scale_factor: window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+		hpps: window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.conversion,
+		vpps: window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.conversion,
+		offsetx: window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.conversion,
+		offsety: window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.conversion
+	} 
+	window.CURRENT_SCENE_DATA.scale_factor 
 	let DataFile = {
 		version: 2,
-		scenes: [window.CURRENT_SCENE_DATA],
+		scenes: [currentSceneData],
 		tokencustomizations: [],
 		notes: {},
 		journalchapters: [],
