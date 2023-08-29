@@ -47,7 +47,8 @@ $(function() {
           });
         }
         else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
-          window.scroll(event.data.x, event.data.y);
+          let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+          window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);
         }
         else if(event.data.msgType == 'projectionZoom' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
           change_zoom(event.data.newZoom, event.data.x, event.data.y);
