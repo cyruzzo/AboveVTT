@@ -2486,8 +2486,8 @@ function center_of_view() {
 }
 
 function should_snap_to_grid() {
-	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap))
-		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
+	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap) && window.CURRENT_SCENE_DATA.gridType == 1)
+		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap && window.CURRENT_SCENE_DATA.gridType == 1);
 }
 
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
@@ -2497,6 +2497,7 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 		const startY = window.CURRENT_SCENE_DATA.offsety;
 		const gridWidth = (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;
 		const gridHeight = (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;
+
 		const currentGridX = Math.floor((mapX - startX) / gridWidth);
 		const currentGridY = Math.floor((mapY - startY) / gridHeight);
 		return {

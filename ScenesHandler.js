@@ -54,6 +54,405 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	switch_scene(sceneid, callback = null) { //This is still used for grid wizard loading since we load so many times. -- THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
+		
+		let grid_5 = function() {
+			$("#scene_selector_toggle").show();
+			$("#tokens").show();
+			window.WIZARDING = false;
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				upsq: "ft",
+				fpsq: "5",
+				grid_subdivided: "0"
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
+			window.ScenesHandler.persist_current_scene();
+			$("#wizard_popup").empty().append("You're good to go!!");
+			$("#exitWizard").remove();
+			$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
+				$("#wizard_popup").remove();
+			});
+			$("#light_container").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
+		};
+
+		let grid_10 = function() {
+			$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so you can get correct token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
+
+			$("#grid_divide").click(function() {
+				window.WIZARDING = false;
+				$("#scene_selector_toggle").show();
+				$("#tokens").show();
+				$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
+				window.CURRENT_SCENE_DATA = {
+					...window.CURRENT_SCENE_DATA,
+					hpps: window.CURRENT_SCENE_DATA.hpps/2,
+					vpps: window.CURRENT_SCENE_DATA.vpps/2,
+					upsq: "ft",
+					fpsq: "5",
+					grid_subdivided: "1"
+				}
+				consider_upscaling(window.CURRENT_SCENE_DATA);
+				$("#exitWizard").remove();
+				$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+					$("#wizard_popup").remove();
+				});
+				window.ScenesHandler.persist_current_scene();
+				$("#light_container").css('visibility', 'visible');
+				$("#darkness_layer").css('visibility', 'visible');
+			});
+
+			$("#grid_nodivide").click(function() {
+				window.WIZARDING = false;
+				$("#scene_selector_toggle").show();
+				$("#tokens").show();
+				window.CURRENT_SCENE_DATA= {
+					...window.CURRENT_SCENE_DATA,
+					upsq: "ft",
+					fpsq: "10",
+					grid_subdivided: "0",
+					snap: "1",
+					grid: "0"
+				}
+				consider_upscaling(window.CURRENT_SCENE_DATA);
+				window.ScenesHandler.persist_current_scene();
+				$("#exitWizard").remove();
+				$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
+				$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+					$("#wizard_popup").remove();
+				});
+				$("#light_container").css('visibility', 'visible');
+				$("#darkness_layer").css('visibility', 'visible');
+			});
+		}
+
+		let grid_15 = function() {
+			window.WIZARDING = false;
+			$("#scene_selector_toggle").show();
+			$("#tokens").show();
+			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				hpps: window.CURRENT_SCENE_DATA.hpps/3,
+				vpps: window.CURRENT_SCENE_DATA.vpps/3,
+				upsq: "ft",
+				fpsq: "5",
+				grid_subdivided: "0"
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
+			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+				$("#wizard_popup").remove();
+			});
+			window.ScenesHandler.persist_current_scene();
+			$("#exitWizard").remove();
+			$("#light_container").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
+		}
+
+
+		let grid_20 = function() {
+			window.WIZARDING = false;
+			$("#scene_selector_toggle").show();
+			$("#tokens").show();
+			$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				hpps: window.CURRENT_SCENE_DATA.hpps/4,
+				vpps: window.CURRENT_SCENE_DATA.vpps/4,
+				upsq: "ft",
+				fpsq: "5",
+				grid_subdivided: "0"
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
+			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
+				$("#wizard_popup").remove();
+			});
+			window.ScenesHandler.persist_current_scene();
+			$("#exitWizard").remove();
+			$("#light_container").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
+		}
+
+		let align_grid = function(square = false, just_rescaling = true, copiedSceneData) {
+
+
+		
+	    
+			$("#tokens").hide();
+			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
+			let aligner1 = $("<canvas id='aligner1'/>");
+			aligner1.width(59);
+			aligner1.height(59);
+			aligner1.css("position", "absolute");
+			aligner1.css("border-radius", "50%");
+			aligner1.css("top", Math.floor($("#scene_map").height() / copiedSceneData.vpps) / 2 * copiedSceneData.vpps + copiedSceneData.offsety - 29 + "px");
+			aligner1.css("left", Math.floor($("#scene_map").width() / copiedSceneData.hpps) / 2  * copiedSceneData.hpps + copiedSceneData.offsetx - 29 + "px");
+			aligner1.css("z-index", 40);
+
+			let drawX = function(canvas) {
+
+				let ctx = canvas.getContext("2d");
+
+				ctx.strokeStyle = "red";
+				ctx.lineWidth = 1;
+				ctx.setLineDash([10, 10, 19, 10, 10]);
+				ctx.beginPath();
+				ctx.moveTo(29, 0);
+				ctx.lineTo(29, 58);
+				ctx.moveTo(0, 29);
+				ctx.lineTo(58, 29);
+				ctx.stroke();
+			};
+
+			let canvas1 = aligner1.get(0);
+
+			let ctx = canvas1.getContext("2d");
+			canvas1.width = 59;
+			canvas1.height = 59;
+			ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+			ctx.fillRect(0, 0, canvas1.width, canvas1.height);
+			if (square)
+				ctx.fillStyle = "rgba(255,0,0,0.5)";
+			else
+				ctx.fillStyle = "rgba(0,255,0,0.5)";
+			ctx.fillRect(0, 0, 59, 29);
+			ctx.fillRect(0, 29, 29, 29);
+			drawX(canvas1);
+
+			let aligner2 = $("<canvas id='aligner2'/>");
+			aligner2.width(59);
+			aligner2.height(59);
+			aligner2.css("position", "absolute");
+			aligner2.css("border-radius", "50%");
+			if (!just_rescaling) {
+				aligner2.css("top", parseFloat(aligner1.css('top')) + copiedSceneData.vpps*3 + "px");
+				aligner2.css("left", parseFloat(aligner1.css('left')) + copiedSceneData.hpps*3  + "px");
+			}
+			else {
+				aligner2.css("top", parseFloat(aligner1.css('top')) + copiedSceneData.vpps*3 + "px");
+				aligner2.css("left", parseFloat(aligner1.css('left')) + copiedSceneData.hpps*3 + "px");
+			}
+			aligner2.css("z-index", 40);
+
+			let canvas2 = aligner2.get(0);
+			canvas2.width = 59;
+			canvas2.height = 59;
+			ctx = canvas2.getContext("2d");
+			ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+			ctx.fillRect(0, 0, canvas2.width, canvas2.height);
+			ctx.fillStyle = "rgba(0,255,0,0.5)";
+			ctx.fillRect(0, 29, 59, 29);
+			ctx.fillRect(29, 0, 29, 29);
+			drawX(canvas2);
+
+
+			let pageX = Math.round(parseInt(aligner1.css('left')) * window.ZOOM - ($(window).width() / 2));
+			let pageY = Math.round(parseInt(aligner1.css('top')) * window.ZOOM - ($(window).height() / 2));
+			$("html,body").animate({
+				scrollTop: pageY + window.VTTMargin,
+				scrollLeft: pageX + window.VTTMargin
+			}, 500);
+
+
+			let regrid = function(e) {
+
+				window.CURRENT_SCENE_DATA.grid_subdivided = '0';
+
+				let al1 = {
+					x: parseInt(aligner1.css("left")) + 29,
+					y: parseInt(aligner1.css("top")) + 29,
+				};
+
+				let al2 = {
+					x: parseInt(aligner2.css("left")) + 29,
+					y: parseInt(aligner2.css("top")) + 29,
+				};
+
+				let adjustmentSliders = {
+					x: ($('#horizontalMinorAdjustmentInput').val()-50)/10,
+					y: ($('#horizontalMinorAdjustmentInput').val()-50)/10,
+				}
+
+				let ppsx;
+				let ppsy;
+				let offsetx;
+				let offsety;
+				let numberOfGrid = ($("#gridType input:checked").val() != 1) ? 2 : 3
+				if (just_rescaling) {
+					ppsx = (al2.x - al1.x);
+					ppsy = (al2.y - al1.y);
+					offsetx = 0;
+					offsety = 0;
+				}
+				else {
+					ppsx = (al2.x - al1.x) / numberOfGrid + adjustmentSliders.x;
+					ppsy = (al2.y - al1.y) / numberOfGrid + adjustmentSliders.y;
+					if($('#gridType input:checked').val() == 3){
+						ppsy = ppsx;
+					}
+					else if($('#gridType input:checked').val() == 2){
+						ppsx = ppsy;
+					}
+
+					offsetx = al1.x % ppsx;
+					offsety = al1.y % ppsy;
+				}
+
+				const a = 2 * Math.PI / 6;
+				if($('#gridType input:checked').val() == 3){
+					if(Math.round(parseInt($('#aligner1').css('left'))/ppsx/1.5  * (1 + Math.cos(a)))%2 == 0)
+						offsety = al1.y % (ppsx/1.5 * Math.sin(a));
+				}
+				if($('#gridType input:checked').val() == 2){
+					if(Math.round(parseInt($('#aligner1').css('top'))/ppsy/1.5  * (1 + Math.cos(a)))%2 == 0)
+						offsetx = al1.x % (ppsx/1.5 * Math.sin(a));
+				}
+				
+				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
+				window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
+				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
+				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
+				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
+
+				if($("#edit_dialog").length != 0){
+					$('#squaresWide').val(`${$('#scene_map').width()/window.CURRENT_SCENE_DATA.hpps}`)
+					$('#squaresTall').val(`${$('#scene_map').height()/window.CURRENT_SCENE_DATA.vpps}`)					
+					$('input[name="offsetx"]').val(`${window.CURRENT_SCENE_DATA.offsetx}`)
+					$('input[name="offsety"]').val(`${window.CURRENT_SCENE_DATA.offsety}`)
+				}
+
+				let width
+				if (window.ScenesHandler.scene.upscaled == "1")
+					width = 2;
+				else
+					width = 1;
+				const dash = [30, 5]
+				const color = "rgba(255, 0, 0,0.5)";
+				// nulls will take the window.current_scene_data from above
+				window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
+				if(window.CURRENT_SCENE_DATA.gridType == 1){
+					redraw_grid(null,null,null,null,color,width,null,dash)
+				}
+				else if(window.CURRENT_SCENE_DATA.gridType == 2){
+					redraw_hex_grid(null,null,null,null,color,width,null,dash,false)
+				}
+				else if(window.CURRENT_SCENE_DATA.gridType == 3){
+					redraw_hex_grid(null,null,null,null,color,width,null,dash,true)
+				}
+				
+			};
+
+			let click2 = {
+				x: 0,
+				y: 0
+			};
+			aligner2.draggable({
+				stop: regrid,
+				start: function(event) {
+					click2.x = event.clientX;
+					click2.y = event.clientY;
+					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
+					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
+				},
+				drag: function(event, ui) {
+					clear_grid()
+					draw_wizarding_box()
+					let zoom = window.ZOOM;
+
+					let original = ui.originalPosition;
+					ui.position = {
+						left: Math.round((event.clientX - click2.x + original.left) / zoom),
+						top: Math.round((event.clientY - click2.y + original.top) / zoom)
+					};
+
+					if ($('#gridType input:checked').val() != 1) { // restrict on 45
+						console.log("PRE");
+						console.log(ui.position);
+						var rad = Math.PI / 180;
+						var angle;
+
+						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner1").css('left')));
+						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner1").css('top')));
+
+						var offset = {
+							x: offsetLeft,
+							y: offsetTop,
+						};
+						console.log(offset);
+						var distance = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
+						console.log("distanza " + distance);
+						
+						if (offset.y > 0)
+							angle = 30 * rad;
+						else
+							angle = 240 * rad;
+					
+
+						if($('#gridType input:checked').val() == 3)
+							ui.position.top = parseInt($("#aligner1").css('top')) + 1;
+						if($('#gridType input:checked').val() == 2)
+							ui.position.left = parseInt($("#aligner1").css('left')) + 1;
+
+						console.log(ui.position);
+					}
+
+				}
+			});
+
+			let click1 = {
+				x: 0,
+				y: 0
+			};
+
+			aligner1.draggable({
+				stop: regrid,
+				start: function(event) {
+					click1.x = event.clientX;
+					click1.y = event.clientY;
+					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
+					$("#aligner1").attr('original-left', parseInt($(event.target).css("left")));
+					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
+					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
+				},
+				drag: function(event, ui) {
+					clear_grid()
+					draw_wizarding_box()
+					let zoom = window.ZOOM;
+
+					let original = ui.originalPosition;
+					ui.position = {
+						left: Math.round((event.clientX - click1.x + original.left) / zoom),
+						top: Math.round((event.clientY - click1.y + original.top) / zoom)
+					};
+					if ($('#gridType input:checked').val() != 1) {
+						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner1").attr('original-left')));
+						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner1").attr('original-top')));
+
+						console.log("off " + offsetLeft + " " + offsetTop);
+
+						$("#aligner2").css('left', (parseInt($("#aligner2").attr("original-left")) + offsetLeft) + "px");
+						$("#aligner2").css('top', (parseInt($("#aligner2").attr("original-top")) + offsetTop) + "px");
+
+
+					}
+				}
+			});
+
+
+			$("#VTT").append(aligner1);
+			$("#VTT").append(aligner2);
+
+			open_grid_wizard_controls(sceneid, aligner1, aligner2, regrid, copiedSceneData);
+
+			$("#light_container").css('visibility', 'hidden');
+			$("#darkness_layer").css('visibility', 'hidden');
+			
+			regrid();
+
+
+		}; // END OF ALIGN GRID WIZARD!
+
 		this.current_scene_id = sceneid;
 		var self = this;
 		var scene = this.scenes[sceneid];
@@ -116,10 +515,18 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		}
 
-		scene.vpps = parseFloat(scene.vpps) * scene.scale_factor;
-		scene.hpps = parseFloat(scene.hpps) * scene.scale_factor;
-		scene.offsetx = parseFloat(scene.offsetx) * scene.scale_factor;
-		scene.offsety = parseFloat(scene.offsety) * scene.scale_factor;
+		scene.vpps = parseFloat(scene.vpps);
+		scene.hpps = parseFloat(scene.hpps);
+		scene.offsetx = parseFloat(scene.offsetx);
+		scene.offsety = parseFloat(scene.offsety);
+
+		let copiedSceneData = {
+			...$.extend(true, {}, window.CURRENT_SCENE_DATA),
+			hpps: window.CURRENT_SCENE_DATA.hpps,
+			vpps: window.CURRENT_SCENE_DATA.vpps,
+			offsetx: window.CURRENT_SCENE_DATA.offsetx,
+			offsety: window.CURRENT_SCENE_DATA.offsety
+		}
 
 		scene.scale_factor = 1;
 		scene.grid_subdivided = '0';
@@ -214,10 +621,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			} else {
 				console.log("Not updating avtt encounter");
 			}
+			align_grid(false, false, copiedSceneData);
 		});
 
 		// some things can't be done correctly until after the scene finishes loading
 		redraw_settings_panel_token_examples();
+
 	}
 
 	display_scene_properties(scene_id) {

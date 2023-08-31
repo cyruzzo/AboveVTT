@@ -637,8 +637,78 @@ function clear_grid(){
 	const gridContext = gridCanvas.getContext("2d");
 	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 }
+function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true){
+	const gridCanvas = document.getElementById("grid_overlay");
+	const gridContext = gridCanvas.getContext("2d");
+	if(window.CURRENT_SCENE_DATA.gridType == 2)
+		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
+	clear_grid();
+	gridContext.setLineDash(dash);
+	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+	let startY = offsetY / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
+	startX = Math.round(startX)
+	startY = Math.round(startY) 
+	const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+	gridContext.lineWidth = lineWidth || window.CURRENT_SCENE_DATA.grid_line_width;
+	gridContext.strokeStyle = color || window.CURRENT_SCENE_DATA.grid_color;
+
+
+	const a = 2 * Math.PI / 6;
+			
+	
+
+
+	if(window.CURRENT_SCENE_DATA.gridType == 2){
+		for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+		    drawHexagon(x, y);
+		  }
+		}		
+	}
+	else{
+		for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+		    drawHexagon(x, y);
+		  }
+		}
+	}
+
+	function drawHexagon(x, y) {
+		if(window.CURRENT_SCENE_DATA.gridType == 3){
+		  gridContext.beginPath();
+		  gridContext.moveTo(x + hexSize, y);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.cos(angle);
+		    let dy = hexSize * Math.sin(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+		else{
+		  gridContext.beginPath();
+		  gridContext.moveTo(x, y + hexSize);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.sin(angle);
+		    let dy = hexSize * Math.cos(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+	}
+
+
+}
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
+	if(window.CURRENT_SCENE_DATA.gridType != 1){
+		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
+		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
+		return;
+	}
 	const gridCanvas = document.getElementById("grid_overlay");
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
@@ -710,16 +780,64 @@ function draw_wizarding_box() {
 
 	gridContext.lineWidth = 2;
 	gridContext.strokeStyle = "green";
-	gridContext.beginPath();
-	gridContext.moveTo(al1.x, al1.y);
-	gridContext.lineTo(al2.x, al1.y);
-	gridContext.moveTo(al2.x, al1.y);
-	gridContext.lineTo(al2.x, al2.y);
-	gridContext.moveTo(al2.x, al2.y);
-	gridContext.lineTo(al1.x, al2.y);
-	gridContext.moveTo(al1.x, al2.y);
-	gridContext.lineTo(al1.x, al1.y);
-	gridContext.stroke();
+
+	if($('#gridType input:checked').val() == 1){
+		gridContext.beginPath();
+		gridContext.moveTo(al1.x, al1.y);
+		gridContext.lineTo(al2.x, al1.y);
+		gridContext.moveTo(al2.x, al1.y);
+		gridContext.lineTo(al2.x, al2.y);
+		gridContext.moveTo(al2.x, al2.y);
+		gridContext.lineTo(al1.x, al2.y);
+		gridContext.moveTo(al1.x, al2.y);
+		gridContext.lineTo(al1.x, al1.y);
+	
+		let hpps = (al2.x - al1.x)/3
+		let vpps = (al2.y - al1.y)/3
+	
+		gridContext.moveTo(al1.x, al1.y + vpps);
+		gridContext.lineTo(al2.x, al1.y + vpps);
+		gridContext.moveTo(al1.x, al1.y + vpps*2);
+		gridContext.lineTo(al2.x, al1.y + vpps*2);
+		gridContext.moveTo(al1.x + hpps, al1.y);
+		gridContext.lineTo(al1.x + hpps, al2.y);
+		gridContext.moveTo(al1.x + hpps*2, al1.y);
+		gridContext.lineTo(al1.x + hpps*2, al2.y);
+	
+		gridContext.stroke();
+	}
+	else{
+		drawHexagon(al1.x, al1.y);
+	}
+
+
+	function drawHexagon(x, y) {
+		let hexSize = (al2.x - al1.x)/2/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+		if(window.CURRENT_SCENE_DATA.gridType == 3){
+		  gridContext.beginPath();
+		  gridContext.moveTo(x + hexSize, y);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.cos(angle);
+		    let dy = hexSize * Math.sin(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+		else{
+		  gridContext.beginPath();
+		  gridContext.moveTo(x, y + hexSize);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.sin(angle);
+		    let dy = hexSize * Math.cos(angle);
+		    gridContext.lineTo(x + dx, y + dy);
+		  }
+		  gridContext.closePath();
+		  gridContext.stroke();
+		}
+	}
 
 }
 function ctxScale(canvasid){
