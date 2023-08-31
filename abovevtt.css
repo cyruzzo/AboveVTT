@@ -469,11 +469,6 @@ a.ddbeb-button {
     z-index: 50100 !important;
 }
 
-#horizontalMinorAdjustmentInput,
-#verticalMinorAdjustmentInput
-{
-    width:100%;
-}
 #horizontalMinorAdjustment,
 #verticalMinorAdjustment
 {
@@ -796,6 +791,63 @@ button#gridSubdividedToggle_toggle::after
  {
     height: 7px;
     width: 7px;
+}
+#edit_dialog #horizontalMinorAdjustmentInput,
+#edit_dialog #verticalMinorAdjustmentInput
+{
+    width:80% !important;
+}
+#additionalGridInfo:after{
+    width: 10px;
+    height: 10px;
+    content: "";
+    display: inline-block;
+    position: relative;
+    border-style: solid;
+    left: 5px;
+    top: 0px;
+    border-width: 5px;
+    border-color: transparent transparent #888 transparent;
+}
+#additionalGridInfo{
+    margin: 15px 0px 15px 0px;
+    font-weight:bold;
+}
+#additionalGridInfo.closed:after{
+    border-color: #888 transparent transparent transparent;
+    top: 4px;
+}
+#additionalGridInfo.closed ~ div{
+    display:none;
+}
+.verticalHex .hideVerticalHex,
+.verticalHex #horizontalMinorAdjustment, 
+.verticalHex #verticalMinorAdjustment{
+    display:none !important; 
+}
+.horizontalHex .hideHorizontalHex,
+.horizontalHex #horizontalMinorAdjustment, 
+.horizontalHex #verticalMinorAdjustment{
+    display:none !important; 
+}
+#gridType label {
+    display: inline-block;
+}
+#gridType legend{
+    font-weight:bold;
+    width: initial;
+}
+
+#gridType fieldset>div{
+    padding:5px;
+}
+#gridType input{
+    margin-left: 10px;
+}
+#gridType fieldset{
+    margin: initial;
+    padding: initial;
+    border: 1px solid #ddd;
 }
 
 button#player_map_is_video_toggle.rc-switch-checked::after,
@@ -4461,7 +4513,14 @@ div#selectedTokensBorderRotationGrabberConnector,
     width:100%;
     position: relative;
 }
+#manual_grid_data>div>div:first-of-type{
+    vertical-align: top;
+    font-weight:bold;
+}
+#manual_grid_data>div{
+    margin: 10px 0px;
 
+}
 .resize_drag_window .title_bar:after,
 #text_controller_title_bar:after,
 .text-input-title-bar:after,

@@ -289,6 +289,429 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 
 	return sceneData;
 }
+
+function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
+	let scene = window.ScenesHandler.scenes[scene_id];
+
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
+		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+		let rowInput
+		if(!inputOverride){
+			if (imageValidation){
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
+			}
+			 
+		}
+		else{
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
+
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (scene[name] === "1" || defaultOn){
+			toggle.addClass("rc-switch-checked")
+		}
+		return toggle
+	}
+
+	function handle_form_grid_on_change(){
+		// not editting this scene, don't show live updates to grid
+		if (scene.id !== window.CURRENT_SCENE_DATA.id){
+			return
+		}
+	
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		// redraw grid with new information
+		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
+			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
+			redraw_grid(parseFloat(hpps*conversion), parseFloat(vpps*conversion), offsetx*conversion, offsety*conversion, grid_color, grid_line_width, grid_subdivided )
+		}
+		else if(grid === "1"){
+			redraw_grid(parseFloat(hpps), parseFloat(vpps), offsetx, offsety, grid_color, grid_line_width, grid_subdivided )
+		}
+		// redraw grid using current scene data
+		else if(grid === "0"){
+			clear_grid()
+		}
+	}
+
+	$("#edit_dialog").remove();
+
+	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
+	console.log('edit_scene_dialog');
+	$("#scene_selector").attr('disabled', 'disabled');
+	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
+	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+
+
+
+
+	scene_properties = $('<div id="scene_properties"/>');
+	dialog.append(scene_properties);
+
+
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, window.innerWidth-340, 340);
+
+	var container = scene_properties;
+
+	container.empty();
+
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
+
+	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	uuid_hidden.val(scene['uuid']);
+	form.append(uuid_hidden);
+
+	grid_buttons = $("<div/>");
+
+	let gridType = $(`
+		<div id="gridType">
+			<fieldset>
+  				<legend>Select a grid type:</legend>
+  				<div>
+				<input type="radio" id="squareGrid" name='grid' value="1" checked='checked'>
+				<label for="squareGrid">Square</label>
+				<input type="radio" id="horizontalHexGrid" name='grid' value="2">
+				<label for="horizontalHexGrid">Horizontal Hex</label>
+				<input type="radio" id="verticalHexGrid" name='grid' value="3">
+				<label for="verticalHexGrid">Vertical Hex</label>
+				</div>
+ 		 	</fieldset>
+		</div>`
+	);
+
+	gridType.find('input').on('change', function(){
+		window.CURRENT_SCENE_DATA.gridType = $(this).val();
+		if($(this).val() == 3){
+			$('#aligner2, #aligner1').css({
+				'display': 'none'
+			});
+			$(scene_properties).toggleClass('verticalHex', true);
+			$(scene_properties).toggleClass('horizontalHex', false);
+			$('span.squaresWide').text(' hexes wide');
+			$('#additionalGridInfo').toggleClass('closed', false);
+			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the hexes across for sizing. If they are skewed at all you may need to use decimals to get close. Note: these hexes are 'perfect' hexes and can't be stretched taller or wider at this time.`)
+		} else if($(this).val() == 2){
+			$(scene_properties).toggleClass('verticalHex', false);
+			$(scene_properties).toggleClass('horizontalHex', true);
+			$('#aligner2, #aligner1').css({
+				'display': 'none'
+			});
+			$('span.squaresTall').text(` hexes tall`);
+			$('#additionalGridInfo').toggleClass('closed', false);
+			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the hexes vertically for sizing. If they are skewed at all you may need to use decimals to get close. Note: these hexes are 'perfect' hexes and can't be stretched taller or wider at this time.`)
+		} else if($(this).val() == 1){
+			$(scene_properties).toggleClass('verticalHex', false);
+			$(scene_properties).toggleClass('horizontalHex', false);
+			$('#aligner2, #aligner1').css({
+				'display': ''
+			});
+			$('span.squaresTall').text(' squares tall');
+			$('span.squaresWide').text(' squares wide');
+			$('#verticalMinorAdjustment label').text('Minor Vertical Adjustment')
+			$('#horizontalMinorAdjustment label').text('Minor Horizontal Adjustment')
+			$('#gridInstructions').text(`Select a 3x3 square using the selectors to align your grid.`)
+		}
+		regrid();
+	})
+
+
+
+	let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment" class='hideVerticalHex'>
+			<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
+			<input type="range" name='verticalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="verticalMinorAdjustmentInput" data-orientation="vertical">
+			<button id="resetMinorVerticalAdjustmentRange">Reset</button>
+	</div>`);
+	let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment" class='hideHorizontalHex'>
+			<label for="horizontalMinorAdjustmentInput">Minor Horizontal Adjustment</label>
+		 	<input type="range" name='horizontalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="horizontalMinorAdjustmentInput">
+			
+			<button id="resetMinorHorizontalAdjustmentRange">Reset</button>
+	</div>`);
+
+	horizontalMinorAdjustment.find('#resetMinorHorizontalAdjustmentRange').on('click', function(){
+		$("#horizontalMinorAdjustmentInput").val('50');
+		horizontalMinorAdjustment.find('input').trigger('change');
+	})
+	verticalMinorAdjustment.find('#resetMinorVerticalAdjustmentRange').on('click', function(){
+		$("#verticalMinorAdjustmentInput").val('50');
+		verticalMinorAdjustment.find('input').trigger('change');
+	})	
+	verticalMinorAdjustment.find('input').on('change input',function(){
+		regrid();
+		console.log('verticalMinorAdjustment');
+
+	});
+	horizontalMinorAdjustment.find('input').on('change input',function(){
+		regrid();
+		console.log('horizontalMinorAdjustment');
+	});
+	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
+
+	let manual = $("<div id='manual_grid_data'/>");
+
+	manual.append($(`
+			<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:40%'>Measurement:</div><div style='display:inline-block; width:60'%'><input type='number' name='fpsq' placeholder='5' value='${window.CURRENT_SCENE_DATA.fpsq}'> <input name='upsq' placeholder='ft' value='${window.CURRENT_SCENE_DATA.upsq}'></div></div>
+			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10) ? 'block' : 'none'}' title='Each side of a grid square will be 2x the units per square. For example a units per square of 5 ft and split grid will make 10ft squares and size tokens appropriately. It will split each grid square into 4 small/medium creature locations used for snap to grid, the ruler etc.'><div style='display:inline-block; width:40%'>Subdivide squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
+			<div id='additionalGridInfo' class='closed'>Additional Grid Info / Manual Settings</div>
+			<div title='Number of grid squares Width x Height.'><div style='display:inline-block; width:30%'>Grid size</div><div style='display:inline-block;width:70%;'><input id='squaresWide' class='hideHorizontalHex' type='number' min='10' value='${$("#scene_map").width()/window.CURRENT_SCENE_DATA.hpps}'><span style='display: inline' class='squaresWide hideHorizontalHex'> squares wide</span><br class='hideHorizontalHex'/><input type='number' id='squaresTall' class='hideVerticalHex' value='${$("#scene_map").height()/window.CURRENT_SCENE_DATA.vpps}' min='10'><span style='display: inline' class='squaresTall hideVerticalHex'> squares tall</span></div></div>
+			<div title='Grid offset from the sides of the map in pixels. From top left corner of square and from middle of hex.'>
+				<div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'>
+				<input type='number' name='offsetx'>px from left<br/>
+				<input type='number' name='offsety'>px from top
+				</div>
+			</div>
+			`));
+
+
+	manual.find('#gridSubdividedRow').append(form_toggle("gridSubdividedToggle",null, false,  function(event) {
+		handle_basic_form_toggle_click(event);
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+			manual.find("#gridSubdividedRow input").val('1');
+			
+		} else {
+			manual.find("#gridSubdividedRow input").val('0');
+		}
+	}));
+
+	manual.find('input[name="fpsq"]').on('input blur', function(){
+		if($(this).val() == 10){
+			$('#gridSubdividedRow').css('display', 'block');
+		}
+		else{
+			$("#gridSubdividedRow input").val('0');
+			$('#gridSubdividedRow').css('display', 'none');
+		}
+	});
+
+	manual.find('#additionalGridInfo').on('click', function(){
+		$(this).toggleClass('closed');
+	})
+
+	manual.find('#squaresWide').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($(this).val());
+		moveAligners()
+	});
+	manual.find('#squaresTall').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($(this).val());
+		moveAligners()
+	})
+	manual.find('input[name="offsetx"]').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.offsetx = parseFloat($(this).val());
+		moveAligners()
+	})
+	manual.find('input[name="offsety"]').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.offsety = parseFloat($(this).val());
+		moveAligners()
+	})
+
+	manual.find('input').on('keydown.enter', function(e){
+		if (e.keyCode == 13) {
+        	e.preventDefault();
+        	$(this).trigger('change')
+        	$('#scene_properties input:visible')[$('#scene_properties input:visible').index(this)+1].select();
+    	}
+	})
+
+	manual.find('input').on('click.select', function(e){
+        	$(this).select();	
+	})
+	
+	let moveAligners = function(){
+		let width
+		if (window.ScenesHandler.scene.upscaled == "1")
+			width = 2;
+		else
+			width = 1;
+		const dash = [30, 5]
+		const color = "rgba(255, 0, 0,0.5)";
+		window.CURRENT_SCENE_DATA.gridType = $('#gridType input:checked').val();
+		if(manual.find('input[name="offsety"]').val()== undefined || manual.find('input[name="offsetx"]').val()==undefined || (manual.find('#squaresTall').val()==undefined || manual.find('#squaresWide').val()==undefined ))
+			return;
+		if(window.CURRENT_SCENE_DATA.gridType == 1){
+			redraw_grid(null,null,null,null,color,width,null,dash);
+		}
+		else if(window.CURRENT_SCENE_DATA.gridType == 2){
+			redraw_hex_grid(null,null,null,null,color,width,null,dash, false);
+		}
+		else if(window.CURRENT_SCENE_DATA.gridType == 3){
+			redraw_hex_grid(null,null,null,null,color,width,null,dash, true);
+		}
+	}			
+
+
+	manual.find("input").each(function() {
+		$(this).css("width", "60px");
+		$(this).val(scene[$(this).attr('name')]);
+	})
+
+	form.append(manual);
+
+	form.append(`
+		<div style='margin-top:20px; font-size:11px; font-weight: bold'>Instructions:</div>
+		<div style='font-size:11px;' id='gridInstructions'>Select a 3x3 square using the selectors to align your grid.</div>
+		<div style='margin-top:20px; font-size:11px; font-weight: bold'>Hover settings for more info</div>
+
+	`);
+
+	if (typeof scene.fog_of_war == "undefined")
+		scene.fog_of_war = "1";
+
+	const submitButton = $("<button type='button'>Save</button>");
+	submitButton.click(function() {
+			$('[id="aligner1"]').remove();
+			$('[id="aligner2"]').remove();
+
+			let gridMeasurement = $('input[name="fpsq"]').val();
+			if(gridMeasurement == 5){
+				grid_5();
+			}else if(gridMeasurement == 10){
+				grid_10();
+			}else if(gridMeasurement == 15){
+				grid_15();
+			}else if(gridMeasurement == 20){
+				grid_20();
+			}else{
+				$("#scene_selector_toggle").show();
+				$("#tokens").show();
+				window.WIZARDING = false;
+				window.CURRENT_SCENE_DATA = {
+					...window.CURRENT_SCENE_DATA,
+					upsq: $('input[name="upsq"]').val(),
+					fpsq: $('input[name="fpsq"]').val(),
+					grid_subdivided: "0"
+				}
+				consider_upscaling(window.CURRENT_SCENE_DATA);
+				window.ScenesHandler.persist_current_scene();
+				$("#wizard_popup").empty().append("You're good to go!!");
+				$("#exitWizard").remove();
+				$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
+					$("#wizard_popup").remove();
+				});
+				$("#light_container").css('visibility', 'visible');
+				$("#darkness_layer").css('visibility', 'visible');
+			}
+			$(`#sources-import-main-container`).remove();
+	});
+
+
+	let grid_5 = function() {
+
+
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		window.WIZARDING = false;
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);
+		window.ScenesHandler.persist_current_scene();
+		$("#light_container").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
+	};
+
+	let grid_10 = function() {
+
+			window.WIZARDING = false;
+			$("#scene_selector_toggle").show();
+			$("#tokens").show();
+			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
+			window.CURRENT_SCENE_DATA = {
+				...window.CURRENT_SCENE_DATA,
+				hpps: window.CURRENT_SCENE_DATA.hpps/2,
+				vpps: window.CURRENT_SCENE_DATA.vpps/2,
+				upsq: "ft",
+				fpsq: "5",
+				grid_subdivided: $('input[name="grid_subdivided"]').val()
+			}
+			consider_upscaling(window.CURRENT_SCENE_DATA);
+			window.ScenesHandler.persist_current_scene();
+			$("#light_container").css('visibility', 'visible');
+			$("#darkness_layer").css('visibility', 'visible');
+	}
+
+	let grid_15 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			hpps: window.CURRENT_SCENE_DATA.hpps/3,
+			vpps: window.CURRENT_SCENE_DATA.vpps/3,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);
+		window.ScenesHandler.persist_current_scene();
+
+		$("#light_container").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
+	}
+
+
+	let grid_20 = function() {
+		window.WIZARDING = false;
+		$("#scene_selector_toggle").show();
+		$("#tokens").show();
+		window.CURRENT_SCENE_DATA = {
+			...window.CURRENT_SCENE_DATA,
+			hpps: window.CURRENT_SCENE_DATA.hpps/4,
+			vpps: window.CURRENT_SCENE_DATA.vpps/4,
+			upsq: "ft",
+			fpsq: "5",
+			grid_subdivided: "0"
+		}
+		consider_upscaling(window.CURRENT_SCENE_DATA);		
+		window.ScenesHandler.persist_current_scene();		
+		$("#light_container").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
+	}
+
+	cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
+	cancel.click(function() {
+		$('[id="aligner1"]').remove();
+		$('[id="aligner2"]').remove();
+		window.WIZARDING = false;
+		window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = copiedSceneData;
+		window.ScenesHandler.scene = copiedSceneData;
+		window.CURRENT_SCENE_DATA = copiedSceneData;
+
+		window.ScenesHandler.persist_current_scene();
+		$("#light_container").css('visibility', 'visible');
+		$("#darkness_layer").css('visibility', 'visible');
+		$("#tokens").show();	
+		$(`#sources-import-main-container`).remove();	
+	})
+	form.append(submitButton);
+	form.append(cancel);
+	container.css('opacity', '0.0');
+	container.append(form);
+	container.animate({
+		opacity: '1.0'
+	}, 1000);
+}
+
 function edit_scene_vision_settings(scene_id){
 	let scene = window.ScenesHandler.scenes[scene_id];
 
@@ -456,7 +879,7 @@ function edit_scene_vision_settings(scene_id){
 
 	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel);
 
-	const cancel = $("<button type='button'>Cancel</button>");
+	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
@@ -767,39 +1190,10 @@ function edit_scene_dialog(scene_id) {
 
 	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
-	grid_buttons.append(manual_button);
+
 	form.append(form_row('gridConfig', 'Grid Configuration', grid_buttons))
 	form.find('#gridConfig_row').attr('title', '2 options for setting up the grid. A wizard that will allow you to visually and quickly set up the grid. And manual setings if you know the required sizes. Manual settings also include custom units and unit type eg. 5 ft.')
-	var manual = $("<div id='manual_grid_data'/>");
-	manual.append($("<div title='Grid square size in pixels. Width x Height.'><div style='display:inline-block; width:30%'>Grid size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
-	manual.append($("<div title='Grid offset from the sides of the map in pixels. x offset, y offset.'><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
-	manual.append($("<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
-	manual.append($("<div title='The unit of the ruler measurment.'><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
-	manual.append($("<div id='gridSubdividedRow' title='Each side of a grid square will be 2x the units per square. For example a units per square of 5 ft and split grid will make 10ft squares and size tokens appropriately. It will split each grid square into 4 small/medium creature locations used for snap to grid, the ruler etc.'><div style='display:inline-block; width:30%'>Large creature grid squares</div><div style='display:inline-block; width:70'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>"));
-	manual.append($("<div title='This will multiply the dimensions of the map by the value input.'><div style='display:inline-block; width:30%'>Image Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
-	manual.find('#gridSubdividedRow').append(form_toggle("gridSubdividedToggle",null, false,  function(event) {
-		handle_basic_form_toggle_click(event);
-		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
-			manual.find("#gridSubdividedRow input").val('1');
-			
-		} else {
-			manual.find("#gridSubdividedRow input").val('0');
-		}
-	}));
-	
-	manual.find("input").each(function() {
-		$(this).css("width", "60px");
-		$(this).val(scene[$(this).attr('name')]);
-	})
-	manual.hide();
-	form.append(manual);
-	manual_button.click(function() {
-		if (manual.is(":visible"))
-			manual.hide();
-		else
-			manual.show();
-		
-	});
+
 
 	form.append(`<div style='margin-top:20px; font-size:11px; font-weight: bold'>Hover settings for more info</div>`);
 
@@ -832,449 +1226,11 @@ function edit_scene_dialog(scene_id) {
 		did_update_scenes();
 	});
 
-	let grid_5 = function() {
 
-
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		window.WIZARDING = false;
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			upsq: "ft",
-			fpsq: "5",
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);
-		window.ScenesHandler.persist_current_scene();
-		$("#wizard_popup").empty().append("You're good to go!!");
-		$("#exitWizard").remove();
-		$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
-			$("#wizard_popup").remove();
-		});
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	};
-
-	let grid_10 = function() {
-		$("#wizard_popup").empty().append("Do you want me to subdivide the map grid in 2 so you can get correct token size? <button id='grid_divide'>Yes</button> <button id='grid_nodivide'>No</button>");
-
-		$("#grid_divide").click(function() {
-			window.WIZARDING = false;
-			$("#scene_selector_toggle").show();
-			$("#tokens").show();
-			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
-			window.CURRENT_SCENE_DATA = {
-				...window.CURRENT_SCENE_DATA,
-				hpps: window.CURRENT_SCENE_DATA.hpps/2,
-				vpps: window.CURRENT_SCENE_DATA.vpps/2,
-				upsq: "ft",
-				fpsq: "5",
-				grid_subdivided: "1"
-			}
-			consider_upscaling(window.CURRENT_SCENE_DATA);
-			$("#exitWizard").remove();
-			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-				$("#wizard_popup").remove();
-			});
-			window.ScenesHandler.persist_current_scene();
-			$("#light_container").css('visibility', 'visible');
-			$("#darkness_layer").css('visibility', 'visible');
-		});
-
-		$("#grid_nodivide").click(function() {
-			window.WIZARDING = false;
-			$("#scene_selector_toggle").show();
-			$("#tokens").show();
-			window.CURRENT_SCENE_DATA= {
-				...window.CURRENT_SCENE_DATA,
-				upsq: "ft",
-				fpsq: "10",
-				grid_subdivided: "0",
-				snap: "1",
-				grid: "0"
-			}
-			consider_upscaling(window.CURRENT_SCENE_DATA);
-			window.ScenesHandler.persist_current_scene();
-			$("#exitWizard").remove();
-			$("#wizard_popup").empty().append("You're good to go! Medium token will match the original grid size");
-			$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-				$("#wizard_popup").remove();
-			});
-			$("#light_container").css('visibility', 'visible');
-			$("#darkness_layer").css('visibility', 'visible');
-		});
-	}
-
-	let grid_15 = function() {
-		window.WIZARDING = false;
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale. We don't currently support overimposing a grid in this scale..'");
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			hpps: window.CURRENT_SCENE_DATA.hpps/3,
-			vpps: window.CURRENT_SCENE_DATA.vpps/3,
-			upsq: "ft",
-			fpsq: "5",
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);
-		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-			$("#wizard_popup").remove();
-		});
-		window.ScenesHandler.persist_current_scene();
-		$("#exitWizard").remove();
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	}
-
-
-	let grid_20 = function() {
-		window.WIZARDING = false;
-		$("#scene_selector_toggle").show();
-		$("#tokens").show();
-		$("#wizard_popup").empty().append("You're good to go! Token will be of the correct scale.");
-		window.CURRENT_SCENE_DATA = {
-			...window.CURRENT_SCENE_DATA,
-			hpps: window.CURRENT_SCENE_DATA.hpps/4,
-			vpps: window.CURRENT_SCENE_DATA.vpps/4,
-			upsq: "ft",
-			fpsq: "5",
-			grid_subdivided: "0"
-		}
-		consider_upscaling(window.CURRENT_SCENE_DATA);
-		$("#wizard_popup").delay(5000).animate({ opacity: 0 }, 4000, function() {
-			$("#wizard_popup").remove();
-		});
-		window.ScenesHandler.persist_current_scene();
-		$("#exitWizard").remove();
-		$("#light_container").css('visibility', 'visible');
-		$("#darkness_layer").css('visibility', 'visible');
-	}
-
-	let align_grid = function(square = false, just_rescaling = true) {
-
-
-		window.ScenesHandler.scenes[scene_id].scale_factor=1;		
-    
-		window.ScenesHandler.switch_scene(scene_id, function() {
-			$("#tokens").hide();
-			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
-			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
-			var aligner1 = $("<canvas id='aligner1'/>");
-			aligner1.width(59);
-			aligner1.height(59);
-			aligner1.css("position", "absolute");
-			aligner1.css("border-radius", "50%");
-			aligner1.css("top", ($("#scene_map").height() / 2) + "px");
-			aligner1.css("left", ($("#scene_map").width() / 2) + "px");
-			aligner1.css("z-index", 40);
-
-			drawX = function(canvas) {
-
-				var ctx = canvas.getContext("2d");
-
-				ctx.strokeStyle = "red";
-				ctx.lineWidth = 1;
-				ctx.setLineDash([10, 10, 19, 10, 10]);
-				ctx.beginPath();
-				ctx.moveTo(29, 0);
-				ctx.lineTo(29, 58);
-				ctx.moveTo(0, 29);
-				ctx.lineTo(58, 29);
-				ctx.stroke();
-			};
-
-			var canvas1 = aligner1.get(0);
-
-			var ctx = canvas1.getContext("2d");
-			canvas1.width = 59;
-			canvas1.height = 59;
-			ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-			ctx.fillRect(0, 0, canvas1.width, canvas1.height);
-			if (square)
-				ctx.fillStyle = "rgba(255,0,0,0.5)";
-			else
-				ctx.fillStyle = "rgba(0,255,0,0.5)";
-			ctx.fillRect(0, 0, 59, 29);
-			ctx.fillRect(0, 29, 29, 29);
-			drawX(canvas1);
-
-			var aligner2 = $("<canvas id='aligner2'/>");
-			aligner2.width(59);
-			aligner2.height(59);
-			aligner2.css("position", "absolute");
-			aligner2.css("border-radius", "50%");
-			if (!just_rescaling) {
-				aligner2.css("top", ($("#scene_map").height() / 2) + 150 + "px");
-				aligner2.css("left", ($("#scene_map").width() / 2) + 150 + "px");
-			}
-			else {
-				aligner2.css("top", ($("#scene_map").height() / 2) + 50 + "px");
-				aligner2.css("left", ($("#scene_map").width() / 2) + 50 + "px");
-			}
-			aligner2.css("z-index", 40);
-
-			var canvas2 = aligner2.get(0);
-			canvas2.width = 59;
-			canvas2.height = 59;
-			var ctx = canvas2.getContext("2d");
-			ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
-			ctx.fillRect(0, 0, canvas2.width, canvas2.height);
-			ctx.fillStyle = "rgba(0,255,0,0.5)";
-			ctx.fillRect(0, 29, 59, 29);
-			ctx.fillRect(29, 0, 29, 29);
-			drawX(canvas2);
-
-
-			var pageX = Math.round(parseInt(aligner1.css('left')) * window.ZOOM - ($(window).width() / 2));
-			var pageY = Math.round(parseInt(aligner1.css('top')) * window.ZOOM - ($(window).height() / 2));
-			$("html,body").animate({
-				scrollTop: pageY + window.VTTMargin,
-				scrollLeft: pageX + window.VTTMargin
-			}, 500);
-
-			let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
-					<input type="range" name='verticalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="verticalMinorAdjustmentInput" data-orientation="vertical">
-					<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
-					<button id="resetMinorVerticalAdjustmentRange">Reset</button>
-			</div>`);
-			let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment">
-				 	<input type="range" name='horizontalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="horizontalMinorAdjustmentInput">
-					<label for="horizontalMinorAdjustmentInput">Minor Horizontal Adjustment</label>
-					<button id="resetMinorHorizontalAdjustmentRange">Reset</button>
-			</div>`);
-
-			horizontalMinorAdjustment.find('#resetMinorHorizontalAdjustmentRange').on('click', function(){
-				$("#horizontalMinorAdjustmentInput").val('50');
-				horizontalMinorAdjustment.find('input').trigger('change');
-			})
-			verticalMinorAdjustment.find('#resetMinorVerticalAdjustmentRange').on('click', function(){
-				$("#verticalMinorAdjustmentInput").val('50');
-				verticalMinorAdjustment.find('input').trigger('change');
-			})
-
-			let regrid = function(e) {
-				window.CURRENT_SCENE_DATA.grid_subdivided = '0';
-
-				let al1 = {
-					x: parseInt(aligner1.css("left")) + 29,
-					y: parseInt(aligner1.css("top")) + 29,
-				};
-
-				let al2 = {
-					x: parseInt(aligner2.css("left")) + 29,
-					y: parseInt(aligner2.css("top")) + 29,
-				};
-
-				let adjustmentSliders = {
-					x: (horizontalMinorAdjustment.find('input').val()-50)/10,
-					y: (verticalMinorAdjustment.find('input').val()-50)/10,
-				}
-
-
-				if (just_rescaling) {
-					ppsx = (al2.x - al1.x);
-					ppsy = (al2.y - al1.y);
-					offsetx = 0;
-					offsety = 0;
-				}
-				else {
-					ppsx = (al2.x - al1.x) / 3.0 + adjustmentSliders.x;
-					ppsy = (al2.y - al1.y) / 3.0 + adjustmentSliders.y;
-					offsetx = al1.x % ppsx;
-					offsety = al1.y % ppsy;
-				}
-				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
-				window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
-				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
-				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
-				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
-				let width
-				if (window.ScenesHandler.scene.upscaled == "1")
-					width = 2;
-				else
-					width = 1;
-				const dash = [30, 5]
-				const color = "rgba(255, 0, 0,0.5)";
-				// nulls will take the window.current_scene_data from above
-				redraw_grid(null,null,null,null,color,width,null,dash)
-			};
-
-			let click2 = {
-				x: 0,
-				y: 0
-			};
-			aligner2.draggable({
-				stop: regrid,
-				start: function(event) {
-					click2.x = event.clientX;
-					click2.y = event.clientY;
-					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
-					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
-				},
-				drag: function(event, ui) {
-					clear_grid()
-					draw_wizarding_box()
-					let zoom = window.ZOOM;
-
-					let original = ui.originalPosition;
-					ui.position = {
-						left: Math.round((event.clientX - click2.x + original.left) / zoom),
-						top: Math.round((event.clientY - click2.y + original.top) / zoom)
-					};
-
-					if (square) { // restrict on 45
-						console.log("PRE");
-						console.log(ui.position);
-						var rad = Math.PI / 180;
-						var angle;
-
-						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner2").attr('original-left')));
-						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner2").attr('original-top')));
-
-						var offset = {
-							x: offsetLeft,
-							y: offsetTop,
-						};
-						console.log(offset);
-						var distance = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
-						console.log("distanza " + distance);
-						if (offset.y > 0)
-							angle = 45 * rad;
-						else
-							angle = 225 * rad;
-
-
-						ui.position.top = Math.sin(angle) * distance + parseInt($("#aligner2").attr('original-top'));
-						console.log(Math.sin(angle) * distance);
-						console.log(parseInt($("#aligner2").attr('original-top')));
-
-						ui.position.left = Math.cos(angle) * distance + parseInt($("#aligner2").attr('original-left'));
-
-						console.log(ui.position);
-					}
-
-				}
-			});
-
-			let click1 = {
-				x: 0,
-				y: 0
-			};
-
-			aligner1.draggable({
-				stop: regrid,
-				start: function(event) {
-					click1.x = event.clientX;
-					click1.y = event.clientY;
-					$("#aligner1").attr('original-top', parseInt($(event.target).css("top")));
-					$("#aligner1").attr('original-left', parseInt($(event.target).css("left")));
-					$("#aligner2").attr('original-top', parseInt($("#aligner2").css("top")));
-					$("#aligner2").attr('original-left', parseInt($("#aligner2").css("left")));
-				},
-				drag: function(event, ui) {
-					clear_grid()
-					draw_wizarding_box()
-					let zoom = window.ZOOM;
-
-					let original = ui.originalPosition;
-					ui.position = {
-						left: Math.round((event.clientX - click1.x + original.left) / zoom),
-						top: Math.round((event.clientY - click1.y + original.top) / zoom)
-					};
-					if (square) {
-						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner1").attr('original-left')));
-						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner1").attr('original-top')));
-
-						console.log("off " + offsetLeft + " " + offsetTop);
-
-						$("#aligner2").css('left', (parseInt($("#aligner2").attr("original-left")) + offsetLeft) + "px");
-						$("#aligner2").css('top', (parseInt($("#aligner2").attr("original-top")) + offsetTop) + "px");
-
-
-					}
-				}
-			});
-
-
-			$("#VTT").append(aligner1);
-			$("#VTT").append(aligner2);
-
-
-			wizard_popup = $("<div id='wizard_popup'></div>");
-			wizard_popup.css("position", "fixed");
-			wizard_popup.css("max-width", "800px");
-			wizard_popup.css("top", "40px");
-			wizard_popup.css("left", "250px");
-			wizard_popup.css("z-index", "200px");
-			wizard_popup.css("background", "rgba(254,215,62,0.8)");
-			wizard_popup.css("font-size", "20px");
-
-
-
-			if (!just_rescaling){
-				wizard_popup.append("Move the pointers at the center of the map to define 3x3 Square on the map! ZOOM IN with the Top Right + button. <button id='step2btn'>Press when it's good enough</button>");
-								
-				verticalMinorAdjustment.find('input').on('change input',function(){
-					regrid();
-					console.log('verticalMinorAdjustment');
-
-				});
-				horizontalMinorAdjustment.find('input').on('change input',function(){
-					regrid();
-					console.log('horizontalMinorAdjustment');
-
-				});
-				wizard_popup.append(verticalMinorAdjustment);
-				wizard_popup.append(horizontalMinorAdjustment);
-
-
-			}
-			else{
-				wizard_popup.append("Set the green square to roughly the size of a medium token! <button id='step2btn'>Press when it's good enough</button>");
-			}
-
-
-			$("body").append(wizard_popup);
-			$("#light_container").css('visibility', 'hidden');
-			$("#darkness_layer").css('visibility', 'hidden');
-			wizard_popup.draggable({
-				addClasses: false,
-				scroll: false,
-				containment: "#windowContainment",
-				start: function() {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function() {
-					$('.iframeResizeCover').remove();
-				}
-			});
-			regrid();
-
-
-			wizard_popup.find("#step2btn").click(
-				function() {
-					aligner1.remove();
-					aligner2.remove();
-
-
-					$("#wizard_popup").empty().append("Nice!! How many units (i.e. feet) per square ? <button id='grid_5'>5</button> <button id='grid_10'>10</button> <button id='grid_15'>15</button> <button id='grid_20'>20</button>");
-					$("#grid_5").click(function() { grid_5(); });
-					$("#grid_10").click(function() { grid_10(); });
-					$("#grid_15").click(function() { grid_15(); });
-					$("#grid_20").click(function() { grid_20(); });
-					$("#grid_100").click(function() { grid_100(); });
-				
-
-				}
-			);
-		});
-	}; // END OF ALIGN GRID WIZARD!
 
 	wizard.click(
 		function() {
+		
 
 			const formData = get_edit_form_data();
 			for (key in formData) {
@@ -1305,15 +1261,7 @@ function edit_scene_dialog(scene_id) {
 
 
 			window.ScenesHandler.switch_scene(scene_id);
-			let copiedSceneData = {
-				...$.extend(true, {}, window.CURRENT_SCENE_DATA),
-				hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
-				vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
-				offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
-				offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
-			}
 
-			
 
 			$("#VTT").css("--scene-scale", 1)
 
@@ -1322,70 +1270,11 @@ function edit_scene_dialog(scene_id) {
 			$("#scene_selector_toggle").click();
 			$("#scene_selector_toggle").hide();
 
-
-			prewiz = $("<table id='prewiz'/>");
-			prewiz.draggable({
-				addClasses: false,
-				scroll: false,
-				containment: "#windowContainment",
-				start: function() {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function() {
-					$('.iframeResizeCover').remove();
-				}
-			});
-			prewiz.append("<tr><td><button id='align_grid'>Align to Grid</button></td><td>Use this if you're working on a pre-gridded map and you want all features to work (precise token size, measurament tool,grid snapping!)</td></tr>");
-			prewiz.append("<tr><td><button id='create_grid'>Create Grid</button></td><td>Use this if you want advanced features on a map that don't have a grid!'</td></tr>");
-			prewiz.append("<tr><td><button id='rescale'>Just Rescale the Image</button></td><td>Use this if you just wanna change the size of the image.. It's good for generic images, world maps, or if you don't care about features and just want to have fun quickly</td></tr>");
-
-			prewiz.css("position", "fixed");
-			prewiz.css("max-width", "800px");
-			prewiz.css("top", "150px");
-			prewiz.css("left", "250px");
-			prewiz.css("z-index", "200px");
-			prewiz.css("background", "rgba(254,215,62,1)");
-			prewiz.css("font-size", "20px");
-			$("body").append(prewiz);
-
-			$("#align_grid").click(function() {
-				$("#prewiz").remove();
-				align_grid(false, false);
-			});
-			$("#create_grid").click(function() {
-				$("#prewiz").remove();
-				align_grid(true, false);
-			});
-			$("#rescale").click(function() {
-				$("#prewiz").remove();
-				align_grid(true, true)
-			});
-
-			let exitWizard = $(`<button id='exitWizard' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'>Cancel Wizard<button>`);
-			$("body").append(exitWizard);
-			exitWizard.on('click', function(){
-				$("#prewiz").remove();
-				$("#wizard_popup").remove();
-				exitWizard.remove();
-				$('#aligner1').remove();
-				$('#aligner2').remove();
-				window.WIZARDING = false;
-				window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = copiedSceneData;
-				window.ScenesHandler.scene = copiedSceneData;
-				window.CURRENT_SCENE_DATA = copiedSceneData;
-
-				window.ScenesHandler.persist_current_scene();
-				$("#light_container").css('visibility', 'visible');
-				$("#darkness_layer").css('visibility', 'visible');
-				$("#tokens").show();
-			});
-
 		}
 	);
 
 
-	cancel = $("<button type='button'>Cancel</button>");
+	cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
@@ -2184,7 +2073,7 @@ function load_sources_iframe_for_map_import(hidden = false) {
 	iframe.attr("src", `/sources`);
 }
 
-function adjust_create_import_edit_container(content='', empty=true, title='', width100Minus=500){
+function adjust_create_import_edit_container(content='', empty=true, title='', width100Minus=500, minWidth=850){
 	if($(`#sources-import-main-container`).length>0 ){
 		let existingContainer = $('#sources-import-content-container');
 		if(empty==true) {
@@ -2201,8 +2090,11 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 		const titleBar = floating_window_title_bar("sources-import-iframe-title-bar", title);
 		mainContainer.prepend(titleBar);
 		titleBar.find(".title-bar-exit").click(function() {
+			$('#cancel_importer').click();
 			$("#sources-import-main-container").remove();
 			$("#mega_importer").remove();
+			$('[id="aligner1"]').remove();
+			$('[id="aligner2"]').remove();
 		});
 		const contentContainer = $(`<div id="sources-import-content-container"></div>`);
 		contentContainer.append(content);
@@ -2221,7 +2113,10 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 		});
 		$(document.body).append(mainContainer);
 	}
-	$(`#sources-import-main-container`).css('width', `calc(100% - ${width100Minus}px)`)
+	$(`#sources-import-main-container`).css({
+		'width': `calc(100% - ${width100Minus}px)`,
+		'min-width': `${minWidth}px`
+	});
 
 }
 
