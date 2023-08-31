@@ -640,8 +640,10 @@ function clear_grid(){
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true){
 	const gridCanvas = document.getElementById("grid_overlay");
 	const gridContext = gridCanvas.getContext("2d");
-	if(window.CURRENT_SCENE_DATA.gridType == 2)
+	if(window.CURRENT_SCENE_DATA.gridType == 2){
 		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
+		window.CURRENT_SCENE_DATA.hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
+	}
 	clear_grid();
 	gridContext.setLineDash(dash);
 	let startX = offsetX / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
