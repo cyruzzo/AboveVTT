@@ -194,13 +194,13 @@ class WaypointManagerClass {
 	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
 
 		// Snap to centre of current grid square
-		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-		var snapPointXStart = coord.startX;
-		var snapPointYStart = coord.startY;
+		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+		let snapPointXStart = coord.startX;
+		let snapPointYStart = coord.startY;
 		this.ctx.moveTo(snapPointXStart, snapPointYStart);
 
-		var snapPointXEnd = coord.endX;
-		var snapPointYEnd = coord.endY;
+		let snapPointXEnd = coord.endX;
+		let snapPointYEnd = coord.endY;
 
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
@@ -209,29 +209,34 @@ class WaypointManagerClass {
 			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
-		var distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
+		let distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
+		if(Math.abs(snapPointXStart - snapPointXEnd) > Math.abs(snapPointYStart - snapPointYEnd) && window.CURRENT_SCENE_DATA.gridType == 2){
+			gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
+		} else if(Math.abs(snapPointXStart - snapPointXEnd) < Math.abs(snapPointYStart - snapPointYEnd) && window.CURRENT_SCENE_DATA.gridType == 3){
+			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
+		}
 		distance = Math.round(distance / gridSize);
 		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
 		coord.distance = distance;
 
-		var textX = 0;
-		var textY = 0;
-		var margin = 2;
-		var heightOffset = 30;
-		var slopeModifier = 0;
+		let textX = 0;
+		let textY = 0;
+		let margin = 2;
+		let heightOffset = 30;
+		let slopeModifier = 0;
 
 		// Setup text metrics
 		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26) + "px Arial";
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
-		var text = `${totalDistance}${unitSymbol}`
-		var textMetrics = this.ctx.measureText(text);
+		let text = `${totalDistance}${unitSymbol}`
+		let textMetrics = this.ctx.measureText(text);
 
 		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or
 		// token dragging (midlineLabels == true)
-		var contrastRect = { x: 0, y: 0, width: 0, height: 0 }
-		var textRect = { x: 0, y: 0, width: 0, height: 0 }
+		let contrastRect = { x: 0, y: 0, width: 0, height: 0 }
+		let textRect = { x: 0, y: 0, width: 0, height: 0 }
 
 		if (midlineLabels === true) {
 
