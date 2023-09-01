@@ -2083,8 +2083,8 @@ class Token {
 					let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
-						tokenX += !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
-						tokenY += !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
+						tokenX += (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width : !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
+						tokenY += (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height : !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
 					}
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
@@ -2512,10 +2512,9 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 		}
 
 		if(window.CURRENT_SCENE_DATA.gridType == 3){
-			startX = startX + gridWidth/2;
-			startY = startY + gridHeight/4;
+			startX = startX + gridWidth/(window.CURRENT_SCENE_DATA.scale_factor);
 		}else if(window.CURRENT_SCENE_DATA.gridType == 2){
-			startY = startY + gridHeight/2;
+			startY = startY + gridHeight/window.CURRENT_SCENE_DATA.scale_factor;
 		}
 
 		return {

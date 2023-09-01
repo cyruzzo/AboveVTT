@@ -674,8 +674,8 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		let hexWidth = hexSize * Math.sqrt(3) / 2;
 		let hexHeight = hexSize;
 		window.hexGridSize = {
-			width: hexWidth*4,
-			height: hexHeight * 3
+			width: hexWidth * 2 * window.CURRENT_SCENE_DATA.scale_factor,
+			height: hexHeight * 1.5 * window.CURRENT_SCENE_DATA.scale_factor
 		}
 	}
 	else{
@@ -684,11 +684,11 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		    drawHexagon(x, y);
 		  }
 		}
-		let hexWidth = Math.floor(hexSize * Math.cos(Math.PI / 6));
-		let hexHeight = Math.floor(hexSize * Math.sin(Math.PI / 6));
+		let hexWidth = hexSize;
+		let hexHeight = hexSize * Math.sqrt(3) / 2;
 		window.hexGridSize = {
-			width: hexSize*1.5 * 2,
-			height: hexHeight * (Math.PI+0.5) * 2
+			width: hexSize * 1.5 * window.CURRENT_SCENE_DATA.scale_factor,
+			height: hexHeight * 2 * window.CURRENT_SCENE_DATA.scale_factor
 		}
 	}
 
