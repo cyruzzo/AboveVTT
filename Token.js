@@ -494,7 +494,7 @@ class Token {
 	}
 	async moveUp() {	
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
-		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
@@ -504,7 +504,7 @@ class Token {
 	}
 	async moveDown() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
-		let addvpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
+		let addvpps = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
@@ -515,7 +515,7 @@ class Token {
 	}
 	async moveLeft() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
-		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
@@ -525,7 +525,7 @@ class Token {
 	}
 	async moveRight() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);			
-		let addhpps = (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		let addhpps = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
@@ -550,6 +550,8 @@ class Token {
 		if(this.walkableArea.right == null || this.walkableArea.bottom == null){
 			this.prepareWalkableArea()
 		}
+		let tokenPosition = snap_point_to_grid(left, top)
+
 		// Stop movement if new position is outside of the scene
 		if (
 			top  < this.walkableArea.top - this.options.size    || 
@@ -558,8 +560,8 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 
-		this.options.top = top + 'px';
-		this.options.left = left + 'px';
+		this.options.top = tokenPosition.y + 'px';
+		this.options.left = tokenPosition.x + 'px';
 		await this.place(100)
 		this.update_and_sync();
 	}
@@ -2486,20 +2488,36 @@ function center_of_view() {
 }
 
 function should_snap_to_grid() {
-	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap) && window.CURRENT_SCENE_DATA.gridType == 1)
-		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap && window.CURRENT_SCENE_DATA.gridType == 1);
+	return (window.CURRENT_SCENE_DATA.snap == "1" && !(window.toggleSnap))
+		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 	if (forceSnap || should_snap_to_grid()) {
 		// adjust to the nearest square coordinate
-		const startX = window.CURRENT_SCENE_DATA.offsetx;
-		const startY = window.CURRENT_SCENE_DATA.offsety;
-		const gridWidth = (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;
-		const gridHeight = (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;
+		let startX = window.CURRENT_SCENE_DATA.offsetx;
+		let startY = window.CURRENT_SCENE_DATA.offsety; 
 
-		const currentGridX = Math.floor((mapX - startX) / gridWidth);
-		const currentGridY = Math.floor((mapY - startY) / gridHeight);
+
+		const gridWidth = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width : (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;;
+		const gridHeight = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height : (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;;
+		
+		let currentGridX = Math.floor((mapX - startX) / gridWidth);
+		let currentGridY = Math.floor((mapY - startY) / gridHeight);
+		if(window.CURRENT_SCENE_DATA.gridType == 3 && currentGridX % 2 == 1){ //replace with current scene when setting exists
+			currentGridY += 0.5;
+		}
+		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
+			currentGridX += 0.5;
+		}
+
+		if(window.CURRENT_SCENE_DATA.gridType == 3){
+			startX = startX + gridWidth/2;
+			startY = startY + gridHeight/4;
+		}else if(window.CURRENT_SCENE_DATA.gridType == 2){
+			startY = startY + gridHeight/2;
+		}
+
 		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),
 			y: Math.ceil((currentGridY * gridHeight) + startY)
