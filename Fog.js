@@ -666,12 +666,24 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		    drawHexagon(x, y);
 		  }
 		}		
+		let hexWidth = hexSize * Math.sqrt(3) / 2;
+		let hexHeight = hexSize;
+		window.hexGridSize = {
+			width: hexWidth*4,
+			height: hexHeight * 3
+		}
 	}
 	else{
 		for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
 		   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
 		    drawHexagon(x, y);
 		  }
+		}
+		let hexWidth = Math.floor(hexSize * Math.cos(Math.PI / 6));
+		let hexHeight = Math.floor(hexSize * Math.sin(Math.PI / 6));
+		window.hexGridSize = {
+			width: hexSize*1.5 * 2,
+			height: hexHeight * (Math.PI+0.5) * 2
 		}
 	}
 
