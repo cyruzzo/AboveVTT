@@ -3733,6 +3733,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	}
 	if(lightPolygon[1] != undefined)
   		lightPolygon.push(lightPolygon[1]);
+  	if(movePolygon[1] != undefined)
+  		movePolygon.push(movePolygon[1]);
   	if(draw == true){
 		if(!fog){
 			  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
