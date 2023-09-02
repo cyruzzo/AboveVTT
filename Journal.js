@@ -1694,6 +1694,7 @@ function render_source_chapter_in_iframe(url) {
 
 		const hash = $(event.target).attr('data-chapter-hash');
 		if (hash) {
+
 			const headerId = `#${hash}`;
 			const sectionHeader = iframeContents.find(headerId);
 			const tagName = sectionHeader.prop("tagName");
@@ -1714,6 +1715,9 @@ function render_source_chapter_in_iframe(url) {
 				nextHeader.nextAll().remove();
 				nextHeader.remove();
 			});
+			iframeContents.find("#content .secondary-content").hide();
+			iframeContents.find("article .p-article-header").hide();
+			iframeContents.find("body").css('background', '#f9f9f9 url(../images/background_texture.png) repeat');
 		}
 
 		$(this).siblings('.sidebar-panel-loading-indicator').remove();
