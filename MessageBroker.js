@@ -1349,133 +1349,133 @@ class MessageBroker {
 
 		let old_src = $("#scene_map").attr('src');
 		if(data.UVTTFile == 1){
-				let uvttMap = await get_map_from_uvtt_file(data.player_map);
-				$("#scene_map").attr('src', uvttMap); 
-		}
-		else{
-			$("#scene_map").attr('src', data.map);
+			data.map = await get_map_from_uvtt_file(data.player_map);
 		}
 
-
-		if (data.fog_of_war == 1) {
-			window.FOG_OF_WAR = true;
-			window.REVEALED = data.reveals;
-		}
-		else {
-			window.FOG_OF_WAR = false;
-			window.REVEALED = [];
-		}
-		if (typeof data.drawings !== "undefined") {
-			window.DRAWINGS = data.drawings;
-
-		}
-		else {
-			window.DRAWINGS = [];
-		}
+		if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
 
 
-		load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
-			console.group("load_scenemap callback")
-			if(!window.CURRENT_SCENE_DATA.scale_factor)
-				window.CURRENT_SCENE_DATA.scale_factor = 1;
-			let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
-			// Store current scene width and height
-			let mapHeight = $("#scene_map").height();
-			let mapWidth = $("#scene_map").width();
-			window.CURRENT_SCENE_DATA.conversion = 1;
-
-			if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
-				let conversion = 2;
-				if(mapWidth >= mapHeight){
-					conversion = 1980 / mapWidth;
-				}
-				else{
-					conversion = 1980 / mapHeight;
-				}
-				mapHeight = mapHeight*conversion;
-				mapWidth = mapWidth*conversion;
-				$("#scene_map").css({
-					'height': mapHeight,
-					'width': mapWidth
-				});
-				scaleFactor = scaleFactor / conversion		
-				window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
-				window.CURRENT_SCENE_DATA.conversion = conversion;
+			if (data.fog_of_war == 1) {
+				window.FOG_OF_WAR = true;
+				window.REVEALED = data.reveals;
 			}
-			else if(!data.scale_check){ //older than 0.98
-				window.CURRENT_SCENE_DATA = {
-					...window.CURRENT_SCENE_DATA,
-					hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
-					vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
-					offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
-					offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
-				}
+			else {
+				window.FOG_OF_WAR = false;
+				window.REVEALED = [];
+			}
+			if (typeof data.drawings !== "undefined") {
+				window.DRAWINGS = data.drawings;
+
+			}
+			else {
+				window.DRAWINGS = [];
 			}
 
-			window.CURRENT_SCENE_DATA.width = mapWidth;
-			window.CURRENT_SCENE_DATA.height = mapHeight;
-			// Scale map according to scaleFactor
+			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+				console.group("load_scenemap callback")
+				if(!window.CURRENT_SCENE_DATA.scale_factor)
+					window.CURRENT_SCENE_DATA.scale_factor = 1;
+				let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+				// Store current scene width and height
+				let mapHeight = $("#scene_map").height();
+				let mapWidth = $("#scene_map").width();
+				window.CURRENT_SCENE_DATA.conversion = 1;
 
-			$("#VTT").css("--scene-scale", scaleFactor)
-			
-			set_default_vttwrapper_size();
-			apply_zoom_from_storage();
-			reset_canvas();
-			
-			// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
-			if(!window.DM && data.dm_map_usable=="1"){
-				$("#scene_map").stop();
-				$("#scene_map").css("opacity","0");
-				console.log("switching back to player map");
-				$("#scene_map").off("load");
-				$("#scene_map").on("load", () => {
-					$("#scene_map").css('opacity', 1)
-					$("#darkness_layer").show();
-				});
-				if(data.UVTTFile == 1){
-					let uvttMap = await get_map_from_uvtt_file(data.player_map);
-					$("#scene_map").attr('src', uvttMap); 
+				if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+					let conversion = 2;
+					if(mapWidth >= mapHeight){
+						conversion = 1980 / mapWidth;
+					}
+					else{
+						conversion = 1980 / mapHeight;
+					}
+					mapHeight = mapHeight*conversion;
+					mapWidth = mapWidth*conversion;
+					$("#scene_map").css({
+						'height': mapHeight,
+						'width': mapWidth
+					});
+					scaleFactor = scaleFactor / conversion		
+					window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
+					window.CURRENT_SCENE_DATA.conversion = conversion;
 				}
-				else{
-					$("#scene_map").attr('src', data.player_map);
-				}		
-			}
-			console.log("LOADING TOKENS!");
+				else if(!data.scale_check){ //older than 0.98
+					window.CURRENT_SCENE_DATA = {
+						...window.CURRENT_SCENE_DATA,
+						hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+						vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+						offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+						offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
+					}
+				}
 
-			for (let id in data.tokens) {
-				self.handleToken({
-					data: data.tokens[id],
+				window.CURRENT_SCENE_DATA.width = mapWidth;
+				window.CURRENT_SCENE_DATA.height = mapHeight;
+				// Scale map according to scaleFactor
+
+
+				$("#VTT").css("--scene-scale", scaleFactor)
+				
+				
+				set_default_vttwrapper_size();
+				apply_zoom_from_storage();
+        reset_canvas();
+				
+				// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
+				if(!window.DM && data.dm_map_usable=="1"){
+					$("#scene_map").stop();
+					$("#scene_map").css("opacity","0");
+					console.log("switching back to player map");
+					$("#scene_map").off("load");
+					$("#scene_map").on("load", () => {
+						$("#scene_map").css('opacity', 1)
+						$("#darkness_layer").show();
+					});
+					if(data.UVTTFile == 1){
+						let uvttMap = await get_map_from_uvtt_file(data.player_map);
+						$("#scene_map").attr('src', uvttMap); 
+					}
+					else{
+						$("#scene_map").attr('src', data.player_map);
+					}		
+				}
+				console.log("LOADING TOKENS!");
+
+				for (let id in data.tokens) {
+					self.handleToken({
+						data: data.tokens[id],
+						loading: true,
+						persist: false
+					});
+				}
+
+
+				ct_load({
 					loading: true,
-					persist: false
+					current: $("#combat_area [data-current]").attr('data-target')
 				});
-			}
 
 
-			ct_load({
-				loading: true,
-				current: $("#combat_area [data-current]").attr('data-target')
+
+				if(!window.DM) {
+				 	window.MB.sendMessage('custom/myVTT/syncmeup');
+					check_token_visibility();
+				}
+
+
+				if (window.EncounterHandler !== undefined) {
+					fetch_and_cache_scene_monster_items();
+				}
+				did_update_scenes();
+				if (window.reorderState === ItemType.Scene) {
+					enable_draggable_change_folder(ItemType.Scene);
+				}
+				console.groupEnd()
 			});
+			
 
-
-
-			if(!window.DM) {
-			 	window.MB.sendMessage('custom/myVTT/syncmeup');
-				check_token_visibility();
-			}
-
-
-			if (window.EncounterHandler !== undefined) {
-				fetch_and_cache_scene_monster_items();
-			}
-			did_update_scenes();
-			if (window.reorderState === ItemType.Scene) {
-				enable_draggable_change_folder(ItemType.Scene);
-			}
-			console.groupEnd()
-		});
-		
-
-		remove_loading_overlay();
+			remove_loading_overlay();
+		}
 		// console.groupEnd()
 	}
 
