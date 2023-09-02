@@ -364,7 +364,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 	$("#scene_map_container").toggleClass('map-loading', true);
 
-	$("#scene_map").remove();
+	$("[id='scene_map']").remove();
 
 	if (window.YTTIMEOUT != null) {
 		clearTimeout(window.YTTIMEOUT);
@@ -423,15 +423,8 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 	}
 	else if (is_video === "0" || !is_video) {
 		$("#scene_map_container").toggleClass('video', false);
-		let newmap = $("<img id='scene_map' src='scene_map' style='position:absolute;top:0;left:0;z-index:10'>");
+		let newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 
-		if(UVTTFile == 1){
-			url = await get_map_from_uvtt_file(url);
-			newmap.attr('src', url); 
-		}
-		else{
-			newmap.attr("src", url);
-		}
 
 		if(UVTTFile && width != null){				
 			newmap.width(width);
