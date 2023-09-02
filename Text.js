@@ -1,20 +1,15 @@
-function apply_settings_from_storage(){
+function apply_settings_from_storage(applyFromWindow = false){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
-    const settings = JSON.parse(localStorage.getItem('textSettings'));
+    const settings = (applyFromWindow) ? window.TEXTDATA : JSON.parse(localStorage.getItem('textSettings'));
     window.TEXTDATA = settings
+    $(`#text_controller_inside button[id^='text_']`).removeClass(buttonSelectedClasses);
     $(`#text_font option[value="${settings.text_font}"]`).attr("selected", "selected");
     $("#text_size").val(settings.text_size)
     $("#text_color").val(settings.text_color)
     $("#text_color").next().find(".sp-preview-inner").css("background-color", settings.text_color)
-    if (settings.text_bold){
-        $("#text_bold").addClass(buttonSelectedClasses)
-    } 
-    if (settings.text_italic){
-        $("#text_italic").addClass(buttonSelectedClasses)
-    } 
-    if (settings.text_underline){
-        $("#text_underline").addClass(buttonSelectedClasses)
-    } 
+    $("#text_bold").toggleClass(buttonSelectedClasses, settings.text_bold)
+    $("#text_italic").toggleClass(buttonSelectedClasses, settings.text_italic)
+    $("#text_underline").toggleClass(buttonSelectedClasses, settings.text_underline)
     $(`#text_${settings.text_alignment}`).addClass(buttonSelectedClasses)
     $("#stroke_size").val(settings.stroke_size)
     $("#stroke_color").val(settings.stroke_color),
@@ -63,10 +58,10 @@ function apply_settings_to_boxes(){
     
 }
 
-function create_text_controller() {
+function create_text_controller(applyFromWindow = false) {
     if ($("#text_controller_inside").length > 0) {
         $("#text_controller_inside").show()
-        apply_settings_from_storage()
+        apply_settings_from_storage(applyFromWindow)
         return
     }
     const textControllerInside = $("<div id='text_controller_inside'/>");
@@ -521,7 +516,7 @@ function handle_draw_text_submit(event) {
     ];
     // bake this data and redraw all text
     window.DRAWINGS.push(data);
-    $(".text-input-title-bar-exit").click();
+    $(this).parent().find(".text-input-title-bar-exit").click();
     redraw_text();
     sync_drawings();
 
@@ -739,25 +734,25 @@ function draw_text(
         return false;
     });
     textSVG.on('dblclick', function(){
-
-        create_text_controller();
+        let text_data = window.DRAWINGS.filter(d => d[9] == this.id)[0];
 
         window.TEXTDATA = [];
-        window.TEXTDATA.text_alignment = font.align;
-        window.TEXTDATA.text_color = font.color;
-        window.TEXTDATA.text_background_color = rectColor;
-        window.TEXTDATA.text_font = font.font;
-        window.TEXTDATA.text_size = font.size;
-        window.TEXTDATA.text_bold = (font.style == 'bold') ? true : false;
-        window.TEXTDATA.text_italic = (font.style == 'italic') ? true : false;
-        window.TEXTDATA.text_underline = font.underline;
-        window.TEXTDATA.stroke_color = stroke.color;
-        window.TEXTDATA.stroke_size = stroke.size;
-        window.TEXTDATA.text_shadow = (font.shadow != 'none') ? true : false;
-        apply_settings_to_boxes();
+        window.TEXTDATA.text_alignment = text_data[6].align;
+        window.TEXTDATA.text_color = text_data[6].color;
+        window.TEXTDATA.text_background_color = text_data[8];
+        window.TEXTDATA.text_font = text_data[6].font;
+        window.TEXTDATA.text_size = text_data[6].size;
+        window.TEXTDATA.text_bold = (parseInt(text_data[6].weight) == 700) ? true : false;
+        window.TEXTDATA.text_italic = (text_data[6].style == 'italic') ? true : false;
+        window.TEXTDATA.text_underline = text_data[6].underline;
+        window.TEXTDATA.stroke_color = text_data[7].color;
+        window.TEXTDATA.stroke_size = text_data[7].size;
+        window.TEXTDATA.text_shadow = (text_data[6].shadow != 'none') ? true : false;
+        create_text_controller(true)
 
         let bounds = $(this)[0].getBoundingClientRect();
         create_moveable_text_box(bounds.left, bounds.top-25, bounds.width, bounds.height+25, text)
+        apply_settings_to_boxes();
         
        window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
         $(this).remove();
