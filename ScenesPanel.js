@@ -460,8 +460,8 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		}
 		else{			
 			window.CURRENT_SCENE_DATA.scaleAdjustment = {
-				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
-				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
+				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/500,
+				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/500
 			}	
 		}
 		moveAligners();
@@ -476,8 +476,8 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		}
 		else{			
 			window.CURRENT_SCENE_DATA.scaleAdjustment = {
-				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
-				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
+				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/500,
+				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/500
 			}	
 		}
 		moveAligners();
