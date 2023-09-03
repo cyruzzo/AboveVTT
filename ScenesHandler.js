@@ -325,10 +325,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						x: 1 + adjustmentSliders.x/10,
 						y: 1 + adjustmentSliders.y/10
 					}
-					window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
-					window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
-					window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
-					window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
 				}
 				if($("#edit_dialog").length != 0){
 					$('#squaresWide').val(`${$('#scene_map').width()/window.CURRENT_SCENE_DATA.hpps}`)
