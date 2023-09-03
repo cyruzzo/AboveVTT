@@ -53,7 +53,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.switch_scene(this.current_scene_id, null);
 	}
 
-	switch_scene(sceneid, callback = null) { //This is still used for grid wizard loading since we load so many times. -- THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
+	async switch_scene(sceneid, callback = null) { //This is still used for grid wizard loading since we load so many times. -- THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
 		
 		let grid_5 = function() {
 			$("#scene_selector_toggle").show();
@@ -580,6 +580,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			map_is_video = (scene.player_map_is_video === "1");
 		}
 
+		if(scene.UVTTFile == 1){
+			map_url = await get_map_from_uvtt_file(scene.player_map);
+		}
 
 		//This is still used for grid wizard loading since we load so many times -- it is not used for other scene loading though. You can find that in message broker handleScene
 		load_scenemap(map_url, map_is_video, window.CURRENT_SCENE_DATA.width, window.CURRENT_SCENE_DATA.height, window.CURRENT_SCENE_DATA.UVTTFile, function() {
