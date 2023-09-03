@@ -161,6 +161,7 @@ async function start_above_vtt_for_dm() {
   did_update_scenes();
 
   startup_step("Start up complete");
+  remove_loading_overlay();
 }
 
 async function start_above_vtt_for_players() {
