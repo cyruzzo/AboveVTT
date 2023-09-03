@@ -644,6 +644,8 @@ function clear_grid(){
 }
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true){
 	const gridCanvas = document.getElementById("grid_overlay");
+	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
+	gridCanvas.height = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 	const gridContext = gridCanvas.getContext("2d");
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
 		hpps = vpps || window.CURRENT_SCENE_DATA.vpps;
@@ -671,11 +673,11 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		    drawHexagon(x, y);
 		  }
 		}		
-		let hexWidth = hexSize * Math.sqrt(3) / 2;
-		let hexHeight = hexSize;
+		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
+		let hexHeight = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
-			width: hexWidth * 2 * window.CURRENT_SCENE_DATA.scale_factor,
-			height: hexHeight * 1.5 * window.CURRENT_SCENE_DATA.scale_factor
+			width: hexWidth,
+			height: hexHeight
 		}
 	}
 	else{
@@ -684,11 +686,11 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		    drawHexagon(x, y);
 		  }
 		}
-		let hexWidth = hexSize;
-		let hexHeight = hexSize * Math.sqrt(3) / 2;
+		let hexWidth = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
+		let hexHeight = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
-			width: hexSize * 1.5 * window.CURRENT_SCENE_DATA.scale_factor,
-			height: hexHeight * 2 * window.CURRENT_SCENE_DATA.scale_factor
+			width: hexWidth,
+			height: hexHeight
 		}
 	}
 
@@ -718,7 +720,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		  gridContext.stroke();
 		}
 	}
-
+	$('#grid_overlay').css('transform', `scale(calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.x}), calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.y}))`)
 
 }
 

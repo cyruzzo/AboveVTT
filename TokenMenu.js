@@ -1370,7 +1370,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let uniqueSizes = [...new Set(tokenSizes)];
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
-		const hpps = Math.round(window.CURRENT_SCENE_DATA.hpps);
+		let tokenMultiplierAdjustment = (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+			
+		const hpps = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenMultiplierAdjustment;
 		if (!isNaN(newSize)) {
 			newSize = hpps * newSize;
 		} else {
