@@ -731,6 +731,8 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		return;
 	}
 	const gridCanvas = document.getElementById("grid_overlay");
+	gridCanvas.width = $('#scene_map').width();
+	gridCanvas.height = $('#scene_map').height();
 	const gridContext = gridCanvas.getContext("2d");
 	clear_grid();
 	gridContext.setLineDash(dash);
@@ -776,6 +778,8 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 
 	}
 	gridContext.stroke();
+	$('#grid_overlay').css('transform', `scale(var(--scene-scale))`)
+
 }
 
 function draw_wizarding_box() {

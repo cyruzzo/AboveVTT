@@ -455,33 +455,32 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	})	
 	verticalMinorAdjustment.find('input').on('change input',function(){
 		if(window.CURRENT_SCENE_DATA.gridType == 1){
-			regrid();
+			window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+			window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
 		}
 		else{			
 			window.CURRENT_SCENE_DATA.scaleAdjustment = {
 				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
 				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
-			}
-				
-			moveAligners();
+			}	
 		}
-		
+		moveAligners();
 		
 		console.log('verticalMinorAdjustment');
 
 	});
 	horizontalMinorAdjustment.find('input').on('change input',function(){
 		if(window.CURRENT_SCENE_DATA.gridType == 1){
-			regrid();
+			window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+			window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());	
 		}
 		else{			
 			window.CURRENT_SCENE_DATA.scaleAdjustment = {
 				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
 				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
-			}
-				
-			moveAligners();
+			}	
 		}
+		moveAligners();
 		console.log('horizontalMinorAdjustment');
 	});
 	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
@@ -527,19 +526,29 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	})
 
 	manual.find('#squaresWide').on('blur change', function(){
-		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($(this).val());
+		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
 		moveAligners()
 	});
 	manual.find('#squaresTall').on('blur change', function(){
-		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($(this).val());
+		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
 		moveAligners()
 	})
 	manual.find('input[name="offsetx"]').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
 		window.CURRENT_SCENE_DATA.offsetx = parseFloat($(this).val());
+		let division = ~~(parseFloat($('#aligner1').css("left")) / window.CURRENT_SCENE_DATA.hpps); 
+		$('#aligner1').css("left", window.CURRENT_SCENE_DATA.hpps*division+window.CURRENT_SCENE_DATA.offsetx-29);
 		moveAligners()
 	})
 	manual.find('input[name="offsety"]').on('blur change', function(){
+		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
+		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
 		window.CURRENT_SCENE_DATA.offsety = parseFloat($(this).val());
+		let division = ~~(parseFloat($('#aligner1').css("top")) / window.CURRENT_SCENE_DATA.vpps)
+		$('#aligner1').css("top", window.CURRENT_SCENE_DATA.vpps*division+window.CURRENT_SCENE_DATA.offsety-29);
 		moveAligners()
 	})
 
@@ -547,7 +556,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		if (e.keyCode == 13) {
         	e.preventDefault();
         	$(this).trigger('change')
-        	$('#scene_properties input:visible')[$('#scene_properties input:visible').index(this)+1].select();
+        	let nextVisibleInput = $('#scene_properties input:visible')[$('#scene_properties input:visible').index(this)+1]
+        	if(nextVisibleInput)
+        		nextVisibleInput.select();
     	}
 	})
 
@@ -567,6 +578,24 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		if(manual.find('input[name="offsety"]').val()== undefined || manual.find('input[name="offsetx"]').val()==undefined || (manual.find('#squaresTall').val()==undefined || manual.find('#squaresWide').val()==undefined ))
 			return;
 		if(window.CURRENT_SCENE_DATA.gridType == 1){
+			let adjustmentSliders = {
+				x: ($('#horizontalMinorAdjustmentInput').val()-50)/10,
+				y: ($('#verticalMinorAdjustmentInput').val()-50)/10,
+			}
+			window.CURRENT_SCENE_DATA.hpps += adjustmentSliders.x;
+			window.CURRENT_SCENE_DATA.vpps += adjustmentSliders.y;
+
+			$('#aligner2').css({
+				"left": `${parseFloat($('#aligner1').css("left")) + window.CURRENT_SCENE_DATA.hpps*3}px`,
+				"top": `${parseFloat($('#aligner1').css("top")) + window.CURRENT_SCENE_DATA.vpps*3}px`
+			})
+
+			let al1 = {
+				x: parseInt($('#aligner1').css("left")) + 29,
+				y: parseInt($('#aligner1').css("top")) + 29,
+			};
+			window.CURRENT_SCENE_DATA.offsetx = Math.abs(al1.x % window.CURRENT_SCENE_DATA.hpps);
+			window.CURRENT_SCENE_DATA.offsety = Math.abs(al1.y % window.CURRENT_SCENE_DATA.vpps);
 			redraw_grid(null,null,null,null,color,width,null,dash);
 		}
 		else if(window.CURRENT_SCENE_DATA.gridType == 2){
