@@ -554,7 +554,8 @@ class Token {
 		if(this.walkableArea.right == null || this.walkableArea.bottom == null){
 			this.prepareWalkableArea()
 		}
-		let tokenPosition = snap_point_to_grid(left, top, true)
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);
+		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken)
 
 		// Stop movement if new position is outside of the scene
 		if (
@@ -2088,8 +2089,8 @@ class Token {
 					let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
-						tokenX += (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width : !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
-						tokenY += (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height : !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
+						tokenX +=  !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
+						tokenY +=  !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
 					}
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
@@ -2504,8 +2505,8 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 		let startY = window.CURRENT_SCENE_DATA.offsety; 
 
 
-		const gridWidth = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;;
-		const gridHeight = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;;
+		const gridWidth = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;
+		const gridHeight = (window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;
 		
 		let currentGridX = Math.floor((mapX - startX) / gridWidth);
 		let currentGridY = Math.floor((mapY - startY) / gridHeight);
@@ -2515,7 +2516,6 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
 			currentGridX += 0.5;
 		} 
-
 
 		if(window.CURRENT_SCENE_DATA.gridType == 3){
 			startX = startX + window.hexGridSize.width/2 * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
