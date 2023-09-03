@@ -404,18 +404,18 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			});
 			$(scene_properties).toggleClass('verticalHex', true);
 			$(scene_properties).toggleClass('horizontalHex', false);
-			$('span.squaresWide').text(' hexes wide');
+			$('span.squaresWide').text(' hex columns');
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the hexes across for sizing. If they are skewed at all you may need to use decimals to get close. Note: these hexes are 'perfect' hexes and can't be stretched taller or wider at this time.`)
+			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex columns for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 2){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', true);
 			$('#aligner2, #aligner1').css({
 				'display': 'none'
 			});
-			$('span.squaresTall').text(` hexes tall`);
+			$('span.squaresTall').text(` hex rows`);
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the hexes vertically for sizing. If they are skewed at all you may need to use decimals to get close. Note: these hexes are 'perfect' hexes and can't be stretched taller or wider at this time.`)
+			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 1){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', false);
@@ -538,17 +538,19 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	manual.find('input[name="offsetx"]').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
 		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
+		let withoutOffset = parseFloat($('#aligner1').css("left")) - parseFloat($(this).attr('data-prev-value'));
 		window.CURRENT_SCENE_DATA.offsetx = parseFloat($(this).val());
-		let division = ~~(parseFloat($('#aligner1').css("left")) / window.CURRENT_SCENE_DATA.hpps); 
-		$('#aligner1').css("left", window.CURRENT_SCENE_DATA.hpps*division+window.CURRENT_SCENE_DATA.offsetx-29);
+		$(this).attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
+		$('#aligner1').css("left", withoutOffset+window.CURRENT_SCENE_DATA.offsetx);
 		moveAligners()
 	})
 	manual.find('input[name="offsety"]').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
 		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
+		let withoutOffset = parseFloat($('#aligner1').css("top")) - parseFloat($(this).attr('data-prev-value'));
 		window.CURRENT_SCENE_DATA.offsety = parseFloat($(this).val());
-		let division = ~~(parseFloat($('#aligner1').css("top")) / window.CURRENT_SCENE_DATA.vpps)
-		$('#aligner1').css("top", window.CURRENT_SCENE_DATA.vpps*division+window.CURRENT_SCENE_DATA.offsety-29);
+		$(this).attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);
+		$('#aligner1').css("top", withoutOffset+window.CURRENT_SCENE_DATA.offsety);
 		moveAligners()
 	})
 
