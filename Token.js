@@ -1676,7 +1676,7 @@ class Token {
 
 			let fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
-			let tokenMultiplierAdjustment = (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+			let tokenMultiplierAdjustment = (window.CURRENT_SCENE_DATA?.scaleAdjustment?.x > window.CURRENT_SCENE_DATA?.scaleAdjustment?.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : (window.CURRENT_SCENE_DATA?.scaleAdjustment?.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
 			if(this.options.gridSquares != undefined){
 				this.options.size = window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares * tokenMultiplierAdjustment;
 			}
