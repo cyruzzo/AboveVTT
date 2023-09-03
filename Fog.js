@@ -725,7 +725,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 }
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
-	if(window.CURRENT_SCENE_DATA.gridType != 1){
+	if(window.CURRENT_SCENE_DATA.gridType != undefined && window.CURRENT_SCENE_DATA.gridType != 1){
 		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
 		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
 		return;
