@@ -331,6 +331,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					$('#squaresTall').val(`${$('#scene_map').height()/window.CURRENT_SCENE_DATA.vpps}`)					
 					$('input[name="offsetx"]').val(`${window.CURRENT_SCENE_DATA.offsetx}`)
 					$('input[name="offsety"]').val(`${window.CURRENT_SCENE_DATA.offsety}`)
+					$('input[name="offsetx"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
+					$('input[name="offsety"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);
 				}
 
 				let width
