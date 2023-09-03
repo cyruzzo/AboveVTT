@@ -246,7 +246,6 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 		let lightColor = hexToRGB(clippedColor, intensity);
 		let options = {
 			...default_options(),
-			id: uuid(),
 			imgsrc : `https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png`,
 			hidden : true,
 			tokenStyleSelect : 'definitelyNotAToken',
@@ -434,12 +433,12 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 
 
-	let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment" class='hideVerticalHex'>
+	let verticalMinorAdjustment = $(`<div id="verticalMinorAdjustment">
 			<label for="verticalMinorAdjustmentInput">Minor Vertical Adjustment</label>
 			<input type="range" name='verticalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="verticalMinorAdjustmentInput" data-orientation="vertical">
 			<button id="resetMinorVerticalAdjustmentRange">Reset</button>
 	</div>`);
-	let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment" class='hideHorizontalHex'>
+	let horizontalMinorAdjustment = $(`<div id="horizontalMinorAdjustment">
 			<label for="horizontalMinorAdjustmentInput">Minor Horizontal Adjustment</label>
 		 	<input type="range" name='horizontalMinorAdjustmentInput' min="1" max="100" value="50" class="slider" id="horizontalMinorAdjustmentInput">
 			
@@ -455,12 +454,34 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		verticalMinorAdjustment.find('input').trigger('change');
 	})	
 	verticalMinorAdjustment.find('input').on('change input',function(){
-		regrid();
+		if(window.CURRENT_SCENE_DATA.gridType == 1){
+			regrid();
+		}
+		else{			
+			window.CURRENT_SCENE_DATA.scaleAdjustment = {
+				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
+				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
+			}
+				
+			moveAligners();
+		}
+		
+		
 		console.log('verticalMinorAdjustment');
 
 	});
 	horizontalMinorAdjustment.find('input').on('change input',function(){
-		regrid();
+		if(window.CURRENT_SCENE_DATA.gridType == 1){
+			regrid();
+		}
+		else{			
+			window.CURRENT_SCENE_DATA.scaleAdjustment = {
+				x: 1 + ($('#horizontalMinorAdjustmentInput').val()-50)/100,
+				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/100
+			}
+				
+			moveAligners();
+		}
 		console.log('horizontalMinorAdjustment');
 	});
 	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
@@ -554,6 +575,8 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		else if(window.CURRENT_SCENE_DATA.gridType == 3){
 			redraw_hex_grid(null,null,null,null,color,width,null,dash, true);
 		}
+
+		//to do: move the grid aligners to match the input settings.
 	}			
 
 

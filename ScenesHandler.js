@@ -271,7 +271,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 				let adjustmentSliders = {
 					x: ($('#horizontalMinorAdjustmentInput').val()-50)/10,
-					y: ($('#horizontalMinorAdjustmentInput').val()-50)/10,
+					y: ($('#verticalMinorAdjustmentInput').val()-50)/10,
 				}
 
 				let ppsx;
@@ -286,8 +286,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					offsety = 0;
 				}
 				else {
-					ppsx = (al2.x - al1.x) / numberOfGrid + adjustmentSliders.x;
-					ppsy = (al2.y - al1.y) / numberOfGrid + adjustmentSliders.y;
+					ppsx = (al2.x - al1.x) / numberOfGrid;
+					ppsy = (al2.y - al1.y) / numberOfGrid;
+					if(window.CURRENT_SCENE_DATA.gridType == 1){
+						ppsx += adjustmentSliders.x;
+						ppsy += adjustmentSliders.y;
+					}
+					
+					
 					if($('#gridType input:checked').val() == 3){
 						ppsy = ppsx;
 					}
@@ -314,7 +320,16 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
 				window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
 				window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
-
+				if(window.CURRENT_SCENE_DATA.gridType != 1){
+					window.CURRENT_SCENE_DATA.scaleAdjustment = {
+						x: 1 + adjustmentSliders.x/10,
+						y: 1 + adjustmentSliders.y/10
+					}
+					window.CURRENT_SCENE_DATA.hpps = Math.abs(ppsx);
+					window.CURRENT_SCENE_DATA.vpps = Math.abs(ppsy);
+					window.CURRENT_SCENE_DATA.offsetx = Math.abs(offsetx);
+					window.CURRENT_SCENE_DATA.offsety = Math.abs(offsety);
+				}
 				if($("#edit_dialog").length != 0){
 					$('#squaresWide').val(`${$('#scene_map').width()/window.CURRENT_SCENE_DATA.hpps}`)
 					$('#squaresTall').val(`${$('#scene_map').height()/window.CURRENT_SCENE_DATA.vpps}`)					
