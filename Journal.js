@@ -585,9 +585,8 @@ class JournalManager{
 		}
 		let note_text=$("<div class='note-text'/>");
 		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
-		if(statBlock){
-			this.translateHtmlAndBlocks(note_text);
-		}
+		
+		this.translateHtmlAndBlocks(note_text);	
 		this.add_journal_roll_buttons(note_text);
 		this.add_journal_tooltip_targets(note_text);
 
@@ -862,7 +861,7 @@ class JournalManager{
             input = input.replace(/\(?(\d+d\d+( \+ \d+)?)\)? ? (\w)/g, '($1) $3');
             // Try to find spells
             input = input.replace(
-                / (the|a|an) (([\w]+ ?){1,4}) spell( |\.|\:|,)/g,
+                / (the|a|an) (([\w]+ ?){1,4}) spell(\.|\:|,)/g,
                 ' $1 [spell]$2[/spell] spell$4'
             );
             // another spell attempt
