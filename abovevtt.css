@@ -820,12 +820,13 @@ button#gridSubdividedToggle_toggle::after
 #additionalGridInfo.closed ~ div{
     display:none;
 }
-.verticalHex .hideVerticalHex{
+.verticalHex .hideVerticalHex,
+.horizontalHex .hideHorizontalHex,
+.horizontalHex .hideHex,
+.verticalHex .hideHex{
     display:none !important; 
 }
-.horizontalHex .hideHorizontalHex{
-    display:none !important; 
-}
+
 #gridType label {
     display: inline-block;
 }
