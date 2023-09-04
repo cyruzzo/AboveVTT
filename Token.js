@@ -1337,7 +1337,9 @@ class Token {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            const tooltipHtml = $(noteHover);
-					            window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+								window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 					            flyout.append(tooltipHtml);
 					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 					            sendToGamelogButton.css({ "float": "right" });
