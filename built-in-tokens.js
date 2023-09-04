@@ -24,7 +24,7 @@ const builtInTokens = [
   {
     "name": "Flame 1",
     "folderPath": "/Overlays",
-    "image": "https://thumbs.gfycat.com/GiddyMajorDingo-small.gif",
+    "image": "https://cdn.discordapp.com/attachments/1083353621778923581/1148091041589756005/flame1.gif",
     "disableborder": true,
     "square": true
   },
