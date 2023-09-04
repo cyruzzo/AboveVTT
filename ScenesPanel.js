@@ -427,6 +427,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			$('#verticalMinorAdjustment label').text('Minor Vertical Adjustment')
 			$('#horizontalMinorAdjustment label').text('Minor Horizontal Adjustment')
 			$('#gridInstructions').text(`Select a 3x3 square using the selectors to align your grid.`)
+			$('input[name="fpsq"]').trigger('change');
 		}
 		regrid();
 	})
@@ -464,7 +465,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/500
 			}	
 		}
-		moveAligners();
+		moveAligners(false, true);
 		
 		console.log('verticalMinorAdjustment');
 
@@ -480,7 +481,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				y: 1 + ($('#verticalMinorAdjustmentInput').val()-50)/500
 			}	
 		}
-		moveAligners();
+		moveAligners(false, true);
 		console.log('horizontalMinorAdjustment');
 	});
 	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
@@ -489,7 +490,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 	manual.append($(`
 			<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:40%'>Measurement:</div><div style='display:inline-block; width:60'%'><input type='number' name='fpsq' placeholder='5' value='${window.CURRENT_SCENE_DATA.fpsq}'> <input name='upsq' placeholder='ft' value='${window.CURRENT_SCENE_DATA.upsq}'></div></div>
-			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10) ? 'block' : 'none'}' title='Each side of a grid square will be 2x the units per square. For example a units per square of 5 ft and split grid will make 10ft squares and size tokens appropriately. It will split each grid square into 4 small/medium creature locations used for snap to grid, the ruler etc.'><div style='display:inline-block; width:40%'>Subdivide squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
+			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10 || window.CURRENT_SCENE_DATA.fpsq == 15 || window.CURRENT_SCENE_DATA.fpsq == 20) ? 'block' : 'none'}' title='Split grid into 5ft sections'><div style='display:inline-block; width:40%'>Split into 5ft squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
 			<div id='additionalGridInfo' class='closed'>Additional Grid Info / Manual Settings</div>
 			<div title='Number of grid squares Width x Height.'><div style='display:inline-block; width:30%'>Grid size</div><div style='display:inline-block;width:70%;'><input id='squaresWide' class='hideHorizontalHex' type='number' min='10' value='${$("#scene_map").width()/window.CURRENT_SCENE_DATA.hpps}'><span style='display: inline' class='squaresWide hideHorizontalHex'> squares wide</span><br class='hideHorizontalHex'/><input type='number' id='squaresTall' class='hideVerticalHex' value='${$("#scene_map").height()/window.CURRENT_SCENE_DATA.vpps}' min='10'><span style='display: inline' class='squaresTall hideVerticalHex'> squares tall</span></div></div>
 			<div title='Grid offset from the sides of the map in pixels. From top left corner of square and from middle of hex.'>
@@ -509,16 +510,24 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		} else {
 			manual.find("#gridSubdividedRow input").val('0');
 		}
+		window.CURRENT_SCENE_DATA.grid_subdivided = $(this).val();
 	}));
 
-	manual.find('input[name="fpsq"]').on('input blur', function(){
-		if($(this).val() == 10){
+	manual.find('input[name="fpsq"]').on('change blur', function(){
+		if(window.CURRENT_SCENE_DATA.gridType == 1 && $(this).val() == 10 || $(this).val() == 15 || $(this).val() == 20){
 			$('#gridSubdividedRow').css('display', 'block');
+			$('#gridInstructions').text(`Select a 3x3 square using the selectors to align your grid. To change the grid to be appropriately sized for medium creatures enable split grid.`)
 		}
 		else{
 			$("#gridSubdividedRow input").val('0');
 			$('#gridSubdividedRow').css('display', 'none');
+			$('#gridInstructions').text(`Select a 3x3 square using the selectors to align your grid.`)
 		}
+		window.CURRENT_SCENE_DATA.fpsq = $(this).val();
+	});
+
+	manual.find('input[name="upsq"]').on('change blur', function(){
+		window.CURRENT_SCENE_DATA.upsq = $(this).val();
 	});
 
 	manual.find('#additionalGridInfo').on('click', function(){
@@ -528,12 +537,12 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	manual.find('#squaresWide').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
 		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
-		moveAligners()
+		moveAligners(true)
 	});
 	manual.find('#squaresTall').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
 		window.CURRENT_SCENE_DATA.hpps = $("#scene_map").width()/parseFloat($('#squaresWide').val());
-		moveAligners()
+		moveAligners(true)
 	})
 	manual.find('input[name="offsetx"]').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
@@ -542,7 +551,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		window.CURRENT_SCENE_DATA.offsetx = parseFloat($(this).val());
 		$(this).attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
 		$('#aligner1').css("left", withoutOffset+window.CURRENT_SCENE_DATA.offsetx);
-		moveAligners()
+		moveAligners(true)
 	})
 	manual.find('input[name="offsety"]').on('blur change', function(){
 		window.CURRENT_SCENE_DATA.vpps = $("#scene_map").height()/parseFloat($('#squaresTall').val());
@@ -551,7 +560,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		window.CURRENT_SCENE_DATA.offsety = parseFloat($(this).val());
 		$(this).attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);
 		$('#aligner1').css("top", withoutOffset+window.CURRENT_SCENE_DATA.offsety);
-		moveAligners()
+		moveAligners(true)
 	})
 
 	manual.find('input').on('keydown.enter', function(e){
@@ -568,7 +577,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
         	$(this).select();	
 	})
 	
-	let moveAligners = function(){
+	let moveAligners = function(moveAligner1 = false, minorAdjustments = false){
 		let width
 		if (window.ScenesHandler.scene.upscaled == "1")
 			width = 2;
@@ -587,17 +596,36 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			window.CURRENT_SCENE_DATA.hpps += adjustmentSliders.x;
 			window.CURRENT_SCENE_DATA.vpps += adjustmentSliders.y;
 
+			if(moveAligner1){
+				$('#aligner1').css({
+					'top': `${(Math.floor(($('#scene_map').height()/2)/window.CURRENT_SCENE_DATA.vpps)-1)*window.CURRENT_SCENE_DATA.vpps + window.CURRENT_SCENE_DATA.offsety - 29}px`,
+					'left': `${(Math.floor(($('#scene_map').width()/2)/window.CURRENT_SCENE_DATA.hpps)-1)*window.CURRENT_SCENE_DATA.hpps + window.CURRENT_SCENE_DATA.offsetx - 29}px`
+				});
+			}
+			
 			$('#aligner2').css({
 				"left": `${parseFloat($('#aligner1').css("left")) + window.CURRENT_SCENE_DATA.hpps*3}px`,
 				"top": `${parseFloat($('#aligner1').css("top")) + window.CURRENT_SCENE_DATA.vpps*3}px`
 			})
 
-			let al1 = {
-				x: parseInt($('#aligner1').css("left")) + 29,
-				y: parseInt($('#aligner1').css("top")) + 29,
-			};
-			window.CURRENT_SCENE_DATA.offsetx = Math.abs(al1.x % window.CURRENT_SCENE_DATA.hpps);
-			window.CURRENT_SCENE_DATA.offsety = Math.abs(al1.y % window.CURRENT_SCENE_DATA.vpps);
+			if(minorAdjustments){
+				let al1 = {
+					x: parseInt(aligner1.css("left")) + 29,
+					y: parseInt(aligner1.css("top")) + 29,
+				};
+
+				window.CURRENT_SCENE_DATA.offsetx  = al1.x % window.CURRENT_SCENE_DATA.hpps;
+				window.CURRENT_SCENE_DATA.offsety = al1.y % window.CURRENT_SCENE_DATA.vpps;							
+				$('input[name="offsetx"]').val(`${window.CURRENT_SCENE_DATA.offsetx}`)
+				$('input[name="offsety"]').val(`${window.CURRENT_SCENE_DATA.offsety}`)
+				$('input[name="offsetx"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
+				$('input[name="offsety"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);			
+			}
+			else{
+				window.CURRENT_SCENE_DATA.offsetx = $('input[name="offsetx"]').val();
+				window.CURRENT_SCENE_DATA.offsety = $('input[name="offsety"]').val();
+			}
+			
 			redraw_grid(null,null,null,null,color,width,null,dash);
 		}
 		else if(window.CURRENT_SCENE_DATA.gridType == 2){
@@ -674,7 +702,6 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		window.WIZARDING = false;
 		window.CURRENT_SCENE_DATA = {
 			...window.CURRENT_SCENE_DATA,
-			upsq: "ft",
 			fpsq: "5",
 			grid_subdivided: "0"
 		}
@@ -687,15 +714,15 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	let grid_10 = function() {
 
 			window.WIZARDING = false;
+			let subdivided = $('input[name="grid_subdivided"]').val() == 1;
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
 			$("#wizard_popup").empty().append("You're good to go! AboveVTT is now super-imposing a grid that divides the original grid map in half. If you want to hide this grid just edit the manual grid data.");
 			window.CURRENT_SCENE_DATA = {
 				...window.CURRENT_SCENE_DATA,
-				hpps: window.CURRENT_SCENE_DATA.hpps/2,
-				vpps: window.CURRENT_SCENE_DATA.vpps/2,
-				upsq: "ft",
-				fpsq: "5",
+				hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/2 : window.CURRENT_SCENE_DATA.hpps,
+				vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/2 : window.CURRENT_SCENE_DATA.vpps,
+				fpsq: (subdivided) ? '5' : '10',
 				grid_subdivided: $('input[name="grid_subdivided"]').val()
 			}
 			consider_upscaling(window.CURRENT_SCENE_DATA);
@@ -706,14 +733,14 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 	let grid_15 = function() {
 		window.WIZARDING = false;
+		let subdivided = $('input[name="grid_subdivided"]').val() == 1;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.CURRENT_SCENE_DATA = {
 			...window.CURRENT_SCENE_DATA,
-			hpps: window.CURRENT_SCENE_DATA.hpps/3,
-			vpps: window.CURRENT_SCENE_DATA.vpps/3,
-			upsq: "ft",
-			fpsq: "5",
+			hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/3 : window.CURRENT_SCENE_DATA.hpps,
+			vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/3 : window.CURRENT_SCENE_DATA.vpps,
+			fpsq:  (subdivided) ? '5' : '15',
 			grid_subdivided: "0"
 		}
 		consider_upscaling(window.CURRENT_SCENE_DATA);
@@ -726,14 +753,14 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 	let grid_20 = function() {
 		window.WIZARDING = false;
+		let subdivided = $('input[name="grid_subdivided"]').val() == 1;
 		$("#scene_selector_toggle").show();
 		$("#tokens").show();
 		window.CURRENT_SCENE_DATA = {
 			...window.CURRENT_SCENE_DATA,
-			hpps: window.CURRENT_SCENE_DATA.hpps/4,
-			vpps: window.CURRENT_SCENE_DATA.vpps/4,
-			upsq: "ft",
-			fpsq: "5",
+			hpps: (subdivided) ? window.CURRENT_SCENE_DATA.hpps/4 : window.CURRENT_SCENE_DATA.hpps,
+			vpps: (subdivided) ? window.CURRENT_SCENE_DATA.vpps/4 : window.CURRENT_SCENE_DATA.vpps,
+			fpsq: (subdivided) ? '5' : '20',
 			grid_subdivided: "0"
 		}
 		consider_upscaling(window.CURRENT_SCENE_DATA);		
