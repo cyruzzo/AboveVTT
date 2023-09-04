@@ -291,7 +291,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 
 function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function(){}, copiedSceneData = window.CURRENT_SCENE_DATA) {
 	let scene = window.ScenesHandler.scenes[scene_id];
-
+	window.WIZARDING = true;
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
 		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
