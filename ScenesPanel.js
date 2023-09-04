@@ -596,6 +596,9 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			window.CURRENT_SCENE_DATA.hpps += adjustmentSliders.x;
 			window.CURRENT_SCENE_DATA.vpps += adjustmentSliders.y;
 
+			window.CURRENT_SCENE_DATA.offsetx = parseFloat($('input[name="offsetx"]').val());
+			window.CURRENT_SCENE_DATA.offsety = parseFloat($('input[name="offsety"]').val());
+
 			if(moveAligner1){
 				$('#aligner1').css({
 					'top': `${(Math.floor(($('#scene_map').height()/2)/window.CURRENT_SCENE_DATA.vpps)-1)*window.CURRENT_SCENE_DATA.vpps + window.CURRENT_SCENE_DATA.offsety - 29}px`,
@@ -621,10 +624,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				$('input[name="offsetx"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsetx);
 				$('input[name="offsety"]').attr('data-prev-value', window.CURRENT_SCENE_DATA.offsety);			
 			}
-			else{
-				window.CURRENT_SCENE_DATA.offsetx = $('input[name="offsetx"]').val();
-				window.CURRENT_SCENE_DATA.offsety = $('input[name="offsety"]').val();
-			}
+		
 			
 			redraw_grid(null,null,null,null,color,width,null,dash);
 		}
