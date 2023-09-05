@@ -1906,7 +1906,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     text-align: center;
     margin-top: 7px;
 }
-
+#journal-panel .sidebar-panel-body>ul.folder-item-list{
+    height: 100%;
+}
 .ct-sidebar__controls .tab-btn,
 .sidebar__controls .tab-btn {
     background-color: #f2f2f2;
@@ -2291,8 +2293,12 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     border: 1px solid #d8e1e8;
 }
 
-#journal-panel .folder.collapsed > .note-list {
+#journal-panel .folder.collapsed > .note-list,
+#journal-panel .folder.collapsed > .folder{
     display: none;
+}
+#journal-panel .folder>.folder{
+    transform: scale(0.98);
 }
 
 .journal-chapter-title {
