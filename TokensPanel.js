@@ -1064,7 +1064,19 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
             break;
         case ItemType.BuiltinToken:
-            options.disablestat = true;
+            tokenSizeSetting = options.tokenSize;
+            tokenSize = parseInt(tokenSizeSetting);
+            if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+                tokenSize = 1;
+                // TODO: handle custom sizes
+            }
+            if(tokenSize <= 0.5){
+                options.tokenSize = 0.5;
+            }
+            else{
+                options.tokenSize = tokenSize;
+            }
+            
             break;
         case ItemType.Aoe:
             // we don't want to allow other options for aoe so this is a full replacement of options
@@ -1168,7 +1180,16 @@ function token_size_for_item(listItem) {
             }
             return tokenSize;
         case ItemType.DDBToken:
-            return 1;
+            options = find_token_options_for_list_item(listItem);
+            tokenSizeSetting = parseFloat(options.tokenSize);
+            if (isNaN(tokenSizeSetting)) {
+                return 1;
+            }
+            tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            if (tokenSize < 0.5) {
+                return 0.5;
+            }
+            return tokenSize;
         case ItemType.Monster:
          options = find_token_options_for_list_item(listItem);
             tokenSizeSetting = parseFloat(options.tokenSize);
@@ -1187,7 +1208,16 @@ function token_size_for_item(listItem) {
             return tokenSize;
             
         case ItemType.BuiltinToken:
-            return 1;
+            options = find_token_options_for_list_item(listItem);
+            tokenSizeSetting = parseFloat(options.tokenSize);
+            if (isNaN(tokenSizeSetting)) {
+                return 1;
+            }
+            tokenSize = Math.round(tokenSizeSetting * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
+            if (tokenSize < 0.5) {
+                return 0.5;
+            }
+            return tokenSize;
         case ItemType.Aoe:
             return listItem.size;
     }
@@ -1218,7 +1248,11 @@ function alternative_images_for_item(listItem) {
             }
             break;
         case ItemType.BuiltinToken:
+            customization = find_token_customization(listItem.type, listItem.id);
+            alternativeImages = listItem.tokenOptions.alternativeImages;
+            break
         case ItemType.DDBToken:
+            customization = find_token_customization(listItem.type, listItem.id);
             alternativeImages = listItem.tokenOptions.alternativeImages;
             break;
     }
@@ -1596,6 +1630,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         case ItemType.MyToken:
         case ItemType.Monster:
         case ItemType.Open5e:
+        case ItemType.BuiltinToken:
+        case ItemType.DDBToken:
         case ItemType.PC:
             break;
         default:
@@ -1622,12 +1658,13 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 
     // add a "remove all" button between the body and the footer
-    let removeAllButton = build_remove_all_images_button(sidebarPanel, listItem, placedToken);
-    sidebarPanel.body.after(removeAllButton);
-    if (alternative_images_for_item(listItem).length === 0) {
-        removeAllButton.hide();
+    if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
+        let removeAllButton = build_remove_all_images_button(sidebarPanel, listItem, placedToken);
+        sidebarPanel.body.after(removeAllButton);
+        if (alternative_images_for_item(listItem).length === 0) {
+            removeAllButton.hide();
+        }
     }
-
     let inputWrapper = sidebarPanel.inputWrapper;
 
 
@@ -1670,9 +1707,10 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         }
     };
 
-
-    let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
-    inputWrapper.append(imageUrlInput);
+    if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
+        let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
+        inputWrapper.append(imageUrlInput);
+    }
 
     if(!listItem.isTypePC()){
         let has_note = customization.tokenOptions.statBlock;
@@ -2688,7 +2726,7 @@ function register_custom_token_image_context_menu() {
                     copy_to_clipboard(imgSrc);
                 }
             };
-            if (!element.hasClass("change-token-image-item")) {
+            if (!element.hasClass("change-token-image-item") && find_sidebar_list_item(element).type !== 'builtinToken' && find_sidebar_list_item(element).type !== 'ddbToken') {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
@@ -2766,7 +2804,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 function find_token_options_for_list_item(listItem) {
     if (!listItem) return {};
     if (listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) {
-        return listItem.tokenOptions;
+        return {...listItem.tokenOptions, ...find_token_customization(listItem.type, listItem.id)?.allCombinedOptions()};
     } else {
         return find_token_customization(listItem.type, listItem.id)?.allCombinedOptions() || {};
     }

@@ -80,7 +80,7 @@ class TokenCustomization {
     tokenOptions;
 
     /** Used internally during TokenCustomization construction to ensure data integrety */
-    static validTypes = [ItemType.PC, ItemType.Monster, ItemType.Open5e, ItemType.MyToken, ItemType.Folder];
+    static validTypes = [ItemType.PC, ItemType.Monster, ItemType.Open5e, ItemType.MyToken, ItemType.BuiltinToken, ItemType.DDBToken, ItemType.Folder];
 
     /**
      * @param playerSheet {string} the id of the DDB character
@@ -332,6 +332,12 @@ class TokenCustomization {
     }
     isTypeOpen5eMonster() {
         return this.tokenType === ItemType.Open5e;
+    }
+    isTypeBuiltinToken() {
+        return this.tokenType === ItemType.BuiltinToken;
+    }
+    isTypeDDBToken() {
+        return this.tokenType === ItemType.DDBToken;
     }
 
     allCombinedOptions() {

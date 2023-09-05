@@ -1531,9 +1531,11 @@ function display_sidebar_list_item_configuration_modal(listItem) {
       break;
     case ItemType.BuiltinToken:
     case ItemType.DDBToken:
-      display_builtin_token_details_modal(listItem, undefined);
+      display_token_configuration_modal(listItem);
       break;
     case ItemType.MyToken:
+      display_token_configuration_modal(listItem);
+      break;
     case ItemType.PC:
     case ItemType.Monster:
       display_token_configuration_modal(listItem);
