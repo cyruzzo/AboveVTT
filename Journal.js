@@ -119,12 +119,16 @@ class JournalManager{
 		chapter_list.sortable({
 			items: '.folder',
 			update: function(event, ui) {
+				event.stopPropagation()
+				if(!$(this).parent().hasClass('folder-item-list'))
+					return;
 				// Find the old index of the dragged element
 				const old_index = self.chapters.findIndex(function(chapter) {
 					return chapter.title == ui.item.find(".journal-chapter-title").text();
 				});
 				// Find the new index of the dragged element
-				const new_index = ui.item.index();
+
+				const new_index = (old_index != -1) ? ui.item.index() : self.chapters.length-1;
 				// Move the dragged element to the new index
 				self.chapters.splice(new_index, 0, self.chapters.splice(old_index, 1)[0]);
 				self.persist();
@@ -135,24 +139,75 @@ class JournalManager{
 			}
 		});
 
-		journalPanel.body.append(chapter_list);
+		chapter_list.droppable({
+		    accept: '.folder>.folder',
+		    drop: function(e,ui) {
+		    	e.stopPropagation()
 
+		    	let folderIndex = ui.draggable.attr('data-index');
+		    	if(self.chapters[folderIndex].parentID){
+		    		delete self.chapters[folderIndex].parentID;
+		    	}else{			
+					// Find the new index of the dragged element
+
+					const new_index = (folderIndex != -1) ? ui.item.index() : self.chapters.length-1;
+					// Move the dragged element to the new index
+					self.chapters.splice(new_index, 0, self.chapters.splice(folderIndex, 1)[0]);
+		    	}
+				self.persist();
+				window.MB.sendMessage('custom/myVTT/JournalChapters',{
+					chapters: self.chapters
+				});
+				self.build_journal();
+
+		    }
+		});
+
+
+
+		journalPanel.body.append(chapter_list);
+		let chaptersWithLaterParents = [];
 		for(let i=0; i<self.chapters.length;i++){
 			console.log('xxx');
+			if(!self.chapters[i].id){
+				self.chapters[i].id = uuid();
+			}
 			// A chapter title can be clicked to expand/collapse the chapter notes
 			let section_chapter=$(`
-				<div data-index='${i}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
+				<div data-index='${i}' data-id='${self.chapters[i].id}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
 			`);
 
 			// Create a sortale list of notes
 			const note_list=$("<ul class='note-list'></ul>");
+			section_chapter.droppable({
+			    accept: '.folder',
+			    drop: function(e,ui) {
+			    	e.stopPropagation()
+			    	let targetID = $(this).attr('data-id');
+			    	let targetIndex = $(this).attr('data-index');
+			    	let folderIndex = ui.draggable.attr('data-index');
+			    	if(self.chapters[folderIndex].id == targetID)
+			    		return;
+			    	self.chapters[folderIndex].parentID = targetID;
+			    	const new_index = targetIndex+1;
+					// Move the dragged element to the new index
+					self.chapters.splice(new_index, 0, self.chapters.splice(folderIndex, 1)[0]);
+					
+					self.persist();
+					window.MB.sendMessage('custom/myVTT/JournalChapters',{
+						chapters: self.chapters
+					});
+					self.build_journal();
 
+			    }
+			})
 			var sender;
 			// Make the section_chapter sortable
 			section_chapter.sortable({
 				connectWith: ".folder",
-				items: '.sidebar-list-item-row',
+				items: '.sidebar-list-item-row:not(.folder)',
 		        receive: function(event, ui) {
+		        	event.stopPropagation();
 		            // Called only in case B (with !!sender == true)
 		            sender = ui.sender;
 		           	let sender_index = sender.attr('data-index');
@@ -161,7 +216,7 @@ class JournalManager{
 						return note == ui.item.attr('data-id');
 					});
 					// Find the new index of the dragged element
-					const new_index = ui.item.index();
+					const new_index = (old_index != -1) ? ui.item.index() : self.chapters.length-1;
 					// Move the dragged element to the new index
 					self.chapters[new_folder_index].notes.splice(new_index, 0, self.chapters[sender_index].notes.splice(old_index, 1)[0]);
 					self.persist();
@@ -172,6 +227,7 @@ class JournalManager{
 		            event.preventDefault();
 		        },
 				update: function(event, ui) {
+					event.stopPropagation();
 					// Find the old index of the dragged element
 					if(sender==undefined){
 						const old_index = self.chapters[i].notes.findIndex(function(note) {
@@ -331,9 +387,22 @@ class JournalManager{
 					row_chapter_title.append(btn_del_chapter);	
 				}	
 				section_chapter.append(row_chapter_title);
-				chapter_list.append(section_chapter);
+
+				if(!self.chapters[i].parentID){
+					chapter_list.append(section_chapter);
+				}
+				else{		
+				let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
+					if(parentFolder.length == 0){
+						self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
+						i -= 1; 
+						continue;
+					}	
+					parentFolder.append(section_chapter)	
+				}
+
 				journalPanel.body.append(chapter_list);
-		
+			
 
 			for(let n=0; n<self.chapters[i].notes.length;n++){
 				
