@@ -1893,6 +1893,20 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     transform: scale(0.8);
 }
 
+#other_export_container button{
+    width: 50%;
+    vertical-align: middle;
+    height: 49px;
+    transform: scale(0.8);
+    margin: 0px -20px 0px 0px;
+}
+#other_export_container span{
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 7px;
+}
+
 .ct-sidebar__controls .tab-btn,
 .sidebar__controls .tab-btn {
     background-color: #f2f2f2;
