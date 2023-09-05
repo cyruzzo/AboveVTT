@@ -512,17 +512,24 @@ function init_settings() {
 		body.append(`
 			<h3 class="token-image-modal-footer-title">Import / Export</h3>
 			<div class="sidebar-panel-header-explanation">
-				<p><b>WARNING</b>: The import / export feature is experimental. Use at your own risk. A future version will include an import/export wizard.</p>
-				<p>Export will download a file containing all of your scenes, custom tokens, and soundpads.
+				<p>Export will download a file containing all of your scenes, custom tokens, journal, audio library and mixer state.
 				Import will allow you to upload an exported file. Scenes from that file will be added to the scenes in this campaign.</p>
 				<div class="sidebar-panel-footer-horizontal-wrapper">
-				<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, and soundpads. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
+				<button onclick='import_openfile();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Upload a file containing scenes, custom tokens, journal, audio library and mixer state. This will not overwrite your existing scenes. Any scenes found in the uploaded file will be added to your current list scenes">IMPORT</button>
 				<button onclick='export_file();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing all of your scenes, custom tokens, and soundpads">EXPORT</button>
 					<input accept='.abovevtt' id='input_file' type='file' style='display: none' />
 				</div>
 				<div id='export_current_scene_container'>
 					<button id='export_current_scene' onclick='export_current_scene();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the current scene data including token notes">EXPORT CURRENT SCENE ONLY</button>
 				</div>
+				<div id='other_export_container'>
+					<span>Specific Local Data Exports:</span>
+					<button id='export_token' onclick='export_token_customization();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing your token customizations including token notes">TOKEN CUSTOMIZATIONS</button>
+					<button id='export_journal' onclick='export_journal();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the journal data including token notes">JOURNAL</button>
+					<button id='export_audio' onclick='export_audio();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the audio data including token notes">AUDIO</button>
+				
+				</div>
+
 
 			</div>
 		`);
@@ -946,7 +953,7 @@ function export_current_scene(){
 		offsetx: window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.conversion,
 		offsety: window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.conversion
 	} 
-	window.CURRENT_SCENE_DATA.scale_factor 
+	
 	let DataFile = {
 		version: 2,
 		scenes: [currentSceneData],
@@ -963,22 +970,84 @@ function export_current_scene(){
 			}
 		}
 	}
-
-	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CURRENT_SCENE_DATA.title}-${datetime}.abovevtt`,"text/plain");
 	$(".import-loading-indicator").remove();
 }
 
-function export_file() {
+function export_token_customization() {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
 		version: 2,
-		scenes: [],
+		scenes: [{}],
 		tokencustomizations: [],
 		notes: {},
 		journalchapters: [],
 		soundpads: {}
 	};
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+                
+	DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-token.abovevtt`,"text/plain");
+		
+	$(".import-loading-indicator").remove();		
+}
 
+function export_journal() {
+	build_import_loading_indicator('Preparing Export File');
+	let DataFile = {
+		version: 2,
+		scenes: [{}],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	DataFile.notes = window.JOURNAL.notes;
+	DataFile.journalchapters = window.JOURNAL.chapters;
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-journal.abovevtt`,"text/plain");
+		
+	$(".import-loading-indicator").remove();		
+}
+
+function export_audio() {
+	build_import_loading_indicator('Preparing Export File');
+	let DataFile = {
+		version: 2,
+		scenes: [{}],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	DataFile.soundpads = window.SOUNDPADS;
+	DataFile.mixerstate = window.MIXER.state();
+	DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-audio.abovevtt`,"text/plain");
+		
+	$(".import-loading-indicator").remove();		
+}
+
+
+
+function export_file() {
+	build_import_loading_indicator('Preparing Export File');
+	let DataFile = {
+		version: 2,
+		scenes: [{}],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 	AboveApi.exportScenes()
 		.then(scenes => {
 			DataFile.scenes = scenes;
@@ -988,7 +1057,7 @@ function export_file() {
 			DataFile.soundpads = window.SOUNDPADS;
 			DataFile.mixerstate = window.MIXER.state();
 			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
-			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),"DataFile.abovevtt","text/plain");
+			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
 		})
 		.catch(error => {
 			showError(error, "export_scenes failed to fetch from the cloud");
