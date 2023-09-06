@@ -35,8 +35,9 @@ class JournalManager{
 	
 	persist(){
 		if(window.DM){
-			if(this.statBlocks)
-				localStorage.setItem('JournalStatblocks', JSON.stringify(this.statBlocks));
+			if(!this.statBlocks)
+				this.statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
+			localStorage.setItem('JournalStatblocks', JSON.stringify(this.statBlocks));
 			localStorage.setItem('Journal' + this.gameid, JSON.stringify(Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true))));
 			localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(this.chapters));
 		}
@@ -65,9 +66,7 @@ class JournalManager{
 		let self=this;
 
 		journalPanel.body.empty();
-		if (journalPanel.header.find(".panel-warning").length == 0) {
-			journalPanel.header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS THE JOURNAL IS CURRENTLY STORED IN YOUR BROWSER STORAGE. DON'T DELETE BROWSER HISTORY</div>");
-		}
+
 		
 		const row_add_chapter=$("<div class='row-add-chapter'></div>");
 		const input_add_chapter=$("<input type='text' placeholder='New chapter name' class='input-add-chapter'>");
