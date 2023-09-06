@@ -392,7 +392,11 @@ class JournalManager{
 					chapter_list.append(section_chapter);
 				}
 				else{		
-				let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
+					let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
+					let parentID = self.chapters[i]?.parentID
+					if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
+						delete self.chapters[i].parentID
+					}
 					if(parentFolder.length == 0){
 						self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
 						i -= 1; 
