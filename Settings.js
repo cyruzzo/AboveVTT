@@ -1008,7 +1008,7 @@ function export_journal() {
 	};
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-	DataFile.notes = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true));
+	DataFile.notes = window.JOURNAL.notes;
 	DataFile.journalchapters = window.JOURNAL.chapters;
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-journal.abovevtt`,"text/plain");
 		
