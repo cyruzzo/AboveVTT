@@ -2310,6 +2310,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     overflow: hidden;
 }
 
+.folderPlaceholder {
+    height: 50px;
+    background: #ddd;
+}
+
 .row-notes-entry {
     display: flex;
     align-items: center;
