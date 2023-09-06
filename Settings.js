@@ -524,9 +524,9 @@ function init_settings() {
 				</div>
 				<div id='other_export_container'>
 					<span>Specific Local Data Exports:</span>
-					<button id='export_token' onclick='export_token_customization();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing your token customizations including token notes">TOKEN CUSTOMIZATIONS</button>
-					<button id='export_journal' onclick='export_journal();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the journal data including token notes">JOURNAL</button>
-					<button id='export_audio' onclick='export_audio();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the audio data including token notes">AUDIO</button>
+					<button id='export_token' onclick='export_token_customization();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing your token customizations">TOKEN CUSTOMIZATIONS</button>
+					<button id='export_journal' onclick='export_journal();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the journal data">JOURNAL</button>
+					<button id='export_audio' onclick='export_audio();' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Download a file containing the audio data">AUDIO</button>
 				
 				</div>
 
@@ -990,6 +990,7 @@ function export_token_customization() {
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
                 
 	DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
+	DataFile.notes = Object.fromEntries(Object.entries(window.JOURNAL.notes).filter(([key, value]) => window.JOURNAL.notes[key].statBlock == true));
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-token.abovevtt`,"text/plain");
 		
 	$(".import-loading-indicator").remove();		
@@ -1007,7 +1008,7 @@ function export_journal() {
 	};
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-	DataFile.notes = window.JOURNAL.notes;
+	DataFile.notes = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true));
 	DataFile.journalchapters = window.JOURNAL.chapters;
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-journal.abovevtt`,"text/plain");
 		

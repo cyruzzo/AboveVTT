@@ -515,8 +515,6 @@ async function init_tokens_panel() {
     tokensPanel.updateHeader("Tokens");
     add_expand_collapse_buttons_to_header(tokensPanel, true);
 
-    header.append("<div class='panel-warning'>WARNING/WORKINPROGRESS. THIS TOKEN LIBRARY IS CURRENTLY STORED IN YOUR BROWSER STORAGE. IF YOU DELETE YOUR HISTORY YOU LOSE YOUR LIBRARY</div>");
-
     let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
     searchInput.off("input").on("input", mydebounce(() => {
         let textValue = tokensPanel.header.find("input[name='token-search']").val();
