@@ -118,8 +118,9 @@ class JournalManager{
 		const chapter_list=$(`<ul class='folder-item-list'></ul>`);
 		chapter_list.sortable({
 			items: '.folder',
+			refreshPositions: true,
 			update: function(event, ui) {
-				event.stopPropagation()
+				
 				if(!$(this).parent().hasClass('folder-item-list'))
 					return;
 				// Find the old index of the dragged element
@@ -140,10 +141,10 @@ class JournalManager{
 		});
 
 		chapter_list.droppable({
-		    accept: '.folder>.folder',
+		    accept: '#journal-panel .folder>.folder',
+		    greedy: true,
+			tolerance: 'pointer',
 		    drop: function(e,ui) {
-		    	e.stopPropagation()
-
 		    	let folderIndex = ui.draggable.attr('data-index');
 		    	if(self.chapters[folderIndex].parentID){
 		    		delete self.chapters[folderIndex].parentID;
@@ -180,9 +181,10 @@ class JournalManager{
 			// Create a sortale list of notes
 			const note_list=$("<ul class='note-list'></ul>");
 			section_chapter.droppable({
-			    accept: '.folder',
+			    accept: '#journal-panel .folder',
+			    greedy: true,
+				tolerance: 'pointer',
 			    drop: function(e,ui) {
-			    	e.stopPropagation()
 			    	let targetID = $(this).attr('data-id');
 			    	let targetIndex = $(this).attr('data-index');
 			    	let folderIndex = ui.draggable.attr('data-index');
@@ -205,9 +207,9 @@ class JournalManager{
 			// Make the section_chapter sortable
 			section_chapter.sortable({
 				connectWith: ".folder",
+				refreshPositions: true,
 				items: '.sidebar-list-item-row:not(.folder)',
 		        receive: function(event, ui) {
-		        	event.stopPropagation();
 		            // Called only in case B (with !!sender == true)
 		            sender = ui.sender;
 		           	let sender_index = sender.attr('data-index');
@@ -227,7 +229,6 @@ class JournalManager{
 		            event.preventDefault();
 		        },
 				update: function(event, ui) {
-					event.stopPropagation();
 					// Find the old index of the dragged element
 					if(sender==undefined){
 						const old_index = self.chapters[i].notes.findIndex(function(note) {
