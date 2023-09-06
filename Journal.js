@@ -206,9 +206,9 @@ class JournalManager{
 			var sender;
 			// Make the section_chapter sortable
 			section_chapter.sortable({
-				connectWith: ".folder",
 				refreshPositions: true,
-				items: '.sidebar-list-item-row:not(.folder)',
+				connectWith: ".folder-item-list",
+				items: '.sidebar-list-item-row',
 		        receive: function(event, ui) {
 		            // Called only in case B (with !!sender == true)
 		            sender = ui.sender;
@@ -231,13 +231,24 @@ class JournalManager{
 				update: function(event, ui) {
 					// Find the old index of the dragged element
 					if(sender==undefined){
-						const old_index = self.chapters[i].notes.findIndex(function(note) {
-							return note == ui.item.attr('data-id')
-						});
-						// Find the new index of the dragged element
-						const new_index = ui.item.index();
-						// Move the dragged element to the new index
-						self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+						if(ui.item.hasClass('folder')){
+							
+							const old_index = self.chapters.findIndex(function(chapter) {
+								return chapter.id == ui.item.attr('data-id')
+							});
+
+							const new_index = ui.item.next().hasClass('folder') ? ui.item.next().attr('data-index') : ui.item.prev().attr('data-index') ;
+							self.chapters.splice(new_index, 0, self.chapters.splice(old_index, 1)[0]);
+						}
+						else{
+							const old_index = self.chapters[i].notes.findIndex(function(note) {
+								return note == ui.item.attr('data-id')
+							});
+							// Find the new index of the dragged element
+							const new_index = ui.item.index();
+							// Move the dragged element to the new index
+							self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+						}
 						self.persist();
 						window.MB.sendMessage('custom/myVTT/JournalChapters',{
 							chapters: self.chapters
