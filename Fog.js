@@ -218,14 +218,11 @@ class WaypointManagerClass {
 			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
 		}
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
-		if(rulerType == 'euclidean'){
-			distance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
-		}
-		else{
-			distance = Math.round(distance / gridSize);		
-			const addedDistance = (rulerType == "fiveten") ? Math.floor(distance/2) : 0;
-			distance = (distance+addedDistance) * window.CURRENT_SCENE_DATA.fpsq;
-		}
+
+		const eucDistance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
+		distance = Math.round(distance / gridSize);		
+		const addedDistance = (rulerType == "fiveten" && Math.round(eucDistance) > distance * window.CURRENT_SCENE_DATA.fpsq) ? Math.floor(distance/2) : 0;
+		distance = (rulerType == 'euclidean') ? eucDistance : (distance+addedDistance) * window.CURRENT_SCENE_DATA.fpsq;
 		
 		
 
@@ -3007,7 +3004,7 @@ function init_ruler_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option'
 				data-shape='line' data-function="measure" data-type="fiveten" data-unique-with="ruler" >
-					${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)}
+					${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} diagonal
 			</button>
 		</div>`);
 	ruler_menu.append(
@@ -3021,7 +3018,7 @@ function init_ruler_menu(buttons){
 
 	ruler_menu.css("position", "fixed");
 	ruler_menu.css("top", "25px");
-	ruler_menu.css("width", "90px");
+	ruler_menu.css("width", "110px");
 	ruler_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(ruler_menu);
 
@@ -3031,7 +3028,7 @@ function init_ruler_menu(buttons){
 
 	ruler_button.off('click.update').on('click.update', function(){
 		$('#ruler_raw').text(`${window.CURRENT_SCENE_DATA.fpsq} ${window.CURRENT_SCENE_DATA.upsq} per Grid`);
-		$('#ruler_fiveten').text(`${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)}`);
+		$('#ruler_fiveten').text(`${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} diagonal`);
 	});
 
 	buttons.append(ruler_button);
