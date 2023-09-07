@@ -176,7 +176,8 @@ class WaypointManagerClass {
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels, labelX, labelY) {
 
-		var cumulativeDistance = 0
+		var cumulativeDistance = 0;
+		this.numberOfDiagonals = 0;
 		for (var i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
@@ -220,9 +221,19 @@ class WaypointManagerClass {
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
 
 		const eucDistance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
-		distance = Math.round(distance / gridSize);		
-		const addedDistance = (rulerType == "fiveten" && Math.round(eucDistance) > distance * window.CURRENT_SCENE_DATA.fpsq) ? Math.floor(distance/2) : 0;
+		distance = Math.round(distance / gridSize);
+
+		const lineSlope = yLength/xLength;
+		let addedDistance = 0;
+
+		if(rulerType == "fiveten" && lineSlope > 0.6 && lineSlope < 1.4){
+			this.numberOfDiagonals += distance;
+			addedDistance = Math.floor(this.numberOfDiagonals/2);
+		}
+
 		distance = (rulerType == 'euclidean') ? eucDistance : (distance+addedDistance) * window.CURRENT_SCENE_DATA.fpsq;
+		
+	
 		
 		
 
