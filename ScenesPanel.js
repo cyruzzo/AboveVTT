@@ -1271,10 +1271,31 @@ function edit_scene_dialog(scene_id) {
 
 	grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
+	grid_buttons.append(manual_button);
 
 	form.append(form_row('gridConfig', 'Grid Configuration', grid_buttons))
 	form.find('#gridConfig_row').attr('title', '2 options for setting up the grid. A wizard that will allow you to visually and quickly set up the grid. And manual setings if you know the required sizes. Manual settings also include custom units and unit type eg. 5 ft.')
-
+	
+	let manual = $("<div id='manual_grid_data'/>");
+	manual.append($("<div style='margin:0px' title='Grid square size in pixels. Width x Height.'><div style='display:inline-block; width:30%'>Grid pixel size in original image</div><div style='display:inline-block;width:70%;'><input type='number' name='hpps'> X <input type='number' name='vpps'></div></div>"));
+	manual.append($("<div style='margin:0px' title='Grid offset from the sides of the map in pixels. x offset, y offset.'><div style='display:inline-block; width:30%'>Offset</div><div style='display:inline-block;width:70%;'><input type='number' name='offsetx'> X <input type='number' name='offsety'></div></div>"));
+	manual.append($("<div style='margin:0px' title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:30%'>Units per square</div><div style='display:inline-block; width:70'%'><input type='number' name='fpsq'></div></div>"));
+	manual.append($("<div style='margin:0px' title='The unit of the ruler measurment.'><div style='display:inline-block; width:30%'>Distance Unit (i.e. feet)</div><div style='display:inline-block; width:70'%'><input name='upsq'></div></div>"));
+	manual.append($("<div style='margin:0px' title='This will multiply the dimensions of the map by the value input.'><div style='display:inline-block; width:30%'>Scene Scale Factor</div><div style='display:inline-block; width:70'%'><input type='number' name='scale_factor'></div></div>"));
+	
+	manual.find("input").each(function() {
+		$(this).css("width", "60px");
+		$(this).val(scene[$(this).attr('name')]);
+	})
+	manual.hide();
+	form.append(manual);
+	manual_button.click(function() {
+		if (manual.is(":visible"))
+			manual.hide();
+		else
+			manual.show();
+		
+	});
 
 	form.append(`<div style='margin-top:20px; font-size:11px; font-weight: bold'>Hover settings for more info</div>`);
 
