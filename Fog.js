@@ -725,7 +725,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 }
 
 function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[]){
-	if(window.CURRENT_SCENE_DATA.gridType != undefined && window.CURRENT_SCENE_DATA.gridType != 1){
+	if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
 		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
 		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
 		return;
@@ -3849,16 +3849,7 @@ async function redraw_light(){
 
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
-
-
-	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
-		context.fillStyle = "white";
-		context.fillRect(0,0,canvasWidth,canvasHeight);
-		return;
-	}
-
-	offscreenContext.fillStyle = "black";
-	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+	
 
 	if(window.moveOffscreenCanvasMask == undefined){
 		window.moveOffscreenCanvasMask = document.createElement('canvas');
@@ -3867,6 +3858,21 @@ async function redraw_light(){
 
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;
+
+	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
+		context.fillStyle = "white";
+		context.fillRect(0,0,canvasWidth,canvasHeight);
+
+		moveOffscreenContext.fillStyle = "white";
+		moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+		return;
+	}
+
+	offscreenContext.fillStyle = "black";
+	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+
+
+
 
 	moveOffscreenContext.fillStyle = "black";
 	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);

@@ -1642,7 +1642,8 @@ function default_scene_data() {
 		order: Date.now(),
 		darkness_filter: '0',
 		itemType: ItemType.Scene,
-		parentId: RootFolder.Scenes.id
+		parentId: RootFolder.Scenes.id,
+		gridType: 1
 	};
 }
 
