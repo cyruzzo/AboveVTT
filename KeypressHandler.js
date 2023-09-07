@@ -62,7 +62,7 @@ Mousetrap.bind('n', function () {   //while combat menu is open, press n to cycl
 });
 
 Mousetrap.bind('r', function () {       //ruler
-    $('#measure-button').click()
+    $('#ruler_button').click()
 });
 
 
@@ -231,14 +231,14 @@ Mousetrap.bind('alt', function () {
     } else {
         altHeld = true;
     }
-    if (!($('#measure-button').hasClass('button-enabled'))) {
-        $('#measure-button').click()
+    if (!($('#ruler_button').hasClass('button-enabled'))) {
+        $('#ruler_button').click()
     }
     return false
 }, 'keydown');
 
 Mousetrap.bind('alt', function () {
-    if ($('#measure-button').hasClass('button-enabled')) {
+    if ($('#ruler_button').hasClass('button-enabled')) {
         $('#select-button').click()
     }
     altHeld = false;

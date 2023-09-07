@@ -2773,8 +2773,8 @@ function init_buttons() {
 
 	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
 
-	buttons.append($("<button style='display:inline;width:75px;' id='measure-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='line' data-function='measure'><u>R</u>ULER</button>"));
-
+	init_ruler_menu(buttons);
+	
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_walls_menu(buttons)

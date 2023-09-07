@@ -150,7 +150,7 @@ class WaypointManagerClass {
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
 	getSnapPointCoords(x, y) {
-		if (!$('#measure-button').hasClass('button-enabled')) {
+		if (!$('#ruler_menu').hasClass('button-enabled')) {
 			// only snap if the ruler tool is selected.
 			// The select tool manages the snapping based on ctrl key, scene settings, etc. so let it do it's thing
 			return { x: x, y: y };
@@ -209,14 +209,26 @@ class WaypointManagerClass {
 			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
-		let distance = Math.max(Math.abs(snapPointXStart - snapPointXEnd), Math.abs(snapPointYStart - snapPointYEnd));
-		if(Math.abs(snapPointXStart - snapPointXEnd) > Math.abs(snapPointYStart - snapPointYEnd) && window.CURRENT_SCENE_DATA.gridType == 2){
+		const xLength = Math.abs(snapPointXStart - snapPointXEnd);
+		const yLength = Math.abs(snapPointYStart - snapPointYEnd);
+		let distance = Math.max(xLength, yLength);
+		if(xLength > yLength && window.CURRENT_SCENE_DATA.gridType == 2){
 			gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
-		} else if(Math.abs(snapPointXStart - snapPointXEnd) < Math.abs(snapPointYStart - snapPointYEnd) && window.CURRENT_SCENE_DATA.gridType == 3){
+		} else if(xLength < yLength && window.CURRENT_SCENE_DATA.gridType == 3){
 			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
 		}
-		distance = Math.round(distance / gridSize);
-		distance = distance * window.CURRENT_SCENE_DATA.fpsq;
+		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
+		if(rulerType == 'euclidean'){
+			distance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
+		}
+		else{
+			distance = Math.round(distance / gridSize);		
+			const addedDistance = (rulerType == "fiveten") ? Math.floor(distance/2) : 0;
+			distance = (distance+addedDistance) * window.CURRENT_SCENE_DATA.fpsq;
+		}
+		
+		
+
 		coord.distance = distance;
 
 		let textX = 0;
@@ -2375,7 +2387,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
-	topButtonIDs = ["select-button", "measure-button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
+	topButtonIDs = ["select-button", "ruler_button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
 	$(".top_menu").removeClass("visible")
 	topButtonIDs.forEach(function(id) {
 		$(`#${id}`).removeClass(buttonSelectedClasses)
@@ -2980,6 +2992,51 @@ function drawClosingArea(ctx, pointX, pointY) {
 		POLYGON_CLOSE_DISTANCE * 2,
 		POLYGON_CLOSE_DISTANCE * 2);
 	ctx.stroke();
+}
+
+function init_ruler_menu(buttons){
+	ruler_menu = $("<div id='ruler_menu' class='top_menu'></div>");
+	ruler_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='ruler_raw' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option button-enabled ddbc-tab-options__header-heading--is-active'
+				data-shape='line' data-function="measure" data-type="raw" data-unique-with="ruler" >
+					${window.CURRENT_SCENE_DATA.fpsq} ${window.CURRENT_SCENE_DATA.upsq} per Grid
+			</button>
+		</div>`);
+		ruler_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option'
+				data-shape='line' data-function="measure" data-type="fiveten" data-unique-with="ruler" >
+					${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)}
+			</button>
+		</div>`);
+	ruler_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option'
+				data-shape='line' data-function="measure" data-type="euclidean" data-unique-with="ruler" >
+					Euclidean
+			</button>
+		</div>`);
+
+
+	ruler_menu.css("position", "fixed");
+	ruler_menu.css("top", "25px");
+	ruler_menu.css("width", "90px");
+	ruler_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+	$("body").append(ruler_menu);
+
+
+	ruler_button = $("<button style='display:inline;width:75px;' id='ruler_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>R</u>ULER</button>");
+
+
+	ruler_button.off('click.update').on('click.update', function(){
+		$('#ruler_raw').text(`${window.CURRENT_SCENE_DATA.fpsq} ${window.CURRENT_SCENE_DATA.upsq} per Grid`);
+		$('#ruler_fiveten').text(`${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)}`);
+	});
+
+	buttons.append(ruler_button);
+	ruler_menu.css("left", ruler_button.position().left);
+
 }
 
 function init_fog_menu(buttons){
