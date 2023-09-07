@@ -227,7 +227,7 @@ class WaypointManagerClass {
 		let addedDistance = 0;
 
 		if(rulerType == "fiveten" && lineSlope > 0.6 && lineSlope < 1.4){
-			this.numberOfDiagonals += distance;
+			this.numberOfDiagonals = (this.numberOfDiagonals%2 == 0) ? distance : distance+1 ;
 			addedDistance = Math.floor(this.numberOfDiagonals/2);
 		}
 
