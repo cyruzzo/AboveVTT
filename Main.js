@@ -224,7 +224,7 @@ function remove_zoom_from_storage() {
 function apply_zoom_from_storage() {
 	console.group("apply_zoom_from_storage");
 	const zoomState = localStorage.getItem("zoom");
-	if (zoomState) {
+	if (zoomState != null) {
 		const zooms = JSON.parse(zoomState);
 		const zoomIndex = zooms.findIndex(zoom => zoom.title === window.CURRENT_SCENE_DATA.title);
 		if(zoomIndex !== -1) {
