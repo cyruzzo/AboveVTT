@@ -499,43 +499,30 @@ class Token {
 	async moveUp() {	
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);	
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
-		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
-			await this.move(newTop, this.options.left)	
-		}
+		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
+		await this.move(newTop, this.options.left)	
+		
 	}
 	async moveDown() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
-		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
-		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
-			await this.move(newTop, this.options.left)	
-		}
+		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
+		await this.move(newTop, this.options.left)	
+		
 
 	}
 	async moveLeft() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) - addhpps}px`;
-		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
-			await this.move(this.options.top, newLeft)	
-		}
+		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
+		await this.move(this.options.top, newLeft)	
+		
 	}
 	async moveRight() {
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);			
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
-		let newLeft = `${parseFloat(this.options.left) + addhpps}px`;
-		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
-			await this.move(this.options.top, newLeft)	
-		}
+		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
+		await this.move(this.options.top, newLeft)	
 	}
 
 	/**
@@ -564,12 +551,16 @@ class Token {
 			left < this.walkableArea.left - this.options.size || 
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
+		let halfWidth = parseFloat(this.options.size)/2;
+		let inLos = detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
+		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
+			this.options.top = tokenPosition.y + 'px';
+			this.options.left = tokenPosition.x + 'px';
 
-		this.options.top = tokenPosition.y + 'px';
-		this.options.left = tokenPosition.x + 'px';
+			await this.place(100)
+			this.update_and_sync();
+		}
 
-		await this.place(100)
-		this.update_and_sync();
 	}
 
 	snap_to_closest_square() {
@@ -2392,8 +2383,8 @@ class Token {
 	prepareWalkableArea() {
 		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
 		const sizeOnGrid = {
-			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps),
-			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps)
+			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps),
+			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps)
 		};
 
 		// Shorten letiable to improve readability
