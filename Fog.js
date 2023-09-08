@@ -429,24 +429,11 @@ function is_token_under_light_aura(tokenid){
 	
 	let pixeldata = window.lightInLos.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 	
-	if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255}))
-		return true;
-				
-	return  false;
-}
-function is_token_under_light_overlay(tokenid){
-	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-		
-
-	let pixeldata = $('#light_overlay')[0].getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-	
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i]>0 || pixeldata[i+1]>0 || pixeldata[i+2]>0)
 			return true;
 	}
-		
-		
+				
 	return  false;
 }
 
@@ -464,9 +451,9 @@ function check_single_token_visibility(id){
 	
 	const inFog = is_token_under_fog(id); // this token is in fog
 	
-	const notInLight = (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
+	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
-	if (hideThisTokenInFogOrDarkness && ( inFog || notInLight )) {
+	if (hideThisTokenInFogOrDarkness && notInLight ) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -525,26 +512,14 @@ async function do_check_token_visibility() {
 			let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
 			//Combining some and filter cut down about 140ms for average sized picture
-			let someFilter = function(ctx) {
-				let pixelData = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[id].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-				//return (index) % 4 == 0 && color == 255
-				for (let i = 0; i < pixelData.length; i += 4) {
-					if (pixelData[i] === 255) {
-						return true;
-					}
-				}
-
-				return false;
-			};
+		
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
 			const inFog = (pixelData[3] == 255); // this token is in fog
+
+			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 			
-			const fullyOutOfLoS = (!someFilter(ctx2) && playerTokenHasVision); //somefilter checks for a white pixel - if one exists the token isn't out of line of sight. We also check the player token is using vision.
-			
-			const notInLight = (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
-			
-			if (hideThisTokenInFogOrDarkness && ( inFog || fullyOutOfLoS || notInLight )) {
+			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
@@ -4066,14 +4041,19 @@ async function redraw_light(){
 	await Promise.all(promises);
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
+
+	lightInLosContext.globalCompositeOperation='source-over';
+	lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
+
 	lightInLosContext.globalCompositeOperation='source-in';
 	lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 	
-	if(!window.DM)
+	if(!window.DM){
 		do_check_token_visibility();
+	}
 }
 
 

@@ -1478,15 +1478,6 @@ class Token {
 					left: this.options.left,
 					top: this.options.top,
 				}, { duration: animationDuration, queue: true, complete: async function() {
-					const browser = get_browser();
-						if (browser.mozilla || browser.safari) {
-							draw_selected_token_bounding_box().then(() => {}); // execute it asynchronously
-							debounceLightChecks();
-						} else {
-							// scheduler is not supported in all browsers
-							await scheduler.postTask(draw_selected_token_bounding_box, {priority: "user-visible"});
-							await scheduler.postTask(debounceLightChecks, {priority: "user-visible"});
-						}
 						$('.token[data-clone-id^="dragging-"]').remove();
 					}
 				});
@@ -2782,7 +2773,6 @@ function deselect_all_tokens() {
    	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
    		window.SelectedTokenVision = false;
    	}
-    debounceLightChecks();
 }
 
 function token_health_aura(hpPercentage) {
