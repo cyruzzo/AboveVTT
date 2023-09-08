@@ -3003,24 +3003,25 @@ function drawClosingArea(ctx, pointX, pointY) {
 }
 
 function init_ruler_menu(buttons){
+	const storedRulerSelection = localStorage.getItem('RulerSettings' + window.gameid);
 	ruler_menu = $("<div id='ruler_menu' class='top_menu'></div>");
 	ruler_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='ruler_raw' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option button-enabled ddbc-tab-options__header-heading--is-active'
+			<button id='ruler_raw' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option ${(storedRulerSelection == 'raw' || storedRulerSelection == null) ? 'button-enabled ddbc-tab-options__header-heading--is-active' : ''}'
 				data-shape='line' data-function="measure" data-type="raw" data-unique-with="ruler" >
 					${window.CURRENT_SCENE_DATA.fpsq} ${window.CURRENT_SCENE_DATA.upsq} per Grid
 			</button>
 		</div>`);
 		ruler_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option'
+			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option ${(storedRulerSelection == 'fiveten')? 'button-enabled ddbc-tab-options__header-heading--is-active' : ''}'
 				data-shape='line' data-function="measure" data-type="fiveten" data-unique-with="ruler" >
 					${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} diagonal
 			</button>
 		</div>`);
 	ruler_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='ruler_fiveten' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option'
+			<button id='ruler_euc' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option ${(storedRulerSelection == 'euclidean')? 'button-enabled ddbc-tab-options__header-heading--is-active' : ''}'
 				data-shape='line' data-function="measure" data-type="euclidean" data-unique-with="ruler" >
 					Euclidean
 			</button>
@@ -3042,7 +3043,12 @@ function init_ruler_menu(buttons){
 		$('#ruler_fiveten').text(`${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)*2} ${parseFloat(window.CURRENT_SCENE_DATA.fpsq)} diagonal`);
 	});
 
+	ruler_menu.find('button').off('click.store').on('click.store', function(){
+		localStorage.setItem('RulerSettings' + window.gameid, $(this).attr('data-type'));
+	})
+
 	buttons.append(ruler_button);
+
 	ruler_menu.css("left", ruler_button.position().left);
 
 }
