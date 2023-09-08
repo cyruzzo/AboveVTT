@@ -3844,7 +3844,10 @@ function detectInLos(x, y) {
 	let canvas = window.moveOffscreenCanvasMask;
 	let ctx = canvas.getContext("2d", { willReadFrequently: true });
 	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
-	if (pixeldata[2] == 0)
+	const pixeldata1 = ctx.getImageData((x-1)/window.CURRENT_SCENE_DATA.scale_factor, (y-1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+	const pixeldata2 = ctx.getImageData((x+1)/window.CURRENT_SCENE_DATA.scale_factor, (y+1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+	
+	if (pixeldata[2] == 0 || pixeldata1[2] == 0 || pixeldata2[2] == 0 )
 	{	
 		return false;			
 	}
