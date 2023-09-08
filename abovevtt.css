@@ -3858,6 +3858,13 @@ div#importer_area>div>div:first-of-type {
     overflow-y: auto;
     flex: auto;
 }
+#token-configuration-modal .sidebar-panel-body{
+    min-height:300px;
+}
+#token-configuration-modal{
+    height: unset;
+}
+
 .tokens-panel-back-button {
     background-image: url(https://media-waterdeep.cursecdn.com/file-attachments/0/737/chevron-left-green.svg);
     background-repeat: no-repeat;
