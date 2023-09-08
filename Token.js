@@ -48,7 +48,7 @@ const debounceLightChecks = mydebounce(() => {
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		redraw_light();
 		
-}, 500);
+}, 20);
 
 
 function random_token_color() {
@@ -502,7 +502,7 @@ class Token {
 		let newTop = `${parseFloat(this.options.top) - addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(!this.options.auraislight || inLos){
+		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			await this.move(newTop, this.options.left)	
 		}
 	}
@@ -512,7 +512,7 @@ class Token {
 		let newTop = `${parseFloat(this.options.top) + addvpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(this.options.left)+halfWidth, parseFloat(newTop)+halfWidth);
-		if(!this.options.auraislight || inLos){
+		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			await this.move(newTop, this.options.left)	
 		}
 
@@ -523,7 +523,7 @@ class Token {
 		let newLeft = `${parseFloat(this.options.left) - addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(!this.options.auraislight || inLos){
+		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			await this.move(this.options.top, newLeft)	
 		}
 	}
@@ -533,7 +533,7 @@ class Token {
 		let newLeft = `${parseFloat(this.options.left) + addhpps}px`;
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = detectInLos(parseFloat(newLeft)+halfWidth, parseFloat(this.options.top)+halfWidth);
-		if(!this.options.auraislight || inLos){
+		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			await this.move(this.options.top, newLeft)	
 		}
 	}
@@ -1920,7 +1920,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")){
 							WaypointManager.fadeoutMeasuring()
 						}	
-						setTimeout(debounceLightChecks, 250)
+						debounceLightChecks();
 
 						self.update_and_sync(event, false);
 						if (self.selected ) {

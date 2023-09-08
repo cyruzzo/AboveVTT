@@ -427,31 +427,11 @@ function is_token_under_light_aura(tokenid){
 	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
 	
-
-	let visibleLightAuras = $(".aura-element-container-clip .aura-element:not([style*='visibility: hidden'])");
-
-	for(let auraIndex = 0; auraIndex < visibleLightAuras.length; auraIndex++){
-		let auraId = $(visibleLightAuras[auraIndex]).attr('data-id');
-		if(window.lightAuraClipPolygon == undefined)
-			continue;
-		if(window.lightAuraClipPolygon[auraId] == undefined)
-			continue;
-		let bounds = {
-			left: parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')), 
-			top:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')),
-			right:  parseInt($(visibleLightAuras[auraIndex]).css('left').replace('px', '')) + $(visibleLightAuras[auraIndex]).width(),
-			bottom:  parseInt($(visibleLightAuras[auraIndex]).css('top').replace('px', '')) + $(visibleLightAuras[auraIndex]).width()
-		};
-
-		if(horizontalMiddle > bounds.left && horizontalMiddle < bounds.right && verticalMiddle > bounds.top && verticalMiddle < bounds.bottom){
+	let pixeldata = window.lightInLos.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+	
+	if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255}))
+		return true;
 				
-
-			let pixeldata = window.lightAuraClipPolygon[auraId].canvas.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-			
-			if(pixeldata.some(function(color, index) {return (index) % 4 == 0 && color == 255}))
-				return true;
-		}		
-	}
 	return  false;
 }
 function is_token_under_light_overlay(tokenid){
@@ -484,7 +464,7 @@ function check_single_token_visibility(id){
 	
 	const inFog = is_token_under_fog(id); // this token is in fog
 	
-	const notInLight = (playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
+	const notInLight = (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
 	
 	if (hideThisTokenInFogOrDarkness && ( inFog || notInLight )) {
 		$(selector + "," + auraSelector).hide();
@@ -562,7 +542,7 @@ async function do_check_token_visibility() {
 			
 			const fullyOutOfLoS = (!someFilter(ctx2) && playerTokenHasVision); //somefilter checks for a white pixel - if one exists the token isn't out of line of sight. We also check the player token is using vision.
 			
-			const notInLight = (playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && !is_token_under_light_overlay(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (hideThisTokenInFogOrDarkness && ( inFog || fullyOutOfLoS || notInLight )) {
 				$(tokenSelector + "," + auraSelector).hide();
@@ -3591,7 +3571,7 @@ function init_vision_menu(buttons){
 		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
 		if (r === true) {
 			// keep only text
-			window.DRAWINGS = window.DRAWINGS.filter(d => !d[1].includes('light') );
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] != 'light');
 			redraw_drawings()
 			sync_drawings()
 		}
@@ -3939,6 +3919,12 @@ async function redraw_light(){
 		return;
 	}
 
+	delete window.lightInLos;
+	window.lightInLos = document.createElement('canvas');
+	window.lightInLos.width = canvasWidth;
+	window.lightInLos.height = canvasHeight;
+
+
 	offscreenContext.fillStyle = "black";
 	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
@@ -3994,6 +3980,8 @@ async function redraw_light(){
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
+
+
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
 			let currentLightAura = $(light_auras[i]);
@@ -4048,6 +4036,15 @@ async function redraw_light(){
 			}
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
+
+			if(window.lightAuraClipPolygon[auraId]){
+				let lightInLosContext = window.lightInLos.getContext('2d');
+				lightInLosContext.globalCompositeOperation='source-over';
+				lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
+			}
+
+
+
 			
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
 				
@@ -4067,6 +4064,12 @@ async function redraw_light(){
 		})); 	
 	}
 	await Promise.all(promises);
+	let lightInLosContext = window.lightInLos.getContext('2d');
+
+	lightInLosContext.globalCompositeOperation='source-in';
+	lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
+
+
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 	
 	if(!window.DM)
@@ -4117,6 +4120,8 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 			y: verticalTokenMiddle
 		} 
 	}
+
+
 }
 
 
