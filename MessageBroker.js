@@ -1422,7 +1422,7 @@ class MessageBroker {
         reset_canvas();
 				
 				// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
-				if(!window.DM && data.dm_map_usable=="1"){
+				if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
 					$("#scene_map").stop();
 					$("#scene_map").css("opacity","0");
 					console.log("switching back to player map");
@@ -1431,13 +1431,10 @@ class MessageBroker {
 						$("#scene_map").css('opacity', 1)
 						$("#darkness_layer").show();
 					});
-					if(data.UVTTFile == 1){
-						let uvttMap = await get_map_from_uvtt_file(data.player_map);
-						$("#scene_map").attr('src', uvttMap); 
-					}
-					else{
-						$("#scene_map").attr('src', data.player_map);
-					}		
+					
+				
+					$("#scene_map").attr('src', data.player_map);
+						
 				}
 				console.log("LOADING TOKENS!");
 
