@@ -290,14 +290,15 @@ function init_characters_pages(container = $(document)) {
   if(!is_abovevtt_page()){
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
-        observe_character_sheet_changes($(document));
+        convertToRPGRoller();
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
         if(window.sendToTab != false)
           window.sendToTab = event.data.tab
       }
       if(event.data.msgType =='removeObserver'){
-        debounceRemoveRPGRoller();
+        $('.integrated-dice__container').off('click.rpg-roller'); 
+        delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTab = undefined;
         tabCommunicationChannel.postMessage({
           msgType: 'isAboveOpen'
@@ -311,12 +312,27 @@ function init_characters_pages(container = $(document)) {
   }
 }
 
-const debounceConvertToRPGRoller =  mydebounce(() => {
+const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 1500)
+
+
+const debounceRemoveRPGRoller =  mydebounce(() => {
+    $('.integrated-dice__container').off('click.rpg-roller'); 
+    delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
+}, 1500)
+
+
+function convertToRPGRoller(){
     $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
           e.stopPropagation();
           e.preventDefault();
-
-          let rollData = getRollData(this)
+          let rollData = {}
+          if($(this).hasClass('avtt-roll-formula-button')){
+             rollData = window.diceRoller.fromSlashCommand(this)
+          }
+          else{
+             rollData = getRollData(this)
+          }
+          
           
           if (rollData.rollType === "damage") {
             damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
@@ -328,12 +344,16 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
       })
     $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       e.stopImmediatePropagation();
+     
+      let rollData = {}
+
+ 
+      rollData = getRollData(this)
       
-      let rollData = getRollData(this);
 
 
       let msgdata = {}
-      if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+      if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
 
         msgdata = {
           player: window.PLAYER_NAME,
@@ -356,7 +376,7 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
         };
       }
    
-      if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+      if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
         window.MB.inject_chat(msgdata);
       }
       else if(!is_abovevtt_page()){
@@ -367,11 +387,7 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
       }
 
     });
-}, 1500)
-
-const debounceRemoveRPGRoller =  mydebounce(() => {
-    $('.integrated-dice__container').off('click.rpg-roller'); 
-}, 1500)
+}
 
 function getRollData(rollButton){
     let expression = '';
@@ -384,7 +400,9 @@ function getRollData(rollButton){
     else if($(rollButton).find('.ddbc-healing-icon').length > 0){
       expression = $(rollButton).text().replace(/\s/g, '');
     }
-
+    if($(rollButton).hasClass('avtt-roll-formula-button')){
+      expression = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command')).expression;
+    }
     let roll = new rpgDiceRoller.DiceRoll(expression); 
     let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
     let rollType = 'custom';
@@ -440,6 +458,7 @@ function init_character_sheet_page() {
 
   // check for name and image
   set_window_name_and_image(function() {
+    observe_character_sheet_changes($(document));
     inject_join_exit_abovevtt_button();
     observe_character_theme_change();
     observe_character_image_change();
@@ -541,7 +560,10 @@ function observe_character_sheet_changes(documentToObserve) {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
        
-        debounceConvertToRPGRoller();
+        if((!is_abovevtt_page() && window.sendToTab !== undefined) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)
+          debounceConvertToRPGRoller();
+        else
+          $('.integrated-dice__container').off('click.rpg-roller');
         
         switch (mutation.type) {
           case "attributes":
