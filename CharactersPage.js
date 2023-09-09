@@ -286,6 +286,27 @@ function init_characters_pages(container = $(document)) {
   // it's ok to call both of these, because they will do any clean up they might need and then return early
   init_character_sheet_page();
   init_character_list_page_without_avtt();
+
+  if(!is_abovevtt_page()){
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(event.data.msgType == 'setupObserver'){
+        observe_character_sheet_changes($(document));
+        if(window.sendToTab != false)
+          window.sendToTab = event.data.tab
+      }
+      if(event.data.msgType =='removeObserver'){
+        debounceRemoveRPGRoller();
+        window.sendToTab = undefined;
+        tabCommunicationChannel.postMessage({
+          msgType: 'isAboveOpen'
+        });
+      }
+    })
+    tabCommunicationChannel.postMessage({
+      msgType: 'isAboveOpen'
+    })
+  
+  }
 }
 
 const debounceConvertToRPGRoller =  mydebounce(() => {
@@ -309,7 +330,10 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
       let rollData = getRollData(this);
 
 
-      let msgdata = {
+      let msgdata = {}
+      if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+
+        msgdata = {
           player: window.PLAYER_NAME,
           img: window.PLAYER_IMG,
           text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
@@ -317,11 +341,23 @@ const debounceConvertToRPGRoller =  mydebounce(() => {
           rollType: rollData.rollType,
           result: rollData.roll.total,
           playerId: window.PLAYER_ID
-      };
-      if(is_abovevtt_page()){
-        window.MB.inject_chat(msgdata);
+        };
       }
       else{
+        msgdata = {
+          player: window.PLAYER_NAME,
+          img: window.PLAYER_IMG,
+          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+          playerId: window.PLAYER_ID,
+          rollData: rollData,
+          sendTo: window.sendToTab 
+        };
+      }
+   
+      if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+        window.MB.inject_chat(msgdata);
+      }
+      else if(!is_abovevtt_page()){
         tabCommunicationChannel.postMessage({
           msgType: 'roll',
           msg: msgdata,
@@ -402,7 +438,6 @@ function init_character_sheet_page() {
 
   // check for name and image
   set_window_name_and_image(function() {
-    observe_character_sheet_changes($(document));
     inject_join_exit_abovevtt_button();
     observe_character_theme_change();
     observe_character_image_change();
@@ -411,7 +446,7 @@ function init_character_sheet_page() {
   // observe window resizing and injeect our join/exit button if necessary
   window.addEventListener('resize', function(event) {
     inject_join_exit_abovevtt_button();
-  });
+  }); 
 }
 
 /** actions to take on the characters list when AboveVTT is NOT running */
@@ -503,11 +538,9 @@ function observe_character_sheet_changes(documentToObserve) {
         console.debug("character_sheet_observer mutation", mutation);
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
-        if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
-          debounceConvertToRPGRoller();
-        } else{
-          debounceRemoveRPGRoller();
-        }
+       
+        debounceConvertToRPGRoller();
+        
         switch (mutation.type) {
           case "attributes":
             if (

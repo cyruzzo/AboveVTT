@@ -8,6 +8,9 @@ window.onbeforeunload = function(event)
 		console.log("refreshing page, storing zoom first");
 		add_zoom_to_storage();
 		window.PeerManager.send(PeerEvent.goodbye());
+		tabCommunicationChannel.postMessage({
+      		msgType: 'removeObserver'
+    	})
 	}
 };
 
@@ -1701,7 +1704,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
 
-		observe_character_sheet_changes($(event.target).contents());
+	
 
 
 		let scripts = [
@@ -1738,6 +1741,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    ($(event.target)[0].contentDocument.head || $(event.target)[0].contentDocument.documentElement).appendChild(s);
 		}
 		injectScript();
+
+		observe_character_sheet_changes($(event.target).contents());
 
 		$(event.target).contents().find("head").append(`
 			<style>
