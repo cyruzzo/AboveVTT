@@ -264,24 +264,56 @@ class DiceRoller {
                 console.warn("parseAndRoll called while we were waiting for another roll to finish up");
                 return false;
             }
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
-                let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
-                let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
-                let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
-                let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
-                
-                let msgdata = {
-                      player: window.PLAYER_NAME,
-                      img: window.PLAYER_IMG,
-                      text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
-                      whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
-                      rollType: rollType,
-                      result: roll.total,
-                      playerId: window.PLAYER_ID
-                  };
-                window.MB.inject_chat(msgdata);                 
+            let msgdata = {}
+            let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+            let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
+            let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
+            let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
+            let modifier = (roll.rolls.length > 1) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+            
+            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+                msgdata = {
+                player: window.PLAYER_NAME,
+                  img: window.PLAYER_IMG,
+                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
+                  whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+                  rollType: rollType,
+                  result: roll.total,
+                  playerId: window.PLAYER_ID
+                };
+            }                         
+            else{
+                let rollData = {
+                    roll: roll,
+                    expression: diceRoll.expression.split(/[+-]/g)[0],
+                    rollType: rollType,
+                    rollTitle: rollTitle,
+                    modifier: modifier,
+                    regExpression: regExpression
+                }
+                      
+                msgdata = {
+                  player: window.PLAYER_NAME,
+                  img: window.PLAYER_IMG,
+                  whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+                  playerId: window.PLAYER_ID,
+                  rollData: rollData,
+                  sendTo: window.sendToTab 
+                };
+            }
+
+
+            if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+                window.MB.inject_chat(msgdata);
                 return true;
             }
+            else if(!is_abovevtt_page()){
+                tabCommunicationChannel.postMessage({
+                      msgType: 'roll',
+                      msg: msgdata,
+                    });
+                return true;
+            }               
 
             console.group("DiceRoller.parseAndRoll");
             console.log("attempting to parse diceRoll", diceRoll);
@@ -303,7 +335,7 @@ class DiceRoller {
             console.groupEnd();
             return true;
         } catch (error) {
-            console.warn("failed to parse and send expression as DDB roll; expression: ", expression, error);
+            console.warn("failed to parse and send expression as DDB roll; expression: ", diceRoll.expression, error);
             this.#resetVariables();
             console.groupEnd();
             return false;

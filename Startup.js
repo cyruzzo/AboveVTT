@@ -47,7 +47,8 @@ $(function() {
           // this should never happen because `is_abovevtt_page` covers all the above cases, but cover all possible cases anyway
           throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
-      }).then(() => {        
+      }).then(() => {      
+        window.diceRoller = new DiceRoller();  
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;

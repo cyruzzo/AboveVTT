@@ -30,7 +30,7 @@ $(function() {
     window.DM = false;
   }
 
-  window.diceRoller = new DiceRoller();
+  window.diceRoller = new DiceRoller(); 
   
 });
 

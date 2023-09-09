@@ -1712,6 +1712,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    { src: "jquery-3.6.0.min.js" },
 		    // AboveVTT Files
 		    { src: "DiceContextMenu/DiceContextMenu.js" },
+		   
 		    { src: "DiceRoller.js" },
 		    { src: "DDBApi.js" },
 		    { src: "rpg-dice-roller.bundle.min.js" },
@@ -1741,9 +1742,9 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    ($(event.target)[0].contentDocument.head || $(event.target)[0].contentDocument.documentElement).appendChild(s);
 		}
 		injectScript();
-
+		
 		observe_character_sheet_changes($(event.target).contents());
-
+		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button {
