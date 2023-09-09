@@ -720,6 +720,17 @@ function delete_token_customization_by_parent_id(parentId, callback) {
         callback(false);
         return;
     }
+    let tokensToBeDeleted = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId == parentId);
+    for(i = 0; i < tokensToBeDeleted.length; i++){
+        let statBlockID = tokensToBeDeleted[i].tokenOptions?.statBlock;
+        if(statBlockID){
+            delete window.JOURNAL.notes[statBlockID]
+            if(window.JOURNAL.statBlocks)
+                delete window.JOURNAL.statBlocks[statBlockID]
+            window.JOURNAL.persist();
+        }
+    }
+
 
     window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId !== parentId);
 
@@ -731,7 +742,15 @@ function delete_token_customization_by_type_and_id(itemType, id, callback) {
         callback = function(){};
     }
     let index = window.TOKEN_CUSTOMIZATIONS.findIndex(tc => tc.tokenType === itemType && tc.id === id);
+
     if (index >= 0) {
+        let statBlockID = window.TOKEN_CUSTOMIZATIONS[index]?.tokenOptions?.statBlock;
+        if(statBlockID){
+            delete window.JOURNAL.notes[statBlockID]
+            if(window.JOURNAL.statBlocks)
+                delete window.JOURNAL.statBlocks[statBlockID]
+            window.JOURNAL.persist();
+        }
         window.TOKEN_CUSTOMIZATIONS.splice(index, 1);
     }
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
