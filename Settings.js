@@ -417,6 +417,14 @@ function set_avtt_setting_value(name, newValue) {
 		case "receiveRulerFromPeers":
 			local_peer_setting_changed(name, newValue);
 			break;
+		case "rpgRoller":
+		 if(is_abovevtt_page()){
+		    tabCommunicationChannel.postMessage({
+		      msgType: 'setupObserver',
+		      tab: window.PLAYER_ID,
+		      rpgRoller: newValue
+		    })
+		  }
 	}
 }
 

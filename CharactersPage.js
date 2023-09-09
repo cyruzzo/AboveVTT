@@ -291,6 +291,8 @@ function init_characters_pages(container = $(document)) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
         observe_character_sheet_changes($(document));
+
+        window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
         if(window.sendToTab != false)
           window.sendToTab = event.data.tab
       }

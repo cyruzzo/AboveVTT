@@ -31,69 +31,7 @@ $(function() {
   }
 
   window.diceRoller = new DiceRoller();
-  if (is_abovevtt_page()) {
-    tabCommunicationChannel.addEventListener ('message', (event) => {
-      if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
-        return;
-      if(event.data.msgType == 'roll'){
-        if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){
-           window.MB.inject_chat(event.data.msg);
-        }
-        else{
-          if(event.data.msg.sendTo == window.PLAYER_ID){
-            window.diceRoller.roll(new DiceRoll(
-              `${event.data.msg.rollData.expression}${event.data.msg.rollData.modifier}`,
-              event.data.msg.rollData.rollTitle,
-              event.data.msg.rollData.rollType,
-              event.data.msg.player,
-              event.data.msg.img,
-              "character",
-              event.data.msg.playerId
-            ));
-          }
-        }       
-        return;
-      }
-      if(event.data.msgType=='isAboveOpen'){
-        tabCommunicationChannel.postMessage({
-          msgType: 'setupObserver',
-          tab: window.PLAYER_ID
-        })
-        return;
-      }
-
-      if(!window.DM){
-        if(event.data.msgType == 'CharacterData'){
-          window.MB.sendMessage("custom/myVTT/character-update", {
-            characterId: event.data.characterId,
-            pcData: event.data.pcData
-          });
-        }
-        else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
-          let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
-          window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);
-        }
-        else if(event.data.msgType == 'projectionZoom' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
-          change_zoom(event.data.newZoom, event.data.x, event.data.y);
-        }
-
-      }
-      else if(event.data.msgType == 'CharacterData'){
-        update_pc_with_data(event.data.characterId, event.data.pcData);
-      }
-    })
-  }
-  if(is_abovevtt_page()){
-    tabCommunicationChannel.postMessage({
-      msgType: 'setupObserver',
-      tab: window.PLAYER_ID
-    })
-  }
-  else{
-    tabCommunicationChannel.postMessage({
-      msgType: 'isAboveOpen'
-    })
-  }
+  
 });
 
 const async_sleep = m => new Promise(r => setTimeout(r, m));
