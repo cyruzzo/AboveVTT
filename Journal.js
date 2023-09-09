@@ -321,7 +321,7 @@ class JournalManager{
 				});
 			});
 			
-			let btn_del_chapter=$("<button class='btn-chapter-icon'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
+			let btn_del_chapter=$("<button class='btn-chapter-icon btn-delete-chapter'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 			
 			btn_del_chapter.click(function(){
 				// TODO: Make this better but default dialog is good enough for now
@@ -331,8 +331,23 @@ class JournalManager{
 						let nid=self.chapters[i].notes[k];
 						delete self.notes[nid];
 					}
+					
+					self.chapters = self.chapters.filter(d => d.id != self.chapters[i].id)
+					
+					$(this).closest('.folder').find('.folder').each(function(){
+						let folderId = $(this).attr('data-id');
+						let chapter = self.chapters.filter(d => d.id == folderId)[0];
 
-					self.chapters.splice(i,1);
+
+						for(let k=0;k<chapter.notes.length;k++){
+							let nid=chapter.notes[k];
+							delete self.notes[nid];
+						}
+
+						self.chapters = self.chapters.filter(d => d.id != folderId)
+
+					})
+					
 					window.MB.sendMessage('custom/myVTT/JournalChapters',{
 						chapters: self.chapters
 					});
@@ -495,7 +510,7 @@ class JournalManager{
 					window.JOURNAL.edit_note(note_id);	
 				});
 				let note_index=n;
-				let delete_btn=$("<button class='btn-chapter-icon delete-journal-chapter'><img src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
+				let delete_btn=$("<button class='btn-chapter-icon'><img src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
 				delete_btn.click(function(){
 					if(confirm("Delete this note?")){
 						console.log("deleting note_index"+note_index);
