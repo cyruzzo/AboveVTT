@@ -661,7 +661,13 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		stat.click(function(){			
 			if(token.options.statBlock){
 				let customStatBlock = window.JOURNAL.notes[token.options.statBlock].text;
-				load_monster_stat(undefined, token.options.id, customStatBlock);
+				let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
+				if(pcURL){
+					open_player_sheet(pcURL);
+				}else{
+					load_monster_stat(undefined, token.options.id, customStatBlock)
+				}
+
 				return;
 			}
 			load_monster_stat(token.options.monster, token.options.id);
