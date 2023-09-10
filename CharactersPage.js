@@ -442,11 +442,11 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
       }
     }
-    const modifier = (roll.rolls.length > 1) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
 
     return {
       roll: roll,
-      expression: expression.split(/[+-]/g)[0],
+      expression: expression,
       rollType: rollType,
       rollTitle: rollTitle,
       modifier: modifier,
