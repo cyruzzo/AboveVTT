@@ -399,35 +399,29 @@ class WaypointManagerClass {
 };
 
 
-function is_token_under_fog(tokenid){
+function is_token_under_fog(tokenid, fogContext=undefined){
 	if(window.DM)
 		return false;
-	let canvas = document.getElementById("fog_overlay");
-	let ctx = canvas.getContext("2d", {willReadFrequently: true});
-	let canvas2 = document.getElementById("raycastingCanvas");
-	let ctx2 = canvas2.getContext("2d", {willReadFrequently: true});
 
-
+	if(fogContext == undefined){
+		fogContext = $('#fog_overlay')[0].getContext('2d', {willReadFrequently: true});
+	}
 	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-	let pixeldata = ctx.getImageData(left, top, 1, 1).data;
-	let pixeldata2 = ctx2.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
-		
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-	let someFilter = function(color, index) {return (index) % 4 == 0 && color == 255};
+	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && (pixeldata[3] == 255 || (!pixeldata2.some(someFilter) && playerTokenAuraIsLight && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))))
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] == 255)
 		return true;
 	else
 		return false;
 }
 
-function is_token_under_light_aura(tokenid){
-	let horizontalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	let verticalMiddle = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor;
-	
-	let pixeldata = window.lightInLos.getContext('2d').getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+function is_token_under_light_aura(tokenid, lightContext=undefined){
+	if(lightContext == undefined){
+		lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
+	}
+
+	let pixeldata = lightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i]>0 || pixeldata[i+1]>0 || pixeldata[i+2]>0)
@@ -494,15 +488,11 @@ async function do_check_token_visibility() {
 	if (canvas.style.diplay == "none")
 		return;
 	let ctx = canvas.getContext("2d",  { willReadFrequently: true });
-	let canvas2 = document.getElementById("raycastingCanvas");
-	let ctx2 = canvas2.getContext("2d",  { willReadFrequently: true });
 
 	let promises = [];
+	let lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
-			let left = (parseInt(window.TOKEN_OBJECTS[id].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeWidth() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-			let top = (parseInt(window.TOKEN_OBJECTS[id].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[id].sizeHeight() / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-			let pixelData = ctx.getImageData(left, top, 1, 1).data;
 			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let tokenSelector = "div.token[data-id='" + id + "']";
@@ -515,9 +505,9 @@ async function do_check_token_visibility() {
 		
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
-			const inFog = (pixelData[3] == 255); // this token is in fog
+			const inFog = is_token_under_fog(id, ctx); // this token is in fog
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
