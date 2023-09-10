@@ -2201,37 +2201,44 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 
 	
 	window.rollButtonObserver = new MutationObserver(function() {
-	        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
 
-			if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-				$(".dice-die-button").each(function() {
-					let dieSize = $(this).attr("data-dice");
-					let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
-					let diceCountElement = $(this).find(".dice-die-button__count");
-					ourDiceElement.parent().find("span").remove();
-					if (diceCountElement.length == 0) {
-						ourDiceElement.removeAttr("data-count");
-					} else {
-						let diceCount = parseInt(diceCountElement.text());
-						ourDiceElement.attr("data-count", diceCount);
-						ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
-					}
-				})
+		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+			$(".dice-die-button").each(function() {
+				let dieSize = $(this).attr("data-dice");
+				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+				let diceCountElement = $(this).find(".dice-die-button__count");
+				ourDiceElement.parent().find("span").remove();
+				if (diceCountElement.length == 0) {
+					ourDiceElement.removeAttr("data-count");
+				} else {
+					let diceCount = parseInt(diceCountElement.text());
+					ourDiceElement.attr("data-count", diceCount);
+					ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+				}
+			})
 
 
-				// make sure our roll button is shown/hidden after all animations have completed
-				setTimeout(function() {
-					if ($(".dice-toolbar").hasClass("rollable")) {
-						$(".roll-button").addClass("show");
-					} else {
-						$(".roll-button").removeClass("show");
-					}
-				}, 0);
-			}
-	    })
-	  const mutation_target = $(".dice-toolbar__dropdown")[0];
-	  const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-	  window.rollButtonObserver.observe(mutation_target, mutation_config);
+			// make sure our roll button is shown/hidden after all animations have completed
+			setTimeout(function() {
+				if ($(".dice-toolbar").hasClass("rollable")) {
+					$(".roll-button").addClass("show");
+				} else {
+					$(".roll-button").removeClass("show");
+				}
+			}, 0);
+		}
+    })
+	const mutation_target = $(".dice-toolbar__dropdown")[0];
+	const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+	window.rollButtonObserver.observe(mutation_target, mutation_config);
+
+	window.sendToDefaultObserver = new MutationObserver(function() {
+    	localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
+	})
+	const sendto_mutation_target = $(".glc-game-log .tss-l9t796-SendToLabel")[0];
+	const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+	window.sendToDefaultObserver.observe(mutation_target, mutation_config);
 
 	
 
