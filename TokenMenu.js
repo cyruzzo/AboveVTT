@@ -128,7 +128,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	if (tokens.length === 1) {
 		let token = tokens[0];
-		if (token.isPlayer() && window.DM) {
+		if (token.isPlayer() && !token.options.id.includes(window.PLAYER_ID)) {
 			let button = $(`<button>Open Character Sheet<span class="material-icons icon-view"></span></button>`);
 			button.on("click", function() {
 				open_player_sheet(token.options.id);
