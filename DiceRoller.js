@@ -269,7 +269,7 @@ class DiceRoller {
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
             let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
             let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
-            let modifier = (roll.rolls.length > 1) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+            let modifier = (roll.rolls.length > 1 && diceRoll.expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
             
             if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 msgdata = {
@@ -285,7 +285,7 @@ class DiceRoller {
             else{
                 let rollData = {
                     roll: roll,
-                    expression: diceRoll.expression.split(/[+-]/g)[0],
+                    expression: diceRoll.expression,
                     rollType: rollType,
                     rollTitle: rollTitle,
                     modifier: modifier,

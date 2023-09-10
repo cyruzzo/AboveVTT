@@ -59,7 +59,7 @@ $(function() {
             else{
               if(event.data.msg.sendTo == window.PLAYER_ID){
                 window.diceRoller.roll(new DiceRoll(
-                  `${event.data.msg.rollData.expression}${event.data.msg.rollData.modifier}`,
+                  `${event.data.msg.rollData.expression}`,
                   event.data.msg.rollData.rollTitle,
                   event.data.msg.rollData.rollType,
                   event.data.msg.player,
