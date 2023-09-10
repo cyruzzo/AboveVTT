@@ -290,6 +290,7 @@ function init_characters_pages(container = $(document)) {
   if(!is_abovevtt_page()){
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
+         observe_character_sheet_changes($(document));
         convertToRPGRoller();
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
@@ -322,6 +323,7 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
+
     $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
           e.stopPropagation();
           e.preventDefault();
@@ -553,10 +555,11 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     });
 
+
+
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       try {
-        console.debug("character_sheet_observer mutation", mutation);
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
        
@@ -565,6 +568,55 @@ function observe_character_sheet_changes(documentToObserve) {
         else
           $('.integrated-dice__container').off('click.rpg-roller');
         
+        mutation.removedNodes.forEach(function(removed_node) {
+          if($(removed_node).hasClass("ct-game-log-pane")) {
+            setTimeout(function() {
+              change_sidbar_tab($("#switch_gamelog"), true);
+              // deselect the gamelog tab since we're not technically showing the gamelog
+              deselect_all_sidebar_tabs();
+              $("#switch_gamelog svg").attr("class", "gamelog-button__icon");
+            }, 0);
+          }
+        });
+
+
+  
+        if (mutationTarget.hasClass('ct-sidebar__pane-content') && mutationTarget.find('.ct-creature-pane').length>0) {
+          scan_player_creature_pane(mutationTarget);
+        }
+
+        if(is_abovevtt_page()){
+           
+            // console.log(`sidebar inserted: ${event.target.classList}`);
+          if (mutationTarget.hasClass('ct-sidebar__pane-content')){
+             // The user clicked on something that shows details. Open the sidebar and show it
+            show_sidebar();
+          if (mutationTarget.find(".ct-game-log-pane").length>0) {
+            inject_chat_buttons();
+            window.MB.reprocess_chat_message_history();
+          }
+
+            if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
+              // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
+              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
+            }
+          }
+            
+
+         
+          if(mutationTarget.hasClass("ddbc-tab-list__content")){
+            if (!is_player_sheet_full_width()) {
+              $(".ct-primary-box").css({ "height": "610px" });
+              $(".ddbc-tab-options__content").css({ "height": "510px" });
+              // these need a little more space due to the filter search bar
+              $(".ct-extras").css({ "height": "540px" });
+              $(".ct-equipment").css({ "height": "540px" });
+              $(".ct-spells").css({ "height": "540px" });
+            }  
+          }
+        }
+
+
         switch (mutation.type) {
           case "attributes":
             if (

@@ -5,12 +5,13 @@
 window.onbeforeunload = function(event)
 {
 	if (is_abovevtt_page()) {
-		console.log("refreshing page, storing zoom first");
-		add_zoom_to_storage();
-		window.PeerManager.send(PeerEvent.goodbye());
 		tabCommunicationChannel.postMessage({
       		msgType: 'removeObserver'
     	})
+		console.log("refreshing page, storing zoom first");
+		add_zoom_to_storage();
+		window.PeerManager.send(PeerEvent.goodbye());
+
 	}
 };
 
@@ -1743,7 +1744,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		}
 		injectScript();
 		
-		observe_character_sheet_changes($(event.target).contents());
+		
 		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
@@ -1801,23 +1802,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		console.log("removing headers");
 
 
-		
-		$(event.target).contents().on("DOMNodeInserted", function(addedEvent) {
-			let addedElement = $(addedEvent.target);
-			if (addedElement.hasClass("ct-sidebar__pane")) {
-				let statBlock = addedElement.find(".ct-creature-pane");
-				if (statBlock.length > 0) {
-					scan_player_creature_pane(statBlock);
-				}
-			}
-		});
-		$(event.target).contents().on("DOMSubtreeModified", ".ct-sidebar__pane", function(modifiedEvent) {
-			let statBlock = $(modifiedEvent.target).find(".ct-creature-pane");
-			if (statBlock.length > 0) {
-				scan_player_creature_pane(statBlock);
-			}
-		});
-
 		// DICE STREAMING ?!?!
 		if(!window.DM){
 			let firstTime=false;
@@ -1840,24 +1824,11 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 		}
 
-		var mutation_target = $(event.target).contents().get(0);
-		var mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-
 		observe_character_sheet_aoe($(event.target).contents());
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
 
-		var observer = new MutationObserver(function(mutations) {
-			console.log('scattai');
-			event.target.contentWindow.EXPERIMENTAL_SETTINGS['rpgRoller'] = window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-			var sidebar = $(event.target).contents().find(".ct-sidebar__pane-content");
-			if (sidebar.length > 0 && $(event.target).contents().find("#castbutton").length == 0) {
-				inject_sidebar_send_to_gamelog_button($(event.target).contents().find(".ct-sidebar__pane-content > div"));
 
-			}
-		});
-
-		observer.observe(mutation_target, mutation_config);
 
 		setTimeout(function() {
 			$("#sheet").find("iframe").each(function() {
@@ -2055,55 +2026,6 @@ function monitor_character_sidebar_changes() {
 			$("#switch_gamelog").click();
 		}
 	});
-
-	$(".ct-sidebar__portal").on("DOMNodeRemoved", function(event) {
-		// console.log(`sidebar removed: ${event.target.classList}`);
-		if ($(event.target).hasClass("ct-game-log-pane")) {
-			// the gamelog was removed to show character sheet details. Switch to it
-			setTimeout(function() {
-				change_sidbar_tab($("#switch_gamelog"), true);
-				// deselect the gamelog tab since we're not technically showing the gamelog
-				deselect_all_sidebar_tabs();
-				$("#switch_gamelog svg").attr("class", "gamelog-button__icon");
-			}, 0);
-		}
-	});
-	$(".ct-sidebar__portal").on("DOMNodeInserted", function(event) {
-		// console.log(`sidebar inserted: ${event.target.classList}`);
-		let addedElement = $(event.target);
-		if (addedElement.hasClass("ct-game-log-pane")) {
-			inject_chat_buttons();
-			window.MB.reprocess_chat_message_history();
-		}
-		if (addedElement.hasClass("ct-creature-pane")) {
-			scan_player_creature_pane(addedElement);
-		}
-
-		if (addedElement.closest(".ct-game-log-pane").length == 0 && addedElement.find(".ct-sidebar__header").length > 0 && addedElement.find(".ddbc-html-content").length > 0 && addedElement.find("#castbutton").length == 0) {
-			// we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-			inject_sidebar_send_to_gamelog_button(addedElement);
-		}
-	});
-
-	$(".ct-sidebar__portal").on("DOMSubtreeModified", function(event) {
-		// console.log(`sidebar modified: ${event.target.classList}`);
-		let modifiedElement = $(event.target);
-		if (modifiedElement.hasClass("ct-sidebar__pane-content")) {
-			// The user clicked on something that shows details. Open the sidebar and show it
-			show_sidebar();
-		}
-	});
-	$(".ddbc-tab-list__content").on("DOMSubtreeModified", function(event) {
-		if (!is_player_sheet_full_width()) {
-			$(".ct-primary-box").css({ "height": "610px" });
-			$(".ddbc-tab-options__content").css({ "height": "510px" });
-			// these need a little more space due to the filter search bar
-			$(".ct-extras").css({ "height": "540px" });
-			$(".ct-equipment").css({ "height": "540px" });
-			$(".ct-spells").css({ "height": "540px" });
-		}
-	});
-
 }
 
 //
@@ -2279,34 +2201,41 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		}
 	});
 
-	$(".dice-toolbar__dropdown").on("DOMSubtreeModified", function() {
-		// Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
-		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-			$(".dice-die-button").each(function() {
-				let dieSize = $(this).attr("data-dice");
-				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
-				let diceCountElement = $(this).find(".dice-die-button__count");
-				ourDiceElement.parent().find("span").remove();
-				if (diceCountElement.length == 0) {
-					ourDiceElement.removeAttr("data-count");
-				} else {
-					let diceCount = parseInt(diceCountElement.text());
-					ourDiceElement.attr("data-count", diceCount);
-					ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
-				}
-			})
+	
+	window.rollButtonObserver = new MutationObserver(function() {
+	        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+
+			if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+				$(".dice-die-button").each(function() {
+					let dieSize = $(this).attr("data-dice");
+					let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
+					let diceCountElement = $(this).find(".dice-die-button__count");
+					ourDiceElement.parent().find("span").remove();
+					if (diceCountElement.length == 0) {
+						ourDiceElement.removeAttr("data-count");
+					} else {
+						let diceCount = parseInt(diceCountElement.text());
+						ourDiceElement.attr("data-count", diceCount);
+						ourDiceElement.parent().append(`<span class="dice-badge">${diceCount}</span>`);
+					}
+				})
 
 
-			// make sure our roll button is shown/hidden after all animations have completed
-			setTimeout(function() {
-				if ($(".dice-toolbar").hasClass("rollable")) {
-					$(".roll-button").addClass("show");
-				} else {
-					$(".roll-button").removeClass("show");
-				}
-			}, 0);
-		}
-	});
+				// make sure our roll button is shown/hidden after all animations have completed
+				setTimeout(function() {
+					if ($(".dice-toolbar").hasClass("rollable")) {
+						$(".roll-button").addClass("show");
+					} else {
+						$(".roll-button").removeClass("show");
+					}
+				}, 0);
+			}
+	    })
+	  const mutation_target = $(".dice-toolbar__dropdown")[0];
+	  const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+	  window.rollButtonObserver.observe(mutation_target, mutation_config);
+
+	
 
 	$(".dice-roller > div img").on("contextmenu", function(e) {
 		e.preventDefault();
@@ -2741,14 +2670,6 @@ function init_ui() {
 	init_mouse_zoom()
 
 	init_help_menu();
-
-	$("ol.tss-jmihpx-GameLogEntries").on("DOMNodeInserted", function(addedEvent) {
-		let injectedElement = $(addedEvent.target);
-		if (injectedElement.hasClass("tss-1wcf5kt-Line-Notation") || injectedElement.hasClass("tss-16k6xf2-Line-Breakdown")) {
-			let gamelogItem = injectedElement.closest("li");
-			replace_gamelog_message_expressions(gamelogItem);
-		}
-	});
 
 	if (window.DM) {
 		// LOAD DDB CHARACTER TOOLS FROM THE PAGE ITSELF. Avoid loading external scripts as requested by firefox review
