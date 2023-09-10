@@ -1573,7 +1573,7 @@ function init_sheet() {
 		$(".avtt-sidebar-controls").append(sheet_button);
 
 		sheet_button.click(function(e) {
-			open_player_sheet(window.PLAYER_SHEET);
+			toggle_player_sheet();
 		});
 	}
 }
