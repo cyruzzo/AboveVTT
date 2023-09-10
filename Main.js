@@ -1498,7 +1498,7 @@ function init_sheet() {
 			sheet_resize_button.hide();
 		}
 		// we're playing on the character page so return early to prevent an iframe from also loading the character sheet
-		return;
+		
 	}
 
 	let container = $("<div id='sheet'></div>");
@@ -1526,44 +1526,44 @@ function init_sheet() {
 
 	$("#site").append(container);
 
-	if(window.DM){
-		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-		$("#sheet").addClass("moveableWindow");
-		if(!$("#sheet").hasClass("minimized")){
-			$("#sheet").addClass("restored");
-		}
-		$("#sheet").resizable({
-			addClasses: false,
-			handles: "all",
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			},
-			minWidth: 200,
-			minHeight: 200
-		});
 
-		$("#sheet").mousedown(function(){
-			frame_z_index_when_click($(this));
-		});
-		$("#sheet").draggable({
-			addClasses: false,
-			scroll: false,
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-			}
-		});
-		minimize_player_window_double_click($("#sheet"));
+	/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+	$("#sheet").addClass("moveableWindow");
+	if(!$("#sheet").hasClass("minimized")){
+		$("#sheet").addClass("restored");
 	}
+	$("#sheet").resizable({
+		addClasses: false,
+		handles: "all",
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		},
+		minWidth: 200,
+		minHeight: 200
+	});
+
+	$("#sheet").mousedown(function(){
+		frame_z_index_when_click($(this));
+	});
+	$("#sheet").draggable({
+		addClasses: false,
+		scroll: false,
+		containment: "#windowContainment",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
+		}
+	});
+	minimize_player_window_double_click($("#sheet"));
+
 	if (!window.DM) {
 
 		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
@@ -1682,9 +1682,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		$("#sheet.minimized").dblclick();
 	}
 	console.log("open_player_sheet"+sheet_url);
-	if (is_characters_page()) {
-		return;
-	}
+
 	close_player_sheet(); // always close before opening
 
 	let container = $("#sheet");
