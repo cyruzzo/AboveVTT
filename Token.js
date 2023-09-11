@@ -2064,16 +2064,16 @@ class Token {
 				drag: async function(event, ui) {
 					event.stopImmediatePropagation();
 					
-					let zoom = window.ZOOM;
+					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (event.pageX - click.x + original.left) / zoom;
+					let tokenX = (event.pageX - click.x + original.left) / zoom;s
 					let tokenY = (event.pageY - click.y + original.top) / zoom;
-					let tinyToken = (Math.round(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares*2)/2 < 1);
+					let tinyToken = (Math.round(parseInt(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
-						tokenX +=  !(tinyToken) ? (window.CURRENT_SCENE_DATA.hpps / 2) : (window.CURRENT_SCENE_DATA.hpps / 4);
-						tokenY +=  !(tinyToken) ? (window.CURRENT_SCENE_DATA.vpps / 2) : (window.CURRENT_SCENE_DATA.vpps / 4) ;
+						tokenX +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 4);
+						tokenY +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 4) ;
 					}
 					
 					let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
@@ -2484,12 +2484,12 @@ function should_snap_to_grid() {
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 	if (forceSnap || should_snap_to_grid()) {
 		// adjust to the nearest square coordinate
-		let startX = window.CURRENT_SCENE_DATA.offsetx;
-		let startY = window.CURRENT_SCENE_DATA.offsety; 
+		let startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
+		let startY = parseFloat(window.CURRENT_SCENE_DATA.offsety); 
 
 
-		const gridWidth = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken) ? window.CURRENT_SCENE_DATA.hpps : window.CURRENT_SCENE_DATA.hpps/2;
-		const gridHeight = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken) ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.vpps/2;
+		const gridWidth = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? parseFloat(window.hexGridSize.width) * parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.x) : (!tinyToken) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+		const gridHeight = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? parseFloat(window.hexGridSize.height) * parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : (!tinyToken) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps/2);
 		
 		let currentGridX = Math.floor((mapX - startX) / gridWidth);
 		let currentGridY = Math.floor((mapY - startY) / gridHeight);
