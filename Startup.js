@@ -81,6 +81,7 @@ $(function() {
             tabCommunicationChannel.postMessage({
               msgType: 'setupObserver',
               tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+              iframeTab: window.PLAYER_ID,
               rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
             })
             return;
@@ -111,6 +112,7 @@ $(function() {
         tabCommunicationChannel.postMessage({
           msgType: 'setupObserver',
           tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+          iframeTab: window.PLAYER_ID,
           rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
         })
         

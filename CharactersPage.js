@@ -291,15 +291,16 @@ function init_characters_pages(container = $(document)) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
          observe_character_sheet_changes($(document));
-        if(event.data.tab == undefined && event.data.rpgRoller == false)
+        if(event.data.tab == undefined && event.data.rpgRoller == false && window.self==window.top){
           $('.integrated-dice__container').off('click.rpg-roller'); 
-        else
+        }else{
           convertToRPGRoller();
+        }
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
-        if(window.sendToTab != false || event.data.tab == undefined)
-          window.sendToTab = event.data.tab
-
+        if(window.sendToTab != false || event.data.tab == undefined){
+            window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;      
+        }
       }
       if(event.data.msgType =='removeObserver'){
         $('.integrated-dice__container').off('click.rpg-roller'); 
@@ -531,8 +532,10 @@ function inject_dice_roll(element) {
   element.empty();
   console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
   element.append(updatedInnerHtml);
-  element.find("button.avtt-roll-formula-button").off('click.rpg-roller').on('click.rpg-roller', function(clickEvent) {
+  element.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
     clickEvent.stopPropagation();
+    if(window.sendToTab != undefined)
+      return;
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll);
@@ -573,7 +576,7 @@ function observe_character_sheet_changes(documentToObserve) {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
        
-        if((!is_abovevtt_page() && window.sendToTab !== undefined) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)
+        if((!is_abovevtt_page() && window.sendToTab !== undefined) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
           debounceConvertToRPGRoller();
         else
           $('.integrated-dice__container').off('click.rpg-roller');
