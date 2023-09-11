@@ -291,19 +291,26 @@ function init_characters_pages(container = $(document)) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
          observe_character_sheet_changes($(document));
-        convertToRPGRoller();
+        if(event.data.tab == undefined && event.data.rpgRoller == false)
+          $('.integrated-dice__container').off('click.rpg-roller'); 
+        else
+          convertToRPGRoller();
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
-        if(window.sendToTab != false)
+        if(window.sendToTab != false || event.data.tab == undefined)
           window.sendToTab = event.data.tab
+
       }
       if(event.data.msgType =='removeObserver'){
         $('.integrated-dice__container').off('click.rpg-roller'); 
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTab = undefined;
-        tabCommunicationChannel.postMessage({
-          msgType: 'isAboveOpen'
-        });
+        setTimeout(function(){
+          tabCommunicationChannel.postMessage({
+           msgType: 'isAboveOpen'
+          });
+        }, 300)
+        
       }
       if(event.data.msgType =='disableSendToTab' && window.self == window.top){
         window.sendToTab = undefined;

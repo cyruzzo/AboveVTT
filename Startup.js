@@ -80,7 +80,7 @@ $(function() {
           if(event.data.msgType=='isAboveOpen'){
             tabCommunicationChannel.postMessage({
               msgType: 'setupObserver',
-              tab: window.PLAYER_ID,
+              tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
               rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
             })
             return;
@@ -108,11 +108,11 @@ $(function() {
         })
         
         
-          tabCommunicationChannel.postMessage({
-            msgType: 'setupObserver',
-            tab: window.PLAYER_ID,
-            rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
-          })
+        tabCommunicationChannel.postMessage({
+          msgType: 'setupObserver',
+          tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+          rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
+        })
         
 
       })

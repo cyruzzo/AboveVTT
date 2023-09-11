@@ -432,16 +432,18 @@ function set_avtt_setting_value(name, newValue) {
 		 if(is_abovevtt_page()){
 		    tabCommunicationChannel.postMessage({
 		      msgType: 'setupObserver',
-		      tab: (get_avtt_setting_default_value('disableSendToTab') ==  true) ? undefined : window.PLAYER_ID,
+		      tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
 		      rpgRoller: newValue
 		    })
 		  }
 		  break;
 		case "disableSendToTab":
 		 	if(is_abovevtt_page()){
-		 		tabCommunicationChannel.postMessage({
-			      msgType: 'disableSendToTab'
-		    	});
+			 	tabCommunicationChannel.postMessage({
+	   		      msgType: 'setupObserver',
+	  		      tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+	   		      rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
+	  		    })
 		 	}
 		 	break;
 	}
