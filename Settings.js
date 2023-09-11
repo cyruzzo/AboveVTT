@@ -337,8 +337,19 @@ function avtt_settings() {
 		label: "Disable DDB dice where possible",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Allow", description: `Disables DDB dice and uses a random number generator` },
-			{ value: false, label: "Never", description: `Defaults to DDB dice` }
+			{ value: true, label: "RNG Dice", description: `Disables DDB dice and uses a random number generator` },
+			{ value: false, label: "DDB Dice", description: `Defaults to DDB dice` }
+		],
+		defaultValue: false
+	})
+	settings.push(
+	{
+		name: "disableSendToTab",
+		label: "Disable capture of pc tab rolls",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Disabled", description: `Rolls will occur on the tab the button is clicked` },
+			{ value: false, label: "Enabled", description: `Rolls from other tabs will occur here` }
 		],
 		defaultValue: false
 	})
@@ -421,10 +432,18 @@ function set_avtt_setting_value(name, newValue) {
 		 if(is_abovevtt_page()){
 		    tabCommunicationChannel.postMessage({
 		      msgType: 'setupObserver',
-		      tab: window.PLAYER_ID,
+		      tab: (get_avtt_setting_default_value('disableSendToTab') ==  true) ? undefined : window.PLAYER_ID,
 		      rpgRoller: newValue
 		    })
 		  }
+		  break;
+		case "disableSendToTab":
+		 	if(is_abovevtt_page()){
+		 		tabCommunicationChannel.postMessage({
+			      msgType: 'disableSendToTab'
+		    	});
+		 	}
+		 	break;
 	}
 }
 
