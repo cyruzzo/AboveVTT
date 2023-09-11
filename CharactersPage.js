@@ -422,39 +422,39 @@ function getRollData(rollButton){
     }
     let roll = new rpgDiceRoller.DiceRoll(expression); 
     let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
-    let rollTitle = 'custom';
-    let rollType = 'AboveVTT';
+    let rollType = 'custom';
+    let rollTitle = 'AboveVTT';
     if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
-      rollTitle = 'save'
-      rollType = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
+      rollType = 'save'
+      rollTitle = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
     } else if($(rollButton).parents(`[class*='ability-summary']`).length > 0){
-      rollTitle = 'check'
-      rollType = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
+      rollType = 'check'
+      rollTitle = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
     } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
-      rollTitle = 'skill';
-      rollType = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
+      rollType = 'skill';
+      rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
     } else if($(rollButton).parents(`[class*='initiative-box']`).length > 0){
       rollTitle = 'Initiative'
     } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
-      rollTitle = 'damage'
+      rollType = 'damage'
       if($(rollButton).parents(`[class*='damage-effect__healing']`).length > 0){
-        rollTitle = 'heal'
+        rollType = 'heal'
       }
     } else if($(rollButton).parents(`[class*='__tohit']`).length > 0){
-      rollTitle = 'attack'
+      rollType = 'attack'
     } 
-    if(rollTitle == 'damage' || rollTitle == 'attack' || rollTitle == 'heal'){
+    if(rollType == 'damage' || rollType == 'attack' || rollType == 'heal'){
       if($(rollButton).parents(`.ddbc-combat-attack--spell`).length > 0){
-        rollType = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
       }
       else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
-        rollType = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
+        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
-        rollType = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-attack--item`).length > 0){
-        rollType = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
       }
     }
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
