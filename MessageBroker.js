@@ -257,7 +257,7 @@ class MessageBroker {
 		if (trackHistory) {
 			window.MB.track_message_history(data);
 		}
-		if(window.DM && data.data.injected_data?.rollType == 'initiative'){
+		if(window.DM && data.data.injected_data?.rollTitle == 'Initiative'){
 			let total = data.data.injected_data?.result;
 			let entityid = data.data.injected_data?.playerId;
 
