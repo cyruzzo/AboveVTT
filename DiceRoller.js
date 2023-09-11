@@ -307,7 +307,7 @@ class DiceRoller {
                 window.MB.inject_chat(msgdata);
                 return true;
             }
-            else if(!is_abovevtt_page()){
+            else if(!is_abovevtt_page() && window.sendToTab != undefined){
                 tabCommunicationChannel.postMessage({
                       msgType: 'roll',
                       msg: msgdata,
