@@ -333,7 +333,11 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
-
+   
+    let urlSplit = window.location.href.split("/");
+    if(urlSplit.length > 0) {
+      window.PLAYER_ID = urlSplit[urlSplit.length - 1];
+    }
     $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
           e.stopPropagation();
           e.preventDefault();
@@ -373,6 +377,7 @@ function convertToRPGRoller(){
           text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
           whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
           rollType: rollData.rollType,
+          rollTitle: rollData.rollTitle,
           result: rollData.roll.total,
           playerId: window.PLAYER_ID
         };
@@ -417,39 +422,39 @@ function getRollData(rollButton){
     }
     let roll = new rpgDiceRoller.DiceRoll(expression); 
     let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
-    let rollType = 'custom';
-    let rollTitle = 'AboveVTT';
+    let rollTitle = 'custom';
+    let rollType = 'AboveVTT';
     if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
-      rollType = 'save'
-      rollTitle = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
+      rollTitle = 'save'
+      rollType = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
     } else if($(rollButton).parents(`[class*='ability-summary']`).length > 0){
-      rollType = 'check'
-      rollTitle = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
+      rollTitle = 'check'
+      rollType = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
     } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
-      rollType = 'skill';
-      rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
+      rollTitle = 'skill';
+      rollType = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
     } else if($(rollButton).parents(`[class*='initiative-box']`).length > 0){
-      rollType = 'initiative'
+      rollTitle = 'Initiative'
     } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
-      rollType = 'damage'
+      rollTitle = 'damage'
       if($(rollButton).parents(`[class*='damage-effect__healing']`).length > 0){
-        rollType = 'heal'
+        rollTitle = 'heal'
       }
     } else if($(rollButton).parents(`[class*='__tohit']`).length > 0){
-      rollType = 'attack'
+      rollTitle = 'attack'
     } 
-    if(rollType == 'damage' || rollType == 'attack' || rollType == 'heal'){
+    if(rollTitle == 'damage' || rollTitle == 'attack' || rollTitle == 'heal'){
       if($(rollButton).parents(`.ddbc-combat-attack--spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
+        rollType = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
       }
       else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
+        rollType = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
+        rollType = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-attack--item`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
+        rollType = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
       }
     }
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
