@@ -305,6 +305,9 @@ function init_characters_pages(container = $(document)) {
           msgType: 'isAboveOpen'
         });
       }
+      if(event.data.msgType =='disableSendToTab' && window.self == window.top){
+        window.sendToTab = undefined;
+      }
     })
     tabCommunicationChannel.postMessage({
       msgType: 'isAboveOpen'
