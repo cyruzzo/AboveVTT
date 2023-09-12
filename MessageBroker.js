@@ -252,7 +252,8 @@ class MessageBroker {
 
 	handle_injected_data(data, trackHistory = true){
 		let self=this;
-		self.chat_pending_messages.push(data);
+		if(data != undefined)
+			self.chat_pending_messages.push(data);
 		let animationDuration = trackHistory ? 250 : 0; // don't animate if we're reprocessing messages
 		if (trackHistory) {
 			window.MB.track_message_history(data);
@@ -295,8 +296,8 @@ class MessageBroker {
 				for(let i=0;i<pend_length;i++){
 					let current=self.chat_pending_messages.shift();
 					
-					let injection_id=current.data.rolls[0].rollType;
-					let injection_data=current.data.injected_data;
+					let injection_id=current.data?.rolls[0]?.rollType;
+					let injection_data=current.data?.injected_data;
 					console.log(`injection_id = ${injection_id}`);
 					console.log(`injection_data = ${injection_data}`);
 					
