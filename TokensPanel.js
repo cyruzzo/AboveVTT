@@ -2598,7 +2598,7 @@ function display_monster_filter_modal() {
             }
         });
       $(`<label class="input-checkbox input-checkbox-label qa-input-checkbox_label qa-monster-filters_accessible-content" title="Only show content I have access to">
-        <input class="input-checkbox__input qa-input-checkbox_input" tabindex="0" type="checkbox">
+        <input class="input-checkbox__input qa-input-checkbox_input" tabindex="0" type="checkbox" ${($.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`)) == true) ? 'checked="checked"' : ''}>
             <div class="input-checkbox__focus-indicator"></div>
             <svg class="input-checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" overflow="visible" focusable="false">
                 <path class="svg-border" d="M5.63636382,2.00000055 C3.62805456,2.00000064 2,3.62805509 2,5.63636419 C2,5.63636419 2,9.87878843 2,18.3636369 C1.9999997,20.3719455 3.62805456,22 5.63636367,22 L18.3636365,22 C20.3719454,22.0000001 22,20.3719455 22,18.3636364 L22,5.63636364 C22,3.62805455 20.3719454,2 18.3636363,2 L5.63636382,2.00000055 Z M19,17.25 C19,18.2164987 18.2164979,19 17.25,19 L6.75000007,19 C5.78350125,19 5,18.2164979 5,17.25 C5,17.25 5,17.25 5,17.25 L5,6.74999977 L5,6.75000003 C4.99999985,5.78350126 5.78350125,5 6.74999999,5 L17.2499999,5 C18.2164986,4.99999996 18.9999998,5.78350126 18.9999998,6.75000003 L19,17.25 Z"></path>
@@ -2629,10 +2629,11 @@ function display_monster_filter_modal() {
 
 function close_monster_filter_iframe() {
     let sidebarMonsterFilter = $("#monster-filter-iframe");
-    window.ownedMonstersOnly = sidebarMonsterFilter.contents().find('.qa-monster-filters_accessible-content input')[0].checked 
-
+    let ownedFilter = sidebarMonsterFilter.contents().find('.qa-monster-filters_accessible-content input')[0]?.checked 
+   
     if(localStorage.getItem('DDBEB-monster-filters') != null) {
         // the user has the "remember filters" option checked... let's grab our data and move on
+        localStorage.setItem(`${gameId}-ownedMonsterFilter`, ownedFilter);
         read_local_monster_search_filters();
         sidebarMonsterFilter.remove();
         tokensPanel.remove_sidebar_loading_indicator(); // if the user double clicks, we might remove iframe before dismissing the loading indicator
@@ -2645,21 +2646,27 @@ function close_monster_filter_iframe() {
         rememberButton.click();
         setTimeout(function() { // make sure we let the "remember filter" click propagate before we harvest that data
             read_local_monster_search_filters();
+            localStorage.removeItem(`${gameId}-ownedMonsterFilter`, ownedFilter);
+            window.ownedMonstersOnly = ownedFilter; 
             rememberButton.click();
             sidebarMonsterFilter.remove();
             tokensPanel.remove_sidebar_loading_indicator(); // if the user double clicks, we might remove iframe before dismissing the loading indicator
             let textValue = tokensPanel.header.find("input[name='token-search']").val();
             filter_token_list(textValue);
         });
+
     }
 }
 
 function read_local_monster_search_filters() {
     if(localStorage.getItem('DDBEB-monster-filters') != null){
-        monster_search_filters = $.parseJSON(localStorage.getItem('DDBEB-monster-filters'));
+        monster_search_filters = $.parseJSON(localStorage.getItem('DDBEB-monster-filters'))    
+        if($.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`)) != null)
+            window.ownedMonstersOnly = $.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`));
     } else {
         monster_search_filters = {};
     }
+
     if (Object.keys(monster_search_filters).length > 0) {
         $(".monster-filter-button").css("color", "#1b9af0");
     } else {
