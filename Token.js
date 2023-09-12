@@ -467,11 +467,11 @@ class Token {
 		}
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
-		if (persist == true) {
-			if (sync) {
-				window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
-			}
+		if (persist == true) {	
 			draw_selected_token_bounding_box(); // redraw the selection box
+		}
+		if (sync) {
+			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
 		update_pc_token_rows();
 	}
@@ -3509,7 +3509,7 @@ function delete_selected_tokens() {
 	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
 		for (let i = 0; i < tokensToDelete.length; i++) {
-			tokensToDelete[i].delete(); // don't persist on each token delete, we'll do that next
+			tokensToDelete[i].delete(false, true);
 		}
 	draw_selected_token_bounding_box(); // redraw the selection box
 }
