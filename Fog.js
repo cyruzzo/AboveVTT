@@ -507,7 +507,7 @@ async function do_check_token_visibility() {
 			
 			const inFog = is_token_under_fog(id, ctx); // this token is in fog
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
@@ -4037,6 +4037,11 @@ async function redraw_light(){
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
+
+	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
+		lightInLosContext.globalCompositeOperation='source-over';
+		lightInLosContext.drawImage($('#raycastingCanvas')[0], 0, 0);
+	}
 
 	lightInLosContext.globalCompositeOperation='source-in';
 	lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
