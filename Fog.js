@@ -4034,17 +4034,18 @@ async function redraw_light(){
 	await Promise.all(promises);
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
-
 	lightInLosContext.globalCompositeOperation='source-over';
-	lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
-
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
-		lightInLosContext.globalCompositeOperation='source-over';
-		lightInLosContext.drawImage($('#raycastingCanvas')[0], 0, 0);
+		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
+	}else{
+		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
+
+		lightInLosContext.globalCompositeOperation='source-in';
+		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 	}
 
-	lightInLosContext.globalCompositeOperation='source-in';
-	lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
+	
+
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
