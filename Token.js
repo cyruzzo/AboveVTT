@@ -448,7 +448,7 @@ class Token {
 		this.place_sync_persist()
 		debounceCombatPersist();
 	}
-	delete(persist=true,sync=true) {
+	delete(persist=true) {
 		if (!window.DM && this.options.deleteableByPlayers != true) {
 			// only allow the DM to delete tokens unless the token specifies deleteableByPlayers == true which is used by AoE tokens and maybe others
 			return;
@@ -468,9 +468,6 @@ class Token {
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {	
-			draw_selected_token_bounding_box(); // redraw the selection box
-		}
-		if (sync) {
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
 		update_pc_token_rows();
@@ -3509,7 +3506,7 @@ function delete_selected_tokens() {
 	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
 		for (let i = 0; i < tokensToDelete.length; i++) {
-			tokensToDelete[i].delete(false, true);
+			tokensToDelete[i].delete(true);
 		}
 	draw_selected_token_bounding_box(); // redraw the selection box
 }
