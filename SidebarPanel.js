@@ -1342,6 +1342,13 @@ function build_sidebar_list_row(listItem) {
       }
 
       break;
+    case ItemType.Open5e:
+      row.attr("data-monster", listItem.monsterData.id);
+      subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
+      if (listItem.monsterData.isHomebrew === true) {
+        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 18px;font-family: 'Material Symbols Outlined';">book_2</span>${listItem.monsterData.document__slug}</div>`);
+      } 
+      break;
     case ItemType.BuiltinToken:
     case ItemType.DDBToken:
       subtitle.hide();
