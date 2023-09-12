@@ -9788,6 +9788,3435 @@ var DDB_EXTRAS =
 		"grid_subdivided": "0",
 		"scale_factor": 2
 	},
+	"gos/salvage-operation/map41emperorofthewaves": {
+		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/517/850/587/27-dm.png",
+		"gridSubdividedToggle": "0",
+		"reveals": [
+			[
+				0,
+				0,
+				0,
+				0,
+				2,
+				0,
+				1
+			]
+		],
+		"gridStrokeNumberInput": "0.5",
+		"scale": 65.93406593406593,
+		"vpps": 45.333333333333336,
+		"darkness_filter_number": "0",
+		"title": "Map 4.1: Emperor of the Waves ",
+		"fog_of_war": "1",
+		"uuid": "gos/salvage-operation/map41emperorofthewaves",
+		"player_map": "https://www.dndbeyond.com/attachments/5/518/27-pc.png",
+		"upsq": "ft",
+		"scaleX": 0.6593406593406593,
+		"scaleY": 0.6666666666666666,
+		"drawings": [
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3113,
+				2502,
+				3086,
+				1936,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3086,
+				1936,
+				3083,
+				1371,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3083,
+				1371,
+				3101,
+				1053,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3113,
+				2513,
+				3109,
+				2491,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3101,
+				1053,
+				3173,
+				869,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3173,
+				869,
+				3315,
+				727,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3315,
+				727,
+				3465,
+				633,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3465,
+				633,
+				3600,
+				700,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3600,
+				700,
+				3761,
+				858,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3761,
+				858,
+				3847,
+				1034,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3847,
+				1034,
+				3865,
+				1393,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3865,
+				1393,
+				3839,
+				2517,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3839,
+				2517,
+				3113,
+				2513,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3325,
+				1985,
+				3325,
+				1985,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2082,
+				1313,
+				2117,
+				2511,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2121,
+				2499,
+				2113,
+				2515,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2113,
+				2515,
+				2831,
+				2511,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2831,
+				2511,
+				2870,
+				1483,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2870,
+				1483,
+				2862,
+				1082,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2862,
+				1082,
+				2758,
+				838,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2758,
+				838,
+				2515,
+				657,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2515,
+				657,
+				2507,
+				386,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2507,
+				386,
+				2437,
+				386,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2437,
+				386,
+				2433,
+				661,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2433,
+				661,
+				2291,
+				753,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2291,
+				753,
+				2159,
+				885,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2159,
+				885,
+				2094,
+				1082,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2094,
+				1082,
+				2082,
+				1313,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2096,
+				1207,
+				2093,
+				1207,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1942,
+				1962,
+				1942,
+				1962,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1757,
+				2511,
+				1791,
+				2039,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1791,
+				2063,
+				1806,
+				1368,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1806,
+				1368,
+				1786,
+				1119,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1786,
+				1119,
+				1728,
+				954,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1728,
+				954,
+				1630,
+				813,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1630,
+				813,
+				1496,
+				722.0424242424242,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1193,
+				1033,
+				1193,
+				1033,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1502,
+				729,
+				1470,
+				716,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1470,
+				716,
+				1418,
+				745,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1418,
+				745,
+				1277,
+				881,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1277,
+				881,
+				1193,
+				1033,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1170,
+				2321,
+				1170,
+				2321,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1190,
+				1030,
+				1157,
+				1208,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1157,
+				1208,
+				1153,
+				1656,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1153,
+				1656,
+				1170,
+				2321,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1760,
+				2519,
+				1760,
+				2519,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1168,
+				2312,
+				1188,
+				2521,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1188,
+				2521,
+				1760,
+				2519,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1751,
+				2523,
+				1762,
+				2499,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1780,
+				1170,
+				1758,
+				1056,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1773,
+				1111,
+				1780,
+				1109,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1421,
+				1115,
+				1421,
+				1124,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1425,
+				1388,
+				1386,
+				1388,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1285,
+				1390,
+				1153,
+				1392,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1384,
+				1483,
+				1381,
+				1753,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1566,
+				1487,
+				1799,
+				1485,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1203,
+				1027,
+				1348,
+				1025,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1348,
+				1025,
+				1313,
+				1120,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1313,
+				1120,
+				1287,
+				1309,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1287,
+				1309,
+				1423,
+				1309,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				268,
+				2507,
+				240,
+				1304,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				240,
+				1304,
+				272,
+				1089,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				272,
+				1089,
+				390,
+				918,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				390,
+				918,
+				557,
+				792,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				557,
+				792,
+				695,
+				865,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				695,
+				865,
+				817,
+				1003,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				817,
+				1003,
+				882,
+				1182,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				882,
+				1182,
+				894,
+				1487,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				894,
+				1487,
+				849,
+				2535,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				264,
+				2523,
+				264,
+				2466,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				270,
+				2496,
+				271,
+				2533,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				270,
+				2525,
+				850,
+				2528,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1166,
+				2118,
+				1437,
+				2119.3155339805826,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1784,
+				2121,
+				1508,
+				2119.660194174757,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1437,
+				2119.3155339805826,
+				1508,
+				2119.660194174757,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1159,
+				1755,
+				1439,
+				1754.1290824261275,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1802,
+				1753,
+				1511,
+				1753.905132192846,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1439,
+				1754.1290824261275,
+				1511,
+				1753.905132192846,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1157,
+				1480,
+				1296,
+				1481.8370044052863,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1384,
+				1483,
+				1370,
+				1482.8149779735684,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1296,
+				1481.8370044052863,
+				1370,
+				1482.8149779735684,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1423,
+				1122,
+				1423.7106227106226,
+				1219,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1425,
+				1395,
+				1424.2527472527472,
+				1293,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1424.2527472527472,
+				1293,
+				1423.7106227106226,
+				1219,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1562,
+				1111,
+				1562.6292834890967,
+				1313,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1562.8504672897195,
+				1384,
+				1562.6292834890967,
+				1313,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1562.8504672897195,
+				1384,
+				1563.7414330218069,
+				1670,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1564,
+				1753,
+				1563.9657320872275,
+				1742,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1563.9657320872275,
+				1742,
+				1563.7414330218069,
+				1670,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				1315,
+				1118,
+				1441,
+				1117.171052631579,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1771,
+				1115,
+				1514,
+				1116.6907894736842,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1441,
+				1117.171052631579,
+				1514,
+				1116.6907894736842,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				2091,
+				1209,
+				2437,
+				1208.5529715762275,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2865,
+				1208,
+				2510,
+				1208.4586563307494,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2437,
+				1208.5529715762275,
+				2510,
+				1208.4586563307494,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0 ,1)",
+				2107,
+				2120,
+				2435,
+				2120.446258503401,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2842,
+				2121,
+				2507,
+				2120.5442176870747,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2435,
+				2120.446258503401,
+				2507,
+				2120.5442176870747,
+				12,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1388,
+				1396,
+				1435,
+				1396,
+				6,
+				2
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1280,
+				1388,
+				1292,
+				1394,
+				6,
+				2
+			],
+			[
+				"rect",
+				"light",
+				"white",
+				1922,
+				590,
+				0,
+				0,
+				"91.06666666666668",
+				2
+			]
+		],
+		"gridType": "1",
+		"fpsq": "5",
+		"tokens": {
+			"0d85067c-9443-4754-bd58-e4d1032cef5d": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1E50DC",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 36,
+				"legacyaspectratio": true,
+				"max_hp": 36,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1029px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "0d85067c-9443-4754-bd58-e4d1032cef5d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16870,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16870,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16870,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "562px",
+				"name": "Ghast 3",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"18d35dca-003f-4a38-973e-59eedced46ea": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2123px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "18d35dca-003f-4a38-973e-59eedced46ea",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2197px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"1fb3115a-257f-49da-a931-9094077dea52": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#006060",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 11,
+				"legacyaspectratio": true,
+				"max_hp": 11,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Wolf Spider",
+				"top": "1394px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1fb3115a-257f-49da-a931-9094077dea52",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16900,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 11,
+					"current": 11,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16900,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16900,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1198px",
+				"name": "Giant Wolf Spider",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"2a3cf639-78c8-43c1-9533-f337b5cbe734": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606060",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 33,
+				"legacyaspectratio": true,
+				"max_hp": 33,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "847px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2a3cf639-78c8-43c1-9533-f337b5cbe734",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 17235,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 17235,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 17235,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Maw Demon",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"2a67a02a-fa82-4f03-9707-ade7dcfa4006": {
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#1E50DC",
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 2.0044052863436126,
+				"custom_conditions": [],
+				"hp": 26,
+				"legacyaspectratio": true,
+				"max_hp": 26,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "1941px",
+				"armorClass": 14,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2a67a02a-fa82-4f03-9707-ade7dcfa4006",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16895,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16895,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16895,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 184.40528634361235,
+				"left": "1561px",
+				"name": "Giant Spider 3",
+				"zindexdiff": 8,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"33727a84-7c30-4c66-99de-94be4f7c027f": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1032px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "33727a84-7c30-4c66-99de-94be4f7c027f",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2199px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"3dc3a377-17f0-485e-83af-78e841f9ecee": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 11,
+				"legacyaspectratio": true,
+				"max_hp": 11,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Wolf Spider",
+				"top": "1394px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3dc3a377-17f0-485e-83af-78e841f9ecee",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16900,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 11,
+					"current": 11,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16900,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16900,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1380px",
+				"name": "Giant Wolf Spider 2",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"45542a3e-73d5-4712-9265-b461bd7a58ac": {
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#E0E000",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 2.0044052863436126,
+				"custom_conditions": [],
+				"hp": 32,
+				"legacyaspectratio": true,
+				"max_hp": 32,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Phase Spider",
+				"top": "1758px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "45542a3e-73d5-4712-9265-b461bd7a58ac",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/318/636252772537829906.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16978,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 32,
+					"current": 32,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16978,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16978,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 184.40528634361235,
+				"left": "1198px",
+				"name": "Phase Spider",
+				"zindexdiff": 8,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"4ea3f66e-a2a1-4581-b28c-172da7bd6cac": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1E50DC",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 44,
+				"legacyaspectratio": true,
+				"max_hp": 44,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "1120px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "4ea3f66e-a2a1-4581-b28c-172da7bd6cac",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16859,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16859,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16859,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Ettercap 3",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"55e082e8-c5ce-4d9c-98a9-2d47321ab477": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1485px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "55e082e8-c5ce-4d9c-98a9-2d47321ab477",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1380px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"5f2e767e-e55c-493c-b530-bce2e180e309": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1123px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "5f2e767e-e55c-493c-b530-bce2e180e309",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2108px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"6032b113-f0f7-4c1a-b550-19451f45a4e8": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606060",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 33,
+				"legacyaspectratio": true,
+				"max_hp": 33,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "938px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6032b113-f0f7-4c1a-b550-19451f45a4e8",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 17235,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 17235,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 17235,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1561px",
+				"name": "Maw Demon",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"61e086a2-de01-4f8c-abdd-4cd2e7e734e0": {
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#202000",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 2.0044052863436126,
+				"custom_conditions": [],
+				"hp": 26,
+				"legacyaspectratio": true,
+				"max_hp": 26,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "2212px",
+				"armorClass": 14,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "61e086a2-de01-4f8c-abdd-4cd2e7e734e0",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16895,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16895,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16895,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 184.40528634361235,
+				"left": "2017px",
+				"name": "Giant Spider",
+				"zindexdiff": 8,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"6ad66280-99be-4571-bacf-dca41ed82249": {
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 2.0044052863436126,
+				"custom_conditions": [],
+				"hp": 26,
+				"legacyaspectratio": true,
+				"max_hp": 26,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "756px",
+				"armorClass": 14,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6ad66280-99be-4571-bacf-dca41ed82249",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16895,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16895,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16895,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 184.40528634361235,
+				"left": "2378px",
+				"name": "Giant Spider 2",
+				"zindexdiff": 8,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"6bf7312b-3257-49d0-9c05-58e0ebc6f74d": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 44,
+				"legacyaspectratio": true,
+				"max_hp": 44,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "2212px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6bf7312b-3257-49d0-9c05-58e0ebc6f74d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16859,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16859,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16859,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2746px",
+				"name": "Ettercap",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"71baa1d1-8a10-4ca7-b764-c106421353cb": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1667px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "71baa1d1-8a10-4ca7-b764-c106421353cb",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1380px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"72e8094f-718e-40b1-b61a-dd3986094fce": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1485px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "72e8094f-718e-40b1-b61a-dd3986094fce",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"85d9deb0-1ca5-4318-8c35-eaa14b81c492": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1303px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "85d9deb0-1ca5-4318-8c35-eaa14b81c492",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"9081823f-ea3e-496d-aa1e-e5cee8c3d575": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 36,
+				"legacyaspectratio": true,
+				"max_hp": 36,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1120px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "9081823f-ea3e-496d-aa1e-e5cee8c3d575",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16870,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16870,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16870,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "653px",
+				"name": "Ghast 2",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"938442e4-456f-4429-bdc9-382c182f7d32": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606060",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 33,
+				"legacyaspectratio": true,
+				"max_hp": 33,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "938px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "938442e4-456f-4429-bdc9-382c182f7d32",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 17235,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 17235,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 17235,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1289px",
+				"name": "Maw Demon",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"96ec85a3-f746-46ae-aee9-533e3286f49e": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 27,
+				"legacyaspectratio": true,
+				"max_hp": 27,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Krell Grohlg",
+				"top": "1941px",
+				"armorClass": 11,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "96ec85a3-f746-46ae-aee9-533e3286f49e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 319295,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 27,
+					"current": 27,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 319295,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 319295,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Krell Grohlg",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"a2d11cc8-96e0-400a-b4ae-105bf55e3810": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2305px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "a2d11cc8-96e0-400a-b4ae-105bf55e3810",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2469px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"b5445e70-e187-4a63-aa9e-beca00a87a04": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1667px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b5445e70-e187-4a63-aa9e-beca00a87a04",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"b7c5f913-8dba-4219-aa65-f02d755ed018": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1212px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b7c5f913-8dba-4219-aa65-f02d755ed018",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1470px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"b9c7ba12-f4da-4c3f-9aa8-08a07b1c62c3": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2305px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b9c7ba12-f4da-4c3f-9aa8-08a07b1c62c3",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2288px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"c9931230-7d6d-4f5b-99c8-a04eeaa75031": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606060",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 33,
+				"legacyaspectratio": true,
+				"max_hp": 33,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "847px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "c9931230-7d6d-4f5b-99c8-a04eeaa75031",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 17235,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 17235,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 17235,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "1380px",
+				"name": "Maw Demon",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"cedf9637-0388-44d5-9599-7fe871c34b5a": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 44,
+				"legacyaspectratio": true,
+				"max_hp": 44,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "847px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "cedf9637-0388-44d5-9599-7fe871c34b5a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16859,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16859,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16859,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2288px",
+				"name": "Ettercap 2",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"d1539efc-c394-4efd-9293-aa727dcbe98b": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1123px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "d1539efc-c394-4efd-9293-aa727dcbe98b",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2199px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"d7f2e763-ab03-4d25-9dd7-09890d7e4e8b": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 36,
+				"legacyaspectratio": true,
+				"max_hp": 36,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1029px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "d7f2e763-ab03-4d25-9dd7-09890d7e4e8b",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16870,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16870,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16870,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "381px",
+				"name": "Ghast 4",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"e4c53268-b470-405d-a38b-4770ba14043f": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1032px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "e4c53268-b470-405d-a38b-4770ba14043f",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2108px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"ec35e5ef-ce3e-4065-8391-f3efb4eea149": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#202000",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 36,
+				"legacyaspectratio": true,
+				"max_hp": 36,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1120px",
+				"armorClass": 13,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "ec35e5ef-ce3e-4065-8391-f3efb4eea149",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16870,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16870,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16870,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "472px",
+				"name": "Ghast",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"efeb35be-270f-432a-a10e-08345f0f82b1": {
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"disablestat": false,
+				"hidestat": false,
+				"hidden": true,
+				"gridSquares": 1.0022026431718063,
+				"custom_conditions": [],
+				"hp": 22,
+				"legacyaspectratio": true,
+				"max_hp": 22,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2214px",
+				"armorClass": 12,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "efeb35be-270f-432a-a10e-08345f0f82b1",
+				"imgsrc": "https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4",
+				"locked": false,
+				"selected": true,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 301414,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"alternativeImages": [
+					"https://drive.google.com/uc?id=1saE_0rxqQyQVnuP9FKCRVVHTNDI6BcN4"
+				],
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 301414,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": false,
+				"healthauratype": "aura",
+				"size": 92.20264317180617,
+				"left": "2560px",
+				"name": "Swarm of Insects (Spiders)",
+				"zindexdiff": 17,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			},
+			"f0bfb480-d9b9-46f8-b333-9eb6e42f957a": {
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"disablestat": false,
+				"hidestat": false,
+				"gridSquares": 2.0044052863436126,
+				"custom_conditions": [],
+				"hp": 26,
+				"legacyaspectratio": true,
+				"max_hp": 26,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "1941px",
+				"armorClass": 14,
+				"hidehpbar": false,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "f0bfb480-d9b9-46f8-b333-9eb6e42f957a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"stat": 16895,
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"lockRestrictDrop": "restrict",
+				"player_owned": false,
+				"monster": 16895,
+				"tokenBaseStyleSelect": "default",
+				"itemId": 16895,
+				"square": false,
+				"vision": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "60"
+				},
+				"healthauratype": "aura",
+				"size": 184.40528634361235,
+				"left": "1198px",
+				"name": "Giant Spider 4",
+				"zindexdiff": 8,
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"disableaura": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"revealInFog": false
+			}
+		},
+		"map": "https://www.dndbeyond.com/attachments/5/517/27-dm.png",
+		"darkness_filter": "0",
+		"grid_line_width": "0.5",
+		"order": 1694378787920,
+		"conversion": 1,
+		"height": 1425,
+		"grid_subdivided": "0",
+		"scale_factor": 2,
+		"offsetx": 40,
+		"dm_map_usable": "1",
+		"offsety": 16.999999999999964,
+		"dm_map_is_video": "0",
+		"grid": "0",
+		"scale_check": true,
+		"dm_map": "https://www.dndbeyond.com/attachments/5/517/27-dm.png",
+		"player_map_is_video": "0",
+		"width": 2063,
+		"hpps": 46,
+		"disableSceneVision": "0",
+		"grid_color": "red",
+		"snap": "1"
+	},
 	"gos/isle-of-the-abbey/LocationsintheRuins": {
 		"dm_map_usable": "1",
 		"snap": "1",
