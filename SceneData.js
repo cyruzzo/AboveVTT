@@ -137148,7 +137148,50 @@ var PRESET = {
 			"scale": 100,
 			"dm_map": ""
 		}
+	],
+	"Weasel Wargaming": [
+		{
+			player_map: "https://www.youtube.com/watch?v=ErBd9sPBAZc",
+			title: "Warpstone cave 1 (Descent into the mines) Battlemap",
+			thumb: "https://i.ytimg.com/vi/ErBd9sPBAZc/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=ChKqW9JM24c",
+			title: "Warpstone cave 2 (Boiling pool) Battlemap",
+			thumb: "https://i.ytimg.com/vi/ChKqW9JM24c/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=rs_f59mRN2w",
+			title: "Warpstone cave 3 (Monstrous encounter) Battlemap",
+			thumb: "https://i.ytimg.com/vi/rs_f59mRN2w/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=6ctnnbXZXsg",
+			title: "Warpstone cave 4 (Grim discovery) Battlemap",
+			thumb: "https://i.ytimg.com/vi/6ctnnbXZXsg/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=Rk87Pp9ceXs",
+			title: "Warpstone cave 5 (Y-junction) Battlemap (Gridless)",
+			thumb: "https://i.ytimg.com/vi/Rk87Pp9ceXs/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=wc7O9tRb304",
+			title: "Warpstone Cave 6 (Throne room) Battlemap (Gridless)",
+			thumb: "https://i.ytimg.com/vi/wc7O9tRb304/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=2bl8eE4Y1HA",
+			title: "Warpstone cave 7 (cells) Battlemap",
+			thumb: "https://i.ytimg.com/vi/2bl8eE4Y1HA/hqdefault.jpg",
+		},
+		{
+			player_map: "https://www.youtube.com/watch?v=4rOSmiccu-Y",
+			title: "Warpstone Cave 8 (Pillar) Battlemap (Gridless)",
+			thumb: "https://i.ytimg.com/vi/4rOSmiccu-Y/hqdefault.jpg",
+		},
 	]
+	
 };
 
 var CONDITIONS = {
@@ -142645,6 +142688,53 @@ const SCENE_IMPORT_DATA = [
 				title: "Bravil 1",
 				thumb: "https://i.ytimg.com/vi/d_2F98P0y2E/hqdefault.jpg",
 			},
+		]
+	},
+	{
+		"title": "Weasel Wargaming",
+		"logo": "https://cdn.discordapp.com/attachments/1083353621778923581/1151198085679153213/AOPolaSIPULLp1Vm-Ud_YVSjV6MNsyFCgLfBNMgwE01ECAs176-c-k-c0x00ffffff-no-rj.png",
+		"scenes": [
+			{
+				player_map: "https://www.youtube.com/watch?v=ErBd9sPBAZc",
+				title: "Warpstone cave 1 (Descent into the mines) Battlemap",
+				thumb: "https://i.ytimg.com/vi/ErBd9sPBAZc/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=ChKqW9JM24c",
+				title: "Warpstone cave 2 (Boiling pool) Battlemap",
+				thumb: "https://i.ytimg.com/vi/ChKqW9JM24c/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=rs_f59mRN2w",
+				title: "Warpstone cave 3 (Monstrous encounter) Battlemap",
+				thumb: "https://i.ytimg.com/vi/rs_f59mRN2w/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=6ctnnbXZXsg",
+				title: "Warpstone cave 4 (Grim discovery) Battlemap",
+				thumb: "https://i.ytimg.com/vi/6ctnnbXZXsg/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=Rk87Pp9ceXs",
+				title: "Warpstone cave 5 (Y-junction) Battlemap (Gridless)",
+				thumb: "https://i.ytimg.com/vi/Rk87Pp9ceXs/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=wc7O9tRb304",
+				title: "Warpstone Cave 6 (Throne room) Battlemap (Gridless)",
+				thumb: "https://i.ytimg.com/vi/wc7O9tRb304/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=2bl8eE4Y1HA",
+				title: "Warpstone cave 7 (cells) Battlemap",
+				thumb: "https://i.ytimg.com/vi/2bl8eE4Y1HA/hqdefault.jpg",
+			},
+			{
+				player_map: "https://www.youtube.com/watch?v=4rOSmiccu-Y",
+				title: "Warpstone Cave 8 (Pillar) Battlemap (Gridless)",
+				thumb: "https://i.ytimg.com/vi/4rOSmiccu-Y/hqdefault.jpg",
+			},
+
 		]
 	}
 ];
