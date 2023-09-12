@@ -1467,10 +1467,10 @@ class MessageBroker {
 				if (window.reorderState === ItemType.Scene) {
 					enable_draggable_change_folder(ItemType.Scene);
 				}
+				update_pc_token_rows();
 				console.groupEnd()
 			});
-			
-
+				
 			remove_loading_overlay();
 		}
 		// console.groupEnd()
