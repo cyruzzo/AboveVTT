@@ -979,10 +979,10 @@ function export_current_scene(){
 	let currentSceneData = {
 		...window.CURRENT_SCENE_DATA,
 		scale_factor: window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-		hpps: window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.conversion,
-		vpps: window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.conversion,
-		offsetx: window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.conversion,
-		offsety: window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.conversion
+		hpps: window.CURRENT_SCENE_DATA.hpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
+		vpps: window.CURRENT_SCENE_DATA.vpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
+		offsetx: window.CURRENT_SCENE_DATA.offsetx/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
+		offsety: window.CURRENT_SCENE_DATA.offsety/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion)
 	} 
 	
 	let DataFile = {
