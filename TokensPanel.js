@@ -34,7 +34,7 @@ async function getOpen5e(results = [], search = ''){
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
+    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -51,7 +51,7 @@ async function getOpen5e(results = [], search = ''){
     return open5e_monsters;
 }
 async function getGroupOpen5e(slugin){
-    let api_url = `https://api.open5e.com/monsters/?slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3`
+    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
