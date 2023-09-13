@@ -2736,7 +2736,11 @@ function init_buttons() {
 
 	window.STREAMPEERS = {};
 	window.MYSTREAMID = uuid();
-	window.JOINTHEDICESTREAM = false;
+	window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+	if(window.EXPERIMENTAL_SETTINGS['streamDiceRolls']){
+		enable_dice_streaming_feature(window.JOINTHEDICESTREAM );
+	}
+	
 
 	init_keypress_handler();
 }
