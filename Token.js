@@ -30,9 +30,11 @@ const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404"
 
 const availableToAoe = [
 	"hidden",
-	"locked",  // not sure why you'd want this, but it doesn't hurt to support it
+	"locked", 
 	"restrictPlayerMove",
-	"revealname"
+	"revealname",
+	"revealInFog",
+	"lockRestrictDrop"
 ];
 
 
