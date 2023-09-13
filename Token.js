@@ -2066,7 +2066,7 @@ class Token {
 					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (event.pageX - click.x + original.left) / zoom;s
+					let tokenX = (event.pageX - click.x + original.left) / zoom;
 					let tokenY = (event.pageY - click.y + original.top) / zoom;
 					let tinyToken = (Math.round(parseInt(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
 
@@ -2389,8 +2389,8 @@ class Token {
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  window.CURRENT_SCENE_DATA.width * window.CURRENT_SCENE_DATA.scale_factor  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
-			bottom: window.CURRENT_SCENE_DATA.height * window.CURRENT_SCENE_DATA.scale_factor + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  parseInt(window.CURRENT_SCENE_DATA.width) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor)  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
+			bottom: parseInt(window.CURRENT_SCENE_DATA.height) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor) + (sizeOnGrid.y * (multi -1)), // ... same as above
 		};	
 	}
 	
