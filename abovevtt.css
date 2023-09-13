@@ -323,6 +323,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     position:absolute;
     left: calc(var(--mid-x) - (10px / var(--window-zoom)));
     top: calc(var(--mid-y) - (10px / var(--window-zoom)));
+    opacity: 0.8;
 }
 .door-button span{
     font-size: calc(19px / var(--window-zoom)); 
