@@ -2809,6 +2809,8 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
         if (window.confirm(`Are you sure you want to remove all custom images for ${tokenName}?\nThis will reset the token images back to the default`)) {
             customization.removeAllAlternativeImages();
             persist_token_customization(customization);
+            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
+            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);                  
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             $(event.currentTarget).hide();
         }
