@@ -1691,6 +1691,8 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         persist_token_customization(customization);
         if (redraw) {
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
+            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
@@ -2758,7 +2760,7 @@ function register_custom_token_image_context_menu() {
                             placedToken.place_sync_persist();
                         }
 
-                        if (listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC()) {
+                        if (listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC() || listItem?.isTypeOpen5eMonster()) {
                             let customization = find_token_customization(listItem.type, listItem.id);
                             if (!customization) {
                                 showError("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
@@ -2766,6 +2768,8 @@ function register_custom_token_image_context_menu() {
                             }
                             customization.removeAlternativeImage(imgSrc);
                             persist_token_customization(customization);
+                            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
+                            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         } else {
                             showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
@@ -2773,7 +2777,7 @@ function register_custom_token_image_context_menu() {
                         }
                         selectedItem.remove();
                     }
-                };
+                };  
             }
             return { items: items };
         }

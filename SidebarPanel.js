@@ -1105,7 +1105,9 @@ function build_sidebar_list_row(listItem) {
   let imgHolder = $(`<div class="sidebar-list-item-row-img"></div>`);
   rowItem.append(imgHolder);
   if (listItem.type !== "aoe"){
-    let img = $(`<img src="${parse_img(listItem.image)}" alt="${listItem.name} image" class="token-image" />`);
+    let tokenCustomizations = find_token_customization(listItem.type, listItem.id);
+    let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
+    let img = $(`<img src="${parse_img(listingImage)}" alt="${listItem.name} image" class="token-image" />`);
     imgHolder.append(img);
   }
   else{
