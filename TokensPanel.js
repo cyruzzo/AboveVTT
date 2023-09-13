@@ -610,6 +610,12 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     update_pc_token_rows();
     inject_encounter_monsters();
+    if(!$('.reveal-hidden-button').hasClass('clicked')){
+        $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
+    }
+    else{
+        $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", true);
+    }  
     console.groupEnd()
 }
 

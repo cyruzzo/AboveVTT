@@ -1961,8 +1961,14 @@ function add_expand_collapse_buttons_to_header(sidebarPanel, addHideButton=false
   if(addHideButton){
     let hideButton = $(`<button class="token-row-button reveal-hidden-button" title="Reveal hidden folders/tokens" style=""><span class="material-icons">disabled_visible</span></button>`);
     hideButton.on("click", function (clickEvent) {
-      $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible");
-      $(this).toggleClass('clicked');
+      if($(this).hasClass('clicked')){
+        $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
+        $(this).toggleClass('clicked', false);
+      }
+      else{
+        $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", true);
+        $(this).toggleClass('clicked', true);
+      }  
     });
     if($('.temporary-visible').length>0){
       $(hideButton).toggleClass('clicked', true);
