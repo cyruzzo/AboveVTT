@@ -1660,7 +1660,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         let removeAllButton = build_remove_all_images_button(sidebarPanel, listItem, placedToken);
         sidebarPanel.body.after(removeAllButton);
         if (alternative_images_for_item(listItem).length === 0) {
-            removeAllButton.hide();
+            $('.token-image-modal-remove-all-button').hide();
         }
     }
     let inputWrapper = sidebarPanel.inputWrapper;
@@ -1688,7 +1688,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
-        removeAllButton.show();
+        $('.token-image-modal-remove-all-button').show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
 
