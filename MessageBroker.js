@@ -1419,8 +1419,9 @@ class MessageBroker {
 				
 				
 				set_default_vttwrapper_size();
-				apply_zoom_from_storage();
+				
         reset_canvas();
+        apply_zoom_from_storage();
 				
 				// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 				if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
