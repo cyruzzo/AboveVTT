@@ -658,6 +658,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(function() {
+			remove_zoom_from_storage()
 			$('[id="aligner1"]').remove();
 			$('[id="aligner2"]').remove();
 

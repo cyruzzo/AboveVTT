@@ -934,7 +934,7 @@ function reset_canvas() {
 	else {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
-
+	apply_zoom_from_storage();
 }
 
 function redraw_fog() {
