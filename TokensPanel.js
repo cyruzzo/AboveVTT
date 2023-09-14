@@ -1692,7 +1692,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         if (redraw) {
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
@@ -2769,7 +2769,7 @@ function register_custom_token_image_context_menu() {
                             customization.removeAlternativeImage(imgSrc);
                             persist_token_customization(customization);
                             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-                            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);
+                            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                         } else {
                             showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
@@ -2810,7 +2810,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             customization.removeAllAlternativeImages();
             persist_token_customization(customization);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-            $(`#${listItem.id}.sidebar-list-item-row .token-image`).attr('src', listingImage);                  
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);                  
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             $(event.currentTarget).hide();
         }
