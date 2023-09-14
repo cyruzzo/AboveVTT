@@ -1350,6 +1350,7 @@ class MessageBroker {
 
 		let old_src = $("#scene_map").attr('src');
 		if(data.UVTTFile == 1){
+			build_import_loading_indicator("Loading UVTT Map");
 			data.map = await get_map_from_uvtt_file(data.player_map);
 		}
 
@@ -1472,7 +1473,7 @@ class MessageBroker {
 				update_pc_token_rows();
 				console.groupEnd()
 			});
-				
+			$('.import-loading-indicator').remove();
 			remove_loading_overlay();
 		}
 		// console.groupEnd()
