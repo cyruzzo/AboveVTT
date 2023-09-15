@@ -1127,8 +1127,9 @@ class Token {
 			console.log("update_opacity failed to find an html element", this);
 			return;
 		}
+		let fogContext = $('#fog_overlay')[0].getContext('2d');
 
-		if (this.options.hidden || is_token_under_fog(this.options.id)) {
+		if (this.options.hidden || is_token_under_fog(this.options.id, fogContext)) {
 			if (window.DM) {
 				if (animated) {
 					tok.animate({ opacity: 0.5 }, { duration: 500, queue: false });
@@ -1450,6 +1451,8 @@ class Token {
 			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
+			if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
+				check_single_token_visibility(this.options.id);
 
 			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
 				
