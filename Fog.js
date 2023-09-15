@@ -435,7 +435,7 @@ function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
-
+	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
@@ -443,7 +443,7 @@ function check_single_token_visibility(id){
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
-	const inFog = is_token_under_fog(id); // this token is in fog
+	const inFog = is_token_under_fog(id, fogContext); // this token is in fog
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
@@ -490,7 +490,8 @@ async function do_check_token_visibility() {
 	let ctx = canvas.getContext("2d",  { willReadFrequently: true });
 
 	let promises = [];
-	let lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
+
+	let lightContext = window.lightInLos.getContext('2d');
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
 			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
@@ -3878,6 +3879,11 @@ async function redraw_light(){
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;
 
+	delete window.lightInLos;
+	window.lightInLos = document.createElement('canvas');
+	window.lightInLos.width = canvasWidth;
+	window.lightInLos.height = canvasHeight;
+
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
 		context.fillRect(0,0,canvasWidth,canvasHeight);
@@ -3886,11 +3892,6 @@ async function redraw_light(){
 		moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 		return;
 	}
-
-	delete window.lightInLos;
-	window.lightInLos = document.createElement('canvas');
-	window.lightInLos.width = canvasWidth;
-	window.lightInLos.height = canvasHeight;
 
 
 	offscreenContext.fillStyle = "black";
