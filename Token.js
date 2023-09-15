@@ -461,12 +461,14 @@ class Token {
 		$(selector).remove();
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
-		if(!is_player_id(this.options.id))
+		if(!is_player_id(this.options.id)){
 			delete window.all_token_objects[id];
-		if (id in window.JOURNAL.notes) {
-			delete window.JOURNAL.notes[id];
-			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+			if (id in window.JOURNAL.notes) {
+				delete window.JOURNAL.notes[id];
+				localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+			}
 		}
+		
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		if (persist == true) {	
