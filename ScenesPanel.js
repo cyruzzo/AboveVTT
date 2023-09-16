@@ -375,7 +375,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['uuid']);
+	uuid_hidden.val(scene['id']);
 	form.append(uuid_hidden);
 
 	grid_buttons = $("<div/>");
@@ -858,7 +858,7 @@ function edit_scene_vision_settings(scene_id){
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['uuid']);
+	uuid_hidden.val(scene['id']);
 	form.append(uuid_hidden);
 
 	let darknessValue = scene.darkness_filter || 0;
@@ -1116,7 +1116,7 @@ function edit_scene_dialog(scene_id) {
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['uuid']);
+	uuid_hidden.val(scene['id']);
 	form.append(uuid_hidden);
 
 	form.append(form_row('title', 'Scene Title'))
