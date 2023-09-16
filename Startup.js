@@ -31,11 +31,16 @@ $(function() {
           // in case someone left this on during beta testing, we should not allow it here
           set_avtt_setting_value("aggressiveErrorMessages", false);
         }
+        if (is_abovevtt_page()) {
+          monitor_console_logs();
+        }
+        window.diceRoller = new DiceRoller(); 
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(() => {
+
         if (is_encounters_page()) {
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
