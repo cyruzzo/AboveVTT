@@ -337,7 +337,7 @@ function convertToRPGRoller(){
    
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0) {
-      window.PLAYER_ID = urlSplit[urlSplit.length - 1];
+      window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
     $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
           e.stopPropagation();
