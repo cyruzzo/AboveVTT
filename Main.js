@@ -315,7 +315,7 @@ function getPlayerIDFromSheet(sheet_url) {
 	if(sheet_url) {
 		let urlSplit = sheet_url.split("/");
 		if(urlSplit.length > 0) {
-			playerID = urlSplit[urlSplit.length - 1];
+			playerID = urlSplit[urlSplit.length - 1].split('?')[0];
 		}
 	}
 	return playerID;
