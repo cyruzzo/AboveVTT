@@ -375,7 +375,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['id']);
+	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
 	grid_buttons = $("<div/>");
@@ -858,7 +858,7 @@ function edit_scene_vision_settings(scene_id){
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['id']);
+	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
 	let darknessValue = scene.darkness_filter || 0;
@@ -988,6 +988,7 @@ function edit_scene_vision_settings(scene_id){
 		}
 		
 		const isNew = false;
+
 		window.ScenesHandler.persist_scene(scene_id, isNew);
 
 
@@ -1116,7 +1117,7 @@ function edit_scene_dialog(scene_id) {
 	form.on('submit', function(e) { e.preventDefault(); });
 
 	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
-	uuid_hidden.val(scene['id']);
+	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
 	form.append(form_row('title', 'Scene Title'))
@@ -1313,7 +1314,6 @@ function edit_scene_dialog(scene_id) {
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
-
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
@@ -1946,7 +1946,7 @@ function redraw_scene_list(searchTerm) {
 	console.groupEnd();
 }
 
-function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
+async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 
 	let newSceneName = "New Scene";
 	let newSceneCount = window.sceneListItems.filter(item => item.parentId === parentId && item.name.startsWith(newSceneName)).length;
@@ -1960,8 +1960,10 @@ function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
 	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
 
 	window.ScenesHandler.scenes.push(sceneData);
-	window.ScenesHandler.persist_scene(window.ScenesHandler.scenes.length - 1,true);
-	edit_scene_dialog(window.ScenesHandler.scenes.length - 1);
+
+	await AboveApi.migrateScenes(window.gameId, [sceneData]);
+
+	edit_scene_dialog(window.ScenesHandler.scenes.length - 1, true);
 	did_update_scenes();
 }
 
