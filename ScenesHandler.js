@@ -1014,7 +1014,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	persist_current_scene(dontswitch=false){
-		window.ScenesHandler.scenes[window.ScenesHandler.current_scene_id] = window.CURRENT_SCENE_DATA;
+		let scene_index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
+		window.ScenesHandler.scenes[scene_index] = window.CURRENT_SCENE_DATA;
 		window.ScenesHandler.scene = window.CURRENT_SCENE_DATA;
 		let sceneData=Object.assign({},this.scene);
 
@@ -1026,7 +1027,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			tokens: {}
 		}
 
-		
+		sceneData.isnewscene=false;
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
 	}
 
