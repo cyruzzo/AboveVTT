@@ -547,6 +547,7 @@ class MessageBroker {
 
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
+				redraw_drawn_light();
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
@@ -556,6 +557,7 @@ class MessageBroker {
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
+				redraw_drawn_light();
 				redraw_drawings();
 				redraw_text();
 				redraw_light_walls();
@@ -1355,6 +1357,7 @@ class MessageBroker {
 		}
 
 		if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
+
 
 			if (data.fog_of_war == 1) {
 				window.FOG_OF_WAR = true;
