@@ -942,8 +942,8 @@ function reset_canvas() {
 function redraw_fog() {
 	if (!window.FOG_OF_WAR)
 		return;
-	var canvas = document.getElementById("fog_overlay");
-	var ctx = canvas.getContext("2d");
+	let canvas = document.getElementById("fog_overlay");
+	let fogContext = canvas.getContext("2d");
 
 	if (window.DM)
 		fogStyle = "rgba(0, 0, 0, 0.5)";
@@ -951,12 +951,19 @@ function redraw_fog() {
 		fogStyle = "rgb(0, 0, 0)";
 
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	let offscreenDraw = document.createElement('canvas');
+	let ctx = offscreenDraw.getContext('2d');
+
+	offscreenDraw.width = canvas.width;
+	offscreenDraw.height = canvas.height;
+
+	fogContext.clearRect(0, 0, canvas.width, canvas.height);
+
 	ctx.fillStyle = fogStyle;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	for (var i = 0; i < window.REVEALED.length; i++) {
-		var d = window.REVEALED[i];
+	for (let i = 0; i < window.REVEALED.length; i++) {
+		let d = window.REVEALED[i];
 		let adjustedArray = [];
 		let revealedScale = (d[6] != undefined) ? d[6]/window.CURRENT_SCENE_DATA.conversion : window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
@@ -1032,6 +1039,7 @@ function redraw_fog() {
 			}
 		}
 	}
+	fogContext.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
 
@@ -1068,69 +1076,19 @@ function redraw_drawings() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall" && d[1] !== 'light')
+	
+	let offscreenDraw = document.createElement('canvas');
+	let offscreenContext = offscreenDraw.getContext('2d');
 
-	for (var i = 0; i < drawings.length; i++) {
-		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
-		let isFilled = fill === "filled";
-		let targetCtx = ctx;
-
-
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
-		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
-
-		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
-			x = x / adjustedScale;
-			y = y / adjustedScale;
-			height = height / adjustedScale;
-			width = width / adjustedScale;
-		}
-
-
-		if (shape == "eraser") {
-			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
-		}
-		if (shape == "rect") {
-			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
-		}
-		if (shape == "arc") {
-			const radius = width
-			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
-		}
-		if (shape == "cone") {
-			drawCone(targetCtx, x, y, width, height, color, isFilled, lineWidth);
-		}
-		if (shape == "line") {
-			drawLine(targetCtx,x, y, width, height, color, lineWidth, scale);		
-		}
-		if (shape == "polygon") {
-			drawPolygon(targetCtx,x, color, isFilled, lineWidth, undefined, undefined, scale);
-			// ctx.stroke();
-		}
-		if (shape == "brush") {
-			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
-		}
-		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
-		}
-		if(shape == "3pointRect"){
-		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
-		}
-	}
-}
-
-function redraw_drawn_light(){
-	let lightCanvas = document.getElementById("light_overlay");
-	let lightCtx = lightCanvas.getContext("2d");
-	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
-	const drawings = window.DRAWINGS.filter(d => d[1].includes("light"))
+	offscreenDraw.width = canvas.width;
+	offscreenDraw.height = canvas.height;
 
 	for (var i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = true;
 		
-		let targetCtx = lightCtx;
+		let targetCtx = offscreenContext;
 	
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
@@ -1174,9 +1132,76 @@ function redraw_drawn_light(){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 	}
+
+	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
-function  redraw_light_walls(clear=true){
+function redraw_drawn_light(){
+	let lightCanvas = document.getElementById("light_overlay");
+	let lightCtx = lightCanvas.getContext("2d");
+	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
+	const drawings = window.DRAWINGS.filter(d => d[1].includes("light"))
+
+	let offscreenDraw = document.createElement('canvas');
+	let offscreenContext = offscreenDraw.getContext('2d');
+
+	offscreenDraw.width = lightCanvas.width;
+	offscreenDraw.height = lightCanvas.height;
+
+	for (var i = 0; i < drawings.length; i++) {
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		let isFilled = true;
+		
+		let targetCtx = offscreenContext;
+	
+
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
+		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
+			x = x / adjustedScale;
+			y = y / adjustedScale;
+			height = height / adjustedScale;
+			width = width / adjustedScale;
+		}
+
+
+		if (shape == "eraser") {
+			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+		}
+		if (shape == "rect") {
+			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
+		}
+		if (shape == "arc") {
+			const radius = width
+			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
+		}
+		if (shape == "cone") {
+			drawCone(targetCtx, x, y, width, height, color, isFilled, lineWidth);
+		}
+		if (shape == "line") {
+			drawLine(targetCtx,x, y, width, height, color, lineWidth, scale);		
+		}
+		if (shape == "polygon") {
+			drawPolygon(targetCtx,x, color, isFilled, lineWidth, undefined, undefined, scale);
+			// ctx.stroke();
+		}
+		if (shape == "brush") {
+			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
+		}
+		if(shape == "paint-bucket"){
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
+		}
+		if(shape == "3pointRect"){
+		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
+	}
+
+	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+}
+
+function redraw_light_walls(clear=true){
 
 	let canvas = document.getElementById("temp_overlay");
 	let ctx = canvas.getContext("2d");
@@ -2289,15 +2314,9 @@ function drawing_contextmenu(e) {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
 		if(window.BEGIN_MOUSEX.length > 0){
-			var canvas = document.getElementById("temp_overlay");
-			var ctx = canvas.getContext("2d");
-
-			if (window.DRAWFUNCTION === "draw") {
-				redraw_drawn_light();
-				redraw_drawings();
-			} else {
-				redraw_fog();
-			}
+			let canvas = document.getElementById("temp_overlay");
+			let ctx = canvas.getContext("2d");
+			clear_temp_canvas();
 			drawPolygon(
 				ctx,
 				joinPointsArray(
@@ -2305,8 +2324,8 @@ function drawing_contextmenu(e) {
 					window.BEGIN_MOUSEY
 				),
 				window.DRAWCOLOR,
-				window.DRAWTYPE === "fill",
-				window.LINEWIDTH,
+				window.DRAWTYPE === "fill" || window.DRAWTYPE === "light",
+				1,
 				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
 				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
@@ -2320,15 +2339,9 @@ function drawing_contextmenu(e) {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
 		if(window.BEGIN_MOUSEX.length > 0){
-			var canvas = document.getElementById("temp_overlay");
-			var ctx = canvas.getContext("2d");
-
-			if (window.DRAWFUNCTION === "draw") {
-				redraw_drawn_light();
-				redraw_drawings();
-			} else {
-				redraw_fog();
-			}
+			let canvas = document.getElementById("temp_overlay");
+			let ctx = canvas.getContext("2d");
+			clear_temp_canvas();
 			draw3PointRect(
 				ctx,
 				joinPointsArray(
@@ -2336,8 +2349,8 @@ function drawing_contextmenu(e) {
 					window.BEGIN_MOUSEY
 				),
 				window.DRAWCOLOR,
-				window.DRAWTYPE === "fill",
-				window.LINEWIDTH,
+				window.DRAWTYPE === "fill" || window.DRAWTYPE === "light",
+				1,
 				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
 				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
@@ -2351,7 +2364,9 @@ function drawing_contextmenu(e) {
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
-		redraw_fog();
+	
+		if (window.DRAWSHAPE !== "paint-bucket")
+			clear_temp_canvas();
 	}
 }
 
