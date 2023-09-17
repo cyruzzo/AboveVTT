@@ -3851,7 +3851,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					clearPolygon(ctx, lightPolygon, undefined, true);
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 				}
-				drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, undefined, true);
+				drawPolygon(ctx, lightPolygon, fogStyle, undefined, 1, undefined, undefined, undefined, undefined, true);
 			}
 		}
 	}
