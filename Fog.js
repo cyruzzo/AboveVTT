@@ -898,8 +898,8 @@ function reset_canvas() {
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
 
-	redraw_drawings();
 	redraw_light_walls();
+	redraw_drawings();
 	redraw_drawn_light();
 	redraw_light();
 	redraw_fog();

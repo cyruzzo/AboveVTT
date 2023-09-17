@@ -547,20 +547,20 @@ class MessageBroker {
 
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
+				redraw_light_walls();
 				redraw_drawn_light();
 				redraw_drawings();
 				redraw_text();
-				redraw_light_walls();
 				await redraw_light();
 				check_token_visibility();
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
+				redraw_light_walls();
 				redraw_drawn_light();
 				redraw_drawings();
 				redraw_text();
-				redraw_light_walls();
 				await redraw_light();
 				check_token_visibility();
 			}
