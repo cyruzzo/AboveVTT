@@ -3420,7 +3420,8 @@ async function do_draw_selected_token_bounding_box() {
 				},
 			});
 		}
-	)	
+	)
+	redraw_light();	
 }
 
 /// removes everything that draw_selected_token_bounding_box added
