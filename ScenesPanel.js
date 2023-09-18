@@ -1,9 +1,9 @@
 
 function consider_upscaling(target){
-		if(target.hpps < 60 && target.hpps > 25){
+		if(target.hpps < 60 && target.hpps > 25  && target.vpps < 60 && target.vpps > 25){
 			target.scale_factor=2;
 		}
-		else if(target.hpps <=25){
+		else if(target.hpps <=25 || target.vpps <=25){
 			target.scale_factor=4;
 		}
 		else{
