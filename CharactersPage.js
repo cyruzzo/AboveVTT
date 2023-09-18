@@ -334,7 +334,10 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
-   
+    if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == false){
+      $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller')
+      return;
+    }
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
