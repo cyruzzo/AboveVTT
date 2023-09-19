@@ -626,7 +626,7 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab.
 		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog.
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
-		$(".ct-character-header__group--game-log").click();
+		$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click()
 	}
 
 }
@@ -1940,7 +1940,7 @@ function init_character_page_sidebar() {
 	}
 
 	// Open the gamelog, and lock it open
-	$(".ct-character-header__group--game-log").click();
+	$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click()
 	$(".ct-sidebar__control--unlock").click();
 
 	$("#site-main").css({"display": "block", "visibility": "hidden"});
@@ -2018,7 +2018,7 @@ function init_character_page_sidebar() {
  */
 function monitor_character_sidebar_changes() {
 
-	$(".ct-character-header__group--game-log").click(function(event) {
+	$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click(function(event) {
 		if (event.originalEvent !== undefined) {
 			// the user actually clicked the button. Make sure we switch tabs
 			$("#switch_gamelog").click();
