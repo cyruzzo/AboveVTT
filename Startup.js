@@ -300,7 +300,7 @@ async function lock_character_gamelog_open() {
   }
 
   // Open the gamelog, and lock it open
-  $(".ct-character-header__group--game-log").click();
+  $("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click()
   $(".ct-sidebar__control--unlock").click();
 }
 
