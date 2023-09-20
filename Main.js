@@ -27,7 +27,7 @@ function parse_img(url) {
 		console.warn("parse_img is removing a data url because those are not allowed");
 		retval = "";
 	} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
-		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5]+"&export=media";
 		console.log("parse_img is converting", url, "to", parsed);
 		retval = parsed;
 	} 
@@ -427,7 +427,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 	}
 	else if (is_video === "0" || !is_video) {
 		$("#scene_map_container").toggleClass('video', false);
-		let newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
+		let newmap = $(`<img id='scene_map' src='${url}&date=${new Date().getTime()}' style='position:absolute;top:0;left:0;z-index:10'>`);
 
 
 		if(UVTTFile && width != null){				
