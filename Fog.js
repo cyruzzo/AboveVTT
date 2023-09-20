@@ -1140,7 +1140,7 @@ function redraw_drawn_light(){
 	let lightCanvas = document.getElementById("light_overlay");
 	let lightCtx = lightCanvas.getContext("2d");
 	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
-	const drawings = window.DRAWINGS.filter(d => d[1].includes("light"))
+	const drawings = window.DRAWINGS.filter(d => d[1] == "light")
 
 	let offscreenDraw = document.createElement('canvas');
 	let offscreenContext = offscreenDraw.getContext('2d');
