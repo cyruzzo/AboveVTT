@@ -291,7 +291,7 @@ function init_characters_pages(container = $(document)) {
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
          observe_character_sheet_changes($(document));
-        if(event.data.tab == undefined && event.data.rpgRoller == false && window.self==window.top){
+        if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
           $('.integrated-dice__container').off('click.rpg-roller'); 
         }else{
           convertToRPGRoller();
@@ -334,7 +334,7 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
-    if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == false){
+    if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
       $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller')
       return;
     }
