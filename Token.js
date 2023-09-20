@@ -2107,7 +2107,7 @@ class Token {
 						}
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
-						if (pixeldata[2] != 0)
+						if (pixeldata[2] > 5)
 						{	
 							window.oldTokenPosition[self.options.id] = ui.position;				
 						}
@@ -2206,7 +2206,7 @@ class Token {
 									}									
 									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
-									if (pixeldata[2] != 0)
+									if (pixeldata[2] > 5)
 									{	
 										window.oldTokenPosition[curr.options.id] = {
 											left: tokenX,

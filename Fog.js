@@ -410,7 +410,7 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] == 255)
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] >= 253)
 		return true;
 	else
 		return false;
@@ -424,7 +424,7 @@ function is_token_under_light_aura(tokenid, lightContext=undefined){
 	let pixeldata = lightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]>0 || pixeldata[i+1]>0 || pixeldata[i+2]>0)
+		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
 			return true;
 	}
 				
@@ -3916,7 +3916,7 @@ function detectInLos(x, y) {
 	const pixeldata1 = ctx.getImageData((x-1)/window.CURRENT_SCENE_DATA.scale_factor, (y-1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	const pixeldata2 = ctx.getImageData((x+1)/window.CURRENT_SCENE_DATA.scale_factor, (y+1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 	
-	if (pixeldata[2] == 0 || pixeldata1[2] == 0 || pixeldata2[2] == 0 )
+	if (pixeldata[2] <= 5 || pixeldata1[2] <= 5 || pixeldata2[2] <= 5 )
 	{	
 		return false;			
 	}
