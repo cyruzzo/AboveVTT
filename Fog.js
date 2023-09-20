@@ -903,7 +903,7 @@ function reset_canvas() {
 	redraw_drawn_light();
 	redraw_light();
 	redraw_fog();
-	redraw_text();
+	
 	
 
 	var canvas_grid = document.getElementById("grid_overlay");
@@ -937,6 +937,7 @@ function reset_canvas() {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
 	apply_zoom_from_storage();
+	redraw_text();
 }
 
 function redraw_fog() {
