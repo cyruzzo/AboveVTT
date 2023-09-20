@@ -1086,7 +1086,7 @@ function redraw_drawings() {
 	for (var i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
-		let isFilled = true;
+		let isFilled = fill === 'filled';
 		
 		let targetCtx = offscreenContext;
 	
