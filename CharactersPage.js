@@ -320,7 +320,7 @@ function init_characters_pages(container = $(document)) {
     tabCommunicationChannel.postMessage({
       msgType: 'isAboveOpen'
     })
-  
+    window.diceRoller = new DiceRoller(); 
   }
 }
 
