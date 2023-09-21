@@ -2229,16 +2229,57 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 			}, 0);
 		}
     })
-	const mutation_target = $(".dice-toolbar__dropdown")[0];
-	const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-	window.rollButtonObserver.observe(mutation_target, mutation_config);
+
+	let watchForDicePanel = new MutationObserver((mutations) => {
+	 mutations.every((mutation) => {
+	    if (!mutation.addedNodes) return
+
+	    for (let i = 0; i < mutation.addedNodes.length; i++) {
+	      // do things to your newly added nodes here
+	      let node = mutation.addedNodes[i]
+	      if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
+	        const mutation_target = $(".dice-toolbar__dropdown")[0];
+			const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+			window.rollButtonObserver.observe(mutation_target, mutation_config);
+			watchForDicePanel.disconnect();
+			return false;
+	      }
+	    }
+	    return true // must return true if doesn't break
+	  })
+	});
 
 	window.sendToDefaultObserver = new MutationObserver(function() {
     	localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
 	})
-	const sendto_mutation_target = $(".glc-game-log .tss-l9t796-SendToLabel")[0];
-	const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-	window.sendToDefaultObserver.observe(mutation_target, mutation_config);
+
+
+	let gamelogObserver = new MutationObserver((mutations) => {
+	 mutations.every((mutation) => {
+	    if (!mutation.addedNodes) return
+	    for (let i = 0; i < mutation.addedNodes.length; i++) {
+	      // do things to your newly added nodes here
+	      let node = mutation.addedNodes[i]
+	      if(node.className == 'tss-l9t796-SendToLabel' || $('.glc-game-log .tss-l9t796-SendToLabel ~ button').length>0){
+	      	const sendto_mutation_target = $(".glc-game-log .tss-l9t796-SendToLabel ~ button")[0];
+			const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+			window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+			gamelogObserver.disconnect();
+			return false;
+	      }
+	    }
+	    return true // must return true if doesn't break
+	  })
+	});
+
+	watchForDicePanel.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
+	gamelogObserver.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
+
+	
+
+
+
+	
 
 	
 
