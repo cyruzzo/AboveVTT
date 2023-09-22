@@ -5986,7 +5986,6 @@ input.max_hp[disabled]{
     background:#ffffff80;
     border-radius:20px !important;
     border: var(--token-border-width) solid #000 !important;
-    opacity:0.5;
 }
 .body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
