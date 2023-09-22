@@ -8,17 +8,17 @@ let recentCharacterUpdates = {};
 
 const debounce_add_extras = mydebounce(() => {
   if (is_abovevtt_page()) {
+    $('.add-monster-token-to-vtt').remove();
     const extraRows = $('.ct-extra-row')
-    const thisPC = window.pcs.filter(d => d.characterId == window.PLAYER_ID);
     for(let i=0; i<extraRows.length; i++){
-      
-      $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt' data-index=${i}>+</button>`)) 
+      $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
 
     $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(){
       const centerView = center_of_view();
       let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
-      let monsterData = playerData[0].extras.creatures[$(this).attr('data-index')];
+      let tokenName = $(this).parent().find('.ddbc-extra-name').text().replace("*", '');
+      let monsterData = playerData[0].extras.creatures.filter(d => d.name == tokenName)[0];
 
       let extraOptions = {
         hitPointInfo: {
@@ -621,6 +621,7 @@ function observe_character_sheet_changes(documentToObserve) {
       try {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
+
        
         if((!is_abovevtt_page() && window.sendToTab !== undefined) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
           debounceConvertToRPGRoller();
@@ -721,6 +722,8 @@ function observe_character_sheet_changes(documentToObserve) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
               send_movement_speeds(documentToObserve, mutationTarget);
+            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row')){
+              debounce_add_extras();
             }
 
             // TODO: check for class or something. We don't need to do this on every mutation

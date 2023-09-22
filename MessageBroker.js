@@ -502,16 +502,6 @@ class MessageBroker {
 					}
 				}
 			}
-			if(msg.eventType == "custom/myVTT/place-extras-token"){
-				if(window.DM){
-					let left = parseInt(msg.data.centerView.x);
-					let top = parseInt(msg.data.centerView.y);
-					
-					fetch_and_cache_monsters([msg.data.monsterId]);
-					create_and_place_token(window.cached_monster_items[msg.data.monsterId], undefined, undefined, left, top, undefined, undefined, true);
-				 
-				}
-			}
 
 	
 
@@ -520,9 +510,9 @@ class MessageBroker {
 					let left = parseInt(msg.data.centerView.x);
 					let top = parseInt(msg.data.centerView.y);
 					let monsterId = msg.data.monsterData.baseId;
-					fetch_and_cache_monsters([monsterId]);
-					create_and_place_token(window.cached_monster_items[monsterId], undefined, undefined, left, top, undefined, undefined, true, msg.data.extraOptions);
-				 
+					fetch_and_cache_monsters([monsterId], function(){
+						create_and_place_token(window.cached_monster_items[monsterId], undefined, undefined, left, top, undefined, undefined, true, msg.data.extraOptions)
+					});
 				}
 			}
 
