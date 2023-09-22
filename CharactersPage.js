@@ -13,9 +13,9 @@ const debounce_add_extras = mydebounce(() => {
     for(let i=0; i<extraRows.length; i++){
       $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
-
-    const playerTokenID = find_pc_by_player_id(my_player_id(), false).sheet
-    $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(){
+    let pc = find_pc_by_player_id(my_player_id(), false)
+    const playerTokenID = pc ? pc.sheet : '';
+    $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(e){
       e.stopImmediatePropagation();
       let tokenPosition = (window.TOKEN_OBJECTS[playerTokenID]) ? 
         {
@@ -36,7 +36,8 @@ const debounce_add_extras = mydebounce(() => {
         armorClass: $(this).parent().find('.ct-extra-row__ac').text(),
         sizeId: monsterData.sizeId,
         name: monsterData.name,
-        player_owned: true
+        player_owned: true,
+        share_vision: true
       }
       if(!window.TOKEN_OBJECTS[playerTokenID])
         tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
@@ -730,7 +731,7 @@ function observe_character_sheet_changes(documentToObserve) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
               send_movement_speeds(documentToObserve, mutationTarget);
-            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row')){
+            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row') || ($(mutation.addedNodes[0]).hasClass('ct-content-group') && $('.ct-extra-row').length>0)){
               debounce_add_extras();
             }
 
