@@ -2441,6 +2441,7 @@ function dragging_right_click_mouseup(event) {
 
 function default_options() {
 	return {
+		id: uuid(),
 		color: random_token_color(),
 		conditions: [],
 		custom_conditions: [],
