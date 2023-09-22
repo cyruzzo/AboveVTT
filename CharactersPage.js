@@ -14,7 +14,8 @@ const debounce_add_extras = mydebounce(() => {
       $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
 
-    $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(){
+    $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(e){
+      e.stopImmediatePropagation();
       const centerView = center_of_view();
       let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
       let tokenName = $(this).parent().find('.ddbc-extra-name').text().replace("*", '');
