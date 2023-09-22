@@ -27,7 +27,8 @@ const debounce_add_extras = mydebounce(() => {
         },       
         armorClass: $(this).parent().find('.ct-extra-row__ac').text(),
         sizeId: monsterData.sizeId,
-        name: monsterData.name
+        name: monsterData.name,
+        player_owned: true
       }
 
       let centerMap = convert_point_from_view_to_map(centerView.x, centerView.y)
