@@ -974,7 +974,7 @@ function build_menu_stat_inputs(tokenIds) {
 	let ac = '';
 	let elev = '';
 
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || window.DM)){
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
 		hp = tokens[0].hp;
 		max_hp = tokens[0].maxHp;
 		ac = tokens[0].ac;
