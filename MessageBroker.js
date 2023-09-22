@@ -104,9 +104,9 @@ function addVideo(stream,streamerid) {
 				const red = frame.data[i + 0];
 				const green = frame.data[i + 1];
 				const blue = frame.data[i + 2];
-				if ((red < 8) && (green < 8) && (blue < 8))
+				if ((red < 24) && (green < 24) && (blue < 24))
 					frame.data[i + 3] = 128;
-				if ((red < 4) && (green < 4) && (blue < 4))
+				if ((red < 8) && (green < 8) && (blue < 8))
 					frame.data[i + 3] = 0;
 				
 				
@@ -474,7 +474,8 @@ class MessageBroker {
 				"custom/myVTT/drawing",
 				"custom/myVTT/drawdata",
 				"custom/myVTT/highlight",
-				"custom/myVTT/pointer"
+				"custom/myVTT/pointer",
+				"custom/myVTT/place-extras-token"
 			].includes(msg.eventType)) {
 				console.log("skipping msg from a different scene");
 				return;
@@ -499,6 +500,29 @@ class MessageBroker {
 					} else {
 						place_token_in_center_of_view(msg.data);
 					}
+				}
+			}
+			if(msg.eventType == "custom/myVTT/place-extras-token"){
+				if(window.DM){
+					let left = parseInt(msg.data.centerView.x);
+					let top = parseInt(msg.data.centerView.y);
+					
+					fetch_and_cache_monsters([msg.data.monsterId]);
+					create_and_place_token(window.cached_monster_items[msg.data.monsterId], undefined, undefined, left, top, undefined, undefined, true);
+				 
+				}
+			}
+
+	
+
+			if(msg.eventType == "custom/myVTT/place-extras-token"){
+				if(window.DM){
+					let left = parseInt(msg.data.centerView.x);
+					let top = parseInt(msg.data.centerView.y);
+					let monsterId = msg.data.monsterData.baseId;
+					fetch_and_cache_monsters([monsterId]);
+					create_and_place_token(window.cached_monster_items[monsterId], undefined, undefined, left, top, undefined, undefined, true, msg.data.extraOptions);
+				 
 				}
 			}
 

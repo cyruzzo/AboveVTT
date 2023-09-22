@@ -6,7 +6,44 @@ $(function() {
 
 let recentCharacterUpdates = {};
 
+const debounce_add_extras = mydebounce(() => {
+  if (is_abovevtt_page()) {
+    const extraRows = $('.ct-extra-row')
+    const thisPC = window.pcs.filter(d => d.characterId == window.PLAYER_ID);
+    for(let i=0; i<extraRows.length; i++){
+      
+      $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt' data-index=${i}>+</button>`)) 
+    }
 
+    $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(){
+      const centerView = center_of_view();
+      let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
+      let monsterData = playerData[0].extras.creatures[$(this).attr('data-index')];
+
+      let extraOptions = {
+        hitPointInfo: {
+          current: $(this).parent().find('.ct-extra-row__hp-value--current').text(),
+          maximum: $(this).parent().find('.ct-extra-row__hp-value--total').text(),
+        },       
+        armorClass: $(this).parent().find('.ct-extra-row__ac').text(),
+        sizeId: monsterData.sizeId,
+        name: monsterData.name
+      }
+
+      let centerMap = convert_point_from_view_to_map(centerView.x, centerView.y)
+      window.MB.sendMessage("custom/myVTT/place-extras-token", {
+          monsterData: monsterData,
+          centerView: centerMap,
+          sceneId: window.CURRENT_SCENE_DATA.id,
+          extraOptions: extraOptions
+      });
+    })
+  
+ 
+  
+  } 
+
+}, 100);
 
 const sendCharacterUpdateEvent = mydebounce(() => {
   if (window.DM) return;
@@ -623,7 +660,7 @@ function observe_character_sheet_changes(documentToObserve) {
             }
           }
             
-
+         
          
           if(mutationTarget.hasClass("ddbc-tab-list__content")){
             if (!is_player_sheet_full_width()) {
@@ -656,6 +693,8 @@ function observe_character_sheet_changes(documentToObserve) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-status-summary-mobile__button--interactive") && mutationTarget.text() === "Inspiration") {
               character_sheet_changed({inspiration: mutationTarget.hasClass("ct-status-summary-mobile__button--active")});
+            } else if(mutationParent.find('[class*="ct-extras"]').length>0 && mutationParent.find('.add-monster-token-to-vtt').length==0){
+              debounce_add_extras();
             }
 
             break;

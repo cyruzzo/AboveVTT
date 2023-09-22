@@ -872,7 +872,10 @@ function update_pc_token_rows() {
  * @param disableSnap {boolean} if true, tokens will not snap to the grid. This is false by default and only used when placing multiple tokens
  * @param nameOverride {string} if present will override the list items name with this name. This is for dragging out player aoe tokens from sheets
  */
-function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "") {
+
+
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions={}) {
+
 
     if (listItem === undefined) {
         console.warn("create_and_place_token was called without a listItem");
@@ -1137,15 +1140,24 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     options.imgsrc = random_image_for_item(listItem, specificImage);
     // TODO: figure out if we still need to do this, and where they are coming from
+    if(extraOptions != {}){
+        options = {
+            ...options,
+            ...extraOptions
+        }
+    }
     delete options.undefined;
     delete options[""];
     console.log("create_and_place_token about to place token with options", options, hidden);
 
     if (eventPageX === undefined || eventPageY === undefined) {
         place_token_in_center_of_view(options);
-    } else {
+    } else if(mapPoint==false){
         let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
         place_token_at_map_point(options, mapPosition.x, mapPosition.y);
+    }
+    else{
+        place_token_at_map_point(options, eventPageX, eventPageY);
     }
 }
 
