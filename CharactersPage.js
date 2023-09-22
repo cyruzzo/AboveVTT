@@ -394,7 +394,8 @@ function convertToRPGRoller(){
           e.preventDefault();
           let rollData = {}
           if($(this).hasClass('avtt-roll-formula-button')){
-             rollData = window.diceRoller.fromSlashCommand(this)
+             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
           }
           else{
              rollData = getRollData(this)
