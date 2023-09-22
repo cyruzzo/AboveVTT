@@ -13,14 +13,17 @@ const debounce_add_extras = mydebounce(() => {
     for(let i=0; i<extraRows.length; i++){
       $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
+
     const playerTokenID = find_pc_by_player_id(my_player_id(), false).sheet
     $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(){
+      e.stopImmediatePropagation();
       let tokenPosition = (window.TOKEN_OBJECTS[playerTokenID]) ? 
         {
           x: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.left) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2,
           y: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.top) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2
         } : 
         center_of_view();
+
       let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
       let tokenName = $(this).parent().find('.ddbc-extra-name').text().replace("*", '');
       let monsterData = playerData[0].extras.creatures.filter(d => d.name == tokenName)[0];
