@@ -13,10 +13,17 @@ const debounce_add_extras = mydebounce(() => {
     for(let i=0; i<extraRows.length; i++){
       $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
-
+    let pc = find_pc_by_player_id(my_player_id(), false)
+    const playerTokenID = pc ? pc.sheet : '';
     $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(e){
       e.stopImmediatePropagation();
-      const centerView = center_of_view();
+      let tokenPosition = (window.TOKEN_OBJECTS[playerTokenID]) ? 
+        {
+          x: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.left) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2,
+          y: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.top) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2
+        } : 
+        center_of_view();
+
       let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
       let tokenName = $(this).parent().find('.ddbc-extra-name').text().replace("*", '');
       let monsterData = playerData[0].extras.creatures.filter(d => d.name == tokenName)[0];
@@ -29,13 +36,14 @@ const debounce_add_extras = mydebounce(() => {
         armorClass: $(this).parent().find('.ct-extra-row__ac').text(),
         sizeId: monsterData.sizeId,
         name: monsterData.name,
-        player_owned: true
+        player_owned: true,
+        share_vision: true
       }
-
-      let centerMap = convert_point_from_view_to_map(centerView.x, centerView.y)
+      if(!window.TOKEN_OBJECTS[playerTokenID])
+        tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
       window.MB.sendMessage("custom/myVTT/place-extras-token", {
           monsterData: monsterData,
-          centerView: centerMap,
+          centerView: tokenPosition,
           sceneId: window.CURRENT_SCENE_DATA.id,
           extraOptions: extraOptions
       });
@@ -723,7 +731,7 @@ function observe_character_sheet_changes(documentToObserve) {
               send_senses();
             } else if (mutationTarget.hasClass("ct-speed-manage-pane")) {
               send_movement_speeds(documentToObserve, mutationTarget);
-            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row')){
+            } else if($(mutation.addedNodes[0]).hasClass('ct-extra-row') || ($(mutation.addedNodes[0]).hasClass('ct-content-group') && $('.ct-extra-row').length>0)){
               debounce_add_extras();
             }
 
