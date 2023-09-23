@@ -790,15 +790,19 @@ class JournalManager{
 		
 	}
 
-	add_journal_roll_buttons(target){
+	add_journal_roll_buttons(target, tokenId=undefined){
 		console.group("add_journal_roll_buttons")
 		
+
+		const rollImage = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
+		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.name : window.PLAYER_NAME
+
 		const clickHandler = function(clickEvent) {
-			roll_button_clicked(clickEvent, window.PLAYER_NAME, window.PLAYER_IMG)
+			roll_button_clicked(clickEvent, rollName, rollImage)
 		};
 
 		const rightClickHandler = function(contextmenuEvent) {
-			roll_button_contextmenu_handler(contextmenuEvent, window.PLAYER_NAME, window.PLAYER_IMG);
+			roll_button_contextmenu_handler(contextmenuEvent, rollName, rollImage);
 		}
 
 		// replace all "to hit" and "damage" rolls
