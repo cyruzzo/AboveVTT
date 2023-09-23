@@ -150,6 +150,17 @@ async function getUvttData(url){
 	return jsonData;
 }
 
+function getGoogleDriveAPILink(url){
+	let api_url = url;
+	if(url.startsWith('https://drive.google.com')){
+		let parsed_url = parse_img(url);
+		let fileid = parsed_url.split('=')[1];
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I&date=${new Date().getTime()}`;
+	}
+
+	return api_url;
+}
+
 async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId){
 	//to do
 	let sceneData = await getUvttData(url);
