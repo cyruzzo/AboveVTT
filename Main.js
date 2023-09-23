@@ -333,12 +333,12 @@ function map_load_error_cb(e) {
 	console.error("map_load_error_cb src", src, e);
 	if (typeof src === "string") {
 		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
-		if (src.includes("drive.google")) {
+		if (src.includes("drive.google") || window.CURRENT_SCENE_DATA.map.includes("drive.google")) {
 			specificMessage = `It looks like you're using a Google Drive image. Please make sure the "Get link" modal says "Anyone on the internet with this link can view".`;
 		}
 		if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
 			if (window.DM || confirm(`SPOILER ALERT!!!\nIf you click OK, you might see the entire map without fog of war. However, the map isn't loading at all so you will probably see a broken link. Are you sure you want to test this image?`)) {
-				window.open(src, '_blank');
+				window.open(window.CURRENT_SCENE_DATA.map, '_blank');
 			}
 		}
 	}
@@ -438,7 +438,8 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.height(height);		
 		}
 		else{
-			newmap = $(`<img id='scene_map' src='${url}&date=${new Date().getTime()}' style='position:absolute;top:0;left:0;z-index:10'>`);
+			url = getGoogleDriveAPILink(url)
+			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 		}
 
 
