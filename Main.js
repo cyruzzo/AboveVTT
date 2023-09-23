@@ -390,7 +390,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			width: width,
 			height: height,
 			videoId: videoid,
-			playerVars: { 'autoplay': 1, 'controls': 0 },
+			playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0 },
 			events: {
 				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
 				'onReady': function(e) { 
@@ -408,16 +408,16 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			if (window.YTPLAYER.playerInfo.playerState != 1){ // Something went wrong. tries to reset
 				window.YTPLAYER.seekTo(0);
 				window.YTPLAYER.playVideo();
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
+				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
 				return;
 			}
 			remaining = window.YTPLAYER.playerInfo.duration - window.YTPLAYER.playerInfo.currentTime;
 			if (remaining < 2) { // We should be able to just skip on the last second
 				window.YTPLAYER.seekTo(0);
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1.6) * 1000);
+				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
 			}
 			else {
-				window.YTTIMEOUT = setTimeout(smooth, (remaining - 1.6) * 1000);
+				window.YTTIMEOUT = setTimeout(smooth, (remaining / 2 ) * 1000);
 			}
 		};
 
@@ -3137,7 +3137,7 @@ function init_help_menu() {
 					<div id="tab11" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.6jh5zmtqvn3f"></div>
 
 					<div id="tab20">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 					</div>
 					<div id="tab21">
 						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
