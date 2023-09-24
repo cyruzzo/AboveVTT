@@ -1452,7 +1452,7 @@ class MessageBroker {
 					});
 					
 				
-					$("#scene_map").attr('src', data.player_map);
+					$("#scene_map").attr('src', getGoogleDriveAPILink(data.player_map));
 						
 				}
 				console.log("LOADING TOKENS!");
