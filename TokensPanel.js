@@ -2914,14 +2914,14 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
         if (token.isMonster()) {
             if(token.options.monster == 'open5e'){
                 let alreadyCached = cached_open5e_items[token.options.stat];
-                if (alreadyCached === undefined) {
+                if (alreadyCached === undefined && token.options.monster != 'customStat') {
                     // we only want monsters that we haven't already cached. no need to keep fetching the same things
                     open5emonsterIds.push(token.options.stat);
                 }
             }
             else{
                 let alreadyCached = cached_monster_items[token.options.monster];
-                if (alreadyCached === undefined) {
+                if (alreadyCached === undefined && token.options.monster != 'customStat') {
                     // we only want monsters that we haven't already cached. no need to keep fetching the same things
                     monsterIds.push(token.options.monster);
                 }
@@ -2944,7 +2944,7 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
 const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
     if(open5e){
         const cachedIds = Object.keys(cached_open5e_items);
-        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
+        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
                 update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
@@ -2956,7 +2956,7 @@ const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
     }
     else{
         const cachedIds = Object.keys(cached_monster_items);
-        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id));
+        const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
                 update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
