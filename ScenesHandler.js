@@ -395,13 +395,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 								left: left,
 								top: top
 							};
-								
-						
 						draw_wizarding_box()
 					}
-					else {
-					
-						
+					else {			
 						draw_wizarding_box()
 					}
 					
@@ -426,6 +422,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				},
 				drag: function(event, ui) {
 					clear_grid()
+
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -433,6 +430,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						left: Math.round((event.clientX - click1.x + original.left) / zoom),
 						top: Math.round((event.clientY - click1.y + original.top) / zoom)
 					};
+
 					
 					if ($('#gridType input:checked').val() != 1) { // restrict on 45
 						let originalDiff = {
@@ -442,6 +440,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						$("#aligner2").css('left', `${parseInt($("#aligner1").css('left')) + originalDiff.x}px`);
 						$("#aligner2").css('top', `${parseInt($("#aligner1").css('top')) + originalDiff.y}px`);
 						draw_wizarding_box()
+
 					}
 					else {
 						draw_wizarding_box()
