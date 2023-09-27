@@ -415,14 +415,14 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			$(scene_properties).toggleClass('horizontalHex', false);
 			$('span.squaresWide').text(' hex columns');
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex columns for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
+			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex columns for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 2){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', true);
 		
 			$('span.squaresTall').text(` hex rows`);
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
+			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 1){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', false);
