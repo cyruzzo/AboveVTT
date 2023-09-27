@@ -410,9 +410,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	gridType.find('input').on('change', function(){
 		window.CURRENT_SCENE_DATA.gridType = $(this).val();
 		if($(this).val() == 3){
-			$('#aligner2, #aligner1').css({
-				'display': 'none'
-			});
+			
 			$(scene_properties).toggleClass('verticalHex', true);
 			$(scene_properties).toggleClass('horizontalHex', false);
 			$('span.squaresWide').text(' hex columns');
@@ -421,18 +419,14 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		} else if($(this).val() == 2){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', true);
-			$('#aligner2, #aligner1').css({
-				'display': 'none'
-			});
+		
 			$('span.squaresTall').text(` hex rows`);
 			$('#additionalGridInfo').toggleClass('closed', false);
 			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 1){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', false);
-			$('#aligner2, #aligner1').css({
-				'display': ''
-			});
+			
 			$('span.squaresTall').text(' squares tall');
 			$('span.squaresWide').text(' squares wide');
 			$('#verticalMinorAdjustment label').text('Minor Vertical Adjustment')

@@ -306,13 +306,19 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				}
 
 				const a = 2 * Math.PI / 6;
-				if($('#gridType input:checked').val() == 3){
-					if(Math.round(parseInt($('#aligner1').css('left'))/ppsx/1.5  * (1 + Math.cos(a)))%2 == 0)
-						offsety = al1.y % (ppsx/1.5 * Math.sin(a));
+				let difference;
+				if($('#gridType input:checked').val() == 3){			
+						offsety = al1.y % (ppsx/1.5 * Math.sin(a)*2);
+						 
+						offsetx = al1.x % ppsx/1.5 * (1 + Math.cos(a))
+						difference = (Math.ceil((al1.x / ppsx/1.5 * (1 + Math.cos(a))))+1)%2
+						offsety += ppsx/1.5 * Math.sin(a)*difference
 				}
-				if($('#gridType input:checked').val() == 2){
-					if(Math.round(parseInt($('#aligner1').css('top'))/ppsy/1.5  * (1 + Math.cos(a)))%2 == 0)
-						offsetx = al1.x % (ppsx/1.5 * Math.sin(a));
+				if($('#gridType input:checked').val() == 2){				
+						offsetx = (al1.x % (ppsx/1.5 * Math.sin(a)*2));							
+						offsety = al1.y % ppsx/1.5 * (1 + Math.cos(a))
+						difference = (Math.ceil((al1.y / ppsx/1.5 * (1 + Math.cos(a))))+1)%2
+						offsetx += ppsx/1.5 * Math.sin(a)*difference
 				}
 				
 				console.log("ppsx " + ppsx + "ppsy " + ppsy + "offsetx " + offsetx + "offsety " + offsety)
@@ -370,7 +376,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				},
 				drag: function(event, ui) {
 					clear_grid()
-					draw_wizarding_box()
+					
 					let zoom = window.ZOOM;
 
 					let original = ui.originalPosition;
@@ -379,36 +385,26 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						top: Math.round((event.clientY - click2.y + original.top) / zoom)
 					};
 
-					if ($('#gridType input:checked').val() != 1) { // restrict on 45
-						console.log("PRE");
-						console.log(ui.position);
-						var rad = Math.PI / 180;
-						var angle;
-
-						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner1").css('left')));
-						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner1").css('top')));
-
-						var offset = {
-							x: offsetLeft,
-							y: offsetTop,
-						};
-						console.log(offset);
-						var distance = Math.sqrt(offset.x * offset.x + offset.y * offset.y);
-						console.log("distanza " + distance);
+					if ($('#gridType input:checked').val() != 1) {
 						
-						if (offset.y > 0)
-							angle = 30 * rad;
-						else
-							angle = 240 * rad;
+							let left = parseInt($("#aligner1").css('left')) + parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))
+							left = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
+							let top = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
 					
-
-						if($('#gridType input:checked').val() == 3)
-							ui.position.top = parseInt($("#aligner1").css('top')) + 1;
-						if($('#gridType input:checked').val() == 2)
-							ui.position.left = parseInt($("#aligner1").css('left')) + 1;
-
-						console.log(ui.position);
+							ui.position = {
+								left: left,
+								top: top
+							};
+								
+						
+						regrid()
 					}
+					else {
+					
+						
+						draw_wizarding_box()
+					}
+					
 
 				}
 			});
@@ -430,24 +426,19 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				},
 				drag: function(event, ui) {
 					clear_grid()
-					draw_wizarding_box()
-					let zoom = window.ZOOM;
-
-					let original = ui.originalPosition;
-					ui.position = {
-						left: Math.round((event.clientX - click1.x + original.left) / zoom),
-						top: Math.round((event.clientY - click1.y + original.top) / zoom)
-					};
-					if ($('#gridType input:checked').val() != 1) {
-						var offsetLeft = Math.round(ui.position.left - parseInt($("#aligner1").attr('original-left')));
-						var offsetTop = Math.round(ui.position.top - parseInt($("#aligner1").attr('original-top')));
-
-						console.log("off " + offsetLeft + " " + offsetTop);
-
-						$("#aligner2").css('left', (parseInt($("#aligner2").attr("original-left")) + offsetLeft) + "px");
-						$("#aligner2").css('top', (parseInt($("#aligner2").attr("original-top")) + offsetTop) + "px");
-
-
+					
+					
+					if ($('#gridType input:checked').val() != 1) { // restrict on 45
+						let originalDiff = {
+							x:parseInt($("#aligner2").attr('original-left')) - parseInt($("#aligner1").attr('original-left')),
+							y:parseInt($("#aligner2").attr('original-top')) - parseInt($("#aligner1").attr('original-top'))
+						}
+						$("#aligner2").css('left', `${parseInt($("#aligner1").css('left')) + originalDiff.x}px`);
+						$("#aligner2").css('top', `${parseInt($("#aligner1").css('top')) + originalDiff.y}px`);
+						regrid()
+					}
+					else {
+						draw_wizarding_box()
 					}
 				}
 			});
