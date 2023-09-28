@@ -658,8 +658,14 @@ function observe_character_sheet_changes(documentToObserve) {
 
         if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-          if(is_abovevtt_page() || window.sendToTab != undefined)
-            inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:last-of-type'));
+          if(is_abovevtt_page() || window.sendToTab != undefined){
+            if(mutationTarget.hasClass('ct-sidebar__pane-content')){
+              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
+            }else{
+              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:last-of-type'));
+            }
+            
+          }
         }
          
 
