@@ -34,7 +34,8 @@ $(function() {
         if (is_abovevtt_page()) {
           monitor_console_logs();
         }
-        window.diceRoller = new DiceRoller(); 
+        window.diceRoller = new DiceRoller();  
+        localStorage.removeItem("ScenesHandler" + gameId);
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
@@ -59,7 +60,7 @@ $(function() {
         if(lastSendToDefault != null){
           $(`[class*='listItemTextRoot']:contains('${lastSendToDefault}')`).click()
         }
-        window.diceRoller = new DiceRoller();  
+        
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
