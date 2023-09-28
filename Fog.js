@@ -440,14 +440,15 @@ function check_single_token_visibility(id){
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
-	const inFog = is_token_under_fog(id, fogContext); // this token is in fog
+	const inFog = playerTokenId != id && is_token_under_fog(id, fogContext); // this token is in fog
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
-	if (hideThisTokenInFogOrDarkness && notInLight ) {
+	if (hideThisTokenInFogOrDarkness && notInLight) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -492,6 +493,10 @@ async function do_check_token_visibility() {
 	let promises = [];
 
 	let lightContext = window.lightInLos.getContext('2d');
+
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
 			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
@@ -499,16 +504,13 @@ async function do_check_token_visibility() {
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
 
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-
 			//Combining some and filter cut down about 140ms for average sized picture
 		
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
-			const inFog = is_token_under_fog(id, ctx); // this token is in fog
+			const inFog = (playerTokenId != id && is_token_under_fog(id, ctx)); // this token is in fog and not the players token
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
