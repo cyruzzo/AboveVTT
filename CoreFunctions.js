@@ -800,7 +800,114 @@ async function look_for_github_issue(...searchTerms) {
       return matchingIndex === index
     });
 }
+//
+/**
+ * Add inject button into sidebar.
+ *
+ * When the user clicks on an item in a character sheet, the details are shown in a sidebar.
+ * This will inject a "send to gamelog" button and properly send the pertinent sidebar content to the gamelog.
+ * @param {DOMObject} sidebarPaneContent
+ */
+function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
+  // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
+  console.log("inject_sidebar_send_to_gamelog_button")
+  let button = $(`<button id='castbutton'">SEND TO GAMELOG</button>`);
+  // button.css({
+  //  "margin": "10px 0px",
+  //  "border": "1px solid #bfccd6",
+  //  "border-radius": "4px",
+  //  "background-color": "transparent",
+  //  "color": "#394b59"
+  // });
+  button.css({
+    "display": "flex",
+    "flex-wrap": "wrap",
+    "font-family": "Roboto Condensed,Roboto,Helvetica,sans-serif",
+    "cursor": "pointer",
+    "color": "#838383",
+    "line-height": "1",
+    "font-weight":" 700",
+    "font-size": "12px",
+    "text-transform": "uppercase",
+    "background-color": "#f2f2f2",
+    "margin": "3px 2px",
+    "border-radius": "3px",
+    "padding": "5px 7px",
+    "white-space": "nowrap"
+    })
+  $(button).hover(
+    function () {
+      button.css({
+          "background-color": "#5d5d5d",
+          "color": "#f2f2f2"
+      })
+    },
+    function () {
+      button.css({
+          "background-color": "#f2f2f2",
+          "color": "#5d5d5d"
+      })
+    }
+  );
 
+  sidebarPaneContent.prepend(button);
+  button.click(function() {
+    // make sure the button grabs dynamically. Don't hold HTML in the button click block because clicking on items back to back will fuck that up
+
+    let sidebar = sidebarPaneContent.closest(".ct-sidebar__portal");
+    let toInject = $(`<div></div>`);
+    toInject.attr("class", sidebarPaneContent.attr("class")); // set the class on our new element
+    // required
+    toInject.append(sidebar.find(".ct-sidebar__header").clone());
+
+    // these are optional, but if they're here, grab them
+    toInject.append(sidebarPaneContent.find(".ddbc-property-list").clone());
+    toInject.append(sidebarPaneContent.find(".ct-spell-detail__level-school").clone());
+    toInject.append(sidebarPaneContent.find(".ct-speed-manage-pane__speeds").clone());
+    toInject.append(sidebarPaneContent.find(".ct-armor-manage-pane__items").clone());
+
+    if (sidebarPaneContent.find(".ct-creature-pane__block").length > 0) {
+      // extras tab creatures need a little extra love
+      toInject.append(sidebarPaneContent.find(".ct-creature-pane__block").clone());
+      toInject.append(sidebarPaneContent.find(".ct-creature-pane__full-image").clone());
+      toInject.find(".ct-sidebar__header").css({
+        "margin-left": "20px",
+        "margin-right": "20px"
+      });
+    } else {
+      // required... unless it's an extras tab creature
+      toInject.append(sidebar.find(".ddbc-html-content").clone());
+    }
+
+    // now clean up any edit elements
+    toInject.find(".ct-container-pane__pencil").remove();
+
+    if(is_abovevtt_page()){
+      let html = window.MB.encode_message_text(toInject[0].outerHTML);
+      data = {
+        player: window.PLAYER_NAME,
+        img: window.PLAYER_IMG,
+        text: html
+      };
+      window.MB.inject_chat(data);
+      notify_gamelog();
+    }
+    else{
+      
+      tabCommunicationChannel.postMessage({
+        msgType: 'SendToGamelog',
+        player: window.PLAYER_NAME,
+        img: window.PLAYER_IMG,
+        text: toInject[0].outerHTML,
+        sendTo: window.sendToTab
+      });
+    }
+    
+    
+    
+    
+  });
+}
 async function fetch_github_issue_comments(issueNumber) {
   const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug", { credentials: "omit" });
   const response = await request.json();

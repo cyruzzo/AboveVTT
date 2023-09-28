@@ -82,6 +82,19 @@ $(function() {
             }       
             return;
           }
+          if(event.data.msgType =='SendToGamelog'){
+            if(event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)){
+              let html = window.MB.encode_message_text(event.data.text);
+              let data = {
+                player: event.data.player,
+                img: event.data.img,
+                text: html
+              };
+              window.MB.inject_chat(data);
+              notify_gamelog();
+            }
+            return;
+          }
           if(event.data.msgType=='isAboveOpen'){
             tabCommunicationChannel.postMessage({
               msgType: 'setupObserver',
