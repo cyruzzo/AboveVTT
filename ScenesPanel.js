@@ -87,7 +87,7 @@ function validate_image_input(element){
 		$(self).prev().attr("title")
 		$(self).prev().removeClass("valid loading")
 		$(self).prev().addClass("unsure")
-		$(self).prev().attr("data-hover", "URL is ok. video validation coming soon")
+		$(self).prev().attr("data-hover", "URL is ok. Video/UVTT validation not available")
 		$(self).attr("data-valid", false)
 	}
 	let url
@@ -97,7 +97,9 @@ function validate_image_input(element){
 		display_not_valid("URL is invalid")
 		return
 	}
-	if ($("#player_map_is_video_toggle").hasClass("rc-switch-checked") || $("#dm_map_is_video_toggle").hasClass("rc-switch-checked")){
+
+	let sceneData = window.ScenesHandler.scenes.filter(d => d.id == $('#edit_dialog').attr('data-scene-id'))[0];
+	if (sceneData.UVTTFile == 1 || $("#player_map_is_video_toggle").hasClass("rc-switch-checked") || $("#dm_map_is_video_toggle").hasClass("rc-switch-checked")){
 		display_unsure()
 		return
 	}
