@@ -1791,7 +1791,23 @@ class Token {
 			tok.attr("data-id", this.options.id);
 
 
+			let sameSizeorLargerTokens = Object.fromEntries(
+								   Object.entries(window.TOKEN_OBJECTS).filter(
+								   		([key, val])=> Math.ceil(window.TOKEN_OBJECTS[key].options.size) >= Math.ceil(this.options.size) && key != this.options.id
+								   	)
+								);
 
+			let topZIndex = 0;
+			if(JSON.stringify(sameSizeorLargerTokens) != '{}'){	
+				const tokenObjects = Object.values(sameSizeorLargerTokens);
+
+				tokenObjects.map((token) => {
+				  const valueFromObject = token.options.zindexdiff;
+				  topZIndex = Math.max(topZIndex, valueFromObject);
+				});
+			}
+			if(topZIndex != 0)
+				this.options.zindexdiff = topZIndex
 			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
