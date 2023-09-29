@@ -81,8 +81,6 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
-
-		this.prepareWalkableArea();
 	}
 
 	/** @return {number} the total of this token's HP and temp HP */
@@ -414,8 +412,6 @@ class Token {
 		}
 
 		this.place_sync_persist();
-
-		this.prepareWalkableArea();
 	}
 
 	imageSize(imageScale) {
@@ -535,9 +531,9 @@ class Token {
 		// Save handle params
 		top = parseFloat(top);
 		left = parseFloat(left);
-		if(this.walkableArea.right == null || this.walkableArea.bottom == null){
-			this.prepareWalkableArea()
-		}
+		
+		this.prepareWalkableArea()
+		
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);
 		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken)
 
@@ -1937,9 +1933,9 @@ class Token {
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					window.oldTokenPosition = {};
-					if(self.walkableArea.right == null || self.walkableArea.bottom == null){
-						self.prepareWalkableArea()
-					}
+					
+					self.prepareWalkableArea()
+					
 					click.x = event.pageX;
 					click.y = event.pageY;
 					if(self.selected == false && $(".token.tokenselected").length>0){
@@ -1987,9 +1983,9 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
- 								if(curr.walkableArea.right == null || curr.walkableArea.bottom == null){
- 									curr.prepareWalkableArea();
-								}
+ 								
+ 								curr.prepareWalkableArea();
+								
 								let el = $("#aura_" + id.replaceAll("/", ""));
 								if (el.length > 0) {
 									el.attr("data-left", el.css("left").replace("px", ""));
@@ -2105,6 +2101,7 @@ class Token {
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
+						
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 						if (pixeldata[2] > 5)
