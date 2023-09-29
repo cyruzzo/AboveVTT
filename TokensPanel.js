@@ -639,6 +639,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         zIndex: 100000,
         cursorAt: {top: 0, left: 0},
         cancel: '.token-row-gear, .change-token-image-item',
+        distance: 25,
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
