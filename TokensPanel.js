@@ -874,7 +874,7 @@ function update_pc_token_rows() {
  */
 
 
-function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions={}) {
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
 
 
     if (listItem === undefined) {
@@ -930,9 +930,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         }
         return;
     }
-
+    let options = {...window.TOKEN_SETTINGS}
     // set up whatever you need to. We'll override a few things after
-    let options = {...window.TOKEN_SETTINGS, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    if(extraOptions == undefined){
+        options = {...options, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    }
+    
     options.name = listItem.name;
 
 
@@ -1140,7 +1143,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     options.imgsrc = random_image_for_item(listItem, specificImage);
     // TODO: figure out if we still need to do this, and where they are coming from
-    if(extraOptions != {}){
+    if(extraOptions != undefined){
         options = {
             ...options,
             ...extraOptions

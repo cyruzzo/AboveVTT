@@ -38,7 +38,8 @@ const debounce_add_extras = mydebounce(() => {
         name: monsterData.name,
         player_owned: true,
         share_vision: true,
-        hidden: false
+        hidden: false,
+        locked: false
       }
       if(!window.TOKEN_OBJECTS[playerTokenID])
         tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
