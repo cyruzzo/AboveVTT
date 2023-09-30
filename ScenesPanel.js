@@ -863,14 +863,14 @@ function edit_scene_vision_settings(scene_id){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 1000);
 
-	var container = scene_properties;
+	let container = scene_properties;
 
 	container.empty();
 
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 
-	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	let uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
