@@ -1682,7 +1682,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         let removeAllButton = build_remove_all_images_button(sidebarPanel, listItem, placedToken);
         sidebarPanel.body.after(removeAllButton);
         if (alternative_images_for_item(listItem).length === 0) {
-            $('.token-image-modal-remove-all-button').hide();
+            $('#token-configuration-modal .token-image-modal-remove-all-button').hide();
         }
     }
     let inputWrapper = sidebarPanel.inputWrapper;
@@ -1712,7 +1712,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
-        $('.token-image-modal-remove-all-button').show();
+        $('#token-configuration-modal .token-image-modal-remove-all-button').show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
 
@@ -1889,7 +1889,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             }
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
         else if(listItem.isTypeMonster() || listItem.isTypeOpen5eMonster()){
@@ -1906,26 +1906,26 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
         else{
             customization.tokenOptions.vision = {
                 feet: '60',
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
     }
     if(customization.tokenOptions.light1 == undefined){
         customization.tokenOptions.light1 = {
             feet: '0',
-            color: 'rgba(255, 255, 255, 1)'
+            color: window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS?.light1?.color : 'rgba(255, 255, 255, 1)'
         }
     }
     if(customization.tokenOptions.light2 == undefined){
         customization.tokenOptions.light2 = {
             feet: '0',
-            color: 'rgba(142, 142, 142, 1)'
+            color: window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS?.light2?.color : 'rgba(142, 142, 142, 1)'
         }
     }
 
@@ -2074,6 +2074,14 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
         customization.setTokenOption(name, value);
     }, function () {
+        let visionInput = $("input[name='visionColor']").spectrum("get");
+        let light1Input = $("input[name='light1Color']").spectrum("get");
+        let light2Input = $("input[name='light2Color']").spectrum("get");
+        
+        customization.tokenOptions.vision.color = `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
+        customization.tokenOptions.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
+        customization.tokenOptions.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
+
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         decorate_modal_images(sidebarPanel, listItem, placedToken);

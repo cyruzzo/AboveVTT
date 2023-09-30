@@ -1668,13 +1668,13 @@ class Token {
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
 					feet: 0,
-					color: 'rgba(255, 255, 255, 1)'
+					color: (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
 					feet: 0,
-					color: 'rgba(142, 142, 142, 1)'
+					color: (window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : 'rgba(142, 142, 142, 1)'
 				}
 			}
 			if(this.options.vision == undefined){
@@ -1691,7 +1691,7 @@ class Token {
 			        }
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(142, 142, 142, 1)'
+		                color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 		        else if(this.isMonster()){
@@ -1720,13 +1720,13 @@ class Token {
 		       		} 
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(142, 142, 142, 1)'
+		                color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 				else{
 					this.options.vision = {
 						feet: 60,
-						color: 'rgba(142, 142, 142, 1)'
+						color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 					}
 				
 				}
@@ -2585,7 +2585,19 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...pc,
 		...tokenObject,
-		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
+		id: tokenObject.id, // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
+		vision: {
+			feet: tokenObject.vision?.feet ? tokenObject.vision.feet : '60',
+			color: tokenObject.vision?.color ? tokenObject.vision.color : (window.TOKEN_SETTINGS?.vision?.color) ?  window.TOKEN_SETTINGS.vision.color : default_options().light2.color
+		},
+		light1: {
+			feet: tokenObject.light1?.feet ? tokenObject.light1.feet : '0',
+			color: tokenObject.light1?.color ? tokenObject.light1.color : (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : default_options().light1.color
+		},
+		light2: {
+			feet: tokenObject.light2?.feet ? tokenObject.light2.feet : '0',
+			color: tokenObject.light2?.color ? tokenObject.light2.color : (window.TOKEN_SETTINGS?.light2?.color) ?  window.TOKEN_SETTINGS.light2.color : default_options().light2.color
+		}
 	};
 	if(window.all_token_objects[options.id] !== undefined){
 		options = {
