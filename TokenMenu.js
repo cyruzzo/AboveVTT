@@ -738,7 +738,7 @@ function build_token_light_inputs(tokenIds) {
 	let aura1Color = tokens.map(t => t.options.light1.color);
 	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS.light1.color : "";
 	let aura2Color = tokens.map(t => t.options.light2.color);
-	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_OBJECTS.light2.color : "";
+	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS.light2.color : "";
 	let visionFeet = tokens.map(t => t.options.vision.feet);
 	let uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : "";
 	let visionColor = tokens.map(t => t.options.vision.color);
