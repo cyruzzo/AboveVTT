@@ -1115,7 +1115,7 @@ function create_light_presets_edit(){
 			window.LIGHT_PRESETS[i].name = $(this).val();
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
 		})
-		row.find('input.light-radius').off('change.radius').on('change.radius', function(){
+		row.find('input[class*="radius"]').off('change.radius').on('change.radius', function(){
 			let lightname = $(this).attr('name');
 			window.LIGHT_PRESETS[i][lightname].feet = $(this).val();
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
