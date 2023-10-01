@@ -1112,7 +1112,7 @@ function create_light_presets_edit(){
 			</div>
 		`)
 		row.find('input.light_preset_title').off('change.name').on('change.name', function(){
-			window.LIGHT_PRESETS[i].name = $(this).val();
+			window.LIGHT_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
 			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
 		})
 		row.find('input[class*="radius"]').off('change.radius').on('change.radius', function(){
