@@ -1984,8 +1984,9 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
-					$(`.token[data-group-id='${self.options.groupId}']`).toggleClass('tokenselected', true); // set grouped tokens as selected
-				
+					$(`.token[data-group-id='${self.options.groupId}']:not([style*=' display: none;'])`).toggleClass('tokenselected', true); // set grouped tokens as selected
+					
+
 					window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
 					window.dragSelectedTokens = $(".token.tokenselected"); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 					
@@ -3200,7 +3201,7 @@ async function do_draw_selected_token_bounding_box() {
 	for(let index in groupIDs){
 		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
 		tokens.each(function(){
-			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
+			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')) || $(this).css('display') == 'none')
 				return;
 			$(this).toggleClass('tokenselected', true);	
 			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
