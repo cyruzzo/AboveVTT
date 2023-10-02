@@ -553,7 +553,7 @@ class Token {
 			await this.place(100)
 			this.update_and_sync();
 		}
-		draw_selected_token_bounding_box()
+		
 
 	}
 
@@ -1644,6 +1644,7 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
+		
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -2324,7 +2325,6 @@ class Token {
 				let count = 0;
 				if (shiftHeld == false) {
 					deselect_all_tokens();
-
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
@@ -2367,6 +2367,8 @@ class Token {
 			new Promise(debounceLightChecks),
 		]);
 		console.groupEnd()
+
+		return true;
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
@@ -2772,7 +2774,7 @@ function deselect_all_tokens() {
 		let curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
-			curr.place();
+			$(`.token[data-id='${id}']`).toggleClass('tokenselected', false);
 		}
 	}
 	remove_selected_token_bounding_box();
@@ -3174,25 +3176,36 @@ async function do_draw_selected_token_bounding_box() {
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
-	let promises = []
-	for (let id in window.TOKEN_OBJECTS) {
+	let promises = [];
+	let selected = Object.fromEntries(
+					   Object.entries(window.TOKEN_OBJECTS).filter(
+					      ([key, val])=> window.TOKEN_OBJECTS[key].selected == true
+					   )
+					);
+	let groupIDs = [];
+	for (let id in selected) {
 		let selector = "div[data-id='" + id + "']";
+		
 		promises.push(new Promise((resolve) => {
 			toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector)); 
 			resolve();
-		}));
-		if (window.TOKEN_OBJECTS[id].selected) {
-			if(!window.CURRENTLY_SELECTED_TOKENS.some(i => i == id))
-				window.CURRENTLY_SELECTED_TOKENS.push(id);
-
-			$(`.token[data-group-id='${window.TOKEN_OBJECTS[id].options.groupId}']`).each(function(){
-				if(window.CURRENTLY_SELECTED_TOKENS.some(id => id == $(this).attr('data-id')))
-					return;
-				$(this).toggleClass('tokenselected', true);
-				window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;
-				window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
-			})
+		}));	
+		window.CURRENTLY_SELECTED_TOKENS.push(id);	
+		$("#tokens").find(selector).toggleClass('tokenselected', true);	
+		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
+			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
 		}
+	}
+
+	for(let index in groupIDs){
+		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
+		tokens.each(function(){
+			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
+				return;
+			$(this).toggleClass('tokenselected', true);	
+			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
+			window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
+		})
 	}
 
 	Promise.allSettled(promises)
