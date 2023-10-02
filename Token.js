@@ -553,6 +553,7 @@ class Token {
 			await this.place(100)
 			this.update_and_sync();
 		}
+		draw_selected_token_bounding_box()
 
 	}
 
@@ -2331,11 +2332,7 @@ class Token {
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
-			
-				$(`.token[data-group-id='${groupID}']`).each(function(){
-					$(this).toggleClass('tokenselected', true);
-					window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = thisSelected;
-				})
+
 				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
 				for (let id in window.TOKEN_OBJECTS) {
@@ -3185,7 +3182,16 @@ async function do_draw_selected_token_bounding_box() {
 			resolve();
 		}));
 		if (window.TOKEN_OBJECTS[id].selected) {
-			window.CURRENTLY_SELECTED_TOKENS.push(id);
+			if(!window.CURRENTLY_SELECTED_TOKENS.some(i => i == id))
+				window.CURRENTLY_SELECTED_TOKENS.push(id);
+
+			$(`.token[data-group-id='${window.TOKEN_OBJECTS[id].options.groupId}']`).each(function(){
+				if(window.CURRENTLY_SELECTED_TOKENS.some(id => id == $(this).attr('data-id')))
+					return;
+				$(this).toggleClass('tokenselected', true);
+				window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;
+				window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
+			})
 		}
 	}
 
