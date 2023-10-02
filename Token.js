@@ -2318,10 +2318,12 @@ class Token {
 					return;
 				}
 				let tokID = parentToken.attr('data-id');
+				let groupID = parentToken.attr('data-group-id');
 				let thisSelected = !(parentToken.hasClass('tokenselected'));
 				let count = 0;
 				if (shiftHeld == false) {
 					deselect_all_tokens();
+
 				}
 				if (thisSelected == true) {
 					parentToken.addClass('tokenselected');
@@ -2329,7 +2331,11 @@ class Token {
 				} else {
 					parentToken.removeClass('tokenselected');
 				}				
-
+			
+				$(`.token[data-group-id='${groupID}']`).each(function(){
+					$(this).toggleClass('tokenselected', true);
+					window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = thisSelected;
+				})
 				window.TOKEN_OBJECTS[tokID].selected = thisSelected;
 
 				for (let id in window.TOKEN_OBJECTS) {
