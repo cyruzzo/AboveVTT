@@ -1094,7 +1094,7 @@ class JournalManager{
 			   of: window
 			},
 			open: function(event, ui){
-				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="chrome-extension://kkemdlbhcdjeammninnkkaclnflbodmj/assets/icons/view.svg"></button>"`);
+				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="${window.EXTENSION_PATH}/assets/icons/view.svg"></button>"`);
 				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
 				btn_view.click(function(){	
 					self.close_all_notes();
