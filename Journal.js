@@ -813,7 +813,7 @@ class JournalManager{
 		// to account for all the nuances of DNDB dice notation.
 		// numbers can be swapped for any number in the following comment
 		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-		const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/gi
+		const damageRollRegex = /([(\s>])(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([)\s<,])/gi
 		// matches " +1 " or " + 1 "
 		const hitRollRegex = /(?<![0-9]+d[0-9]+)([(\s>])([+-]\s?[0-9]+)([)\s<,])/gi
 		const dRollRegex = /\s(\s?d[0-9]+)\s/gi
@@ -822,7 +822,7 @@ class JournalManager{
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
-			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
+			.replaceAll(damageRollRegex, `$1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$5`)
 			.replaceAll(hitRollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
@@ -1191,7 +1191,7 @@ class JournalManager{
 		                    url = parsed;
 		                }
 
-				        e.element.setAttribute("src", url);
+				        e.element.setAttribute("src", getGoogleDriveAPILink(url));
 				        return; 
 				    }
 				    return;
