@@ -758,7 +758,7 @@ function build_token_light_inputs(tokenIds) {
 				<div class="token-image-modal-footer-title">Preset</div>
 				<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
 					<select class="token-config-aura-preset">
-						<option value="none"></option>
+						<option value=""></option>
 					</select>
 				</div>
 				<div class="menu-vision-aura">
@@ -803,6 +803,17 @@ function build_token_light_inputs(tokenIds) {
 
 	if(localStorage.getItem('LIGHT_PRESETS') == null){
 		window.LIGHT_PRESETS = [
+			{
+				name: 'No Light (0/0)',
+				vision: {
+				},
+				light1: {
+					feet: '0'
+				},
+				light2: {
+					feet: '0'
+				}	
+			},
 			{
 				name: 'Candle (5/5)',
 				vision: {
@@ -990,9 +1001,9 @@ function build_token_light_inputs(tokenIds) {
 		let preset = e.target.value;
 		let selectedPreset = window.LIGHT_PRESETS.filter(d=> d.name == preset)[0]
 		
-
 		if(!selectedPreset) {
 			console.warn("somehow got an unexpected preset", preset, e);
+			return;
 		}
 		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
 		if(selectedPreset.vision.feet){
