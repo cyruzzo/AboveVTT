@@ -1735,7 +1735,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     }
 
     if(!listItem.isTypePC()){
-        let has_note = customization.tokenOptions.statBlock;
+        let has_note = (customization.id in window.JOURNAL.notes);
 
         let editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons">
                 <span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>
@@ -1773,7 +1773,9 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                     text: '',
                     plain: '',
                     player: true
-                }
+                }     
+            }
+            if(customization.tokenOptions.statBlock != customization.id){
                 customization.tokenOptions.statBlock = customization.id;
                 persist_token_customization(customization);
                 display_token_configuration_modal(listItem, placedToken);
