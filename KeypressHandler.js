@@ -115,7 +115,14 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 });
 
 Mousetrap.bind('w', function () {
-    $('#wall_button').click()
+    $('#wall_button').click()   
+});
+Mousetrap.bind('shift+w', function () {
+    if(window.DM){
+        $('#show_walls').toggleClass('button-enabled');
+        redraw_light_walls();
+    }
+       
 });
 Mousetrap.bind('l', function () {
     $('#vision_button').click()

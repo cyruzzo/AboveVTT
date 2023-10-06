@@ -2374,6 +2374,12 @@ function init_ui() {
 	grid.css("left", "0");
 	grid.css("z-index", "19");
 
+	const walls = $("<canvas id='walls_layer'></canvas>");
+	walls.css("position", "absolute");
+	walls.css("top", "0");
+	walls.css("left", "0");
+	walls.css("z-index", "19");
+
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2466,6 +2472,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	VTT.append(walls);
 	lightContainer.append(rayCasting);
 	lightContainer.append(lightOverlay);
 	mapContainer.append(lightContainer);
@@ -3017,6 +3024,10 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+V</dt>
 							<dd>Temporary check token vision.</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+W</dt>
+							<dd>Toggle always show walls.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click</dt>
