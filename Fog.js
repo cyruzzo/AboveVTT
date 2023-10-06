@@ -3974,8 +3974,6 @@ async function redraw_light(){
 	}
 
 
-	offscreenContext.fillStyle = "black";
-	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 
@@ -4030,6 +4028,7 @@ async function redraw_light(){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 
+	let lightInLosContext = window.lightInLos.getContext('2d');
 
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
@@ -4086,8 +4085,7 @@ async function redraw_light(){
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
 
-			if(window.lightAuraClipPolygon[auraId]){
-				let lightInLosContext = window.lightInLos.getContext('2d');
+			if(window.lightAuraClipPolygon[auraId]){	
 				lightInLosContext.globalCompositeOperation='source-over';
 				lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 			}
@@ -4113,24 +4111,29 @@ async function redraw_light(){
 		})); 	
 	}
 	await Promise.all(promises);
-	let lightInLosContext = window.lightInLos.getContext('2d');
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
-		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
-	}else{
-		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
+		offscreenContext.globalCompositeOperation='destination-over';
+		offscreenContext.fillStyle = "black";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
-		lightInLosContext.globalCompositeOperation='source-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 	}
+	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
+		lightInLosContext.globalCompositeOperation='destination-over';
+		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
-	
+		lightInLosContext.globalCompositeOperation='destination-in';
+		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 
+		offscreenContext.globalCompositeOperation='destination-over';
+		offscreenContext.fillStyle = "black";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+	}	
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-	
 	if(!window.DM){
 		do_check_token_visibility();
 	}
@@ -4142,8 +4145,11 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	if(window.DM)
 		return;
 	
-	let lightRadius =(parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)+parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
-	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let blackLight1 = (window.TOKEN_OBJECTS[auraId].options.light1.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let blackLight2 = (window.TOKEN_OBJECTS[auraId].options.light2.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let blackVision = (window.TOKEN_OBJECTS[auraId].options.vision.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let lightRadius =((parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)*blackLight1)+(parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined)) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
