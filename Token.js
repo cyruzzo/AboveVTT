@@ -1780,9 +1780,7 @@ class Token {
 
 			tokenImage.css({
 				"max-height": this.sizeHeight(),
-				"max-width": this.sizeWidth(),
-				"height": "100%",
-				"width": "100%"
+				"max-width": this.sizeWidth()
 			});
 		
 
