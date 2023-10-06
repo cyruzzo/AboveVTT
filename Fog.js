@@ -855,6 +855,7 @@ function reset_canvas() {
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
+	ctxScale('walls_layer');
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -1205,12 +1206,20 @@ function redraw_drawn_light(){
 }
 
 function redraw_light_walls(clear=true){
+	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
+	let canvas = (showWallsToggle != true) ? document.getElementById("temp_overlay") : document.getElementById("walls_layer");	
 
-	let canvas = document.getElementById("temp_overlay");
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
+
+	if(showWallsToggle == true){
+		$('#walls_layer').css('display', '');
+	}
+	else{
+		$('#walls_layer').css('display', 'none');
+	}
 		
-	if(clear)
+	if(showWallsToggle == true || clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
@@ -1248,7 +1257,7 @@ function redraw_light_walls(clear=true){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled'))) {
+		if (showWallsToggle || (shape == "line" && ($('#wall_button').hasClass('button-enabled')) || ($('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 		let type = (color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)" ) ? 1 : 0;
@@ -3448,12 +3457,18 @@ function init_walls_menu(buttons){
 			</button>
 		</div>`);
 	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='show_walls' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
+				Always Show
+			</button>
+		</div>`);
+	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_walls'>
 				CLEAR
 			</button>
 		</div>`);
-
+ 
 	wall_menu.find("#delete_walls").click(function() {
 		r = confirm("DELETE ALL WALLS (cannot be undone!)");
 		if (r === true) {
