@@ -1026,7 +1026,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				clearPolygon(ctx, d[0], d[6], true);
+				clearPolygon(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 			
 			}
@@ -1035,11 +1035,11 @@ function redraw_fog() {
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// HIDE BUCKET
-				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1);			
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1, false);			
 			}
 			if (d[4] == 5) {
-				//HIDE 3 POINT RECT
-				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);		
+				//HIDE 3 POINT RECT	
+				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true, false, true);		
 			}
 		}
 	}
@@ -2753,8 +2753,11 @@ function draw3PointRect(
 	mouseY = null,
 	scale = window.CURRENT_SCENE_DATA.scale_factor,
 	replacefog = false,
-	islight = false
+	islight = false,
+	clear = false
 ) {
+
+
 	ctx.save();
 	ctx.beginPath();
 	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
@@ -2788,6 +2791,13 @@ function draw3PointRect(
 		ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.closePath();
 		ctx.fillStyle = style;
+		if(clear){
+			ctx.fillStyle = "#000";
+			ctx.globalCompositeOperation = 'destination-out';
+			ctx.fill();
+			ctx.fillStyle = style;
+			ctx.globalCompositeOperation = 'source-over';
+		}
 		ctx.fill();
 		if(!islight){
 			if(replacefog && window.DM)
@@ -3883,7 +3893,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					clearPolygon(ctx, lightPolygon, undefined, true);
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 				}
-				drawPolygon(ctx, lightPolygon, fogStyle, undefined, 1, undefined, undefined, undefined, undefined, true);
+				else{
+					drawPolygon(ctx, lightPolygon, fogStyle, undefined, 1, undefined, undefined, undefined, undefined, true);
+				}	
 			}
 		}
 	}
