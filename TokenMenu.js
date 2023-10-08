@@ -595,7 +595,6 @@ function build_token_auras_inputs(tokenIds) {
 				token.options[event.target.name]['feet'] = newRadius;
 				token.place_sync_persist();
 			});
-			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
 		}
 	});
 	radiusInputs.on('focusout', function(event) {
@@ -604,8 +603,7 @@ function build_token_auras_inputs(tokenIds) {
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
 				token.place_sync_persist();
-			});
-			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+			});		
 		}
 	});
 
