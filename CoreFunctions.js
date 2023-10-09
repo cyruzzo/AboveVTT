@@ -529,7 +529,7 @@ const debounce_pc_token_update = mydebounce(() => {
         token.options = {
           ...token.options,
           ...pc,
-          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.imgsrc : currentImage,
+          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
           id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
         };
         token.place_sync_persist(); // not sure if this is overkill
@@ -540,7 +540,7 @@ const debounce_pc_token_update = mydebounce(() => {
         token.options = {
           ...token.options,
           ...pc,
-          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.imgsrc : currentImage,
+          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
           id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
         };
       }     
