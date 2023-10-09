@@ -1937,11 +1937,12 @@ class Token {
 								window.dragSelectedTokens.removeClass("pause_click")
 								delete window.playerTokenAuraIsLight;
 								delete window.dragSelectedTokens;
+								delete window.orig_zoom;
 							}
 						}, 200)
 					},
 				start: function (event) {
-					event.stopImmediatePropagation();
+					
 					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
@@ -1951,9 +1952,8 @@ class Token {
 					window.oldTokenPosition = {};
 					
 					self.prepareWalkableArea()
-					
-					click.x = event.pageX;
-					click.y = event.pageY;
+					window.orig_zoom = window.ZOOM;
+
 					if(self.selected == false && $(".token.tokenselected").length>0){
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
@@ -2078,14 +2078,14 @@ class Token {
 				 * @param {Event} event mouse event
 				 * @param {Object} ui UI-object
 				 */
-				drag: async function(event, ui) {
-					event.stopImmediatePropagation();
+				drag: function(event, ui) {
+				
 					
 					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (event.pageX - click.x + original.left) / zoom;
-					let tokenY = (event.pageY - click.y + original.top) / zoom;
+					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.options.size)/2)) / parseFloat(window.ZOOM);
+					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.options.size)/2)) / parseFloat(window.ZOOM);
 					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
@@ -2114,7 +2114,7 @@ class Token {
 						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
+							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
