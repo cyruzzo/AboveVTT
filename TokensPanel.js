@@ -797,8 +797,9 @@ function update_pc_token_rows() {
                 let abilityValue = row.find(`[data-ability='${a.name}']`);
                 abilityValue.find(".ability_modifier").text(a.modifier);
                 abilityValue.find(".ability_score").text(a.score);
-            });
-            row.find(".pp-value").text(pc.passivePerception);
+            });    
+            let customizations = find_token_customization(listItem.type, listItem.id);
+            row.find(".token-image").attr('src', (customizations?.tokenOptions?.alternativeImages?.length>0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image);
             row.find(".pinv-value").text(pc.passiveInvestigation);
             row.find(".pins-value").text(pc.passiveInsight);
             row.find(".walking-value").text(speed_from_pc_object(pc));
@@ -2218,6 +2219,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
+        if(listItem.type == 'pc'){
+            const playerId = getPlayerIDFromSheet(listItem.sheet);
+            const pc = find_pc_by_player_id(playerId, false)
+            listItem.image = pc.image;
+        }
         let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
         modalBody.append(tokenDiv);
     }

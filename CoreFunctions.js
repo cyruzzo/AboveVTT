@@ -524,10 +524,12 @@ const debounce_pc_token_update = mydebounce(() => {
     window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
       const pc = find_pc_by_player_id(playerId, false);
       let token = window.TOKEN_OBJECTS[pc?.sheet];
+      let currentImage = token.options.imgsrc;
       if (token) {
         token.options = {
           ...token.options,
           ...pc,
+          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.imgsrc : currentImage,
           id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
         };
         token.place_sync_persist(); // not sure if this is overkill
@@ -537,11 +539,12 @@ const debounce_pc_token_update = mydebounce(() => {
         token.options = {
           ...token.options,
           ...pc,
+          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.imgsrc : currentImage,
           id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
         };
-      }
-      update_pc_token_rows();
+      }     
     });
+    update_pc_token_rows();
     window.PC_TOKENS_NEEDING_UPDATES = [];
   }
 });

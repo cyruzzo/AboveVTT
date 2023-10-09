@@ -990,8 +990,9 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        character_sheet_changed({image: updatedUrl,
-                                avatarUrl: updatedUrl});
+        character_sheet_changed({imgsrc: updatedUrl,
+                                avatarUrl: updatedUrl,
+                                image: updatedUrl});
       } catch { }
     });
   });
