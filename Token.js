@@ -545,7 +545,7 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
+		let inLos = this.isAoe() ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
 		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			this.options.top = tokenPosition.y + 'px';
 			this.options.left = tokenPosition.x + 'px';
@@ -2084,8 +2084,8 @@ class Token {
 					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.options.size)/2)) / parseFloat(window.ZOOM);
-					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.options.size)/2)) / parseFloat(window.ZOOM);
+					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
+					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
 					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
 
 					if (should_snap_to_grid()) {
@@ -2110,11 +2110,11 @@ class Token {
 				
 
 					if(!window.DM && window.playerTokenAuraIsLight){
-						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const left = (tokenPosition.x + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const top = (tokenPosition.y + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
+							  Error(`One of these values is not a number: Size: ${self.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
@@ -2133,12 +2133,12 @@ class Token {
 
 					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 					if (allowTokenMeasurement) {
-						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+						const tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.sizeWidth() / 2);
 
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeWidth() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 					if (!self.options.hidden) {
 						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
@@ -2210,11 +2210,11 @@ class Token {
 								$(tok).css('top', tokenY + "px");
 
 								if(!window.DM && window.playerTokenAuraIsLight){
-									const left = (tokenX + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-									const top = (tokenY + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									const left = (tokenX + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									const top = (tokenY + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 									if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 										showErrorMessage(
-										  Error(`One of these values is not a number: Size: ${curr.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+										  Error(`One of these values is not a number: Size: ${curr.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
 									}									
@@ -2400,8 +2400,8 @@ class Token {
 	prepareWalkableArea() {
 		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
 		const sizeOnGrid = {
-			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps),
-			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps)
+			y: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.vpps),
+			x: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.hpps)
 		};
 
 		// Shorten letiable to improve readability
