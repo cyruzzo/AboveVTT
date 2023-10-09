@@ -39,7 +39,8 @@ const debounce_add_extras = mydebounce(() => {
         player_owned: true,
         share_vision: true,
         hidden: false,
-        locked: false
+        locked: false,
+        deleteableByPlayers: true
       }
       if(!window.TOKEN_OBJECTS[playerTokenID])
         tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
