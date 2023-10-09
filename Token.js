@@ -2604,6 +2604,9 @@ function place_token_at_map_point(tokenObject, x, y) {
 		}
 	};
 	if(window.all_token_objects[options.id] !== undefined){
+		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
+			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
+		}
 		options = {
 			...options,
 			...window.all_token_objects[options.id].options
