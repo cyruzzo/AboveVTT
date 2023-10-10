@@ -3573,9 +3573,9 @@ function delete_selected_tokens() {
 	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
 	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
-		for (let i = 0; i < tokensToDelete.length; i++) {
-			tokensToDelete[i].delete(true);
-		}
+	for (let i = 0; i < tokensToDelete.length; i++) {
+		tokensToDelete[i].delete(true);
+	}
 	draw_selected_token_bounding_box(); // redraw the selection box
 }
 
