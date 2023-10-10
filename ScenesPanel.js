@@ -2056,6 +2056,13 @@ function register_scene_row_context_menu() {
 						duplicate_scene(itemToEdit.id);
 					}
 				};
+				menuItems["export"] = {
+					name: "Export",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						export_scene_context(itemToEdit.id)
+					}
+				};
 			}
 			if (rowItem.canDelete()) {
 

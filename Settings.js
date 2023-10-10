@@ -1050,6 +1050,36 @@ function export_current_scene(){
 	$(".import-loading-indicator").remove();
 }
 
+async function export_scene_context(sceneId){
+	build_import_loading_indicator('Preparing Export File');
+	let scene = await AboveApi.getScene(sceneId);
+	let currentSceneData = {
+		...scene.data
+	} 
+	
+	let DataFile = {
+		version: 2,
+		scenes: [currentSceneData],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	delete DataFile.scenes[0].itemType;
+	for(token in scene.data.tokens){
+		let tokenId = scene.data.tokens[token].id;
+		for(noteID in window.JOURNAL.notes){
+			if( tokenId == noteID){
+				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+			}
+		}
+	}
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${scene.data.title}-${datetime}.abovevtt`,"text/plain");
+	$(".import-loading-indicator").remove();
+}
+
 function export_token_customization() {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
