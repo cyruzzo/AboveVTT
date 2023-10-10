@@ -201,13 +201,18 @@ class Token {
 			});
 			delete this.options.aura1;
 			delete this.options.aura2;
-			this.options.auraVisible = false;
-			this.options.square = true;
-			this.options.disablestat = true
-			this.options.hidestat = true
-			this.options.disableborder = true
-			this.options.disableaura = true
-			this.options.revealInFog = true
+
+			this.options = {
+				...this.options,
+				auraVisible: false,
+				square: true,
+				disablestat: true,
+				auraislight: false,
+				hidestat: true,
+				disableborder: true,
+				disableaura: true,
+				revealInFog: true
+			}
 		}
 	}
 
