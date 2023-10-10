@@ -2097,6 +2097,17 @@ async function duplicate_scene(sceneId) {
 		id: uuid()
 	} 
 	
+	for(token in aboveSceneData.tokens){
+		let oldId = aboveSceneData.tokens[token].id;
+		let newId = uuid();
+		for(noteID in window.JOURNAL.notes){
+			if(oldId == noteID){
+				window.JOURNAL.notes[newId] = {...window.JOURNAL.notes[noteID]};
+			}
+		}
+		window.JOURNAL.persist();
+		aboveSceneData.tokens[token].id = newId;
+	}
 
 	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
