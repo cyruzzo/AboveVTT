@@ -494,25 +494,25 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
 	async moveUp() {	
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);	
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
 		await this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	async moveDown() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);		
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
 		await this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	async moveLeft() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);		
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
 		await this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
 	async moveRight() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);			
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
 		await this.move(parseFloat(this.options.top)+5, newLeft)	
@@ -534,7 +534,7 @@ class Token {
 		
 		this.prepareWalkableArea()
 		
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
 		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken)
 
 		// Stop movement if new position is outside of the scene
@@ -2086,7 +2086,7 @@ class Token {
 					let original = ui.originalPosition;
 					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
 					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
-					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
+					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
 					if (should_snap_to_grid()) {
 						tokenX +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 4);
@@ -2199,7 +2199,7 @@ class Token {
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
 								if(should_snap_to_grid()){
-									let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1);
+									let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1) || curr.isAoe();
 									let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 	
 									tokenY =  tokenPosition.y;
