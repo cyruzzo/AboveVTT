@@ -890,8 +890,8 @@ class JournalManager{
   
             // Find attack actions
             input = input.replace(/(attack) action/gi, 
-            	function(m){
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+            	function(m, first_bracket_match){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(first_bracket_match, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
                 });
             // Find cover rules
