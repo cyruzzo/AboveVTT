@@ -2048,6 +2048,15 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
+			if(rowItem.isTypeScene()){
+				menuItems["duplicate"] = {
+					name: "Duplicate",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						duplicate_scene(itemToEdit.id);
+					}
+				};
+			}
 			if (rowItem.canDelete()) {
 
 				menuItems["border"] = "---";
@@ -2071,6 +2080,24 @@ function register_scene_row_context_menu() {
 			return { items: menuItems };
 		}
 	});
+}
+
+async function duplicate_scene(sceneId) {
+	let scene = await AboveApi.getScene(sceneId);
+
+	let aboveSceneData = {
+		...scene.data,
+		id: uuid()
+	} 
+	
+
+	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
+
+	window.ScenesHandler.scenes.push(aboveSceneData);
+	did_update_scenes();
+	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	$("#sources-import-main-container").remove();
+	expand_all_folders_up_to_id(aboveSceneData.id);
 }
 
 function expand_folders_to_active_scenes() {
