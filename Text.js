@@ -53,7 +53,8 @@ function apply_settings_to_boxes(){
         "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
         "-webkit-text-stroke-color": window.TEXTDATA.stroke_color,
         "-webkit-text-stroke-width": `calc(${window.TEXTDATA.stroke_size}px * var(--window-zoom))`,
-        "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none"
+        "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none",
+        "padding": '0px'
     })
     
 }
@@ -122,7 +123,7 @@ function create_text_controller(applyFromWindow = false) {
         `<div class='ddbc-tab-options--layout-pill'>
             <select id='text_font' data-required="text_font" name='font' style='text-align:center'>
                 ${availableFonts.map((font) => {
-            return `<option  style='font-family:"${font}";' value="${font}">${font}</option>`;
+            return `<option  style='font-family:${font};' value="${font}">${font}</option>`;
         })}
             </select>
         </div>
@@ -483,8 +484,8 @@ function handle_draw_text_submit(event) {
     let fontStyle = $(textBox).css("font-style") || "normal";
 
     const font = {
-        font: $(textBox).css("font-family"),
-        size: parseInt($(textBox).css("font-size")) / window.ZOOM,
+        font: $(textBox).css("font-family").replaceAll(/['"]+/g, ''),
+        size: Math.ceil(parseInt($(textBox).css("font-size")) / window.ZOOM),
         weight: fontWeight,
         style: fontStyle,
         underline: $(textBox).css("text-decoration")?.includes("underline"),
@@ -613,12 +614,12 @@ function draw_text(
 
     let adjustScale = (scale/divideScale);   
 
-    font.size = font.size / adjustScale
-    stroke.size = stroke.size / adjustScale
-    width = width / adjustScale 
-    height = height / adjustScale 
-    startingX = startingX / adjustScale 
-    startingY = startingY / adjustScale
+    font.size = Math.ceil(font.size / adjustScale)
+    stroke.size = Math.ceil(stroke.size / adjustScale)
+    width = Math.ceil(width / adjustScale) 
+    height = Math.ceil(height / adjustScale) 
+    startingX = Math.ceil(startingX / adjustScale) 
+    startingY = Math.ceil(startingY / adjustScale)
 
     let shadowStyle ='';
     if (font.shadow && font.shadow !== "none"){
@@ -641,9 +642,9 @@ function draw_text(
         <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
-            <g style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
-            <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
-            </g>
+            <svg x="0.5" y="${font.size*-0.14}" style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
+                <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
+            </svg>
          </svg>
     `);
 
@@ -691,7 +692,7 @@ function draw_text(
     document.getElementById("PROCESSING").remove();
 
     textSVG.draggable({
-        containment: '#text_div',
+        distance: 5,
         start: function () {
             $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
             $("#sheet").append($('<div class="iframeResizeCover"></div>'));
