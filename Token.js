@@ -2608,7 +2608,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 			color: tokenObject.light2?.color ? tokenObject.light2.color : (window.TOKEN_SETTINGS?.light2?.color) ?  window.TOKEN_SETTINGS.light2.color : default_options().light2.color
 		}
 	};
-	if(window.all_token_objects[options.id] !== undefined){
+	if(window.all_token_objects[options.id] !== undefined && options.alternativeImages){
 		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
 		}
