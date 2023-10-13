@@ -206,7 +206,7 @@ async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
-
+  $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_ID = false;
   window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = dm_id;
@@ -258,7 +258,8 @@ async function start_above_vtt_for_players() {
   if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
     throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
-
+  
+  $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_SHEET = window.location.pathname;
   window.PLAYER_ID = getPlayerIDFromSheet(window.PLAYER_SHEET);
 
