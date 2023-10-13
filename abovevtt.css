@@ -5724,6 +5724,7 @@ input.max_hp[disabled]{
 }
 
 .flyout-from-menu-item:hover ~ .context-menu-flyout,
+#tokenOptionsPopup.touch .context-menu-flyout,
 .context-menu-flyout:hover,
 .context-menu-flyout:focus-within {
     visibility: visible;
