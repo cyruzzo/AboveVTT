@@ -49,7 +49,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 		if (diff > 0) {
 			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
 			// align to the top of the row. 14 is half the height of the button
-			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
+			let buttonPosition = $(hoverEvent.currentTarget).closest('.flyout-from-menu-item')[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
 			if(buttonPosition < contextMenuCenter) {
 				flyoutTop =  buttonPosition - (flyoutHeight / 5)
 			}
@@ -427,7 +427,6 @@ function token_context_menu_expanded(tokenIds, e) {
 	$("#tokenOptionsPopup").draggable({
 			addClasses: false,
 			scroll: false,
-			containment: "#windowContainment",
 			start: function () {
 				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -439,14 +438,31 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 	
 
-	moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+	
 
-	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
-		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+	if(e.touches?.length>0){
+		moveableTokenOptions.css("left", Math.max(e.touches[0].clientX - 230, 0) + 'px');
+		if($(moveableTokenOptions).height() + e.touches[0].clientY > window.innerHeight - 20) {
+			moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+		}
+		else {
+			moveableTokenOptions.css("top", e.touches[0].clientY - 10 + 'px');
+		}	
+		$(moveableTokenOptions).toggleClass('touch', true);
+
+		
 	}
-	else {
-		moveableTokenOptions.css("top", e.clientY - 10 + 'px');
-	}	
+	else{
+		moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+		if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
+			moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+		}
+		else {
+			moveableTokenOptions.css("top", e.clientY - 10 + 'px');
+		}	
+		$(moveableTokenOptions).toggleClass('touch', false);
+	}
+	
 }
 
 

@@ -2761,7 +2761,33 @@ function determine_hidden_classname(tokenIds) {
 }
 
 function token_menu() {
-
+		let initialX;
+		let initialY;
+		$("#tokens").on("touchstart", ".VTTToken", function(event) {
+			initialX = event.touches[0].clientX;
+			initialY = event.touches[0].clientY;
+		    LongPressTimer = setTimeout(function() {
+			    console.log("context_menu_flyout contextmenu event", event);
+				if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
+					return;
+				if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+					token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
+				} else {
+					token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
+				}
+		    }, 600)
+		  })
+		  .on('touchend', function(e) {
+		    clearTimeout(LongPressTimer)
+		  })
+		  .on('touchmove', function(e) {
+		  	let currentY = e.touches[0].clientY;
+		  	let currentX = e.touches[0].clientX;
+		  	if(Math.abs(initialX-currentX) > 15 || Math.abs(initialY-currentY) > 15 ){
+		  		clearTimeout(LongPressTimer)
+		  	}
+		    
+		  });
 		$("#tokens").on("contextmenu", ".VTTToken", function(event) {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
@@ -3012,8 +3038,13 @@ function setTokenBase(token, options) {
 			options.disableborder = true;
 			options.disableaura = true;
 			options.enablepercenthpbar = false;
+			if(options.tokenStyleSelect === "definitelyNotAToken"){
+				token.toggleClass('definitelyNotAToken', true);
+			}
+			else{
+				token.toggleClass('labelToken', true);
+			}
 		}
-		token.toggleClass('labelToken', true);
 
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
@@ -3039,6 +3070,10 @@ function setTokenBase(token, options) {
 
 	if(options.tokenStyleSelect != 'labelToken'){
 		token.toggleClass('labelToken', false);
+	}
+
+	if(options.tokenStyleSelect != 'definitelyNotAToken'){
+		token.toggleClass('definitelyNotAToken', false);
 	}
 
 	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){

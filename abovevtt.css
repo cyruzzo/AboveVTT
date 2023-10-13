@@ -1304,6 +1304,21 @@ div#scene_properties form > div {
     pointer-events: none;
 }
 
+.definitelyNotAToken.hasTooltip.VTTToken::after{
+    display:none;
+}
+.definitelyNotAToken.ui-draggable-disabled>img{
+    cursor: default !important;
+}
+
+.token>img{
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
 .hasTooltip.CTToken::after{
     position: absolute;
     z-index: 4;
@@ -5709,6 +5724,7 @@ input.max_hp[disabled]{
 }
 
 .flyout-from-menu-item:hover ~ .context-menu-flyout,
+#tokenOptionsPopup.touch .context-menu-flyout,
 .context-menu-flyout:hover,
 .context-menu-flyout:focus-within {
     visibility: visible;

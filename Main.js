@@ -265,7 +265,7 @@ function decrease_zoom() {
 * @return {Number}
 */
 function get_reset_zoom() {
-	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right')) ? 340 : 0;
+	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0) ? 340 : 0;
 	const wH = $(window).height();
 	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width()-sidebar_open;
@@ -290,7 +290,7 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
-	if($('#hide_rightpanel').hasClass('point-right'))
+	if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
 		$(window).scrollLeft(window.scrollX + 170); // 170 half of game log
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
@@ -1190,7 +1190,7 @@ function init_mouse_zoom() {
 		if (e.ctrlKey) {
 			e.preventDefault();
 
-			var newScale;
+			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
 				newScale = window.ZOOM * 0.9;
 			}
@@ -1206,7 +1206,37 @@ function init_mouse_zoom() {
 			}
 		}
 	}, { passive: false } );
-}
+	let dist1=0;
+	function start_pinch(ev) {
+           if (ev.targetTouches.length == 2) {//check if two fingers touched screen
+               dist1 = Math.hypot( //get rough estimate of distance between two fingers
+                ev.touches[0].pageX - ev.touches[1].pageX,
+                ev.touches[0].pageY - ev.touches[1].pageY);                  
+           }
+    
+    }
+    function move_pinch(ev) {
+           if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
+                 // Check if the two target touches are the same ones that started
+              	let dist2 = Math.hypot(//get rough estimate of new distance between fingers
+                ev.touches[0].pageX - ev.touches[1].pageX,
+                ev.touches[0].pageY - ev.touches[1].pageY);
+              	let newScale;
+                //alert(dist);
+                if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
+                  newScale = window.ZOOM * 0.95;
+                }
+                if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+                  newScale = window.ZOOM * 1.05;
+                }
+                change_zoom(newScale);
+            }
+           
+    }
+    window.addEventListener ('touchstart', start_pinch, false);
+    window.addEventListener('touchmove', move_pinch, false);
+
+	}
 
 
 /**
