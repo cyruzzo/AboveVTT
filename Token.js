@@ -3012,8 +3012,13 @@ function setTokenBase(token, options) {
 			options.disableborder = true;
 			options.disableaura = true;
 			options.enablepercenthpbar = false;
+			if(options.tokenStyleSelect === "definitelyNotAToken"){
+				token.toggleClass('definitelyNotAToken', true);
+			}
+			else{
+				token.toggleClass('labelToken', true);
+			}
 		}
-		token.toggleClass('labelToken', true);
 
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
@@ -3039,6 +3044,10 @@ function setTokenBase(token, options) {
 
 	if(options.tokenStyleSelect != 'labelToken'){
 		token.toggleClass('labelToken', false);
+	}
+
+	if(options.tokenStyleSelect != 'definitelyNotAToken'){
+		token.toggleClass('definitelyNotAToken', false);
 	}
 
 	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){
