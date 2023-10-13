@@ -10,6 +10,7 @@ $(function() {
     console.log("startup calling init_splash");
     window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
+    $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
     window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
       event.stopImmediatePropagation();
       if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
