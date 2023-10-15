@@ -1080,6 +1080,69 @@ async function export_scene_context(sceneId){
 	$(".import-loading-indicator").remove();
 }
 
+
+
+async function export_scenes_folder_context(folderId){
+	build_import_loading_indicator('Preparing Export File');
+	
+	let path = window.ScenesHandler.scenes.filter(d => d.parentId == folderId && d.itemType == 'scene')[0].folderPath;
+
+
+	let ids = [];
+	ids.push(folderId);
+	const getIds = function(folderId){
+		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
+
+		for(let scene in scenesInFolder){
+			ids.push(scenesInFolder[scene].id)
+			if(scenesInFolder[scene].itemType != 'scene'){
+				getIds(scenesInFolder[scene].id)
+			}
+		}
+	}
+
+	getIds(folderId);
+	let DataFile = {
+		version: 2,
+		scenes: [],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	for(let id in ids){
+		let scene = await AboveApi.getScene(ids[id]);
+		let currentSceneData = {
+			...scene.data
+		} 
+		
+		
+		DataFile.scenes.push(currentSceneData)
+
+		for(let token in scene.data.tokens){
+			let tokenId = scene.data.tokens[token].id;
+			for(let noteID in window.JOURNAL.notes){
+				if( tokenId == noteID){
+					DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+				}
+			}
+		}
+
+	}
+	DataFile.scenes[0].parentId = "scenesFolder";
+	
+	let folder = window.ScenesHandler.scenes.filter(d => d.id == folderId)[0].title;
+
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${folder}-${datetime}.abovevtt`,"text/plain");
+	$(".import-loading-indicator").remove();
+
+
+
+
+}
+
 function export_token_customization() {
 	build_import_loading_indicator('Preparing Export File');
 	let DataFile = {
