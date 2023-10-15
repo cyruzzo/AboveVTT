@@ -1095,7 +1095,7 @@ input {
     width: calc(100% + 2px);
     left: -1px;
     cursor: move;
-    z-index: 1;
+    z-index: 10;
 }
 
 
@@ -7586,14 +7586,18 @@ div.removePreset{
     margin:0px !important;
 }
 .light_preset_title_row {
+    position: sticky;
+    top: 0px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+    z-index: 1;
 }
 
 .light_preset_title_row>div>h3 {
     font-size: 12px;
-    margin: 20px 75px; 
+    margin: 10px 75px; 
 }
 #edit_preset_light_dialog{
     height: 100%;
