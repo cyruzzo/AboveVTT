@@ -2064,6 +2064,16 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
+			if(rowItem.isTypeFolder()){
+				menuItems["export"] = {
+					name: "Export",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						export_scenes_folder_context(itemToEdit.id)
+					}			
+				}
+			}
+
 			if (rowItem.canDelete()) {
 
 				menuItems["border"] = "---";
