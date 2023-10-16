@@ -314,22 +314,181 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     width: 420px;
 }
 .door-button{
-    backdrop-filter: blur(6px); 
-    border-radius: calc(5px / var(--window-zoom));
-    width: calc(20px / var(--window-zoom)); 
-    height: calc(20px / var(--window-zoom));  
+    width: max(15px, calc(20px / var(--window-zoom)));
+    height: max(15px, calc(20px / var(--window-zoom)));   
     cursor: pointer; 
-    border: calc(1px / var(--window-zoom)) solid #000;
     position:absolute;
     left: calc(var(--mid-x) - (10px / var(--window-zoom)));
     top: calc(var(--mid-y) - (10px / var(--window-zoom)));
     opacity: 0.8;
 }
-.door-button span{
-    font-size: calc(19px / var(--window-zoom)); 
-    filter: drop-shadow(0px 0px calc(1px / var(--window-zoom)) white);
+
+.door.background{
+    border:2px solid #060606;
+    height: 130%;
+    width: 100%;
+    position: absolute;
+}
+.door.foreground{
+    background: #fff6;
+    height: calc(130% - 2px);
+    width: calc(100% - 2px);
+    left: 1px;
+    top: 1px;
+    border: 1px solid #000;
+    position: absolute;
+    transform-origin: left;
+    transform: rotateY(0deg);
+    transition: 200ms transform linear;
+}
+.door-icon{
+    width: 15%;
+    height: 33%;
+    position: absolute;
+    top: 34%;
+    left: 74%;  
 }
 
+.door.foreground>div{
+    border-radius: 5%;
+    width: 15%;
+    height: 38%;
+    position: absolute;
+    top: 37%;
+    left: 73%;
+    background: #000;
+}
+
+.locked .door.foreground>div{
+    display: none;
+}
+
+.door-button.open .door.foreground{
+    transform: rotateY(57deg);
+    transition: 200ms transform linear;
+}
+
+.door-button.locked .door-icon{
+    content: "";
+    display: block;
+    background: #000;
+    width: 50%;
+    height: 30%;
+    position: absolute;
+    top: 61%;
+    left: 25%;
+    border-radius: 0;
+    margin: auto;
+}
+.door-button.locked .door-icon:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    bottom: 100%;
+    position: absolute;
+    border: 2px solid #000;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    border-bottom: 0;
+}
+
+.door-button.secret .door-icon:before {
+    content: "S";
+    font-weight: 600;
+    font-size: max(12px, var(--font-size, calc(20px / var(--window-zoom))));
+    color: #F008;
+    display: block;
+    width: 100%;
+    height: 50%;
+    bottom: 100%;
+    position: absolute;
+}
+.door-button.secret .door-icon {
+    background: none;
+    content: "";
+    display: block;
+    width: 66%;
+    height: 30%;
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    border-radius: 0;
+    margin: auto;
+}
+.door-button.secret.locked .door-icon:before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    bottom: 100%;
+    position: absolute;
+    border: 2px solid #000;
+    border-top-right-radius: 50%;
+    border-top-left-radius: 50%;
+    border-bottom: 0;
+}
+.door-button.secret.locked .door-icon:after {
+    content: "S";
+    font-weight: 600;
+    font-size: max(12px, var(--font-size, calc(20px / var(--window-zoom))));
+    color: #F004;
+    display: block;
+    width: 100%;
+    height: 100%;
+    bottom: 190%;
+    position: absolute;
+}
+.door-button.secret.locked .door-icon{
+    content: "";
+    display: block;
+    background: #000;
+    width: 50%;
+    height: 30%;
+    position: absolute;
+    top: 61%;
+    left: 25%;
+    border-radius: 0;
+    margin: auto;
+}
+.window.background{
+    border:2px solid #060606;
+    height: 130%;
+    width: 100%;
+    position: absolute;
+}
+
+
+.window.foreground{
+    background: #fff6;
+    height: calc(calc(130% - 2px) / 2);
+    width: calc(100% - 4px);
+    left: 2px;
+    top: 1px;
+    border: 1px solid #000;
+    position: absolute;
+
+}
+.window.background:after{
+    content: '';
+    background: #fff6;
+    height: calc(calc(130% - 2px) / 2);
+    width: 100%;
+    top: 45%;
+    border: 1px solid #000;
+    position: absolute;
+    transition: 200ms top linear;
+}
+.open .window.background:after{
+    content: '';
+    background: #fff6;
+    height: calc(calc(130% - 2px) / 2);
+    width: 100%;
+    top: 0%;
+    border: 1px solid #000;
+    position: absolute;
+    transition: 200ms top linear;
+}
 
 /*for resizable and moveable monsters and sheets in DM view*/
 
@@ -3660,6 +3819,11 @@ div#importer_area>div>div:first-of-type {
     letter-spacing: 0px;
     padding: 0px 6px;
 }
+#door_types{
+    padding: 2px;
+    width: 105px;
+}
+
 .token-row-button{
     position: relative;
     display: block;

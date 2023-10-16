@@ -1323,7 +1323,7 @@ class MessageBroker {
 		console.debug("handlescene", msg);
 
 		window.DRAWINGS = [];
-		reset_canvas();
+	
 
 		window.TOKEN_OBJECTS = {};
 		let data = msg.data;
