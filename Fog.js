@@ -892,6 +892,24 @@ function draw_wizarding_box() {
 	}
 	else{
 		drawHexagon(al1.x, al1.y);
+		let hexSize = (al2.x - al1.x)/1.5/2;
+		const a = 2 * Math.PI / 6;
+		if($('#gridType input:checked').val() == 3){			
+				drawHexagon(al1.x, al1.y + hexSize* Math.sin(a)*2);
+				drawHexagon(al1.x, al1.y - hexSize * Math.sin(a)*2);
+				drawHexagon(al1.x+hexSize * (1 + Math.cos(a)), al1.y+hexSize * Math.sin(a));
+				drawHexagon(al1.x-hexSize * (1 + Math.cos(a)), al1.y+hexSize * Math.sin(a));
+				drawHexagon(al1.x+hexSize * (1 + Math.cos(a)), al1.y-hexSize * Math.sin(a));
+				drawHexagon(al1.x-hexSize * (1 + Math.cos(a)), al1.y-hexSize * Math.sin(a));
+		}
+		if($('#gridType input:checked').val() == 2){				
+				drawHexagon(al1.x + hexSize * Math.sin(a)*2, al1.y);
+				drawHexagon(al1.x - hexSize * Math.sin(a)*2, al1.y);
+				drawHexagon(al1.x+hexSize * Math.sin(a), al1.y+hexSize * (1 + Math.cos(a)));
+				drawHexagon(al1.x+hexSize * Math.sin(a), al1.y-hexSize * (1 + Math.cos(a)));
+				drawHexagon(al1.x-hexSize * Math.sin(a), al1.y+hexSize * (1 + Math.cos(a)));
+				drawHexagon(al1.x-hexSize * Math.sin(a), al1.y-hexSize * (1 + Math.cos(a)));
+		}
 	}
 
 

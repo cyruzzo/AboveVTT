@@ -412,29 +412,23 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	gridType.find('input').on('change', function(){
 		window.CURRENT_SCENE_DATA.gridType = $(this).val();
 		if($(this).val() == 3){
-			$('#aligner2, #aligner1').css({
-				'display': 'none'
-			});
+			
 			$(scene_properties).toggleClass('verticalHex', true);
 			$(scene_properties).toggleClass('horizontalHex', false);
 			$('span.squaresWide').text(' hex columns');
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex columns for sizing, this can be a decimal. Start by aligning the hexes in the top left of the map with offset. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders. Keeping both sliders at the same value will keep a perfect hex shape if small adjustments are needed after setting number of columns and offset.`)
+			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex columns for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 2){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', true);
-			$('#aligner2, #aligner1').css({
-				'display': 'none'
-			});
+		
 			$('span.squaresTall').text(` hex rows`);
 			$('#additionalGridInfo').toggleClass('closed', false);
-			$('#gridInstructions').text(`Hex grids currently only have manual options. Count the number of hex rows for sizing, this can be a decimal. Start by aligning the hexes in the top left of the map with offset. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders. Keeping both sliders at the same value will keep a perfect hex shape if small adjustments are needed after setting number of rows and offset.`)
+			$('#gridInstructions').text(`Top left draggable will position the hex grid, bottom right will adjust it's size. Use minor adjustment bars to skew the hex if it isn't a 'perfect hex' on the map. These bars will stretch/squash starting in the top left. To use manual options: Count the number of hex rows for sizing. If the hexes on the map are squashed/stretched at all use the minor adjustment sliders.`)
 		} else if($(this).val() == 1){
 			$(scene_properties).toggleClass('verticalHex', false);
 			$(scene_properties).toggleClass('horizontalHex', false);
-			$('#aligner2, #aligner1').css({
-				'display': ''
-			});
+			
 			$('span.squaresTall').text(' squares tall');
 			$('span.squaresWide').text(' squares wide');
 			$('#verticalMinorAdjustment label').text('Minor Vertical Adjustment')
