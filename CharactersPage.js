@@ -38,7 +38,9 @@ const debounce_add_extras = mydebounce(() => {
         name: monsterData.name,
         player_owned: true,
         share_vision: true,
-        hidden: false
+        hidden: false,
+        locked: false,
+        deleteableByPlayers: true
       }
       if(!window.TOKEN_OBJECTS[playerTokenID])
         tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
@@ -656,25 +658,34 @@ function observe_character_sheet_changes(documentToObserve) {
           scan_player_creature_pane(mutationTarget);
         }
 
+        if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
+          // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
+          if(is_abovevtt_page() || window.sendToTab != undefined){
+            if(mutationTarget.hasClass('ct-sidebar__pane-content')){
+              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
+            }else{
+              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:last-of-type'));
+            }
+            
+          }
+        }
+         
+
         if(is_abovevtt_page()){
            
             // console.log(`sidebar inserted: ${event.target.classList}`);
           if (mutationTarget.hasClass('ct-sidebar__pane-content')){
              // The user clicked on something that shows details. Open the sidebar and show it
             show_sidebar();
+        
+          }
+            
           if (mutationTarget.find(".ct-game-log-pane").length>0) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
 
-            if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
-              // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
-            }
-          }
-            
-         
-         
+        
           if(mutationTarget.hasClass("ddbc-tab-list__content")){
             if (!is_player_sheet_full_width()) {
               $(".ct-primary-box").css({ "height": "610px" });
@@ -980,8 +991,9 @@ function observe_character_image_change() {
         // This should be just fine, but catch any parsing errors just in case
         const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
         window.PLAYER_IMG = updatedUrl;
-        character_sheet_changed({image: updatedUrl,
-                                avatarUrl: updatedUrl});
+        character_sheet_changed({imgsrc: updatedUrl,
+                                avatarUrl: updatedUrl,
+                                image: updatedUrl});
       } catch { }
     });
   });

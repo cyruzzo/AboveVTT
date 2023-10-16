@@ -81,8 +81,6 @@ class Token {
 		if (typeof options.conditions == "undefined") {
 			this.options.conditions = [];
 		}
-
-		this.prepareWalkableArea();
 	}
 
 	/** @return {number} the total of this token's HP and temp HP */
@@ -203,13 +201,18 @@ class Token {
 			});
 			delete this.options.aura1;
 			delete this.options.aura2;
-			this.options.auraVisible = false;
-			this.options.square = true;
-			this.options.disablestat = true
-			this.options.hidestat = true
-			this.options.disableborder = true
-			this.options.disableaura = true
-			this.options.revealInFog = true
+
+			this.options = {
+				...this.options,
+				auraVisible: false,
+				square: true,
+				disablestat: true,
+				auraislight: false,
+				hidestat: true,
+				disableborder: true,
+				disableaura: true,
+				revealInFog: true
+			}
 		}
 	}
 
@@ -414,8 +417,6 @@ class Token {
 		}
 
 		this.place_sync_persist();
-
-		this.prepareWalkableArea();
 	}
 
 	imageSize(imageScale) {
@@ -498,25 +499,25 @@ class Token {
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
 	async moveUp() {	
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);	
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
 		await this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	async moveDown() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);		
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
 		await this.move(newTop, parseFloat(this.options.left)+5)	
 	}
 	async moveLeft() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);		
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
 		await this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
 	async moveRight() {
-		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1);			
+		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
 		await this.move(parseFloat(this.options.top)+5, newLeft)	
@@ -535,10 +536,10 @@ class Token {
 		// Save handle params
 		top = parseFloat(top);
 		left = parseFloat(left);
-		if(this.walkableArea.right == null || this.walkableArea.bottom == null){
-			this.prepareWalkableArea()
-		}
-		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1);
+		
+		this.prepareWalkableArea()
+		
+		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
 		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken)
 
 		// Stop movement if new position is outside of the scene
@@ -549,7 +550,7 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
+		let inLos = this.isAoe() ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
 		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 			this.options.top = tokenPosition.y + 'px';
 			this.options.left = tokenPosition.x + 'px';
@@ -557,6 +558,7 @@ class Token {
 			await this.place(100)
 			this.update_and_sync();
 		}
+		
 
 	}
 
@@ -1647,6 +1649,7 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
+		
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -1672,13 +1675,13 @@ class Token {
 			if(this.options.light1 == undefined){
 				this.options.light1 ={
 					feet: 0,
-					color: 'rgba(255, 255, 255, 1)'
+					color: (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : 'rgba(255, 255, 255, 1)'
 				}
 			}
 			if(this.options.light2 == undefined){
 				this.options.light2 = {
 					feet: 0,
-					color: 'rgba(142, 142, 142, 1)'
+					color: (window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : 'rgba(142, 142, 142, 1)'
 				}
 			}
 			if(this.options.vision == undefined){
@@ -1695,7 +1698,7 @@ class Token {
 			        }
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(142, 142, 142, 1)'
+		                color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 		        else if(this.isMonster()){
@@ -1724,13 +1727,13 @@ class Token {
 		       		} 
 		            this.options.vision = {
 		                feet: darkvision.toString(),
-		                color: 'rgba(142, 142, 142, 1)'
+		                color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 		            }
 		        }
 				else{
 					this.options.vision = {
 						feet: 60,
-						color: 'rgba(142, 142, 142, 1)'
+						color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
 					}
 				
 				}
@@ -1782,16 +1785,30 @@ class Token {
 
 			tokenImage.css({
 				"max-height": this.sizeHeight(),
-				"max-width": this.sizeWidth(),
-				"height": "100%",
-				"width": "100%"
+				"max-width": this.sizeWidth()
 			});
 		
 
 			tok.attr("data-id", this.options.id);
 
 
+			let sameSizeorLargerTokens = Object.fromEntries(
+								   Object.entries(window.TOKEN_OBJECTS).filter(
+								   		([key, val])=> Math.ceil(window.TOKEN_OBJECTS[key].options.size) >= Math.ceil(this.options.size) && key != this.options.id
+								   	)
+								);
 
+			let topZIndex = 0;
+			if(JSON.stringify(sameSizeorLargerTokens) != '{}'){	
+				const tokenObjects = Object.values(sameSizeorLargerTokens);
+
+				tokenObjects.map((token) => {
+				  const valueFromObject = token.options.zindexdiff;
+				  topZIndex = Math.max(topZIndex, valueFromObject);
+				});
+			}
+			if(topZIndex != 0)
+				this.options.zindexdiff = topZIndex
 			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
@@ -1925,11 +1942,12 @@ class Token {
 								window.dragSelectedTokens.removeClass("pause_click")
 								delete window.playerTokenAuraIsLight;
 								delete window.dragSelectedTokens;
+								delete window.orig_zoom;
 							}
 						}, 200)
 					},
 				start: function (event) {
-					event.stopImmediatePropagation();
+					
 					pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 					if (get_avtt_setting_value("allowTokenMeasurement")) {
 						$("#temp_overlay").css("z-index", "50");
@@ -1937,11 +1955,10 @@ class Token {
 					window.DRAWFUNCTION = "select"
 					window.DRAGGING = true;
 					window.oldTokenPosition = {};
-					if(self.walkableArea.right == null || self.walkableArea.bottom == null){
-						self.prepareWalkableArea()
-					}
-					click.x = event.pageX;
-					click.y = event.pageY;
+					
+					self.prepareWalkableArea()
+					window.orig_zoom = window.ZOOM;
+
 					if(self.selected == false && $(".token.tokenselected").length>0){
 						for (let tok of $(".token.tokenselected")){
 							let id = $(tok).attr("data-id");
@@ -1970,8 +1987,9 @@ class Token {
 					self.orig_top = self.options.top;
 					self.orig_left = self.options.left;
 
-					$(`.token[data-group-id='${self.options.groupId}']`).toggleClass('tokenselected', true); // set grouped tokens as selected
-				
+					$(`.token[data-group-id='${self.options.groupId}']:not([style*=' display: none;'])`).toggleClass('tokenselected', true); // set grouped tokens as selected
+					
+
 					window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
 					window.dragSelectedTokens = $(".token.tokenselected"); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 					
@@ -1987,9 +2005,9 @@ class Token {
 								let curr = window.TOKEN_OBJECTS[id];
 								curr.orig_top = curr.options.top;
 								curr.orig_left = curr.options.left;
- 								if(curr.walkableArea.right == null || curr.walkableArea.bottom == null){
- 									curr.prepareWalkableArea();
-								}
+ 								
+ 								curr.prepareWalkableArea();
+								
 								let el = $("#aura_" + id.replaceAll("/", ""));
 								if (el.length > 0) {
 									el.attr("data-left", el.css("left").replace("px", ""));
@@ -2065,15 +2083,15 @@ class Token {
 				 * @param {Event} event mouse event
 				 * @param {Object} ui UI-object
 				 */
-				drag: async function(event, ui) {
-					event.stopImmediatePropagation();
+				drag: function(event, ui) {
+				
 					
 					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (event.pageX - click.x + original.left) / zoom;
-					let tokenY = (event.pageY - click.y + original.top) / zoom;
-					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1);
+					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
+					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
+					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
 					if (should_snap_to_grid()) {
 						tokenX +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 4);
@@ -2097,14 +2115,15 @@ class Token {
 				
 
 					if(!window.DM && window.playerTokenAuraIsLight){
-						const left = (tokenPosition.x + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-						const top = (tokenPosition.y + (parseFloat(self.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const left = (tokenPosition.x + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const top = (tokenPosition.y + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
-							  Error(`One of these values is not a number: Size: ${self.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, pagex: ${event.pageX}, clickx: ${click.x}, originalleft: ${original.left}, pageY: ${event.pageY}, clickY: ${click.y}, original.top: ${original.top}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
+							  Error(`One of these values is not a number: Size: ${self.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
 							  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 							)
 						}
+						
 						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
 
 						if (pixeldata[2] > 5)
@@ -2119,12 +2138,12 @@ class Token {
 
 					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 					if (allowTokenMeasurement) {
-						const tokenMidX = tokenPosition.x + Math.round(self.options.size / 2);
-						const tokenMidY = tokenPosition.y + Math.round(self.options.size / 2);
+						const tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.sizeWidth() / 2);
 
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.options.size / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.options.size + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeWidth() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 					if (!self.options.hidden) {
 						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
@@ -2185,7 +2204,7 @@ class Token {
 								tokenX = offsetLeft + parseInt(curr.orig_left);
 								tokenY = offsetTop + parseInt(curr.orig_top);
 								if(should_snap_to_grid()){
-									let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1);
+									let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1) || curr.isAoe();
 									let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 	
 									tokenY =  tokenPosition.y;
@@ -2196,11 +2215,11 @@ class Token {
 								$(tok).css('top', tokenY + "px");
 
 								if(!window.DM && window.playerTokenAuraIsLight){
-									const left = (tokenX + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-									const top = (tokenY + (parseFloat(curr.options.size) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									const left = (tokenX + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+									const top = (tokenY + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 									if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 										showErrorMessage(
-										  Error(`One of these values is not a number: Size: ${curr.options.size}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
+										  Error(`One of these values is not a number: Size: ${curr.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}`),
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
 									}									
@@ -2305,6 +2324,7 @@ class Token {
 					return;
 				}
 				let tokID = parentToken.attr('data-id');
+				let groupID = parentToken.attr('data-group-id');
 				let thisSelected = !(parentToken.hasClass('tokenselected'));
 				let count = 0;
 				if (shiftHeld == false) {
@@ -2351,6 +2371,8 @@ class Token {
 			new Promise(debounceLightChecks),
 		]);
 		console.groupEnd()
+
+		return true;
 	}
 
 	// key: String, numberRemaining: Number; example: track_ability("1stlevel", 2) // means they have 2 1st level spell slots remaining
@@ -2383,8 +2405,8 @@ class Token {
 	prepareWalkableArea() {
 		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
 		const sizeOnGrid = {
-			y: Math.max(this.options.size, window.CURRENT_SCENE_DATA.vpps),
-			x: Math.max(this.options.size, window.CURRENT_SCENE_DATA.hpps)
+			y: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.vpps),
+			x: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.hpps)
 		};
 
 		// Shorten letiable to improve readability
@@ -2572,12 +2594,29 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...pc,
 		...tokenObject,
-		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
+		id: tokenObject.id, // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
+		vision: {
+			feet: tokenObject.vision?.feet ? tokenObject.vision.feet : '60',
+			color: tokenObject.vision?.color ? tokenObject.vision.color : (window.TOKEN_SETTINGS?.vision?.color) ?  window.TOKEN_SETTINGS.vision.color : default_options().light2.color
+		},
+		light1: {
+			feet: tokenObject.light1?.feet ? tokenObject.light1.feet : '0',
+			color: tokenObject.light1?.color ? tokenObject.light1.color : (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : default_options().light1.color
+		},
+		light2: {
+			feet: tokenObject.light2?.feet ? tokenObject.light2.feet : '0',
+			color: tokenObject.light2?.color ? tokenObject.light2.color : (window.TOKEN_SETTINGS?.light2?.color) ?  window.TOKEN_SETTINGS.light2.color : default_options().light2.color
+		}
 	};
-	if(window.all_token_objects[options.id] !== undefined){
+	if(window.all_token_objects[options.id] !== undefined && options.alternativeImages){
+		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
+			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
+		}
+		let alternativeImages = options.alternativeImages;
 		options = {
 			...options,
-			...window.all_token_objects[options.id].options
+			...window.all_token_objects[options.id].options,
+			alternativeImages: alternativeImages
 		};
 	}
 	// aoe tokens have classes instead of images
@@ -2722,7 +2761,33 @@ function determine_hidden_classname(tokenIds) {
 }
 
 function token_menu() {
-
+		let initialX;
+		let initialY;
+		$("#tokens").on("touchstart", ".VTTToken", function(event) {
+			initialX = event.touches[0].clientX;
+			initialY = event.touches[0].clientY;
+		    LongPressTimer = setTimeout(function() {
+			    console.log("context_menu_flyout contextmenu event", event);
+				if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
+					return;
+				if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+					token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
+				} else {
+					token_context_menu_expanded([$(event.currentTarget).attr("data-id")], event);
+				}
+		    }, 600)
+		  })
+		  .on('touchend', function(e) {
+		    clearTimeout(LongPressTimer)
+		  })
+		  .on('touchmove', function(e) {
+		  	let currentY = e.touches[0].clientY;
+		  	let currentX = e.touches[0].clientX;
+		  	if(Math.abs(initialX-currentX) > 15 || Math.abs(initialY-currentY) > 15 ){
+		  		clearTimeout(LongPressTimer)
+		  	}
+		    
+		  });
 		$("#tokens").on("contextmenu", ".VTTToken", function(event) {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
@@ -2744,7 +2809,7 @@ function deselect_all_tokens() {
 		let curr = window.TOKEN_OBJECTS[id];
 		if (curr.selected) {
 			curr.selected = false;
-			curr.place();
+			$(`.token[data-id='${id}']`).toggleClass('tokenselected', false);
 		}
 	}
 	remove_selected_token_bounding_box();
@@ -2806,8 +2871,8 @@ function token_health_aura(hpPercentage) {
 function setTokenAuras (token, options) {
 	if (!options.aura1) return;
 
-	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
@@ -2852,9 +2917,9 @@ function setTokenAuras (token, options) {
 function setTokenLight (token, options) {
 	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
 
-	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / 5) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
@@ -2973,8 +3038,13 @@ function setTokenBase(token, options) {
 			options.disableborder = true;
 			options.disableaura = true;
 			options.enablepercenthpbar = false;
+			if(options.tokenStyleSelect === "definitelyNotAToken"){
+				token.toggleClass('definitelyNotAToken', true);
+			}
+			else{
+				token.toggleClass('labelToken', true);
+			}
 		}
-		token.toggleClass('labelToken', true);
 
 		token.children("img").css("border-radius", "0");
 		token.children("img").addClass("preserve-aspect-ratio");
@@ -3000,6 +3070,10 @@ function setTokenBase(token, options) {
 
 	if(options.tokenStyleSelect != 'labelToken'){
 		token.toggleClass('labelToken', false);
+	}
+
+	if(options.tokenStyleSelect != 'definitelyNotAToken'){
+		token.toggleClass('definitelyNotAToken', false);
 	}
 
 	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){
@@ -3146,16 +3220,36 @@ async function do_draw_selected_token_bounding_box() {
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
-	let promises = []
-	for (let id in window.TOKEN_OBJECTS) {
+	let promises = [];
+	let selected = Object.fromEntries(
+					   Object.entries(window.TOKEN_OBJECTS).filter(
+					      ([key, val])=> window.TOKEN_OBJECTS[key].selected == true
+					   )
+					);
+	let groupIDs = [];
+	for (let id in selected) {
 		let selector = "div[data-id='" + id + "']";
+		
 		promises.push(new Promise((resolve) => {
 			toggle_player_selectable(window.TOKEN_OBJECTS[id], $("#tokens").find(selector)); 
 			resolve();
-		}));
-		if (window.TOKEN_OBJECTS[id].selected) {
-			window.CURRENTLY_SELECTED_TOKENS.push(id);
+		}));	
+		window.CURRENTLY_SELECTED_TOKENS.push(id);	
+		$("#tokens").find(selector).toggleClass('tokenselected', true);	
+		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
+			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
 		}
+	}
+
+	for(let index in groupIDs){
+		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
+		tokens.each(function(){
+			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')) || $(this).css('display') == 'none')
+				return;
+			$(this).toggleClass('tokenselected', true);	
+			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
+			window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
+		})
 	}
 
 	Promise.allSettled(promises)
@@ -3514,9 +3608,9 @@ function delete_selected_tokens() {
 	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
 	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
-		for (let i = 0; i < tokensToDelete.length; i++) {
-			tokensToDelete[i].delete(true);
-		}
+	for (let i = 0; i < tokensToDelete.length; i++) {
+		tokensToDelete[i].delete(true);
+	}
 	draw_selected_token_bounding_box(); // redraw the selection box
 }
 

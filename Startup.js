@@ -10,6 +10,7 @@ $(function() {
     console.log("startup calling init_splash");
     window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
+    $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
     window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
       event.stopImmediatePropagation();
       if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
@@ -34,7 +35,8 @@ $(function() {
         if (is_abovevtt_page()) {
           monitor_console_logs();
         }
-        window.diceRoller = new DiceRoller(); 
+        window.diceRoller = new DiceRoller();  
+        localStorage.removeItem("ScenesHandler" + gameId);
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
@@ -59,7 +61,7 @@ $(function() {
         if(lastSendToDefault != null){
           $(`[class*='listItemTextRoot']:contains('${lastSendToDefault}')`).click()
         }
-        window.diceRoller = new DiceRoller();  
+        
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
@@ -80,6 +82,19 @@ $(function() {
                 ));
               }
             }       
+            return;
+          }
+          if(event.data.msgType =='SendToGamelog'){
+            if(event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)){
+              let html = window.MB.encode_message_text(event.data.text);
+              let data = {
+                player: event.data.player,
+                img: event.data.img,
+                text: html
+              };
+              window.MB.inject_chat(data);
+              notify_gamelog();
+            }
             return;
           }
           if(event.data.msgType=='isAboveOpen'){
@@ -191,7 +206,7 @@ async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
-
+  $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_ID = false;
   window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = dm_id;
@@ -243,7 +258,8 @@ async function start_above_vtt_for_players() {
   if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
     throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
-
+  
+  $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_SHEET = window.location.pathname;
   window.PLAYER_ID = getPlayerIDFromSheet(window.PLAYER_SHEET);
 

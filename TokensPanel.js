@@ -639,6 +639,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         zIndex: 100000,
         cursorAt: {top: 0, left: 0},
         cancel: '.token-row-gear, .change-token-image-item',
+        distance: 25,
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
@@ -796,8 +797,9 @@ function update_pc_token_rows() {
                 let abilityValue = row.find(`[data-ability='${a.name}']`);
                 abilityValue.find(".ability_modifier").text(a.modifier);
                 abilityValue.find(".ability_score").text(a.score);
-            });
-            row.find(".pp-value").text(pc.passivePerception);
+            });    
+            let customizations = find_token_customization(listItem.type, listItem.id);
+            row.find(".token-image").attr('src', (customizations?.tokenOptions?.alternativeImages?.length>0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image);
             row.find(".pinv-value").text(pc.passiveInvestigation);
             row.find(".pins-value").text(pc.passiveInsight);
             row.find(".walking-value").text(speed_from_pc_object(pc));
@@ -874,7 +876,7 @@ function update_pc_token_rows() {
  */
 
 
-function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions={}) {
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
 
 
     if (listItem === undefined) {
@@ -930,9 +932,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         }
         return;
     }
-
+    let options = {...window.TOKEN_SETTINGS}
     // set up whatever you need to. We'll override a few things after
-    let options = {...window.TOKEN_SETTINGS, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    if(extraOptions == undefined){
+        options = {...options, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    }
+    
     options.name = listItem.name;
 
 
@@ -1140,7 +1145,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     options.imgsrc = random_image_for_item(listItem, specificImage);
     // TODO: figure out if we still need to do this, and where they are coming from
-    if(extraOptions != {}){
+    if(extraOptions != undefined){
         options = {
             ...options,
             ...extraOptions
@@ -1678,7 +1683,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         let removeAllButton = build_remove_all_images_button(sidebarPanel, listItem, placedToken);
         sidebarPanel.body.after(removeAllButton);
         if (alternative_images_for_item(listItem).length === 0) {
-            $('.token-image-modal-remove-all-button').hide();
+            $('#token-configuration-modal .token-image-modal-remove-all-button').hide();
         }
     }
     let inputWrapper = sidebarPanel.inputWrapper;
@@ -1708,7 +1713,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
-        $('.token-image-modal-remove-all-button').show();
+        $('#token-configuration-modal .token-image-modal-remove-all-button').show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
     };
 
@@ -1731,7 +1736,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     }
 
     if(!listItem.isTypePC()){
-        let has_note = customization.tokenOptions.statBlock;
+        let has_note = (customization.id in window.JOURNAL.notes);
 
         let editNoteButton = $(`<button class="custom-stat-buttons icon-note material-icons">
                 <span style='font-family:Roboto,Open Sans,Helvetica,sans-serif;'>
@@ -1769,7 +1774,9 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
                     text: '',
                     plain: '',
                     player: true
-                }
+                }     
+            }
+            if(customization.tokenOptions.statBlock != customization.id){
                 customization.tokenOptions.statBlock = customization.id;
                 persist_token_customization(customization);
                 display_token_configuration_modal(listItem, placedToken);
@@ -1885,7 +1892,7 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
             }
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
         else if(listItem.isTypeMonster() || listItem.isTypeOpen5eMonster()){
@@ -1902,26 +1909,26 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
 
             customization.tokenOptions.vision = {
                 feet: darkvision.toString(),
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
         else{
             customization.tokenOptions.vision = {
                 feet: '60',
-                color: 'rgba(142, 142, 142, 1)'
+                color: window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS?.vision?.color : 'rgba(142, 142, 142, 1)'
             }
         }
     }
     if(customization.tokenOptions.light1 == undefined){
         customization.tokenOptions.light1 = {
             feet: '0',
-            color: 'rgba(255, 255, 255, 1)'
+            color: window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS?.light1?.color : 'rgba(255, 255, 255, 1)'
         }
     }
     if(customization.tokenOptions.light2 == undefined){
         customization.tokenOptions.light2 = {
             feet: '0',
-            color: 'rgba(142, 142, 142, 1)'
+            color: window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS?.light2?.color : 'rgba(142, 142, 142, 1)'
         }
     }
 
@@ -2070,6 +2077,14 @@ function display_token_configuration_modal(listItem, placedToken = undefined) {
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
         customization.setTokenOption(name, value);
     }, function () {
+        let visionInput = $("input[name='visionColor']").spectrum("get");
+        let light1Input = $("input[name='light1Color']").spectrum("get");
+        let light2Input = $("input[name='light2Color']").spectrum("get");
+        
+        customization.tokenOptions.vision.color = `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
+        customization.tokenOptions.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
+        customization.tokenOptions.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
+
         persist_token_customization(customization);
         redraw_settings_panel_token_examples(customization.tokenOptions);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
@@ -2204,6 +2219,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
+        if(listItem.type == 'pc'){
+            const playerId = getPlayerIDFromSheet(listItem.sheet);
+            const pc = find_pc_by_player_id(playerId, false)
+            listItem.image = pc.image;
+        }
         let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
         modalBody.append(tokenDiv);
     }

@@ -507,31 +507,6 @@ function download(data, filename, type) {
 }
 
 
-
-function scene_import_with_drawings(scenedata=null){  //modified cloud_migration / import tool to import a single scene with drawings, walls etc without a refresh
-	let http_api_gw="https://services.abovevtt.net";
-	let searchParams = new URLSearchParams(window.location.search);
-	if(searchParams.has("dev")){
-		http_api_gw="https://jiv5p31gj3.execute-api.eu-west-1.amazonaws.com";
-	}
-	let gameid = find_game_id();
-
-	if(scenedata==null)
-		scenedata=localStorage.getItem("ScenesHandler"+gameid);
-	$.ajax({
-		url:http_api_gw+"/services?action=migrate&campaign="+window.CAMPAIGN_SECRET,
-		type:"POST",
-		contentType:'application/json',
-		data: scenedata,
-		success:function(data){
-			$('#edit_dialog').remove();
-
-
-		}
-	});
-}
-
-
 function init_settings() {
 
 	let body = settingsPanel.body;
@@ -583,9 +558,17 @@ function init_settings() {
 						delete window.TOKEN_SETTINGS[name];
 					}
 				}, function() {
+					let visionInput = $("input[name='visionColor']").spectrum("get");
+	   				let light1Input = $("input[name='light1Color']").spectrum("get");
+	    			let light2Input = $("input[name='light2Color']").spectrum("get");
+	        		
+	        		window.TOKEN_SETTINGS.vision.color= `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
+	   				window.TOKEN_SETTINGS.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
+	    			window.TOKEN_SETTINGS.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
+
 					persist_token_settings(window.TOKEN_SETTINGS);
 					redraw_settings_panel_token_examples();
-				});
+				}, true);
 				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
 				flyout.append(optionsContainer);
 				position_flyout_left_of(body, flyout);
@@ -732,7 +715,7 @@ function build_example_token(options) {
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
-function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange) {
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false) {
 	if (typeof updateValue !== 'function') {
 		updateValue = function(name, newValue){
 			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
@@ -774,6 +757,53 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
+
+	if(showExtraOptions){
+	    window.TOKEN_SETTINGS.vision = (window.TOKEN_SETTINGS?.vision) ? window.TOKEN_SETTINGS.vision : {color: 'rgba(142, 142, 142, 1)'};
+	    window.TOKEN_SETTINGS.light1 = (window.TOKEN_SETTINGS?.light1) ? window.TOKEN_SETTINGS.light1 : {color: 'rgba(255, 255, 255, 1)'};
+	   	window.TOKEN_SETTINGS.light2 = (window.TOKEN_SETTINGS?.light2) ? window.TOKEN_SETTINGS.light2 : {color: 'rgba(142, 142, 142, 1)'};
+	
+
+	    let lightInputs = `<div class="token-image-modal-footer-select-wrapper">
+	                    <div class="token-image-modal-footer-title">Darkvision Color</div>
+	                    <div style="padding-left: 2px">
+	                        <input class="spectrum" name="visionColor" value="${window.TOKEN_SETTINGS.vision.color}" >
+	                    </div>
+	                </div>
+	                <div class="token-image-modal-footer-select-wrapper">
+	                    <div class="token-image-modal-footer-title">Inner Light Color</div>
+	                    <div style="padding-left: 2px">
+	                        <input class="spectrum" name="light1Color" value="${window.TOKEN_SETTINGS.light1.color}" >
+	                    </div>
+	                </div>
+	                <div class="token-image-modal-footer-select-wrapper">
+	                   <div class="token-image-modal-footer-title">Outer Light Color</div>
+	                    <div style="padding-left: 2px">
+	                        <input class="spectrum" name="light2Color" value="${window.TOKEN_SETTINGS.light2.color}" >
+	                    </div>
+	                </div>`;
+	
+	    container.append(lightInputs);
+	    let colorPickers = container.find('input.spectrum');
+	    colorPickers.spectrum({
+	        type: "color",
+	        showInput: true,
+	        showInitial: true,
+	        containerClassName: 'prevent-sidebar-modal-close',
+	        clickoutFiresChange: true,
+	        appendTo: "parent"
+	    });
+		container.find("input[name='visionColor']").spectrum("set", window.TOKEN_SETTINGS.vision.color);
+	    container.find("input[name='light1Color']").spectrum("set", window.TOKEN_SETTINGS.light1.color);
+	    container.find("input[name='light2Color']").spectrum("set", window.TOKEN_SETTINGS.light2.color);
+	    const colorPickerChange = function(e, tinycolor) {
+	        didChange(); 
+	    };
+	    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+	    colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+	    colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+	}
+
 	update_token_base_visibility(container);
 
 
@@ -811,6 +841,19 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 		// This is why we want multiple callback functions.
 		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
 		availableOptions.forEach(option => updateValue(option.name, undefined));
+		let defaultTokenOptions = default_options();
+		if(showExtraOptions == true){
+			$("input[name='visionColor']").spectrum("set", defaultTokenOptions.light2.color);
+		    $("input[name='light1Color']").spectrum("set", defaultTokenOptions.light1.color);
+		    $("input[name='light2Color']").spectrum("set", defaultTokenOptions.light2.color);
+		}
+		else{
+			$("input[name='visionColor']").spectrum("set", ((window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : defaultTokenOptions.light2.color));
+		    $("input[name='light1Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : defaultTokenOptions.light1.color));
+		    $("input[name='light2Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : defaultTokenOptions.light2.color));
+		}
+
+
 		didChange();
 	});
 	container.append(resetToDefaults);
@@ -1005,6 +1048,99 @@ function export_current_scene(){
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CURRENT_SCENE_DATA.title}-${datetime}.abovevtt`,"text/plain");
 	$(".import-loading-indicator").remove();
+}
+
+async function export_scene_context(sceneId){
+	build_import_loading_indicator('Preparing Export File');
+	let scene = await AboveApi.getScene(sceneId);
+	let currentSceneData = {
+		...scene.data
+	} 
+	
+	let DataFile = {
+		version: 2,
+		scenes: [currentSceneData],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	delete DataFile.scenes[0].itemType;
+	for(token in scene.data.tokens){
+		let tokenId = scene.data.tokens[token].id;
+		for(noteID in window.JOURNAL.notes){
+			if( tokenId == noteID){
+				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+			}
+		}
+	}
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${scene.data.title}-${datetime}.abovevtt`,"text/plain");
+	$(".import-loading-indicator").remove();
+}
+
+
+
+async function export_scenes_folder_context(folderId){
+	build_import_loading_indicator('Preparing Export File');
+	
+	let path = window.ScenesHandler.scenes.filter(d => d.parentId == folderId && d.itemType == 'scene')[0].folderPath;
+
+
+	let ids = [];
+	ids.push(folderId);
+	const getIds = function(folderId){
+		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
+
+		for(let scene in scenesInFolder){
+			ids.push(scenesInFolder[scene].id)
+			if(scenesInFolder[scene].itemType != 'scene'){
+				getIds(scenesInFolder[scene].id)
+			}
+		}
+	}
+
+	getIds(folderId);
+	let DataFile = {
+		version: 2,
+		scenes: [],
+		tokencustomizations: [],
+		notes: {},
+		journalchapters: [],
+		soundpads: {}
+	};
+	for(let id in ids){
+		let scene = await AboveApi.getScene(ids[id]);
+		let currentSceneData = {
+			...scene.data
+		} 
+		
+		
+		DataFile.scenes.push(currentSceneData)
+
+		for(let token in scene.data.tokens){
+			let tokenId = scene.data.tokens[token].id;
+			for(let noteID in window.JOURNAL.notes){
+				if( tokenId == noteID){
+					DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+				}
+			}
+		}
+
+	}
+	DataFile.scenes[0].parentId = "scenesFolder";
+	
+	let folder = window.ScenesHandler.scenes.filter(d => d.id == folderId)[0].title;
+
+	let currentdate = new Date(); 
+	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${folder}-${datetime}.abovevtt`,"text/plain");
+	$(".import-loading-indicator").remove();
+
+
+
+
 }
 
 function export_token_customization() {

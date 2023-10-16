@@ -813,7 +813,7 @@ class JournalManager{
 		// to account for all the nuances of DNDB dice notation.
 		// numbers can be swapped for any number in the following comment
 		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-		const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/gi
+		const damageRollRegex = /([(\s>])(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([)\s<,])/gi
 		// matches " +1 " or " + 1 "
 		const hitRollRegex = /(?<![0-9]+d[0-9]+)([(\s>])([+-]\s?[0-9]+)([)\s<,])/gi
 		const dRollRegex = /\s(\s?d[0-9]+)\s/gi
@@ -822,7 +822,7 @@ class JournalManager{
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
-			.replaceAll(damageRollRegex, ` <button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1</button> `)
+			.replaceAll(damageRollRegex, `$1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$5`)
 			.replaceAll(hitRollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
@@ -890,8 +890,8 @@ class JournalManager{
   
             // Find attack actions
             input = input.replace(/(attack) action/gi, 
-            	function(m){
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+            	function(m, first_bracket_match){
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(first_bracket_match, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
                 });
             // Find cover rules
@@ -1094,7 +1094,7 @@ class JournalManager{
 			   of: window
 			},
 			open: function(event, ui){
-				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="chrome-extension://kkemdlbhcdjeammninnkkaclnflbodmj/assets/icons/view.svg"></button>"`);
+				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="${window.EXTENSION_PATH}assets/icons/view.svg"></button>"`);
 				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
 				btn_view.click(function(){	
 					self.close_all_notes();
@@ -1191,7 +1191,7 @@ class JournalManager{
 		                    url = parsed;
 		                }
 
-				        e.element.setAttribute("src", url);
+				        e.element.setAttribute("src", getGoogleDriveAPILink(url));
 				        return; 
 				    }
 				    return;

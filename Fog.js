@@ -440,14 +440,15 @@ function check_single_token_visibility(id){
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
-	const inFog = is_token_under_fog(id, fogContext); // this token is in fog
+	const inFog = playerTokenId != id && is_token_under_fog(id, fogContext); // this token is in fog
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
-	if (hideThisTokenInFogOrDarkness && notInLight ) {
+	if (hideThisTokenInFogOrDarkness && notInLight) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
@@ -492,6 +493,10 @@ async function do_check_token_visibility() {
 	let promises = [];
 
 	let lightContext = window.lightInLos.getContext('2d');
+
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
 			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
@@ -499,16 +504,13 @@ async function do_check_token_visibility() {
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
 
-			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-			let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-
 			//Combining some and filter cut down about 140ms for average sized picture
 		
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
-			const inFog = is_token_under_fog(id, ctx); // this token is in fog
+			const inFog = (playerTokenId != id && is_token_under_fog(id, ctx)); // this token is in fog and not the players token
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
@@ -871,6 +873,7 @@ function reset_canvas() {
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
+	ctxScale('walls_layer');
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -1041,7 +1044,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 3) {
 				// HIDE POLYGON
-				clearPolygon(ctx, d[0], d[6], true);
+				clearPolygon(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 				drawPolygon(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);
 			
 			}
@@ -1050,11 +1053,11 @@ function redraw_fog() {
 					adjustedArray[adjusted] = d[adjusted] / (revealedScale);
 				}
 				// HIDE BUCKET
-				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1);			
+				bucketFill(ctx, adjustedArray[0], adjustedArray[1], fogStyle, 1, false);			
 			}
 			if (d[4] == 5) {
-				//HIDE 3 POINT RECT
-				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true);		
+				//HIDE 3 POINT RECT	
+				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true, false, true);		
 			}
 		}
 	}
@@ -1221,12 +1224,20 @@ function redraw_drawn_light(){
 }
 
 function redraw_light_walls(clear=true){
+	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
+	let canvas = (showWallsToggle != true) ? document.getElementById("temp_overlay") : document.getElementById("walls_layer");	
 
-	let canvas = document.getElementById("temp_overlay");
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
+
+	if(showWallsToggle == true){
+		$('#walls_layer').css('display', '');
+	}
+	else{
+		$('#walls_layer').css('display', 'none');
+	}
 		
-	if(clear)
+	if(showWallsToggle == true || clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
@@ -1264,7 +1275,7 @@ function redraw_light_walls(clear=true){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if (shape == "line" && ($('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled'))) {
+		if (showWallsToggle || (shape == "line" && ($('#wall_button').hasClass('button-enabled')) || ($('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 		let type = (color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)" ) ? 1 : 0;
@@ -2281,17 +2292,17 @@ function drawing_mouseup(e) {
 
 	else if (window.DRAWFUNCTION == "select") {
 		// FIND TOKENS INSIDE THE AREA
-		var c = 0;
+		let c = 0;
 		for (let id in window.TOKEN_OBJECTS) {
-			var curr = window.TOKEN_OBJECTS[id];
+			let curr = window.TOKEN_OBJECTS[id];
 
 
 			let tokenImageRect = $("#tokens>div[data-id='" + curr.options.id + "'] .token-image")[0].getBoundingClientRect();	
 			let size = window.TOKEN_OBJECTS[curr.options.id].options.size;	
-			var toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-			var tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			var tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-			var tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			let toktop = (parseInt(tokenImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+			let tokleft = (parseInt(tokenImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			let tokright = (parseInt(tokenImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+			let tokbottom = (parseInt(tokenImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 			let scaledRemainderTop = (tokbottom-toktop-size)/2;
 			let scaledRemainderLeft = (tokright-tokleft-size)/2;
 			if(window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'circle' || window.TOKEN_OBJECTS[curr.options.id].options.tokenStyleSelect == 'square' || $("#tokens>div[data-id='" + curr.options.id + "']").hasClass("isAoe")){
@@ -2309,16 +2320,15 @@ function drawing_mouseup(e) {
 				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
-					curr.place();
 				}
 			}
 
 		}
 		$("#temp_overlay").css('z-index', '25');
 		window.MULTIPLE_TOKEN_SELECTED = (c > 1);
-
-		redraw_fog();
 		draw_selected_token_bounding_box();
+		
+
 		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
@@ -2761,8 +2771,11 @@ function draw3PointRect(
 	mouseY = null,
 	scale = window.CURRENT_SCENE_DATA.scale_factor,
 	replacefog = false,
-	islight = false
+	islight = false,
+	clear = false
 ) {
+
+
 	ctx.save();
 	ctx.beginPath();
 	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
@@ -2796,6 +2809,13 @@ function draw3PointRect(
 		ctx.lineTo(point4.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, point4.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.closePath();
 		ctx.fillStyle = style;
+		if(clear){
+			ctx.fillStyle = "#000";
+			ctx.globalCompositeOperation = 'destination-out';
+			ctx.fill();
+			ctx.fillStyle = style;
+			ctx.globalCompositeOperation = 'source-over';
+		}
 		ctx.fill();
 		if(!islight){
 			if(replacefog && window.DM)
@@ -3465,12 +3485,18 @@ function init_walls_menu(buttons){
 			</button>
 		</div>`);
 	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='show_walls' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
+				Always Show
+			</button>
+		</div>`);
+	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_walls'>
 				CLEAR
 			</button>
 		</div>`);
-
+ 
 	wall_menu.find("#delete_walls").click(function() {
 		r = confirm("DELETE ALL WALLS (cannot be undone!)");
 		if (r === true) {
@@ -3885,7 +3911,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					clearPolygon(ctx, lightPolygon, undefined, true);
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 				}
-				drawPolygon(ctx, lightPolygon, fogStyle, undefined, 1, undefined, undefined, undefined, undefined, true);
+				else{
+					drawPolygon(ctx, lightPolygon, fogStyle, undefined, 1, undefined, undefined, undefined, undefined, true);
+				}	
 			}
 		}
 	}
@@ -3991,8 +4019,6 @@ async function redraw_light(){
 	}
 
 
-	offscreenContext.fillStyle = "black";
-	offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
 
@@ -4047,6 +4073,7 @@ async function redraw_light(){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 
+	let lightInLosContext = window.lightInLos.getContext('2d');
 
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
@@ -4103,8 +4130,7 @@ async function redraw_light(){
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
 
-			if(window.lightAuraClipPolygon[auraId]){
-				let lightInLosContext = window.lightInLos.getContext('2d');
+			if(window.lightAuraClipPolygon[auraId]){	
 				lightInLosContext.globalCompositeOperation='source-over';
 				lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 			}
@@ -4130,24 +4156,29 @@ async function redraw_light(){
 		})); 	
 	}
 	await Promise.all(promises);
-	let lightInLosContext = window.lightInLos.getContext('2d');
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
-		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
-	}else{
-		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
+		offscreenContext.globalCompositeOperation='destination-over';
+		offscreenContext.fillStyle = "black";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
-		lightInLosContext.globalCompositeOperation='source-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 	}
+	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
+		lightInLosContext.globalCompositeOperation='destination-over';
+		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
-	
+		lightInLosContext.globalCompositeOperation='destination-in';
+		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 
+		offscreenContext.globalCompositeOperation='destination-over';
+		offscreenContext.fillStyle = "black";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+	}	
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-	
 	if(!window.DM){
 		do_check_token_visibility();
 	}
@@ -4159,8 +4190,11 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	if(window.DM)
 		return;
 	
-	let lightRadius =(parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)+parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
-	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let blackLight1 = (window.TOKEN_OBJECTS[auraId].options.light1.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let blackLight2 = (window.TOKEN_OBJECTS[auraId].options.light2.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let blackVision = (window.TOKEN_OBJECTS[auraId].options.vision.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
+	let lightRadius =((parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)*blackLight1)+(parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined)) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));

@@ -87,7 +87,7 @@ function validate_image_input(element){
 		$(self).prev().attr("title")
 		$(self).prev().removeClass("valid loading")
 		$(self).prev().addClass("unsure")
-		$(self).prev().attr("data-hover", "URL is ok. video validation coming soon")
+		$(self).prev().attr("data-hover", "URL is ok. Video/UVTT validation not available")
 		$(self).attr("data-valid", false)
 	}
 	let url
@@ -97,7 +97,9 @@ function validate_image_input(element){
 		display_not_valid("URL is invalid")
 		return
 	}
-	if ($("#player_map_is_video_toggle").hasClass("rc-switch-checked") || $("#dm_map_is_video_toggle").hasClass("rc-switch-checked")){
+
+	let sceneData = window.ScenesHandler.scenes.filter(d => d.id == $('#edit_dialog').attr('data-scene-id'))[0];
+	if (sceneData.UVTTFile == 1 || $("#player_map_is_video_toggle").hasClass("rc-switch-checked") || $("#dm_map_is_video_toggle").hasClass("rc-switch-checked")){
 		display_unsure()
 		return
 	}
@@ -855,14 +857,14 @@ function edit_scene_vision_settings(scene_id){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 1000);
 
-	var container = scene_properties;
+	let container = scene_properties;
 
 	container.empty();
 
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 
-	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	let uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
@@ -1751,9 +1753,9 @@ function init_scenes_panel() {
 function did_update_scenes() {
 	if (!window.DM) return;
 
-	// store this locally in case we run into the cloud bug that prevents the scenelist event from being sent down
+	
 	const sanitizedScenes = normalize_scene_urls(window.ScenesHandler.scenes);
-	localStorage.setItem(`ScenesHandler${find_game_id()}`, JSON.stringify(sanitizedScenes));
+
 	console.debug("did_update_scenes", `ScenesHandler${find_game_id()}`, sanitizedScenes);
 
 
@@ -2040,6 +2042,32 @@ function register_scene_row_context_menu() {
 					}
 				};
 			}
+			if(rowItem.isTypeScene()){
+				menuItems["duplicate"] = {
+					name: "Duplicate",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						duplicate_scene(itemToEdit.id);
+					}
+				};
+				menuItems["export"] = {
+					name: "Export",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						export_scene_context(itemToEdit.id)
+					}
+				};
+			}
+			if(rowItem.isTypeFolder()){
+				menuItems["export"] = {
+					name: "Export",
+					callback: function(itemKey, opt, originalEvent) {
+						let itemToEdit = find_sidebar_list_item(opt.$trigger);
+						export_scenes_folder_context(itemToEdit.id)
+					}			
+				}
+			}
+
 			if (rowItem.canDelete()) {
 
 				menuItems["border"] = "---";
@@ -2063,6 +2091,35 @@ function register_scene_row_context_menu() {
 			return { items: menuItems };
 		}
 	});
+}
+
+async function duplicate_scene(sceneId) {
+	let scene = await AboveApi.getScene(sceneId);
+
+	let aboveSceneData = {
+		...scene.data,
+		id: uuid()
+	} 
+	
+	for(token in aboveSceneData.tokens){
+		let oldId = aboveSceneData.tokens[token].id;
+		let newId = uuid();
+		for(noteID in window.JOURNAL.notes){
+			if(oldId == noteID){
+				window.JOURNAL.notes[newId] = {...window.JOURNAL.notes[noteID]};
+			}
+		}
+		window.JOURNAL.persist();
+		aboveSceneData.tokens[token].id = newId;
+	}
+
+	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
+
+	window.ScenesHandler.scenes.push(aboveSceneData);
+	did_update_scenes();
+	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+	$("#sources-import-main-container").remove();
+	expand_all_folders_up_to_id(aboveSceneData.id);
 }
 
 function expand_folders_to_active_scenes() {

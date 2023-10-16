@@ -265,7 +265,7 @@ function decrease_zoom() {
 * @return {Number}
 */
 function get_reset_zoom() {
-	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right')) ? 340 : 0;
+	const sidebar_open = ($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0) ? 340 : 0;
 	const wH = $(window).height();
 	const mH = $("#scene_map").height()*window.CURRENT_SCENE_DATA.scale_factor;
 	const wW = $(window).width()-sidebar_open;
@@ -290,7 +290,7 @@ function reset_zoom() {
 		block: 'center',
 		inline: 'center'
 	});
-	if($('#hide_rightpanel').hasClass('point-right'))
+	if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
 		$(window).scrollLeft(window.scrollX + 170); // 170 half of game log
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
@@ -1190,7 +1190,7 @@ function init_mouse_zoom() {
 		if (e.ctrlKey) {
 			e.preventDefault();
 
-			var newScale;
+			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
 				newScale = window.ZOOM * 0.9;
 			}
@@ -1206,7 +1206,37 @@ function init_mouse_zoom() {
 			}
 		}
 	}, { passive: false } );
-}
+	let dist1=0;
+	function start_pinch(ev) {
+           if (ev.targetTouches.length == 2) {//check if two fingers touched screen
+               dist1 = Math.hypot( //get rough estimate of distance between two fingers
+                ev.touches[0].pageX - ev.touches[1].pageX,
+                ev.touches[0].pageY - ev.touches[1].pageY);                  
+           }
+    
+    }
+    function move_pinch(ev) {
+           if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
+                 // Check if the two target touches are the same ones that started
+              	let dist2 = Math.hypot(//get rough estimate of new distance between fingers
+                ev.touches[0].pageX - ev.touches[1].pageX,
+                ev.touches[0].pageY - ev.touches[1].pageY);
+              	let newScale;
+                //alert(dist);
+                if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
+                  newScale = window.ZOOM * 0.95;
+                }
+                if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
+                  newScale = window.ZOOM * 1.05;
+                }
+                change_zoom(newScale);
+            }
+           
+    }
+    window.addEventListener ('touchstart', start_pinch, false);
+    window.addEventListener('touchmove', move_pinch, false);
+
+	}
 
 
 /**
@@ -2033,98 +2063,7 @@ function monitor_character_sidebar_changes() {
 	});
 }
 
-//
-/**
- * Add inject button into sidebar.
- *
- * When the user clicks on an item in a character sheet, the details are shown in a sidebar.
- * This will inject a "send to gamelog" button and properly send the pertinent sidebar content to the gamelog.
- * @param {DOMObject} sidebarPaneContent
- */
-function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
-	// we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-	console.log("inject_sidebar_send_to_gamelog_button")
-	let button = $(`<button id='castbutton'">SEND TO GAMELOG</button>`);
-	// button.css({
-	// 	"margin": "10px 0px",
-	// 	"border": "1px solid #bfccd6",
-	// 	"border-radius": "4px",
-	// 	"background-color": "transparent",
-	// 	"color": "#394b59"
-	// });
-	button.css({
-		"display": "flex",
-		"flex-wrap": "wrap",
-		"font-family": "Roboto Condensed,Roboto,Helvetica,sans-serif",
-		"cursor": "pointer",
-		"color": "#838383",
-		"line-height": "1",
-		"font-weight":" 700",
-		"font-size": "12px",
-		"text-transform": "uppercase",
-		"background-color": "#f2f2f2",
-		"margin": "3px 2px",
-		"border-radius": "3px",
-		"padding": "5px 7px",
-		"white-space": "nowrap"
-		})
-	$(button).hover(
-		function () {
-			button.css({
-					"background-color": "#5d5d5d",
-					"color": "#f2f2f2"
-			})
-		},
-		function () {
-			button.css({
-					"background-color": "#f2f2f2",
-					"color": "#5d5d5d"
-			})
-		}
-	);
 
-	sidebarPaneContent.prepend(button);
-	button.click(function() {
-		// make sure the button grabs dynamically. Don't hold HTML in the button click block because clicking on items back to back will fuck that up
-
-		let sidebar = sidebarPaneContent.closest(".ct-sidebar__portal");
-		let toInject = $(`<div></div>`);
-		toInject.attr("class", sidebarPaneContent.attr("class")); // set the class on our new element
-		// required
-		toInject.append(sidebar.find(".ct-sidebar__header").clone());
-
-		// these are optional, but if they're here, grab them
-		toInject.append(sidebarPaneContent.find(".ddbc-property-list").clone());
-		toInject.append(sidebarPaneContent.find(".ct-spell-detail__level-school").clone());
-		toInject.append(sidebarPaneContent.find(".ct-speed-manage-pane__speeds").clone());
-		toInject.append(sidebarPaneContent.find(".ct-armor-manage-pane__items").clone());
-
-		if (sidebarPaneContent.find(".ct-creature-pane__block").length > 0) {
-			// extras tab creatures need a little extra love
-			toInject.append(sidebarPaneContent.find(".ct-creature-pane__block").clone());
-			toInject.append(sidebarPaneContent.find(".ct-creature-pane__full-image").clone());
-			toInject.find(".ct-sidebar__header").css({
-				"margin-left": "20px",
-				"margin-right": "20px"
-			});
-		} else {
-			// required... unless it's an extras tab creature
-			toInject.append(sidebar.find(".ddbc-html-content").clone());
-		}
-
-		// now clean up any edit elements
-		toInject.find(".ct-container-pane__pencil").remove();
-
-		let html = window.MB.encode_message_text(toInject[0].outerHTML);
-		data = {
-			player: window.PLAYER_NAME,
-			img: window.PLAYER_IMG,
-			text: html
-		};
-		window.MB.inject_chat(data);
-		notify_gamelog();
-	});
-}
 
 /**
  * Add Dice buttons into sidebar.
@@ -2465,6 +2404,12 @@ function init_ui() {
 	grid.css("left", "0");
 	grid.css("z-index", "19");
 
+	const walls = $("<canvas id='walls_layer'></canvas>");
+	walls.css("position", "absolute");
+	walls.css("top", "0");
+	walls.css("left", "0");
+	walls.css("z-index", "19");
+
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2557,6 +2502,7 @@ function init_ui() {
 	VTT.append(drawOverlay);
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
+	VTT.append(walls);
 	lightContainer.append(rayCasting);
 	lightContainer.append(lightOverlay);
 	mapContainer.append(lightContainer);
@@ -3108,6 +3054,10 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+V</dt>
 							<dd>Temporary check token vision.</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+W</dt>
+							<dd>Toggle always show walls.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click</dt>

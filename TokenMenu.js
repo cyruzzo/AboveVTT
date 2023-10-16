@@ -49,7 +49,7 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 		if (diff > 0) {
 			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
 			// align to the top of the row. 14 is half the height of the button
-			let buttonPosition = $(".flyout-from-menu-item:hover")[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
+			let buttonPosition = $(hoverEvent.currentTarget).closest('.flyout-from-menu-item')[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
 			if(buttonPosition < contextMenuCenter) {
 				flyoutTop =  buttonPosition - (flyoutHeight / 5)
 			}
@@ -427,7 +427,6 @@ function token_context_menu_expanded(tokenIds, e) {
 	$("#tokenOptionsPopup").draggable({
 			addClasses: false,
 			scroll: false,
-			containment: "#windowContainment",
 			start: function () {
 				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
@@ -439,14 +438,31 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 	
 
-	moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+	
 
-	if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
-		moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+	if(e.touches?.length>0){
+		moveableTokenOptions.css("left", Math.max(e.touches[0].clientX - 230, 0) + 'px');
+		if($(moveableTokenOptions).height() + e.touches[0].clientY > window.innerHeight - 20) {
+			moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+		}
+		else {
+			moveableTokenOptions.css("top", e.touches[0].clientY - 10 + 'px');
+		}	
+		$(moveableTokenOptions).toggleClass('touch', true);
+
+		
 	}
-	else {
-		moveableTokenOptions.css("top", e.clientY - 10 + 'px');
-	}	
+	else{
+		moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+		if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
+			moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+		}
+		else {
+			moveableTokenOptions.css("top", e.clientY - 10 + 'px');
+		}	
+		$(moveableTokenOptions).toggleClass('touch', false);
+	}
+	
 }
 
 
@@ -595,7 +611,6 @@ function build_token_auras_inputs(tokenIds) {
 				token.options[event.target.name]['feet'] = newRadius;
 				token.place_sync_persist();
 			});
-			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
 		}
 	});
 	radiusInputs.on('focusout', function(event) {
@@ -604,8 +619,7 @@ function build_token_auras_inputs(tokenIds) {
 			tokens.forEach(token => {
 				token.options[event.target.name]['feet'] = newRadius;
 				token.place_sync_persist();
-			});
-			$(event.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+			});		
 		}
 	});
 
@@ -732,17 +746,17 @@ function build_token_light_inputs(tokenIds) {
 	}
 
 	let aura1Feet = tokens.map(t => t.options.light1.feet);
-	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : ""
+	let uniqueAura1Feet = aura1Feet.length === 1 ? aura1Feet[0] : "";
 	let aura2Feet = tokens.map(t => t.options.light2.feet);
-	let uniqueAura2Feet = aura2Feet.length === 1 ? aura2Feet[0] : ""
+	let uniqueAura2Feet = aura2Feet.length === 1 ? aura2Feet[0] : "";
 	let aura1Color = tokens.map(t => t.options.light1.color);
-	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : ""
+	let uniqueAura1Color = aura1Color.length === 1 ? aura1Color[0] : window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS.light1.color : "";
 	let aura2Color = tokens.map(t => t.options.light2.color);
-	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : ""
+	let uniqueAura2Color = aura2Color.length === 1 ? aura2Color[0] : window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS.light2.color : "";
 	let visionFeet = tokens.map(t => t.options.vision.feet);
-	let uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : ""
+	let uniqueVisionFeet = visionFeet.length === 1 ? visionFeet[0] : "";
 	let visionColor = tokens.map(t => t.options.vision.color);
-	let uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : ""
+	let uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS.vision.color : "";
 
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
@@ -756,12 +770,9 @@ function build_token_light_inputs(tokenIds) {
 					
 				
 				<div class="token-image-modal-footer-title">Preset</div>
+				<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
 					<select class="token-config-aura-preset">
-						<option value="none"></option>
-						<option value="candle">Candle (5/5)</option>
-						<option value="torch">Torch / Light (20/20)</option>
-						<option value="lamp">Lamp (15/30)</option>
-						<option value="lantern">Lantern (30/30)</option>
+						<option value=""></option>
 					</select>
 				</div>
 				<div class="menu-vision-aura">
@@ -800,6 +811,93 @@ function build_token_light_inputs(tokenIds) {
 			</div>
 		</div>
 	`);
+
+
+
+
+	if(localStorage.getItem('LIGHT_PRESETS') == null){
+		window.LIGHT_PRESETS = [
+			{
+				name: 'No Light (0/0)',
+				vision: {
+				},
+				light1: {
+					feet: '0'
+				},
+				light2: {
+					feet: '0'
+				}	
+			},
+			{
+				name: 'Candle (5/5)',
+				vision: {
+				},
+				light1: {
+					feet: '5',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '5',
+					color: "rgba(142, 142, 142, 1)"
+				}
+			},
+			{
+				name: 'Torch (20/20)',
+				vision: {
+				},
+				light1: {
+					feet: '20',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '20',
+					color: "rgba(142, 142, 142, 1)"
+				}
+			},
+			{
+				name: 'Lamp (15/30)',
+				vision: {
+				},
+				light1: {
+					feet: '15',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '30',
+					color: "rgba(142, 142, 142, 1)"
+				}
+			},
+			{
+				name: 'Lantern (30/30)',
+				vision: {
+				},
+				light1: {
+					feet: '30',
+					color: 'rgba(255, 255, 255, 1)'
+				},
+				light2: {
+					feet: '30',
+					color: "rgba(142, 142, 142, 1)"
+				}
+			},
+		]
+	}
+	else{
+		window.LIGHT_PRESETS = JSON.parse(localStorage.getItem('LIGHT_PRESETS'));
+	}
+
+	
+
+	for(let i in window.LIGHT_PRESETS){
+		wrapper.find('.token-config-aura-preset').append(`<option value="${window.LIGHT_PRESETS[i].name}">${window.LIGHT_PRESETS[i].name}</option>`)
+	}
+	
+	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
+
+		create_light_presets_edit();
+		
+	})
+
 
 	const lightOption = {
 		name: "auraislight",
@@ -913,47 +1011,48 @@ function build_token_light_inputs(tokenIds) {
 
 
 	wrapper.find(".token-config-aura-preset").on("change", function(e) {
-		let feet1 = "";
-		let feet2 = "";
+
 		let preset = e.target.value;
-		if (preset === "candle") {
-			feet1 = "5";
-			feet2 = "5";
-		} else if (preset === "torch") {
-			feet1 = "20";
-			feet2 = "20";
-		} else if (preset === "lamp") {
-			feet1 = "15";
-			feet2 = "30";
-		} else if (preset === "lantern") {
-			feet1 = "30";
-			feet2 = "30";
-		} 
-		else if (preset === "60ftdark") {
-			feet1 = "60";
-			feet2 = "0";
-		} 
-		else if (preset === "120ftdark") {
-			feet1 = "120";
-			feet2 = "0";
-		} 
-		else {
+		let selectedPreset = window.LIGHT_PRESETS.filter(d=> d.name == preset)[0]
+		
+		if(!selectedPreset) {
 			console.warn("somehow got an unexpected preset", preset, e);
+			return;
 		}
 		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
-		wrapper.find("input[name='light1']").val(feet1);
-		wrapper.find("input[name='light2']").val(feet2);
+		if(selectedPreset.vision.feet){
+			wrapper.find("input[name='vision']").val(selectedPreset.vision.feet);
+		}
 
-		let color1 = "rgba(255, 255, 255, 1)";
-		let color2 = "rgba(142, 142, 142, 1)";
-		wrapper.find("input[name='light1Color']").spectrum("set", color1);
-		wrapper.find("input[name='light2Color']").spectrum("set", color2);
+		if(selectedPreset.light1.feet){
+			wrapper.find("input[name='light1']").val(selectedPreset.light1.feet);
+		}
+		
+		if(selectedPreset.light2.feet){
+			wrapper.find("input[name='light2']").val(selectedPreset.light2.feet);
+		}
+		if(selectedPreset.vision.color){
+			wrapper.find("input[name='visionColor']").spectrum("set", selectedPreset.vision.color);
+		}
+
+		if(selectedPreset.light1.color){
+			wrapper.find("input[name='light1Color']").spectrum("set", selectedPreset.light1.color);
+		}
+		
+		if(selectedPreset.light2.color){
+			wrapper.find("input[name='light2Color']").spectrum("set", selectedPreset.light2.color);
+		}
+
+		
+		
 
 		tokens.forEach(token => {
-			token.options.light1.feet = feet1;
-			token.options.light2.feet = feet2;
-			token.options.light1.color = color1;
-			token.options.light2.color = color2;
+			token.options.vision.feet = (selectedPreset.vision.feet) ? selectedPreset.vision.feet : token.options.vision.feet;
+			token.options.vision.color = (selectedPreset.vision.color) ? selectedPreset.vision.color : token.options.vision.color;
+			token.options.light1.feet = (selectedPreset.light1.feet) ? selectedPreset.light1.feet : token.options.light1.feet;
+			token.options.light2.feet = (selectedPreset.light2.feet) ? selectedPreset.light2.feet : token.options.light2.feet;
+			token.options.light1.color = (selectedPreset.light1.color) ? selectedPreset.light1.color : token.options.light1.color;
+			token.options.light2.color = (selectedPreset.light2.color) ? selectedPreset.light2.color : token.options.light2.color;
 			token.place_sync_persist();
 		});
 	});
@@ -966,6 +1065,135 @@ function build_token_light_inputs(tokenIds) {
 
 	return body;
 }
+
+function create_light_presets_edit(){
+	let dialog = $('#edit_preset_light_dialog')
+
+	dialog.remove();
+	dialog = $(`<div id='edit_preset_light_dialog'></div>`);
+	
+		
+
+	let upsq = 'ft';
+	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+		upsq = window.CURRENT_SCENE_DATA.upsq;
+	}
+	let light_presets = $('<div id="light_presets_properties"/>');
+	dialog.append(light_presets);
+
+	let titleRow = $(`
+		<div class='light_preset_title_row' data-index='${i}'>
+				<div>
+					<h3 style="margin-bottom:0px;">Name</h3>
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Darkvision</h3>			
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Inner Light</h3>			
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Outer Light</h3>	
+				</div>
+			</div>
+			`)
+	light_presets.append(titleRow);
+	for(let i in window.LIGHT_PRESETS){
+		let row = $(`
+			<div class='light_preset_row' data-index='${i}'>
+				<input class='light_preset_title' value='${window.LIGHT_PRESETS[i].name}'></input>
+				<div class="menu-vision-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="vision-radius" name="vision" type="text" value="${(window.LIGHT_PRESETS[i].vision?.feet) ? window.LIGHT_PRESETS[i].vision.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="visionColor" value="${(window.LIGHT_PRESETS[i].vision?.color) ? window.LIGHT_PRESETS[i].vision.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</div>
+				<div class="menu-inner-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light1" type="text" value="${(window.LIGHT_PRESETS[i].light1?.feet) ? window.LIGHT_PRESETS[i].light1.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="light1Color" value="${(window.LIGHT_PRESETS[i].light1?.color) ? window.LIGHT_PRESETS[i].light1.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</div>
+				<div class="menu-outer-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="light-radius" name="light2" type="text" value="${(window.LIGHT_PRESETS[i].light2?.feet) ? window.LIGHT_PRESETS[i].light2.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="light2Color" value="${(window.LIGHT_PRESETS[i].light2?.color) ? window.LIGHT_PRESETS[i].light2.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</div>
+				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+
+			</div>
+		`)
+		row.find('input.light_preset_title').off('change.name').on('change.name', function(){
+			window.LIGHT_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
+			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+		})
+		row.find('input[class*="radius"]').off('change.radius').on('change.radius', function(){
+			let lightname = $(this).attr('name');
+			window.LIGHT_PRESETS[i][lightname].feet = $(this).val();
+			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+		})
+		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
+			window.LIGHT_PRESETS.splice(i, 1);
+			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+			create_light_presets_edit();
+		})
+		let colorPickers = row.find('input.spectrum');
+		colorPickers.spectrum({
+			type: "color",
+			showInput: true,
+			showInitial: true,
+			containerClassName: 'prevent-sidebar-modal-close',
+			clickoutFiresChange: true,
+			appendTo: "parent"
+		});
+
+		const colorPickerChange = function(e, tinycolor) {
+			let auraName = e.target.name.replace("Color", "");
+			window.LIGHT_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+			console.log(auraName, e, tinycolor);
+			localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+		};
+		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+		colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+		colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+		light_presets.append(row);
+
+	}
+
+	let addButton = $(`<div id='addLightPreset'>+</div>`)
+
+	addButton.off('click.addPreset').on('click.addPreset', function(){
+		window.LIGHT_PRESETS.push({
+			name: 'New Preset',
+			vision: {
+			},
+			light1: {
+			},
+			light2: {
+			}
+		});
+		localStorage.setItem('LIGHT_PRESETS', JSON.stringify(window.LIGHT_PRESETS));
+		create_light_presets_edit();
+	});
+	light_presets.append(addButton);
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
+}
+
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");
