@@ -1,4 +1,37 @@
 const POLYGON_CLOSE_DISTANCE = 15;
+const doorColors = {
+	0: {
+		'open': "rgba(255, 100, 255, 0.5)",
+		'closed': "rgba(255, 100, 255, 1)"
+	},
+	1: {
+		'open': "rgba(255, 255, 0, 0.5)",
+		'closed': "rgba(255, 255, 0, 1)"
+	},
+	2: {
+		'open': "rgba(150, 50, 150, 0.5)",
+		'closed': "rgba(150, 50, 150, 1)"
+	},
+	3: {
+		'open': "rgba(150, 150, 0, 0.5)",
+		'closed': "rgba(150, 150, 0, 1)"
+	},
+	4: {
+		'open': "rgba(100, 0, 255, 0.5)",
+		'closed': "rgba(100, 0, 255, 1)"
+	},
+	5: {
+		'open': "rgba(50, 0, 180, 0.5)",
+		'closed': "rgba(50, 0, 180, 1)"
+	},
+};
+let doorColorsArray = [];
+
+for(let i in doorColors){
+	for(let j in doorColors[i]){
+		doorColorsArray.push(doorColors[i][j])
+	}
+}
 
 
 function sync_fog(){
@@ -431,6 +464,44 @@ function is_token_under_light_aura(tokenid, lightContext=undefined){
 	return  false;
 }
 
+function is_door_under_fog(door, fogContext=undefined){
+	if(window.DM)
+		return false;
+
+	if(fogContext == undefined){
+		fogContext = $('#fog_overlay')[0].getContext('2d', {willReadFrequently: true});
+	}
+	
+
+
+	let left = parseInt($(door).css('--mid-x'));
+	let top = parseInt($(door).css('--mid-y'));
+	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
+
+	if (pixeldata[3] >= 253)
+		return true;
+	else
+		return false;
+}
+
+function is_door_under_light_aura(door, lightContext=undefined){
+	if(lightContext == undefined){
+		lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
+	}
+
+
+	let left = parseInt($(door).css('--mid-x'));
+	let top = parseInt($(door).css('--mid-y'));
+	let pixeldata = lightContext.getImageData(left-5, top-5, 10, 10).data;
+	
+	for(let i=0; i<pixeldata.length; i+=4){
+		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
+			return true;
+	}
+				
+	return  false;
+}
+
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden"))
@@ -519,6 +590,26 @@ async function do_check_token_visibility() {
 				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
+			}
+		}));
+	}
+	let doors = $('.door-button');
+	for(let i=0; i<doors.length; i++){
+		let door = doors[i];
+		promises.push(new Promise(function() {
+
+			//Combining some and filter cut down about 140ms for average sized picture
+		
+			
+			const inFog = (is_door_under_fog(door, ctx)); // this token is in fog and not the players token
+
+			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_door_under_light_aura(door, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
+			
+			if (notInLight ) {
+				$(door).css('visibility', 'hidden');
+			}
+			else {
+				$(door).css('visibility', 'visible');
 			}
 		}));
 	}
@@ -1223,6 +1314,7 @@ function redraw_light_walls(clear=true){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
+
 	window.walls =[];
 	let sceneMapContainer = $('#scene_map_container');
 	let sceneMapHeight = sceneMapContainer.height();
@@ -1240,14 +1332,19 @@ function redraw_light_walls(clear=true){
 	const drawings = window.DRAWINGS.filter(d => d[1] == "wall");
 
 
+	let currentDoors = $('.door-button');
+	currentDoors.toggleClass('removeAfterDraw', true);
+	
+
 	if(drawings.length > 0){
 		$('#VTT').css('--walls-up-shadow-percent', '30%');
 	}
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-	$('.door-button').remove();
-	for (var i = 0; i < drawings.length; i++) {
+
+	
+	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 
@@ -1260,36 +1357,67 @@ function redraw_light_walls(clear=true){
 		if (showWallsToggle || (shape == "line" && ($('#wall_button').hasClass('button-enabled')) || ($('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')))) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
-		let type = (color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)" ) ? 1 : 0;
-		if(window.DM && (color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 100, 255, 1)" || color == "rgba(255, 255, 0, 1)" || color == "rgba(255, 255, 0, 0.5)")){
-			let doorButtonColor;
-			if(color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 255, 0, 0.5)" )
-				doorButtonColor = '#9eff61ad'
-			if(color == "rgba(255, 100, 255, 1)" || color == "rgba(255, 255, 0, 1)")
-				doorButtonColor = '#ff6168ad'
+	
+        let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
+        let open;
+		if($(`.door-button[data-x1='${x}'][data-y1='${y}']`).length==0 && doorColorsArray.includes(color)){
 			
-
+			
 			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
 			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
 
-			let googleIcon = (type == 1) ? `window_closed` : `door_open`
 
-			let openCloseDoorButton = $(`<div class='door-button' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px; background:${doorButtonColor};'>
-											<span class="material-symbols-outlined">
-												${googleIcon}
-											</span>
-										</div>`)
-			openCloseDoorButton.on('click', function(){open_close_door(x, y, width, height, type)});
-			$('#tokens').append(openCloseDoorButton);
+			let doorType = (type == 1 || type == 3) ? `window` : `door`;
+			
+			let locked = (type == 2 || type == 3 || type == 5) ? `locked` : ``;
+			let secret = (type == 4 || type == 5) ? `secret` : ``;
+			open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
+			if(window.DM || secret == ''){
+				let openCloseDoorButton = $(`<div class='door-button ${locked} ${secret} ${open}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+													<div class='${doorType} background'></div>
+													<div class='${doorType} foreground'><div></div></div>
+													<div class='door-icon'></div>
+											</div>`)
+				openCloseDoorButton.on('click', function(){
+
+					let locked = $(this).hasClass('locked');
+					let secret = $(this).hasClass('secret');
+					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
+					if(!$(this).hasClass('locked')){
+						$(this).toggleClass('open');
+						$(this).toggleClass('closed');
+						open_close_door(x, y, width, height, type)
+					}
+				});
+			
+
+
+				$('#tokens').append(openCloseDoorButton);
+			}
 		}
-		if(color == "rgba(255, 100, 255, 0.5)" || color == "rgba(255, 255, 0, 0.5)"){
+		else if (doorColorsArray.includes(color)){		
+			let secret = (type == 4 || type == 5) ? `secret` : ``;
+			if(!window.DM && secret == 'secret')
+				$(`.door-button[data-x1='${x}'][data-y1='${y}']`).remove()
+			else{
+				let locked = (type == 2 || type == 3 || type == 5) ? `locked` : ``;
+				open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
+				$(`.door-button[data-x1='${x}'][data-y1='${y}']`).attr('class', `door-button ${locked} ${secret} ${open}`)
+			}			
+		}
+		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).toggleClass('removeAfterDraw', false);
+
+		if((/rgba.*0\.5\)/g).test(color))
 			continue;
-		}
+		
 		
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
 		window.walls.push(drawnWall);
 	}
+	$('.door-button.removeAfterDraw').remove();
+	if(window.DM)
+		init_door_context_menu();
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
@@ -1306,25 +1434,214 @@ function redraw_light_walls(clear=true){
  	}
  
 }
+
+
+function init_door_context_menu(){
+	
+	$.contextMenu({
+        selector: ".door-button",
+        build: function(element, e) {
+
+            let menuItems = {};
+            let door = $(element);
+ 
+
+            let x1 = parseInt(door.attr('data-x1'));
+            let x2 = parseInt(door.attr('data-x2'));
+            let y1 = parseInt(door.attr('data-y1'));
+            let y2 = parseInt(door.attr('data-y2'));
+
+            let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            let color = doors[0][2];
+            let isOpen = (/rgba.*0\.5\)/g).test(color) ? 'open' : 'closed';
+            if(door.children('.door').length>0){
+            	menuItems["Unlocked"] = {
+	                name: "Unlocked Door",
+	                callback: function(itemKey, opt, originalEvent) {
+	                	door.toggleClass(['locked', 'secret'], false);
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[0][isOpen],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];	
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+	            };
+	            menuItems["Locked"] = {
+	                name: "Locked Door",
+	                callback: function(itemKey, opt, originalEvent) {
+	                   door.toggleClass('locked', true);
+	                   door.toggleClass(['secret', 'open'], false);
+
+
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[2]['closed'],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];		
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+	            };
+	            // copy url doesn't make sense for folders
+	            menuItems["secret"] = {
+	                name: "Secret Door",
+	                callback: function(itemKey, opt, originalEvent) {
+	                    door.toggleClass('locked', false);
+	                    door.toggleClass('secret', true);
+
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[4][isOpen],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];	
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+	            };
+	            menuItems["secretLocked"] = {
+	                name: "Locked Secret Door",
+	                callback: function(itemKey, opt, originalEvent) {
+	                	door.toggleClass(['locked', 'secret'], true);
+	                	door.toggleClass('open', false);
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[5]['closed'],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];	
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+           		};
+            }
+            else if(door.children('.window').length>0){
+            	menuItems["Unlocked"] = {
+	                name: "Unlocked Window",
+	                callback: function(itemKey, opt, originalEvent) {
+	                    door.toggleClass('locked', false);
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[1][isOpen],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];	
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+	            };
+
+	            menuItems["Locked"] = {
+	                name: "Locked Window",
+	                callback: function(itemKey, opt, originalEvent) {
+	                    door.toggleClass('locked', true);
+	                    door.toggleClass('open', false);
+	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[3]['closed'],
+									 x1,
+									 y1,
+									 x2,
+									 y2,
+									 12,
+									 doors[0][8]
+						];		
+						window.DRAWINGS.push(data);
+
+						redraw_light_walls();
+						redraw_light();
+
+
+						sync_drawings();
+	                }
+	            };
+            }
+            
+         
+
+           
+
+
+            if (Object.keys(menuItems).length === 0) {
+                menuItems["not-allowed"] = {
+                    name: "You are not allowed to configure this item",
+                    disabled: true
+                };
+            }
+            return { items: menuItems };
+        }
+    });
+}
+
+
+
+
+
+
 function open_close_door(x1, y1, x2, y2, type=0){
-	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && (d[2] == "rgba(255, 100, 255, 1)" || d[2] == "rgba(255, 100, 255, 0.5)" || d[2] == "rgba(255, 255, 0, 0.5)" || d[2] == "rgba(255, 255, 0, 1)")  && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
-	let color;
-	if(type == 0){ //door
-		if(doors[0][2] == "rgba(255, 100, 255, 0.5)"){
-			color = "rgba(255, 100, 255, 1)"
-		}
-		else{
-			color = "rgba(255, 100, 255, 0.5)";
-		}
-	}
-	else if(type == 1){//window
-		if(doors[0][2] == "rgba(255, 255, 0, 0.5)"){
-			color = "rgba(255, 255, 0, 1)"
-		}
-		else{
-			color = "rgba(255, 255, 0, 0.5)";
-		}
-	}
+	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
+
+
+		
+	let color = ((/rgba.*0\.5\)/g).test(doors[0][2])) ? doorColors[type].closed : doorColors[type].open;
+		
+	
+
 	window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
 		
 	let data = ['line',
@@ -1430,13 +1747,7 @@ function drawing_mousedown(e) {
 	}
 	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" ){
 		// semi transparent black
-		window.DRAWCOLOR = "rgba(255, 100, 255, 1)"
-		window.DRAWTYPE = "filled"
-		window.LINEWIDTH = 12;
-	}
-	else if(window.DRAWFUNCTION === "wall-window-convert" || window.DRAWFUNCTION === "wall-window" ){
-		// semi transparent black
-		window.DRAWCOLOR = "rgba(255, 255, 0, 1)"
+		window.DRAWCOLOR = doorColors[$('#door_types').val()].closed
 		window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 12;
 	}
@@ -1888,11 +2199,9 @@ function drawing_mouseup(e) {
 			break;
 		case 'wall-door':
 			data[1] = "wall"
-			data[2] = "rgba(255, 100, 255, 1)"
 			break;
 		case 'wall-window':
 			data[1] = "wall"
-			data[2] = "rgba(255, 255, 0, 1)"
 		default:
 			break;
 		}
@@ -1949,7 +2258,7 @@ function drawing_mouseup(e) {
 			window.DRAWINGS.push(data);
 		}
 
-		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
+		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door' ){
 			if ( e.button == 2) {
 				return;
 			}
@@ -2018,7 +2327,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION == 'wall-window-convert' || window.DRAWFUNCTION == "wall-eraser-one"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -2206,7 +2515,7 @@ function drawing_mouseup(e) {
 						window.DRAWINGS.push(data);					
 					}
 
-					if(window.DRAWFUNCTION == 'wall-door-convert' || window.DRAWFUNCTION == 'wall-window-convert'){
+					if(window.DRAWFUNCTION == 'wall-door-convert'){
 						x1 = undefined;
 
 						if(bottom != false){
@@ -2237,10 +2546,10 @@ function drawing_mouseup(e) {
 								x2 = top.x;
 								y2 = top.y;							
 						}
-						let color = (window.DRAWFUNCTION == 'wall-door-convert') ? "rgba(255, 100, 255, 1)" : "rgba(255, 255, 0, 1)"
+						
 						let data = ['line',
 						 'wall',
-						 color,
+						 window.DRAWCOLOR,
 						 x1,
 						 y1,
 						 x2,
@@ -3225,6 +3534,16 @@ function init_fog_menu(buttons){
 	buttons.append(fog_button);
 	fog_menu.css("left", fog_button.position().left);
 }
+function get_available_doors(){
+    return {
+		0: `door`,
+		1: `window`,
+		2: `Locked Door`,
+		3: `Locked Window`,
+		4: `Secret Door`,
+		5: `Secret Locked Door`
+	}
+}
 
 function init_draw_menu(buttons){
 	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
@@ -3410,48 +3729,53 @@ function init_walls_menu(buttons){
 					Draw Wall
 			</button>
 		</div>`);
-		wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='rect' data-function="wall" data-unique-with="draw">
-					Rect Wall
-			</button>
-		</div>`);
-		wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill'>
-			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='3pointRect' data-function="wall" data-unique-with="draw">
-					3p Rect
-			</button>
-		</div>`);
-		wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='line' data-function="wall-door" data-unique-with="draw">
-				 	Draw Door 
-			</button>
-		</div>`);
+	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='rect' data-function="wall" data-unique-with="draw">
+				Rect Wall
+		</button>
+	</div>`);
+	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='3pointRect' data-function="wall" data-unique-with="draw">
+				3p Rect
+		</button>
+	</div>`);
+
+
+
+
+    wall_menu.append("<div class='menu-subtitle'>Door/Windows</div>");
+    wall_menu.append(
+        `<div class='ddbc-tab-options--layout-pill'>
+            <select id='door_types' class="ddbc-select ddbc-tab-options__header-heading" >
+	            ${Object.entries(get_available_doors()).map(([k, doorType]) => {
+				    	return `<option class="ddbc-tab-options__header-heading" value="${k}">${doorType}</option>`;
+				   	}
+				)}  
+            </select>
+        </div>
+            `)
+
+	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='line' data-function="wall-door" data-unique-with="draw">
+			 	Draw Selected
+		</button>
+	</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-door-convert" data-unique-with="draw">
-				 	Wall>Door 
+				 	Wall>Selected
 			</button>
 		</div>`);
-	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='draw_door' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='line' data-function="wall-window" data-unique-with="draw">
-				 	Draw Window
-			</button>
-		</div>`);
-	wall_menu.append(
-		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
-				data-shape='rect' data-function="wall-window-convert" data-unique-with="draw">
-				 	Wall>Window 
-			</button>
-		</div>`);
+
+
+	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
@@ -3494,7 +3818,7 @@ function init_walls_menu(buttons){
 
 	wall_menu.css("position", "fixed");
 	wall_menu.css("top", "50px");
-	wall_menu.css("width", "90px");
+	wall_menu.css("width", "110px");
 	wall_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 
 	$("body").append(wall_menu);
@@ -3828,7 +4152,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
-	        if (dist < recordLight && walls[j].c != 1) {
+	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3) {
 	          	recordLight = dist;          	
 		        if(dist == lightRadius){
 		          	pt = {
