@@ -474,8 +474,8 @@ function is_door_under_fog(door, fogContext=undefined){
 	
 
 
-	let left = parseInt($(door).css('--mid-x'));
-	let top = parseInt($(door).css('--mid-y'));
+	let left = parseFloat($(door).css('--mid-x'))/window.CURRENT_SCENE_DATA.scale_factor;
+	let top = parseFloat($(door).css('--mid-y'))/window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
 
 	if (pixeldata[3] >= 253)
@@ -490,8 +490,8 @@ function is_door_under_light_aura(door, lightContext=undefined){
 	}
 
 
-	let left = parseInt($(door).css('--mid-x'));
-	let top = parseInt($(door).css('--mid-y'));
+	let left = parseFloat($(door).css('--mid-x'))/window.CURRENT_SCENE_DATA.scale_factor;
+	let top = parseFloat($(door).css('--mid-y'))/window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = lightContext.getImageData(left-5, top-5, 10, 10).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
