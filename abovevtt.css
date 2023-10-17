@@ -339,7 +339,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     position: absolute;
     transform-origin: left;
     transform: rotateY(0deg);
-    transition: 200ms transform linear;
+    transition: 200ms transform 400ms linear;
+    will-change: transform;
 }
 .door-icon{
     width: 15%;
@@ -365,7 +366,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 
 .door-button.open .door.foreground{
     transform: rotateY(57deg);
-    transition: 200ms transform linear;
+    transition: 200ms transform 400ms linear;
+    will-change: transform;
 }
 
 .door-button.locked .door-icon{
@@ -474,10 +476,11 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     background: #fff6;
     height: calc(calc(130% - 2px) / 2);
     width: 100%;
-    top: 45%;
+    transform: translateY(65%);
     border: 1px solid #000;
     position: absolute;
-    transition: 200ms top linear;
+    transition: 200ms transform 400ms linear;
+    will-change: transform;
 }
 .open .window.background>div{
     content: '';
@@ -485,9 +488,11 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: calc(calc(130% - 2px) / 2);
     width: 100%;
     top: 0%;
+    transform: translateY(0%);
     border: 1px solid #000;
     position: absolute;
-    transition: 200ms top linear;
+    transition: 200ms transform 400ms linear;
+    will-change: transform;
 }
 
 /*for resizable and moveable monsters and sheets in DM view*/
