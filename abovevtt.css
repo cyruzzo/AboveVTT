@@ -469,7 +469,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     position: absolute;
 
 }
-.window.background:after{
+.window.background>div{
     content: '';
     background: #fff6;
     height: calc(calc(130% - 2px) / 2);
@@ -479,7 +479,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     position: absolute;
     transition: 200ms top linear;
 }
-.open .window.background:after{
+.open .window.background>div{
     content: '';
     background: #fff6;
     height: calc(calc(130% - 2px) / 2);

@@ -1320,15 +1320,15 @@ function redraw_light_walls(clear=true){
 
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
-
-	if(showWallsToggle == true || $('#wall_button.button-enabled').length>0 || $('#paint-bucket.button-enabled').length>0){
+	let displayWalls = showWallsToggle == true || $('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')
+	if(displayWalls){
 		$('#walls_layer').css('display', '');
 	}
 	else{
 		$('#walls_layer').css('display', 'none');
 	}
 		
-	if(showWallsToggle == true || clear)
+	if(displayWalls == true || clear)
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 
@@ -1372,13 +1372,14 @@ function redraw_light_walls(clear=true){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if (showWallsToggle || (shape == "line" && ($('#wall_button').hasClass('button-enabled')) || ($('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')))) {
+		if (displayWalls) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
 	
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
-		if($(`.door-button[data-x1='${x}'][data-y1='${y}']`).length==0 && doorColorsArray.includes(color)){
+        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}']`);
+		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
 			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
@@ -1392,7 +1393,7 @@ function redraw_light_walls(clear=true){
 			open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
 			if(window.DM || secret == ''){
 				let openCloseDoorButton = $(`<div class='door-button ${locked} ${secret} ${open}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
-													<div class='${doorType} background'></div>
+													<div class='${doorType} background'><div></div></div>
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>
 											</div>`)
@@ -1416,11 +1417,11 @@ function redraw_light_walls(clear=true){
 		else if (doorColorsArray.includes(color)){		
 			let secret = (type == 4 || type == 5) ? `secret` : ``;
 			if(!window.DM && secret == 'secret')
-				$(`.door-button[data-x1='${x}'][data-y1='${y}']`).remove()
+				doorButton.remove()
 			else{
 				let locked = (type == 2 || type == 3 || type == 5) ? `locked` : ``;
 				open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
-				$(`.door-button[data-x1='${x}'][data-y1='${y}']`).attr('class', `door-button ${locked} ${secret} ${open}`)
+				doorButton.attr('class', `door-button ${locked} ${secret} ${open}`)
 			}			
 		}
 		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).toggleClass('removeAfterDraw', false);
