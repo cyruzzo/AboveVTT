@@ -1316,12 +1316,12 @@ function redraw_drawn_light(){
 
 function redraw_light_walls(clear=true){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
-	let canvas = (showWallsToggle != true) ? document.getElementById("temp_overlay") : document.getElementById("walls_layer");	
+	let canvas = document.getElementById("walls_layer");	
 
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
 
-	if(showWallsToggle == true){
+	if(showWallsToggle == true || $('#wall_button.button-enabled').length>0 || $('#paint-bucket.button-enabled').length>0){
 		$('#walls_layer').css('display', '');
 	}
 	else{
@@ -1948,9 +1948,6 @@ function drawing_mousemove(e) {
 		// }
 
 		if (window.DRAWSHAPE == "rect") {
-			if(window.DRAWFUNCTION == "wall-eraser" || window.DRAWFUNCTION == "wall-door-convert" || window.DRAWFUNCTION == "wall-window-convert" ||  window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-eraser-one"  ){
-				redraw_light_walls(false);
-			}
 			if(window.DRAWFUNCTION == "draw_text")
 			{
 				drawRect(context,
@@ -2029,7 +2026,6 @@ function drawing_mousemove(e) {
 			}
 			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
-				redraw_light_walls(false);
 				if(window.StoredWalls != undefined){
 					for(let wall in window.StoredWalls){
 						drawLine(context,
@@ -2084,8 +2080,6 @@ function drawing_mousemove(e) {
 	else if (window.DRAWSHAPE === "3pointRect" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 		clear_temp_canvas()
-		if(window.DRAWFUNCTION =='wall')
-			redraw_light_walls(false);
 		WaypointManager.setCanvas(canvas);
 		WaypointManager.cancelFadeout()
 		draw3PointRect( context,
