@@ -1351,7 +1351,7 @@ function redraw_light_walls(clear=true){
 
 
 	let currentDoors = $('.door-button');
-	currentDoors.toggleClass('removeAfterDraw', true);
+	currentDoors.attr('removeAfterDraw', 'true');
 	
 
 	if(drawings.length > 0){
@@ -1403,8 +1403,6 @@ function redraw_light_walls(clear=true){
 					let secret = $(this).hasClass('secret');
 					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
 					if(!$(this).hasClass('locked')){
-						$(this).toggleClass('open');
-						$(this).toggleClass('closed');
 						open_close_door(x, y, width, height, type)
 					}
 				});
@@ -1415,16 +1413,17 @@ function redraw_light_walls(clear=true){
 			}
 		}
 		else if (doorColorsArray.includes(color)){		
-			let secret = (type == 4 || type == 5) ? `secret` : ``;
-			if(!window.DM && secret == 'secret')
+			let secret = (type == 4 || type == 5) ? ` secret` : ``;
+			if(!window.DM && secret == ' secret')
 				doorButton.remove()
 			else{
-				let locked = (type == 2 || type == 3 || type == 5) ? `locked` : ``;
-				open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
-				doorButton.attr('class', `door-button ${locked} ${secret} ${open}`)
+				let locked = (type == 2 || type == 3 || type == 5) ? ` locked` : ``;
+				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+				if(doorButton.attr('class') != `door-button${locked}${secret}${open}`)
+					doorButton.attr('class', `door-button${locked}${secret}${open}`)
 			}			
 		}
-		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).toggleClass('removeAfterDraw', false);
+		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).removeAttr('removeAfterDraw');
 
 		if((/rgba.*0\.5\)/g).test(color))
 			continue;
@@ -1434,7 +1433,7 @@ function redraw_light_walls(clear=true){
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
 		window.walls.push(drawnWall);
 	}
-	$('.door-button.removeAfterDraw').remove();
+	$('.door-button[removeAfterDraw]').remove();
 	if(window.DM)
 		init_door_context_menu();
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
