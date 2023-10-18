@@ -147,7 +147,7 @@ function change_zoom(newZoom, x, y) {
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
-	$("#tokens").get(0).style.setProperty("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
 
 	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
 	set_default_vttwrapper_size()
