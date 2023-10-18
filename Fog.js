@@ -1388,11 +1388,11 @@ function redraw_light_walls(clear=true){
 
 			let doorType = (type == 1 || type == 3) ? `window` : `door`;
 			
-			let locked = (type == 2 || type == 3 || type == 5) ? `locked` : ``;
-			let secret = (type == 4 || type == 5) ? `secret` : ``;
-			open = (/rgba.*0\.5\)/g).test(color) ? `open` : `closed`;
+			let locked = (type == 2 || type == 3 || type == 5) ? ` locked` : ``;
+			let secret = (type == 4 || type == 5) ? ` secret` : ``;
+			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			if(window.DM || secret == ''){
-				let openCloseDoorButton = $(`<div class='door-button ${locked} ${secret} ${open}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
 													<div class='${doorType} background'><div></div></div>
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>
