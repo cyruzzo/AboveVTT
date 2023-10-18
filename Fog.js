@@ -1397,8 +1397,7 @@ function redraw_light_walls(clear=true){
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>
 											</div>`)
-				openCloseDoorButton.on('click', function(){
-
+			openCloseDoorButton.off('click.doors').on('click.doors', function(){
 					let locked = $(this).hasClass('locked');
 					let secret = $(this).hasClass('secret');
 					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
@@ -1406,7 +1405,9 @@ function redraw_light_walls(clear=true){
 						open_close_door(x, y, width, height, type)
 					}
 				});
-			
+			openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
+				$(this).toggleClass('ignore-hover', false);
+			});
 
 
 				$('#tokens').append(openCloseDoorButton);
@@ -1419,8 +1420,10 @@ function redraw_light_walls(clear=true){
 			else{
 				let locked = (type == 2 || type == 3 || type == 5) ? ` locked` : ``;
 				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-				if(doorButton.attr('class') != `door-button${locked}${secret}${open}`)
+				if(doorButton.attr('class') != `door-button${locked}${secret}${open}`){
 					doorButton.attr('class', `door-button${locked}${secret}${open}`)
+					doorButton.toggleClass('ignore-hover', true);
+				}
 			}			
 		}
 		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).removeAttr('removeAfterDraw');
