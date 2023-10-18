@@ -2894,7 +2894,12 @@ function setTokenAuras (token, options) {
 			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
-
+		if(options.animation?.aura){
+			token.parent().parent().find("#aura_" + tokenId).attr('data-animation', options.animation.aura)
+		}
+		else{
+			token.parent().parent().find("#aura_" + tokenId).removeAttr('data-animation')
+		}
 
 		
 	} else {
@@ -2947,6 +2952,12 @@ function setTokenLight (token, options) {
 			lightElement.contextmenu(function(){return false;});
 			$("#light_container").prepend(lightElement);
 		}
+		if(options.animation?.light){
+			token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").attr('data-animation', options.animation.light)
+		}
+		else{
+			token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").removeAttr('data-animation')
+		}
 		if(window.DM){
 			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#vision_" + tokenId).css("opacity", 0.5)
 			: token.parent().parent().find("#vision_" + tokenId).css("opacity", 1)
@@ -2975,6 +2986,7 @@ function setTokenLight (token, options) {
 			}	
 		}
 	}
+
 }
 
 function setTokenBase(token, options) {

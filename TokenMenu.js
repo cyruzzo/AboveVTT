@@ -525,6 +525,10 @@ function build_token_auras_inputs(tokenIds) {
 
 			<div class="token-config-aura-wrapper">
 				<div class="token-image-modal-footer-select-wrapper">
+					<div class="token-image-modal-footer-title">Animation</div>
+					<select class="token-config-animation-preset">
+						<option value=""></option>
+					</select>
 				</div>
 				<div class="menu-inner-aura">
 					<h3 style="margin-bottom:0px;">Inner Aura</h3>
@@ -551,7 +555,17 @@ function build_token_auras_inputs(tokenIds) {
 			</div>
 		</div>
 	`);
-
+	let animationPresets = {
+		'Flicker': 'flicker-fx',	
+		'Rays': 'rays-fx',
+		'Dome': 'force-fx',
+		'Wild Magic': 'wild-fx',	
+	}
+	for(let option in animationPresets){
+		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
+	}
 	const auraOption = {
 		name: "auraVisible",
 		label: "Enable Token Auras",
@@ -694,6 +708,20 @@ function build_token_auras_inputs(tokenIds) {
 			token.place_sync_persist();
 		});
 	});
+	wrapper.find(".token-config-animation-preset").on("change", function(e) {
+
+		let preset = e.target.value;
+
+		tokens.forEach(token => {
+
+			token.options.animation= {
+				...token.options.animation,
+				aura: preset
+			}
+			token.place_sync_persist();
+		});
+	});
+
 
 	$("#VTTWRAPPER .sidebar-modal").on("remove", function () {
 		console.log("removing sidebar modal!!!");
@@ -769,9 +797,15 @@ function build_token_light_inputs(tokenIds) {
 				<div class="token-image-modal-footer-select-wrapper">
 					
 				
-				<div class="token-image-modal-footer-title">Preset</div>
-				<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
+					<div class="token-image-modal-footer-title">Preset</div>
+					<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
 					<select class="token-config-aura-preset">
+						<option value=""></option>
+					</select>
+				</div>
+				<div class="token-image-modal-footer-select-wrapper">
+					<div class="token-image-modal-footer-title">Animation</div>
+					<select class="token-config-animation-preset">
 						<option value=""></option>
 					</select>
 				</div>
@@ -886,10 +920,21 @@ function build_token_light_inputs(tokenIds) {
 		window.LIGHT_PRESETS = JSON.parse(localStorage.getItem('LIGHT_PRESETS'));
 	}
 
-	
+	let animationPresets = {
+		'Flicker': 'flicker-fx',	
+		'Rays': 'rays-fx',
+		'Dome': 'force-fx',
+		'Wild Magic': 'wild-fx',	
+	}
 
 	for(let i in window.LIGHT_PRESETS){
 		wrapper.find('.token-config-aura-preset').append(`<option value="${window.LIGHT_PRESETS[i].name}">${window.LIGHT_PRESETS[i].name}</option>`)
+	}
+
+	for(let option in animationPresets){
+		let allTokenSelected = tokens.map(t => t.options.animation?.light);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
 	
 	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
@@ -994,7 +1039,7 @@ function build_token_light_inputs(tokenIds) {
 				token.options[auraName]['color'] = color;
 				token.place_sync_persist();
 			});
-			$(e.target).closest(".token-config-aura-wrapper").find(".token-config-aura-preset")[0].selectedIndex = 0;
+			$(".token-config-aura-preset")[0].selectedIndex = 0;
 		} else {
 			tokens.forEach(token => {
 				let selector = "div[data-id='" + token.options.id + "']";
@@ -1053,6 +1098,20 @@ function build_token_light_inputs(tokenIds) {
 			token.options.light2.feet = (selectedPreset.light2.feet) ? selectedPreset.light2.feet : token.options.light2.feet;
 			token.options.light1.color = (selectedPreset.light1.color) ? selectedPreset.light1.color : token.options.light1.color;
 			token.options.light2.color = (selectedPreset.light2.color) ? selectedPreset.light2.color : token.options.light2.color;
+			token.place_sync_persist();
+		});
+	});
+
+	wrapper.find(".token-config-animation-preset").on("change", function(e) {
+
+		let preset = e.target.value;
+
+		tokens.forEach(token => {
+
+			token.options.animation= {
+				...token.options.animation,
+				light: preset
+			}
 			token.place_sync_persist();
 		});
 	});
