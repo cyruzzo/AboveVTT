@@ -1672,19 +1672,19 @@ class Token {
 			}
 			if(this.options.groupId != undefined)
 				tok.attr('data-group-id', this.options.groupId)
-			if(this.options.light1 == undefined){
+			if(this.options.light1?.feet == undefined){
 				this.options.light1 ={
 					feet: 0,
 					color: (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : 'rgba(255, 255, 255, 1)'
 				}
 			}
-			if(this.options.light2 == undefined){
+			if(this.options.light2?.feet == undefined){
 				this.options.light2 = {
 					feet: 0,
 					color: (window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : 'rgba(142, 142, 142, 1)'
 				}
 			}
-			if(this.options.vision == undefined){
+			if(this.options.vision?.feet == undefined){
 				if(this.isPlayer()){
 		            let pcData = find_pc_by_player_id(this.options.id, false);
 		            let darkvision = 0;
@@ -2594,19 +2594,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 		...window.TOKEN_SETTINGS,
 		...pc,
 		...tokenObject,
-		id: tokenObject.id, // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
-		vision: {
-			feet: tokenObject.vision?.feet ? tokenObject.vision.feet : '60',
-			color: tokenObject.vision?.color ? tokenObject.vision.color : (window.TOKEN_SETTINGS?.vision?.color) ?  window.TOKEN_SETTINGS.vision.color : default_options().light2.color
-		},
-		light1: {
-			feet: tokenObject.light1?.feet ? tokenObject.light1.feet : '0',
-			color: tokenObject.light1?.color ? tokenObject.light1.color : (window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : default_options().light1.color
-		},
-		light2: {
-			feet: tokenObject.light2?.feet ? tokenObject.light2.feet : '0',
-			color: tokenObject.light2?.color ? tokenObject.light2.color : (window.TOKEN_SETTINGS?.light2?.color) ?  window.TOKEN_SETTINGS.light2.color : default_options().light2.color
-		}
+		id: tokenObject.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
 	};
 	if(window.all_token_objects[options.id] !== undefined && options.alternativeImages){
 		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
