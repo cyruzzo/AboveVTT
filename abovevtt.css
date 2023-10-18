@@ -314,17 +314,18 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     width: 420px;
 }
 .door-button{
-    width: max(15px, calc(20px / var(--window-zoom)));
-    height: max(15px, calc(20px / var(--window-zoom)));   
-    cursor: pointer; 
-    position:absolute;
-    left: calc(var(--mid-x) - (10px / var(--window-zoom)));
-    top: calc(var(--mid-y) - (10px / var(--window-zoom)));
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    left: calc(var(--mid-x) - 10px );
+    top: calc(var(--mid-y) - 10px);
     opacity: 0.8;
+    transform: scale(Max(1, calc(1 / var(--window-zoom))));
 }
 
 .door.background{
-    border:2px solid #060606;
+    border: 2px ridge #060606;
     height: 130%;
     width: 100%;
     position: absolute;
@@ -360,9 +361,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     background: #000;
 }
 
-.locked .door.foreground>div{
-    display: none;
-}
 
 .door-button.open .door.foreground{
     transform: rotateY(57deg);
@@ -373,7 +371,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.locked .door-icon{
     content: "";
     display: block;
-    background: #000;
+    background: #0008;
     width: 50%;
     height: 30%;
     position: absolute;
@@ -389,7 +387,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: 100%;
     bottom: 100%;
     position: absolute;
-    border: 2px solid #000;
+    border: 2px solid #0008;
     border-top-right-radius: 50%;
     border-top-left-radius: 50%;
     border-bottom: 0;
@@ -398,7 +396,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.secret .door-icon:before {
     content: "S";
     font-weight: 600;
-    font-size: max(12px, var(--font-size, calc(20px / var(--window-zoom))));
+    font-size: max(12px, var(--font-size, 20px));
     color: #F008;
     display: block;
     width: 100%;
@@ -425,7 +423,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     height: 100%;
     bottom: 100%;
     position: absolute;
-    border: 2px solid #000;
+    border: 2px solid #0008;
     border-top-right-radius: 50%;
     border-top-left-radius: 50%;
     border-bottom: 0;
@@ -433,8 +431,8 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.secret.locked .door-icon:after {
     content: "S";
     font-weight: 600;
-    font-size: max(12px, var(--font-size, calc(20px / var(--window-zoom))));
-    color: #F004;
+    font-size: max(12px, var(--font-size, 20px));
+    color: #F008;
     display: block;
     width: 100%;
     height: 100%;
@@ -444,7 +442,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.secret.locked .door-icon{
     content: "";
     display: block;
-    background: #000;
+    background: #0008;
     width: 50%;
     height: 30%;
     position: absolute;
@@ -454,7 +452,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     margin: auto;
 }
 .window.background{
-    border:2px solid #060606;
+    border: 2px ridge #060606;
     height: 130%;
     width: 100%;
     position: absolute;
@@ -494,6 +492,29 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transition: 200ms transform 400ms linear;
     will-change: transform;
 }
+.door-button:not(.locked):hover .window.background>div{
+    transform: translateY(35%);
+    transition: 100ms transform 100ms linear;
+    will-change: transform;
+}
+.door-button.open:hover .window.background>div{
+    transform: translateY(20%);
+    transition: 100ms transform 100ms linear;
+    will-change: transform;
+}
+
+.door-button:not(.locked):hover .door.foreground{
+    transform: rotateY(35deg);
+    transition: 100ms transform 100ms linear;
+    will-change: transform;
+}
+.door-button.open:hover .door.foreground{
+    transform: rotateY(40deg);
+    transition: 100ms transform 100ms linear;
+    will-change: transform;
+}
+
+
 
 /*for resizable and moveable monsters and sheets in DM view*/
 
