@@ -1704,7 +1704,7 @@ class Token {
 		        else if(this.isMonster()){
 		            let darkvision = 0;
 		            if(window.monsterListItems){
-		            	let monsterSidebarListItem = window.monsterListItems.filter((d) => this.options.monster == d.id)[0];	
+		            	let monsterSidebarListItem = this.options.monster == "open5e" ? window.open5eListItems.filter((d) => this.options.itemId == d.id)[0] : window.monsterListItems.filter((d) => this.options.monster == d.id)[0] ;	
 		            	if(!monsterSidebarListItem){
 							for(let i in encounter_monster_items){
 							    if(encounter_monster_items[i].some((d) => this.options.monster == d.id)){
