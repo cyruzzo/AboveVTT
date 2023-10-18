@@ -490,6 +490,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transition: 200ms transform 400ms linear;
     will-change: transform;
 }
+
 .door-button:not(.ignore-hover):not(.locked):hover .window.background>div{
     transform: translateY(7px);
     transition: 50ms transform 100ms linear;
