@@ -34,6 +34,7 @@ for(let i in doorColors){
 }
 
 
+
 function sync_fog(){
 	window.MB.sendMessage("custom/myVTT/fogdata",window.REVEALED);
 }
@@ -1689,9 +1690,9 @@ function stop_drawing() {
 	window.MOUSEDOWN = false;
 	var target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
-	target.off('mousedown', drawing_mousedown);
-	target.off('mouseup', drawing_mouseup);
-	target.off('mousemove', drawing_mousemove);
+	target.off('mousedown touchstart', drawing_mousedown);
+	target.off('mouseup touchend', drawing_mouseup);
+	target.off('mousemove touchmove', drawing_mousemove);
 	target.off('contextmenu', drawing_contextmenu);
 	window.StoredWalls = [];
 	window.wallToStore = [];
@@ -1707,8 +1708,13 @@ function is_rgba_fully_transparent(rgba){
 }
 
 function get_event_cursor_position(event){
-	const pointX = Math.round(((event.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((event.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+	let eventLocation = {
+		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
+		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
+	}
+	const pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
+	const pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+
 	return [pointX, pointY]
 }
 
@@ -1719,6 +1725,7 @@ function get_event_cursor_position(event){
  * @returns
  */
 function drawing_mousedown(e) {
+
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){
 		clear_temp_canvas()
@@ -1726,7 +1733,12 @@ function drawing_mousedown(e) {
 		WaypointManager.cancelFadeout()
 		WaypointManager.clearWaypoints()
 	}
-
+	const mousePosition = {
+		clientX: (e.touches) ? e.touches[0].clientX : e.clientX,
+		pageX: (e.touches) ? e.touches[0].pageX : e.pageX,
+		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
+		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
+	}
 	// always draw unbaked drawings to the temp overlay
 	let canvas = document.getElementById("temp_overlay");
 	let context = canvas.getContext("2d");
@@ -1787,10 +1799,10 @@ function drawing_mousedown(e) {
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
-	if (e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door" && window.DRAWFUNCTION != "wall-window" )
+	if (!e.touches && e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door" && window.DRAWFUNCTION != "wall-window" )
 		return;
 
-	if (e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
+	if (!e.touches && e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
 		return;
 
 	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.MOUSEDOWN && window.wallToStore != undefined){
@@ -1799,7 +1811,7 @@ function drawing_mousedown(e) {
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
+	if ((!e.touches && e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
 		return;
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
@@ -1881,8 +1893,8 @@ function drawing_mousedown(e) {
 		);
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
-		window.BEGIN_MOUSEX = e.clientX;
-		window.BEGIN_MOUSEY = e.clientY;
+		window.BEGIN_MOUSEX = mousePosition.clientX;
+		window.BEGIN_MOUSEY = mousePosition.clientY;
 		window.MOUSEDOWN = true;
 		window.MOUSEMOVEWAIT = false;
 	}
@@ -1940,6 +1952,13 @@ function drawing_mousemove(e) {
 		window.MOUSEMOVEWAIT = false;
 	}, mouseMoveFps);
 
+	const mousePosition = {
+		clientX: (e.touches) ? e.touches[0].clientX : e.clientX,
+		pageX: (e.touches) ? e.touches[0].pageX : e.pageX,
+		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
+		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
+	}
+
 	if (window.MOUSEDOWN) {
 		clear_temp_canvas()
 		const width = mouseX - window.BEGIN_MOUSEX;
@@ -1956,8 +1975,8 @@ function drawing_mousemove(e) {
 				drawRect(context,
 					Math.round(((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX))) * (1.0 / window.ZOOM),
 					Math.round(((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY))) * (1.0 / window.ZOOM),
-					((e.clientX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)),
-					((e.clientY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)),
+					((mousePosition.clientX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)),
+					((mousePosition.clientY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY) * (1.0 / window.ZOOM)),
 					window.DRAWCOLOR,
 					isFilled,
 					window.LINEWIDTH);
@@ -2009,7 +2028,7 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
-				if(e.which === 1){
+				if(e.which === 1 || e.touches){
 					WaypointManager.setCanvas(canvas);
 					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mouseX, mouseY);
@@ -2113,8 +2132,15 @@ function drawing_mouseup(e) {
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
-	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || e.button != 0) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
+	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || (!e.touches && e.button != 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
 		return;
+	}
+
+	const mousePosition = {
+		clientX: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientX : event.changedTouches[0].clientX) : event.clientX,
+		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
+		clientY: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientY : event.changedTouches[0].clientY) : event.clientY,
+		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
@@ -2131,7 +2157,7 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION == "reveal" ||
 		window.DRAWFUNCTION == "hide" ||
 		window.DRAWFUNCTION == "draw_text" ||
-		window.DRAWFUNCTION === "select") && e.which !== 1)
+		window.DRAWFUNCTION === "select") && e.which !== 1 && !e.touches)
 	{
 		return;
 	}
@@ -2586,8 +2612,8 @@ function drawing_mouseup(e) {
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text";
-		const textWidth = e.clientX - window.BEGIN_MOUSEX
-		const textHeight = e.clientY - window.BEGIN_MOUSEY
+		const textWidth = mousePosition.clientX - window.BEGIN_MOUSEX
+		const textHeight = mousePosition.clientY - window.BEGIN_MOUSEY
 		data[5] = textWidth
 		data[6] = textHeight
 		add_text_drawing_input(data);
@@ -2644,7 +2670,12 @@ function drawing_mouseup(e) {
 }
 
 function drawing_contextmenu(e) {
-
+	const mousePosition = {
+		clientX: (e.touches) ? e.touches[0].clientX : e.clientX,
+		pageX: (e.touches) ? e.touches[0].pageX : e.pageX,
+		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
+		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
+	}
 	if (window.DRAWSHAPE === "polygon") {
 		window.BEGIN_MOUSEX.pop();
 		window.BEGIN_MOUSEY.pop();
@@ -2661,8 +2692,8 @@ function drawing_contextmenu(e) {
 				window.DRAWCOLOR,
 				window.DRAWTYPE === "fill" || window.DRAWTYPE === "light",
 				1,
-				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
-				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
+				Math.round(((mousePosition.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((mousePosition.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
 		}
 		else{
@@ -2686,8 +2717,8 @@ function drawing_contextmenu(e) {
 				window.DRAWCOLOR,
 				window.DRAWTYPE === "fill" || window.DRAWTYPE === "light",
 				1,
-				Math.round(((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
-				Math.round(((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
+				Math.round(((mousePosition.pageX - window.VTTMargin) * (1.0 / window.ZOOM))),
+				Math.round(((mousePosition.pageY - window.VTTMargin) * (1.0 / window.ZOOM)))
 			);
 		}
 		else{
@@ -2879,11 +2910,16 @@ function handle_drawing_button_click() {
 		}
 		// allow all drawing to be done above the tokens
 		if ($(clicked).is("#select-button")){
-			$("#temp_overlay").css("z-index", "25")
-			$
+			$("#temp_overlay").css({
+				"z-index": "25",
+				'touch-action' : ''
+			})
 		}
 		else{
-			$("#temp_overlay").css("z-index", "50")
+			$("#temp_overlay").css({
+				"z-index": "50",
+				'touch-action' : 'none'
+			})
 		}
 		if (($(clicked).is("#text_button") ||$(clicked).is("#text_select")) && $("#text_select").hasClass('ddbc-tab-options__header-heading--is-active')){
 			$("#text_div").css("z-index", "51")
@@ -2897,9 +2933,9 @@ function handle_drawing_button_click() {
 		else{
 			$("#temp_overlay").css("mix-blend-mode", "")
 		}
-		target.on('mousedown', data, drawing_mousedown);
-		target.on('mouseup',  data, drawing_mouseup);
-		target.on('mousemove', data, drawing_mousemove);
+		target.on('mousedown touchstart', data, drawing_mousedown);
+		target.on('mouseup touchend',  data, drawing_mouseup);
+		target.on('mousemove touchmove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 	})
 	// during initialisation of VTT default to the select button
