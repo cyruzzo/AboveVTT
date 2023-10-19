@@ -840,8 +840,14 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 
 		// This is why we want multiple callback functions.
 		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
+
 		availableOptions.forEach(option => updateValue(option.name, undefined));
+		updateValue('vision', undefined);
+		updateValue('light1', undefined);
+		updateValue('light2', undefined);
+
 		let defaultTokenOptions = default_options();
+
 		if(showExtraOptions == true){
 			$("input[name='visionColor']").spectrum("set", defaultTokenOptions.light2.color);
 		    $("input[name='light1Color']").spectrum("set", defaultTokenOptions.light1.color);
