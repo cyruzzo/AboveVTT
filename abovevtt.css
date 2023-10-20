@@ -364,7 +364,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 
 .door-button.open .door.foreground{
     transform: rotateY(57deg) skew(0deg, 16deg);
-    transition: 200ms transform 400ms linear;
+    transition: 200ms transform 0ms linear;
     will-change: transform;
 }
 
@@ -465,7 +465,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     top: 1px;
     border: 1px solid #000;
     position: absolute;
-
 }
 .window.background>div{
     content: '';
@@ -475,7 +474,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: translateY(9px);
     border: 1px solid #000;
     position: absolute;
-    transition: 200ms transform 400ms linear;
+    transition: 200ms transform 0ms linear;
     will-change: transform;
 }
 .open .window.background>div{
@@ -487,7 +486,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: translateY(1px);
     border: 1px solid #000;
     position: absolute;
-    transition: 200ms transform 400ms linear;
+    transition: 200ms transform 0ms linear;
     will-change: transform;
 }
 
@@ -7742,6 +7741,67 @@ button.journal-view-button.journal-button {
   width: 90%;
   z-index: 2;
 }
+
+
+[data-animation='fairy-fx'] .islight,
+.aura-element[data-animation='fairy-fx'][id*='aura_'] {
+    animation: aurafx-fairy 5s infinite linear alternate;
+    -webkit-mask-image: url('https://cdn.discordapp.com/attachments/1164788038296150016/1164788046206611516/fairys.png');
+    -webkit-mask-size: contain;
+}
+
+[data-animation='fairy-fx'] .islight:before,
+.aura-element[data-animation='fairy-fx'][id*='aura_']:before {
+    animation: aurafx-fairy2 50s infinite linear;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #fff;
+    -webkit-mask-image: url('https://cdn.discordapp.com/attachments/1164788038296150016/1164788046206611516/fairys.png');
+    -webkit-mask-size: contain;
+    border-radius: 50%;
+    translate: 5px;
+}
+
+[data-animation='magic-circle-fx'] .islight,
+.aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
+    animation: aurafx-rotate 80s infinite linear;
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1164788045468401695/magiccircle1.png");
+    -webkit-mask-size: contain;
+}
+
+[data-animation='magic-circle-2-fx'] .islight,
+.aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
+    animation: aurafx-rotate 80s infinite linear;
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1164788044688265228/magiccircle2.png");
+    -webkit-mask-size: contain;
+}
+
+
+@keyframes aurafx-fairy {
+    0% {
+        transform: scale(0.95) skew(1deg, 0deg);
+    }
+    100% {
+        transform: scale(1) skew(0deg, 1deg);
+    }
+}
+@keyframes aurafx-fairy2 {
+    0% {
+        transform: rotate(360deg) scale(1.5);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1);
+    }
+    100% {
+        transform: rotate(0deg) scale(1.5);
+    }
+}
+
 @keyframes aurafx-flicker{
       0% {
         filter: blur(15px);
