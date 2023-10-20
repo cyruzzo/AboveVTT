@@ -6344,10 +6344,24 @@ div.ddbc-tab-options--layout-pill>button{
     z-index: 9;
     mix-blend-mode: lighten;
 }
+
+[data-darkness]{
+    z-index:15 !important;
+    opacity: 1 !important;
+}
+[data-darkness] .aoe-style-darkness{
+    opacity: 1 !important;
+    background: #000;
+    border:none;
+}
 .aura-element.islight,
 .aura-element[id*='vision_']{
     z-index: 9;
     mix-blend-mode: lighten;
+}
+
+.aura-element-container-clip.devilsight{
+    z-index: 20 !important;
 }
 #scene_map{
     mix-blend-mode: multiply;

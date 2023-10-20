@@ -513,6 +513,8 @@ function check_single_token_visibility(id){
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
+	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
@@ -520,10 +522,10 @@ function check_single_token_visibility(id){
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
-	if (hideThisTokenInFogOrDarkness && notInLight) {
+	if (hideThisTokenInFogOrDarkness) {
 		$(selector + "," + auraSelector).hide();
 	}
-	else if (!window.TOKEN_OBJECTS[id].options.hidden) {
+	else if (!window.TOKEN_OBJECTS[id].options.hidden || playerHasTruesight) {
 		$(selector).css('opacity', 1);
 		$(selector).show();
 		if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
@@ -569,6 +571,8 @@ async function do_check_token_visibility() {
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
+	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
 			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
@@ -587,7 +591,7 @@ async function do_check_token_visibility() {
 			if (hideThisTokenInFogOrDarkness && notInLight ) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden ) {
+			else if (!window.TOKEN_OBJECTS[id].options.hidden || playerHasTruesight ) {
 				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
@@ -4361,6 +4365,7 @@ async function redraw_light(){
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;
 
+
 	delete window.lightInLos;
 	window.lightInLos = document.createElement('canvas');
 	window.lightInLos.width = canvasWidth;
@@ -4432,6 +4437,8 @@ async function redraw_light(){
 
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
+	let devilSightPolygons = [];
+	
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
 			let currentLightAura = $(light_auras[i]);
@@ -4464,6 +4471,10 @@ async function redraw_light(){
 					numberofwalls: walls.length
 				}
 
+
+
+
+
 				let path = "";
 				for( let i = 0; i < lightPolygon.length; i++ ){
 					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
@@ -4471,6 +4482,7 @@ async function redraw_light(){
 				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 			}
 
+		
 
 			if(window.lightAuraClipPolygon == undefined)
 				window.lightAuraClipPolygon = {};
@@ -4505,6 +4517,9 @@ async function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
+				if(!window.DM && currentLightAura.parent().hasClass('devilsight')){
+					devilSightPolygons.push(window.lightAuraClipPolygon[auraId].canvas);
+				}
 				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
@@ -4526,6 +4541,11 @@ async function redraw_light(){
 		lightInLosContext.globalCompositeOperation='destination-over';
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
+		draw_darkness_aoe_to_canvas(lightInLosContext);
+		for(let i = 0; i < devilSightPolygons.length; i++){
+			lightInLosContext.globalCompositeOperation='source-over';
+			lightInLosContext.drawImage(devilSightPolygons[i], 0, 0);
+		}
 		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 
@@ -4541,7 +4561,24 @@ async function redraw_light(){
 	}
 }
 
+function draw_darkness_aoe_to_canvas(ctx){
 
+	let darknessAoes = $('[data-darkness]');
+	ctx.globalCompositeOperation='source-over';
+	for(let i = 0; i<darknessAoes.length; i++){
+		let currentAoe = $(darknessAoes[i]);
+		if(currentAoe.find('.aoe-shape-circle').length>0){
+			let centerX = (parseFloat(currentAoe.css('left')) + parseFloat(currentAoe.css('width'))/2) * window.CURRENT_SCENE_DATA.scale_factor;
+			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2) * window.CURRENT_SCENE_DATA.scale_factor;;
+			let radius = (parseFloat(currentAoe.css('width'))/2) * window.CURRENT_SCENE_DATA.scale_factor; ;
+			drawCircle(ctx, centerX, centerY, radius, 'black')
+		}
+
+	}
+
+
+
+}
 function clipped_light(auraId, maskPolygon, playerTokenId){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM)

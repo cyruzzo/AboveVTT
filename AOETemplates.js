@@ -23,6 +23,7 @@ function get_available_styles(){
     return [
         "Acid",
         "Bludgeoning",
+        "Darkness",
         "Default",
         "Fire",
         "Force",
@@ -267,12 +268,20 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
         size = size * 2;
     }
 
-    const options = get_aoe_default_options()
+    let options = get_aoe_default_options()
     options.name = name
     options.imgsrc = build_aoe_img_name(style, shape, name);
     options.size = shape !== "line" ? size : ""
     options.gridHeight = shape === "line" ? countGridSquares : ""
     options.gridWidth = shape === "line" ? 1 : ""
+
+    if(style == 'darkness'){
+        options = {
+            ...options,
+            darkness: true
+        }
+    }
+
 
     return options
 }
