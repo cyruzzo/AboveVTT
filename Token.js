@@ -1924,6 +1924,7 @@ class Token {
 					height: `calc(${tok.css('height')} / var(--scene-scale))`,
 				})
 		        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
+		        tokenClone.find('.conditions').remove();
 		        tokenClone.removeClass(['token', 'VTTToken']);
 		        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
 		        	$('#light_container').append(tokenClone);

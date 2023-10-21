@@ -2968,9 +2968,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 
 /* END AOE STYLES */
-.token.isAoe{
-    visibility: hidden;
-}
+
+
 .token.isAoe .token-image,
 .token.isAoe .token-image *,
 .token.isAoe:before,
