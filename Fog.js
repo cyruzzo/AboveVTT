@@ -4476,7 +4476,7 @@ async function redraw_light(){
 		draw_darkness_aoe_to_canvas(lightInLosContext);
 		for(let i = 0; i < devilSightPolygons.length; i++){
 			lightInLosContext.globalCompositeOperation='source-over';
-			drawCircle(lightInLosContext, devilSightPolygons[i].middle.x, devilSightPolygons[i].middle.y, devilSightPolygons[i].middle.darkvision, 'white')
+			drawCircle(lightInLosContext, devilSightPolygons[i].middle.x, devilSightPolygons[i].middle.y, devilSightPolygons[i].darkvision, 'white')
 		}
 		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
