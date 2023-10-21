@@ -125,7 +125,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	$('body').append(tokenOptionsClickCloseDiv);
 
 
-	if(door.length == 1){
+	if(door != undefined){
 		if(window.DM) {
 			
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Door Note</div></div>`);
