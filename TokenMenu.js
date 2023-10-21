@@ -518,36 +518,36 @@ function token_context_menu_expanded(tokenIds, e) {
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
-	if(window.DM || (tokens.length == 1 && (tokens[0].isPlayer() || (tokens[0].options.player_owned && !tokens[0].isPlayer())))) {
-		body.append(toTopMenuButton);
-		body.append(toBottomMenuButton);
 
-		toTopMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
-				});
-				token.place_sync_persist();
-			});
-		});
+	body.append(toTopMenuButton);
+	body.append(toBottomMenuButton);
 
-		toBottomMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
-				});
-				token.place_sync_persist();
+	toTopMenuButton.off().on("click", function(tokenIds){
+		tokens.forEach(token => {
+			$(".token").each(function(){	
+				let tokenId = $(this).attr('data-id');	
+				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+				if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
+				}		
 			});
+			token.place_sync_persist();
 		});
-	}
+	});
+
+	toBottomMenuButton.off().on("click", function(tokenIds){
+		tokens.forEach(token => {			
+			$(".token").each(function(){	
+				let tokenId = $(this).attr('data-id');	
+				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+				if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+				}		
+			});
+			token.place_sync_persist();
+		});
+	});
+
 
 	if (tokens.length === 1) {
 		body.append(build_menu_stat_inputs(tokenIds));
@@ -1045,6 +1045,12 @@ function build_token_light_inputs(tokenIds) {
 						<option value=""></option>
 					</select>
 				</div>
+				<div class="token-image-modal-footer-select-wrapper">
+					<div class="token-image-modal-footer-title">Darkvision Type</div>
+					<select class="token-config-visiontype-preset">
+						<option value=""></option>
+					</select>
+				</div>
 				<div class="menu-vision-aura">
 					<h3 style="margin-bottom:0px;">Darkvision</h3>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
@@ -1165,6 +1171,11 @@ function build_token_light_inputs(tokenIds) {
 		'Magic Circle': 'magic-circle-fx',
 		'Magic Circle 2': 'magic-circle-2-fx'		
 	}
+	let darkVisionType = {
+		'Darkvision': 'darkvision',	
+		'Devilsight': 'devilsight',
+		'Truesight': 'truesight'	
+	}
 
 	for(let i in window.LIGHT_PRESETS){
 		wrapper.find('.token-config-aura-preset').append(`<option value="${window.LIGHT_PRESETS[i].name}">${window.LIGHT_PRESETS[i].name}</option>`)
@@ -1175,11 +1186,15 @@ function build_token_light_inputs(tokenIds) {
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
+
+	for(let option in darkVisionType){
+		let allTokenSelected = tokens.map(t => t.options.sight);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-visiontype-preset').append(`<option ${darkVisionType[option] == selected ? `selected=true` : ''} value="${darkVisionType[option]}">${option}</option>`)
+	}
 	
 	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
-
-		create_light_presets_edit();
-		
+		create_light_presets_edit();		
 	})
 
 
@@ -1223,6 +1238,7 @@ function build_token_light_inputs(tokenIds) {
 			token.place_sync_persist();
 		});
 	});
+
 
 	wrapper.prepend(enabledLightInput);
 
@@ -1351,6 +1367,21 @@ function build_token_light_inputs(tokenIds) {
 				...token.options.animation,
 				light: preset
 			}
+			token.place_sync_persist();
+		});
+	});
+
+	wrapper.find(".token-config-visiontype-preset").on("change", function(e) {
+
+		let preset = e.target.value;
+
+		tokens.forEach(token => {
+			if(preset == 'darkvision'){
+				delete token.options.sight;
+			}
+			else{
+				token.options.sight = preset;
+			}		
 			token.place_sync_persist();
 		});
 	});

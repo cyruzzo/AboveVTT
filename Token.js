@@ -204,15 +204,22 @@ class Token {
 
 			this.options = {
 				...this.options,
-				auraVisible: false,
-				square: true,
 				disablestat: true,
+		        hidestat: true,
+		        disableborder: true,
+		        square: true,
+		        restrictPlayerMove: false,
+		        hidden: false,
+		        locked: false,
+		        disableaura: true,
+		        legacyaspectratio: false,
+		        deleteableByPlayers: true,
+		        lockRestrictDrop: 'none',
+		        auraVisible: false,
 				auraislight: false,
-				hidestat: true,
-				disableborder: true,
-				disableaura: true,
 				revealInFog: true
 			}
+			
 		}
 	}
 
@@ -472,6 +479,7 @@ class Token {
 		
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
+		$(`[data-darkness='darkness_${id}']`).remove()
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
@@ -1483,6 +1491,12 @@ class Token {
 			old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 			old.css("--token-rotation", rotation+"deg");
 			old.css("--token-scale", imageScale);
+			$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
+				'--token-rotation': `${rotation}deg`,
+				'--token-scale': imageScale
+			})
+			$(`.isAoe[data-id='${this.options.id}']:not(.token) .token-image`).css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
+
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			let selector = "tr[data-target='"+this.options.id+"']";
@@ -1539,9 +1553,8 @@ class Token {
 			else {
 				old.css("border", "");
 				old.removeClass("tokenselected");
-
 			}
-			const oldImage = old.find(".token-image,[data-img]")
+			const oldImage =  old.find(".token-image,[data-img]")
 			// token uses an image for it's image
 			if (!this.options.imgsrc.startsWith("class")){
 				if(oldImage.attr("src")!=this.options.imgsrc){
@@ -1590,6 +1603,7 @@ class Token {
 
 			setTokenAuras(old, this.options);
 			setTokenLight(old, this.options);
+
 			if(this.options.lockRestrictDrop == undefined){
 				if(this.options.restrictPlayerMove){
 					this.options.lockRestrictDrop = "restrict"
@@ -1649,7 +1663,16 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-		
+			if(this.options.darkness){
+				let darknessImage = $(`[data-darkness='darkness_${this.options.id}']`);
+				darknessImage.css({
+					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+					width: `calc(${old.css('width')} / var(--scene-scale))`,
+					height: `calc(${old.css('height')} / var(--scene-scale))`,
+				})
+			}
+			
 			console.groupEnd()
 		}
 		else { // adding a new token
@@ -1780,7 +1803,8 @@ class Token {
 				tok.toggleClass("isAoe", true);
 			}
 			tok.css("--token-rotation", rotation + "deg");
-			tok.append(tokenImage);
+
+
 
 
 			tokenImage.css({
@@ -1817,7 +1841,8 @@ class Token {
 			tok.width(this.sizeWidth());
 			tok.height(this.sizeHeight());
 			tok.addClass('token');
-			tok.append(tokenImage);
+			
+		   	tok.append(tokenImage);		    
 
 
 			tok.attr("data-id", this.options.id);
@@ -1875,7 +1900,19 @@ class Token {
 
 			$("#tokens").append(tok);
 	
-
+			if(this.options.darkness){
+				let tokenClone = tok.clone();
+				tokenClone.css({
+					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+					width: `calc(${tok.css('width')} / var(--scene-scale))`,
+					height: `calc(${tok.css('height')} / var(--scene-scale))`,
+				})
+		        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
+		        tokenClone.removeClass(['token', 'VTTToken']);
+		        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
+		        	$('#light_container').append(tokenClone);
+		    }
 
 			this.update_opacity(tok, true);
 
@@ -2023,6 +2060,11 @@ class Token {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
 								}
+								el = $("[data-darkness='darkness_" + id.replaceAll("/", "") + "']");
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
+								}
 							}
 
 						}												
@@ -2039,6 +2081,11 @@ class Token {
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
 					el = $("#vision_" + self.options.id.replaceAll("/", ""));
+					if (el.length > 0) {
+						el.attr("data-left", el.css("left").replace("px", ""));
+						el.attr("data-top", el.css("top").replace("px", ""));
+					}
+					el = $("[data-darkness='darkness_" + self.options.id.replaceAll("/", "") + "']");
 					if (el.length > 0) {
 						el.attr("data-left", el.css("left").replace("px", ""));
 						el.attr("data-top", el.css("top").replace("px", ""));
@@ -2184,8 +2231,15 @@ class Token {
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
 
-
-
+					el = ui.helper.parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+					if (el.length > 0) {
+						let currLeft = parseFloat(el.attr("data-left"));
+						let currTop = parseFloat(el.attr("data-top"));
+						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+					}
 
 
 					if (self.selected && window.dragSelectedTokens.length>1) {
@@ -2264,6 +2318,15 @@ class Token {
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 								selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
+								if (selEl.length > 0) {
+									let currLeft = parseFloat(selEl.attr("data-left"));
+									let currTop = parseFloat(selEl.attr("data-top"));
+									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+								}
+								selEl = $(tok).parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -2907,12 +2970,14 @@ function setTokenAuras (token, options) {
 		token.parent().parent().find("#aura_" + tokenId).remove();
 	}
 }
+
 function setTokenLight (token, options) {
 	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
 
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const tokenId = token.attr("data-id").replaceAll("/", "");
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
@@ -2943,7 +3008,7 @@ function setTokenLight (token, options) {
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
-		const tokenId = token.attr("data-id").replaceAll("/", "");
+		
 		if (token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
@@ -2970,7 +3035,6 @@ function setTokenLight (token, options) {
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
 		
 	} else {
-		const tokenId = token.attr("data-id").replaceAll("/", "");
 		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
 	}
 	if(!window.DM){
@@ -2985,6 +3049,12 @@ function setTokenLight (token, options) {
 				$(vision[i]).css("visibility", "visible");
 			}	
 		}
+	}
+	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM)){
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', true);
+	}
+	else{
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', false);
 	}
 
 }
@@ -3516,7 +3586,7 @@ async function do_draw_selected_token_bounding_box() {
 			});
 		}
 	)
-	redraw_light();	
+	debounceLightChecks();
 }
 
 /// removes everything that draw_selected_token_bounding_box added
