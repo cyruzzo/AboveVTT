@@ -3037,8 +3037,9 @@ function setTokenLight (token, options) {
 	} else {
 		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
 	}
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	if(!window.DM){
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		
 		
 		let vision = $("[id*='vision_']");
 		for(let i = 0; i < vision.length; i++){
@@ -3050,7 +3051,7 @@ function setTokenLight (token, options) {
 			}	
 		}
 	}
-	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM)){
+	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
 		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', true);
 	}
 	else{

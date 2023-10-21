@@ -1376,12 +1376,9 @@ function build_token_light_inputs(tokenIds) {
 		let preset = e.target.value;
 
 		tokens.forEach(token => {
-			if(preset == 'darkvision'){
-				delete token.options.sight;
-			}
-			else{
-				token.options.sight = preset;
-			}		
+			
+			token.options.sight = preset;
+				
 			token.place_sync_persist();
 		});
 	});
