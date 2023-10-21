@@ -1519,8 +1519,8 @@ class Token {
 				// NEED RESIZING
 				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
 				old.find("img").css({
-					"max-height": this.sizeWidth(),
-					"max-width": this.sizeHeight()
+					"max-width": this.sizeWidth(),
+					"max-height": this.sizeHeight()
 				});
 
 
@@ -1528,6 +1528,20 @@ class Token {
 					width: this.sizeWidth(),
 					height: this.sizeHeight()
 				}, { duration: 1000, queue: false });
+				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
+					"max-width": this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor,
+					"max-height": this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
+				})
+				$(`.isAoe[data-id='${this.options.id}']:not(.token) .token-image`).css({
+					"max-width": this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor,
+					"max-height": this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
+				})
+
+				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).animate({
+					width: this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor,
+					height: this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
+				}, { duration: 1000, queue: false });
+
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
 				old.css("z-index", "calc(5000 + var(--z-index-diff))");
@@ -1541,6 +1555,7 @@ class Token {
 				let fs = Math.floor(bar_height / 1.3) + "px";
 				old.css("font-size",fs);
 			}
+
 
 			this.update_opacity(old);
 
