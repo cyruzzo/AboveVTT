@@ -3013,7 +3013,7 @@ function setTokenLight (token, options) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
-			const lightElement = $(`<div class='aura-element-container-clip' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
+			const lightElement = $(`<div class='aura-element-container-clip light' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${token.attr("data-id")}'><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
 			lightElement.contextmenu(function(){return false;});
 			$("#light_container").prepend(lightElement);
 		}
