@@ -1384,6 +1384,7 @@ function redraw_light_walls(clear=true){
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}']`);
+
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
@@ -1402,20 +1403,21 @@ function redraw_light_walls(clear=true){
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>
 											</div>`)
-			openCloseDoorButton.off('click.doors').on('click.doors', function(){
-					let locked = $(this).hasClass('locked');
-					let secret = $(this).hasClass('secret');
-					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
-					if(!$(this).hasClass('locked')){
-						open_close_door(x, y, width, height, type)
-					}
+				openCloseDoorButton.off('click.doors').on('click.doors', function(){
+						let locked = $(this).hasClass('locked');
+						let secret = $(this).hasClass('secret');
+						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
+						if(!$(this).hasClass('locked')){
+							open_close_door(x, y, width, height, type)
+						}
+					});
+				openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
+					$(this).toggleClass('ignore-hover', false);
 				});
-			openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
-				$(this).toggleClass('ignore-hover', false);
-			});
 
 
 				$('#tokens').append(openCloseDoorButton);
+				doorButton = openCloseDoorButton;
 			}
 		}
 		else if (doorColorsArray.includes(color)){		
@@ -1429,9 +1431,122 @@ function redraw_light_walls(clear=true){
 					doorButton.attr('class', `door-button${locked}${secret}${open}`)
 					doorButton.toggleClass('ignore-hover', true);
 				}
-			}			
+			}	
+			doorButton.find('.condition-container').remove();		
 		}
-		$(`.door-button[data-x1='${x}'][data-y1='${y}']`).removeAttr('removeAfterDraw');
+		let id = `${x}${y}${window.CURRENT_SCENE_DATA.id}` 
+		doorButton.attr('data-id', `${x}${y}${window.CURRENT_SCENE_DATA.id}`)
+		doorButton.removeAttr('removeAfterDraw');
+
+
+		if (id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[id].player == true)) {
+			const conditionName = "note"
+			const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
+			const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
+			conditionContainer.append(symbolImage);
+			conditionContainer.click(function(e){
+				e.stopPropagation();
+			})
+			conditionContainer.dblclick(function(e){
+				e.stopPropagation();
+				window.JOURNAL.display_note(id);
+			})
+
+			doorButton.append(conditionContainer);
+
+			let noteHover = `<div>
+								<div class="tooltip-header">
+						       	 	<div class="tooltip-header-icon">
+						            
+							        	</div>
+							        <div class="tooltip-header-text">
+							            ${window.JOURNAL.notes[id].title}
+							        </div>
+							        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+							           Note
+							        </div>
+					    		</div>
+						   		<div class="tooltip-body note-text">
+							        <div class="tooltip-body-description">
+							            <div class="tooltip-body-description-text note-text">
+							                ${window.JOURNAL.notes[id].text}
+							            </div>
+							        </div>
+							    </div>
+							</div>`
+
+
+						
+			let flyoutLocation = convert_point_from_map_to_view(parseInt(x), parseInt(y))
+	
+			let hoverNoteTimer;
+			symbolImage.on({
+				'mouseover': function(e){
+					hoverNoteTimer = setTimeout(function () {
+		            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+				            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+				            const tooltipHtml = $(noteHover);
+							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+							window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+							window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+				            flyout.append(tooltipHtml);
+				            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+				            sendToGamelogButton.css({ "float": "right" });
+				            sendToGamelogButton.on("click", function(ce) {
+				                ce.stopPropagation();
+				                ce.preventDefault();
+				                const tooltipWithoutButton = $(noteHover);
+				                tooltipWithoutButton.css({
+				                    "width": "100%",
+				                    "max-width": "100%",
+				                    "min-width": "100%"
+				                });
+				                send_html_to_gamelog(noteHover);
+				            });
+				            let flyoutLeft = e.clientX+20
+				            if(flyoutLeft + 400 > window.innerWidth){
+				            	flyoutLeft = window.innerWidth - 420
+				            }
+				            flyout.css({
+				            	left: flyoutLeft,
+				            	width: '400px'
+				            })
+
+				            const buttonFooter = $("<div></div>");
+				            buttonFooter.css({
+				                height: "40px",
+				                width: "100%",
+				                position: "relative",
+				                background: "#fff"
+				            });
+				            flyout.append(buttonFooter);
+				            buttonFooter.append(sendToGamelogButton);
+				            flyout.find("a").attr("target","_blank");
+				      		flyout.off('click').on('click', '.int_source_link', function(event){
+								event.preventDefault();
+								render_source_chapter_in_iframe(event.target.href);
+							});
+							
+
+				            flyout.hover(function (hoverEvent) {
+				                if (hoverEvent.type === "mouseenter") {
+				                    clearTimeout(removeToolTipTimer);
+				                    removeToolTipTimer = undefined;
+				                } else {
+				                    remove_tooltip(500);
+				                }
+				            });
+				            flyout.css("background-color", "#fff");
+				        });
+		        	}, 500);		
+				
+				},
+				'mouseout': function(e){
+					clearTimeout(hoverNoteTimer)
+				}
+		
+		    });
+		}
 
 		if((/rgba.*0\.5\)/g).test(color))
 			continue;
@@ -1441,9 +1556,23 @@ function redraw_light_walls(clear=true){
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
 		window.walls.push(drawnWall);
 	}
+	if(window.DM){
+		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
+		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
+
+		for(journal in sceneDoorJournal){
+			if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
+				delete window.JOURNAL.notes[sceneDoorJournal[journal]]
+				window.JOURNAL.persist();
+			}
+
+		}
+	}
+
+	
+
 	$('.door-button[removeAfterDraw]').remove();
-	if(window.DM)
-		init_door_context_menu();
+
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
@@ -1460,203 +1589,6 @@ function redraw_light_walls(clear=true){
  	}
  
 }
-
-
-function init_door_context_menu(){
-	
-	$.contextMenu({
-        selector: ".door-button",
-        build: function(element, e) {
-
-            let menuItems = {};
-            let door = $(element);
- 
-
-            let x1 = parseInt(door.attr('data-x1'));
-            let x2 = parseInt(door.attr('data-x2'));
-            let y1 = parseInt(door.attr('data-y1'));
-            let y2 = parseInt(door.attr('data-y2'));
-
-            let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
-            let color = doors[0][2];
-            let isOpen = (/rgba.*0\.5\)/g).test(color) ? 'open' : 'closed';
-            if(door.children('.door').length>0){
-            	menuItems["Unlocked"] = {
-	                name: "Unlocked Door",
-	                callback: function(itemKey, opt, originalEvent) {
-	                	door.toggleClass(['locked', 'secret'], false);
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[0][isOpen],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];	
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-	            };
-	            menuItems["Locked"] = {
-	                name: "Locked Door",
-	                callback: function(itemKey, opt, originalEvent) {
-	                   door.toggleClass('locked', true);
-	                   door.toggleClass(['secret', 'open'], false);
-
-
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[2]['closed'],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];		
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-	            };
-	            // copy url doesn't make sense for folders
-	            menuItems["secret"] = {
-	                name: "Secret Door",
-	                callback: function(itemKey, opt, originalEvent) {
-	                    door.toggleClass('locked', false);
-	                    door.toggleClass('secret', true);
-
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[4][isOpen],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];	
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-	            };
-	            menuItems["secretLocked"] = {
-	                name: "Locked Secret Door",
-	                callback: function(itemKey, opt, originalEvent) {
-	                	door.toggleClass(['locked', 'secret'], true);
-	                	door.toggleClass('open', false);
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[5]['closed'],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];	
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-           		};
-            }
-            else if(door.children('.window').length>0){
-            	menuItems["Unlocked"] = {
-	                name: "Unlocked Window",
-	                callback: function(itemKey, opt, originalEvent) {
-	                    door.toggleClass('locked', false);
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[1][isOpen],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];	
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-	            };
-
-	            menuItems["Locked"] = {
-	                name: "Locked Window",
-	                callback: function(itemKey, opt, originalEvent) {
-	                    door.toggleClass('locked', true);
-	                    door.toggleClass('open', false);
-	            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[3]['closed'],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];		
-						window.DRAWINGS.push(data);
-
-						redraw_light_walls();
-						redraw_light();
-
-
-						sync_drawings();
-	                }
-	            };
-            }
-            
-         
-
-           
-
-
-            if (Object.keys(menuItems).length === 0) {
-                menuItems["not-allowed"] = {
-                    name: "You are not allowed to configure this item",
-                    disabled: true
-                };
-            }
-            return { items: menuItems };
-        }
-    });
-}
-
-
-
-
 
 
 function open_close_door(x1, y1, x2, y2, type=0){

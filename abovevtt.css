@@ -350,6 +350,14 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     top: 34%;
     left: 74%;  
 }
+.door-button:hover .door.foreground {
+    background: #fff;
+}
+
+.door-button:hover .window.foreground,
+.door-button:hover .window.background>div {
+    background: #fffc;
+}
 
 .door.foreground>div{
     border-radius: 5%;
@@ -6345,6 +6353,7 @@ div.ddbc-tab-options--layout-pill>button{
     mix-blend-mode: lighten;
 }
 
+
 [data-darkness]{
     z-index:15 !important;
     opacity: 1 !important;
@@ -6355,6 +6364,26 @@ div.ddbc-tab-options--layout-pill>button{
     background: #000;
     border:none;
 }
+
+
+.door-button #note{
+    position: absolute;
+    right: -4px;
+    width: 10px;
+    height: 10px;
+    top: -5px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    overflow: hidden;
+}
+.door-button #note>img{
+    background: #FF0;
+    position:absolute;
+    width:100%;
+    height:100%;
+    
+}
+
 
 .aura-element.islight,
 .aura-element[id*='vision_']{

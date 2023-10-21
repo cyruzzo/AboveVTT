@@ -90,18 +90,19 @@ function token_context_menu_expanded(tokenIds, e) {
 		return;
 	}
 
+
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined)
 
-	if (tokens.length === 0) {
+	let door = (tokenIds.length == 1) ? $(`[data-id='${tokenIds}'].door-button`) : undefined;
+
+	if (tokens.length === 0 && door.length == 0) {
 		console.warn(`token_context_menu_expanded was called with ids: ${JSON.stringify(tokenIds)}, but no matching tokens could be found`);
 		return;
 	}
 
-	// Aoe tokens are treated differently from everything else so we need to check this more often
-	let isAoeList = tokens.map(t => t.isAoe());
-	let uniqueAoeList = [...new Set(isAoeList)];
-	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
-	const someTokensAreAoe = (uniqueAoeList.includes(true));
+
+
+
 
 	$("#tokenOptionsPopup").remove();
 	let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
@@ -123,8 +124,240 @@ function token_context_menu_expanded(tokenIds, e) {
 	$('body').append(moveableTokenOptions);
 	$('body').append(tokenOptionsClickCloseDiv);
 
-	// stat block / character sheet
 
+	if(door.length == 1){
+		if(window.DM) {
+			
+			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Door Note</div></div>`);
+			notesRow.hover(function (hoverEvent) {
+				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
+					flyout.append(build_notes_flyout_menu(tokenIds));
+				})
+			});
+			body.append(notesRow);
+
+		
+ 
+
+            let x1 = parseInt(door.attr('data-x1'));
+            let x2 = parseInt(door.attr('data-x2'));
+            let y1 = parseInt(door.attr('data-y1'));
+            let y2 = parseInt(door.attr('data-y2'));
+
+            let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            let color = doors[0][2];
+            let isOpen = (/rgba.*0\.5\)/g).test(color) ? 'open' : 'closed';
+
+            if(door.children('.door').length>0){
+
+	            body.append($('<div class="token-image-modal-footer-title" style="margin-top:10px">Door Type</div>'));
+
+				let button = $(`<button>Unlocked</button>`);
+				button.on("click", function() {
+					door.toggleClass(['locked', 'secret'], false);
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[0][isOpen],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];	
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+
+				button = $(`<button>Locked</button>`);
+				button.on("click", function() {
+					door.toggleClass('locked', true);
+                	door.toggleClass(['secret', 'open'], false);
+
+
+            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[2]['closed'],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];		
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+
+
+				button = $(`<button>Secret</button>`);
+				button.on("click", function() {
+					door.toggleClass('locked', false);
+                    door.toggleClass('secret', true);
+
+            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[4][isOpen],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];	
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+
+				button = $(`<button>Secret & Locked</button>`);
+				button.on("click", function() {
+					door.toggleClass(['locked', 'secret'], true);
+                	door.toggleClass('open', false);
+            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[5]['closed'],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];	
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+
+			}
+			else if(door.children('.window').length>0){
+				 body.append($('<div class="token-image-modal-footer-title" style="margin-top:10px">Window Type</div>'));
+
+				let button = $(`<button>Unlocked</button>`);
+				button.on("click", function() {
+					door.toggleClass('locked', false);
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[1][isOpen],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];	
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+
+				button = $(`<button>Locked</button>`);
+				button.on("click", function() {
+					door.toggleClass('locked', true);
+                    door.toggleClass('open', false);
+            		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[3]['closed'],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8]
+					];		
+					window.DRAWINGS.push(data);
+
+					redraw_light_walls();
+					redraw_light();
+
+
+					sync_drawings();
+				});
+				body.append(button);
+			}
+
+		}
+		$("#tokenOptionsPopup").addClass("moveableWindow");
+		$("#tokenOptionsPopup").draggable({
+				addClasses: false,
+				scroll: false,
+				start: function () {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function () {
+					$('.iframeResizeCover').remove();
+
+				}
+			});
+		
+
+		if(e.touches?.length>0){
+			moveableTokenOptions.css("left", Math.max(e.touches[0].clientX - 230, 0) + 'px');
+			if($(moveableTokenOptions).height() + e.touches[0].clientY > window.innerHeight - 20) {
+				moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+			}
+			else {
+				moveableTokenOptions.css("top", e.touches[0].clientY - 10 + 'px');
+			}	
+			$(moveableTokenOptions).toggleClass('touch', true);
+
+			
+		}
+		else{
+			moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+			if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
+				moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+			}
+			else {
+				moveableTokenOptions.css("top", e.clientY - 10 + 'px');
+			}	
+			$(moveableTokenOptions).toggleClass('touch', false);
+		}
+
+		return;
+	}
+
+	// Aoe tokens are treated differently from everything else so we need to check this more often
+	let isAoeList = tokens.map(t => t.isAoe());
+	let uniqueAoeList = [...new Set(isAoeList)];
+	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
+	const someTokensAreAoe = (uniqueAoeList.includes(true));
+
+	// stat block / character sheet
 
 	if (tokens.length === 1) {
 		let token = tokens[0];
@@ -1433,7 +1666,7 @@ function build_menu_stat_inputs(tokenIds) {
 function build_notes_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
-	let id = tokens[0].options.id;
+	let id = tokenIds.length == 1 ? tokenIds[0] : tokens[0].options.id;
 	body.css({
 		width: "200px", // once we add Markers, make this wide enough to contain them all
 		padding: "5px",
@@ -1466,8 +1699,9 @@ function build_notes_flyout_menu(tokenIds) {
 
 		editNoteButton.off().on("click", function(){
 			if (!(id in window.JOURNAL.notes)) {
+				let title = window.TOKEN_OBJECTS[id] ? window.TOKEN_OBJECTS[id].options.name : `Note`
 				window.JOURNAL.notes[id] = {
-					title: window.TOKEN_OBJECTS[id].options.name,
+					title: title,
 					text: '',
 					plain: '',
 					player: false

@@ -2814,7 +2814,7 @@ function determine_hidden_classname(tokenIds) {
 function token_menu() {
 		let initialX;
 		let initialY;
-		$("#tokens").on("touchstart", ".VTTToken", function(event) {
+		$("#tokens").on("touchstart", ".VTTToken, .door-button", function(event) {
 			initialX = event.touches[0].clientX;
 			initialY = event.touches[0].clientY;
 		    LongPressTimer = setTimeout(function() {
@@ -2839,7 +2839,7 @@ function token_menu() {
 		  	}
 		    
 		  });
-		$("#tokens").on("contextmenu", ".VTTToken", function(event) {
+		$("#tokens").on("contextmenu", ".VTTToken, .door-button", function(event) {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
