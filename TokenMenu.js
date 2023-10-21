@@ -99,7 +99,9 @@ function token_context_menu_expanded(tokenIds, e) {
 		console.warn(`token_context_menu_expanded was called with ids: ${JSON.stringify(tokenIds)}, but no matching tokens could be found`);
 		return;
 	}
-
+	if(door?.length > 0 && !window.DM){
+		return;
+	}
 
 
 
@@ -125,10 +127,10 @@ function token_context_menu_expanded(tokenIds, e) {
 	$('body').append(tokenOptionsClickCloseDiv);
 
 
-	if(tokens.length === 0 && door != undefined){
+	if(door?.length == 1){
 		if(window.DM) {
 			
-			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Door Note</div></div>`);
+			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
 					flyout.append(build_notes_flyout_menu(tokenIds));
