@@ -6349,11 +6349,13 @@ div.ddbc-tab-options--layout-pill>button{
     z-index:15 !important;
     opacity: 1 !important;
 }
-[data-darkness] .aoe-style-darkness{
+[data-darkness] .aoe-style-darkness,
+[data-darkness] .aoe-border-cone{
     opacity: 1 !important;
     background: #000;
     border:none;
 }
+
 .aura-element.islight,
 .aura-element[id*='vision_']{
     z-index: 9;

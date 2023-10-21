@@ -204,15 +204,22 @@ class Token {
 
 			this.options = {
 				...this.options,
-				auraVisible: false,
-				square: true,
 				disablestat: true,
+		        hidestat: true,
+		        disableborder: true,
+		        square: true,
+		        restrictPlayerMove: false,
+		        hidden: false,
+		        locked: false,
+		        disableaura: true,
+		        legacyaspectratio: false,
+		        deleteableByPlayers: true,
+		        lockRestrictDrop: 'none',
+		        auraVisible: false,
 				auraislight: false,
-				hidestat: true,
-				disableborder: true,
-				disableaura: true,
 				revealInFog: true
 			}
+			
 		}
 	}
 
@@ -471,7 +478,7 @@ class Token {
 		}
 		
 		$("#aura_" + id.replaceAll("/", "")).remove();
-		$(`.aura-element-container-clip[id='darkness_${id}']`).remove()
+		$(`.aura-element-container-clip[id='${id}']`).remove()
 		$(`[data-darkness='darkness_${id}']`).remove()
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
@@ -1484,6 +1491,12 @@ class Token {
 			old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 			old.css("--token-rotation", rotation+"deg");
 			old.css("--token-scale", imageScale);
+			$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
+				'--token-rotation': `${rotation}deg`,
+				'--token-scale': imageScale
+			})
+			$(`.isAoe[data-id='${this.options.id}']:not(.token) .token-image`).css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
+
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
 			let selector = "tr[data-target='"+this.options.id+"']";
@@ -2957,13 +2970,6 @@ function setTokenAuras (token, options) {
 		token.parent().parent().find("#aura_" + tokenId).remove();
 	}
 }
-function setDarknessAoe(token, options){
-	if (!options.darkness || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
-
-
-
-
-}
 
 function setTokenLight (token, options) {
 	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
@@ -3580,7 +3586,7 @@ async function do_draw_selected_token_bounding_box() {
 			});
 		}
 	)
-	redraw_light();	
+	debounceLightChecks();
 }
 
 /// removes everything that draw_selected_token_bounding_box added

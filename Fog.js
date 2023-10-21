@@ -4518,7 +4518,7 @@ async function redraw_light(){
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
 				if(!window.DM && currentLightAura.parent().hasClass('devilsight')){
-					devilSightPolygons.push(window.lightAuraClipPolygon[auraId].canvas);
+					devilSightPolygons.push(window.lightAuraClipPolygon[auraId]);
 				}
 				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
@@ -4544,7 +4544,7 @@ async function redraw_light(){
 		draw_darkness_aoe_to_canvas(lightInLosContext);
 		for(let i = 0; i < devilSightPolygons.length; i++){
 			lightInLosContext.globalCompositeOperation='source-over';
-			lightInLosContext.drawImage(devilSightPolygons[i], 0, 0);
+			drawCircle(lightInLosContext, devilSightPolygons[i].middle.x, devilSightPolygons[i].middle.y, devilSightPolygons[i].middle.darkvision, 'white')
 		}
 		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
@@ -4561,7 +4561,7 @@ async function redraw_light(){
 	}
 }
 
-function draw_darkness_aoe_to_canvas(ctx){
+function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
 
 	let darknessAoes = $('[data-darkness]');
 	ctx.globalCompositeOperation='source-over';
@@ -4569,9 +4569,51 @@ function draw_darkness_aoe_to_canvas(ctx){
 		let currentAoe = $(darknessAoes[i]);
 		if(currentAoe.find('.aoe-shape-circle').length>0){
 			let centerX = (parseFloat(currentAoe.css('left')) + parseFloat(currentAoe.css('width'))/2) * window.CURRENT_SCENE_DATA.scale_factor;
-			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2) * window.CURRENT_SCENE_DATA.scale_factor;;
-			let radius = (parseFloat(currentAoe.css('width'))/2) * window.CURRENT_SCENE_DATA.scale_factor; ;
+			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2) * window.CURRENT_SCENE_DATA.scale_factor;
+			let radius = (parseFloat(currentAoe.css('width'))/2) * window.CURRENT_SCENE_DATA.scale_factor + window.CURRENT_SCENE_DATA.hpps/2;
 			drawCircle(ctx, centerX, centerY, radius, 'black')
+		}
+		if(currentAoe.find('.aoe-shape-square').length>0){
+			let width = parseFloat(currentAoe.css('width')) * window.CURRENT_SCENE_DATA.scale_factor + window.CURRENT_SCENE_DATA.hpps/2;
+			let height = parseFloat(currentAoe.css('height')) * window.CURRENT_SCENE_DATA.scale_factor + window.CURRENT_SCENE_DATA.hpps/2;
+			let centerX = (parseFloat(currentAoe.css('left')) + parseFloat(currentAoe.css('width'))/2);
+			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2);
+
+			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
+
+			ctx.translate(centerX, centerY);
+			ctx.rotate(rotationRad);
+			drawRect(ctx, -width/2, -height/2, width, height, "black")
+			ctx.rotate(-rotationRad);
+			ctx.translate(-centerX, -centerY);
+		}
+		if(currentAoe.find('.aoe-shape-line').length>0){
+			let width = parseFloat(currentAoe.css('width')) * window.CURRENT_SCENE_DATA.scale_factor + window.CURRENT_SCENE_DATA.hpps/2;
+			let height = parseFloat(currentAoe.css('height')) * window.CURRENT_SCENE_DATA.scale_factor + window.CURRENT_SCENE_DATA.hpps/2;
+			let centerX = (parseFloat(currentAoe.css('left')) + parseFloat(currentAoe.css('width'))/2);
+			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2);
+
+			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
+
+			ctx.translate(centerX, centerY);
+			ctx.rotate(rotationRad);
+			drawRect(ctx, -width/2, -height/2, width, height, "black")
+			ctx.rotate(-rotationRad);
+			ctx.translate(-centerX, -centerY);
+		}
+		if(currentAoe.find('.aoe-shape-cone').length>0){
+			let width = parseFloat(currentAoe.css('width')) + window.CURRENT_SCENE_DATA.hpps/2;
+			let height = parseFloat(currentAoe.css('height')) + window.CURRENT_SCENE_DATA.hpps/2;
+			let centerX = (parseFloat(currentAoe.css('left')) + parseFloat(currentAoe.css('width'))/2);
+			let centerY = (parseFloat(currentAoe.css('top')) + parseFloat(currentAoe.css('height'))/2);
+
+			let rotationRad = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180) 
+
+			ctx.translate(centerX, centerY);
+			ctx.rotate(rotationRad);
+			drawCone(ctx, 0, -height, 0, height, "black")
+			ctx.rotate(-rotationRad);
+			ctx.translate(-centerX, -centerY);
 		}
 
 	}

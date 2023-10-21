@@ -242,7 +242,9 @@ function get_aoe_default_options(){
         locked: false,
         disableaura: true,
         legacyaspectratio: false,
-        deleteableByPlayers: true
+        deleteableByPlayers: true,
+        revealInFog: true,
+        lockRestrictDrop: 'none'
     };
     return options
 }

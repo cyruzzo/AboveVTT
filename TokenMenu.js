@@ -285,36 +285,36 @@ function token_context_menu_expanded(tokenIds, e) {
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
-	if(window.DM || (tokens.length == 1 && (tokens[0].isPlayer() || (tokens[0].options.player_owned && !tokens[0].isPlayer())))) {
-		body.append(toTopMenuButton);
-		body.append(toBottomMenuButton);
 
-		toTopMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
-					}		
-				});
-				token.place_sync_persist();
-			});
-		});
+	body.append(toTopMenuButton);
+	body.append(toBottomMenuButton);
 
-		toBottomMenuButton.off().on("click", function(tokenIds){
-			tokens.forEach(token => {			
-				$(".token").each(function(){	
-					let tokenId = $(this).attr('data-id');	
-					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
-					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
-						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
-					}		
-				});
-				token.place_sync_persist();
+	toTopMenuButton.off().on("click", function(tokenIds){
+		tokens.forEach(token => {
+			$(".token").each(function(){	
+				let tokenId = $(this).attr('data-id');	
+				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+				if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
+				}		
 			});
+			token.place_sync_persist();
 		});
-	}
+	});
+
+	toBottomMenuButton.off().on("click", function(tokenIds){
+		tokens.forEach(token => {			
+			$(".token").each(function(){	
+				let tokenId = $(this).attr('data-id');	
+				let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+				if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+					window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+				}		
+			});
+			token.place_sync_persist();
+		});
+	});
+
 
 	if (tokens.length === 1) {
 		body.append(build_menu_stat_inputs(tokenIds));
@@ -955,7 +955,7 @@ function build_token_light_inputs(tokenIds) {
 	}
 
 	for(let option in darkVisionType){
-		let allTokenSelected = tokens.map(t => t.options.animation?.light);
+		let allTokenSelected = tokens.map(t => t.options.sight);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-visiontype-preset').append(`<option ${darkVisionType[option] == selected ? `selected=true` : ''} value="${darkVisionType[option]}">${option}</option>`)
 	}
