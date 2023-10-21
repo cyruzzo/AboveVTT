@@ -350,6 +350,14 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     top: 34%;
     left: 74%;  
 }
+.door-button:hover .door.foreground {
+    background: #fff;
+}
+
+.door-button:hover .window.foreground,
+.door-button:hover .window.background>div {
+    background: #fffc;
+}
 
 .door.foreground>div{
     border-radius: 5%;
