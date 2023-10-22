@@ -6373,6 +6373,9 @@ div.ddbc-tab-options--layout-pill>button{
     z-index:15 !important;
     opacity: 1 !important;
 }
+[data-darkness] .token-image{
+    transform: none !important;
+}
 
 [data-darkness] .aoe-style-darkness,
 [data-darkness] .aoe-border-cone{

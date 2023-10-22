@@ -4506,20 +4506,23 @@ async function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
-				if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
-					tempDarkvisionCtx.globalCompositeOperation='source-over';
-					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
-					tempDarkvisionCtx.globalCompositeOperation='destination-in';
-					drawPolygon(tempDarkvisionCtx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+				if(!window.DM){
+					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
+						tempDarkvisionCtx.globalCompositeOperation='source-over';
+						drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+						tempDarkvisionCtx.globalCompositeOperation='destination-in';
+						drawPolygon(tempDarkvisionCtx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+					}
+					if(currentLightAura.parent().hasClass('devilsight')){
+						devilsightCtx.globalCompositeOperation='source-over';
+						devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
+					}
+					if(currentLightAura.parent().hasClass('truesight')){
+						truesightCanvasContext.globalCompositeOperation='source-over';
+						truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
+					}
 				}
-				if(currentLightAura.parent().hasClass('devilsight')){
-					devilsightCtx.globalCompositeOperation='source-over';
-					devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
-				}
-				if(currentLightAura.parent().hasClass('truesight')){
-					truesightCanvasContext.globalCompositeOperation='source-over';
-					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
-				}
+
 
 				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
@@ -4543,17 +4546,19 @@ async function redraw_light(){
 		lightInLosContext.globalCompositeOperation='destination-over';
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
-		draw_darkness_aoe_to_canvas(lightInLosContext);
+
+		if(!window.DM){
+			draw_darkness_aoe_to_canvas(lightInLosContext);
 		
-		lightInLosContext.globalCompositeOperation='source-over';
-		lightInLosContext.drawImage(devilsightCanvas, 0, 0);	
+			lightInLosContext.globalCompositeOperation='source-over';
+			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
+
+			truesightCanvasContext.globalCompositeOperation='destination-in';
+			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);	
+		}
 		
 		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
-
-		
-		truesightCanvasContext.globalCompositeOperation='destination-in';
-		truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
 		
 
 		offscreenContext.globalCompositeOperation='destination-over';
