@@ -353,6 +353,17 @@ function avtt_settings() {
 		],
 		defaultValue: false
 	})
+	settings.push(
+	{
+		name: "reduceMovement",
+		label: "Reduce animation movement",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Disabled", description: `Reduces movement by disabling some animations` },
+			{ value: false, label: "Enabled", description: `All animations will be enabled` }
+		],
+		defaultValue: false
+	})
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool
@@ -447,6 +458,9 @@ function set_avtt_setting_value(name, newValue) {
 	   		      rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
 	  		    })
 		 	}
+		 	break;
+		 case "reduceMovement":
+		 	$('body').toggleClass('reduceMovement', newValue)
 		 	break;
 	}
 }
