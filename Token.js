@@ -3068,12 +3068,12 @@ function setTokenLight (token, options) {
 		}
 	}
 	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', true);
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', true);	
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('truesight', options.sight=='truesight');
 	}
 	else{
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', false);
+		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass(['devilsight', 'truesight'], false);
 	}
-
 }
 
 function setTokenBase(token, options) {

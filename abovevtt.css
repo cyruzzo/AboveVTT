@@ -2960,6 +2960,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     box-shadow: inset -20px -20px 2px 1000px rgba(49, 177, 246, 0.49);
 }
 
+.aoe-style-darkness{
+    background-image: url(https://media.discordapp.net/attachments/954822823636009041/979765607484506122/fire_background.png);
+    filter: grayscale(1) brightness(0.2) !important;
+}
+
 /* SPECIFIC SPELL STYLES */
 .aoe-style-fog-cloud{
     background-image: url(https://media.discordapp.net/attachments/954822823636009041/984327704641962004/fog_cloud_tileable.png?width=676&height=676) !important;
@@ -6368,10 +6373,7 @@ div.ddbc-tab-options--layout-pill>button{
     z-index:15 !important;
     opacity: 1 !important;
 }
-[data-darkness] .token-image{
-    transform: none !important;
 
-}
 [data-darkness] .aoe-style-darkness,
 [data-darkness] .aoe-border-cone{
     opacity: 1 !important;
