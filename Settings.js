@@ -1057,6 +1057,7 @@ function export_current_scene(){
 		soundpads: {}
 	};
 	delete DataFile.scenes[0].itemType;
+	delete DataFile.scenes[0].map;
 	for(tokenID in window.TOKEN_OBJECTS){
 		for(noteID in window.JOURNAL.notes){
 			if(tokenID == noteID){
