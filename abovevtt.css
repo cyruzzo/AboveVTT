@@ -1379,6 +1379,16 @@ div#scene_properties form > div {
     content:"\e898"; 
 }
 
+.door-lock.material-icons:before{
+    content:"\e897"; 
+    padding: 2px 0px;
+}
+
+.door-secret.material-icons:before{
+    content: "S";
+    margin: 0px 0px 0px 2px;
+    color: #dc0000;
+}
 
 .condition-lock.locked.material-symbols-outlined:before,
 .condition-lock.material-symbols-outlined:hover:before {
@@ -6359,11 +6369,10 @@ div.ddbc-tab-options--layout-pill>button{
 
 
 [data-darkness]{
+    transform: rotate(var(--token-rotation));
     z-index:15 !important;
     opacity: 1 !important;
 }
-
-
 
 [data-darkness] .aoe-style-darkness,
 [data-darkness] .aoe-border-cone{

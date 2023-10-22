@@ -1,27 +1,27 @@
 const POLYGON_CLOSE_DISTANCE = 15;
 const doorColors = {
 	0: {
-		'open': "rgba(255, 100, 255, 0.5)",
+		'open': "rgba(255, 100, 255, 0.5)", // door
 		'closed': "rgba(255, 100, 255, 1)"
 	},
 	1: {
-		'open': "rgba(255, 255, 0, 0.5)",
+		'open': "rgba(255, 255, 0, 0.5)", // window
 		'closed': "rgba(255, 255, 0, 1)"
 	},
 	2: {
-		'open': "rgba(150, 50, 150, 0.5)",
+		'open': "rgba(150, 50, 150, 0.5)", // locked door
 		'closed': "rgba(150, 50, 150, 1)"
 	},
 	3: {
-		'open': "rgba(150, 150, 0, 0.5)",
+		'open': "rgba(150, 150, 0, 0.5)", // locked window
 		'closed': "rgba(150, 150, 0, 1)"
 	},
 	4: {
-		'open': "rgba(100, 0, 255, 0.5)",
+		'open': "rgba(100, 0, 255, 0.5)", //secret door
 		'closed': "rgba(100, 0, 255, 1)"
 	},
 	5: {
-		'open': "rgba(50, 0, 180, 0.5)",
+		'open': "rgba(50, 0, 180, 0.5)", // secret locked door
 		'closed': "rgba(50, 0, 180, 1)"
 	},
 };

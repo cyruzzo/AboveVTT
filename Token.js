@@ -1495,7 +1495,7 @@ class Token {
 				'--token-rotation': `${rotation}deg`,
 				'--token-scale': imageScale
 			})
-			$(`.isAoe[data-id='${this.options.id}']:not(.token) .token-image`).css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
+
 
 			setTimeout(function() {old.find(".token-image").css("transition", "")}, 200);		
 			
