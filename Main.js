@@ -2389,7 +2389,7 @@ function init_ui() {
 	lightOverlay.css("position", "absolute");
 	lightOverlay.css("top", "0");
 	lightOverlay.css("left", "0");
-	lightOverlay.css("z-index", "20");
+	lightOverlay.css("z-index", "8");
 	lightOverlay.css("mix-blend-mode", "lighten");
 
 	const textDiv = $("<div id='text_div'></div>");

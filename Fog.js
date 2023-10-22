@@ -465,6 +465,22 @@ function is_token_under_light_aura(tokenid, lightContext=undefined){
 	return  false;
 }
 
+function is_token_under_truesight_aura(tokenid, truesightContext=undefined){
+	if(truesightContext == undefined){
+		truesightContext = window.truesightCanvas.getContext('2d', {willReadFrequently: true});
+	}
+
+	let pixeldata = truesightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+	
+	for(let i=0; i<pixeldata.length; i+=4){
+		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
+			return true;
+	}
+				
+	return  false;
+}
+
+
 function is_door_under_fog(door, fogContext=undefined){
 	if(window.DM)
 		return false;
@@ -522,10 +538,14 @@ function check_single_token_visibility(id){
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
-	if (hideThisTokenInFogOrDarkness || (window.TOKEN_OBJECTS[id].options.hidden && !playerHasTruesight)) {
+	let inTruesight = false;
+	if($(`.aura-element-container-clip.truesight`).length>0 ){
+		inTruesight = is_token_under_truesight_aura(id);
+	}
+	if (hideThisTokenInFogOrDarkness || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
 		$(selector + "," + auraSelector).hide();
 	}
-	else if (!window.TOKEN_OBJECTS[id].options.hidden || playerHasTruesight) {
+	else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
 		$(selector).css('opacity', 1);
 		$(selector).show();
 		if(!window.TOKEN_OBJECTS[id].options.hideaura && id != playerTokenId)
@@ -567,6 +587,12 @@ async function do_check_token_visibility() {
 	let promises = [];
 
 	let lightContext = window.lightInLos.getContext('2d');
+	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
+
+	let truesightContext;
+
+	if(truesightAuraExists) 
+		truesightContext = window.truesightCanvas.getContext('2d');
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
@@ -588,10 +614,16 @@ async function do_check_token_visibility() {
 
 			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
-			if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !playerHasTruesight) ) {
+
+			let inTruesight = false;
+			if(truesightAuraExists){
+				inTruesight = is_token_under_truesight_aura(id, truesightContext);
+			}
+
+			if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden || playerHasTruesight ) {
+			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
 				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
@@ -4298,6 +4330,7 @@ async function redraw_light(){
 	window.moveOffscreenCanvasMask.height = canvasHeight;
 
 
+
 	delete window.lightInLos;
 	window.lightInLos = document.createElement('canvas');
 	window.lightInLos.width = canvasWidth;
@@ -4312,11 +4345,36 @@ async function redraw_light(){
 		return;
 	}
 
+	if(window.truesightCanvas == undefined){
+		window.truesightCanvas = document.createElement('canvas');
+	}
+	let truesightCanvasContext = truesightCanvas.getContext('2d');
+
+	window.truesightCanvas.width = canvasWidth;
+	window.truesightCanvas.height = canvasHeight;
+
+	truesightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
+
+	
+	let devilsightCanvas = document.createElement('canvas');
+	
+	let devilsightCtx = devilsightCanvas.getContext('2d');
+
+	devilsightCanvas.width = canvasWidth;
+	devilsightCanvas.height = canvasHeight;
+
+	devilsightCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
 
+	let tempDarkvisionCanvas = document.createElement('canvas');
+	let tempDarkvisionCtx = tempDarkvisionCanvas.getContext('2d');
 
+	tempDarkvisionCanvas.width = canvasWidth;
+	tempDarkvisionCanvas.height = canvasHeight;
 
-
+	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
+	
+	
 	moveOffscreenContext.fillStyle = "black";
 	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
@@ -4369,7 +4427,6 @@ async function redraw_light(){
 
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
-	let devilSightPolygons = [];
 	
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
@@ -4449,12 +4506,25 @@ async function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
-				if(!window.DM && currentLightAura.parent().hasClass('devilsight')){
-					devilSightPolygons.push(window.lightAuraClipPolygon[auraId]);
+				if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
+					tempDarkvisionCtx.globalCompositeOperation='source-over';
+					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+					tempDarkvisionCtx.globalCompositeOperation='destination-in';
+					drawPolygon(tempDarkvisionCtx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
 				}
+				if(currentLightAura.parent().hasClass('devilsight')){
+					devilsightCtx.globalCompositeOperation='source-over';
+					devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
+				}
+				if(currentLightAura.parent().hasClass('truesight')){
+					truesightCanvasContext.globalCompositeOperation='source-over';
+					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
+				}
+
 				tokenVisionAura.css('visibility', 'visible'); 		
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+
 			}
 			resolve();
 		})); 	
@@ -4474,12 +4544,17 @@ async function redraw_light(){
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
 		draw_darkness_aoe_to_canvas(lightInLosContext);
-		for(let i = 0; i < devilSightPolygons.length; i++){
-			lightInLosContext.globalCompositeOperation='source-over';
-			drawCircle(lightInLosContext, devilSightPolygons[i].middle.x, devilSightPolygons[i].middle.y, devilSightPolygons[i].darkvision, 'white')
-		}
+		
+		lightInLosContext.globalCompositeOperation='source-over';
+		lightInLosContext.drawImage(devilsightCanvas, 0, 0);	
+		
 		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
+
+		
+		truesightCanvasContext.globalCompositeOperation='destination-in';
+		truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
+		
 
 		offscreenContext.globalCompositeOperation='destination-over';
 		offscreenContext.fillStyle = "black";
