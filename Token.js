@@ -1884,12 +1884,12 @@ class Token {
 
 			tok.attr("data-id", this.options.id);
 
-
+	
 			let sameSizeorLargerTokens = Object.fromEntries(
-								   Object.entries(window.TOKEN_OBJECTS).filter(
-								   		([key, val])=> Math.ceil(window.TOKEN_OBJECTS[key].options.size) >= Math.ceil(this.options.size) && key != this.options.id
-								   	)
-								);
+							   Object.entries(window.TOKEN_OBJECTS).filter(
+							   		([key, val])=> Math.ceil(window.TOKEN_OBJECTS[key].options.size) >= Math.ceil(this.options.size) && key != this.options.id
+							   	)
+							);
 
 			let topZIndex = 0;
 			if(JSON.stringify(sameSizeorLargerTokens) != '{}'){	
@@ -1900,13 +1900,14 @@ class Token {
 				  topZIndex = Math.max(topZIndex, valueFromObject);
 				});
 			}
-			if(topZIndex != 0)
-				this.options.zindexdiff = topZIndex
-			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
+		
+			
+			
+			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : topZIndex != 0 ? topZIndex : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
 			console.log("Diff: "+zindexdiff);
 			
-			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
+			
 			tok.width(this.sizeWidth());
 			tok.height(this.sizeHeight());
 			tok.addClass('token');
@@ -1930,6 +1931,8 @@ class Token {
 			tok.css("display", "flex");
 			tok.css("justify-content", "center");
 			tok.css("align-items", "center");
+			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
+
 
 			if (typeof this.options.monster !== "undefined")
 				tok.attr('data-monster', this.options.monster);
