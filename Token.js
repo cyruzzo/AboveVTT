@@ -1680,7 +1680,7 @@ class Token {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
 			if(this.options.darkness || this.options.tokenStyleSelect == 'definitelyNotAToken'){
-				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`).add(`[data-notatoken='notatoken_${this.options.id}']`);
+				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
 					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
@@ -1690,10 +1690,14 @@ class Token {
 					height: `var(--token-height)`,
 					'max-width': `var(--token-width)`,
 					'max-height': `var(--token-height)`,
-					'--z-index-diff': old.css('--z-index-diff')
+					'--z-index-diff': old.css('--z-index-diff'),
+					'--token-scale': old.css('--token-scale'),
+    				'--token-rotation': old.css('--token-rotation')
 				})
-				if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
-					if($(`[data-notatoken=notatoken_${this.options.id}]`).length == 0){
+
+			}
+			if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
+					if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 						let tokenClone = old.clone();
 						tokenClone.css({
 							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
@@ -1710,9 +1714,33 @@ class Token {
 				        tokenClone.find('.conditions').remove();      
 				        $('#map_items').append(tokenClone);
 					}
-				}
-				
-			}
+					else{
+						let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
+						copyToken.css({
+							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+							top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+							'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+							'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
+							width: `var(--token-width)`,
+							height: `var(--token-height)`,
+							'max-width': `var(--token-width)`,
+							'max-height': `var(--token-height)`,
+							'--z-index-diff': old.css('--z-index-diff'),
+							'--token-scale': old.css('--token-scale'),
+		    				'--token-rotation': old.css('--token-rotation')
+						})
+					}
+					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
+					let oldImage = old.find('.token-image');
+					copyImage.css({
+						'min-width': `calc(${oldImage.css('min-width')} / var(--scene-scale))`,
+						'min-height': `calc(${oldImage.css('min-height')} / var(--scene-scale))`
+					})
+
+			}  	
+			else{
+	    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
+	    	}
 			
 			console.groupEnd()
 		}
@@ -2506,6 +2534,7 @@ class Token {
 				}
 			
 		    }
+
 
 			console.groupEnd()
 		}
