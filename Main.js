@@ -2825,7 +2825,7 @@ function init_zoom_buttons() {
 		 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
 			<style type="text/css">
 				#select_locked .st0{fill:none;}
-				#select_locked .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#231F20;}
+				#select_locked .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#7f7f7f;}
 			</style>
 			<path d="M7,20.6c-0.5,0-0.9-0.2-1.2-0.5s-0.5-0.7-0.5-1.2v-8.3c0-0.5,0.2-0.8,0.5-1.2C6.1,9.1,6.5,8.9,7,8.9h0.8V7.3
 				c0-1.2,0.4-2.1,1.2-2.9s1.8-1.2,3-1.2c1.2,0,2.2,0.4,3,1.2s1.2,1.8,1.2,2.9v1.7h0.8c0.5,0,0.9,0.2,1.2,0.5c0.3,0.3,0.5,0.7,0.5,1.2
