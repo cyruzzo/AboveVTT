@@ -1366,6 +1366,7 @@ class MessageBroker {
 		$(".aura-element[id^='aura_'").remove();
 		$(".aura-element-container-clip").remove();
 		$("[data-darkness]").remove();
+		$("[data-notatoken]").remove();
 
 		let old_src = $("#scene_map").attr('src');
 		if(data.UVTTFile == 1){
