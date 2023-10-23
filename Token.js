@@ -722,8 +722,8 @@ class Token {
 		}
 
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage);
-		let tokenWidth = this.sizeWidth();
-		let tokenHeight = this.sizeHeight();
+		let tokenWidth = (this.options.tokenStyleSelect == 'definitelyNotAToken') ? this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor : this.sizeWidth();
+		let tokenHeight =  (this.options.tokenStyleSelect == 'definitelyNotAToken') ? this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor : this.sizeHeight();
 			
 		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
@@ -1861,7 +1861,10 @@ class Token {
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
-				tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px" );
+				else{
+					tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px" );
+				}
+				
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
 				tokenImage.attr("src", this.options.imgsrc);
@@ -1901,7 +1904,6 @@ class Token {
 				});
 			}
 		
-			
 			
 			let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : topZIndex != 0 ? topZIndex : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 			this.options.zindexdiff = Math.max(zindexdiff, -5000);
@@ -2543,7 +2545,7 @@ class Token {
 		}
 		// HEALTH AURA / DEAD CROSS
 		selector = "div[data-id='" + this.options.id + "']";
-		let token = $("#tokens").find(selector);
+		let token = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`);
 
 		Promise.all([
 			new Promise(() => this.build_stats(token)),
