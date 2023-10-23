@@ -2136,12 +2136,12 @@ class Token {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
 								}
-								el = $("[data-darkness='darkness_" + id.replaceAll("/", "") + "']");
+								el = $("[data-darkness='darkness_" + id + "']");
 								if (el.length > 0) {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
 								}
-								el = $("[data-notatoken='notatoken_" + id.replaceAll("/", "") + "']");
+								el = $("[data-notatoken='notatoken_" + id + "']");
 								if (el.length > 0) {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
@@ -2171,7 +2171,7 @@ class Token {
 						el.attr("data-left", el.css("left").replace("px", ""));
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
-					el = $("[data-notatoken='notatoken_" + self.options.id.replaceAll("/", "") + "']");
+					el = $("[data-notatoken='notatoken_" + self.options.id + "']");
 					if (el.length > 0) {
 						el.attr("data-left", el.css("left").replace("px", ""));
 						el.attr("data-top", el.css("top").replace("px", ""));
@@ -2325,7 +2325,7 @@ class Token {
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
-					el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+					el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id")}']`);
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
@@ -2420,7 +2420,7 @@ class Token {
 									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
-								selEl = $(tok).parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+								selEl = $(tok).parent().parent().find(`[data-darkness='darkness_${id}']`);
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -2429,7 +2429,7 @@ class Token {
 									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
-								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
 								if (selEl.length > 0) {
 									let currLeft = parseFloat(selEl.attr("data-left"));
 									let currTop = parseFloat(selEl.attr("data-top"));
@@ -2523,7 +2523,7 @@ class Token {
 			});
 			
 			if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
-				if($(`[data-notatoken=notatoken_${this.options.id}]`).length == 0){
+				if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 					let tokenClone = tok.clone();
 					tokenClone.css({
 						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
