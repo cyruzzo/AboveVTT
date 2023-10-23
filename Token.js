@@ -502,7 +502,7 @@ class Token {
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		let selector = "div[data-id='" + this.options.id + "']";
-		let tokenElement = $("#tokens").find(selector);
+		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
@@ -1669,7 +1669,7 @@ class Token {
 			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
 				old.draggable("enable");
 			}
-
+			old.toggleClass('lockedToken', this.options.locked)
 			this.update_health_aura(old);
 
 			// store custom token info if available
@@ -1684,11 +1684,34 @@ class Token {
 				copyImage.css({
 					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
-					'--token-width': `calc(${old.css('width')} / var(--scene-scale))`,
-					'--token-height': `calc(${old.css('height')} / var(--scene-scale))`,
+					'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+					'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 					width: `var(--token-width)`,
 					height: `var(--token-height)`,
+					'max-width': `var(--token-width)`,
+					'max-height': `var(--token-height)`,
+					'--z-index-diff': old.css('--z-index-diff')
 				})
+				if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
+					if($(`[data-notatoken=notatoken_${this.options.id}]`).length == 0){
+						let tokenClone = old.clone();
+						tokenClone.css({
+							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+							top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+							'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+							'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
+							width: `var(--token-width)`,
+							height: `var(--token-height)`,
+							'max-width': `var(--token-width)`,
+							'max-height': `var(--token-height)`,
+							'--z-index-diff': old.css('--z-index-diff')
+						})
+				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
+				        tokenClone.find('.conditions').remove();      
+				        $('#map_items').append(tokenClone);
+					}
+				}
+				
 			}
 			
 			console.groupEnd()
