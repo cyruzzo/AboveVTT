@@ -207,7 +207,9 @@ button .ddbc-tab-options__header-heading .menu-option{
     fill: #fff;
 }
 
-
+#select_locked.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active svg .st1{
+    fill: #fff;
+}
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading svg{
     padding: 0px 0px 0px 1px;
 }
@@ -6395,7 +6397,7 @@ div.ddbc-tab-options--layout-pill>button{
     width: var(--token-width) !important;
     height: var(--token-width) !important;
 }
-#tokens .token.definitelyNotAToken img{
+#tokens .token.definitelyNotAToken>img{
     opacity: 0;
 }
 
