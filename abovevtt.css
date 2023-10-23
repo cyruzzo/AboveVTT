@@ -6383,7 +6383,26 @@ div.ddbc-tab-options--layout-pill>button{
     background: #000;
     border:none;
 }
+#map_items{
+    width:100%;
+    height:100%;
+}
+[data-notatoken]{
+    opacity: 1 !important;
+    border:none;
+}
+[data-notatoken]>img{
+    width: var(--token-width) !important;
+    height: var(--token-width) !important;
+}
+#tokens .token.definitelyNotAToken img{
+    opacity: 0;
+}
 
+body.preventSelectDefinitelyNot .token.lockedToken,
+body.preventSelectDefinitelyNot .token.lockedToken>img{
+    pointer-events: none !important;
+}
 
 .door-button #note{
     position: absolute;
@@ -6413,7 +6432,7 @@ div.ddbc-tab-options--layout-pill>button{
 .aura-element-container-clip.vision.devilsight{
     z-index: 20 !important;
 }
-#scene_map{
+#map_items{
     mix-blend-mode: multiply;
     background:#000;
 }

@@ -479,7 +479,8 @@ class Token {
 		
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
-		$(`[data-darkness='darkness_${id}']`).remove()
+		$(`[data-darkness='darkness_${id}']`).remove();
+		$(`[data-notatoken='notatoken_${id}']`).remove()
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
@@ -1678,13 +1679,15 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			if(this.options.darkness){
-				let darknessImage = $(`[data-darkness='darkness_${this.options.id}']`);
-				darknessImage.css({
+			if(this.options.darkness || this.options.tokenStyleSelect == 'definitelyNotAToken'){
+				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`).add(`[data-notatoken='notatoken_${this.options.id}']`);
+				copyImage.css({
 					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
-					width: `calc(${old.css('width')} / var(--scene-scale))`,
-					height: `calc(${old.css('height')} / var(--scene-scale))`,
+					'--token-width': `calc(${old.css('width')} / var(--scene-scale))`,
+					'--token-height': `calc(${old.css('height')} / var(--scene-scale))`,
+					width: `var(--token-width)`,
+					height: `var(--token-height)`,
 				})
 			}
 			
@@ -1930,6 +1933,7 @@ class Token {
 		        	$('#light_container').append(tokenClone);
 		    }
 
+
 			this.update_opacity(tok, true);
 
 			setTokenAuras(tok, this.options);
@@ -2081,6 +2085,11 @@ class Token {
 									el.attr("data-left", el.css("left").replace("px", ""));
 									el.attr("data-top", el.css("top").replace("px", ""));
 								}
+								el = $("[data-notatoken='notatoken_" + id.replaceAll("/", "") + "']");
+								if (el.length > 0) {
+									el.attr("data-left", el.css("left").replace("px", ""));
+									el.attr("data-top", el.css("top").replace("px", ""));
+								}
 							}
 
 						}												
@@ -2102,6 +2111,11 @@ class Token {
 						el.attr("data-top", el.css("top").replace("px", ""));
 					}
 					el = $("[data-darkness='darkness_" + self.options.id.replaceAll("/", "") + "']");
+					if (el.length > 0) {
+						el.attr("data-left", el.css("left").replace("px", ""));
+						el.attr("data-top", el.css("top").replace("px", ""));
+					}
+					el = $("[data-notatoken='notatoken_" + self.options.id.replaceAll("/", "") + "']");
 					if (el.length > 0) {
 						el.attr("data-left", el.css("left").replace("px", ""));
 						el.attr("data-top", el.css("top").replace("px", ""));
@@ -2246,8 +2260,16 @@ class Token {
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
-
 					el = ui.helper.parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+					if (el.length > 0) {
+						let currLeft = parseFloat(el.attr("data-left"));
+						let currTop = parseFloat(el.attr("data-top"));
+						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+					}
+					el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
@@ -2351,6 +2373,15 @@ class Token {
 									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
+								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
+								if (selEl.length > 0) {
+									let currLeft = parseFloat(selEl.attr("data-left"));
+									let currTop = parseFloat(selEl.attr("data-top"));
+									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
+									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
+									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+								}
 							}
 						}													
 					}
@@ -2379,7 +2410,7 @@ class Token {
 					this.options.restrictPlayerMove = false;
 				}
 			}
-
+			tok.toggleClass('lockedToken', this.options.locked)
 			if(this.options.locked){
 				tok.draggable("disable");
 				tok.removeClass("ui-state-disabled");
@@ -2435,6 +2466,24 @@ class Token {
 				
 			});
 			
+			if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
+				if($(`[data-notatoken=notatoken_${this.options.id}]`).length == 0){
+					let tokenClone = tok.clone();
+					tokenClone.css({
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+						'--token-width': `calc(${tok.css('width')} / var(--scene-scale))`,
+						'--token-height': `calc(${tok.css('width')} / var(--scene-scale))`,
+						width: `var(--token-width)`,
+						height: `var(--token-height)`,
+					})
+			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
+			        tokenClone.find('.conditions').remove();      
+			        $('#map_items').append(tokenClone);
+				}
+			
+		    }
+
 			console.groupEnd()
 		}
 		// HEALTH AURA / DEAD CROSS

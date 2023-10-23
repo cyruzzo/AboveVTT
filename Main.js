@@ -383,8 +383,8 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			height = 1080;
 		}
 
-		var newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
-		$("#scene_map_container").append(newmap);
+		let newmap = $('<div style="width:' + width + 'px;height:' + height + 'px;position:absolute;top:0;left:0;z-index:10" id="scene_map" />');
+		$("#map_items").append(newmap);
 		videoid = youtube_parser(url);
 		window.YTPLAYER = new YT.Player('scene_map', {
 			width: width,
@@ -428,7 +428,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 	else if (is_video === "0" || !is_video) {
 		$("#scene_map_container").toggleClass('video', false);
 
-		let nemap;
+		let newmap;
 
 		
 
@@ -451,7 +451,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		if (callback != null) {
 			newmap.on("load", callback);
 		}
-		$("#scene_map_container").append(newmap);
+		$("#map_items").append(newmap);
 
 
 	}
@@ -486,7 +486,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		else{
 			$("#scene_map_container").toggleClass('map-loading', false);
 		}
-		$("#scene_map_container").append(newmap);
+		$("#map_items").append(newmap);
 
 	}
 
@@ -2367,6 +2367,12 @@ function init_ui() {
 	background.css("position", "absolute");
 	background.css("z-index", "10");
 
+	const mapItems = $("<div id='map_items'></div>");
+	mapItems.css("top", "0");
+	mapItems.css("left", "0");
+	mapItems.css("position", "absolute");
+	mapItems.css("z-index", "10");
+
 	const mapContainer = $("<div id='scene_map_container' />");
 	mapContainer.css("top", "0");
 	mapContainer.css("left", "0");
@@ -2494,7 +2500,7 @@ function init_ui() {
 	tokens.css("left", 0);
 
 	VTT.append(tokens);
-	VTT.append(background);
+
 	VTT.append(mapContainer);
 	VTT.append(peerOverlay);
 	VTT.append(fog);
@@ -2507,6 +2513,8 @@ function init_ui() {
 	lightContainer.append(lightOverlay);
 	mapContainer.append(lightContainer);
 	mapContainer.append(darknessLayer);
+	mapContainer.append(mapItems);
+	mapItems.append(background);
 
 
 
@@ -2810,6 +2818,103 @@ function init_zoom_buttons() {
 			}
 		});
 
+
+		let select_locked = $(`<div id='select_locked' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Toggle Locked Tokens Selectable'> 
+		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
+				<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" x="0px" y="0px"
+		 viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+			<style type="text/css">
+				#select_locked .st0{fill:none;}
+				#select_locked .st1{fill-rule:evenodd;clip-rule:evenodd;fill:#231F20;}
+			</style>
+			<path d="M7,20.6c-0.5,0-0.9-0.2-1.2-0.5s-0.5-0.7-0.5-1.2v-8.3c0-0.5,0.2-0.8,0.5-1.2C6.1,9.1,6.5,8.9,7,8.9h0.8V7.3
+				c0-1.2,0.4-2.1,1.2-2.9s1.8-1.2,3-1.2c1.2,0,2.2,0.4,3,1.2s1.2,1.8,1.2,2.9v1.7h0.8c0.5,0,0.9,0.2,1.2,0.5c0.3,0.3,0.5,0.7,0.5,1.2
+				v8.3c0,0.5-0.2,0.8-0.5,1.2c-0.3,0.3-0.7,0.5-1.2,0.5H7z M7,18.9h10.1v-8.3H7V18.9z M12.1,16.4c0.5,0,0.9-0.2,1.2-0.5
+				c0.3-0.3,0.5-0.7,0.5-1.2c0-0.5-0.2-0.8-0.5-1.2s-0.7-0.5-1.2-0.5c-0.5,0-0.9,0.2-1.2,0.5c-0.3,0.3-0.5,0.7-0.5,1.2
+				c0,0.5,0.2,0.8,0.5,1.2C11.2,16.2,11.6,16.4,12.1,16.4z M9.5,8.9h5.1V7.3c0-0.7-0.2-1.3-0.7-1.8c-0.5-0.5-1.1-0.7-1.8-0.7
+				c-0.7,0-1.3,0.2-1.8,0.7S9.5,6.6,9.5,7.3V8.9z M7,18.9v-8.3V18.9z"/>
+			<g>
+				<g>
+					<g>
+						<g>
+							<g>
+								<g>
+									<rect x="-6" y="9" class="st0" width="15" height="6"/>
+								</g>
+								<rect x="1" y="9.4" class="st1" width="1.5" height="1.1"/>
+								<rect x="1" y="11.4" class="st1" width="1.5" height="1.1"/>
+								<rect x="1" y="13.4" class="st1" width="1.5" height="1.1"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<g>
+									<rect x="9" y="-6" class="st0" width="6" height="15"/>
+								</g>
+								<rect x="13.4" y="1" class="st1" width="1.1" height="1.5"/>
+								<rect x="11.4" y="1" class="st1" width="1.1" height="1.5"/>
+								<rect x="9.5" y="1" class="st1" width="1.1" height="1.5"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<g>
+									<rect x="15" y="9" class="st0" width="15" height="6"/>
+								</g>
+								<rect x="21.5" y="13.4" class="st1" width="1.5" height="1.1"/>
+								<rect x="21.5" y="11.4" class="st1" width="1.5" height="1.1"/>
+								<rect x="21.5" y="9.5" class="st1" width="1.5" height="1.1"/>
+							</g>
+						</g>
+						<g>
+							<g>
+								<g>
+									<rect x="9" y="15" class="st0" width="6" height="15"/>
+								</g>
+								<rect x="9.4" y="21.5" class="st1" width="1.1" height="1.5"/>
+								<rect x="11.4" y="21.5" class="st1" width="1.1" height="1.5"/>
+								<rect x="13.4" y="21.5" class="st1" width="1.1" height="1.5"/>
+							</g>
+						</g>
+						<g>
+							<rect x="0.9" y="5.5" class="st1" width="1.5" height="2.5"/>
+							<polygon class="st1" points="0.9,1 0.9,3.5 2.4,3.5 2.4,2.5 3.4,2.5 3.4,1 				"/>
+							<rect x="5.4" y="1" class="st1" width="2.5" height="1.5"/>
+						</g>
+						<g>
+							<rect x="16" y="0.9" class="st1" width="2.5" height="1.5"/>
+							<polygon class="st1" points="23,0.9 20.5,0.9 20.5,2.4 21.5,2.4 21.5,3.4 23,3.4 				"/>
+							<rect x="21.5" y="5.4" class="st1" width="1.5" height="2.5"/>
+						</g>
+						<g>
+							<rect x="21.6" y="16" class="st1" width="1.5" height="2.5"/>
+							<polygon class="st1" points="23.1,23 23.1,20.5 21.6,20.5 21.6,21.5 20.6,21.5 20.6,23 				"/>
+							<rect x="16.1" y="21.5" class="st1" width="2.5" height="1.5"/>
+						</g>
+						<g>
+							<rect x="5.5" y="21.6" class="st1" width="2.5" height="1.5"/>
+							<polygon class="st1" points="1,23.1 3.5,23.1 3.5,21.6 2.5,21.6 2.5,20.6 1,20.6 				"/>
+							<rect x="1" y="16.1" class="st1" width="1.5" height="2.5"/>
+						</g>
+					</g>
+				</g>
+			</g>
+			</svg>
+		</div></div>
+		`);
+	
+		select_locked.click(async function(){
+			if ($('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+				$('body').toggleClass('preventSelectDefinitelyNot', true);
+			} else {
+				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+				$('body').toggleClass('preventSelectDefinitelyNot', false);
+			}
+		});
+	
+		zoom_section.append(select_locked);
+
 		pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
 		<div class="ddbc-tab-options__header-heading">
 				<svg id='player-pause-svg' xmlns="http://www.w3.org/2000/svg" height="20" width="20"><path d="M11.583 15.833V4.167H15v11.666Zm-6.583 0V4.167h3.417v11.666Z"/></svg>
@@ -2841,7 +2946,7 @@ function init_zoom_buttons() {
 	}
 
 
-	selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
+	let selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
 	<div class="ddbc-tab-options__header-heading">
 			<svg version="1.1" id="selectedEyeSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" x="0px" y="0px"
 				 viewBox="0 0 800 800" style="enable-background:new 0 0 800 800;" xml:space="preserve">
