@@ -7876,6 +7876,162 @@ button.journal-view-button.journal-button {
 }
 
 
+[data-animation='hurricane-fx'] .islight,
+.aura-element[data-animation='hurricane-fx'][id*='aura_'] {
+    animation: aurafx-rotate 30s infinite linear;
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1166273141782356139/hurricane_cloud.png");
+    -webkit-mask-size: contain;
+}
+
+[data-animation='hurricane-fx'] .islight:before,
+.aura-element[data-animation='hurricane-fx'][id*='aura_']:before
+{
+    animation: lightning 5s infinite linear;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #ffffff;
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1166273143082598470/lightning_2.png");
+    -webkit-mask-size: contain;
+    mix-blend-mode: overlay;
+}
+
+[data-animation='snow-fx'] .islight,
+.aura-element[data-animation='snow-fx'][id*='aura_']{
+    border-radius:50%;
+    overflow:hidden;
+    background: #0000 !important;
+}
+
+[data-animation='snow-fx'] .islight:before,
+.aura-element[data-animation='snow-fx'][id*='aura_']:before,
+[data-animation='snow-fx'] .islight:after,
+.aura-element[data-animation='snow-fx'][id*='aura_']:after
+{
+    animation: snow 5s infinite linear;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: var(--gradient);
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1166273142138884106/snow.png");
+    -webkit-mask-size: contain;
+    overflow:hidden;
+    border-radius:50%;
+}
+
+[data-animation='snow-fx'] .islight:before,
+.aura-element[data-animation='snow-fx'][id*='aura_']:before
+{
+    animation: snow 5s infinite 2.5s linear;
+    opacity:0;
+}
+
+
+[data-animation='bubble-fx'] .islight,
+.aura-element[data-animation='bubble-fx'][id*='aura_']{
+    border-radius:50%;
+    overflow:hidden;
+    background: #0000 !important;
+    filter:blur(2px);
+}
+[data-animation='bubble-fx'] .islight:before,
+.aura-element[data-animation='bubble-fx'][id*='aura_']:before,
+[data-animation='bubble-fx'] .islight:after,
+.aura-element[data-animation='bubble-fx'][id*='aura_']:after
+{
+    animation: bubble 6s infinite linear;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    background-image: var(--gradient);
+    -webkit-mask-image: url("https://cdn.discordapp.com/attachments/1164788038296150016/1166273143359414312/bubble.png");
+    -webkit-mask-size: contain;
+}
+
+[data-animation='bubble-fx'] .islight:before,
+.aura-element[data-animation='bubble-fx'][id*='aura_']:before
+{
+    animation: bubble 6s infinite 3s linear;
+    rotate:200deg;
+}
+
+
+
+
+@keyframes bubble {
+     0%{
+        opacity: 0;
+        transform: scale(1);
+    }
+    50%{
+         opacity: 1;
+    }
+    100%{
+        transform: scale(1.4);
+        opacity: 0;
+    }
+}
+
+
+
+
+@keyframes lightning {
+    0%{
+        opacity: 0;
+    }
+    20%{
+        opacity: 0;
+    }
+    21%{
+        scale: 3.5;
+       opacity: 1;
+    }
+    25%{
+        opacity: 0;
+        scale: 3.5;
+    }
+    70%{
+        opacity: 0;
+    }
+    71%{
+        scale: 5.5;
+       opacity: 1;
+    }
+    75%{
+        scale: 5.5;
+        opacity: 0;
+    }
+    100%{
+        opacity: 0%;
+    }
+}
+
+@keyframes snow {
+    0%{
+        opacity: 0;
+        transform: scale(1);
+    }
+    50%{
+         opacity: 0.5;
+    }
+    100%{
+        transform: scale(0.5);
+        opacity: 0;
+    }
+}
+
+
+
 @keyframes aurafx-fairy {
     0% {
         transform: scale(0.95) skew(1deg, 0deg);
