@@ -3062,7 +3062,10 @@ function setTokenAuras (token, options) {
 							background-image:${auraBg};
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
-							display:${showAura}
+							display:${showAura};
+							--color1: ${options.aura1.color};
+							--color2: ${options.aura2.color};	
+							--gradient: ${auraBg};
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3114,6 +3117,9 @@ function setTokenLight (token, options) {
 							background-image:${lightBg};
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							--color1: ${options.aura1.color};
+							--color2: ${options.aura2.color};
+							--gradient: ${lightBg};
 							`;
 
 

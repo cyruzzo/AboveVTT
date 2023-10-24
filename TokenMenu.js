@@ -723,7 +723,9 @@ function build_token_auras_inputs(tokenIds) {
 		'Fairy': 'fairy-fx',
 		'Magic Circle': 'magic-circle-fx',
 		'Magic Circle 2': 'magic-circle-2-fx',
-		'Hurricane': 'hurricane-fx'	
+		'Hurricane': 'hurricane-fx',
+		'Snow': 'snow-fx',
+		'Bubble': 'bubble-fx'
 	}
 	for(let option in animationPresets){
 		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
@@ -1098,7 +1100,9 @@ function build_token_light_inputs(tokenIds) {
 		'Fairy': 'fairy-fx',
 		'Magic Circle': 'magic-circle-fx',
 		'Magic Circle 2': 'magic-circle-2-fx',
-		'Hurricane': 'hurricane-fx'			
+		'Hurricane': 'hurricane-fx',
+		'Snow': 'snow-fx',
+		'Bubble': 'bubble-fx'				
 	}
 	let darkVisionType = {
 		'Darkvision': 'darkvision',	
