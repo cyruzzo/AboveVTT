@@ -526,7 +526,7 @@ function check_single_token_visibility(id){
 	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-	let selector = "div.token[data-id='" + id + "']";
+	let selector = "#tokens div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
@@ -542,7 +542,7 @@ function check_single_token_visibility(id){
 	if($(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
 	}
-	if (hideThisTokenInFogOrDarkness || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
+	if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
