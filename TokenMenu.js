@@ -533,16 +533,18 @@ function token_context_menu_expanded(tokenIds, e) {
 		}
 	}
 	let lightRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Vision/Light</div></div>`);
+
 	lightRow.hover(function (hoverEvent) {
 		context_menu_flyout("light-flyout", hoverEvent, function(flyout) {
 			flyout.append(build_token_light_inputs(tokenIds));
 		})
 	});
-	if(window.CURRENT_SCENE_DATA.disableSceneVision != true && (window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer())))){
+	if(window.CURRENT_SCENE_DATA.disableSceneVision != true && (window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()) && tokens[0].options.auraislight==true))){
 		if (!someTokensAreAoe) {
 			body.append(lightRow);
 		}
 	}
+
 	if(window.DM) {
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
@@ -1141,18 +1143,8 @@ function build_token_light_inputs(tokenIds) {
 		],
 		defaultValue: false
 	};
-	let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
-		console.log(`${name} setting is now ${newValue}`);
-		tokens.forEach(token => {
-			token.options[name] = newValue;
-			token.place_sync_persist();
-		});
-		if (newValue) {
-			wrapper.find(".token-config-aura-wrapper").show();
-		} else {
-			wrapper.find(".token-config-aura-wrapper").hide();
-		}
-	});
+
+	
 
 	const revealvisionOption = {
 		name: "share_vision",
@@ -1172,8 +1164,22 @@ function build_token_light_inputs(tokenIds) {
 		});
 	});
 
-
+	let enabledLightInput = build_toggle_input( lightOption, auraIsLightEnabled, function(name, newValue) {
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name] = newValue;
+			token.place_sync_persist();
+		});
+		if (newValue) {
+			wrapper.find(".token-config-aura-wrapper").show();
+		} else {
+			wrapper.find(".token-config-aura-wrapper").hide();
+		}
+	});
 	wrapper.prepend(enabledLightInput);
+	if(!window.DM){
+		enabledLightInput.hide();
+	}
 
 	wrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
 	

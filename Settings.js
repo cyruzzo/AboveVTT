@@ -107,6 +107,16 @@ function token_setting_options() {
 			defaultValue: false
 		},
 		{
+			name: 'underDarkness',
+			label: 'Move token below darkness/light',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Below darkness", description: "The token will appear below darkness/light." },
+				{ value: false, label: "Hidden in Fog", description: "The token will appear above darkness/light" }
+			],
+			defaultValue: false
+		},
+		{
 			name: 'disablestat',
 			label: 'Remove HP/AC',
 			type: 'toggle',
@@ -175,6 +185,16 @@ function token_setting_options() {
 			options: [
 				{ value: true, label: 'Visible', description: "The token's name is visible to players" },
 				{ value: false, label: 'Hidden', description: "The token's name is hidden from players" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'alwaysshowname',
+			label: 'Always display name',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Always display name", description: "Always displays name." },
+				{ value: false, label: "Only display name on hover", description: "Only displays name on hover" }
 			],
 			defaultValue: false
 		},
@@ -911,6 +931,7 @@ function update_token_base_visibility(container) {
 		findOtherOption("enablepercenthpbar").hide();
 		findOtherOption("player_owned").hide();
 		findOtherOption("hidestat").hide();
+		findOtherOption("underDarkness").hide();
 	} 
 	else{
 		findOtherOption("restrictPlayerMove").show();
@@ -921,6 +942,7 @@ function update_token_base_visibility(container) {
 		findOtherOption("enablepercenthpbar").show();
 		findOtherOption("player_owned").show();
 		findOtherOption("hidestat").show();
+		findOtherOption("underDarkness").show();
 	}
 }
 

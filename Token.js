@@ -722,9 +722,12 @@ class Token {
 		}
 
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage);
-		let tokenWidth = (this.options.tokenStyleSelect == 'definitelyNotAToken') ? this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor : this.sizeWidth();
-		let tokenHeight =  (this.options.tokenStyleSelect == 'definitelyNotAToken') ? this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor : this.sizeHeight();
-			
+		let tokenWidth =  this.sizeWidth();
+		let tokenHeight = this.sizeHeight();
+		
+
+
+
 		if(this.options.disableaura || !this.hp || !this.maxHp) {
 			token.css('--token-hp-aura-color', 'transparent');
 			token.css('--token-temp-hp', "transparent");
@@ -748,8 +751,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 1;
-				tokenHeight = tokenHeight - 1;
+				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (1/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 1;
+				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (1/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 1;
 			}
 			token.css('--token-border-color', this.options.color);
 			$("token:before").css('--token-border-color', this.options.color);
@@ -776,29 +779,29 @@ class Token {
 				if(imageWidth != 0 && imageHeight != 0){
 
 					if( imageWidth == imageHeight ){
-						token.children('.token-image').css("min-width", tokenWidth + 'px');
-						token.children('.token-image').css("min-height", tokenHeight + 'px');
+						token.children('.token-image').css("--min-width", tokenWidth + 'px');
+						token.children('.token-image').css("--min-height", tokenHeight + 'px');
 					}
 					else if(imageWidth > imageHeight) {
-						token.children('.token-image').css("min-width", tokenWidth + 'px');
+						token.children('.token-image').css("--min-width", tokenWidth + 'px');
 						token.children('img').css("min-height", '');
 					}
 					else {
-						token.children('.token-image').css("min-height", tokenHeight + 'px');
-						token.children('.token-image').css("min-width", '');
+						token.children('.token-image').css("--min-height", tokenHeight + 'px');
+						token.children('.token-image').css("--min-width", '');
 					}
 									
 				}
 			}
 		}
 		else {
-			token.children('.token-image').css("min-width", "");
-			token.children('.token-image').css("min-height", "");
+			token.children('.token-image').css("--min-width", "");
+			token.children('.token-image').css("--min-height", "");
 		}
 		
 		token.children('.token-image').css({		
-		    'max-width': tokenWidth + 'px',
-			'max-height': tokenHeight + 'px',
+		    '--max-width': tokenWidth + 'px',
+			'--max-height': tokenHeight + 'px',
 		});
 
 		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
@@ -1502,7 +1505,7 @@ class Token {
 			
 			let selector = "tr[data-target='"+this.options.id+"']";
 			let entry = $("#combat_area").find(selector);
-			if((!(this.options.name) || !(this.options.revealname)) && !window.DM) {
+			if((!(this.options.name) && !(this.options.revealname)) && !window.DM) {
 				old.toggleClass('hasTooltip', false);
 				entry.toggleClass('hasTooltip', false);
 			}	
@@ -1588,6 +1591,7 @@ class Token {
 				setTokenAuras(old, this.options);
 				setTokenLight(old, this.options);
 				setTokenBase(old, this.options);
+				setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
 
 				if(!(this.options.square) && !oldImage.hasClass('token-round')){
 					oldImage.addClass("token-round");
@@ -1679,7 +1683,7 @@ class Token {
 			if (typeof this.options.tokendataname !== "undefined") {
 				old.attr("data-tokendataname", this.options.tokendataname);
 			}
-			if(this.options.darkness || this.options.tokenStyleSelect == 'definitelyNotAToken'){
+			if(this.options.darkness){
 				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
 					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
@@ -1696,7 +1700,8 @@ class Token {
 				})
 
 			}
-			if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
+			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
+					old.toggleClass('underDarkness', true);
 					if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 						let tokenClone = old.clone();
 						tokenClone.css({
@@ -1711,7 +1716,7 @@ class Token {
 							'--z-index-diff': old.css('--z-index-diff')
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-				        tokenClone.find('.conditions').remove();      
+				        tokenClone.find('div:not(.base)').remove();      
 				        $('#map_items').append(tokenClone);
 					}
 					else{
@@ -1729,6 +1734,7 @@ class Token {
 							'--token-scale': old.css('--token-scale'),
 		    				'--token-rotation': old.css('--token-rotation')
 						})
+						copyToken.find('div:not(.base)').remove()
 					}
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
@@ -1740,6 +1746,7 @@ class Token {
 			}  	
 			else{
 	    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
+	    		old.toggleClass('underDarkness', false);
 	    	}
 			
 			console.groupEnd()
@@ -1862,7 +1869,8 @@ class Token {
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
 				else{
-					tokenImage.css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px" );
+					let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
+					tokenImage.css("--token-border-width",tokenBorderWidth);
 				}
 				
 				tokenImage.css("max-height", this.options.size);
@@ -2522,7 +2530,8 @@ class Token {
 				
 			});
 			
-			if(this.options.tokenStyleSelect == 'definitelyNotAToken'){
+			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness){
+				tok.toggleClass('underDarkness', true);
 				if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 					let tokenClone = tok.clone();
 					tokenClone.css({
@@ -2534,10 +2543,9 @@ class Token {
 						height: `var(--token-height)`,
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-			        tokenClone.find('.conditions').remove();      
+			        tokenClone.find('div:not(.base)').remove();      
 			        $('#map_items').append(tokenClone);
-				}
-			
+				}	
 		    }
 
 
@@ -2555,6 +2563,8 @@ class Token {
 			new Promise(() => toggle_player_selectable(this, token)),
 			new Promise(debounceLightChecks),
 		]);
+		$(`[data-notatoken='notatoken_${this.options.id}']`).find('div:not(.base)').remove();
+
 		console.groupEnd()
 
 		return true;
@@ -3267,9 +3277,9 @@ function setTokenBase(token, options) {
 		token.children("img").addClass("preserve-aspect-ratio");
 	}
 
-	if(options.tokenStyleSelect != 'labelToken'){
-		token.toggleClass('labelToken', false);
-	}
+	
+	token.toggleClass('labelToken', (options.tokenStyleSelect == 'labelToken' || options.alwaysshowname == true ));
+
 
 	if(options.tokenStyleSelect != 'definitelyNotAToken'){
 		token.toggleClass('definitelyNotAToken', false);
