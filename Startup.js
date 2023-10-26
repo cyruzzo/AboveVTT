@@ -54,6 +54,8 @@ $(function() {
           // this should never happen because `is_abovevtt_page` covers all the above cases, but cover all possible cases anyway
           throw new Error(`Invalid AboveVTT page: ${window.location.href}`)
         }
+      }).then(()=>{
+        addExtensionPathStyles();
       }).then(() => {     
 
         let lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
@@ -143,6 +145,82 @@ $(function() {
       });  
   }
 });
+
+function addExtensionPathStyles(){
+  let styles = `<style id='aboveExtensionPathStyles'>
+    .aoe-style-fire{
+      background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fire_background.png);
+    }
+    .aoe-style-lightning{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/lightninig.png);
+    }
+    .aoe-style-slashing{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/slashing.png);
+    }
+    .aoe-style-darkness{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fire_background.png);
+    }
+    .aoe-style-fog-cloud{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fog_cloud_tileable.png) !important;
+    }
+    .aoe-style-hypnotic-pattern{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/hypnotic-pattern.png) !important;
+    }
+    .aoe-style-stinking-cloud{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fog_cloud_tileable.png) !important;
+    }
+    .aoe-style-web{
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/tileable3pxsquareweb.png) !important;
+    }
+
+    [data-animation='fairy-fx'] .islight,
+    .aura-element[data-animation='fairy-fx'][id*='aura_'] {
+        -webkit-mask-image: url('${window.EXTENSION_PATH}images/Animation Masks/fairys.png');
+    }
+
+    [data-animation='fairy-fx'] .islight:before,
+    .aura-element[data-animation='fairy-fx'][id*='aura_']:before {
+        -webkit-mask-image: url('${window.EXTENSION_PATH}images/Animation Masks/fairys.png');
+    }
+
+    [data-animation='magic-circle-fx'] .islight,
+    .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/magiccircle1.png");
+    }
+
+    [data-animation='magic-circle-2-fx'] .islight,
+    .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/magiccircle2.png");
+    }
+    [data-animation='hurricane-fx'] .islight,
+    .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/hurricane_cloud.png");
+    }
+
+    [data-animation='hurricane-fx'] .islight:before,
+    .aura-element[data-animation='hurricane-fx'][id*='aura_']:before
+    {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/lightning_2.png");
+    }
+    [data-animation='snow-fx'] .islight:before,
+    .aura-element[data-animation='snow-fx'][id*='aura_']:before,
+    [data-animation='snow-fx'] .islight:after,
+    .aura-element[data-animation='snow-fx'][id*='aura_']:after
+    {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/snow.png");
+    }
+    [data-animation='bubble-fx'] .islight:before,
+    .aura-element[data-animation='bubble-fx'][id*='aura_']:before,
+    [data-animation='bubble-fx'] .islight:after,
+    .aura-element[data-animation='bubble-fx'][id*='aura_']:after
+    {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/bubble.png");
+    }
+  </style>`
+
+
+  $('body').append(styles);
+}
 
 function load_external_script(scriptUrl) {
   return new Promise(function (resolve, reject) {
