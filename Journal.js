@@ -206,7 +206,7 @@ class JournalManager{
 			// Make the section_chapter sortable
 			section_chapter.sortable({
 				refreshPositions: true,
-				connectWith: ".folder-item-list",
+				connectWith: "#journal-panel .folder",
 				items: '.sidebar-list-item-row',
 		        receive: function(event, ui) {
 		            // Called only in case B (with !!sender == true)
