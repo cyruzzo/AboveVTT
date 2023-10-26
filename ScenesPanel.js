@@ -259,7 +259,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 		let lightColor = hexToRGB(clippedColor, intensity);
 		let options = {
 			...default_options(),
-			imgsrc : `https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png`,
+			imgsrc : `https://www.googleapis.com/drive/v3/files/1_QnkvmGct2dzeu-pBO9ofT-828pWvCcn?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`,
 			hidden : true,
 			tokenStyleSelect : 'definitelyNotAToken',
 			light1 : {
@@ -914,8 +914,8 @@ function edit_scene_vision_settings(scene_id){
 	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
 	darknessFilterRange.after(darknessNumberInput);
 
-	let playerPreviewVisibleMap = $('<img class="player_map_preview zero_darkness" src="https://media.discordapp.net/attachments/1127918981303504946/1127920961946124430/revealed.jpg"></img>')
-	let playerPreviewHiddenMap = $('<img class="player_map_preview hundred_darkness" src="https://media.discordapp.net/attachments/1127918981303504946/1127920962218774598/darkness.jpg"></img>')
+	let playerPreviewVisibleMap = $(`<img class="player_map_preview zero_darkness" src="${window.EXTENSION_PATH}images/Darkness Preview Images/revealed.jpg"></img>`)
+	let playerPreviewHiddenMap = $(`<img class="player_map_preview hundred_darkness" src="${window.EXTENSION_PATH}images/Darkness Preview Images/darkness.jpg"></img>`)
 	
 
 	if(darknessFilterRange.val() == 100){

@@ -3206,14 +3206,14 @@ function init_help_menu() {
 					<div id="tab22">
 						<div class='help-compatible-tool'>
 							<a href='https://dddice.com' target="_blank">
-								<img class='compatible-tool-icon dddice-icon' src='https://media.discordapp.net/attachments/1131333685908623370/1131333688416817294/logo-light-fs8.png'/>
+								<img class='compatible-tool-icon dddice-icon' src='${window.EXTENSION_PATH}images/Compatible Tools/logo-light-fs8.png'/>
 								<span class='compatible-tool-title'>dddice</span>
 							</a>
 							<span class='compatible-tool-desc'>A multiplayer dice roller that allows you to roll, create, and collect 3D dice with your party or community.</span>
 						</div>
 						<div class='help-compatible-tool'>
 							<a href='https://www.dungeonalchemist.com/' target="_blank">
-								<img class='compatible-tool-icon da-icon' src='https://cdn.discordapp.com/attachments/1131333685908623370/1131333688693620796/DungeonAlchemist-Logo-Softshadow-0907.png'/>
+								<img class='compatible-tool-icon da-icon' src='${window.EXTENSION_PATH}images/Compatible Tools/DungeonAlchemist-Logo-Softshadow-0907.png'/>
 								<span class='compatible-tool-title'>Dungeon Alchemist</span>
 							</a>
 							<span class='compatible-tool-desc'>An AI-powered map-making application that enables you to make high-quality content fast! Export maps as a UVTT file to import maps, light and walls into AboveVTT.</span>

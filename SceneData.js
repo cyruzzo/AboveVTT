@@ -178785,7 +178785,7 @@ const SCENE_IMPORT_DATA = [
 	},
 	{
 		"title": "Weasel Wargaming",
-		"logo": "https://cdn.discordapp.com/attachments/1083353621778923581/1151198085679153213/AOPolaSIPULLp1Vm-Ud_YVSjV6MNsyFCgLfBNMgwE01ECAs176-c-k-c0x00ffffff-no-rj.png",
+		"logo": `${window.EXTENSION_PATH}images/Tokens-Overlays/warweasel.png`,
 		"scenes": [
 			{
 				player_map: "https://www.youtube.com/watch?v=ErBd9sPBAZc",
