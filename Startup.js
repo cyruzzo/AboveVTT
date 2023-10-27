@@ -61,7 +61,7 @@ $(function() {
         if(lastSendToDefault != null){
           $(`[class*='listItemTextRoot']:contains('${lastSendToDefault}')`).click();
         }
-        $('body').toggleClass('reduceMovement', window.EXPERIMENTAL_SETTINGS['reduceMovement']);
+        $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;
