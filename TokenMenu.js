@@ -1347,7 +1347,7 @@ function create_light_presets_edit(){
 	dialog.append(light_presets);
 
 	let titleRow = $(`
-		<div class='light_preset_title_row' data-index='${i}'>
+		<div class='light_preset_title_row'>
 				<div>
 					<h3 style="margin-bottom:0px;">Name</h3>
 				</div>
