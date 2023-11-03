@@ -444,6 +444,7 @@ class JournalManager{
 				if( (! window.DM) && (! self.notes[note_id].player) )
 					continue;
 				
+				let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
 				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
 				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>`);
 
@@ -524,7 +525,7 @@ class JournalManager{
 					}
 				});
 								
-
+				entry.append(prependIcon);
 				entry.append(entry_title);
 
 				if(window.DM){
@@ -655,6 +656,7 @@ class JournalManager{
 				
 			visibility_toggle.change(function(){
 				window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
+				window.JOURNAL.build_journal();
 			});
 			visibility_container.append(visibility_toggle);
 			visibility_container.append(" visible to players");
@@ -1052,6 +1054,7 @@ class JournalManager{
 			note: this.notes[id],
 			id: id
 		})
+
 		this.persist();
 	}
 	
