@@ -1864,7 +1864,7 @@ class Token {
 					tokenImage.addClass("token-round");
 				}
 
-				tokenImage.attr("src", this.options.imgsrc);
+				tokenImage.attr("src", await getGoogleDriveAPILink(this.options.imgsrc, false));
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");
@@ -1875,7 +1875,7 @@ class Token {
 				
 				tokenImage.css("max-height", this.options.size);
 				tokenImage.css("max-width", this.options.size);
-				tokenImage.attr("src", this.options.imgsrc);
+		
 				tok.toggleClass("isAoe", false);
 
 			} else {
