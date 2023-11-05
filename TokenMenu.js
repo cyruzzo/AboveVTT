@@ -166,75 +166,113 @@ function token_context_menu_expanded(tokenIds, e) {
 				let locked = door.hasClass('locked');
 				let secret = door.hasClass('secret');
 
-				const type = isDoor ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (!locked ? 3 : 1)
+				const type = isDoor ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
 
 				isOpen = !locked ? 'closed' : isOpen;
 
 				door.toggleClass('locked', !locked);
-	        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-	                let data = ['line',
-								 'wall',
-								 doorColors[type][isOpen],
-								 x1,
-								 y1,
-								 x2,
-								 y2,
-								 12,
-								 doors[0][8]
-					];	
-					window.DRAWINGS.push(data);
+				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            
+        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+                let data = ['line',
+							 'wall',
+							 doorColors[type][isOpen],
+							 x1,
+							 y1,
+							 x2,
+							 y2,
+							 12,
+							 doors[0][8],
+							 doors[0][9]
+				];	
+				window.DRAWINGS.push(data);
 
-					redraw_light_walls();
-					redraw_light();
+				redraw_light_walls();
+				redraw_light();
 
 
-					sync_drawings();
+				sync_drawings();
 
 				clickedItem.removeClass("single-active all-active some-active active-condition");
 
 				clickedItem.addClass(`${!locked ? 'single-active active-condition' : ''}`);
 			});
 			body.append(lockedButton);
-
-
+		
 			
-			if(door.children('.door').length>0){
-				let secretButton = $(`<button class="${door.hasClass('secret') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
-				secretButton.off().on("click", function(clickEvent){
-					let clickedItem = $(this);
-					let locked = door.hasClass('locked');
-					let secret = door.hasClass('secret');
+			let secretButton = $(`<button class="${door.hasClass('secret') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
+			secretButton.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				let locked = door.hasClass('locked');
+				let secret = door.hasClass('secret');
 
-					const type = !secret ? (locked ? 5 : 4) : (locked ? 2 : 0)
+				const type = isDoor ? (!secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (locked ? (!secret ? 7 : 3) : (!secret ?  6 : 1)) 
 
-					isOpen = locked ? 'closed' : isOpen;
+				isOpen = locked ? 'closed' : isOpen;
 
-					door.toggleClass('secret', !secret);
-		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		                let data = ['line',
-									 'wall',
-									 doorColors[type][isOpen],
-									 x1,
-									 y1,
-									 x2,
-									 y2,
-									 12,
-									 doors[0][8]
-						];	
-						window.DRAWINGS.push(data);
+				door.toggleClass('secret', !secret);
+				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            
+        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+                let data = ['line',
+							 'wall',
+							 doorColors[type][isOpen],
+							 x1,
+							 y1,
+							 x2,
+							 y2,
+							 12,
+							 doors[0][8],
+							 doors[0][9]
+				];	
+				window.DRAWINGS.push(data);
 
-						redraw_light_walls();
-						redraw_light();
+				redraw_light_walls();
+				redraw_light();
 
 
-						sync_drawings();
+				sync_drawings();
 
-					clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.removeClass("single-active all-active some-active active-condition");
 
-					clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
-				});
-				body.append(secretButton);
-			}
+				clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
+			});
+			body.append(secretButton);
+			let hideButton = $(`<button class="${door.hasClass('hiddenDoor') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hidden-show walls to view</button>`)
+			hideButton.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				let hidden = door.hasClass('hiddenDoor');
+				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            
+        		
+               
+				door.toggleClass('hiddenDoor', !hidden);
+        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+                let data = ['line',
+							 'wall',
+							 doors[0][2],
+							 x1,
+							 y1,
+							 x2,
+							 y2,
+							 12,
+							 doors[0][8],
+							 !hidden
+				];	
+				window.DRAWINGS.push(data);
+
+				redraw_light_walls();
+				redraw_light();
+
+
+				sync_drawings();
+
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+
+				clickedItem.addClass(`${!hidden ? 'single-active active-condition' : ''}`);
+			});
+			body.append(hideButton);
+			
 
 		}
 		$("#tokenOptionsPopup").addClass("moveableWindow");

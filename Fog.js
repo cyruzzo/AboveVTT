@@ -24,6 +24,14 @@ const doorColors = {
 		'open': "rgba(50, 0, 180, 0.5)", // secret locked door
 		'closed': "rgba(50, 0, 180, 1)"
 	},
+	6: {
+		'open': "rgba(50, 255, 255, 0.5)", // secret window
+		'closed': "rgba(50, 255, 255, 1)"
+	},
+	7: {
+		'open': "rgba(50, 180, 180, 0.5)", // secret locked window
+		'closed': "rgba(50, 180, 180, 1)"
+	},
 };
 let doorColorsArray = [];
 
@@ -1401,7 +1409,7 @@ function redraw_light_walls(clear=true){
 	
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, hidden] = drawing_clone;
 
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
@@ -1416,7 +1424,7 @@ function redraw_light_walls(clear=true){
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}']`);
-
+        let hiddenDoor = hidden ? ` hiddenDoor` : ``;
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
@@ -1424,13 +1432,14 @@ function redraw_light_walls(clear=true){
 			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
 
 
-			let doorType = (type == 1 || type == 3) ? `window` : `door`;
+			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : `door`;
 			
-			let locked = (type == 2 || type == 3 || type == 5) ? ` locked` : ``;
-			let secret = (type == 4 || type == 5) ? ` secret` : ``;
+			let locked = (type == 2 || type == 3 || type == 5 || type == 7) ? ` locked` : ``;
+			let secret = (type == 4 || type == 5 || type == 6 || type == 7) ? ` secret` : ``;
+		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			if(window.DM || secret == ''){
-				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
 													<div class='${doorType} background'><div></div></div>
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>
@@ -1438,7 +1447,7 @@ function redraw_light_walls(clear=true){
 				openCloseDoorButton.off('click.doors').on('click.doors', function(){
 						let locked = $(this).hasClass('locked');
 						let secret = $(this).hasClass('secret');
-						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : locked ? 3 : 1
+						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
 						if(!$(this).hasClass('locked')){
 							open_close_door(x, y, width, height, type)
 						}
@@ -1447,20 +1456,20 @@ function redraw_light_walls(clear=true){
 					$(this).toggleClass('ignore-hover', false);
 				});
 
-
-				$('#tokens').append(openCloseDoorButton);
+				if(hidden != true || displayWalls)
+					$('#tokens').append(openCloseDoorButton);
 				doorButton = openCloseDoorButton;
 			}
 		}
 		else if (doorColorsArray.includes(color)){		
-			let secret = (type == 4 || type == 5) ? ` secret` : ``;
-			if(!window.DM && secret == ' secret')
+			let secret = (type == 4 || type == 5 || type == 6 || type == 7) ? ` secret` : ``;
+			if(!window.DM && secret == ' secret' || (hidden == true && !displayWalls))
 				doorButton.remove()
 			else{
-				let locked = (type == 2 || type == 3 || type == 5) ? ` locked` : ``;
+				let locked =(type == 2 || type == 3 || type == 5 || type == 7) ? ` locked` : ``;
 				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-				if(doorButton.attr('class') != `door-button${locked}${secret}${open}`){
-					doorButton.attr('class', `door-button${locked}${secret}${open}`)
+				if(doorButton.attr('class') != `door-button${locked}${secret}${open}${hiddenDoor}`){
+					doorButton.attr('class', `door-button${locked}${secret}${open}${hiddenDoor}`)
 					doorButton.toggleClass('ignore-hover', true);
 				}
 			}	
@@ -1642,7 +1651,8 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 x2,
 				 y2,
 				 12,
-				 doors[0][8]
+				 doors[0][8],
+				 doors[0][9]
 				 ];	
 	window.DRAWINGS.push(data);
 
@@ -3610,7 +3620,9 @@ function get_available_doors(){
 		2: `Locked Door`,
 		3: `Locked Window`,
 		4: `Secret Door`,
-		5: `Secret Locked Door`
+		5: `Secret Locked Door`,
+		6: `Secret Window`,
+		7: `Secret Locked Window`
 	}
 }
 
@@ -4221,7 +4233,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
-	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3) {
+	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3 && walls[j].c != 6 && walls[j].c != 7) {
 	          	recordLight = dist;          	
 		        if(dist == lightRadius){
 		          	pt = {
