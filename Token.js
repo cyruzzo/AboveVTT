@@ -1864,7 +1864,7 @@ class Token {
 					tokenImage.addClass("token-round");
 				}
 
-				tokenImage.attr("src", await getGoogleDriveAPILink(this.options.imgsrc, false));
+				tokenImage.attr("src", getGoogleDriveAPILink(this.options.imgsrc, false));
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");

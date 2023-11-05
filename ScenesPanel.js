@@ -152,16 +152,13 @@ async function getUvttData(url){
 	return jsonData;
 }
 
-async function getGoogleDriveAPILink(url, date=true){
+function getGoogleDriveAPILink(url, date=true){
 	let api_url = url;
 	if(url.startsWith('https://drive.google.com')){
 		let parsed_url = parse_img(url);
 		let fileid = parsed_url.split('=')[1];
 		let dateAttr = date == true ? `&date=${new Date().getTime()}` : '';
-		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?&fields=webContentLink&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
-		await $.getJSON(api_url, function(data){
-			api_url = data.webContentLink;
-		});
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?&alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 	}
 
 	return api_url;
