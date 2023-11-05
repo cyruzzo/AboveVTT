@@ -4334,17 +4334,15 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 function detectInLos(x, y) {
 	let canvas = window.moveOffscreenCanvasMask;
 	let ctx = canvas.getContext("2d", { willReadFrequently: true });
-	const pixeldata = ctx.getImageData(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
-	const pixeldata1 = ctx.getImageData((x-1)/window.CURRENT_SCENE_DATA.scale_factor, (y-1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
-	const pixeldata2 = ctx.getImageData((x+1)/window.CURRENT_SCENE_DATA.scale_factor, (y+1)/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+	const pixeldata = ctx.getImageData((x-2)/window.CURRENT_SCENE_DATA.scale_factor, (y-2)/window.CURRENT_SCENE_DATA.scale_factor, 4, 4).data;
+
+
+	for(let i=0; i<pixeldata.length; i+=4){
+		if(pixeldata[i] <= 5)
+			return false;
+	}
+	return true;
 	
-	if (pixeldata[2] <= 5 || pixeldata1[2] <= 5 || pixeldata2[2] <= 5 )
-	{	
-		return false;			
-	}
-	else{
-		return true;
-	}
 }
 
 async function redraw_light(){
