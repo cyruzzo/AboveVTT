@@ -6485,7 +6485,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     background: #000;
     z-index: 9;
     opacity: 1;
-    filter:blur(calc(10px / var(--scene-scale)));
+    filter:blur(calc(5px / var(--scene-scale)));
 }
 
 #text_div{

@@ -345,7 +345,7 @@ function filter_token_list(searchTerm) {
     }
 
     console.log("filter_token_list searchTerm", searchTerm)
-
+    $('.custom-token-list').hide();
     redraw_token_list(searchTerm);
 
     if (searchTerm.length > 0) {
@@ -372,7 +372,7 @@ function filter_token_list(searchTerm) {
     open5e_monsters = [];
     inject_monster_tokens(searchTerm, 0);
     getOpen5e(open5e_monsters, searchTerm);
-
+     $('.custom-token-list').show();
 }
 
 /**

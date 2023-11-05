@@ -152,13 +152,12 @@ async function getUvttData(url){
 	return jsonData;
 }
 
-function getGoogleDriveAPILink(url, date=true){
+function getGoogleDriveAPILink(url){
 	let api_url = url;
 	if(url.startsWith('https://drive.google.com')){
 		let parsed_url = parse_img(url);
 		let fileid = parsed_url.split('=')[1];
-		let dateAttr = date == true ? `&date=${new Date().getTime()}` : '';
-		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?&alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 	}
 
 	return api_url;
