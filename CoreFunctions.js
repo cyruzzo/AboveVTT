@@ -1064,6 +1064,9 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       container.css("left", container.data("prev-minimized-left"));
       container.height(23);
       container.width(200);
+      if(container.find('#sourceChapterIframe').length>0){
+          container.data("prev-scroll", $('#sourceChapterIframe')[0].contentWindow.scrollY);
+      }  
       titleBar.addClass("minimized");
       titleBar.removeClass("restored");
       titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
@@ -1077,6 +1080,9 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       titleBar.addClass("restored");
       titleBar.removeClass("minimized");
       titleBar.find(".title_bar_text").remove();
+      if(container.find('#sourceChapterIframe').length>0){
+        $('#sourceChapterIframe')[0].contentWindow.scrollTo(0, container.data("prev-scroll"));
+      }
     }
   });
 
