@@ -1392,6 +1392,16 @@ div#scene_properties form > div {
     color: #dc0000;
 }
 
+.door-hidden{
+    padding: none;
+}
+
+.door-hidden.material-icons:before,
+.door-hidden.material-icons:hover:before {
+    content:"\e76e"; 
+    font-family: "Material Icons", sans-serif !important;
+}
+
 .condition-lock.locked.material-symbols-outlined:before,
 .condition-lock.material-symbols-outlined:hover:before {
     content:"\e897"; 
