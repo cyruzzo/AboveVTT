@@ -1431,7 +1431,7 @@ class Token {
 		console.groupEnd()
 	}
 
-	async place(animationDuration) {
+	place(animationDuration) {
 		
 		if(!window.CURRENT_SCENE_DATA){
 			// No scene loaded!
@@ -1448,6 +1448,10 @@ class Token {
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 		let self = this;
+		if(this.options.type == 'door'){
+			setTokenLight(old, this.options);
+			return;
+		}
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
@@ -1608,9 +1612,8 @@ class Token {
 					// if the option is true, the user actively enabled the option
 					oldImage.removeClass("preserve-aspect-ratio");
 				}
-
-
-			} else{
+			}
+			else{
 				// token is an aoe div that uses styles instead of an image
 				// do something with it maybe?
 				// re-calc the border width incase the token has changed size
@@ -1621,8 +1624,7 @@ class Token {
 			oldImage.css("max-height", this.sizeHeight());
 			oldImage.css("max-width", this.sizeWidth());
 
-			setTokenAuras(old, this.options);
-			setTokenLight(old, this.options);
+
 
 			if(this.options.lockRestrictDrop == undefined){
 				if(this.options.restrictPlayerMove){
@@ -3112,7 +3114,7 @@ function setTokenLight (token, options) {
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const tokenId = token.attr("data-id").replaceAll("/", "");
+	const tokenId = token.attr("data-id").replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
@@ -3127,8 +3129,8 @@ function setTokenLight (token, options) {
 							background-image:${lightBg};
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
-							--color1: ${options.aura1.color};
-							--color2: ${options.aura2.color};
+							--color1: ${options.light1.color};
+							--color2: ${options.light2.color};
 							--gradient: ${lightBg};
 							`;
 

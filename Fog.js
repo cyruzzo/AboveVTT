@@ -532,7 +532,7 @@ function check_single_token_visibility(id){
 	if (window.DM || $("#fog_overlay").is(":hidden"))
 		return;
 	let fogContext = $('#fog_overlay')[0].getContext('2d');
-	let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
@@ -609,7 +609,7 @@ async function do_check_token_visibility() {
 
 	for (let id in window.TOKEN_OBJECTS) {
 		promises.push(new Promise(function() {
-			let auraSelectorId = $(".token[data-id='" + id + "']").attr("data-id").replaceAll("/", "");
+			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
@@ -1476,7 +1476,7 @@ function redraw_light_walls(clear=true){
 			doorButton.find('.condition-container').remove();		
 		}
 		let id = `${x}${y}${window.CURRENT_SCENE_DATA.id}` 
-		doorButton.attr('data-id', `${x}${y}${window.CURRENT_SCENE_DATA.id}`)
+		doorButton.attr('data-id', `${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
 		doorButton.removeAttr('removeAfterDraw');
 
 
@@ -2431,6 +2431,10 @@ function drawing_mouseup(e) {
 				}
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
+						let wallId = `${window.DRAWINGS[j][3]}${window.DRAWINGS[j][4]}${window.CURRENT_SCENE_DATA.id}`;
+						if(window.TOKEN_OBJECTS[wallId.replaceAll('.', '')]){
+							window.TOKEN_OBJECTS[wallId.replaceAll('.', '')].delete(true)
+						}
 						window.DRAWINGS.splice(j, 1);
 						break;
 					}
@@ -2654,6 +2658,9 @@ function drawing_mouseup(e) {
 		// FIND TOKENS INSIDE THE AREA
 		let c = 0;
 		for (let id in window.TOKEN_OBJECTS) {
+			if(window.TOKEN_OBJECTS[id].options.type == 'door'){
+				continue;
+			}
 			let curr = window.TOKEN_OBJECTS[id];
 
 
@@ -2705,8 +2712,6 @@ function drawing_contextmenu(e) {
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
 	if (window.DRAWSHAPE === "polygon") {
-		window.BEGIN_MOUSEX.pop();
-		window.BEGIN_MOUSEY.pop();
 		if(window.BEGIN_MOUSEX.length > 0){
 			let canvas = document.getElementById("temp_overlay");
 			let ctx = canvas.getContext("2d");
@@ -3889,7 +3894,11 @@ function init_walls_menu(buttons){
 		if (r === true) {
 			// keep only non wall
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "wall");
-
+			for(let token in window.TOKEN_OBJECTS){
+				if(window.TOKEN_OBJECTS[token].options.type=='door'){
+					window.TOKEN_OBJECTS[token].delete(true);
+				}
+			}
 			redraw_light_walls();
 			redraw_light();
 			sync_drawings();
