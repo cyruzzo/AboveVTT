@@ -1394,6 +1394,7 @@ div#scene_properties form > div {
 
 .door-hidden{
     padding: none;
+    display:none;
 }
 
 .door-hidden.material-icons:before,
