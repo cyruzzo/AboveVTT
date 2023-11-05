@@ -6,6 +6,7 @@
  * Also holds notes attached to tokens
  * 
  */
+cached_journal_items = {};
 
 class JournalManager{
 	
@@ -791,7 +792,15 @@ class JournalManager{
 		}
 		
 	}
-
+	async getNotes(){
+	for(let note in window.JOURNAL.notes){
+	        if(window.JOURNAL.notes[note].ddbsource){
+            	await $.get(window.JOURNAL.notes[note].ddbsource, function(data){
+            		cached_journal_items[note] = data.replace(/<style[^>]*>.*<\/style>/g, '').replace(/<script[^>]*>.*<\/script>/g, '').replace(/<[^>]+>/g, '').replace(/([\r\n]+ +)+/g, '');;                	
+                });
+	        }
+	    }
+	}
 	add_journal_roll_buttons(target, tokenId=undefined){
 		console.group("add_journal_roll_buttons")
 		

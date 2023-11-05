@@ -1448,11 +1448,7 @@ class Token {
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 		let self = this;
-		if(this.options.type == 'door'){
-			setTokenLight(old, this.options);
-			debounceLightChecks();
-			return;
-		}
+
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
 
@@ -1472,6 +1468,12 @@ class Token {
 			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
+			if(this.options.type == 'door'){
+				this.options.size = 1;
+				setTokenLight(old, this.options);
+				debounceLightChecks();
+				return;
+			}
 			if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
 				check_single_token_visibility(this.options.id);
 
@@ -1867,7 +1869,7 @@ class Token {
 					tokenImage.addClass("token-round");
 				}
 
-				tokenImage.attr("src", getGoogleDriveAPILink(this.options.imgsrc, false));
+				tokenImage.attr("src", this.options.imgsrc);
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");

@@ -4218,7 +4218,7 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.y = y;
 };
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
 	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	let prevClosestWall = null;
@@ -4227,7 +4227,20 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let prevClosestBarrierPoint = null;
     let closestWall = null;
     let closestBarrier = null;
-
+    let token;
+    let x1;
+    let x2;
+    let y1;
+    let y2;
+    let tokenIsDoor;
+    if(auraId){
+    	let token = $(`#tokens [data-id='${auraId}']`)
+    	tokenIsDoor = token.hasClass('door-button');
+    	x1 = tokenIsDoor ? parseFloat(token.attr('data-x1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
+    	x2 = tokenIsDoor ? parseFloat(token.attr('data-x2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
+    	y1 = tokenIsDoor ? parseFloat(token.attr('data-y1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
+    	y2 = tokenIsDoor ? parseFloat(token.attr('data-y2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
+    }
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    
 	    let pt;
@@ -4243,18 +4256,21 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
 	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3 && walls[j].c != 6 && walls[j].c != 7) {
-	          	recordLight = dist;          	
-		        if(dist == lightRadius){
-		          	pt = {
-			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
-			          }
-	       		}	           	
-	          	closestLight = pt;
+	          	if(!tokenIsDoor || walls[j].a.x != x1 || walls[j].a.y != y1 || walls[j].b.x != x2 || walls[j].b.y != y2)
+      			{
+		          	recordLight = dist;          	
+			        if(dist == lightRadius){
+			          	pt = {
+				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+				          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+				          }
+		       		}	           	
+		          	closestLight = pt;
 
-		        if(dist != lightRadius){    	
-		          	closestWall = walls[j];
-		        }	         
+			        if(dist != lightRadius){    	
+			          	closestWall = walls[j];
+			        }	         
+  		       }
 	        }
 	        if(dist < recordMove){
 	        	recordMove = dist;
@@ -4520,7 +4536,7 @@ async function redraw_light(){
 			}
 			else{
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-				particleLook(context, walls, 100000, undefined, undefined, undefined, false);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 				window.lineOfSightPolygons[auraId] = {
 					polygon: lightPolygon,
 					move: movePolygon,
