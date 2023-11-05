@@ -425,7 +425,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     });
 }
 
-async function inject_monster_list_items(listItems) {
+function inject_monster_list_items(listItems) {
     let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
@@ -434,13 +434,13 @@ async function inject_monster_list_items(listItems) {
     let list = monsterFolder.find(`> .folder-item-list`);
     for (let i = 0; i < listItems.length; i++) {
         let item = listItems[i];
-        let row = await build_sidebar_list_row(item);
+        let row = build_sidebar_list_row(item);
         enable_draggable_token_creation(row);
         list.append(row);
     }
 }
 
-async function inject_open5e_monster_list_items(listItems = open5e_monsters) {
+function inject_open5e_monster_list_items(listItems = open5e_monsters) {
     let monsterFolder = find_html_row_from_path(RootFolder.Open5e.path, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
@@ -450,7 +450,7 @@ async function inject_open5e_monster_list_items(listItems = open5e_monsters) {
     for (let i = 0; i < listItems.length; i++) {
         let item = SidebarListItem.open5eMonster(listItems[i]);
         window.open5eListItems.push(item);
-        let row = await build_sidebar_list_row(item);
+        let row = build_sidebar_list_row(item);
         enable_draggable_token_creation(row);
         list.append(row);
     }
@@ -542,8 +542,8 @@ async function init_tokens_panel() {
 }
 
 
-async function redraw_token_list_item(item){
-    const row = await build_sidebar_list_row(item);
+function redraw_token_list_item(item){
+    const row = build_sidebar_list_row(item);
     let oldRow = $(`#${item.id}`);
     if (oldRow.length === 0) {
         oldRow = find_html_row_from_path(item.fullPath(), tokensPanel.body)
@@ -557,7 +557,7 @@ async function redraw_token_list_item(item){
  * @param searchTerm {string} the search term used to filter the list of tokens
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
-async function redraw_token_list(searchTerm, enableDraggable = true) {
+function redraw_token_list(searchTerm, enableDraggable = true) {
     if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
@@ -576,7 +576,7 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
 
     // first let's add our root folders
     for (let i = 0; i < tokens_rootfolders.length; i++) {
-        let row = await build_sidebar_list_row(tokens_rootfolders[i]);
+        let row = build_sidebar_list_row(tokens_rootfolders[i]);
         list.append(row);
     }
 
@@ -584,8 +584,8 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
     window.tokenListItems
         .filter(item => item.isTypeFolder())
         .sort(SidebarListItem.folderDepthComparator)
-        .forEach(async item => {
-            let row = await build_sidebar_list_row(item);
+        .forEach(item => {
+            let row = build_sidebar_list_row(item);
             console.debug("appending item", item);
             $(`#${item.parentId} > .folder-item-list`).append(row);
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
@@ -598,8 +598,8 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
             && item.nameOrContainingFolderMatches(nameFilter)
         )
         .sort(SidebarListItem.sortComparator)
-        .forEach(async item => {
-            let row = await build_sidebar_list_row(item);
+        .forEach(item => {
+            let row = build_sidebar_list_row(item);
             if (enableDraggable === true && !item.isTypeEncounter()) {
                 enable_draggable_token_creation(row);
             }
@@ -2437,9 +2437,9 @@ function inject_encounter_monsters() {
                 }
             }
 
-            monsters.forEach(async shortMonster => {
+            monsters.forEach(shortMonster => {
                 let monsterItem = monsterItems.find(item => item.monsterData.id === shortMonster.id);
-                let monsterRow = await build_sidebar_list_row(monsterItem);
+                let monsterRow = build_sidebar_list_row(monsterItem);
                 enable_draggable_token_creation(monsterRow);
                 groupDiv.append(monsterRow);
             });

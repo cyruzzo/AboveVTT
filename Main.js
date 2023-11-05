@@ -438,7 +438,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.height(height);		
 		}
 		else{
-			url = await getGoogleDriveAPILink(url);
+			url = getGoogleDriveAPILink(url)
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 		}
 
