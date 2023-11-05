@@ -299,7 +299,7 @@ function init_trackLibrary() {
     const header = document.createElement("h3");
     header.textContent = "Track Library";
 
-    const searchTrackLibary = $(`<input type='text' placeholder='Search' style='margin-bottom: 5px; width: 100%;'></input>`)
+    const searchTrackLibary = $(`<input type='search' placeholder='Search' style='margin-bottom: 5px; width: 100%;'></input>`)
     searchTrackLibary.off().on('change keydown blur', (e) => {
          debounceSearch(e.target.value);
     });
