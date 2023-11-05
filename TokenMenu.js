@@ -129,7 +129,24 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	if(door?.length == 1){
 		if(window.DM) {
-			
+			if(window.TOKEN_OBJECTS[tokenIds] == undefined){
+				window.TOKEN_OBJECTS[tokenIds] = new Token({
+					...default_options(),
+					left: door.css('left'),
+					top: door.css('top'),
+					id: tokenIds[0].replaceAll('.', ''),
+					vision:{
+						feet: 0,
+						color: `rgba(0, 0, 0, 0)`
+					},
+					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+					type: 'door',
+					size: 20
+				});
+				window.TOKEN_OBJECTS[tokenIds].sync = mydebounce(function(e) {				
+					window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[tokenIds].options);
+				}, 500);
+			}
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
@@ -138,8 +155,17 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 			body.append(notesRow);
 
-		
- 
+			let lightRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Vision/Light</div></div>`);
+
+			lightRow.hover(function (hoverEvent) {
+				context_menu_flyout("light-flyout", hoverEvent, function(flyout) {
+					flyout.append(build_token_light_inputs(tokenIds, true));
+				})
+			});
+			if(window.CURRENT_SCENE_DATA.disableSceneVision != true && window.DM){		
+				body.append(lightRow);		
+			}
+	 
 
             let x1 = parseInt(door.attr('data-x1'));
             let x2 = parseInt(door.attr('data-x2'));
@@ -274,6 +300,8 @@ function token_context_menu_expanded(tokenIds, e) {
 			}	
 			$(moveableTokenOptions).toggleClass('touch', false);
 		}
+
+
 
 		return;
 	}
@@ -904,7 +932,7 @@ function build_token_auras_inputs(tokenIds) {
  * @param tokens {Array<Token>} the token objects that the aura configuration HTML is for
  * @returns {*|jQuery|HTMLElement}
  */
-function build_token_light_inputs(tokenIds) {
+function build_token_light_inputs(tokenIds, door=false) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
 	body.css({
@@ -961,16 +989,7 @@ function build_token_light_inputs(tokenIds) {
 	let wrapper = $(`
 		<div class="token-config-aura-input">
 
-			<div class="token-config-aura-wrapper">
-				<div class="token-image-modal-footer-select-wrapper">
-					
-				
-					<div class="token-image-modal-footer-title">Preset</div>
-					<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
-					<select class="token-config-aura-preset">
-						<option value=""></option>
-					</select>
-				</div>
+			<div class="token-config-aura-wrapper">			
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Animation</div>
 					<select class="token-config-animation-preset">
@@ -980,6 +999,13 @@ function build_token_light_inputs(tokenIds) {
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Darkvision Type</div>
 					<select class="token-config-visiontype-preset">
+						<option value=""></option>
+					</select>
+				</div>
+				<div class="token-image-modal-footer-select-wrapper">		
+					<div class="token-image-modal-footer-title">Preset</div>
+					<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
+					<select class="token-config-aura-preset">
 						<option value=""></option>
 					</select>
 				</div>
