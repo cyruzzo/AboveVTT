@@ -1450,6 +1450,7 @@ class Token {
 		let self = this;
 		if(this.options.type == 'door'){
 			setTokenLight(old, this.options);
+			debounceLightChecks();
 			return;
 		}
 		/* UPDATE COMBAT TRACKER */
@@ -3065,7 +3066,7 @@ function setTokenAuras (token, options) {
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
 		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
-		const tokenId = token.attr("data-id").replaceAll("/", "");
+		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
 		const auraStyles = `width:${totalSize }px;
 							height:${totalSize }px;
@@ -3114,7 +3115,7 @@ function setTokenLight (token, options) {
 	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const tokenId = token.attr("data-id").replaceAll("/", "").replaceAll('.', '');
+	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
@@ -3149,19 +3150,19 @@ function setTokenLight (token, options) {
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
 							`;
 		
-		if (token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").length > 0) {
+		if (token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").length > 0) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
-			const lightElement = $(`<div class='aura-element-container-clip light' id='${token.attr("data-id")}'><div class='aura-element' id="light_${tokenId}" data-id='${token.attr("data-id")}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${token.attr("data-id")}'><div class='aura-element' id="vision_${tokenId}" data-id='${token.attr("data-id")}' style='${visionStyles}'></div></div>`);
+			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
 			lightElement.contextmenu(function(){return false;});
 			$("#light_container").prepend(lightElement);
 		}
 		if(options.animation?.light){
-			token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").attr('data-animation', options.animation.light)
+			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
 		}
 		else{
-			token.parent().parent().find(".aura-element-container-clip[id='" + token.attr("data-id")+"']").removeAttr('data-animation')
+			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").removeAttr('data-animation')
 		}
 		if(window.DM){
 			(options.hidden && options.reveal_light == 'never') ? token.parent().parent().find("#vision_" + tokenId).css("opacity", 0.5)
@@ -3175,7 +3176,7 @@ function setTokenLight (token, options) {
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
 		
 	} else {
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 	}
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	if(!window.DM){
@@ -3192,11 +3193,11 @@ function setTokenLight (token, options) {
 		}
 	}
 	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('devilsight', true);	
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass('truesight', options.sight=='truesight');
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('devilsight', true);	
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('truesight', options.sight=='truesight');
 	}
 	else{
-		token.parent().parent().find(`.aura-element-container-clip[id='${token.attr("data-id")}']`).toggleClass(['devilsight', 'truesight'], false);
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass(['devilsight', 'truesight'], false);
 	}
 }
 
