@@ -152,12 +152,13 @@ async function getUvttData(url){
 	return jsonData;
 }
 
-function getGoogleDriveAPILink(url){
+function getGoogleDriveAPILink(url, date=true){
 	let api_url = url;
 	if(url.startsWith('https://drive.google.com')){
 		let parsed_url = parse_img(url);
 		let fileid = parsed_url.split('=')[1];
-		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I&date=${new Date().getTime()}`;
+		let dateAttr = date == true ? `&date=${new Date().getTime()}` : '';
+		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?&alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 	}
 
 	return api_url;
@@ -1886,7 +1887,7 @@ async function migrate_scene_folders() {
  * clears and redraws the list of scenes in the sidebar
  * @param searchTerm {string} the search term used to filter the list of scenes
  */
-function redraw_scene_list(searchTerm) {
+async function redraw_scene_list(searchTerm) {
 	console.group("redraw_scene_list");
 
 	let nameFilter = "";
@@ -1904,11 +1905,11 @@ function redraw_scene_list(searchTerm) {
 
 	// first let's add all folders because we need the folder to exist in order to add items into it
 	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
-	window.sceneListFolders
+	await window.sceneListFolders
 		.sort(SidebarListItem.folderDepthComparator)
-		.forEach(item => {
+		.forEach(async item => {
 			console.debug("redraw_scene_list folderPath", item.folderPath, item.parentId, item.id);
-			let row = build_sidebar_list_row(item);
+			let row = await build_sidebar_list_row(item);
 			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			let folder = $(`#${item.parentId} > .folder-item-list`);
 			if (folder.length > 0) {
@@ -1920,11 +1921,11 @@ function redraw_scene_list(searchTerm) {
 		});
 
 	// now let's add all the other items
-	window.sceneListItems
+	await window.sceneListItems
 		.sort(SidebarListItem.sortComparator)
 		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
-		.forEach(item => {
-			let row = build_sidebar_list_row(item);
+		.forEach(async item => {
+			let row = await build_sidebar_list_row(item);
 			let folder = $(`#${item.parentId} > .folder-item-list`);
 			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			if (folder.length > 0) {

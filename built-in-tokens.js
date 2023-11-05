@@ -24,7 +24,7 @@ const builtInTokens = [
   {
     "name": "Flame 1",
     "folderPath": "/Overlays",
-    "image": "https://www.googleapis.com/drive/v3/files/1eWHXQsHloLuocYOuHnvvd0zymZQMH7sm?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I",
+    "image": "https://drive.google.com/file/d/1eWHXQsHloLuocYOuHnvvd0zymZQMH7sm",
     "disableborder": true,
     "square": true
   },
@@ -38,7 +38,7 @@ const builtInTokens = [
   {
     "name": "Map Pin",
     "folderPath": "/Overlays",
-    "image": "https://www.googleapis.com/drive/v3/files/1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I",
+    "image": "https://drive.google.com/file/d/1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M",
     "disableborder": true,
     "square": true
   },
@@ -52,14 +52,14 @@ const builtInTokens = [
   {
     "name": "Skull",
     "folderPath": "/Overlays",
-    "image": "https://www.googleapis.com/drive/v3/files/1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I",
+    "image": "https://drive.google.com/file/d/1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA",
     "disableborder": true,
     "square": true
   },
   {
     "name": "Star",
     "folderPath": "/Overlays",
-    "image": "https://www.googleapis.com/drive/v3/files/1F868fVhQnzFALTcnEIXUDeAl3UKZccKA?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I",
+    "image": "https://drive.google.com/file/d/1F868fVhQnzFALTcnEIXUDeAl3UKZccKA",
     "disableborder": true,
     "square": true
   },
