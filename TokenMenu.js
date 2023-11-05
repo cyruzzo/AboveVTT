@@ -1908,6 +1908,10 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				token.options.name = newName;
 				token.place_sync_persist();
+				if(window.JOURNAL.notes[token.options.id]){
+					window.JOURNAL.notes[token.options.id].title = newName;
+					window.JOURNAL.persist();
+				}
 			});
 		}
 	});
@@ -1917,7 +1921,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 			tokens.forEach(token => {
 				token.options.name = newName;
 				token.place_sync_persist();
+				if(window.JOURNAL.notes[token.options.id]){
+					window.JOURNAL.notes[token.options.id].title = newName;
+					window.JOURNAL.persist();
+				}
 			});
+
 		}
 	});
 	let nameWrapper = $(`
