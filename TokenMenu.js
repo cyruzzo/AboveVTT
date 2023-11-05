@@ -264,7 +264,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
 			});
 			body.append(secretButton);
-			let hideButton = $(`<button class="${door.hasClass('hiddenDoor') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hidden-show walls to view</button>`)
+			let hideButton = $(`<button class="${door.hasClass('hiddenDoor') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide for DM-Show Walls to View</button>`)
 			hideButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
 				let hidden = door.hasClass('hiddenDoor');
