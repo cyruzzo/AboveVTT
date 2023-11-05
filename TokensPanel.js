@@ -515,7 +515,7 @@ async function init_tokens_panel() {
     tokensPanel.updateHeader("Tokens");
     add_expand_collapse_buttons_to_header(tokensPanel, true);
 
-    let searchInput = $(`<input name="token-search" type="text" style="width:96%;margin:2%" placeholder="search tokens">`);
+    let searchInput = $(`<input name="token-search" type="search" style="width:96%;margin:2%" placeholder="search tokens">`);
     searchInput.off("input").on("input", mydebounce(() => {
         let textValue = tokensPanel.header.find("input[name='token-search']").val();
         filter_token_list(textValue);
