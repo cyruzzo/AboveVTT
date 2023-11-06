@@ -2174,7 +2174,7 @@ function drawing_mouseup(e) {
 	// restore to what it looked like when first clicked
 	// but not polygons as they have a close box to clear and then save
 	// measure gets special treatment later on in this function
-	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure" && window.DRAWFUNCTION != "wall"){
+	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure" && (window.DRAWFUNCTION != "wall" || window.DRAWSHAPE == 'rect')){
 		clear_temp_canvas()
 	}
 
