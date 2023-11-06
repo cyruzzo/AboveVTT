@@ -1380,6 +1380,10 @@ div#scene_properties form > div {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
     content:"\e898"; 
 }
+.door-open.material-icons:before{
+    content:"\eb4f"; 
+    padding: 2px 0px;
+}
 
 .door-lock.material-icons:before{
     content:"\e897"; 
