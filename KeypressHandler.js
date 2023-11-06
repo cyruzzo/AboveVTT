@@ -119,7 +119,7 @@ Mousetrap.bind('w', function () {
 });
 Mousetrap.bind('shift+w', function () {
     if(window.DM){
-        $('#show_walls').toggleClass('button-enabled');
+        $('#show_walls').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
         redraw_light_walls();
     }
        

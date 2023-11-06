@@ -1521,7 +1521,19 @@ function redraw_light_walls(clear=true){
 
 			doorButton.append(conditionContainer);
 
-			let noteHover = `<div>
+
+
+
+						
+			let flyoutLocation = convert_point_from_map_to_view(parseInt(x), parseInt(y))
+	
+			let hoverNoteTimer;
+			symbolImage.on({
+				'mouseover': function(e){
+					hoverNoteTimer = setTimeout(function () {
+		            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+				            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+				            let noteHover = `<div>
 								<div class="tooltip-header">
 						       	 	<div class="tooltip-header-icon">
 						            
@@ -1541,17 +1553,6 @@ function redraw_light_walls(clear=true){
 							        </div>
 							    </div>
 							</div>`
-
-
-						
-			let flyoutLocation = convert_point_from_map_to_view(parseInt(x), parseInt(y))
-	
-			let hoverNoteTimer;
-			symbolImage.on({
-				'mouseover': function(e){
-					hoverNoteTimer = setTimeout(function () {
-		            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
-				            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 				            const tooltipHtml = $(noteHover);
 							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
 							window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
@@ -3003,6 +3004,12 @@ function handle_drawing_button_click() {
 		target.on('mousemove touchmove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
 	})
+	$("#door_types").click(function(){
+		if(!$(`#draw_door`).hasClass('button-enabled') && !$(`#draw_door_erase`).hasClass('button-enabled')  && !$(`#draw_door_hidden`).hasClass('button-enabled')){
+			$('#wall_menu .ddbc-tab-options__header-heading--is-active:not(#show_walls)').toggleClass(['button-enabled','ddbc-tab-options__header-heading--is-active'], false);
+			$(`#draw_door_erase`).toggleClass(['button-enabled','ddbc-tab-options__header-heading--is-active'], true)
+		}
+	})
 	// during initialisation of VTT default to the select button
 	$('#select-button').click();
 
@@ -3893,7 +3900,7 @@ function init_walls_menu(buttons){
 		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			<button id='draw_door_hidden' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='line' data-function="wall-door" data-unique-with="draw" data-hidden="true">
 				 	Hidden Icon
 			</button>

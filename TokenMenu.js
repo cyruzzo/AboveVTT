@@ -154,13 +154,14 @@ function token_context_menu_expanded(tokenIds, e) {
 				let secret = door.hasClass('secret');
 
 				const type = isDoor ? (secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (secret ? (locked ? 7 : 6) : (locked ? 3 : 1))
-
-				let opened = (/rgba.*0\.5\)/g).test(color) ? true : false;
+		
+				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            
+            	let opened = (/rgba.*0\.5\)/g).test(doors[0][2]) ? true : false;
 				isOpen = opened ? 'closed' : 'open';
 
 				door.toggleClass('open', !opened);
-				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
-            
+
         		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
                 let data = ['line',
 							 'wall',
