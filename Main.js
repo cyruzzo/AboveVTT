@@ -2907,9 +2907,12 @@ function init_zoom_buttons() {
 			if ($('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 				$('body').toggleClass('preventSelectDefinitelyNot', true);
+				$('.lockedToken').draggable("disable");
+				$('.lockedToken').removeClass("ui-state-disabled");	
 			} else {
 				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 				$('body').toggleClass('preventSelectDefinitelyNot', false);
+				$('.lockedToken').draggable("enable");
 			}
 		});
 	
