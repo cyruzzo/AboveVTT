@@ -1906,12 +1906,13 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let newName = event.target.value;
 		if (event.key == "Enter" && newName !== undefined && newName.length > 0) {
 			tokens.forEach(token => {
-				token.options.name = newName;
-				token.place_sync_persist();
 				if(window.JOURNAL.notes[token.options.id]){
 					window.JOURNAL.notes[token.options.id].title = newName;
 					window.JOURNAL.persist();
 				}
+				token.options.name = newName;
+				token.place_sync_persist();
+
 			});
 		}
 	});
@@ -1919,12 +1920,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let newName = event.target.value;
 		if (newName !== undefined && newName.length > 0) {
 			tokens.forEach(token => {
-				token.options.name = newName;
-				token.place_sync_persist();
 				if(window.JOURNAL.notes[token.options.id]){
 					window.JOURNAL.notes[token.options.id].title = newName;
 					window.JOURNAL.persist();
 				}
+				token.options.name = newName;
+				token.place_sync_persist();		
 			});
 
 		}
