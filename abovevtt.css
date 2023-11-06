@@ -4619,6 +4619,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 }
 #VTT{
 	z-index:2;
+    transform: scale(var(--window-zoom));
 }
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
@@ -7881,7 +7882,7 @@ button.journal-view-button.journal-button {
 [data-animation='fairy-fx'] .islight,
 .aura-element[data-animation='fairy-fx'][id*='aura_'] {
     animation: aurafx-fairy 5s infinite linear alternate;
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='fairy-fx'] .islight:before,
@@ -7894,7 +7895,7 @@ button.journal-view-button.journal-button {
     top: 0;
     left: 0;
     background: #fff;
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
     border-radius: 50%;
     translate: 5px;
 }
@@ -7902,19 +7903,19 @@ button.journal-view-button.journal-button {
 [data-animation='magic-circle-fx'] .islight,
 .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
     animation: aurafx-rotate 80s infinite linear;
-   -webkit-mask-size: contain;
+   -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='magic-circle-2-fx'] .islight,
 .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
     animation: aurafx-rotate 80s infinite linear;
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
     animation: aurafx-rotate 30s infinite linear;
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='hurricane-fx'] .islight:before,
@@ -7928,7 +7929,7 @@ button.journal-view-button.journal-button {
     top: 0;
     left: 0;
     background: #ffffff;
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
     mix-blend-mode: overlay;
 }
 
@@ -7952,7 +7953,7 @@ button.journal-view-button.journal-button {
     top: 0;
     left: 0;
     background-image: var(--gradient);
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
     overflow:hidden;
     border-radius:50%;
 }
@@ -7986,7 +7987,7 @@ button.journal-view-button.journal-button {
     left: 0;
     opacity: 0;
     background-image: var(--gradient);
-    -webkit-mask-size: contain;
+    -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='bubble-fx'] .islight:before,

@@ -134,8 +134,15 @@ const MIN_ZOOM = 0.1
  * @param {Number} x zoom center horizontal
  * @param {Number} y zoom center vertical
  */
-function change_zoom(newZoom, x, y) {
+async function change_zoom(newZoom, x, y) {
 	console.group("change_zoom")
+	
+	$('body').toggleClass('reduceMovement', true);
+	$('#light_container>div').css({
+		'mix-blend-mode': 'initial'
+	})
+	
+	
 	console.log("zoom", newZoom, x , y)
 	let zoomCenterX = x || $(window).width() / 2
 	let zoomCenterY = y || $(window).height() / 2
@@ -147,14 +154,14 @@ function change_zoom(newZoom, x, y) {
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
-	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
 
-	$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
-	set_default_vttwrapper_size()
-	$(window).scrollLeft(pageX);
-	$(window).scrollTop(pageY);
+
+	window.scrollTo({
+		top: pageY,
+		left: pageX,
+		behavior: 'instant'
+	});
 	$("body").css("--window-zoom", window.ZOOM)
-	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
@@ -164,6 +171,24 @@ function change_zoom(newZoom, x, y) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
+	//make sure this happens after browser render
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$('#light_container>div').css({
+				'mix-blend-mode': ''
+			})
+			$('body').toggleClass('reduceMovement', false);	
+			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+			
+
+		}, 50)
+
+	})
+
+
+	
+	
 	console.groupEnd()
 }
 
@@ -1189,7 +1214,6 @@ function init_mouse_zoom() {
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
-
 			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
 				newScale = window.ZOOM * 0.9;
@@ -1229,7 +1253,11 @@ function init_mouse_zoom() {
                 if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
                   newScale = window.ZOOM * 1.05;
                 }
-                change_zoom(newScale);
+
+                if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
+				
+	                change_zoom(newScale);
+	            }
             }
            
     }
@@ -2487,7 +2515,8 @@ function init_ui() {
 	});
 
 	window.ZOOM = 1.0;
-	VTT = $("<div id='VTT' style='position:absolute; top:0px;left:0px;transform: scale(1.0);'/>");
+	$('body').css('--window-zoom', window.ZOOM)
+	VTT = $("<div id='VTT' style='position:absolute; top:0px;left:0px;'/>");
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");

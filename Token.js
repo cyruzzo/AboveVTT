@@ -2407,51 +2407,50 @@ class Token {
 													
 								//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 								//curr.place();
-
+								const tokLeft = parseFloat($(tok).css('left'));
+								const tokTop = parseFloat($(tok).css('top'));
+								const tokMidLeft = tokLeft + parseFloat(curr.sizeWidth())/2
+								const tokMidTop = tokTop + parseFloat(curr.sizeHeight())/2
 								let selEl = $(tok).parent().parent().find("#aura_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+									const selElWidth = parseFloat(selEl.css('width'))/2;
+									const selElHeight = parseFloat(selEl.css('height'))/2;
+									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
+									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									selEl.css('left', auraLeft  + "px");
+									selEl.css('top', auraTop + "px");
 								}
 								selEl = $(tok).parent().parent().find("#light_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+									const selElWidth = parseFloat(selEl.css('width'))/2;
+									const selElHeight = parseFloat(selEl.css('height'))/2;
+									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
+									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									selEl.css('left', auraLeft  + "px");
+									selEl.css('top', auraTop + "px");
 								}
 								selEl = $(tok).parent().parent().find("#vision_" + id.replaceAll("/", ""));
 								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+									const selElWidth = parseFloat(selEl.css('width'))/2;
+									const selElHeight = parseFloat(selEl.css('height'))/2;
+									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
+									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									selEl.css('left', auraLeft  + "px");
+									selEl.css('top', auraTop + "px");
 								}
 								selEl = $(tok).parent().parent().find(`[data-darkness='darkness_${id}']`);
 								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+									const selElWidth = parseFloat(selEl.css('width'))/2;
+									const selElHeight = parseFloat(selEl.css('height'))/2;
+									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
+									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									selEl.css('left', auraLeft  + "px");
+									selEl.css('top', auraTop + "px");
 								}
 								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
 								if (selEl.length > 0) {
-									let currLeft = parseFloat(selEl.attr("data-left"));
-									let currTop = parseFloat(selEl.attr("data-top"));
-									let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-									let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
-									selEl.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-									selEl.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+									selEl.css('left', tokLeft/window.CURRENT_SCENE_DATA.scale_factor  + "px");
+									selEl.css('top', tokTop/window.CURRENT_SCENE_DATA.scale_factor + "px");
 								}
 							}
 						}													
@@ -3085,6 +3084,7 @@ function setTokenAuras (token, options) {
 							--color1: ${options.aura1.color};
 							--color2: ${options.aura2.color};	
 							--gradient: ${auraBg};
+							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3139,6 +3139,7 @@ function setTokenLight (token, options) {
 							--color1: ${options.light1.color};
 							--color2: ${options.light2.color};
 							--gradient: ${lightBg};
+							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							`;
 
 
