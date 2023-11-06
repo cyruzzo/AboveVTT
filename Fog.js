@@ -1423,7 +1423,7 @@ function redraw_light_walls(clear=true){
 	
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
-        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}']`);
+        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
         let hiddenDoor = hidden ? ` hiddenDoor` : ``;
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
@@ -2429,12 +2429,14 @@ function drawing_mouseup(e) {
 				if(window.DRAWFUNCTION == "wall-eraser-one" ){
 					fullyInside = true;
 				}
+				let wallColor;
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						let wallId = `${window.DRAWINGS[j][3]}${window.DRAWINGS[j][4]}${window.CURRENT_SCENE_DATA.id}`;
 						if(window.TOKEN_OBJECTS[wallId.replaceAll('.', '')]){
 							window.TOKEN_OBJECTS[wallId.replaceAll('.', '')].delete(true)
 						}
+						wallColor = window.DRAWINGS[j][2];
 						window.DRAWINGS.splice(j, 1);
 						break;
 					}
@@ -2465,7 +2467,7 @@ function drawing_mouseup(e) {
 						y2 = left.y;
 						let data = ['line',
 						 'wall',
-						 "rgba(0, 255, 0 ,1)",
+						 wallColor,
 						 x1,
 						 y1,
 						 x2,
@@ -2489,7 +2491,7 @@ function drawing_mouseup(e) {
 						y2 = right.y;
 						let data = ['line',
 						 'wall',
-						 'rgba(0, 255, 0, 1)',
+						 wallColor,
 						 x1,
 						 y1,
 						 x2,
@@ -2512,7 +2514,7 @@ function drawing_mouseup(e) {
 						y2 = top.y;
 						let data = ['line',
 						 'wall',
-						 "rgba(0, 255, 0 ,1)",
+						 wallColor,
 						 x1,
 						 y1,
 						 x2,
@@ -2536,7 +2538,7 @@ function drawing_mouseup(e) {
 						y2 = bottom.y;
 							let data = ['line',
 						 'wall',
-						 "rgba(0, 255, 0 ,1)",
+						 wallColor,
 						 x1,
 						 y1,
 						 x2,
