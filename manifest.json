@@ -28,7 +28,7 @@
 			]
 		},
 	   	{
-	      "matches":    ["https://8x8.vc/aboveVTT*bottom_layout=true*"],
+	      "matches":    ["https://jitsi.member.fsf.org/aboveVTT-*?bottom_layout=true*"],
 	      "css":        ["jitsifix.css"],
 	      "all_frames": true
 	   	}
