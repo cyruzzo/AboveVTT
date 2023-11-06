@@ -2111,16 +2111,17 @@ async function duplicate_scene(sceneId) {
 			}
 		}
 		window.JOURNAL.persist();
-		aboveSceneData.tokens[token].id = newId;
+		aboveSceneData.tokens[newId] = aboveSceneData.tokens[token];
+		aboveSceneData.tokens[newId].id = newId;
+		aboveSceneData.tokens = Object.fromEntries(Object.entries(aboveSceneData.tokens).filter(([k, v]) => k != token));
 	}
 
 	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
 	window.ScenesHandler.scenes.push(aboveSceneData);
-	did_update_scenes();
+	await did_update_scenes();
+	await expand_all_folders_up_to_id(aboveSceneData.id);
 	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
-	$("#sources-import-main-container").remove();
-	expand_all_folders_up_to_id(aboveSceneData.id);
 }
 
 function expand_folders_to_active_scenes() {
