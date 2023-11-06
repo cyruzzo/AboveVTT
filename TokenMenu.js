@@ -147,6 +147,42 @@ function token_context_menu_expanded(tokenIds, e) {
 					window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[tokenIds].options);
 				}, 500);
 			}
+			let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
+			openButton.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				let locked = door.hasClass('locked');
+				let secret = door.hasClass('secret');
+
+				const type = isDoor ? (secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (secret ? (locked ? 7 : 6) : (locked ? 3 : 1))
+
+				let opened = (/rgba.*0\.5\)/g).test(color) ? true : false;
+				isOpen = opened ? 'closed' : 'open';
+
+				door.toggleClass('open', !opened);
+				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+            
+        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+                let data = ['line',
+							 'wall',
+							 doorColors[type][isOpen],
+							 x1,
+							 y1,
+							 x2,
+							 y2,
+							 12,
+							 doors[0][8],
+							 doors[0][9]
+				];	
+				window.DRAWINGS.push(data);
+
+				redraw_light_walls();
+				redraw_light();
+
+				sync_drawings();
+			});
+
+			body.append(openButton);
+
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
@@ -186,6 +222,7 @@ function token_context_menu_expanded(tokenIds, e) {
             body.append($('<div class="token-image-modal-footer-title" style="margin-top:10px">Door Type</div>'));
 
 
+
 			let lockedButton = $(`<button class="${door.hasClass('locked') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-lock material-icons">Locked</button>`)
 			lockedButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
@@ -193,8 +230,6 @@ function token_context_menu_expanded(tokenIds, e) {
 				let secret = door.hasClass('secret');
 
 				const type = isDoor ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
-
-				isOpen = !locked ? 'closed' : isOpen;
 
 				door.toggleClass('locked', !locked);
 				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
