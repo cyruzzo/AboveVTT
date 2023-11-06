@@ -1,7 +1,7 @@
 #largeVideoBackgroundContainer,
 .stage-participant-label,
 #largeVideoElementsContainer{
-	display:none;
+	display:none !important;
 }
 
 #layout_wrapper .filmstrip{
@@ -10,10 +10,10 @@
 }
 body.desktop-browser,
 body.desktop-browser>div>div {
-    background: none;
+    background: none !important;
 }
 #layout_wrapper .dragHandleContainer{
-	display:none ;
+	display:none !important;
 }
 #layout_wrapper #filmstripLocalVideo {
     position:relative;
@@ -28,7 +28,7 @@ body.desktop-browser>div>div {
     height:130px !important;  
 }
 #localVideoWrapper .flipVideoX{
-	transform: none;
+	transform: none !important;
 }
 #layout_wrapper .filmstrip__videos.remote-videos div{
     opacity: 1;

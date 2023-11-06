@@ -18,7 +18,7 @@ function create_jitsi_button() {
 }
 
 function init_jitsi(tileLayout) {
-	const domain = '8x8.vc';
+	const domain = 'jitsi.member.fsf.org';
 	const options = {
 		roomName: 'aboveVTT-' + find_game_id(),
 		width: '100%',
