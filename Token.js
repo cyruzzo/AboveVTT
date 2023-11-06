@@ -1669,10 +1669,12 @@ class Token {
 				}
 			}
 			if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
-				old.draggable("disable");
-				old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				if(window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){
+					old.draggable("disable");
+					old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
+				}
 			}
-			else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked){
+			else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
 				old.draggable("enable");
 			}	
 			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
@@ -2480,9 +2482,11 @@ class Token {
 				}
 			}
 			tok.toggleClass('lockedToken', this.options.locked)
-			if(this.options.locked){
-				tok.draggable("disable");
-				tok.removeClass("ui-state-disabled");
+			if(this.options.locked ){
+				if(window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){		
+					tok.draggable("disable");
+					tok.removeClass("ui-state-disabled");
+				}
 			}
 			if (!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) {
 				tok.draggable("disable");

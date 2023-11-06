@@ -125,7 +125,14 @@ Mousetrap.bind('shift+w', function () {
        
 });
 Mousetrap.bind('l', function () {
+    if(shiftHeld)
+        return;
     $('#vision_button').click()
+});
+Mousetrap.bind('shift+l', function () {
+     if(window.DM){
+        $('#select_locked').click();
+    }
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons

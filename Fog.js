@@ -1448,8 +1448,34 @@ function redraw_light_walls(clear=true){
 						let locked = $(this).hasClass('locked');
 						let secret = $(this).hasClass('secret');
 						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
-						if(!$(this).hasClass('locked')){
+						if(!$(this).hasClass('locked') && !shiftHeld){
 							open_close_door(x, y, width, height, type)
+						}
+						else if(shiftHeld){
+							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
+							const isOpen = $(this).hasClass('open') ? `open` : `closed`;
+							openCloseDoorButton.toggleClass('locked', !locked);
+							let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x && parseInt(d[4]) == y && parseInt(d[5]) == width && parseInt(d[6]) == height))  
+			            
+			        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+			                let data = ['line',
+										 'wall',
+										 doorColors[type][isOpen],
+										 x,
+										 y,
+										 width,
+										 height,
+										 12,
+										 doors[0][8],
+										 doors[0][9]
+							];	
+							window.DRAWINGS.push(data);
+
+							redraw_light_walls();
+							redraw_light();
+
+
+							sync_drawings();
 						}
 					});
 				openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
@@ -2110,7 +2136,7 @@ function drawing_mouseup(e) {
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
-	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || (!e.touches && e.button != 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
+	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || (!e.touches && e.button != 0))  && ((window.DRAWFUNCTION == "wall" && window.DRAWSHAPE != 'rect')|| window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
 		return;
 	}
 
@@ -3729,14 +3755,14 @@ function init_draw_menu(buttons){
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
-				data-key="fill" data-value='border' data-unique-with="fill">
+				data-key="fill" data-value='border' data-toggle='true' data-unique-with="fill">
 				BORDER
 			</button>
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
-				data-key="fill" data-value='filled' data-unique-with="fill">
+				data-key="fill" data-value='filled' data-toggle='true' data-unique-with="fill">
 				FILLED
 			</button>
 		</div>`);
@@ -3890,7 +3916,7 @@ function init_walls_menu(buttons){
 		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
-			<button id='show_walls' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
+			<button id='show_walls' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading ${(window.showWallsToggle) ? "button-enabled" : ''}'>
 				Always Show
 			</button>
 		</div>`);
