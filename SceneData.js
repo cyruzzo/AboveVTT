@@ -176519,7 +176519,7 @@ const SCENE_IMPORT_DATA = [
 	},
 	{
 		"title": "CZEPEKU",
-		"logo": "https://www.czepeku.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo-small.9d524d7f.png&w=384&q=75",
+		"logo": "https://www.czepeku.com/favicon.ico",
 		"scenes": [
 			{
 				"thumb": "https://64.media.tumblr.com/537e51775141c75a7a46bd0a12089ef8/61495676bc3c2a76-21/s1280x1920/71e98dbcbdf98f36267d5ed73eef7cbbfd2379c9.jpg",
@@ -178785,7 +178785,7 @@ const SCENE_IMPORT_DATA = [
 	},
 	{
 		"title": "Weasel Wargaming",
-		"logo": `${window.EXTENSION_PATH}images/Tokens-Overlays/warweasel.png`,
+		"logo": `${$("#extensionpath").attr('data-path')}images/Tokens-Overlays/warweasel.png`,
 		"scenes": [
 			{
 				player_map: "https://www.youtube.com/watch?v=ErBd9sPBAZc",
