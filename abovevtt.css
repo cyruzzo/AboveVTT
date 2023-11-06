@@ -8086,12 +8086,12 @@ button.journal-view-button.journal-button {
 
 @keyframes aurafx-flicker{
       0% {
-        filter: blur(15px);
-        transform: scale(0.995);
+        filter: blur(15px) brightness(0.7);
+        transform: scale(0.975);
       }
       100% {
         filter: blur(20px);
-        transform: scale(1.005);
+        transform: scale(0.995);
       }
 }
 @keyframes aurafx-rotate{
