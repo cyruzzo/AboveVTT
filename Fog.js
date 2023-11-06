@@ -2160,6 +2160,7 @@ function drawing_mouseup(e) {
 	const width = mouseX - window.BEGIN_MOUSEX;
 	const height = mouseY - window.BEGIN_MOUSEY;
 	// data is modified by each shape/function but as a starting point fill it up
+	let hidden = $('[data-hidden]').hasClass('button-enabled');
 	let data = ['',
 		 window.DRAWTYPE,
 		 window.DRAWCOLOR,
@@ -2218,6 +2219,7 @@ function drawing_mouseup(e) {
 			break;
 		case 'wall-door':
 			data[1] = "wall"
+			data[9] = hidden
 			break;
 		case 'wall-window':
 			data[1] = "wall"
@@ -2281,6 +2283,7 @@ function drawing_mouseup(e) {
 			if ( e.button == 2) {
 				return;
 			}
+			
 			for(let walls in window.StoredWalls){
 					data = ['line',
 						"wall",
@@ -2290,7 +2293,8 @@ function drawing_mouseup(e) {
 						window.StoredWalls[walls][2],
 						window.StoredWalls[walls][3],
 						window.LINEWIDTH,
-						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+						hidden];
 					window.DRAWINGS.push(data);
 			}
 			window.StoredWalls = [];
@@ -3861,7 +3865,13 @@ function init_walls_menu(buttons){
 				 	Wall>Selected
 			</button>
 		</div>`);
-
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='line' data-function="wall-door" data-unique-with="draw" data-hidden="true">
+				 	Hidden Icon
+			</button>
+		</div>`);
 
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
 	wall_menu.append(
