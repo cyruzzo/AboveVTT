@@ -1622,6 +1622,7 @@ function redraw_light_walls(clear=true){
 		
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
+		drawnWall.scaleAdjustment = adjustedScale;
 		window.walls.push(drawnWall);
 	}
 	if(window.DM){
@@ -4215,16 +4216,26 @@ Ray.prototype.draw = function(ctx) {
 }; */
 
 Ray.prototype.cast = function(boundary) {
-  const x1 = boundary.a.x;
-  const y1 = boundary.a.y;
-  const x2 = boundary.b.x;
-  const y2 = boundary.b.y;
+
+
+  let x1 = boundary.a.x;
+  let y1 = boundary.a.y;
+  let x2 = boundary.b.x;
+  let y2 = boundary.b.y;
   
   const x3 = this.pos.x;
   const y3 = this.pos.y;
   const x4 = this.pos.x + this.dir.x;
   const y4 = this.pos.y + this.dir.y;
   
+  const addedScale = 1;
+
+  x1 = x1 < x3 ? x1+addedScale : x1-addedScale
+  y1 = y1 < y3 ? y1+addedScale : y1-addedScale
+
+  x2 = x2 < x4 ? x2+addedScale : x2-addedScale
+  y2 = y2 < y4 ? y2+addedScale : y2-addedScale
+
   const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
   // if denominator is zero then the ray and boundary are parallel
   if (den === 0) {
@@ -4301,7 +4312,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
 	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3 && walls[j].c != 6 && walls[j].c != 7) {
-	          	if(!tokenIsDoor || walls[j].a.x != x1 || walls[j].a.y != y1 || walls[j].b.x != x2 || walls[j].b.y != y2)
+	          	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
       			{
 		          	recordLight = dist;          	
 			        if(dist == lightRadius){

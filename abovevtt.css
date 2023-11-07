@@ -6497,8 +6497,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     opacity: 1;
 
 }
-div#light_container .aura-element-container-clip:not([data-animation]) .aura-element,
-#raycastingCanvas,
+div#light_container .aura-element-container-clip.light:not([data-animation]) .aura-element,
 #light_overlay {
     filter: blur(calc(10px / var(--scene-scale)))
 }
