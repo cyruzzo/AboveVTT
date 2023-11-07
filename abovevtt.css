@@ -4621,6 +4621,11 @@ div#selectedTokensBorderRotationGrabberConnector,
 	z-index:2;
     transform: scale(var(--window-zoom));
 }
+
+#VTT *,
+#VTT{
+    will-change: transform;
+}
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
