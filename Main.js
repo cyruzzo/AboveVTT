@@ -137,11 +137,7 @@ const MIN_ZOOM = 0.1
 async function change_zoom(newZoom, x, y) {
 	console.group("change_zoom")
 	
-	$('body').toggleClass('reduceMovement', true);
-	$('#light_container>div').css({
-		'mix-blend-mode': 'initial'
-	})
-	
+
 	
 	console.log("zoom", newZoom, x , y)
 	let zoomCenterX = x || $(window).width() / 2
@@ -156,12 +152,27 @@ async function change_zoom(newZoom, x, y) {
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
 
 
-	window.scrollTo({
-		top: pageY,
-		left: pageX,
-		behavior: 'instant'
-	});
-	$("body").css("--window-zoom", window.ZOOM)
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$("body").css("--window-zoom", window.ZOOM)
+			window.scrollTo({
+				top: pageY,
+				left: pageX,
+				behavior: 'instant'
+			});		
+		}, 0)
+	})
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+		}, 20)
+	})
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+		}, 40)
+	})
+
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
@@ -171,24 +182,8 @@ async function change_zoom(newZoom, x, y) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
-	//make sure this happens after browser render
-	requestAnimationFrame(()=> {
-		setTimeout(function(){
-			$('#light_container>div').css({
-				'mix-blend-mode': ''
-			})
-			$('body').toggleClass('reduceMovement', false);	
-			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
-			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-			
-
-		}, 50)
-
-	})
 
 
-	
-	
 	console.groupEnd()
 }
 
