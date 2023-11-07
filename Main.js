@@ -134,13 +134,8 @@ const MIN_ZOOM = 0.1
  * @param {Number} x zoom center horizontal
  * @param {Number} y zoom center vertical
  */
-async function change_zoom(newZoom, x, y) {
+function change_zoom(newZoom, x, y, reset = false) {
 	console.group("change_zoom")
-	
-	$('body').toggleClass('reduceMovement', true);
-	$('#light_container>div').css({
-		'mix-blend-mode': 'initial'
-	})
 	
 	
 	console.log("zoom", newZoom, x , y)
@@ -156,12 +151,40 @@ async function change_zoom(newZoom, x, y) {
 	//Set scaling token names CSS variable this variable can be used with anything in #tokens
 
 
-	window.scrollTo({
-		top: pageY,
-		left: pageX,
-		behavior: 'instant'
-	});
-	$("body").css("--window-zoom", window.ZOOM)
+
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			if(reset != true){
+				$(window).scrollLeft(pageX);
+				$(window).scrollTop(pageY);	
+			}
+			$("body").css("--window-zoom", window.ZOOM) 
+
+		}, 0)
+	})
+	if(reset == true){
+		requestAnimationFrame(()=> {
+			setTimeout(function(){	
+					$("#scene_map")[0].scrollIntoView({
+						behavior: 'auto',
+						block: 'center',
+						inline: 'center'
+					});		
+					if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
+						$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
+			}, 0)
+		})
+	}
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+		}, 20)
+	})
+	requestAnimationFrame(()=> {
+		setTimeout(function(){
+			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+		}, 40)
+	})
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
@@ -171,23 +194,6 @@ async function change_zoom(newZoom, x, y) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
-	//make sure this happens after browser render
-	requestAnimationFrame(()=> {
-		setTimeout(function(){
-			$('#light_container>div').css({
-				'mix-blend-mode': ''
-			})
-			$('body').toggleClass('reduceMovement', false);	
-			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
-			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-			
-
-		}, 50)
-
-	})
-
-
-	
 	
 	console.groupEnd()
 }
@@ -309,14 +315,9 @@ function reset_zoom() {
 	console.log("zooming on centre of map");
 	// change_zoom is great for mouse zooming, but tricky when just hitting the centre of the map
 	// so don't give it any x/y and just use the scrollIntoView center instead
-	change_zoom(get_reset_zoom(), undefined, undefined);
-	$("#scene_map")[0].scrollIntoView({
-		behavior: 'auto',
-		block: 'center',
-		inline: 'center'
-	});
-	if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
-		$(window).scrollLeft(window.scrollX + 170); // 170 half of game log
+	change_zoom(get_reset_zoom(), undefined, undefined, true);
+
+
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
