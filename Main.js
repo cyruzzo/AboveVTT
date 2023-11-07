@@ -136,8 +136,6 @@ const MIN_ZOOM = 0.1
  */
 function change_zoom(newZoom, x, y, reset = false) {
 	console.group("change_zoom")
-	
-	
 	console.log("zoom", newZoom, x , y)
 	let zoomCenterX = x || $(window).width() / 2
 	let zoomCenterY = y || $(window).height() / 2
@@ -147,9 +145,6 @@ function change_zoom(newZoom, x, y, reset = false) {
 	window.ZOOM = newZoom;
 	let pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
-
-	//Set scaling token names CSS variable this variable can be used with anything in #tokens
-
 
 
 	requestAnimationFrame(()=> {
@@ -175,8 +170,10 @@ function change_zoom(newZoom, x, y, reset = false) {
 			}, 0)
 		})
 	}
+
 	requestAnimationFrame(()=> {
 		setTimeout(function(){
+	    //Set scaling token names CSS variable this variable can be used with anything in #tokens
 			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
 		}, 20)
 	})
@@ -185,6 +182,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 		}, 40)
 	})
+
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
@@ -194,7 +192,6 @@ function change_zoom(newZoom, x, y, reset = false) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
-	
 	console.groupEnd()
 }
 
