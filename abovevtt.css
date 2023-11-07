@@ -6495,7 +6495,12 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     background: #000;
     z-index: 9;
     opacity: 1;
-    filter:blur(calc(5px / var(--scene-scale)));
+
+}
+div#light_container .aura-element-container-clip:not([data-animation]) .aura-element,
+#raycastingCanvas,
+#light_overlay {
+    filter: blur(calc(10px / var(--scene-scale)))
 }
 
 #text_div{
@@ -7908,19 +7913,19 @@ button.journal-view-button.journal-button {
 [data-animation='magic-circle-fx'] .islight,
 .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
     animation: aurafx-rotate 80s infinite linear;
-   -webkit-mask-size: var(--animation-width);
+   -webkit-mask-size: contain;
 }
 
 [data-animation='magic-circle-2-fx'] .islight,
 .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
     animation: aurafx-rotate 80s infinite linear;
-    -webkit-mask-size: var(--animation-width);
+    -webkit-mask-size: contain;
 }
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
     animation: aurafx-rotate 30s infinite linear;
-    -webkit-mask-size: var(--animation-width);
+    -webkit-mask-size: contain;
 }
 
 [data-animation='hurricane-fx'] .islight:before,
@@ -7934,7 +7939,7 @@ button.journal-view-button.journal-button {
     top: 0;
     left: 0;
     background: #ffffff;
-    -webkit-mask-size: var(--animation-width);
+    -webkit-mask-size: contain;
     mix-blend-mode: overlay;
 }
 
