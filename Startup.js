@@ -188,6 +188,18 @@ function addExtensionPathStyles(){
         -webkit-mask-image: url('${window.EXTENSION_PATH}images/Animation Masks/fairys.png');
     }
 
+    [data-animation='spore-fx'] .islight,
+    .aura-element[data-animation='spore-fx'][id*='aura_'] {
+        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/spore.png");
+    }
+
+    [data-animation='lightning-fx'] .islight,
+    .aura-element[data-animation='lightning-fx'][id*='aura_'] {
+        --mask-1: url("${window.EXTENSION_PATH}images/Animation Masks/lightning1.png");
+        --mask-2: url("${window.EXTENSION_PATH}images/Animation Masks/lightning2.png");
+        --mask-3: url("${window.EXTENSION_PATH}images/Animation Masks/lightning3.png");
+    }
+
     [data-animation='magic-circle-fx'] .islight,
     .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
         -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/magiccircle1.png");

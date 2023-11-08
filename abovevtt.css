@@ -7890,7 +7890,7 @@ button.journal-view-button.journal-button {
 
 [data-animation='fairy-fx'] .islight,
 .aura-element[data-animation='fairy-fx'][id*='aura_'] {
-    animation: aurafx-fairy 5s infinite linear alternate;
+    animation: aurafx-fairy 150s infinite linear;
     -webkit-mask-size: var(--animation-width);
 }
 
@@ -7920,6 +7920,36 @@ button.journal-view-button.journal-button {
     animation: aurafx-rotate 80s infinite linear;
     -webkit-mask-size: contain;
 }
+
+[data-animation='spore-fx'] .islight,
+.aura-element[data-animation='spore-fx'][id*='aura_'] {
+    animation: aurafx-rotate 180s infinite linear;
+   -webkit-mask-size: contain;
+   filter:blur(5px);
+}
+
+[data-animation='lightning-fx'] .islight,
+.aura-element[data-animation='lightning-fx'][id*='aura_'] {
+    animation: aurafx-rotate 40s infinite linear, lightning-circle-fx 6s infinite linear;
+    -webkit-mask-size: contain;
+    -webkit-mask-image: var(--mask-1);
+}
+[data-animation='lightning-fx'] .islight:before,
+.aura-element[data-animation='lightning-fx'][id*='aura_']:before {
+    animation: lightning 5s infinite linear;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #ffffff;
+    -webkit-mask-size: contain;
+    mix-blend-mode: overlay;
+    -webkit-mask-image: var(--mask-2);
+}
+
+
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
@@ -7965,12 +7995,14 @@ button.journal-view-button.journal-button {
     -webkit-mask-size: var(--animation-width);
     overflow:hidden;
     border-radius:50%;
+    --starting-deg: 0deg;
 }
 
 [data-animation='snow-fx'] .islight:before,
 .aura-element[data-animation='snow-fx'][id*='aura_']:before
 {
     animation: snow 5s infinite 2.5s linear;
+    --starting-deg: 230deg;
     opacity:0;
 }
 
@@ -8025,7 +8057,6 @@ button.journal-view-button.journal-button {
 
 
 
-
 @keyframes lightning {
     0%{
         opacity: 0;
@@ -8061,11 +8092,26 @@ button.journal-view-button.journal-button {
     0%{
         opacity: 0;
         transform: scale(1);
+        rotate: calc(var(--starting-deg) + 200deg);
+    }
+    25%{
+        rotate: calc(var(--starting-deg) + 200deg);
+        opacity: 1;
     }
     50%{
-         opacity: 0.5;
+        rotate: calc(var(--starting-deg) + 200deg);
+        opacity: 0;
+    }
+    51%{
+        rotate: var(--starting-deg);
+        opacity: 0;
+    }
+    75%{
+        rotate: var(--starting-deg);
+        opacity: 1;
     }
     100%{
+        rotate: var(--starting-deg);
         transform: scale(0.5);
         opacity: 0;
     }
@@ -8075,10 +8121,13 @@ button.journal-view-button.journal-button {
 
 @keyframes aurafx-fairy {
     0% {
-        transform: scale(0.95) skew(1deg, 0deg);
+        transform: scale(0.98) rotate(0deg);
+    }
+    50% {
+        transform: scale(1) rotate(180deg);
     }
     100% {
-        transform: scale(1) skew(0deg, 1deg);
+        transform: scale(0.98) rotate(360deg);
     }
 }
 @keyframes aurafx-fairy2 {
@@ -8112,6 +8161,92 @@ button.journal-view-button.journal-button {
       to {
          transform: rotate(360deg);
       }
+}
+
+@keyframes lightning-circle-fx{
+    0% {
+        opacity:1;
+        -webkit-mask-image: var(--mask-1);
+    }
+    5%{
+        opacity:0;
+    }
+    26.3% {
+        opacity:0;
+        -webkit-mask-image: var(--mask-1);
+    }
+
+    27.7% {
+        opacity:1;
+        -webkit-mask-image: var(--mask-2);
+    }
+    30%{
+        opacity:0;
+    }
+    36%{
+        opacity:0;
+         -webkit-mask-image: var(--mask-2);
+    }
+    37% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-3);
+    }
+    40%{
+        opacity:0;
+    }
+    48%{
+         opacity:0;
+          -webkit-mask-image: var(--mask-3);
+    }
+    50% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-2);
+    }
+    55%{
+        opacity:0;
+    }
+    66%{
+         opacity:0;
+          -webkit-mask-image: var(--mask-2);
+    }
+    67% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-3);
+    }
+    70%{
+        opacity:0;
+    }
+    81%{
+         opacity:0;
+          -webkit-mask-image: var(--mask-3);
+    }
+    82% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-1);
+    }
+    85%{
+        opacity:0;
+    }
+    93%{
+         opacity:0;
+          -webkit-mask-image: var(--mask-1);
+    }
+    94% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-2);
+    }
+    98%{
+        opacity:0;
+    }
+    99%{
+         opacity:0;
+          -webkit-mask-image: var(--mask-2);
+    }
+    100% {
+         opacity:1;
+        -webkit-mask-image: var(--mask-1);
+    }
+    
 }
 @keyframes aurafx-wild{
     from {
