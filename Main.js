@@ -147,41 +147,29 @@ function change_zoom(newZoom, x, y, reset = false) {
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 
-	requestAnimationFrame(()=> {
-		setTimeout(function(){
-			if(reset != true){
-				$(window).scrollLeft(pageX);
-				$(window).scrollTop(pageY);	
-			}
-			$("body").css("--window-zoom", window.ZOOM) 
-
-		}, 0)
-	})
+	if(reset != true){
+		$(window).scrollLeft(pageX);
+		$(window).scrollTop(pageY);	
+	}
+	$("body").css("--window-zoom", window.ZOOM) 
 	if(reset == true){
-		requestAnimationFrame(()=> {
-			setTimeout(function(){	
-					$("#scene_map")[0].scrollIntoView({
-						behavior: 'auto',
-						block: 'center',
-						inline: 'center'
-					});		
-					if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
-						$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
-			}, 0)
-		})
+		
+		$("#scene_map")[0].scrollIntoView({
+			behavior: 'auto',
+			block: 'center',
+			inline: 'center'
+		});		
+		if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
+			$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
+		
 	}
 
-	requestAnimationFrame(()=> {
-		setTimeout(function(){
-	    //Set scaling token names CSS variable this variable can be used with anything in #tokens
-			$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
-		}, 20)
-	})
-	requestAnimationFrame(()=> {
-		setTimeout(function(){
-			$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-		}, 40)
-	})
+
+    //Set scaling token names CSS variable this variable can be used with anything in #tokens
+	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+	
+	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+
 
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
