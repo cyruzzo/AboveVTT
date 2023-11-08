@@ -1065,6 +1065,9 @@ function reset_canvas() {
 
 	var canvas_grid = document.getElementById("grid_overlay");
 	var ctx_grid = canvas_grid.getContext("2d");
+
+	window.temp_canvas = document.getElementById("temp_overlay");;
+	window.temp_context = window.temp_canvas.getContext("2d");
 	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid == "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
 		if(window.WIZARDING){
@@ -1946,8 +1949,7 @@ function drawing_mousemove(e) {
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 
-	const canvas = document.getElementById("temp_overlay");
-	const context = canvas.getContext("2d");
+	
 
 	const isFilled = window.DRAWTYPE === "filled" || window.DRAWTYPE === "light";
 	const mouseMoveFps = Math.round((1000.0 / 24.0));
@@ -1978,7 +1980,7 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE == "rect") {
 			if(window.DRAWFUNCTION == "draw_text")
 			{
-				drawRect(context,
+				drawRect(window.temp_context,
 					Math.round(((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX))) * (1.0 / window.ZOOM),
 					Math.round(((window.BEGIN_MOUSEY - window.VTTMargin + window.scrollY))) * (1.0 / window.ZOOM),
 					((mousePosition.clientX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)) - ((window.BEGIN_MOUSEX - window.VTTMargin + window.scrollX) * (1.0 / window.ZOOM)),
@@ -1988,7 +1990,7 @@ function drawing_mousemove(e) {
 					window.LINEWIDTH);
 			}
 			else{
-				drawRect(context,
+				drawRect(window.temp_context,
 						window.BEGIN_MOUSEX,
 						window.BEGIN_MOUSEY,
 						width,
@@ -2001,7 +2003,7 @@ function drawing_mousemove(e) {
 		if (window.DRAWSHAPE === "text_erase") {
 			// draw a rect that will be removed and replaced with an input box
 			// when mouseup
-			drawRect(context,
+			drawRect(window.temp_context,
 					 window.BEGIN_MOUSEX,
 					 window.BEGIN_MOUSEY,
 					 width,
@@ -2014,7 +2016,7 @@ function drawing_mousemove(e) {
 			centerX = window.BEGIN_MOUSEX;
 			centerY = window.BEGIN_MOUSEY;
 			radius = Math.round(Math.sqrt(Math.pow(centerX - mouseX, 2) + Math.pow(centerY - mouseY, 2)));
-			drawCircle(context,
+			drawCircle(window.temp_context,
 				       centerX,
 					   centerY,
 					   radius,
@@ -2023,7 +2025,7 @@ function drawing_mousemove(e) {
 					   window.LINEWIDTH);
 		}
 		else if (window.DRAWSHAPE == "cone") {
-			drawCone(context,
+			drawCone(window.temp_context,
 				     window.BEGIN_MOUSEX,
 					 window.BEGIN_MOUSEY,
 					 mouseX,
@@ -2035,16 +2037,16 @@ function drawing_mousemove(e) {
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
 				if(e.which === 1 || e.touches){
-					WaypointManager.setCanvas(canvas);
+					WaypointManager.setCanvas(window.temp_canvas);
 					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mouseX, mouseY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw(false);
-					context.fillStyle = '#f50';
+					window.temp_context.fillStyle = '#f50';
 					sendRulerPositionToPeers();
 				}
 			}else{
-				drawLine(context,
+				drawLine(window.temp_context,
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY,
 					mouseX,
@@ -2056,7 +2058,7 @@ function drawing_mousemove(e) {
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
 				if(window.StoredWalls != undefined){
 					for(let wall in window.StoredWalls){
-						drawLine(context,
+						drawLine(window.temp_context,
 							window.StoredWalls[wall][0],
 							window.StoredWalls[wall][1],
 							window.StoredWalls[wall][2],
@@ -2076,7 +2078,7 @@ function drawing_mousemove(e) {
 			{
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
 
-				drawBrushstroke(context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH);
+				drawBrushstroke(window.temp_context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -2090,9 +2092,9 @@ function drawing_mousemove(e) {
 	else if (window.DRAWSHAPE === "polygon" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 		clear_temp_canvas()
-		WaypointManager.setCanvas(canvas);
+		WaypointManager.setCanvas(window.temp_canvas);
 		WaypointManager.cancelFadeout()
-		drawPolygon( context,
+		drawPolygon( window.temp_context,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
 				window.BEGIN_MOUSEY
@@ -2108,9 +2110,9 @@ function drawing_mousemove(e) {
 	else if (window.DRAWSHAPE === "3pointRect" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 		clear_temp_canvas()
-		WaypointManager.setCanvas(canvas);
+		WaypointManager.setCanvas(window.temp_canvas);
 		WaypointManager.cancelFadeout()
-		draw3PointRect( context,
+		draw3PointRect( window.temp_context,
 			joinPointsArray(
 				window.BEGIN_MOUSEX,
 				window.BEGIN_MOUSEY
@@ -2122,6 +2124,7 @@ function drawing_mousemove(e) {
 			mouseY
 		);
 	}
+
 	
 }
 
@@ -3266,9 +3269,7 @@ function calculateFourthPoint(point1, point2, point3) {
     return { x: point3.x - dx, y: point3.y - dy };
 }
 function clear_temp_canvas(){
-	const canvas = document.getElementById("temp_overlay");
-	const context = canvas.getContext("2d");
-	context.clearRect(0, 0, canvas.width, canvas.height);
+	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height);
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){
