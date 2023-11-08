@@ -7839,6 +7839,9 @@ button.journal-view-button.journal-button {
     border-radius:50%;
     background-image: repeating-conic-gradient(from 0deg, transparent 0deg 3deg, #0006 5deg 7deg, transparent 9deg)
 }
+[data-animation='rays-fx'] .islight:after{
+    background-image: repeating-conic-gradient(from 0deg, transparent 0deg 3deg, #000 5deg 7deg, transparent 9deg)
+}
 .aura-element[data-animation='rays-fx'][id*='aura_']{
     animation: aurafx-rotate 100s infinite linear;
     -webkit-mask-image: repeating-conic-gradient(from 0deg, #fff 0deg 3deg, transparent 5deg 7deg, #fff 9deg);
