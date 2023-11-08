@@ -56,6 +56,15 @@ function apply_settings_to_boxes(){
         "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none",
         "padding": '0px'
     })
+    $(".text-input-inside").css({
+        "--text-align": window.TEXTDATA.text_alignment,
+        "--color": window.TEXTDATA.text_color, 
+        "--font-family": window.TEXTDATA.text_font,
+        "--font-size": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
+        "--line-height": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
+        "--font-weight": window.TEXTDATA.text_bold ? "bold" : "normal",
+        "--font-style": window.TEXTDATA.text_italic ? "italic" : "normal"
+    })
     
 }
 
@@ -326,7 +335,7 @@ function create_text_controller(applyFromWindow = false) {
  * @returns a div which has the title bar with submit/close buttons and a text area
  */
 function create_moveable_text_box(x,y,width, height, text = undefined) {
-    const textInputInside = $(`<div class="text-input-inside"/>`);
+    const textInputInside = $(`<div class="text-input-inside" data-text='${text ? text : ''}'/>`);
     textInputInside.css({
         "position": "fixed",
         "z-index": 1000,
@@ -432,6 +441,7 @@ function create_moveable_text_box(x,y,width, height, text = undefined) {
 function handle_auto_resize(e){
     $(this).parent().css("height", this.scrollHeight +25 +2 + "px")
     $(this).parent().css("width", this.scrollWidth + 2 +"px")
+    $(this).closest('.text-input-inside').attr('data-text', this.value)
 }
 
 /**
@@ -495,7 +505,7 @@ function handle_draw_text_submit(event) {
     };
 
     const stroke = {
-        size: parseInt($(textBox).css("-webkit-text-stroke-width")) / window.ZOOM,
+        size: parseInt($(textBox).css("-webkit-text-stroke-width"))/window.ZOOM,
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
     const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
@@ -531,6 +541,9 @@ function handle_key_press(e) {
     if (e.key == "Escape") {
         $(this).parent().remove();
         document.getElementById("text_controller_inside")?.remove();
+    }
+    else{
+        $(this).closest('.text-input-inside').attr('data-text', this.value)
     }
 }
 

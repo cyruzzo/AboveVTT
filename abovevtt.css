@@ -4776,6 +4776,36 @@ div#selectedTokensBorderRotationGrabberConnector,
     width:100%;
     position: relative;
 }
+.text-input-inside:before{
+    resize: none;
+    content: attr(data-text);
+    height: calc(100% - 25px);
+    width: calc(100% - 2px);
+    position: relative;
+    z-index: 2;
+    white-space: pre-wrap;
+    overflow: hidden;
+    background-color: transparent;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 0px;
+    position: absolute;
+    left: 1px;
+    top: 26px;
+    pointer-events: none;
+    overflow-wrap: break-word;
+    text-align:  var(--text-align);
+    color: var(--color);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+    font-weight: var(--font-weight);
+    font-style: var(--font-style);
+}
+  
+
+
+
 #manual_grid_data>div>div:first-of-type{
     vertical-align: top;
     font-weight:bold;
