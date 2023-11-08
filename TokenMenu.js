@@ -827,6 +827,8 @@ function build_token_auras_inputs(tokenIds) {
 		'Fairy': 'fairy-fx',
 		'Magic Circle': 'magic-circle-fx',
 		'Magic Circle 2': 'magic-circle-2-fx',
+		'Spores': 'spore-fx',
+		'Lightning Circle': 'lightning-fx',
 		'Hurricane': 'hurricane-fx',
 		'Snow': 'snow-fx',
 		'Bubble': 'bubble-fx'
@@ -1202,6 +1204,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 		'Fairy': 'fairy-fx',
 		'Magic Circle': 'magic-circle-fx',
 		'Magic Circle 2': 'magic-circle-2-fx',
+		'Spores': 'spore-fx',
+		'Lightning Circle': 'lightning-fx',
 		'Hurricane': 'hurricane-fx',
 		'Snow': 'snow-fx',
 		'Bubble': 'bubble-fx'				
