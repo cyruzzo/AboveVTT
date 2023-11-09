@@ -1027,11 +1027,11 @@ function reset_canvas() {
 		return;
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	let darknessPercent = 100 - parseInt(darknessfilter);
-	if(darknessfilter == 0 && window.walls.length>4){
+ 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
+	if(darknessFilter < 30 && window.walls.length>4){
  		$('#raycastingCanvas').css('opacity', '.3');
- 	}
- 	else if(darknessfilter<100){
+	}
+ 	else if(darknessFilter<100 || window.DM){
  		$('#raycastingCanvas').css('opacity', `0`);
  	}
  	else{
