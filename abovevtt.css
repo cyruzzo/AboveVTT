@@ -343,7 +343,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform-origin: left;
     transform: rotateY(0deg);
     transition: 200ms transform 400ms linear;
-    will-change: transform;
 }
 .door-icon{
     width: 15%;
@@ -375,7 +374,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.open .door.foreground{
     transform: rotateY(57deg) skew(0deg, 16deg);
     transition: 200ms transform 0ms linear;
-    will-change: transform;
 }
 
 .door-button.locked .door-icon{
@@ -485,7 +483,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     border: 1px solid #000;
     position: absolute;
     transition: 200ms transform 0ms linear;
-    will-change: transform;
 }
 .open .window.background>div{
     content: '';
@@ -497,29 +494,24 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     border: 1px solid #000;
     position: absolute;
     transition: 200ms transform 0ms linear;
-    will-change: transform;
 }
 
 .door-button:not(.ignore-hover):not(.locked):hover .window.background>div{
     transform: translateY(7px);
     transition: 50ms transform 100ms linear;
-    will-change: transform;
 }
 .door-button.open:not(.ignore-hover):hover .window.background>div{
     transform: translateY(2px);
     transition: 50ms transform 100ms linear;
-    will-change: transform;
 }
 
 .door-button:not(.ignore-hover):not(.locked):hover .door.foreground{
     transform: rotateY(35deg) skew(0deg, 6deg);
     transition: 50ms transform 100ms linear;
-    will-change: transform;
 }
 .door-button.open:not(.ignore-hover):hover .door.foreground{
     transform: rotateY(45deg) skew(0deg, 10deg);
     transition: 50ms transform 100ms linear;
-    will-change: transform;
 }
 
 
@@ -2620,6 +2612,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #raycastingCanvas{
     mix-blend-mode:multiply;
     opacity: 1;
+  
+}
+
+#raycastingCanvas,
+#light_overlay,
+.aura-element-container-clip:not([data-animation])>.islight,
+.aura-element-container-clip>div:not(.islight){
+    filter: blur(calc(10px / var(--scene-scale)));
 }
 
 #conditions-flyout li,
@@ -4622,10 +4622,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     transform: scale(var(--window-zoom));
 }
 
-#VTT *,
-#VTT{
-    will-change: transform;
-}
+
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
@@ -6512,10 +6509,10 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 }
 #map_items{
     mix-blend-mode: multiply;
-    background:#000;
+
 }
 #darkness_layer{
-    z-index: 8;
+    z-index: 7;
     background: #fff;
     filter: brightness(var(--darkness-filter));
 
@@ -6527,10 +6524,12 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     opacity: 1;
 
 }
+
 div#light_container .aura-element-container-clip.light:not([data-animation]) .aura-element,
 #light_overlay {
     filter: blur(calc(10px / var(--scene-scale)))
 }
+
 
 #text_div{
     pointer-events:none;
@@ -6545,6 +6544,7 @@ div#light_container .aura-element-container-clip.light:not([data-animation]) .au
     overflow: clip;
     transition: opacity 1.5s linear 0s;
     opacity:1;
+    background:#000;
 }
 #scene_map_container.map-loading{
     opacity: 0;
