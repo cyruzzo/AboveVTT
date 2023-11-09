@@ -1886,7 +1886,7 @@ async function migrate_scene_folders() {
  * clears and redraws the list of scenes in the sidebar
  * @param searchTerm {string} the search term used to filter the list of scenes
  */
-async function redraw_scene_list(searchTerm) {
+function redraw_scene_list(searchTerm) {
 	console.group("redraw_scene_list");
 
 	let nameFilter = "";
@@ -1904,11 +1904,11 @@ async function redraw_scene_list(searchTerm) {
 
 	// first let's add all folders because we need the folder to exist in order to add items into it
 	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
-	await window.sceneListFolders
+	window.sceneListFolders
 		.sort(SidebarListItem.folderDepthComparator)
-		.forEach(async item => {
+		.forEach(item => {
 			console.debug("redraw_scene_list folderPath", item.folderPath, item.parentId, item.id);
-			let row = await build_sidebar_list_row(item);
+			let row = build_sidebar_list_row(item);
 			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			let folder = $(`#${item.parentId} > .folder-item-list`);
 			if (folder.length > 0) {
@@ -1920,11 +1920,11 @@ async function redraw_scene_list(searchTerm) {
 		});
 
 	// now let's add all the other items
-	await window.sceneListItems
+	window.sceneListItems
 		.sort(SidebarListItem.sortComparator)
 		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
-		.forEach(async item => {
-			let row = await build_sidebar_list_row(item);
+		.forEach(item => {
+			let row = build_sidebar_list_row(item);
 			let folder = $(`#${item.parentId} > .folder-item-list`);
 			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 			if (folder.length > 0) {

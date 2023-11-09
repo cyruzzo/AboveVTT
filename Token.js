@@ -3169,7 +3169,7 @@ function setTokenLight (token, options) {
 			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
 
 			lightElement.contextmenu(function(){return false;});
-			if(visionRadius != 0 || lightRadius != 0)
+			if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
 				$("#light_container").prepend(lightElement);
 		}
 		if(options.animation?.light){
