@@ -216,8 +216,9 @@ class WaypointManagerClass {
 
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
-	draw(midlineLabels, labelX, labelY) {
+	draw(midlineLabels, labelX, labelY, alpha = 1) {
 		$('.ruler-svg-text').remove();
+		$('#VTT').css('--svg-text-alpha', alpha);
 		var cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		for (var i = 0; i < this.coords.length; i++) {
@@ -415,12 +416,13 @@ class WaypointManagerClass {
 		function fadeout(){
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
-			self.draw(false)
+			self.draw(false, undefined, undefined, alpha)
 			alpha = alpha - 0.08;
 			if (alpha <= 0.0){
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
+
 				$('.ruler-svg-text').remove();
 			}
 		}
