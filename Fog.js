@@ -335,20 +335,9 @@ class WaypointManagerClass {
 			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
 			textY = (labelY + (margin * 2) + slopeModifier);
 		} else {
-			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
-			if (snapPointYStart <= snapPointYEnd) {
-				// Push right and down
-				slopeModifier = margin * 4;
-			}
-			else {
-				// Push up and left, bigger number as whole rect height pushed
-				slopeModifier = -heightOffset - (margin * 4);
-			}
-
-			// Need to further tweak the modifier if we are on the right hand side of the map
-			if (snapPointXEnd + gridSize > this.canvas.width) {
-				slopeModifier = -(heightOffset * 1.5);
-			}
+			
+			slopeModifier = margin;
+		
 
 			// Calculate our coords and dimensions
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
@@ -390,12 +379,12 @@ class WaypointManagerClass {
 		this.ctx.fillText(text, textX, textY);*/
 
 		let textSVG = $(`
-			<svg class='ruler-svg-text' style='top:${textY}px; left:${textX}px; width:${textRect.width};'>
+			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
 				<text x="1" y="11">
 					${text}
 				</text>
 			<svg>`)
-		$('#text_div').append(textSVG)
+		$('#VTT').append(textSVG)
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd);
@@ -412,6 +401,7 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
+				$('.ruler-svg-text').remove();
 				return;
 		} 
 		// only ever allow a single fadeout to occur
@@ -431,6 +421,7 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
+				$('.ruler-svg-text').remove();
 			}
 		}
 	}

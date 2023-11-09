@@ -2626,6 +2626,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     font-weight: bold;
     font-family: 'Roboto', sans-serif;
     transform-origin: top left;
+    pointer-events: none;
+    z-index:80;
 }
 
 #raycastingCanvas,

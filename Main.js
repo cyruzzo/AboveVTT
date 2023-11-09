@@ -15,9 +15,7 @@ window.onbeforeunload = function(event)
 	}
 };
 
-const debounceVTTMargin = mydebounce(() => {
-	set_default_vttwrapper_size();
-}, 800)
+
 
 /** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
@@ -161,7 +159,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
 	}) 
 
-
+	set_default_vttwrapper_size();
 	if(reset == true){
 		$("#scene_map")[0].scrollIntoView({
 			behavior: 'auto',
@@ -185,7 +183,7 @@ function change_zoom(newZoom, x, y, reset = false) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
-	debounceVTTMargin();
+	
 	console.groupEnd()
 }
 
