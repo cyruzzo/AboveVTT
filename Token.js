@@ -3007,13 +3007,16 @@ function deselect_all_tokens() {
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = 100 - parseInt(darknessFilter); 	
-	if(window.DM && darknessPercent < 40){
-   	 	darknessPercent = 40; 	
-   	 	$('#raycastingCanvas').css('opacity', 0);
-   	}
-	else{
-		$('#raycastingCanvas').css('opacity', '');
-	}
+
+ 	if(darknessFilter == 0 && window.walls.length>4){
+ 		$('#raycastingCanvas').css('opacity', '.3');
+ 	}
+ 	else if(darknessFilter<100){
+ 		$('#raycastingCanvas').css('opacity', `0`);
+ 	}
+ 	else{
+ 		$('#raycastingCanvas').css('opacity', `1`);
+ 	}
 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
    		$("#light_container [id^='light_']").css('visibility', "visible");
@@ -3193,9 +3196,7 @@ function setTokenLight (token, options) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 	}
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	if(!window.DM){
-		
-		
+	if(!window.DM){		
 		let vision = $("[id*='vision_']");
 		for(let i = 0; i < vision.length; i++){
 			if(!vision[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != true){
@@ -3205,6 +3206,13 @@ function setTokenLight (token, options) {
 				$(vision[i]).css("visibility", "visible");
 			}	
 		}
+	}
+
+	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed')){
+		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "none")
+	}
+	else if(options.type == 'door'){
+		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "")
 	}
 	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('devilsight', true);	
