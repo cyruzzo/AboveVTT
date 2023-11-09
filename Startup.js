@@ -137,13 +137,6 @@ $(function() {
           iframeTab: window.PLAYER_ID,
           rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
         })
-        
-        $(window).off('focus.altCheck').on('focus.altCheck', function(){
-          window.altHeld = false;
-            if ($('#ruler_button').hasClass('button-enabled')) {
-                $('#select-button').click()
-            }
-        })
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);

@@ -248,6 +248,12 @@ Mousetrap.bind('alt', function () {
     if (!($('#ruler_button').hasClass('button-enabled'))) {
         $('#ruler_button').click()
     }
+    $(window).off('focus.altCheck').one('focus.altCheck', function(){
+      window.altHeld = false;
+        if ($('#ruler_button').hasClass('button-enabled')) {
+            $('#select-button').click()
+        }
+    })
     return false
 }, 'keydown');
 
