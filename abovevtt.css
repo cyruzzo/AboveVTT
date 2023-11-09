@@ -6518,10 +6518,8 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 }
 #light_container{
     mix-blend-mode:lighten;
-    background: #000;
     z-index: 9;
     opacity: 1;
-
 }
 
 
