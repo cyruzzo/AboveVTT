@@ -1028,10 +1028,10 @@ function reset_canvas() {
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
-	if(darknessFilter < 30 && window.walls.length>4){
+	if(darknessfilter < 30 && window.walls.length>4){
  		$('#raycastingCanvas').css('opacity', '.3');
 	}
- 	else if(darknessFilter<100 || window.DM){
+ 	else if(darknessfilter<100 || window.DM){
  		$('#raycastingCanvas').css('opacity', `0`);
  	}
  	else{
