@@ -401,7 +401,6 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
-				$('.ruler-svg-text').remove();
 				return;
 		} 
 		// only ever allow a single fadeout to occur
@@ -421,7 +420,6 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
-				$('.ruler-svg-text').remove();
 			}
 		}
 	}
@@ -3273,6 +3271,7 @@ function calculateFourthPoint(point1, point2, point3) {
 }
 function clear_temp_canvas(){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height);
+	$('.ruler-svg-text').remove();
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){
