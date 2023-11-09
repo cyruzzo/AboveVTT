@@ -343,7 +343,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform-origin: left;
     transform: rotateY(0deg);
     transition: 200ms transform 0ms linear;
-   
 }
 .door-icon{
     width: 15%;
@@ -375,7 +374,6 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
 .door-button.open .door.foreground{
     transform: rotateY(57deg) skew(0deg, 16deg);
     transition: 200ms transform 0ms linear;
-  
 }
 
 .door-button.locked .door-icon{
@@ -2613,7 +2611,14 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    opacity: 1;
+    opacity: 1; 
+}
+
+#raycastingCanvas,
+#light_overlay,
+.aura-element-container-clip:not([data-animation])>.islight,
+.aura-element-container-clip>div:not(.islight){
+    filter: blur(calc(10px / var(--scene-scale)));
 }
 
 #conditions-flyout li,
@@ -4616,6 +4621,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     transform: scale(var(--window-zoom));
 }
 
+
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
@@ -6502,10 +6508,10 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 }
 #map_items{
     mix-blend-mode: multiply;
-    background:#000;
+
 }
 #darkness_layer{
-    z-index: 8;
+    z-index: 7;
     background: #fff;
     filter: brightness(var(--darkness-filter));
 
@@ -6517,9 +6523,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     opacity: 1;
 
 }
-div#light_container {
-    filter: blur(calc(10px / var(--scene-scale)))
-}
+
 
 #text_div{
     pointer-events:none;
@@ -6534,6 +6538,7 @@ div#light_container {
     overflow: clip;
     transition: opacity 1.5s linear 0s;
     opacity:1;
+    background:#000;
 }
 #scene_map_container.map-loading{
     opacity: 0;

@@ -151,9 +151,14 @@ function change_zoom(newZoom, x, y, reset = false) {
 		$(window).scrollLeft(pageX);
 		$(window).scrollTop(pageY);	
 	}
-	$("body").css("--window-zoom", window.ZOOM) 
+
+	$("#VTT").css({
+		"--window-zoom": window.ZOOM,
+		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
+	}) 
+
+
 	if(reset == true){
-		
 		$("#scene_map")[0].scrollIntoView({
 			behavior: 'auto',
 			block: 'center',
@@ -161,14 +166,20 @@ function change_zoom(newZoom, x, y, reset = false) {
 		});		
 		if($('#hide_rightpanel').hasClass('point-right') && $('.ct-sidebar.ct-sidebar--hidden').length == 0)
 			$(window).scrollLeft(window.scrollX + 170); // 170 half of game log			
-		
 	}
+
+
+	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+
+
+
 
 
     //Set scaling token names CSS variable this variable can be used with anything in #tokens
 	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
 	
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+
 
 
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
@@ -2501,8 +2512,7 @@ function init_ui() {
 	});
 
 	window.ZOOM = 1.0;
-	$('body').css('--window-zoom', window.ZOOM)
-	VTT = $("<div id='VTT' style='position:absolute; top:0px;left:0px;'/>");
+	VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px; --window-zoom:${window.ZOOM} '/>`);
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
@@ -2524,8 +2534,8 @@ function init_ui() {
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	VTT.append(walls);
-	lightContainer.append(rayCasting);
-	lightContainer.append(lightOverlay);
+	mapContainer.append(rayCasting);
+	mapContainer.append(lightOverlay);
 	mapContainer.append(lightContainer);
 	mapContainer.append(darknessLayer);
 	mapContainer.append(mapItems);
