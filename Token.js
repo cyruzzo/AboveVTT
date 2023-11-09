@@ -3165,7 +3165,9 @@ function setTokenLight (token, options) {
 			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
+
 			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
+
 			lightElement.contextmenu(function(){return false;});
 			if(visionRadius != 0 || lightRadius != 0)
 				$("#light_container").prepend(lightElement);

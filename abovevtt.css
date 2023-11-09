@@ -342,7 +342,7 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     position: absolute;
     transform-origin: left;
     transform: rotateY(0deg);
-    transition: 200ms transform 400ms linear;
+    transition: 200ms transform 0ms linear;
 }
 .door-icon{
     width: 15%;
@@ -6523,8 +6523,6 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
     opacity: 1;
 
 }
-
-
 
 
 #text_div{

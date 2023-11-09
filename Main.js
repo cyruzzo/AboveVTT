@@ -147,11 +147,11 @@ function change_zoom(newZoom, x, y, reset = false) {
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
 
-
 	if(reset != true){
 		$(window).scrollLeft(pageX);
 		$(window).scrollTop(pageY);	
 	}
+
 	$("#VTT").css({
 		"--window-zoom": window.ZOOM,
 		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
@@ -169,6 +169,15 @@ function change_zoom(newZoom, x, y, reset = false) {
 	}
 
 
+	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
+
+
+
+
+
+    //Set scaling token names CSS variable this variable can be used with anything in #tokens
+	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
+	
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 
 
