@@ -2628,6 +2628,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     transform-origin: top left;
     pointer-events: none;
     z-index:80;
+    opacity: var(--svg-text-alpha);
 }
 
 #raycastingCanvas,
