@@ -2611,8 +2611,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    opacity: 1;
-  
+    opacity: 1; 
 }
 
 #raycastingCanvas,
@@ -6525,10 +6524,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 
 }
 
-div#light_container .aura-element-container-clip.light:not([data-animation]) .aura-element,
-#light_overlay {
-    filter: blur(calc(10px / var(--scene-scale)))
-}
+
 
 
 #text_div{
