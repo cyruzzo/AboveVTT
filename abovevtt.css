@@ -2618,7 +2618,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #light_overlay,
 .aura-element-container-clip:not([data-animation])>.islight,
 .aura-element-container-clip>div:not(.islight){
-    filter: blur(calc(10px / var(--scene-scale)));
+    filter: blur(calc(5px / var(--scene-scale)));
+}
+
+#light_container{
+    filter: blur(calc(3px / var(--scene-scale)));
 }
 
 #conditions-flyout li,

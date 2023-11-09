@@ -1037,6 +1037,9 @@ function reset_canvas() {
  	else if(window.DM){
  		$('#raycastingCanvas').css('opacity', '');
  	}
+ 	else{
+ 		$('#raycastingCanvas').css('opacity', Math.max(0.15, darknessfilter/100));
+ 	}
  	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
@@ -4229,7 +4232,7 @@ Ray.prototype.cast = function(boundary) {
   const x4 = this.pos.x + this.dir.x;
   const y4 = this.pos.y + this.dir.y;
   
-  const addedScale = 4;
+  const addedScale = 1;
 
   x1 = x1 < x3 ? x1+addedScale : x1-addedScale
   y1 = y1 < y3 ? y1+addedScale : y1-addedScale
@@ -4345,13 +4348,19 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 	    }	    
 	    if (closestLight && closestWall != prevClosestWall) {
-	    	if(prevClosestPoint){
-	    		 lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	if(prevClosestWall != null && prevClosestPoint != null){
+	    		let intersect = lineLine(prevClosestWall.a.x, prevClosestWall.a.y, prevClosestWall.b.x, prevClosestWall.b.y, closestWall.a.x, closestWall.a.y, closestWall.b.x, closestWall.b.y)
+	    		if(intersect != false){
+	    			lightPolygon.push({x: intersect.x*window.CURRENT_SCENE_DATA.scale_factor, y: intersect.y*window.CURRENT_SCENE_DATA.scale_factor});
+	    		}
+	    		else{
+	    			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    		}
 	    	}
 	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
 	    if (closestMove && closestBarrier != prevClosestBarrier) {
-	    	if(prevClosestPoint){
+	    	if(prevClosestBarrierPoint){
 	    		 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
 	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
@@ -4406,6 +4415,8 @@ function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
 	}
 
 }
+
+
 function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
 
   // calculate the direction of the lines

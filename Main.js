@@ -15,6 +15,10 @@ window.onbeforeunload = function(event)
 	}
 };
 
+const debounceVTTMargin = mydebounce(() => {
+	set_default_vttwrapper_size();
+}, 800)
+
 /** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
  * @return {String} a sanitized and possibly modified url to help with loading maps */
@@ -172,16 +176,6 @@ function change_zoom(newZoom, x, y, reset = false) {
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 
 
-
-
-
-    //Set scaling token names CSS variable this variable can be used with anything in #tokens
-	$("#tokens").css("--font-size-zoom", Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px");
-	
-	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-
-
-
 	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
 		tabCommunicationChannel.postMessage({
    			msgType: 'projectionZoom',
@@ -191,6 +185,7 @@ function change_zoom(newZoom, x, y, reset = false) {
    			sceneId: window.CURRENT_SCENE_DATA.id
    		})
 	}
+	debounceVTTMargin();
 	console.groupEnd()
 }
 
