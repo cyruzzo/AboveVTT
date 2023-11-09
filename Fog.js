@@ -1030,16 +1030,16 @@ function reset_canvas() {
 	}
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	let darknessPercent = 100 - parseInt(darknessfilter);
- 	if(window.DM && darknessPercent < 40){
- 		darknessPercent = 40;
- 		$('#raycastingCanvas').css('opacity', '0');
+	if(darknessfilter == 0 && window.walls.length>4){
+ 		$('#raycastingCanvas').css('opacity', '.3');
  	}
- 	else if(window.DM){
- 		$('#raycastingCanvas').css('opacity', '');
+ 	else if(darknessfilter<100){
+ 		$('#raycastingCanvas').css('opacity', `0`);
  	}
  	else{
- 		$('#raycastingCanvas').css('opacity', Math.max(0.15, darknessfilter/100));
+ 		$('#raycastingCanvas').css('opacity', `1`);
  	}
+
  	if(!parseInt(darknessfilter) && window.walls.length>4){
  		$('#light_container').css({
  			'mix-blend-mode': 'unset',
@@ -1456,6 +1456,7 @@ function redraw_light_walls(clear=true){
 						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
 						if(!$(this).hasClass('locked') && !shiftHeld){
 							open_close_door(x, y, width, height, type)
+							window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
 						}
 						else if(shiftHeld){
 							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
