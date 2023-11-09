@@ -2179,7 +2179,7 @@ function drawing_mouseup(e) {
 	// restore to what it looked like when first clicked
 	// but not polygons as they have a close box to clear and then save
 	// measure gets special treatment later on in this function
-	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure" && (window.DRAWFUNCTION != "wall" || window.DRAWSHAPE == 'rect')){
+	if (window.DRAWSHAPE !== "polygon" && window.DRAWFUNCTION !== "measure" && (window.DRAWFUNCTION != "wall" && !window.shiftHeld || window.DRAWSHAPE == 'rect') || (window.DRAWFUNCTION == "wall" && !window.shiftHeld))  {
 		clear_temp_canvas()
 	}
 
@@ -4229,7 +4229,7 @@ Ray.prototype.cast = function(boundary) {
   const x4 = this.pos.x + this.dir.x;
   const y4 = this.pos.y + this.dir.y;
   
-  const addedScale = 1;
+  const addedScale = 4;
 
   x1 = x1 < x3 ? x1+addedScale : x1-addedScale
   y1 = y1 < y3 ? y1+addedScale : y1-addedScale
