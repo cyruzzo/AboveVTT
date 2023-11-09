@@ -217,7 +217,7 @@ class WaypointManagerClass {
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels, labelX, labelY) {
-
+		$('.ruler-svg-text').remove();
 		var cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		for (var i = 0; i < this.coords.length; i++) {
@@ -288,7 +288,7 @@ class WaypointManagerClass {
 		let slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26) + "px Arial";
+		let fontSize = Math.max(75 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26)
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -377,7 +377,7 @@ class WaypointManagerClass {
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		/*this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, true);
@@ -387,7 +387,15 @@ class WaypointManagerClass {
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
-		this.ctx.fillText(text, textX, textY);
+		this.ctx.fillText(text, textX, textY);*/
+
+		let textSVG = $(`
+			<svg class='ruler-svg-text' style='top:${textY}px; left:${textX}px; width:${textRect.width};'>
+				<text x="1" y="11">
+					${text}
+				</text>
+			<svg>`)
+		$('#text_div').append(textSVG)
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd);
