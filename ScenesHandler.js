@@ -179,6 +179,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 	    
 			$("#tokens").hide();
+
 			window.CURRENT_SCENE_DATA.grid_subdivided = "0";
 			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor)
 			let aligner1 = $("<canvas id='aligner1'/>");
@@ -454,8 +455,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			open_grid_wizard_controls(sceneid, aligner1, aligner2, regrid, copiedSceneData);
 
-			$("#light_container").css('visibility', 'hidden');
-			$("#darkness_layer").css('visibility', 'hidden');
+			$("#light_container, #darkness_layer, #raycastingCanvas").css('visibility', 'hidden');
 			
 			regrid();
 
@@ -479,13 +479,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		window.CURRENT_SCENE_DATA = scene;
 
-		$(".VTTToken").each(function() {
+		$(".VTTToken, .door-button").each(function() {
 			$("#aura_" + $(this).attr("data-id").replaceAll("/", "")).remove();
 			$("#light_" + $(this).attr("data-id").replaceAll("/", "")).remove();
 			$(`.aura-element-container-clip[id='${$(this).attr("data-id")}']`).remove();
 		});
 		$(".VTTToken").remove();
-
+		$('#raycastingCanvas').css('opacity', '0');
+		$('#scene_map_container').css('background', '#fff');
 		for (var i in window.TOKEN_OBJECTS) {
 			delete window.TOKEN_OBJECTS[i];
 		}
@@ -610,7 +611,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		
 			$("#scene_map").off("load");
 			reset_canvas();
-			$("#VTT").css("transform", "scale(" + window.ZOOM + ")");
+
 
 			set_default_vttwrapper_size()
 

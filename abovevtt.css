@@ -2613,6 +2613,22 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     mix-blend-mode:multiply;
     opacity: 1; 
 }
+.ruler-svg-text{
+    fill: #000;
+    background:#fff;
+    border-radius:2px;
+    border:1px solid #000;
+    position:absolute;
+    z-index:20;
+    transform: scale(calc(2 / var(--window-zoom)));
+    height: 16px;
+    font-size: 10px;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    transform-origin: top left;
+    pointer-events: none;
+    z-index:80;
+}
 
 #raycastingCanvas,
 #light_overlay,

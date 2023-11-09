@@ -217,7 +217,7 @@ class WaypointManagerClass {
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels, labelX, labelY) {
-
+		$('.ruler-svg-text').remove();
 		var cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		for (var i = 0; i < this.coords.length; i++) {
@@ -288,7 +288,7 @@ class WaypointManagerClass {
 		let slopeModifier = 0;
 
 		// Setup text metrics
-		this.ctx.font = Math.max(150 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26) + "px Arial";
+		let fontSize = Math.max(75 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 26)
 		const totalDistance = Number.isInteger(distance + cumulativeDistance)
 			? (distance + cumulativeDistance)
 			: (distance + cumulativeDistance).toFixed(1)
@@ -335,20 +335,9 @@ class WaypointManagerClass {
 			textX = (labelX + margin + slopeModifier - (textRect.width / 2));
 			textY = (labelY + (margin * 2) + slopeModifier);
 		} else {
-			// Calculate slope modifier so we can float the rectangle away from the line end, all a bit magic number-y
-			if (snapPointYStart <= snapPointYEnd) {
-				// Push right and down
-				slopeModifier = margin * 4;
-			}
-			else {
-				// Push up and left, bigger number as whole rect height pushed
-				slopeModifier = -heightOffset - (margin * 4);
-			}
-
-			// Need to further tweak the modifier if we are on the right hand side of the map
-			if (snapPointXEnd + gridSize > this.canvas.width) {
-				slopeModifier = -(heightOffset * 1.5);
-			}
+			
+			slopeModifier = margin;
+		
 
 			// Calculate our coords and dimensions
 			contrastRect.x = snapPointXEnd - margin + slopeModifier;
@@ -377,7 +366,7 @@ class WaypointManagerClass {
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
 
-		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		/*this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 		roundRect(this.ctx, Math.floor(textRect.x), Math.floor(textRect.y), Math.floor(textRect.width), Math.floor(textRect.height), 10, true);
@@ -387,7 +376,15 @@ class WaypointManagerClass {
 		// Finally draw our text
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
-		this.ctx.fillText(text, textX, textY);
+		this.ctx.fillText(text, textX, textY);*/
+
+		let textSVG = $(`
+			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
+				<text x="1" y="11">
+					${text}
+				</text>
+			<svg>`)
+		$('#VTT').append(textSVG)
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd);
@@ -404,6 +401,7 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
+				$('.ruler-svg-text').remove();
 				return;
 		} 
 		// only ever allow a single fadeout to occur
@@ -423,6 +421,7 @@ class WaypointManagerClass {
 				self.cancelFadeout()
 				self.clearWaypoints();
 				clear_temp_canvas()
+				$('.ruler-svg-text').remove();
 			}
 		}
 	}

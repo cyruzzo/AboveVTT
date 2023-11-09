@@ -695,10 +695,10 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 				$("#wizard_popup").delay(2000).animate({ opacity: 0 }, 4000, function() {
 					$("#wizard_popup").remove();
 				});
-				$("#light_container").css('visibility', 'visible');
-				$("#darkness_layer").css('visibility', 'visible');
+				$("#light_container, #darkness_layer, #raycastingCanvas").css('visibility', 'visible');
 			}
 			$(`#sources-import-main-container`).remove();
+			$('#scene_map_container').css('background', '');
 	});
 
 
