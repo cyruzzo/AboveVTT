@@ -3008,14 +3008,12 @@ function deselect_all_tokens() {
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
 
-	if(darknessFilter < 30 && window.walls.length>4){
- 		$('#raycastingCanvas').css('opacity', '.3');
-	}
- 	else if(darknessFilter<100 || window.DM){
- 		$('#raycastingCanvas').css('opacity', `0`);
+ 	if(window.DM && darknessPercent < 40){
+ 		darknessPercent = 40;
+ 		$('#raycastingCanvas').css('opacity', '0');
  	}
- 	else{
- 		$('#raycastingCanvas').css('opacity', `1`);
+ 	else if(window.DM){
+ 		$('#raycastingCanvas').css('opacity', '');
  	}
 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
@@ -3169,7 +3167,7 @@ function setTokenLight (token, options) {
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
 
-			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
+			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
 
 			lightElement.contextmenu(function(){return false;});
 			if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))

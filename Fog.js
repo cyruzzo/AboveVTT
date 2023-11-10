@@ -1026,26 +1026,32 @@ function reset_canvas() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
+
+	redraw_light_walls();
+	redraw_drawings();
+	redraw_drawn_light();
+	redraw_light();
+	redraw_fog();
+
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
  	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
-	if(darknessfilter < 30 && window.walls.length>4){
- 		$('#raycastingCanvas').css('opacity', '.3');
-	}
- 	else if(darknessfilter<100 || window.DM){
- 		$('#raycastingCanvas').css('opacity', `0`);
+ 	if(window.DM && darknessPercent < 40){
+ 		darknessPercent = 40;
+ 		$('#raycastingCanvas').css('opacity', '0');
  	}
- 	else{
- 		$('#raycastingCanvas').css('opacity', `1`);
+ 	else if(window.DM){
+ 		$('#raycastingCanvas').css('opacity', '');
  	}
 
+
  	if(!parseInt(darknessfilter) && window.walls.length>4){
- 		$('#light_container').css({
+ 		$('#outer_light_container').css({
  			'mix-blend-mode': 'unset',
  			'background':  '#FFF',
  			'opacity': '0.3'
  		});
  	} else{
- 		$('#light_container').css({
+ 		$('#outer_light_container').css({
  			'mix-blend-mode': '',
  			'background': '',
  			'opacity': ''
@@ -1056,11 +1062,7 @@ function reset_canvas() {
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
 
-	redraw_light_walls();
-	redraw_drawings();
-	redraw_drawn_light();
-	redraw_light();
-	redraw_fog();
+
 	
 	
 
