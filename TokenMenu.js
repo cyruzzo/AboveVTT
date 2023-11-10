@@ -149,6 +149,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 			let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
 			openButton.off().on("click", function(clickEvent){
+				window.TOKEN_OBJECTS[`${door.attr('data-x1')}${door.attr('data-y1')}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
 				let clickedItem = $(this);
 				let locked = door.hasClass('locked');
 				let secret = door.hasClass('secret');

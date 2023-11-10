@@ -1456,7 +1456,7 @@ function redraw_light_walls(clear=true){
 							open_close_door(x, y, width, height, type)
 							window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
 						}
-						else if(shiftHeld){
+						else if(shiftHeld && window.DM){
 							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
 							const isOpen = $(this).hasClass('open') ? `open` : `closed`;
 							openCloseDoorButton.toggleClass('locked', !locked);
