@@ -2413,8 +2413,17 @@ function init_ui() {
 	lightOverlay.css("position", "absolute");
 	lightOverlay.css("top", "0");
 	lightOverlay.css("left", "0");
-	lightOverlay.css("z-index", "10");
+	lightOverlay.css("z-index", "9");
 	lightOverlay.css("mix-blend-mode", "lighten");
+
+	const outer_light_container = $("<div id='outer_light_container'></canvas>");
+	outer_light_container.css("position", "absolute");
+	outer_light_container.css("top", "0");
+	outer_light_container.css("left", "0");
+	outer_light_container.css("z-index", "9");
+	outer_light_container.css("width", "100%");
+	outer_light_container.css("height", "100%");
+
 
 	const textDiv = $("<div id='text_div'></div>");
 	textDiv.css("position", "absolute");
@@ -2527,11 +2536,14 @@ function init_ui() {
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	VTT.append(walls);
-	mapContainer.append(rayCasting);
-	mapContainer.append(lightOverlay);
-	mapContainer.append(lightContainer);
-	mapContainer.append(darknessLayer);
+	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
+	mapContainer.append(darknessLayer);
+	outer_light_container.append(rayCasting);
+	outer_light_container.append(lightContainer);
+	lightContainer.append(lightOverlay);
+
+
 	mapItems.append(background);
 
 

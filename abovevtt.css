@@ -2611,7 +2611,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #raycastingCanvas{
     mix-blend-mode:multiply;
-    opacity: 1; 
+    opacity: 1;
+}
+
+#outer_light_container{
+    mix-blend-mode:lighten;
+    opacity:1;
+    background:#000;
 }
 .ruler-svg-text{
     fill: #000;
@@ -2640,6 +2646,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 #light_container{
     filter: blur(calc(3px / var(--scene-scale)));
+
 }
 
 #conditions-flyout li,
@@ -6458,7 +6465,7 @@ div.ddbc-tab-options--layout-pill>button{
 
 [data-darkness]{
     transform: rotate(var(--token-rotation));
-    z-index:15 !important;
+    z-index:16 !important;
     opacity: 1 !important;
 }
 [data-darkness] .token-image{
@@ -6538,8 +6545,8 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 
 }
 #light_container{
-    mix-blend-mode:lighten;
-    z-index: 9;
+    mix-blend-mode:hard-light;
+    z-index: 15;
     opacity: 1;
 }
 
