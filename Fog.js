@@ -4450,7 +4450,8 @@ function detectInLos(x, y) {
 	
 }
 
-async function redraw_light(){
+function redraw_light(){
+	let startTime = Date.now();
 
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
@@ -4685,7 +4686,7 @@ async function redraw_light(){
 			resolve();
 		})); 	
 	}
-	await Promise.all(promises);
+	Promise.all(promises);
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
@@ -4724,6 +4725,17 @@ async function redraw_light(){
 	if(!window.DM){
 		do_check_token_visibility();
 	}
+
+	debounceLightChecks = mydebounce(() => {		
+		if(window.DRAGGING)
+			return;
+		if(window.walls?.length < 5){
+			redraw_light_walls();	
+		}
+		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
+		redraw_light();
+		
+	}, Math.min(500, Math.abs(startTime-Date.now())));
 }
 
 function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
