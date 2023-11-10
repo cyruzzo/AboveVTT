@@ -245,13 +245,15 @@ Mousetrap.bind('alt', function () {
     } else {
         altHeld = true;
     }
+    window.selectedMenuButton = $('#VTTWRAPPER ~ .ddbc-tab-options--layout-pill>button.button-enabled')
     if (!($('#ruler_button').hasClass('button-enabled'))) {
         $('#ruler_button').click()
     }
-    $(window).off('focus.altCheck').one('focus.altCheck', function(){
+
+    $(window).off('blur.altCheck').one('blur.altCheck', function(){
       window.altHeld = false;
         if ($('#ruler_button').hasClass('button-enabled')) {
-            $('#select-button').click()
+            window.selectedMenuButton.click()
         }
     })
     return false
@@ -259,7 +261,7 @@ Mousetrap.bind('alt', function () {
 
 Mousetrap.bind('alt', function () {
     if ($('#ruler_button').hasClass('button-enabled')) {
-        $('#select-button').click()
+        window.selectedMenuButton.click()
     }
     altHeld = false;
     return false
