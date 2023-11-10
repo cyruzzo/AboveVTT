@@ -41,7 +41,7 @@ const availableToAoe = [
 
 
 
-const debounceLightChecks = mydebounce(() => {		
+let debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
@@ -507,29 +507,29 @@ class Token {
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
 	}
-	async moveUp() {	
+	moveUp() {	
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) - addvpps/2-5}px`;
-		await this.move(newTop, parseFloat(this.options.left)+5)	
+		 this.move(newTop, parseFloat(this.options.left)+5)	
 	}
-	async moveDown() {
+	moveDown() {
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addvpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.height * window.CURRENT_SCENE_DATA.scaleAdjustment.y : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
 		let newTop = `${parseFloat(this.options.top) + addvpps+5}px`;
-		await this.move(newTop, parseFloat(this.options.left)+5)	
+		this.move(newTop, parseFloat(this.options.left)+5)	
 	}
-	async moveLeft() {
+	moveLeft() {
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) - addhpps/2-5}px`;
-		await this.move(parseFloat(this.options.top)+5, newLeft)	
+		this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
-	async moveRight() {
+	moveRight() {
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();		
 		let addhpps = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? window.hexGridSize.width * window.CURRENT_SCENE_DATA.scaleAdjustment.x : (!tinyToken || window.CURRENTLY_SELECTED_TOKENS.length > 1) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		let newLeft = `${parseFloat(this.options.left) + addhpps+5}px`;
-		await this.move(parseFloat(this.options.top)+5, newLeft)	
+		this.move(parseFloat(this.options.top)+5, newLeft)	
 	}
 
 	/**
@@ -538,7 +538,7 @@ class Token {
 	 * @param {String|Number} left position from the left
 	 * @returns void
 	 */
-	async move(top, left) {
+	move(top, left) {
 		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 
@@ -564,7 +564,7 @@ class Token {
 			this.options.top = tokenPosition.y + 'px';
 			this.options.left = tokenPosition.x + 'px';
 
-			await this.place(100)
+			this.place(100)
 			this.update_and_sync();
 		}
 		
