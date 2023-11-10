@@ -4532,7 +4532,7 @@ async function redraw_light(){
 	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
-	let light_auras = $(`.aura-element.islight:not([style*='visibility: hidden'])`)
+	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
 	if(selectedTokens.length>0){

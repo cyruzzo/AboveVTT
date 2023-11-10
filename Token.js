@@ -1469,7 +1469,7 @@ class Token {
 			console.group("old token")
 			console.log("trovato!!");
 			if(this.options.type == 'door'){
-				this.options.size = 1;
+				this.options.size = 50;
 				setTokenLight(old, this.options);
 				debounceLightChecks();
 				return;
