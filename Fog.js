@@ -545,7 +545,7 @@ function check_single_token_visibility(id){
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
 	
 	let inTruesight = false;
-	if($(`.aura-element-container-clip.truesight`).length>0 ){
+	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
 	}
 	if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
@@ -622,7 +622,7 @@ async function do_check_token_visibility() {
 			
 
 			let inTruesight = false;
-			if(truesightAuraExists){
+			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
