@@ -1469,7 +1469,7 @@ class Token {
 			console.group("old token")
 			console.log("trovato!!");
 			if(this.options.type == 'door'){
-				this.options.size = 1;
+				this.options.size = 50;
 				setTokenLight(old, this.options);
 				debounceLightChecks();
 				return;
@@ -3006,7 +3006,7 @@ function deselect_all_tokens() {
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
 	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter); 	
+	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
 
 	if(darknessFilter < 30 && window.walls.length>4){
  		$('#raycastingCanvas').css('opacity', '.3');
@@ -3208,7 +3208,7 @@ function setTokenLight (token, options) {
 		}
 	}
 
-	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed')){
+	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed') && $(`.door-button[data-id='${options.id}'] .door`).length > 0){
 		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "none")
 	}
 	else if(options.type == 'door'){

@@ -132,8 +132,8 @@ function token_context_menu_expanded(tokenIds, e) {
 			if(window.TOKEN_OBJECTS[tokenIds] == undefined){
 				window.TOKEN_OBJECTS[tokenIds] = new Token({
 					...default_options(),
-					left: `${parseFloat(door.css('--mid-x'))}px`,
-					top: `${parseFloat(door.css('--mid-y'))}px`,
+					left: `${parseFloat(door.css('--mid-x')) - 25}px`,
+					top: `${parseFloat(door.css('--mid-y')) - 25}px`,
 					id: tokenIds[0].replaceAll('.', ''),
 					vision:{
 						feet: 0,
@@ -141,7 +141,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					},
 					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 					type: 'door',
-					size: 1
+					size: 50
 				});
 				window.TOKEN_OBJECTS[tokenIds].sync = mydebounce(function(e) {				
 					window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[tokenIds].options);
