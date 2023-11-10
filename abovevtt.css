@@ -6477,7 +6477,7 @@ div.ddbc-tab-options--layout-pill>button{
     opacity: 1 !important;
     background: #000;
     border:none;
-}
+} 
 
 #tokens .underDarkness .token-image{
     opacity: 0 !important;
@@ -6545,7 +6545,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>img{
 
 }
 #light_container{
-    mix-blend-mode:hard-light;
+    mix-blend-mode:lighten;
     z-index: 15;
     opacity: 1;
 }
