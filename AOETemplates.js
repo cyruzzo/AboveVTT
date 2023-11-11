@@ -152,9 +152,12 @@ function sanitize_aoe_shape(shape){
 }
 
 function set_spell_override_style(spellName){
-    const spells = ["hypnotic pattern", "web", "fog cloud", "stinking cloud"]
+    const spells = ["hypnotic pattern", "web", "fog cloud", "stinking cloud", "darkness"]
     if (typeof spellName === "string" && spells.includes(spellName.toLowerCase())){
         return `aoe-style-${spellName.toLowerCase().replace(" ","-")}`
+    }
+    else if (typeof spellName === "string" && spellName == 'Maddening Darkness'){
+        return `aoe-style-darkness`
     }
     return ""
 }
