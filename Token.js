@@ -3168,18 +3168,14 @@ function setTokenLight (token, options) {
 
 		
 			
-		if (token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").length > 0) {
-			
-			token.parent().parent().find("#light_" + tokenId).attr("style", lightStyles);	
-			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
-		} else {
+		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").remove();
 
-			const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
+		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
-			lightElement.contextmenu(function(){return false;});
-			if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
-				$("#light_container").prepend(lightElement);
-		}
+		lightElement.contextmenu(function(){return false;});
+		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
+			$("#light_container").prepend(lightElement);
+		
 		if(options.animation?.light){
 			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
 		}
