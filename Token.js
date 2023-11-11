@@ -481,9 +481,13 @@ class Token {
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		$(`[data-darkness='darkness_${id}']`).remove();
 		$(`[data-notatoken='notatoken_${id}']`).remove()
+		if(this.options.darkness == true){
+			redraw_light();
+		}
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
+
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
