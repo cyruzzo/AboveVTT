@@ -130,7 +130,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	if(door?.length == 1){
 		if(window.DM) {
 			if(window.TOKEN_OBJECTS[tokenIds] == undefined){
-				window.TOKEN_OBJECTS[tokenIds] = new Token({
+				let options = {
 					...default_options(),
 					left: `${parseFloat(door.css('--mid-x')) - 25}px`,
 					top: `${parseFloat(door.css('--mid-y')) - 25}px`,
@@ -141,15 +141,13 @@ function token_context_menu_expanded(tokenIds, e) {
 					},
 					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 					type: 'door',
-					size: 50
-				});
-				window.TOKEN_OBJECTS[tokenIds].sync = mydebounce(function(e) {				
-					window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[tokenIds].options);
-				}, 500);
+					size: 50,
+					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor
+				};
+				window.ScenesHandler.create_update_token(options)
 			}
 			let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
 			openButton.off().on("click", function(clickEvent){
-				window.TOKEN_OBJECTS[`${door.attr('data-x1')}${door.attr('data-y1')}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
 				let clickedItem = $(this);
 				let locked = door.hasClass('locked');
 				let secret = door.hasClass('secret');
@@ -181,6 +179,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				redraw_light();
 
 				sync_drawings();
+				window.TOKEN_OBJECTS[`${x1}${y1}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
 			});
 
 			body.append(openButton);
@@ -1730,7 +1729,7 @@ function build_notes_flyout_menu(tokenIds) {
 				if(id in window.JOURNAL.notes){
 					delete window.JOURNAL.notes[id];
 					window.JOURNAL.persist();
-					window.TOKEN_OBJECTS[id].place();
+					window.TOKEN_OBJECTS[id].place();			
 				}
 			});
 		}
