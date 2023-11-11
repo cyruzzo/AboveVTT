@@ -749,6 +749,7 @@ function normalize_scene_urls(scenes) {
   if (!Array.isArray(scenes) || scenes.length === 0) {
     return [];
   }
+
   return scenes.map(sceneData => Object.assign(sceneData, {
     dm_map: parse_img(sceneData.dm_map),
     player_map: parse_img(sceneData.player_map)

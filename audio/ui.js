@@ -300,7 +300,7 @@ function init_trackLibrary() {
     header.textContent = "Track Library";
 
     const searchTrackLibary = $(`<input type='search' placeholder='Search' style='margin-bottom: 5px; width: 100%;'></input>`)
-    searchTrackLibary.off().on('change keyup blur', (e) => {      
+    searchTrackLibary.off().on('change keyup blur search', (e) => {      
         debounceSearch(e.target.value);
     });
     // import csv button

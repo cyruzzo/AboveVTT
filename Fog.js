@@ -1512,8 +1512,62 @@ function redraw_light_walls(clear=true){
 		doorButton.attr('data-id', `${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
 		doorButton.removeAttr('removeAfterDraw');
 
+		door_note_icon(id);
+		
 
-		if (id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[id].player == true)) {
+		if((/rgba.*0\.5\)/g).test(color))
+			continue;
+		
+		
+
+		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
+		drawnWall.scaleAdjustment = adjustedScale;
+		window.walls.push(drawnWall);
+	}
+	if(window.DM){
+		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
+		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
+
+		for(journal in sceneDoorJournal){
+			if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
+				delete window.JOURNAL.notes[sceneDoorJournal[journal]]
+				window.JOURNAL.persist();
+			}
+
+		}
+	}
+
+	
+
+	$('.door-button[removeAfterDraw]').remove();
+
+	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+ 	if(!parseInt(darknessfilter) && window.walls.length>4){
+ 		$('#light_container').css({
+ 			'mix-blend-mode': 'unset',
+ 			'background': '#FFF',
+ 			'opacity': '0.3'
+ 		});
+ 	} else{
+ 		$('#light_container').css({
+ 			'mix-blend-mode': '',
+ 			'background': '',
+ 			'opacity': ''
+ 		});
+ 	}
+ 
+}
+
+function door_note_icon(id){
+
+	let doorButton = $(`.door-button[data-id='${id}']`);
+
+	let x = doorButton.attr('data-x1');
+	let y = doorButton.attr('data-y1');
+
+	doorButton.find('.condition-container').remove();
+
+	if (id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[id].player == true)) {
 			const conditionName = "note"
 			const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 			const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
@@ -1622,50 +1676,7 @@ function redraw_light_walls(clear=true){
 		
 		    });
 		}
-
-		if((/rgba.*0\.5\)/g).test(color))
-			continue;
-		
-		
-
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
-		drawnWall.scaleAdjustment = adjustedScale;
-		window.walls.push(drawnWall);
-	}
-	if(window.DM){
-		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
-		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
-
-		for(journal in sceneDoorJournal){
-			if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
-				delete window.JOURNAL.notes[sceneDoorJournal[journal]]
-				window.JOURNAL.persist();
-			}
-
-		}
-	}
-
-	
-
-	$('.door-button[removeAfterDraw]').remove();
-
-	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	if(!parseInt(darknessfilter) && window.walls.length>4){
- 		$('#light_container').css({
- 			'mix-blend-mode': 'unset',
- 			'background': '#FFF',
- 			'opacity': '0.3'
- 		});
- 	} else{
- 		$('#light_container').css({
- 			'mix-blend-mode': '',
- 			'background': '',
- 			'opacity': ''
- 		});
- 	}
- 
 }
-
 
 function open_close_door(x1, y1, x2, y2, type=0){
 	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
@@ -4737,7 +4748,7 @@ function redraw_light(){
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		redraw_light();
 		
-	}, Math.min(500, Math.abs(startTime-Date.now())));
+	}, Math.min(300, Math.abs(startTime-Date.now())));
 }
 
 function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){

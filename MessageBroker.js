@@ -672,9 +672,8 @@ class MessageBroker {
 					window.JOURNAL.build_journal();
 					
 					if(msg.data.id in window.TOKEN_OBJECTS){
-						window.TOKEN_OBJECTS[msg.data.id].place();
-					}
-					
+						window.TOKEN_OBJECTS[msg.data.id].place();			
+					}				
 					if(msg.data.popup)
 						window.JOURNAL.display_note(msg.data.id);
 					
@@ -1327,7 +1326,9 @@ class MessageBroker {
 		window.DRAWINGS = [];
 	
 
+        
 		window.TOKEN_OBJECTS = {};
+
 		let data = msg.data;
 		let self=this;
 
@@ -1393,7 +1394,7 @@ class MessageBroker {
 				window.DRAWINGS = [];
 			}
 
-			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, function() {
 				console.group("load_scenemap callback")
 				if(!window.CURRENT_SCENE_DATA.scale_factor)
 					window.CURRENT_SCENE_DATA.scale_factor = 1;

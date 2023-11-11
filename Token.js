@@ -839,6 +839,7 @@ class Token {
 
 		this.options.left = old.css("left");
 		this.options.top = old.css("top");
+		this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 		//this.options.hpstring=old.find(".hpbar").val();
 		//this.options.size=old.width();
 		if (old.css("opacity") == 0.5)
@@ -1472,6 +1473,7 @@ class Token {
 				this.options.size = 50;
 				setTokenLight(old, this.options);
 				debounceLightChecks();
+				door_note_icon(this.options.id);
 				return;
 			}
 			if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
@@ -1555,7 +1557,8 @@ class Token {
 
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
-				old.css("z-index", "calc(5000 + var(--z-index-diff))");
+				let zConstant = this.options.underDarkness ? 2000 : 5000;
+				old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 				old.css("--z-index-diff", zindexdiff);
 
 				let bar_height = Math.floor(this.sizeHeight() * 0.2);
@@ -1948,7 +1951,8 @@ class Token {
 			tok.css("display", "flex");
 			tok.css("justify-content", "center");
 			tok.css("align-items", "center");
-			tok.css("z-index", "calc(5000 + var(--z-index-diff))");
+			const zConstant = this.options.underDarkness ? 2000 : 5000;
+			tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 
 
 			if (typeof this.options.monster !== "undefined")
@@ -2852,6 +2856,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 			}
 		}
 	}
+
 	token_setting_options().forEach(option => setReasonableDefault(option.name, option.defaultValue));
 	// unless otherwise specified, tokens should not be hidden when they are placed
 	setReasonableDefault("hidden", false);
@@ -3079,8 +3084,8 @@ function setTokenAuras (token, options) {
 							left:${absPosOffset}px;
 							top:${absPosOffset}px;
 							background-image:${auraBg};
-							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
-							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor + absPosOffset}px;
+							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor + absPosOffset}px;
 							display:${showAura};
 							--color1: ${options.aura1.color};
 							--color2: ${options.aura2.color};	
@@ -3124,19 +3129,21 @@ function setTokenLight (token, options) {
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
+		const optionsSize = options.type == 'door' ? parseFloat(options.size) - 25 : parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
+		const optionsLeft = parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+		const optionsTop  = parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
-		const lightRadius = innerlightSize ? (innerlightSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
+		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
 		const lightBg = `radial-gradient(${options.light1.color} ${lightRadius}px, ${options.light2.color} ${lightRadius}px);`;
-		const totalSize = (totallight == 0) ? 0 : parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor + (2 * totallight);
-		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
+		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
+		const absPosOffset = (optionsSize - totalSize) / 2;
+
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
-							left:${absPosOffset}px;
-							top:${absPosOffset}px;
 							background-image:${lightBg};
-							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
-							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							left:${optionsLeft + absPosOffset}px;
+							top:${optionsTop+ absPosOffset}px;
 							--color1: ${options.light1.color};
 							--color2: ${options.light2.color};
 							--gradient: ${lightBg};
@@ -3145,17 +3152,17 @@ function setTokenLight (token, options) {
 
 
 
-		const visionRadius = visionSize ? (visionSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
+		const visionRadius = visionSize ? (visionSize + (optionsSize / 2)) : 0;
 		const visionBg = `radial-gradient(${options.vision.color} ${visionRadius}px, #00000000 ${visionRadius}px)`;
-		const totalVisionSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * visionSize);
-		const visionAbsPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalVisionSize) / 2;
+		const totalVisionSize = optionsSize + (2 * visionSize);
+		const visionAbsPosOffset = (optionsSize - totalVisionSize) / 2;
 		const visionStyles = `width:${totalVisionSize }px;
 							height:${totalVisionSize }px;
 							left:${visionAbsPosOffset}px;
 							top:${visionAbsPosOffset}px;
 							background-image:${visionBg};
-							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
-							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor - ((totalVisionSize - options.size/window.CURRENT_SCENE_DATA.scale_factor) / 2)}px;
+							left:${optionsLeft + visionAbsPosOffset}px;
+							top:${optionsTop + visionAbsPosOffset}px;
 							`;
 		
 
@@ -3167,7 +3174,7 @@ function setTokenLight (token, options) {
 			token.parent().parent().find("#vision_" + tokenId).attr("style", visionStyles);	
 		} else {
 
-			const lightElement = $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`);
+			const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
 			lightElement.contextmenu(function(){return false;});
 			if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
