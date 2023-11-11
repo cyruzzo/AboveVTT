@@ -150,7 +150,7 @@ function addExtensionPathStyles(){
       background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fire_background.png);
     }
     .aoe-style-lightning{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/lightninig.png);
+        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/lightning.png);
     }
     .aoe-style-slashing{
         background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/slashing.png);

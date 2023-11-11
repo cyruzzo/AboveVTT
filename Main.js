@@ -1712,7 +1712,14 @@ function observe_character_sheet_aoe(documentToObserve) {
 					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
 					hide_player_sheet();
 					close_player_sheet();
-					const options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
+
+					let options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
+					if(name == 'Darkness' || name == 'Maddening Darkness' ){
+						options = {
+							...options,
+							darkness: true
+						}
+					}
 					place_aoe_token_in_centre(options)
 					// place_token_in_center_of_view only works for the DM
 					// place_token_in_center_of_view(options)
@@ -2937,12 +2944,12 @@ function init_zoom_buttons() {
 			if ($('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
 				$('body').toggleClass('preventSelectDefinitelyNot', true);
-				$('.lockedToken').draggable("disable");
-				$('.lockedToken').removeClass("ui-state-disabled");	
+				$('#tokens .lockedToken').draggable("disable");
+				$('#tokens .lockedToken').removeClass("ui-state-disabled");	
 			} else {
 				$('#select_locked .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 				$('body').toggleClass('preventSelectDefinitelyNot', false);
-				$('.lockedToken').draggable("enable");
+				$('#tokens .lockedToken').draggable("enable");
 			}
 		});
 	
