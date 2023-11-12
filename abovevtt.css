@@ -330,6 +330,10 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: scale(Max(1, calc(1 / var(--window-zoom))));
 }
 
+.door-button.hiddenDoor{
+    display:none;
+}
+
 .door.background{
     border: 2px ridge #060606;
     height: 130%;
