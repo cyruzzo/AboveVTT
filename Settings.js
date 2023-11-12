@@ -1109,14 +1109,18 @@ async function export_scene_context(sceneId){
 		soundpads: {}
 	};
 	delete DataFile.scenes[0].itemType;
-	for(token in scene.data.tokens){
+	let tokensObject = {}
+	for(let token in scene.data.tokens){
 		let tokenId = scene.data.tokens[token].id;
-		for(noteID in window.JOURNAL.notes){
+		for(let noteID in window.JOURNAL.notes){
 			if( tokenId == noteID){
 				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
 			}
 		}
+		tokensObject[tokenId] = scene.data.tokens[token];		
 	}
+	DataFile.scenes[0].tokens = tokensObject;
+
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${scene.data.title}-${datetime}.abovevtt`,"text/plain");
@@ -1158,10 +1162,7 @@ async function export_scenes_folder_context(folderId){
 		let currentSceneData = {
 			...scene.data
 		} 
-		
-		
-		DataFile.scenes.push(currentSceneData)
-
+		let tokensObject = {}
 		for(let token in scene.data.tokens){
 			let tokenId = scene.data.tokens[token].id;
 			for(let noteID in window.JOURNAL.notes){
@@ -1169,8 +1170,10 @@ async function export_scenes_folder_context(folderId){
 					DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
 				}
 			}
+			tokensObject[tokenId] = scene.data.tokens[token];		
 		}
-
+		currentSceneData.tokens = tokensObject;
+		DataFile.scenes.push(currentSceneData)
 	}
 	DataFile.scenes[0].parentId = "scenesFolder";
 	
