@@ -50,7 +50,7 @@ function apply_settings_to_boxes(){
         "line-height": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
         "font-weight": window.TEXTDATA.text_bold ? "bold" : "normal",
         "font-style": window.TEXTDATA.text_italic ? "italic" : "normal",
-        "text-decoration": window.TEXTDATA.text_underline ? "underline" : "none",
+        "text-decoration": window.TEXTDATA.text_underline ? `underline ${window.TEXTDATA.text_color}` : "none",
         "-webkit-text-stroke-color": window.TEXTDATA.stroke_color,
         "-webkit-text-stroke-width": `calc(${window.TEXTDATA.stroke_size}px * var(--window-zoom))`,
         "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none",
@@ -59,6 +59,7 @@ function apply_settings_to_boxes(){
     $(".text-input-inside").css({
         "--text-align": window.TEXTDATA.text_alignment,
         "--color": window.TEXTDATA.text_color, 
+        "--text-decoration-color": window.TEXTDATA.text_color,
         "--font-family": window.TEXTDATA.text_font,
         "--font-size": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
         "--line-height": `calc(${window.TEXTDATA.text_size}px * var(--window-zoom))`,
@@ -655,8 +656,8 @@ function draw_text(
         <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
-            <svg x="0.5" y="${font.size*-0.14}" style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; text-decoration: ${underline}; font-family: ${font.font};">
-                <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
+            <svg x="0.5" y="${font.size*-0.14}" style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; font-family: ${font.font};">
+                <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; text-decoration: ${underline} ${font.color}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
             </svg>
          </svg>
     `);

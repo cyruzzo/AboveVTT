@@ -154,7 +154,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 		$(window).scrollTop(pageY);	
 	}
 
-	$("#VTT").css({
+	$("body").css({
 		"--window-zoom": window.ZOOM,
 		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
 	}) 
@@ -2521,7 +2521,9 @@ function init_ui() {
 	});
 
 	window.ZOOM = 1.0;
-	VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px; --window-zoom:${window.ZOOM} '/>`);
+
+	$('body').css('--window-zoom', window.ZOOM);
+	VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px;  '/>`);
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
