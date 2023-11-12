@@ -1431,6 +1431,7 @@ function redraw_light_walls(clear=true){
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
         let hiddenDoor = hidden && !displayWalls ? ` hiddenDoor` : ``;
+        let dataHidden = hidden;
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
@@ -1445,7 +1446,7 @@ function redraw_light_walls(clear=true){
 		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			if(window.DM || secret == ''){
-				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
 													<div class='${doorType} background'><div></div></div>
 													<div class='${doorType} foreground'><div></div></div>
 													<div class='door-icon'></div>

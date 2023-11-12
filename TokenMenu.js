@@ -302,15 +302,15 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
 			});
 			body.append(secretButton);
-			let hideButton = $(`<button class="${door.hasClass('hiddenDoor') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide for DM-Show Walls to View</button>`)
+			let hideButton = $(`<button class="${door.attr('data-hidden') == 'true' ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide for DM-Show Walls to View</button>`)
 			hideButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
-				let hidden = door.hasClass('hiddenDoor');
+				let hidden = door.attr('data-hidden') == 'true';
 				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
             
         		
                
-				door.toggleClass('hiddenDoor', !hidden);
+				door.attr('data-hidden', !hidden);
         		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
                 let data = ['line',
 							 'wall',
