@@ -1236,7 +1236,6 @@ class MessageBroker {
 		let auraislightchanged = false;
 		if(data.id == undefined)
 			return;
-
 		if (msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading) {
 			let gridSquares = parseFloat(data.gridSquares);
 			if (!isNaN(gridSquares)) {
@@ -1263,9 +1262,13 @@ class MessageBroker {
 		}
 			
 		if (data.id in window.TOKEN_OBJECTS) {
+
 			for (var property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
-					continue;				
+					continue;	
+				if(window.all_token_objects[data.id] == undefined){
+						window.all_token_objects[data.id] = window.TOKEN_OBJECTS[data.id]	
+				}	
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 				window.all_token_objects[data.id].options[property] = data[property];
 			}
