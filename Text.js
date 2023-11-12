@@ -56,6 +56,8 @@ function apply_settings_to_boxes(){
         "text-shadow": window.TEXTDATA.text_shadow ? "black 5px 5px 5px" : "none",
         "padding": '0px'
     })
+    $(".drawing-text-box").attr('data-text-size', window.TEXTDATA.text_size);
+    $(".drawing-text-box").attr('data-stroke-size', window.TEXTDATA.stroke_size);
     $(".text-input-inside").css({
         "--text-align": window.TEXTDATA.text_alignment,
         "--color": window.TEXTDATA.text_color, 
@@ -496,7 +498,7 @@ function handle_draw_text_submit(event) {
 
     const font = {
         font: $(textBox).css("font-family").replaceAll(/['"]+/g, ''),
-        size: $('#text_size').val(),
+        size: parseInt($(".drawing-text-box").attr('data-text-size')),
         weight: fontWeight,
         style: fontStyle,
         underline: $(textBox).css("text-decoration")?.includes("underline"),
@@ -506,7 +508,7 @@ function handle_draw_text_submit(event) {
     };
 
     const stroke = {
-        size: $('#stroke_size').val(),
+        size: parseInt($(".drawing-text-box").attr('data-stroke-size')),
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
     const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
