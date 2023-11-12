@@ -3129,7 +3129,7 @@ function setTokenLight (token, options) {
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
-		const optionsSize = options.type == 'door' ? parseFloat(options.size) - 25 : parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
+		const optionsSize = parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
 		const optionsLeft = parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
 		const optionsTop  = parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
 		// use sizeWidth and sizeHeight???
