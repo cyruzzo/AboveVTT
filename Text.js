@@ -753,16 +753,17 @@ function draw_text(
         if(window.TEXTDATA == undefined){
             window.TEXTDATA = {};
         }
+        let scaleConversion = text_data[10]/window.CURRENT_SCENE_DATA.scale_factor
         window.TEXTDATA.text_alignment = text_data[6].align;
         window.TEXTDATA.text_color = text_data[6].color;
         window.TEXTDATA.text_background_color = text_data[8];
         window.TEXTDATA.text_font = text_data[6].font;
-        window.TEXTDATA.text_size = text_data[6].size;
+        window.TEXTDATA.text_size = text_data[6].size / scaleConversion;
         window.TEXTDATA.text_bold = (parseInt(text_data[6].weight) == 700) ? true : false;
         window.TEXTDATA.text_italic = (text_data[6].style == 'italic') ? true : false;
         window.TEXTDATA.text_underline = text_data[6].underline;
         window.TEXTDATA.stroke_color = text_data[7].color;
-        window.TEXTDATA.stroke_size = text_data[7].size;
+        window.TEXTDATA.stroke_size = text_data[7].size / scaleConversion;
         window.TEXTDATA.text_shadow = (text_data[6].shadow != 'none') ? true : false;
         create_text_controller(true)
 
