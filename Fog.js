@@ -1430,7 +1430,7 @@ function redraw_light_walls(clear=true){
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
-        let hiddenDoor = hidden ? ` hiddenDoor` : ``;
+        let hiddenDoor = hidden && !displayWalls ? ` hiddenDoor` : ``;
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
@@ -1489,14 +1489,14 @@ function redraw_light_walls(clear=true){
 					$(this).toggleClass('ignore-hover', false);
 				});
 
-				if(hidden != true || displayWalls)
-					$('#tokens').append(openCloseDoorButton);
+				
+				$('#tokens').append(openCloseDoorButton);
 				doorButton = openCloseDoorButton;
 			}
 		}
 		else if (doorColorsArray.includes(color)){		
 			let secret = (type == 4 || type == 5 || type == 6 || type == 7) ? ` secret` : ``;
-			if(!window.DM && secret == ' secret' || (hidden == true && !displayWalls))
+			if(!window.DM && secret == ' secret')
 				doorButton.remove()
 			else{
 				let locked =(type == 2 || type == 3 || type == 5 || type == 7) ? ` locked` : ``;
