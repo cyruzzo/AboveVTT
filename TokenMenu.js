@@ -175,11 +175,13 @@ function token_context_menu_expanded(tokenIds, e) {
 				];	
 				window.DRAWINGS.push(data);
 
+
+
 				redraw_light_walls();
 				redraw_light();
 
 				sync_drawings();
-				window.TOKEN_OBJECTS[`${x1}${y1}${window.CURRENT_SCENE_DATA.id.replaceAll('.','')}`].place_sync_persist();
+				window.TOKEN_OBJECTS[`${x1}${y1}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
 			});
 
 			body.append(openButton);
@@ -262,7 +264,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			body.append(lockedButton);
 		
 			
-			let secretButton = $(`<button class="${door.hasClass('secret') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
+			let secretButton = $(`<button class="${door.hasClass('secretr') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
 			secretButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
 				let locked = door.hasClass('locked');
