@@ -1556,8 +1556,8 @@ class Token {
 				}, { duration: 1000, queue: false });
 
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
-				this.options.zindexdiff = Math.max(zindexdiff, -5000);
-				let zConstant = this.options.underDarkness ? 2000 : 5000;
+				this.options.zindexdiff = Math.max(zindexdiff, -2000);
+				let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 2000 : 5000;
 				old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 				old.css("--z-index-diff", zindexdiff);
 
@@ -3294,6 +3294,7 @@ function setTokenBase(token, options) {
 			options.enablepercenthpbar = false;
 			if(options.tokenStyleSelect === "definitelyNotAToken"){
 				token.toggleClass('definitelyNotAToken', true);
+				options.underDarkness = true;
 			}
 			else{
 				token.toggleClass('labelToken', true);
