@@ -1506,9 +1506,9 @@ class MessageBroker {
 
 				if(!window.DM) {
 				 	window.MB.sendMessage('custom/myVTT/syncmeup');
-					check_token_visibility();
+					do_check_token_visibility();
 				}
-				$('#loadingStyles').remove();
+
 				$('.import-loading-indicator .percentageLoaded').css('width', '95%');	
 				if (window.EncounterHandler !== undefined) {
 					fetch_and_cache_scene_monster_items();
@@ -1519,7 +1519,10 @@ class MessageBroker {
 				}
 				update_pc_token_rows();
 				$('.import-loading-indicator').remove();
+				$('#loadingStyles').remove();
+				
 				console.groupEnd()
+
 			});
 			
 			remove_loading_overlay();

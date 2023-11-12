@@ -481,13 +481,9 @@ class Token {
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		$(`[data-darkness='darkness_${id}']`).remove();
 		$(`[data-notatoken='notatoken_${id}']`).remove()
-		if(this.options.darkness == true){
-			redraw_light();
-		}
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
-
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
@@ -1476,7 +1472,7 @@ class Token {
 			if(this.options.type == 'door'){
 				this.options.size = 50;
 				setTokenLight(old, this.options);
-				debounceLightChecks();
+				redraw_light();
 				door_note_icon(this.options.id);
 				return;
 			}
@@ -3133,16 +3129,34 @@ function setTokenLight (token, options) {
 	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
-		const optionsSize = parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
-		const optionsLeft = parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
-		const optionsTop  = parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+
+		const isDoor = options.type == 'door';
+
+		const optionsSize = isDoor ? 0 : parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
+		let optionsLeft = isDoor ? (parseFloat(options.left.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor : parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+		let optionsTop  = isDoor ? (parseFloat(options.top.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor : parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+		
+	
+		if(isDoor){
+
+			const doorButton = $(`.door-button[data-id='${options.id}']`);
+			const x1 = doorButton.attr('data-x1');
+			const x2 = doorButton.attr('data-x2');
+			const y1 = doorButton.attr('data-y1');
+			const y2 = doorButton.attr('data-y2');
+			const doors = window.DRAWINGS.filter(d => (d[1] == "wall" && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2))  
+            let doorScale = doors[0][8];
+            optionsLeft = optionsLeft/(doorScale/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+			optionsTop = optionsTop/(doorScale/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+		}
+
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
 		const lightBg = `radial-gradient(${options.light1.color} ${lightRadius}px, ${options.light2.color} ${lightRadius}px);`;
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
-
+		let clippath = token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").css('clip-path');
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							background-image:${lightBg};
@@ -3171,10 +3185,11 @@ function setTokenLight (token, options) {
 		
 
 		
-			
+
 		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").remove();
 
-		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
+
+		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
 		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
