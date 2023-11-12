@@ -31,7 +31,11 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
-
+.percentageLoaded{
+    height: 10px;
+    position: absolute;
+    background: #0F0;
+}
 #loading_overlay {
     position: fixed;
     top: -2%;

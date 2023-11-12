@@ -1370,11 +1370,15 @@ class MessageBroker {
 		$("[data-notatoken]").remove();
 
 		let old_src = $("#scene_map").attr('src');
+
 		if(data.UVTTFile == 1){
 			build_import_loading_indicator("Loading UVTT Map");
 			data.map = await get_map_from_uvtt_file(data.player_map);
 		}
-
+		else{
+			await build_import_loading_indicator(`Loading ${data.title}`);		
+		}
+		$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
 		if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
 
 
@@ -1394,7 +1398,7 @@ class MessageBroker {
 				window.DRAWINGS = [];
 			}
 
-			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, function() {
+			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 				console.group("load_scenemap callback")
 				if(!window.CURRENT_SCENE_DATA.scale_factor)
 					window.CURRENT_SCENE_DATA.scale_factor = 1;
@@ -1431,14 +1435,22 @@ class MessageBroker {
 						offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
 					}
 				}
-
+				$('.import-loading-indicator .percentageLoaded').css('width', `10%`);	
 				window.CURRENT_SCENE_DATA.width = mapWidth;
 				window.CURRENT_SCENE_DATA.height = mapHeight;
 				// Scale map according to scaleFactor
 
 
 				$("#VTT").css("--scene-scale", scaleFactor)
-				
+				$('body').append($(`<style id='loadingStyles'>
+						.token{
+							display: none !important;
+						}
+						.sidebar-list-item-row-item button,
+						.token-row-gear{
+							pointer-events: none !important;
+						}
+					</style>`))
 				
 				set_default_vttwrapper_size();
 				
@@ -1459,17 +1471,27 @@ class MessageBroker {
 					
 				
 					$("#scene_map").attr('src', getGoogleDriveAPILink(data.player_map));
-						
+					$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 				}
 				console.log("LOADING TOKENS!");
+				let tokensLength = Object.keys(data.tokens).length;
+				let count = 0;
+				const timer = ms => new Promise(res => setTimeout(res, ms))
+				const tokenLoop = async function(data, count, tokensLength){
+						for (let id in data.tokens) {
+							await self.handleToken({
+								data: data.tokens[id],
+								loading: true,
+								persist: false			
+							})
+							count += 1;
+							await timer(0.01);
+							$('.import-loading-indicator .percentageLoaded').css('width', `${20 + count/tokensLength*75}%`)
+							
+						}
+					}
 
-				for (let id in data.tokens) {
-					self.handleToken({
-						data: data.tokens[id],
-						loading: true,
-						persist: false
-					});
-				}
+				await tokenLoop(data, count, tokensLength);
 
 
 				ct_load({
@@ -1483,8 +1505,8 @@ class MessageBroker {
 				 	window.MB.sendMessage('custom/myVTT/syncmeup');
 					check_token_visibility();
 				}
-
-
+				$('#loadingStyles').remove();
+				$('.import-loading-indicator .percentageLoaded').css('width', '95%');	
 				if (window.EncounterHandler !== undefined) {
 					fetch_and_cache_scene_monster_items();
 				}
@@ -1493,9 +1515,10 @@ class MessageBroker {
 					enable_draggable_change_folder(ItemType.Scene);
 				}
 				update_pc_token_rows();
+				$('.import-loading-indicator').remove();
 				console.groupEnd()
 			});
-			$('.import-loading-indicator').remove();
+			
 			remove_loading_overlay();
 		}
 		// console.groupEnd()
