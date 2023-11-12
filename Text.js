@@ -323,7 +323,7 @@ function create_text_controller(applyFromWindow = false) {
         store_text_settings()
     }
     else{
-        apply_settings_from_storage()
+        apply_settings_from_storage(applyFromWindow)
     }
     
     
@@ -496,7 +496,7 @@ function handle_draw_text_submit(event) {
 
     const font = {
         font: $(textBox).css("font-family").replaceAll(/['"]+/g, ''),
-        size: Math.ceil(parseInt($(textBox).css("font-size")) / window.ZOOM),
+        size: $('#text_size').val(),
         weight: fontWeight,
         style: fontStyle,
         underline: $(textBox).css("text-decoration")?.includes("underline"),
@@ -506,7 +506,7 @@ function handle_draw_text_submit(event) {
     };
 
     const stroke = {
-        size: parseInt($(textBox).css("-webkit-text-stroke-width"))/window.ZOOM,
+        size: $('#stroke_size').val(),
         color: $(textBox).css("-webkit-text-stroke-color"),
     };
     const hidden = $('#text_controller_inside #hide_text.button-enabled').length>0;
@@ -515,7 +515,7 @@ function handle_draw_text_submit(event) {
     let textid = uuid();
     data = ["text",
         rectX,
-        rectY + font.size,
+        rectY + Math.ceil(parseFloat($(textBox).css("font-size")) / window.ZOOM),
         width,
         height,
         text,
@@ -750,8 +750,9 @@ function draw_text(
     });
     textSVG.on('dblclick', function(){
         let text_data = window.DRAWINGS.filter(d => d[9] == this.id)[0];
-
-        window.TEXTDATA = [];
+        if(window.TEXTDATA == undefined){
+            window.TEXTDATA = {};
+        }
         window.TEXTDATA.text_alignment = text_data[6].align;
         window.TEXTDATA.text_color = text_data[6].color;
         window.TEXTDATA.text_background_color = text_data[8];
@@ -768,6 +769,7 @@ function draw_text(
         let bounds = $(this)[0].getBoundingClientRect();
         create_moveable_text_box(bounds.left, bounds.top-25, bounds.width, bounds.height+25, text)
         apply_settings_to_boxes();
+        store_text_settings();
         
        window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
         $(this).remove();
