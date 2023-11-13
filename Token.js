@@ -3133,8 +3133,8 @@ function setTokenLight (token, options) {
 		const isDoor = options.type == 'door';
 
 		const optionsSize = isDoor ? 0 : parseFloat(options.size)/window.CURRENT_SCENE_DATA.scale_factor
-		let optionsLeft = isDoor ? (parseFloat(options.left.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor : parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
-		let optionsTop  = isDoor ? (parseFloat(options.top.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor : parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+		let optionsLeft = isDoor ? (parseFloat(options.left.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion : parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
+		let optionsTop  = isDoor ? (parseFloat(options.top.replace('px', ''))+25)/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion : parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor
 		
 	
 		if(isDoor){
@@ -3146,8 +3146,8 @@ function setTokenLight (token, options) {
 			const y2 = doorButton.attr('data-y2');
 			const doors = window.DRAWINGS.filter(d => (d[1] == "wall" && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2))  
             let doorScale = doors[0][8];
-            optionsLeft = optionsLeft/(doorScale/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
-			optionsTop = optionsTop/(doorScale/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+            optionsLeft = optionsLeft/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
+			optionsTop = optionsTop/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 
 		// use sizeWidth and sizeHeight???
