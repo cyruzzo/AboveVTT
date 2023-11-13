@@ -3,6 +3,7 @@ function apply_settings_from_storage(applyFromWindow = false){
     const settings = (applyFromWindow) ? window.TEXTDATA : JSON.parse(localStorage.getItem('textSettings'));
     window.TEXTDATA = settings
     $(`#text_controller_inside button[id^='text_']`).removeClass(buttonSelectedClasses);
+    $(`#text_font option`).removeAttr('selected');
     $(`#text_font option[value="${settings.text_font}"]`).attr("selected", "selected");
     $("#text_size").val(settings.text_size)
     $("#text_color").val(settings.text_color)
@@ -16,6 +17,7 @@ function apply_settings_from_storage(applyFromWindow = false){
     $("#stroke_color").next().find(".sp-preview-inner").css("background-color", settings.stroke_color)
     $("#text_background_color").val(settings.text_background_color)
     $("#text_background_color").next().find(".sp-preview-inner").css("background-color", settings.text_background_color)
+    $('#hide_text').toggleClass(buttonSelectedClasses, settings.text_hide == true)
     if (settings.text_shadow){
         $("#text_shadow").addClass(buttonSelectedClasses)
     } 
@@ -767,6 +769,7 @@ function draw_text(
         window.TEXTDATA.stroke_color = text_data[7].color;
         window.TEXTDATA.stroke_size = text_data[7].size / scaleConversion;
         window.TEXTDATA.text_shadow = (text_data[6].shadow != 'none') ? true : false;
+        window.TEXTDATA.text_hide = text_data[11];
         create_text_controller(true)
 
         let bounds = $(this)[0].getBoundingClientRect();
