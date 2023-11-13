@@ -3138,16 +3138,21 @@ function setTokenLight (token, options) {
 		
 	
 		if(isDoor){
-
 			const doorButton = $(`.door-button[data-id='${options.id}']`);
-			const x1 = doorButton.attr('data-x1');
-			const x2 = doorButton.attr('data-x2');
-			const y1 = doorButton.attr('data-y1');
-			const y2 = doorButton.attr('data-y2');
-			const doors = window.DRAWINGS.filter(d => (d[1] == "wall" && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2))  
-            let doorScale = doors[0][8];
-            optionsLeft = optionsLeft/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
-			optionsTop = optionsTop/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
+			if(doorButton.length>0){
+				const x1 = doorButton.attr('data-x1');
+				const x2 = doorButton.attr('data-x2');
+				const y1 = doorButton.attr('data-y1');
+				const y2 = doorButton.attr('data-y2');
+				const doors = window.DRAWINGS.filter(d => (d[1] == "wall" && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2))  
+	            const doorScale = doors[0][8];
+	            optionsLeft = optionsLeft/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
+				optionsTop = optionsTop/(doorScale/window.CURRENT_SCENE_DATA.scale_factor);
+			}	
+			else{
+				console.warn('Door light attempted to be placed before door button')
+				return;
+			}
 		}
 
 		// use sizeWidth and sizeHeight???
