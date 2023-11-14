@@ -1951,7 +1951,7 @@ class Token {
 			tok.css("display", "flex");
 			tok.css("justify-content", "center");
 			tok.css("align-items", "center");
-			const zConstant = this.options.underDarkness ? 2000 : 5000;
+			const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 2000 : 5000;
 			tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 
 
