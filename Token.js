@@ -1469,8 +1469,7 @@ class Token {
 		}		
 
 		if (old.length > 0) {
-			if($('#loadingStyles').length > 0)
-				return;
+
 			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
@@ -1541,11 +1540,14 @@ class Token {
 					"max-height": this.sizeHeight()
 				});
 
-
-				old.animate({
-					width: this.sizeWidth(),
-					height: this.sizeHeight()
-				}, { duration: 1000, queue: false });
+				if($('#loadingStyles').length == 0)
+				{
+					old.animate({
+						width: this.sizeWidth(),
+						height: this.sizeHeight()
+					}, { duration: 1000, queue: false });
+				}
+				
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					"max-width": this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor,
 					"max-height": this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
