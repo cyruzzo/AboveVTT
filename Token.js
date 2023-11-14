@@ -1927,7 +1927,8 @@ class Token {
 
 				tokenObjects.map((token) => {
 				  const valueFromObject = token.options.zindexdiff;
-				  topZIndex = Math.max(topZIndex, valueFromObject);
+				  if(typeof valueFromObject == 'number')
+				 	 topZIndex = Math.max(topZIndex, valueFromObject);
 				});
 			}
 		
@@ -1960,6 +1961,7 @@ class Token {
 			tok.css("display", "flex");
 			tok.css("justify-content", "center");
 			tok.css("align-items", "center");
+
 			const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 5000 : 10000;
 			tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 

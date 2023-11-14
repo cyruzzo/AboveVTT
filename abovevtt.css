@@ -4503,6 +4503,10 @@ div.sidebar__pane-content div.tooltip::after {
     position: absolute;
 }
 
+.elev{
+    pointer-events: none;
+}
+
 button.avtt-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
