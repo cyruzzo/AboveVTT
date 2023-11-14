@@ -3124,7 +3124,7 @@ function setTokenAuras (token, options) {
 			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
-		if(options.animation?.aura){
+		if(options.animation?.aura && options.animation?.aura != 'none'){
 			token.parent().parent().find("#aura_" + tokenId).attr('data-animation', options.animation.aura)
 		}
 		else{
@@ -3217,7 +3217,7 @@ function setTokenLight (token, options) {
 		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
 			$("#light_container").prepend(lightElement);
 		
-		if(options.animation?.light){
+		if(options.animation?.light && options.animation?.light != 'none'){
 			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
 		}
 		else{
