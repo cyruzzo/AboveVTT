@@ -584,6 +584,8 @@ async function check_token_visibility(){
 
 async function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
+	if(window.DM)
+		return;
 	let canvas = document.getElementById("fog_overlay");
 
 	if (canvas.style.diplay == "none")
