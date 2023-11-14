@@ -1061,21 +1061,25 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       titleBar.data("prev-width", titleBar.width() - 3);
       container.data("prev-top", container.css("top"));
       container.data("prev-left", container.css("left"));
-      container.css("top", container.data("prev-minimized-top"));
-      container.css("left", container.data("prev-minimized-left"));
-      container.height(23);
-      container.width(200);
       if(container.find('#sourceChapterIframe').length>0){
           container.data("prev-scroll", $('#sourceChapterIframe')[0].contentWindow.scrollY);
       }  
+      container.css("top", container.data("prev-minimized-top"));
+      container.css("left", container.data("prev-minimized-left"));
+      container.data('prev-height', container.css('height'));
+      container.data('prev-width', container.css('width'));
+
+      container.height(23);
+      container.width(200);
+
       titleBar.addClass("minimized");
       titleBar.removeClass("restored");
       titleBar.prepend(`<div class="title_bar_text">${titleBarText}</div>`);
     } else if(titleBar.hasClass("minimized")) {
       container.data("prev-minimized-top", container.css("top"));
       container.data("prev-minimized-left", container.css("left"));
-      container.height('80%');
-      container.width('80%');
+      container.height(container.data('prev-height'));
+      container.width(container.data('prev-width'));
       container.css("top", container.data("prev-top"));
       container.css("left", container.data("prev-left"));
       titleBar.addClass("restored");
@@ -1084,6 +1088,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       if(container.find('#sourceChapterIframe').length>0){
         $('#sourceChapterIframe')[0].contentWindow.scrollTo(0, container.data("prev-scroll"));
       }
+  
     }
   });
 
