@@ -112,7 +112,7 @@ function token_setting_options() {
 			type: 'toggle',
 			options: [
 				{ value: true, label: "Below darkness", description: "The token will appear below darkness/light." },
-				{ value: false, label: "Hidden in Fog", description: "The token will appear above darkness/light" }
+				{ value: false, label: "Above darkness", description: "The token will appear above darkness/light" }
 			],
 			defaultValue: false
 		},

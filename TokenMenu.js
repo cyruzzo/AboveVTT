@@ -264,7 +264,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			body.append(lockedButton);
 		
 			
-			let secretButton = $(`<button class="${door.hasClass('secretr') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
+			let secretButton = $(`<button class="${door.hasClass('secret') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
 			secretButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
 				let locked = door.hasClass('locked');
@@ -302,7 +302,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
 			});
 			body.append(secretButton);
-			let hideButton = $(`<button class="${door.attr('data-hidden') == 'true' ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide for DM-Show Walls to View</button>`)
+			let hideButton = $(`<button class="${door.attr('data-hidden') == 'true' ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide Icon-Show Walls to View</button>`)
 			hideButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
 				let hidden = door.attr('data-hidden') == 'true';

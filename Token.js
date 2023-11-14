@@ -1556,8 +1556,8 @@ class Token {
 				}, { duration: 1000, queue: false });
 
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
-				this.options.zindexdiff = Math.max(zindexdiff, -2000);
-				let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 2000 : 5000;
+				this.options.zindexdiff = Math.max(zindexdiff, -5000);
+				let zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken' ? 5000 : 10000;
 				old.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 				old.css("--z-index-diff", zindexdiff);
 
@@ -1727,7 +1727,7 @@ class Token {
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.find('div:not(.base)').remove();      
-				        $('#map_items').append(tokenClone);
+				        $('#token_map_items').append(tokenClone);
 					}
 					else{
 						let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
@@ -1763,6 +1763,7 @@ class Token {
 		}
 		else { // adding a new token
 			// console.group("new token")
+
 			let tok = $("<div/>");
 			
 			let bar_height = Math.floor(this.sizeHeight() * 0.2);
@@ -1773,6 +1774,14 @@ class Token {
 			let fs = Math.floor(bar_height / 1.3) + "px";
 			tok.css("font-size",fs);
 			let tokenMultiplierAdjustment = (window.CURRENT_SCENE_DATA?.scaleAdjustment?.x > window.CURRENT_SCENE_DATA?.scaleAdjustment?.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : (window.CURRENT_SCENE_DATA?.scaleAdjustment?.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+			
+			if(this.options.type == 'door'){
+				this.options.size = 50;
+				setTokenLight(tok, this.options);
+				redraw_light();
+				door_note_icon(this.options.id);
+				return;
+			}
 			if(this.options.gridSquares != undefined){
 				this.options.size = window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares * tokenMultiplierAdjustment;
 			}
@@ -1951,7 +1960,7 @@ class Token {
 			tok.css("display", "flex");
 			tok.css("justify-content", "center");
 			tok.css("align-items", "center");
-			const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 2000 : 5000;
+			const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 5000 : 10000;
 			tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
 
 
@@ -2556,7 +2565,7 @@ class Token {
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 			        tokenClone.find('div:not(.base)').remove();      
-			        $('#map_items').append(tokenClone);
+			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
 
