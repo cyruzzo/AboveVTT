@@ -6502,7 +6502,6 @@ div.ddbc-tab-options--layout-pill>button{
     height:100%;
 }
 [data-notatoken]{
-    opacity: 1 !important;
     border:none;
 }
 [data-notatoken]>img{
