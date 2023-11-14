@@ -345,6 +345,7 @@ window.YTTIMEOUT = null;
 function map_load_error_cb(e) {
 	console.log(e);
 	let src = e.currentTarget.getAttribute("src");
+	$('#loadingStyles').remove();
 	console.error("map_load_error_cb src", src, e);
 	if (typeof src === "string") {
 		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
@@ -2398,6 +2399,12 @@ function init_ui() {
 	mapItems.css("position", "absolute");
 	mapItems.css("z-index", "11");
 
+	const tokenMapItems = $("<div id='token_map_items'></div>")
+	tokenMapItems.css("top", "0");
+	tokenMapItems.css("left", "0");
+	tokenMapItems.css("position", "absolute");
+	tokenMapItems.css("z-index", "12");
+
 	const mapContainer = $("<div id='scene_map_container' />");
 	mapContainer.css("top", "0");
 	mapContainer.css("left", "0");
@@ -2545,6 +2552,7 @@ function init_ui() {
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	VTT.append(walls);
+	mapItems.append(tokenMapItems);
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);

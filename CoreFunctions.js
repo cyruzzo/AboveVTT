@@ -267,7 +267,7 @@ function showError(error, ...extraInfo) {
   if (error?.constructor?.name !== "Error") {
     error = new Error(error);
   }
-
+  $('#loadingStyles').remove();
   showErrorMessage(error, ...extraInfo);
 
   $("#above-vtt-error-message .error-message-buttons").append(`<div style="float: right;top:-22px;position:relative;">Use this button to share logs with developers!<span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 14px;position: relative;">line_end_arrow_notch</span></div>`);
