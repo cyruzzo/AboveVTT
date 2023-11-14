@@ -1328,8 +1328,8 @@ class MessageBroker {
 
 		window.DRAWINGS = [];
 	
-
-        
+		window.sceneRequestTime = Date.now();
+    let lastSceneRequestTime = window.sceneRequestTime;   
 		window.TOKEN_OBJECTS = {};
 
 		let data = msg.data;
@@ -1373,7 +1373,7 @@ class MessageBroker {
 		$("[data-notatoken]").remove();
 
 		let old_src = $("#scene_map").attr('src');
-
+		$('.import-loading-indicator').remove();
 		if(data.UVTTFile == 1){
 			build_import_loading_indicator("Loading UVTT Map");
 			data.map = await get_map_from_uvtt_file(data.player_map);
@@ -1445,13 +1445,10 @@ class MessageBroker {
 
 
 				$("#VTT").css("--scene-scale", scaleFactor)
+				$('#loadingStyles').remove(); // incase 2nd load
 				$('body').append($(`<style id='loadingStyles'>
 						.token{
 							display: none !important;
-						}
-						.sidebar-list-item-row-item button,
-						.token-row-gear{
-							pointer-events: none !important;
 						}
 					</style>`))
 				
@@ -1482,6 +1479,9 @@ class MessageBroker {
 				const timer = ms => new Promise(res => setTimeout(res, ms))
 				const tokenLoop = async function(data, count, tokensLength){
 						for (let id in data.tokens) {
+							if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
+								return;
+							}
 							await self.handleToken({
 								data: data.tokens[id],
 								loading: true,
@@ -1493,9 +1493,11 @@ class MessageBroker {
 							
 						}
 					}
-
+	
 				await tokenLoop(data, count, tokensLength);
-
+				if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
+					return;
+				}
 
 				ct_load({
 					loading: true,
@@ -1522,7 +1524,7 @@ class MessageBroker {
 				$('#loadingStyles').remove();
 				
 				console.groupEnd()
-
+				delete window.newLoad;
 			});
 			
 			remove_loading_overlay();
