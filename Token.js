@@ -1150,9 +1150,11 @@ class Token {
 			if (window.DM) {
 				if (animated) {
 					tok.animate({ opacity: 0.5 }, { duration: 500, queue: false });
+
 				} else {
 					tok.css("opacity", 0.5); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 				}
+				$(`#token_map_items [data-id='${this.options.id}']`).css("opacity", 0.5); 
 			} else {
 				tok.hide();
 			}
@@ -1162,6 +1164,7 @@ class Token {
 			} else {
 				tok.css("opacity", 1); // DM SEE HIDDEN TOKENS AS OPACITY 0.5
 			}
+			$(`#token_map_items [data-id='${this.options.id}']`).css("opacity", 1); 
 		}
 	}
 
@@ -1723,7 +1726,8 @@ class Token {
 							height: `var(--token-height)`,
 							'max-width': `var(--token-width)`,
 							'max-height': `var(--token-height)`,
-							'--z-index-diff': old.css('--z-index-diff')
+							'--z-index-diff': old.css('--z-index-diff'),
+							'opacity': this.options.hidden ? '0.5' : '1'
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.find('div:not(.base)').remove();      
@@ -1742,7 +1746,8 @@ class Token {
 							'max-height': `var(--token-height)`,
 							'--z-index-diff': old.css('--z-index-diff'),
 							'--token-scale': old.css('--token-scale'),
-		    				'--token-rotation': old.css('--token-rotation')
+		    				'--token-rotation': old.css('--token-rotation'),
+							'opacity': this.options.hidden ? '0.5' : '1'
 						})
 						copyToken.find('div:not(.base)').remove()
 					}
@@ -2008,7 +2013,7 @@ class Token {
 					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
 					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 					width: `calc(${tok.css('width')} / var(--scene-scale))`,
-					height: `calc(${tok.css('height')} / var(--scene-scale))`,
+					height: `calc(${tok.css('height')} / var(--scene-scale))`
 				})
 		        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
 		        tokenClone.find('.conditions').remove();
@@ -2562,6 +2567,7 @@ class Token {
 						'--token-height': `calc(${tok.css('width')} / var(--scene-scale))`,
 						width: `var(--token-width)`,
 						height: `var(--token-height)`,
+						opacity: this.options.hidden ? '0.5' : '1'
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 			        tokenClone.find('div:not(.base)').remove();      
