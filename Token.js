@@ -1469,6 +1469,8 @@ class Token {
 		}		
 
 		if (old.length > 0) {
+			if($('#loadingStyles').length > 0)
+				return;
 			console.trace();
 			console.group("old token")
 			console.log("trovato!!");
