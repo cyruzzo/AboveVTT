@@ -822,6 +822,7 @@ function build_token_auras_inputs(tokenIds) {
 		</div>
 	`);
 	let animationPresets = {
+		'None': 'none',
 		'Flicker': 'flicker-fx',	
 		'Rays': 'rays-fx',
 		'Dome': 'force-fx',
@@ -1199,6 +1200,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	}
 
 	let animationPresets = {
+		'None': 'none',
 		'Flicker': 'flicker-fx',	
 		'Rays': 'rays-fx',
 		'Dome': 'force-fx',

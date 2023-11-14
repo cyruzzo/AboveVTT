@@ -6500,6 +6500,7 @@ div.ddbc-tab-options--layout-pill>button{
 #map_items{
     width:100%;
     height:100%;
+    background: #000;
 }
 [data-notatoken]{
     border:none;
