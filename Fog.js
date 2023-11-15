@@ -1447,70 +1447,69 @@ function redraw_light_walls(clear=true){
 			let secret = (type == 4 || type == 5 || type == 6 || type == 7) ? ` secret` : ``;
 		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			if(window.DM || secret == ''){
-				let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
-													<div class='${doorType} background'><div></div></div>
-													<div class='${doorType} foreground'><div></div></div>
-													<div class='door-icon'></div>
-											</div>`)
-				openCloseDoorButton.off('click.doors').on('click.doors', function(){
-						let locked = $(this).hasClass('locked');
-						let secret = $(this).hasClass('secret');
-						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
-						if(!$(this).hasClass('locked') && !shiftHeld){
-							open_close_door(x, y, width, height, type)
-							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
-							if(tokenObject)
-								tokenObject.place_sync_persist();
-						}
-						else if(shiftHeld && window.DM){
-							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
-							const isOpen = $(this).hasClass('open') ? `open` : `closed`;
-							openCloseDoorButton.toggleClass('locked', !locked);
-							let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x && parseInt(d[4]) == y && parseInt(d[5]) == width && parseInt(d[6]) == height))  
-			            
-			        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-			                let data = ['line',
-										 'wall',
-										 doorColors[type][isOpen],
-										 x,
-										 y,
-										 width,
-										 height,
-										 12,
-										 doors[0][8],
-										 doors[0][9]
-							];	
-							window.DRAWINGS.push(data);
+			
+			let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+												<div class='${doorType} background'><div></div></div>
+												<div class='${doorType} foreground'><div></div></div>
+												<div class='door-icon'></div>
+										</div>`)
+			openCloseDoorButton.off('click.doors').on('click.doors', function(){
+					let locked = $(this).hasClass('locked');
+					let secret = $(this).hasClass('secret');
+					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
+					if(!$(this).hasClass('locked') && !shiftHeld){
+						open_close_door(x, y, width, height, type)
+						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+						if(tokenObject)
+							tokenObject.place_sync_persist();
+					}
+					else if(shiftHeld && window.DM){
+						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
+						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
+						openCloseDoorButton.toggleClass('locked', !locked);
+						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x && parseInt(d[4]) == y && parseInt(d[5]) == width && parseInt(d[6]) == height))  
+		            
+		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		                let data = ['line',
+									 'wall',
+									 doorColors[type][isOpen],
+									 x,
+									 y,
+									 width,
+									 height,
+									 12,
+									 doors[0][8],
+									 doors[0][9]
+						];	
+						window.DRAWINGS.push(data);
 
-							redraw_light_walls();
-							redraw_light();
+						redraw_light_walls();
+						redraw_light();
 
 
-							sync_drawings();
-						}
-					});
-				openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
-					$(this).toggleClass('ignore-hover', false);
+						sync_drawings();
+					}
 				});
+			openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
+				$(this).toggleClass('ignore-hover', false);
+			});
 
-				
-				$('#tokens').append(openCloseDoorButton);
-				doorButton = openCloseDoorButton;
-			}
+			
+			$('#tokens').append(openCloseDoorButton);
+			doorButton = openCloseDoorButton;
+			
 		}
 		else if (doorColorsArray.includes(color)){		
 			let secret = (type == 4 || type == 5 || type == 6 || type == 7) ? ` secret` : ``;
-			if(!window.DM && secret == ' secret')
-				doorButton.remove()
-			else{
-				let locked =(type == 2 || type == 3 || type == 5 || type == 7) ? ` locked` : ``;
-				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-				if(doorButton.attr('class') != `door-button${locked}${secret}${open}${hiddenDoor}`){
-					doorButton.attr('class', `door-button${locked}${secret}${open}${hiddenDoor}`)
-					doorButton.toggleClass('ignore-hover', true);
-				}
-			}	
+
+	
+			let locked =(type == 2 || type == 3 || type == 5 || type == 7) ? ` locked` : ``;
+			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+			if(doorButton.attr('class') != `door-button${locked}${secret}${open}${hiddenDoor}`){
+				doorButton.attr('class', `door-button${locked}${secret}${open}${hiddenDoor}`)
+				doorButton.toggleClass('ignore-hover', true);
+			}
+			
 			doorButton.find('.condition-container').remove();		
 		}
 		let id = `${x}${y}${window.CURRENT_SCENE_DATA.id}` 
