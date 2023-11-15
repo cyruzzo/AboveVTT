@@ -484,6 +484,7 @@ class Token {
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
+		debounceLightChecks();
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
