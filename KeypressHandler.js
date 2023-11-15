@@ -275,6 +275,9 @@ Mousetrap.bind('shift', function () {
     } else {
         shiftHeld = true;
     }
+    $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
+      window.shiftHeld = false;
+    })
 }, 'keydown');
 
 Mousetrap.bind('shift', function () {

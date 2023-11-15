@@ -1457,7 +1457,7 @@ function redraw_light_walls(clear=true){
 					let locked = $(this).hasClass('locked');
 					let secret = $(this).hasClass('secret');
 					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
-					if(!$(this).hasClass('locked') && !shiftHeld){
+					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
 						open_close_door(x, y, width, height, type)
 						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 						if(tokenObject)
