@@ -2122,7 +2122,7 @@ class Token {
 					let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 					self.selected = true;
-					$("#tokens [data-id='" + self.options.id + "']").toggleClass("tokenselected", true);
+					$("#tokens [data-id='" + self.options.id + "']").toggleClass(["tokenselected", 'pause_click'], true);
 					if(tok.is(":animated")){
 						self.stopAnimation();
 					}
