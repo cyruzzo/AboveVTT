@@ -914,8 +914,8 @@ function edit_scene_vision_settings(scene_id){
 	form.find('#darknessFilter_row').attr('title', `This will darken the map by the percentage indicated. This filter interacts with light auras. Any light aura on the map will reveal the darkness. Fully opaque white light will completely eliminate the darkness in it's area.`)
 	darknessFilterRange.after(darknessNumberInput);
 
-	let playerPreviewVisibleMap = $(`<img class="player_map_preview zero_darkness" src="${window.EXTENSION_PATH}images/Darkness Preview Images/revealed.jpg"></img>`)
-	let playerPreviewHiddenMap = $(`<img class="player_map_preview hundred_darkness" src="${window.EXTENSION_PATH}images/Darkness Preview Images/darkness.jpg"></img>`)
+	let playerPreviewVisibleMap = $(`<img class="player_map_preview zero_darkness" src="https://abovevtt-assets.s3.eu-central-1.amazonaws.com/menu-images/revealed.jpg"></img>`)
+	let playerPreviewHiddenMap = $(`<img class="player_map_preview hundred_darkness" src="https://abovevtt-assets.s3.eu-central-1.amazonaws.com/menu-images/darkness.jpg"></img>`)
 	
 
 	if(darknessFilterRange.val() == 100){
