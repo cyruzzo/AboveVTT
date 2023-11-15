@@ -330,9 +330,12 @@ div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
     transform: scale(Max(1, calc(1 / var(--window-zoom))));
 }
 
-.door-button.hiddenDoor{
+.door-button.hiddenDoor,
+.body-rpgcharacter-sheet .door-button.secret{
     display:none;
 }
+
+
 
 .door.background{
     border: 2px ridge #060606;
