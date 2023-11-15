@@ -3183,7 +3183,7 @@ function setTokenLight (token, options) {
 		const lightBg = `radial-gradient(${options.light1.color} ${lightRadius}px, ${options.light2.color} ${lightRadius}px);`;
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
-		let clippath = token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").css('clip-path');
+		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							background-image:${lightBg};
@@ -3219,9 +3219,14 @@ function setTokenLight (token, options) {
 		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
-		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id))
+		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision || is_player_id(options.id)){
 			$("#light_container").prepend(lightElement);
+			if(clippath == undefined){
+				debounceLightChecks();
+			}
+		}
 		
+
 		if(options.animation?.light && options.animation?.light != 'none'){
 			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
 		}
@@ -3268,6 +3273,7 @@ function setTokenLight (token, options) {
 	else{
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass(['devilsight', 'truesight'], false);
 	}
+
 }
 
 function setTokenBase(token, options) {

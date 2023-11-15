@@ -4620,13 +4620,7 @@ function redraw_light(){
 			else{
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
-				window.lineOfSightPolygons[auraId] = {
-					polygon: lightPolygon,
-					move: movePolygon,
-					x: tokenPos.x,
-					y: tokenPos.y,
-					numberofwalls: walls.length
-				}
+
 
 
 
@@ -4635,6 +4629,14 @@ function redraw_light(){
 				let path = "";
 				for( let i = 0; i < lightPolygon.length; i++ ){
 					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+				}
+				window.lineOfSightPolygons[auraId] = {
+					polygon: lightPolygon,
+					move: movePolygon,
+					x: tokenPos.x,
+					y: tokenPos.y,
+					numberofwalls: walls.length,
+					clippath: path
 				}
 				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 			}
