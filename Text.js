@@ -340,7 +340,9 @@ function create_text_controller(applyFromWindow = false) {
  * @returns a div which has the title bar with submit/close buttons and a text area
  */
 function create_moveable_text_box(x,y,width, height, text = undefined) {
-    const htmlText = text.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/'/g, "&apos;")
+    let htmlText;
+    if(typeof text == 'string')
+        htmlText = text.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/'/g, "&apos;")
 
 
     const textInputInside = $(`<div class="text-input-inside" data-text='${htmlText ? htmlText : ''}'/>`);
