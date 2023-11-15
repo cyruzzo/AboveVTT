@@ -144,87 +144,87 @@ $(function() {
   }
 });
 
-function addExtensionPathStyles(){
+function addExtensionPathStyles(){ // some above server images moved out of extension package
   let styles = `<style id='aboveExtensionPathStyles'>
     .aoe-style-fire{
-      background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fire_background.png);
+      background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fire_background.png);
     }
     .aoe-style-lightning{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/lightning.png);
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/lightning.png);
     }
     .aoe-style-slashing{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/slashing.png);
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/slashing.png);
     }
     .aoe-style-darkness{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fire_background.png);
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fire_background.png);
     }
     .aoe-style-fog-cloud{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fog_cloud_tileable.png) !important;
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fog_cloud_tileable.png) !important;
     }
     .aoe-style-hypnotic-pattern{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/hypnotic-pattern.png) !important;
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/hypnotic-pattern.png) !important;
     }
     .aoe-style-stinking-cloud{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/fog_cloud_tileable.png) !important;
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fog_cloud_tileable.png) !important;
     }
     .aoe-style-web{
-        background-image: url(${window.EXTENSION_PATH}images/Tokens-Overlays/tileable3pxsquareweb.png) !important;
+        background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/tileable3pxsquareweb.png) !important;
     }
 
     [data-animation='fairy-fx'] .islight,
     .aura-element[data-animation='fairy-fx'][id*='aura_'] {
-        -webkit-mask-image: url('${window.EXTENSION_PATH}images/Animation Masks/fairys.png');
+        -webkit-mask-image: url('https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/fairys.png');
     }
 
     [data-animation='fairy-fx'] .islight:before,
     .aura-element[data-animation='fairy-fx'][id*='aura_']:before {
-        -webkit-mask-image: url('${window.EXTENSION_PATH}images/Animation Masks/fairys.png');
+        -webkit-mask-image: url('https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/fairys.png');
     }
 
     [data-animation='spore-fx'] .islight,
     .aura-element[data-animation='spore-fx'][id*='aura_'] {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/spore.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/spore.png");
     }
 
     [data-animation='lightning-fx'] .islight,
     .aura-element[data-animation='lightning-fx'][id*='aura_'] {
-        --mask-1: url("${window.EXTENSION_PATH}images/Animation Masks/lightning1.png");
-        --mask-2: url("${window.EXTENSION_PATH}images/Animation Masks/lightning2.png");
-        --mask-3: url("${window.EXTENSION_PATH}images/Animation Masks/lightning3.png");
+        --mask-1: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning1.png");
+        --mask-2: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning2.png");
+        --mask-3: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning3.png");
     }
 
     [data-animation='magic-circle-fx'] .islight,
     .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/magiccircle1.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/magiccircle1.png");
     }
 
     [data-animation='magic-circle-2-fx'] .islight,
     .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/magiccircle2.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/magiccircle2.png");
     }
     [data-animation='hurricane-fx'] .islight,
     .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/hurricane_cloud.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/hurricane_cloud.png");
     }
 
     [data-animation='hurricane-fx'] .islight:before,
     .aura-element[data-animation='hurricane-fx'][id*='aura_']:before
     {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/lightning_2.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning_2.png");
     }
     [data-animation='snow-fx'] .islight:before,
     .aura-element[data-animation='snow-fx'][id*='aura_']:before,
     [data-animation='snow-fx'] .islight:after,
     .aura-element[data-animation='snow-fx'][id*='aura_']:after
     {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/snow.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/snow.png");
     }
     [data-animation='bubble-fx'] .islight:before,
     .aura-element[data-animation='bubble-fx'][id*='aura_']:before,
     [data-animation='bubble-fx'] .islight:after,
     .aura-element[data-animation='bubble-fx'][id*='aura_']:after
     {
-        -webkit-mask-image: url("${window.EXTENSION_PATH}images/Animation Masks/bubble.png");
+        -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/bubble.png");
     }
   </style>`
 
