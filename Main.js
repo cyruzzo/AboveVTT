@@ -3286,8 +3286,8 @@ function init_help_menu() {
 		if($(currentTab).hasClass('bookmark')){
 			$('.tabs-content>div#tab2').show();
 			let src = $(currentTab).attr('data-src');
-			$('.tabs-content>div#tab2').find('iframe').attr('src', '');
-			$('.tabs-content>div#tab2').find('iframe').attr('src', src);
+			$('.tabs-content>div#tab2').find('iframe').remove();
+			$('.tabs-content>div#tab2').append(`<iframe src='${src}'></iframe>`)
 		}
 
 		$(currentTab).show();
