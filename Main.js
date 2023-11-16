@@ -3207,16 +3207,24 @@ function init_help_menu() {
 							<dd>Hide buttons from screen (spectator mode)</dd>
 						<dl>
 						<dl>
+							<dt>SHIFT+L</dt>
+							<dd>Enable/Disable locked token interation (DM only)</dd>
+						<dl>
+						<dl>
 							<dt>SHIFT+V</dt>
 							<dd>Temporary check token vision.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+W</dt>
-							<dd>Toggle always show walls.</dd>
+							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+Click</dt>
+							<dt>SHIFT+Click Token</dt>
 							<dd>Select multiple tokens</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+Click Door/Window</dt>
+							<dd>Quick toggle door/window locked</dd>
 						<dl>
 						<dl>
 							<dt>Hold SHIFT while drawing walls</dt>
