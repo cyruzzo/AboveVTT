@@ -1379,7 +1379,7 @@ class MessageBroker {
 			data.map = await get_map_from_uvtt_file(data.player_map);
 		}
 		else{
-			await build_import_loading_indicator(`Loading ${data.title}`);		
+			await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
 		}
 		$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
 		if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
