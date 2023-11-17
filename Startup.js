@@ -332,9 +332,6 @@ async function start_above_vtt_for_dm() {
   if (activeScene) {
     window.MB.handleScene(activeScene);
   }
-  if (window.PLAYER_SCENE_ID) {
-    window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.PLAYER_SCENE_ID });
-  }
 
   did_update_scenes();
 

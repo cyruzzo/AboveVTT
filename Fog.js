@@ -584,7 +584,7 @@ async function check_token_visibility(){
 
 async function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
-	if(window.DM)
+	if(window.DM || window.LOADING)
 		return;
 	let canvas = document.getElementById("fog_overlay");
 
@@ -4751,7 +4751,7 @@ function redraw_light(){
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		redraw_light();
 		
-	}, Math.min(300, Math.abs(startTime-Date.now())));
+	}, Math.min(250, Math.abs(startTime-Date.now())));
 }
 
 function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
