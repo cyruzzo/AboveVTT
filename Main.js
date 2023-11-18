@@ -390,9 +390,10 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		clearTimeout(window.YTTIMEOUT);
 		window.YTTIMEOUT = null;
 	}
-
+	$("#youtube_controls_button").hide();
 	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
+		$("#youtube_controls_button").show();
 		$("#scene_map_container").toggleClass('video', true);
 		if (width == null) {
 			width = 1920;
@@ -406,7 +407,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			width: width,
 			height: height,
 			videoId: videoid,
-			playerVars: { 'autoplay': 1, 'controls': 0, 'rel': 0 },
+			playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0 },
 			events: {
 				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
 				'onReady': function(e) { 
@@ -2806,7 +2807,21 @@ function init_zoom_buttons() {
 
 	// ZOOM BUTTON
 	zoom_section = $("<div id='zoom_buttons' />");
-
+	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
+	youtube_controls_button.click(function (event) {
+		console.log("youtube_controls_button", event);
+		const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+		if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+			iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+			$(`#scene_map_container`).css('z-index', '');
+		} else {
+			iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+			$(`#scene_map_container`).css('z-index', '100');
+		}
+	});	
+	youtube_controls_button.append(`<div class="ddbc-tab-options__header-heading"><span style="font-size: 20px;" class="material-symbols-outlined">video_settings</span></div>`);
+	
+	zoom_section.append(youtube_controls_button);
 	if(window.DM) {
 
 		const projector_toggle = $(`<div id='projector_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector mode'></div>`);
@@ -3027,6 +3042,8 @@ function init_zoom_buttons() {
 			</svg>
 	</div></div>
 	`);
+
+
 
 	selected_token_vision.click(async function(){
 		if ($('#selected_token_vision .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
