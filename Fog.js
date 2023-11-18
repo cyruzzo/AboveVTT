@@ -584,8 +584,11 @@ async function check_token_visibility(){
 
 async function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
-	if(window.DM)
+	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('.tokenselected').length == 0)){
+		$(`.token`).show();
+		$(`.aura-element`).show();
 		return;
+	}
 	let canvas = document.getElementById("fog_overlay");
 
 	if (canvas.style.diplay == "none")
@@ -4553,7 +4556,7 @@ function redraw_light(){
 	if(selectedTokens.length>0){
 		if(window.SelectedTokenVision){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
-				$('#VTT').css('--darkness-filter', `0%`)
+				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
 			}
 	  		$('#raycastingCanvas').css('opacity', '1');
 	  		
@@ -4676,7 +4679,7 @@ function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
-				if(!window.DM){
+				if(!window.DM || window.SelectedTokenVision){
 					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
 						tempDarkvisionCtx.globalCompositeOperation='source-over';
 						drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
@@ -4717,7 +4720,7 @@ function redraw_light(){
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 
 
-		if(!window.DM){
+		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
 		
 			lightInLosContext.globalCompositeOperation='source-over';
@@ -4738,7 +4741,7 @@ function redraw_light(){
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-	if(!window.DM){
+	if(!window.DM || window.SelectedTokenVision){
 		do_check_token_visibility();
 	}
 
@@ -4816,7 +4819,7 @@ function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
 }
 function clipped_light(auraId, maskPolygon, playerTokenId){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
-	if(window.DM)
+	if(window.DM && !window.SelectedTokenVision)
 		return;
 	
 	let blackLight1 = (window.TOKEN_OBJECTS[auraId].options.light1.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
