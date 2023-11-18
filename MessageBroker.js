@@ -1309,17 +1309,8 @@ class MessageBroker {
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-			if(data.auraislight){
-				if(playerTokenAuraIsLight){
-						check_token_visibility();
-				}
-				else{
-					check_single_token_visibility(data.id);
-				}	
-			}
-			else{
-				check_single_token_visibility(data.id);
-			}
+			check_single_token_visibility(data.id);
+	
 		}
 }
 
@@ -1400,7 +1391,7 @@ class MessageBroker {
 			else {
 				window.DRAWINGS = [];
 			}
-
+			window.LOADING = true;
 			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 				console.group("load_scenemap callback")
 				if(!window.CURRENT_SCENE_DATA.scale_factor)
@@ -1446,11 +1437,23 @@ class MessageBroker {
 
 				$("#VTT").css("--scene-scale", scaleFactor)
 				$('#loadingStyles').remove(); // incase 2nd load
-				$('body').append($(`<style id='loadingStyles'>
-						.token{
+				if(!window.DM){
+					$('body').append($(`<style id='loadingStyles'>
+						.token,
+						.door-button,
+						.aura-element-container-clip{
 							display: none !important;
 						}
+						.token[data-id*='${window.PLAYER_ID}']{
+							display: flex !important;
+						}
+						
+						.aura-element-container-clip[id*='${window.PLAYER_ID}']{
+							display:unset !important;
+						}
 					</style>`))
+				}
+
 				
 				set_default_vttwrapper_size();
 				
@@ -1476,7 +1479,6 @@ class MessageBroker {
 				console.log("LOADING TOKENS!");
 				let tokensLength = Object.keys(data.tokens).length;
 				let count = 0;
-				const timer = ms => new Promise(res => setTimeout(res, ms))
 				const tokenLoop = async function(data, count, tokensLength){
 						for (let id in data.tokens) {
 							if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
@@ -1488,7 +1490,7 @@ class MessageBroker {
 								persist: false			
 							})
 							count += 1;
-							await timer(0.01);
+							await async_sleep(0.01);
 							$('.import-loading-indicator .percentageLoaded').css('width', `${20 + count/tokensLength*75}%`)
 							
 						}
@@ -1522,7 +1524,9 @@ class MessageBroker {
 				update_pc_token_rows();
 				$('.import-loading-indicator').remove();
 				$('#loadingStyles').remove();
-				
+				delete window.LOADING;
+				if(!window.DM)
+					do_check_token_visibility()
 				console.groupEnd()
 				delete window.newLoad;
 			});
