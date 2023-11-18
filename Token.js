@@ -34,7 +34,8 @@ const availableToAoe = [
 	"restrictPlayerMove",
 	"revealname",
 	"revealInFog",
-	"lockRestrictDrop"
+	"lockRestrictDrop",
+	"underDarkness"
 ];
 
 
@@ -1735,7 +1736,7 @@ class Token {
 							'opacity': this.options.hidden ? '0.5' : '1'
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-				        tokenClone.find('div:not(.base)').remove();      
+				        tokenClone.children('div:not(.base):not(.token-image)').remove();    
 				        $('#token_map_items').append(tokenClone);
 					}
 					else{
@@ -1754,7 +1755,7 @@ class Token {
 		    				'--token-rotation': old.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1'
 						})
-						copyToken.find('div:not(.base)').remove()
+						copyToken.children('div:not(.base):not(.token-image)').remove()
 					}
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
@@ -2578,7 +2579,7 @@ class Token {
 						opacity: this.options.hidden ? '0.5' : '1'
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-			        tokenClone.find('div:not(.base)').remove();      
+			        tokenClone.children('div:not(.base):not(.token-image)').remove();      
 			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
@@ -2598,7 +2599,7 @@ class Token {
 			new Promise(() => toggle_player_selectable(this, token)),
 			new Promise(debounceLightChecks),
 		]);
-		$(`[data-notatoken='notatoken_${this.options.id}']`).find('div:not(.base)').remove();
+		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image)').remove();
 
 		console.groupEnd()
 
