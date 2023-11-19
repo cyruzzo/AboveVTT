@@ -2411,6 +2411,7 @@ class Token {
 										)
 									}									
 
+
 									const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;
 									let canMove = true;
 									for(let i=0; i<pixeldata.length; i+=4){
