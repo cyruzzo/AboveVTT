@@ -115,6 +115,8 @@ Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to t
 });
 
 Mousetrap.bind('w', function () {
+    if(shiftHeld)
+        return;
     $('#wall_button').click()   
 });
 Mousetrap.bind('shift+w', function () {
