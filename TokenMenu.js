@@ -2180,7 +2180,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype') {
+		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype' || setting.globalSettingOnly) {
 			continue;
 		}
 
