@@ -1258,7 +1258,6 @@ function redraw_drawings() {
 		let isFilled = fill === 'filled';
 		
 		let targetCtx = offscreenContext;
-	
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
@@ -1324,7 +1323,9 @@ function redraw_drawn_light(){
 		
 		let targetCtx = offscreenContext;
 	
-
+		if(color == true){
+			color = window.CURRENT_SCENE_DATA.daylight;
+		}
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
@@ -1783,6 +1784,8 @@ function drawing_mousedown(e) {
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
 
+	window.DRAWDAYLIGHT = (data.from == 'vision_menu' && $('#daylight').hasClass('button-enabled'));
+
 	// some functions don't have selectable features
 	// such as colour / filltype so set them here
 	if(window.DRAWFUNCTION === "reveal"){
@@ -2213,7 +2216,7 @@ function drawing_mouseup(e) {
 	let hidden = $('[data-hidden]').hasClass('button-enabled');
 	let data = ['',
 		 window.DRAWTYPE,
-		 window.DRAWCOLOR,
+		 (window.DRAWDAYLIGHT) ? window.DRAWDAYLIGHT : window.DRAWCOLOR,
 		 window.BEGIN_MOUSEX,
 		 window.BEGIN_MOUSEY,
 		 width,
@@ -3355,7 +3358,7 @@ function save3PointRect(e){
 		data = [
 			'3pointRect',
 			window.DRAWTYPE,
-			window.DRAWCOLOR,
+			(window.DRAWDAYLIGHT) ? window.DRAWDAYLIGHT : window.DRAWCOLOR,
 			polygonPoints,
 			null,
 			null,
@@ -3397,7 +3400,7 @@ function savePolygon(e) {
 		data = [
 			'polygon',
 			window.DRAWTYPE,
-			window.DRAWCOLOR,
+			(window.DRAWDAYLIGHT) ? window.DRAWDAYLIGHT : window.DRAWCOLOR,
 			polygonPoints,
 			null,
 			null,
@@ -4061,6 +4064,13 @@ function init_vision_menu(buttons){
         <input title='Background color' data-required="background_color" class='spectrum'
             id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#FFF'}'/>
         `)
+	vision_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='daylight' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				 data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading'>
+				 	Daylight
+			</button>
+		</div>`);
 
     let colorPickers = vision_menu.find('input.spectrum');
 	colorPickers.spectrum({
@@ -4116,6 +4126,8 @@ function init_vision_menu(buttons){
 		let scene_index = window.ScenesHandler.scenes.findIndex(s => s.id === window.CURRENT_SCENE_DATA.id);
 		edit_scene_vision_settings(scene_index);
 	})
+
+
 
 	vision_menu.find("#delete_light").click(function() {
 		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");

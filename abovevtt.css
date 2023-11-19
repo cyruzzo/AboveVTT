@@ -36,6 +36,28 @@ body > button,
     position: absolute;
     background: #0F0;
 }
+button.daylight {
+    position: relative;
+    height: 20px;
+    width: 20px;
+    left: -2px;
+    top: 3px;
+    border-radius: 3px;
+    object-fit: cover;
+    background: #fff;
+    border: 1px solid #d8e1e8;
+    cursor: pointer;
+}
+
+button.daylight.active-daylight {
+    background: #1b9af0;
+}
+
+button.daylight span.material-symbols-outlined {
+    font-size: 15px;
+    position:relative;
+    left: -4px;
+}
 #loading_overlay {
     position: fixed;
     top: -2%;
