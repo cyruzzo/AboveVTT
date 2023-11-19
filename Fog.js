@@ -584,8 +584,11 @@ async function check_token_visibility(){
 
 async function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
-	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('.tokenselected').length == 0) || window.LOADING){
+	if(window.LOADING)
+		return;
+	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('.tokenselected').length == 0)){
 		$(`.token`).show();
+		$(`.door-button`).css('visibility', '');
 		$(`.aura-element`).show();
 		return;
 	}
