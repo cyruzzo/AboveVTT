@@ -1061,6 +1061,13 @@ function build_token_light_inputs(tokenIds, door=false) {
 	let visionColor = tokens.map(t => t.options.vision.color);
 	let uniqueVisionColor = visionColor.length === 1 ? visionColor[0] : window.TOKEN_SETTINGS?.vision?.color ? window.TOKEN_SETTINGS.vision.color : "";
 
+	let light1DaylightColor = tokens.map(t => t.options.light1.daylight);
+	let uniquelight1DaylightColor = light1DaylightColor.length === 1 ? light1DaylightColor[0] == true ? 'active-daylight' : '' : '';
+
+	let light2DaylightColor = tokens.map(t => t.options.light2.daylight);
+	let uniquelight2DaylightColor = light2DaylightColor.length === 1 ? light2DaylightColor[0] == true ? 'active-daylight' : '' : '';
+
+
 	let upsq = 'ft';
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
@@ -1107,7 +1114,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 					</div>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
+						<button name='light1' class='daylight ${uniquelight1DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
 						<input class="spectrum" name="light1Color" value="${uniqueAura1Color}" >
+	
 					</div>
 				</div>
 				<div class="menu-outer-aura">
@@ -1118,7 +1127,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 					</div>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
+						<button name='light2' class='daylight ${uniquelight2DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
 						<input class="spectrum" name="light2Color" value="${uniqueAura1Color}" >
+						
 					</div>
 				</div>
 			</div>
@@ -1238,6 +1249,16 @@ function build_token_light_inputs(tokenIds, door=false) {
 	
 	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
 		create_light_presets_edit();		
+	})
+	wrapper.find('.daylight').off('click.editDaylight').on('click.editDaylight', function(){
+		$(this).toggleClass('active-daylight');
+		let newValue = $(this).hasClass('active-daylight');	
+		let name = $(this).attr('name');
+		console.log(`${name} setting is now ${newValue}`);
+		tokens.forEach(token => {
+			token.options[name].daylight = newValue;
+			token.place_sync_persist();
+		});	
 	})
 
 

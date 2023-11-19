@@ -964,14 +964,47 @@ function edit_scene_vision_settings(scene_id){
 
 	});
 
-	let playerViewLabel = $('<div class="player_map_preview_label">Player view will see the map image even when behind walls at less than 100% darkness opacity. Tokens will still be hidden when out of line of sight.</div>')
+	let playerViewLabel = $('<div class="player_map_preview_label">Player view will see the map image even when behind walls at less than 100% darkness opacity. If token vision/light is enabled tokens will be hidden when out of line of sight otherwise line of sight will be ignored.</div>')
 
-	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel);
+
+
+    let daylightInput = $(`<div class="token-image-modal-footer-select-wrapper">
+                    <div class="token-image-modal-footer-title">Daylight Color</div>
+                    <div style="padding-left: 2px">
+                        <input class="spectrum" name="daylightColor" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
+                    </div>
+                </div>
+                </div>`);
+
+    let colorPickers = daylightInput.find('input.spectrum');
+    colorPickers.spectrum({
+        type: "color",
+        showInput: true,
+        showInitial: true,
+        containerClassName: 'prevent-sidebar-modal-close',
+        clickoutFiresChange: true,
+        appendTo: "parent"
+    });
+    window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)';
+    const originalColor = window.CURRENT_SCENE_DATA.daylight;
+	daylightInput.find("input[name='daylightColor']").spectrum("set", window.CURRENT_SCENE_DATA.daylight);
+    const colorPickerChange = function(e, tinycolor) {
+        window.CURRENT_SCENE_DATA.daylight = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+ 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
+    };
+    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+    colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+    colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
+	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel, daylightInput);
 
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
 		// redraw or clear grid based on scene data
 		// discarding any changes that have been made to live modification of grid
+		window.CURRENT_SCENE_DATA.daylight = originalColor;
+		$('#VTT').css('--daylight-color', originalColor);
 		if (scene.id === window.CURRENT_SCENE_DATA.id){
 			if(window.CURRENT_SCENE_DATA.grid === "1"){
 				redraw_grid()
@@ -993,7 +1026,7 @@ function edit_scene_vision_settings(scene_id){
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
-		
+		scene['daylight'] = window.CURRENT_SCENE_DATA.daylight;
 		const isNew = false;
 
 		window.ScenesHandler.persist_scene(scene_id, isNew);

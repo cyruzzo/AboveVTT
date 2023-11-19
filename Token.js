@@ -3187,7 +3187,7 @@ function setTokenLight (token, options) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
-		const lightBg = `radial-gradient(${options.light1.color} ${lightRadius}px, ${options.light2.color} ${lightRadius}px);`;
+		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px);`;
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
 		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
@@ -3196,8 +3196,8 @@ function setTokenLight (token, options) {
 							background-image:${lightBg};
 							left:${optionsLeft + absPosOffset}px;
 							top:${optionsTop+ absPosOffset}px;
-							--color1: ${options.light1.color};
-							--color2: ${options.light2.color};
+							--color1: ${options.light1.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light1.color};
+							--color2: ${options.light2.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light2.color};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							`;
