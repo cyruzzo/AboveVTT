@@ -2299,9 +2299,15 @@ class Token {
 							)
 						}
 						
-						const pixeldata = ctx.getImageData(left, top, 1, 1).data;
-
-						if (pixeldata[2] > 5)
+						const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;
+						let canMove = true;
+						for(let i=0; i<pixeldata.length; i+=4){
+							if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
+								canMove = false;
+								break;
+							}
+						}
+						if (canMove)
 						{	
 							window.oldTokenPosition[self.options.id] = ui.position;				
 						}
@@ -2330,13 +2336,12 @@ class Token {
 					/*$(event.target).css("left",ui.position.left);
 					$(event.target).css("top",ui.position.top);*/
 					// END OF HACK TEST
-
+					let offsetLeft = ui.position.left - parseFloat(self.orig_left);
+					let offsetTop = ui.position.top - parseFloat(self.orig_top);
 					let el = ui.helper.parent().parent().find("#aura_" + ui.helper.attr("data-id").replaceAll("/", ""));
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
@@ -2344,8 +2349,6 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
@@ -2353,8 +2356,6 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
@@ -2362,8 +2363,6 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
@@ -2371,8 +2370,6 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						let offsetLeft = Math.round(ui.position.left - parseInt(self.orig_left));
-						let offsetTop = Math.round(ui.position.top - parseInt(self.orig_top));
 						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
@@ -2413,15 +2410,17 @@ class Token {
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
 									}									
+
+
 									const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;
-									let canMove = false;
+									let canMove = true;
 									for(let i=0; i<pixeldata.length; i+=4){
-										if(pixeldata[i]>5 || pixeldata[i+1]>5 || pixeldata[i+2]>5){
-											canMove = true;
+										if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
+											canMove = false;
 											break;
 										}
 									}
-									if (pixeldata[2] > 5)
+									if (canMove)
 									{	
 										window.oldTokenPosition[curr.options.id] = {
 											left: tokenX,
