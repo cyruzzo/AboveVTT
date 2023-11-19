@@ -3052,6 +3052,9 @@ function deselect_all_tokens() {
 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
    	if(window.DM){
    		$("#light_container [id^='light_']").css('visibility', "visible");
+   		$(`.token`).show();
+		$(`.door-button`).css('visibility', '');
+		$(`.aura-element`).show();
    	}
    	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
    		window.SelectedTokenVision = false;
