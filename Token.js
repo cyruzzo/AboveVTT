@@ -2413,8 +2413,14 @@ class Token {
 										  `To fix this, have the DM delete your token and add it again. Refreshing the page will sometimes fix this as well.`
 										)
 									}									
-									const pixeldata = ctx.getImageData(left, top, 1, 1).data;
-
+									const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;
+									let canMove = false;
+									for(let i=0; i<pixeldata.length; i+=4){
+										if(pixeldata[i]>5 || pixeldata[i+1]>5 || pixeldata[i+2]>5){
+											canMove = true;
+											break;
+										}
+									}
 									if (pixeldata[2] > 5)
 									{	
 										window.oldTokenPosition[curr.options.id] = {
