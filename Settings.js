@@ -229,6 +229,17 @@ function token_setting_options() {
 				{ value: "max", label: "Max", description: "Monster Max HP will be set to the maximum value." }
 			],
 			defaultValue: "average"
+		},
+		{
+			name: "auraislight",
+			label: "Enable Token Vision/Light",
+			type: 'toggle',
+			globalSettingOnly: true,
+			options: [
+				{ value: true, label: 'Enabled', description: "Token line of sight will be calculated and token vision/light can be used." },
+				{ value: false, label: 'Disabled', description: "Token line of sight will be disabled and token vision/light can not be used." }
+			],
+			defaultValue: true
 		}
 	];
 }
@@ -586,7 +597,7 @@ function init_settings() {
 		tokenOptionsButton.on("click", function (clickEvent) {
 			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
 				let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
-					if (value === true || value === false || typeof value === 'string') {
+					if (value === true || value === false || typeof value === 'string' || typeof value === 'object') {
 						window.TOKEN_SETTINGS[name] = value;
 					} else {
 						delete window.TOKEN_SETTINGS[name];
@@ -860,7 +871,11 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 		// disable all toggle switches
 		tokenOptionsFlyoutContainer
 			.find(".rc-switch")
-			.removeClass("rc-switch-checked")
+			.each(function (){
+				let el = $(this);
+				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
+				el.toggleClass("rc-switch-checked", matchingOption.defaultValue)
+			})		
 			.removeClass("rc-switch-unknown");
 
 		// set all dropdowns to their default values
@@ -876,9 +891,9 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
 
 		availableOptions.forEach(option => updateValue(option.name, undefined));
-		updateValue('vision', undefined);
-		updateValue('light1', undefined);
-		updateValue('light2', undefined);
+		updateValue('vision', {});
+		updateValue('light1', {});
+		updateValue('light2', {});
 
 		let defaultTokenOptions = default_options();
 

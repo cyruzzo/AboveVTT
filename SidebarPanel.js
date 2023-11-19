@@ -405,10 +405,10 @@ function build_toggle_input(settingOption, currentValue, changeHandler) {
     input.addClass("rc-switch-unknown");
     update_hover_text(wrapper, "This has multiple values. Clicking this will enable it for all.");
   } else {
-    if (currentValue === true) {
-      input.addClass("rc-switch-checked");
-    }
     const currentlySetOption = settingOption.options.find(o => o.value === currentValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+    if(currentlySetOption.value == true){
+     input.addClass("rc-switch-checked");
+    }
     update_hover_text(wrapper, currentlySetOption?.description);
   }
   wrapper.append(input);
