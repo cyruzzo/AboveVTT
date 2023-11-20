@@ -969,7 +969,7 @@ function edit_scene_vision_settings(scene_id){
 
 
     let daylightInput = $(`<div class="token-image-modal-footer-select-wrapper">
-                    <div class="token-image-modal-footer-title">Daylight Color</div>
+                    <div class="token-image-modal-footer-title">Daylight Color - For light drawings and token light</div>
                     <div style="padding-left: 2px">
                         <input class="spectrum" name="daylightColor" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
                     </div>
