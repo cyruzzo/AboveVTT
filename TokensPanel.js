@@ -662,9 +662,10 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 let helper = draggedRow.find("img.token-image").clone();
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
-                } else {
-                    let randomImage = await random_image_for_item(draggedItem);
-                    helper.attr("src", randomImage);
+                } else {         
+                    random_image_for_item(draggedItem).then((img) => {
+                        helper.attr("src", img);
+                    });
                 }
                 helper.addClass("draggable-token-creation");
                 return helper;
