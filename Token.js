@@ -2810,7 +2810,7 @@ function place_token_at_view_point(tokenObject, pageX, pageY) {
 	place_token_at_map_point(tokenObject, mapPosition.x, mapPosition.y);
 }
 
-function place_token_at_map_point(tokenObject, x, y) {
+async function place_token_at_map_point(tokenObject, x, y) {
 
 	console.log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
 
@@ -2845,7 +2845,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	}
 	// aoe tokens have classes instead of images
 	if (typeof options.imgsrc === "string" && !options.imgsrc.startsWith("class")) {
-		options.imgsrc = parse_img(options.imgsrc);
+		options.imgsrc = await parse_img(options.imgsrc);
 	}
 
 	if (options.size == undefined) {

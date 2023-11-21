@@ -20,26 +20,29 @@ window.onbeforeunload = function(event)
 /** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
  * @return {String} a sanitized and possibly modified url to help with loading maps */
-function parse_img(url) {
-	let retval = url;
-	if (typeof retval !== "string") {
-		console.log("parse_img is converting", url, "to an empty string");
-		retval = "";
-	} else if (retval.trim().startsWith("data:")) {
-		console.warn("parse_img is removing a data url because those are not allowed");
-		retval = "";
-	} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
-		const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
-		console.log("parse_img is converting", url, "to", parsed);
-		retval = parsed;
-	} 
-	else if(retval.includes("dropbox.com")){
-		const splitUrl = url.split('dropbox.com');
-		const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-		console.log("parse_img is converting", url, "to", parsed);
-		retval = parsed;
-	}
-	return retval;
+async function parse_img(url) {
+		let retval = url;
+		if (typeof retval !== "string") {
+			console.log("parse_img is converting", url, "to an empty string");
+			retval = "";
+		} else if (retval.trim().startsWith("data:")) {
+			console.warn("parse_img is removing a data url because those are not allowed");
+			retval = "";
+		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+			const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
+			console.log("parse_img is converting", url, "to", parsed);
+			retval = parsed;
+			return await throttleImage(() => {
+				return Promise.resolve(retval);
+			})
+		} 
+		else if(retval.includes("dropbox.com")){
+			const splitUrl = url.split('dropbox.com');
+			const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+			console.log("parse_img is converting", url, "to", parsed);
+			retval = parsed;
+		}
+		return await Promise.resolve(retval);	
 }
 
 /**
@@ -455,7 +458,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.height(height);		
 		}
 		else{
-			url = getGoogleDriveAPILink(url)
+			url = await getGoogleDriveAPILink(url)
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 		}
 

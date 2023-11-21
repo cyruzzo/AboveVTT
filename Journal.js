@@ -1187,7 +1187,7 @@ class JournalManager{
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items)', value: 'tooltip-hover'}
 			],
 			setup: function (editor) { 
-				editor.on('NodeChange', function (e) {
+				editor.on('NodeChange', async function (e) {
 					// When an image is inserted into the editor
 				    if (e.element.tagName === "IMG") { 
 				    	let url = e.element.getAttribute('src');
@@ -1203,7 +1203,7 @@ class JournalManager{
 		                    url = parsed;
 		                }
 
-				        e.element.setAttribute("src", getGoogleDriveAPILink(url));
+				        e.element.setAttribute("src", await getGoogleDriveAPILink(url));
 				        return; 
 				    }
 				    return;

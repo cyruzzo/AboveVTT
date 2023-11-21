@@ -195,14 +195,14 @@ class TokenCustomization {
         }
     }
 
-    addAlternativeImage(imageUrl) {
+    async addAlternativeImage(imageUrl) {
         if (imageUrl.startsWith("data:")) {
             return false;
         }
         if (this.tokenOptions.alternativeImages === undefined) {
             this.tokenOptions.alternativeImages = [];
         }
-        const parsed = parse_img(imageUrl);
+        const parsed = await parse_img(imageUrl);
         if (!this.tokenOptions.alternativeImages.includes(parsed)) {
             this.tokenOptions.alternativeImages.push(parsed);
             return true;
@@ -210,7 +210,7 @@ class TokenCustomization {
             return false;
         }
     }
-    removeAlternativeImage(imageUrl) {
+    async removeAlternativeImage(imageUrl) {
         if (this.tokenOptions.alternativeImages === undefined) {
             return;
         }
@@ -218,7 +218,7 @@ class TokenCustomization {
         if (typeof index === "number" && index >= 0) {
             this.tokenOptions.alternativeImages.splice(index, 1);
         }
-        const parsed = parse_img(imageUrl);
+        const parsed = await parse_img(imageUrl);
         let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => i === parsed);
         if (typeof parsedIndex === "number" && parsedIndex >= 0) {
             this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
@@ -567,7 +567,7 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
 
     // MyToken migration
     console.log("migrate_token_customizations starting to migrate mytokens customizations");
-    listOfMyTokens.forEach(myToken => {
+    listOfMyTokens.forEach(async myToken => {
         let fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${myToken.folderPath}/${myToken.name}`);
         const existing = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.tokenType === ItemType.MyToken && (tc.id === myToken.customizationId || tc.fullPath() === fullPath));
         if (existing) {
@@ -585,7 +585,7 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
                 tokenOptions.alternativeImages = [...myToken.alternativeImages]; //
             }
             else if(myToken.image){
-                tokenOptions.alternativeImages = [parse_img(myToken.image)]
+                tokenOptions.alternativeImages = [await parse_img(myToken.image)]
             }
             delete tokenOptions.image;
             delete tokenOptions.folderpath;
