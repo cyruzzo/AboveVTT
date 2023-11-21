@@ -640,7 +640,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         cursorAt: {top: 0, left: 0},
         cancel: '.token-row-gear, .change-token-image-item',
         distance: 25,
-        helper: async function(event) {
+        helper: function(event) {
             console.log("enable_draggable_token_creation helper");
             let draggedRow = $(event.target).closest(".list-item-identifier");
             let isPlayerSheetAoe = false
