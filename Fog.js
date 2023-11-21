@@ -4334,7 +4334,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     	y2 = tokenIsDoor ? parseFloat(token.attr('data-y2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
     }
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
-	    
 	    let pt;
 	    let closestLight = null;
 	    let closestMove = null;
@@ -4426,8 +4425,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				}	
 			}
 		}
-	}
-  
+	} 		
 };
 
 function rectLineIntersection(x1, y1, x2, y2, rectx, rexty, rectw, recth) {
@@ -4637,7 +4635,7 @@ function redraw_light(){
 			}
 			else{
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
-				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId)  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
 
 
@@ -4760,17 +4758,32 @@ function redraw_light(){
 		do_check_token_visibility();
 	}
 
-	debounceLightChecks = mydebounce(() => {		
-		if(window.DRAGGING)
-			return;
-		if(window.walls?.length < 5){
-			redraw_light_walls();	
-		}
-		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		redraw_light();
-		
-	}, Math.min(250, Math.abs(startTime-Date.now())));
+	if(Math.abs(startTime-Date.now()) > 250){
+		debounceLightChecks = mydebounce(() => {	
+				if(window.DRAGGING)
+					return;	
+				if(window.walls?.length < 5){
+					redraw_light_walls();	
+				}
+				//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
+				redraw_light();
+				
+		}, 250);
+	}
+	else{
+		debounceLightChecks = mydebounce(() => {	
+			if(window.DRAGGING)
+					return;	
+			if(window.walls?.length < 5){
+				redraw_light_walls();	
+			}
+			//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
+			redraw_light();
+				
+		}, 20);
+	}
 }
+	
 
 function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
 
