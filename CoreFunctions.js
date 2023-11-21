@@ -745,15 +745,88 @@ function find_game_id() {
   return window.gameId;
 }
 
-function normalize_scene_urls(scenes) {
+async function normalize_scene_urls(scenes) {
   if (!Array.isArray(scenes) || scenes.length === 0) {
     return [];
   }
 
-  return scenes.map(sceneData => Object.assign(sceneData, {
-    dm_map: parse_img(sceneData.dm_map),
-    player_map: parse_img(sceneData.player_map)
-  }));
+  let scenesArray = await Promise.all(scenes.map(async sceneData => Object.assign(sceneData, {
+    dm_map: await parse_img(sceneData.dm_map),
+    player_map: await parse_img(sceneData.player_map)
+  })));
+
+  return scenesArray;
+}
+
+const throttleGoogleApi = throttledQueue(5, 10000);
+const throttleImage = throttledQueue(10, 10000);
+
+function throttledQueue(
+  maxRequestsPerInterval,
+  interval,
+  evenlySpaced = false
+) {
+  /**
+   * If all requests should be evenly spaced, adjust to suit.
+   */
+  if (evenlySpaced) {
+    interval = interval / maxRequestsPerInterval
+    maxRequestsPerInterval = 1
+  }
+  const queue = []
+  let lastIntervalStart = 0
+  let numRequestsPerInterval = 0
+  let timeout
+  /**
+   * Gets called at a set interval to remove items from the queue.
+   * This is a self-adjusting timer, since the browser's setTimeout is highly inaccurate.
+   */
+  const dequeue = () => {
+    const intervalEnd = lastIntervalStart + interval
+    const now = Date.now()
+    /**
+     * Adjust the timer if it was called too early.
+     */
+    if (now < intervalEnd) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      timeout !== undefined && clearTimeout(timeout)
+      timeout = setTimeout(dequeue, intervalEnd - now)
+      return
+    }
+    lastIntervalStart = now
+    numRequestsPerInterval = 0
+    for (const callback of queue.splice(0, maxRequestsPerInterval)) {
+      numRequestsPerInterval++
+      void callback()
+    }
+    if (queue.length) {
+      timeout = setTimeout(dequeue, interval)
+    } else {
+      timeout = undefined
+    }
+  }
+
+  return fn =>
+    new Promise((resolve, reject) => {
+      const callback = () =>
+        Promise.resolve()
+          .then(fn)
+          .then(resolve)
+          .catch(reject)
+      const now = Date.now()
+      if (timeout === undefined && now - lastIntervalStart > interval) {
+        lastIntervalStart = now
+        numRequestsPerInterval = 0
+      }
+      if (numRequestsPerInterval++ < maxRequestsPerInterval) {
+        void callback()
+      } else {
+        queue.push(callback)
+        if (timeout === undefined) {
+          timeout = setTimeout(dequeue, lastIntervalStart + interval - now)
+        }
+      }
+    })
 }
 
 async function look_for_github_issue(...searchTerms) {

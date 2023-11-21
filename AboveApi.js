@@ -120,7 +120,7 @@ class AboveApi {
     }
 
     // never upload data urls
-    const sanitizedScenes = normalize_scene_urls(scenes);
+    const sanitizedScenes = await normalize_scene_urls(scenes);
     console.log(`AboveApi.migrateScenes about to upload`, sanitizedScenes);
 
     const url = this.#buildUrl("migrate");

@@ -1114,7 +1114,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 					</div>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
-						<button name='light1' class='daylight ${uniquelight1DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
+						<button name='light1' title='Uses daylight color instead of custom color' class='daylight ${uniquelight1DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
 						<input class="spectrum" name="light1Color" value="${uniqueAura1Color}" >
 	
 					</div>
@@ -1127,7 +1127,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 					</div>
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Color</div>
-						<button name='light2' class='daylight ${uniquelight2DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
+						<button name='light2' title='Uses daylight color instead of custom color' class='daylight ${uniquelight2DaylightColor}'><span class="material-symbols-outlined">sunny</span></button>
 						<input class="spectrum" name="light2Color" value="${uniqueAura1Color}" >
 						
 					</div>

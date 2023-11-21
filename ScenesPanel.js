@@ -32,36 +32,44 @@ function handle_map_toggle_click(event){
 }
 
 
-function get_edit_form_data(){
+async function get_edit_form_data(){
 	// bain todo, call image validation here and stop if it's not valid
 	let data = {}
-	$("#edit_scene_form").find("input, button.rc-switch").each(function() {
-		const inputName = $(this).attr('name');
-		let inputValue = $(this).val();
+	let promises = [];
+	
+	$("#edit_scene_form").find("input, button.rc-switch").each(function(index) {	
+		promises.push(new Promise(async (resolve, reject) => {
+			const inputName = $(this).attr('name');
+			let inputValue = $(this).val();
 
-		if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
-			inputValue = parse_img(inputValue);
-		}
-		else if ($(this).is("button")){
-			inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
-		}
-		
-		data[inputName] = inputValue
+			if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
+				inputValue = await parse_img(inputValue);
+			}
+			else if ($(this).is("button")){
+				inputValue = $(this).hasClass("rc-switch-checked") ? "1" : "0"
+			}
+			
+			data[inputName] = await inputValue;
+			resolve();
+		}))
 	})
-	return data
+	
+	await Promise.all(promises);
+	return data;
+	
 }
 
-function validate_image_input(element){
-	const self = element
+async function validate_image_input(element){
+		const self = element
 
-	$(`#${self.name}_validator`).remove()
-	// no value so can't validate, return early
-	if (self.value?.length === 0) return
-	if(self.value.startsWith("data:")){
-		$(element).val("URLs that start with 'data:' will cause crashes. URL has been removed");
-		return;
+		$(`#${self.name}_validator`).remove()
+		// no value so can't validate, return early
+		if (self.value?.length === 0) return
+		if(self.value.startsWith("data:")){
+			$(element).val("URLs that start with 'data:' will cause crashes. URL has been removed");
+			return;
 	}
-	const img = parse_img(self.value)
+	const img = await parse_img(self.value)
 	const validIcon = $(`<span id="${self.name}_validator" data-hover="Map image valid" class="sidebar-hovertext material-icons url-validator valid">check_circle_outline</span>`)
 
 	// default as valid
@@ -129,38 +137,40 @@ function validate_image_input(element){
 	} catch (_) {
 		display_not_valid("Image not found")
 	}
-
 }
 
 
 async function getUvttData(url){
-	let api_url = url;
-	let jsonData = {};
-	if(url.startsWith('https://drive.google.com')){
-		let parsed_url = parse_img(url);
-		let fileid = parsed_url.split('=')[1];
-		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
-	}
-	else if(url.includes('dropbox.com')){		
-		let splitUrl = url.split('dropbox.com');
-		api_url = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-	}
+	return await throttleGoogleApi(async () => {
+		let api_url = url;
+		let jsonData = {};
+		if(url.startsWith('https://drive.google.com')){
+			let parsed_url = await parse_img(url);
+			let fileid = parsed_url.split('=')[1];
+			api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+		}
+		else if(url.includes('dropbox.com')){		
+			let splitUrl = url.split('dropbox.com');
+			api_url = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+		}
 
-	await $.getJSON(api_url, function(data){
-		jsonData = data;
-	});
-	return jsonData;
+		await $.getJSON(api_url, function(data){
+			jsonData = data;
+		});
+		return Promise.resolve(jsonData);
+	})
 }
 
-function getGoogleDriveAPILink(url){
-	let api_url = url;
-	if(url.startsWith('https://drive.google.com')){
-		let parsed_url = parse_img(url);
-		let fileid = parsed_url.split('=')[1];
-		api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
-	}
-
-	return api_url;
+async function getGoogleDriveAPILink(url){
+	return await throttleGoogleApi(async () => {
+		let api_url = url;
+		if(url.startsWith('https://drive.google.com')){
+			let parsed_url = await parse_img(url);
+			let fileid = parsed_url.split('=')[1];
+			api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+		}
+		return Promise.resolve(api_url);
+	})
 }
 
 async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId){
@@ -341,13 +351,13 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		return toggle
 	}
 
-	function handle_form_grid_on_change(){
+	async function handle_form_grid_on_change(){
 		// not editting this scene, don't show live updates to grid
 		if (scene.id !== window.CURRENT_SCENE_DATA.id){
 			return
 		}
 	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
 		// redraw grid with new information
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
@@ -969,7 +979,7 @@ function edit_scene_vision_settings(scene_id){
 
 
     let daylightInput = $(`<div class="token-image-modal-footer-select-wrapper">
-                    <div class="token-image-modal-footer-title">Daylight Color</div>
+                    <div class="token-image-modal-footer-title">Daylight Color - For light drawings and token light</div>
                     <div style="padding-left: 2px">
                         <input class="spectrum" name="daylightColor" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
                     </div>
@@ -1019,10 +1029,10 @@ function edit_scene_vision_settings(scene_id){
 		
 	})
 	const submitButton = $("<button type='button'>Save</button>");
-	submitButton.click(function() {
+	submitButton.click(async function() {
 		console.log("Saving scene changes")
 
-		const formData = get_edit_form_data();
+		const formData = await get_edit_form_data();
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
@@ -1092,13 +1102,13 @@ function edit_scene_dialog(scene_id) {
 		return toggle
 	}
 
-	function handle_form_grid_on_change(){
+	async function handle_form_grid_on_change(){
 		// not editting this scene, don't show live updates to grid
 		if (scene.id !== window.CURRENT_SCENE_DATA.id){
 			return
 		}
 	
-		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = get_edit_form_data()
+		const {hpps, vpps, offsetx, offsety, grid_color, grid_line_width, grid_subdivided, grid} = await get_edit_form_data()
 		// redraw grid with new information
 		if(grid === "1" && window.CURRENT_SCENE_DATA.scale_check){
 			let conversion = window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion
@@ -1347,10 +1357,10 @@ function edit_scene_dialog(scene_id) {
 
 
 	const submitButton = $("<button type='button'>Save</button>");
-	submitButton.click(function() {
+	submitButton.click(async function() {
 		console.log("Saving scene changes")
 
-		const formData = get_edit_form_data();
+		const formData = await get_edit_form_data();
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
@@ -1372,10 +1382,10 @@ function edit_scene_dialog(scene_id) {
 
 
 	wizard.click(
-		function() {
+		async function() {
 		
 
-			const formData = get_edit_form_data();
+			const formData = await get_edit_form_data()();
 			for (key in formData) {
 				scene[key] = formData[key];
 			}
@@ -1783,11 +1793,11 @@ function init_scenes_panel() {
 /**
  * Updates and redraws the scene list in the sidebar
  */
-function did_update_scenes() {
+async function did_update_scenes() {
 	if (!window.DM) return;
 
 	
-	const sanitizedScenes = normalize_scene_urls(window.ScenesHandler.scenes);
+	const sanitizedScenes = await normalize_scene_urls(window.ScenesHandler.scenes);
 
 	console.debug("did_update_scenes", `ScenesHandler${find_game_id()}`, sanitizedScenes);
 
@@ -1919,7 +1929,7 @@ async function migrate_scene_folders() {
  * clears and redraws the list of scenes in the sidebar
  * @param searchTerm {string} the search term used to filter the list of scenes
  */
-function redraw_scene_list(searchTerm) {
+async function redraw_scene_list(searchTerm) {
 	console.group("redraw_scene_list");
 
 	let nameFilter = "";
@@ -1937,36 +1947,46 @@ function redraw_scene_list(searchTerm) {
 
 	// first let's add all folders because we need the folder to exist in order to add items into it
 	// don't filter folders by the searchTerm because we need the folder to exist in order to add items into it
+	let promises = [];
 	window.sceneListFolders
 		.sort(SidebarListItem.folderDepthComparator)
-		.forEach(item => {
-			console.debug("redraw_scene_list folderPath", item.folderPath, item.parentId, item.id);
-			let row = build_sidebar_list_row(item);
-			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
-			let folder = $(`#${item.parentId} > .folder-item-list`);
-			if (folder.length > 0) {
-				console.debug("appending folder item", item, folder);
-				folder.append(row);
-			} else {
-				console.warn("Could not find a folder to append folder item to", item);
-			}
+		.forEach(item => { promises.push(new Promise(async (resolve, reject) => {
+				console.debug("redraw_scene_list folderPath", item.folderPath, item.parentId, item.id);
+				let row = await build_sidebar_list_row(item);
+				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+				let folder = $(`#${item.parentId} > .folder-item-list`);
+				if (folder.length > 0) {
+					console.debug("appending folder item", item, folder);
+					folder.append(row);
+				} else {
+					console.warn("Could not find a folder to append folder item to", item);
+				}
+				resolve();
+			}))	
 		});
+
+	await Promise.all(promises);
+	promises = [];
 
 	// now let's add all the other items
 	window.sceneListItems
 		.sort(SidebarListItem.sortComparator)
 		.filter(item => item.nameOrContainingFolderMatches(nameFilter))
-		.forEach(item => {
-			let row = build_sidebar_list_row(item);
-			let folder = $(`#${item.parentId} > .folder-item-list`);
-			// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
-			if (folder.length > 0) {
-				console.debug("appending scene item", item, folder);
-				folder.append(row);
-			} else {
-				console.warn("Could not find a folder to append scene item to", item);
-			}
+		.forEach(item => { promises.push(new Promise(async (resolve, reject) => {
+				let row = await build_sidebar_list_row(item);
+				let folder = $(`#${item.parentId} > .folder-item-list`);
+				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
+				if (folder.length > 0) {
+					console.debug("appending scene item", item, folder);
+					folder.append(row);
+				} else {
+					console.warn("Could not find a folder to append scene item to", item);
+				}
+				resolve();
+			}))
 		});
+
+	await Promise.all(promises);
 
 	if (nameFilter.length > 0) {
 		// auto expand all folders so we see all the search results
@@ -2334,7 +2354,7 @@ function floating_window_title_bar(id, title='') {
   `);
 }
 
-function create_scene_root_container(fullPath, parentId) {
+async function create_scene_root_container(fullPath, parentId) {
 	const container = build_import_container();
 	container.find(".j-collapsible__search").hide();
 
@@ -2343,7 +2363,7 @@ function create_scene_root_container(fullPath, parentId) {
 	sectionHtml.find(".ddb-collapsible__header").hide();
 	sectionHtml.css("border", "none");
 
-	const ddb = build_tutorial_import_list_item({
+	const ddb = await build_tutorial_import_list_item({
 		"title": "D&D Beyond",
 		"description": "Import Scenes from books you own",
 		"category": "Source Books",
@@ -2358,7 +2378,7 @@ function create_scene_root_container(fullPath, parentId) {
 		load_sources_iframe_for_map_import();
 	});
 
-	const free = build_tutorial_import_list_item({
+	const free = await build_tutorial_import_list_item({
 		"title": "Above VTT",
 		"description": "Import Scenes that have been preconfigured by the AboveVTT community",
 		"category": "Scenes",
@@ -2367,13 +2387,13 @@ function create_scene_root_container(fullPath, parentId) {
 	free.css("width", "25%");
 	sectionHtml.find("ul").append(free);
 	free.find(".listing-card__callout").hide();
-	free.find("a.listing-card__link").click(function (e) {
+	free.find("a.listing-card__link").click(async function (e) {
 		e.stopPropagation();
 		e.preventDefault();
-		build_free_map_importer();
+		await build_free_map_importer();
 	});
 
-	const custom = build_tutorial_import_list_item({
+	const custom = await build_tutorial_import_list_item({
 		"title": "Custom URL",
 		"description": "Build a scene from scratch using a URL",
 		"category": "Scenes",
@@ -2388,7 +2408,7 @@ function create_scene_root_container(fullPath, parentId) {
 		create_scene_inside(parentId, fullPath);
 	});
 
-	const UVTT = build_tutorial_import_list_item({
+	const UVTT = await build_tutorial_import_list_item({
 		"title": "Import from UVTT File",
 		"description": "Build a scene using a Universal Virtual Tabletop file",
 		"category": "Scenes",
@@ -2464,10 +2484,10 @@ function build_UVTT_import_container(){
 	form.append(form_row('title', 'Scene Title', 'New Scene'));
 	form.append(form_row('player_map', 'UVTT File link', 'URL for .dd2vtt, .uvtt, .df2vtt or other universal vtt file.'));
 	const submitButton = $("<button type='button'>Save</button>");
-	submitButton.click(function() {
+	submitButton.click(async function() {
 		console.log("Saving scene changes")
 
-		const formData = get_edit_form_data();
+		const formData = await get_edit_form_data();
 		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
 		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 		container.append(build_combat_tracker_loading_indicator('One moment while we load the UVTT File'));
@@ -2487,14 +2507,14 @@ function build_free_map_importer() {
 	const container = build_import_container();
 	add_scene_importer_back_button(container);
 
-	SCENE_IMPORT_DATA.forEach(section => {
-		const logoUrl = parse_img(section.logo);
+	SCENE_IMPORT_DATA.forEach(async section => {
+		const logoUrl = await parse_img(section.logo);
 		const sectionHtml = build_import_collapsible_section(section.title, logoUrl);
 		container.find(".no-results").before(sectionHtml);
 
-		section.scenes.forEach(scene => {
+		section.scenes.forEach(async scene => {
 			try {
-				const sceneHtml = build_tutorial_import_list_item(scene, logoUrl, (scene.player_map_is_video && scene.player_map_is_video !== "0"));
+				const sceneHtml = await build_tutorial_import_list_item(scene, logoUrl, (scene.player_map_is_video && scene.player_map_is_video !== "0"));
 				sectionHtml.find("ul").append(sceneHtml);
 			} catch(error) {
 				console.warn("Failed to parse scene import data", section.title, scene, error);
@@ -2515,11 +2535,11 @@ function build_source_book_chapter_import_section(sceneSet) {
 	sectionHtml.find(".ddb-collapsible__header").hide();
 	sectionHtml.css("border", "none");
 
-	sceneSet.forEach(scene => {
+	sceneSet.forEach(async scene => {
 		if (scene.uuid in DDB_EXTRAS) {
 			scene = {...scene, ...DDB_EXTRAS[scene.uuid]}
 		}
-		const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+		const sceneHtml = await build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 		sectionHtml.find("ul").append(sceneHtml);
 	});
 
@@ -2686,8 +2706,8 @@ function build_recently_visited_scene_imports_item(recentlyVisited) {
 	return itemHtml;
 }
 
-function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
-	const logoUrl = parse_img(logo);
+async function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
+	const logoUrl = await parse_img(logo);
 	let description = scene.description || "";
 	let tags = scene.tags || [];
 	if (scene.drawings) {
