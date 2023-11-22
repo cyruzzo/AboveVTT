@@ -26,12 +26,7 @@
 			"js": [
 				"LoadCharacterPage.js"
 			]
-		},
-	   	{
-	      "matches":    ["https://jitsi.member.fsf.org/aboveVTT-*?bottom_layout=true*"],
-	      "css":        ["jitsifix.css"],
-	      "all_frames": true
-	   	}
+		}
 	],
 	"permissions": [
 		"*://*.dndbeyond.com/*"
