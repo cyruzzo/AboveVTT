@@ -18,7 +18,15 @@ function create_jitsi_button() {
 }
 
 function init_jitsi(tileLayout) {
-	const domain = 'jitsi.member.fsf.org';
+	/* Removed from manifest since the servers we used were no longer public access. Will implement it again if we find a proper public server or find another option.
+   	This is required in the manifest for our layout if we do find a working server.
+
+   	{
+      "matches":    ["https://[jisti-server-here]/aboveVTT-*?bottom_layout=true*"],
+      "css":        ["jitsifix.css"],
+      "all_frames": true
+   	}*/
+	const domain = //jitsi server domain here - removed as the servers we were using are no longer public unless members (both main sites and other public server we tried);
 	const options = {
 		roomName: 'aboveVTT-' + find_game_id(),
 		width: '100%',

@@ -2628,7 +2628,7 @@ function init_ui() {
 
 
 
-	create_jitsi_button();
+	//create_jitsi_button();
 
 	// EXPERRIMENTAL DRAG TO MOVE
 	var curDown = false,
