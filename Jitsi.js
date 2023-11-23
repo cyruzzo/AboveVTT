@@ -26,7 +26,7 @@ function init_jitsi(tileLayout) {
       "css":        ["jitsifix.css"],
       "all_frames": true
    	}*/
-	const domain = //jitsi server domain here - removed as the servers we were using are no longer public unless members (both main sites and other public server we tried);
+	const domain = '';//jitsi server domain here - removed as the servers we were using are no longer public unless members (both main sites and other public server we tried);
 	const options = {
 		roomName: 'aboveVTT-' + find_game_id(),
 		width: '100%',
