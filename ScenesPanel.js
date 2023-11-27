@@ -1385,7 +1385,7 @@ function edit_scene_dialog(scene_id) {
 		async function() {
 		
 
-			const formData = await get_edit_form_data()();
+			const formData = await get_edit_form_data();
 			for (key in formData) {
 				scene[key] = formData[key];
 			}
