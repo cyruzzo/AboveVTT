@@ -831,7 +831,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				var id = $(this).attr('id');
 				if (typeof id == typeof undefined)
 					return;
-				var img1 = $(this).find(".compendium-image-center").attr("href");
+				var img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right").attr("href");
 				var links = $(this).find("figcaption a");
 				var player_map = '';
 				var dm_map = '';
@@ -869,7 +869,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			// COMPENDIUM IMAGES
 			let compendiumWithSubtitle = iframe.contents().find(".compendium-image-with-subtitle-center,.compendium-image-with-subtitle-right,.compendium-image-with-subtitle-left");
-			let compendiumWithoutSubtitle = iframe.contents().find(".compendium-image-center");
+			let compendiumWithoutSubtitle = iframe.contents().find(".compendium-image-center, .compendium-image-left, .compendium-image-right");
 
 			if (compendiumWithSubtitle.length > 0) {
 				compendiumWithSubtitle.each(function(idx) {
