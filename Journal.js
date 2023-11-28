@@ -840,8 +840,15 @@ class JournalManager{
 			.replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'> $1</button>`)
 			
 		
+		let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
+	
+		let $newHTML = $(updated);
+	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
+			$(this).empty().append(ignoreFormatting[index].innerHTML);
+	    })
 
-		$(target).html(updated);
+
+		$(target).html($newHTML);
 
 		$(target).find('button[data-rolltype="damage"], button[data-rolltype="to hit"]').each(function(){
 			let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
@@ -1054,7 +1061,19 @@ class JournalManager{
             return input;
         });
 
-        $(target).html(lines.join(``));
+	    let newHtml = lines.join('');
+	    let ignoreFormatting = $(data).find('.ignore-abovevtt-formating');
+	
+		let $newHTML = $(newHtml);
+	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
+			$(this).empty().append(ignoreFormatting[index].innerHTML);
+	    })
+	    	
+	    	
+	   
+	    
+
+        $(target).html($newHTML);
     }
 	
 	note_visibility(id,visibility){
@@ -1163,6 +1182,7 @@ class JournalManager{
 			      { title: 'Ripped Paper', block: 'div', wrapper: true, classes: 'block-torn-paper' },
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
+			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			    ] },
 			    { title: 'Custom Statblock Stats', items: [
 			      { title: 'AC', inline: 'b', classes: 'custom-ac custom-stat'},
@@ -1253,6 +1273,9 @@ class JournalManager{
 				    border: 1px solid #d4d0ce;
 				    background: white;
 				    padding: 15px
+				}
+				.ignore-abovevtt-formating{
+					border: 2px dotted #b100ff;
 				}
 
 				@media(min-width: 768px) {
