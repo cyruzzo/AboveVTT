@@ -4379,14 +4379,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 	    }	    
 	    if (closestLight && closestWall != prevClosestWall) {
-	    	if(prevClosestWall != null && prevClosestPoint != null){
-	    		let intersect = lineLine(prevClosestWall.a.x, prevClosestWall.a.y, prevClosestWall.b.x, prevClosestWall.b.y, closestWall.a.x, closestWall.a.y, closestWall.b.x, closestWall.b.y)
-	    		if(intersect != false){
-	    			lightPolygon.push({x: intersect.x*window.CURRENT_SCENE_DATA.scale_factor, y: intersect.y*window.CURRENT_SCENE_DATA.scale_factor});
-	    		}
-	    		else{
-	    			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    		}
+	    	if(prevClosestWall != null && prevClosestPoint != null){	    		
+	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    		
 	    	}
 	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
@@ -4743,7 +4738,7 @@ function redraw_light(){
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);	
 		}
 		
-		lightInLosContext.globalCompositeOperation='destination-in';
+		lightInLosContext.globalCompositeOperation='destination-over';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		
 
