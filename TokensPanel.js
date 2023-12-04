@@ -382,7 +382,7 @@ function filter_token_list(searchTerm) {
  */
 function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     console.log("inject_monster_tokens about to call search_monsters");
-    search_monsters(searchTerm, skip, function (monsterSearchResponse) {
+    search_monsters(searchTerm, skip, async function (monsterSearchResponse) {
         let listItems = addedList;
         let remainderItems = 0;
 
@@ -400,12 +400,12 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             listItems.push(item);
         }
         console.log("search_monsters converted", listItems);
-        let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
+        let monsterFolder = await find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
         if(listItems.length < 10 && monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)){
-            inject_monster_tokens(searchTerm, skip + 10, listItems);
+           await inject_monster_tokens(searchTerm, skip + 10, listItems);
         }
         else{
-            inject_monster_list_items(listItems);
+            await inject_monster_list_items(listItems);
             if (searchTerm.length > 0) {
                 monsterFolder.removeClass("collapsed");
             }     
