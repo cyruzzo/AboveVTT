@@ -181,7 +181,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				redraw_light();
 
 				sync_drawings();
-				window.TOKEN_OBJECTS[`${x1}${y1}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
+				window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
 			});
 
 			body.append(openButton);
