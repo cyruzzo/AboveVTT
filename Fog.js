@@ -1466,7 +1466,7 @@ function redraw_light_walls(clear=true){
 					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 )))
 					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
 						open_close_door(x, y, width, height, type)
-						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 						if(tokenObject)
 							tokenObject.place_sync_persist();
 					}
@@ -1519,11 +1519,14 @@ function redraw_light_walls(clear=true){
 			
 			doorButton.find('.condition-container').remove();		
 		}
-		let id = `${x}${y}${window.CURRENT_SCENE_DATA.id}` 
-		doorButton.attr('data-id', `${x}${y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
-		doorButton.removeAttr('removeAfterDraw');
+		if(doorButton.length ==1){
+			let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+			doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
+			doorButton.removeAttr('removeAfterDraw');
 
-		door_note_icon(id);
+			door_note_icon(id);
+		}
+	
 		
 
 		if((/rgba.*0\.5\)/g).test(color))
@@ -2492,7 +2495,7 @@ function drawing_mouseup(e) {
 				let wallColor;
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
-						let wallId = `${window.DRAWINGS[j][3]}${window.DRAWINGS[j][4]}${window.CURRENT_SCENE_DATA.id}`;
+						let wallId = `${window.DRAWINGS[j][3]}${window.DRAWINGS[j][4]}${window.DRAWINGS[j][5]}${window.DRAWINGS[j][6]}${window.CURRENT_SCENE_DATA.id}`;
 						if(window.TOKEN_OBJECTS[wallId.replaceAll('.', '')]){
 							window.TOKEN_OBJECTS[wallId.replaceAll('.', '')].delete(true)
 						}
