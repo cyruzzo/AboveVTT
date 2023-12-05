@@ -2905,7 +2905,12 @@ function display_change_image_modal(placedToken) {
             alert("You cannot use urls starting with data:");
             return;
         }
+        if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+            placedToken.options.alternativeImages.push(placedToken.options.imgsrc)
+        }
+        
         placedToken.options.imgsrc = await parse_img(imageUrl);
+        placedToken.options.alternativeImages.push(placedToken.options.imgsrc);
         close_sidebar_modal();
         placedToken.place_sync_persist();
     };
