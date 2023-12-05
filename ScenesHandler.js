@@ -844,10 +844,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 				var thumb = $(this).find("img").attr('src');
 
-
+				dm_map = img1;
 				if (links.length > 0) {
 					player_map = links.attr('href');
-					dm_map = img1;
 				}
 				else {
 					player_map = img1;
@@ -862,7 +861,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					dm_map_is_video: "0",
 					thumb: thumb,
 					scale: "100",
-					dm_map_usable: "0",
+					dm_map_usable: "1",
 					tokens: {},
 				});
 			});
@@ -885,12 +884,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					var player_map;
 					var dm_map;
 
+					dm_map = img1;
 					if ($(this).next().hasClass("compendium-image-view-player")) {
-						dm_map = img1;
 						player_map = $(this).next().find(".compendium-image-center").attr("href");
 					}
 					else if ($(this).find(".compendium-image-view-player a").length > 0) {
-						dm_map = img1;
 						player_map = $(this).find(".compendium-image-view-player a").attr("href");
 					}
 					else {
@@ -906,7 +904,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						player_map_is_video: "0",
 						dm_map_is_video: "0",
 						scale: "100",
-						dm_map_usable: "0",
+						dm_map_usable: "1",
 						thumb: thumb,
 						tokens: {},
 					});
@@ -946,7 +944,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						player_map_is_video: "0",
 						dm_map_is_video: "0",
 						scale: "100",
-						dm_map_usable: "0",
+						dm_map_usable: "1",
 						thumb: thumb,
 						tokens: {},
 					});
