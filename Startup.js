@@ -319,7 +319,6 @@ async function start_above_vtt_for_dm() {
   $("#site-main").css({"display": "block", "visibility": "hidden"});
   $(".dice-rolling-panel").css({"visibility": "visible"});
   $("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
-  $("div.dice-toolbar").css({"bottom": "35px"});
   $("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
   init_ui();
 
