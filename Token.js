@@ -2301,12 +2301,15 @@ class Token {
 						
 						const pixeldata = ctx.getImageData(left-2, top-2, 4, 4).data;
 						let canMove = true;
-						for(let i=0; i<pixeldata.length; i+=4){
-							if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
-								canMove = false;
-								break;
+						if(!self.isAoe()){
+							for(let i=0; i<pixeldata.length; i+=4){
+								if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
+									canMove = false;
+									break;
+								}
 							}
 						}
+						
 						if (canMove)
 						{	
 							window.oldTokenPosition[self.options.id] = ui.position;				
