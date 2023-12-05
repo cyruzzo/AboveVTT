@@ -4565,6 +4565,7 @@ function redraw_light(){
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	if(selectedTokens.length>0){
 		if(window.SelectedTokenVision){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
@@ -4584,7 +4585,8 @@ function redraw_light(){
   		
 		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
-			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true)
+
+			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 		  		selectedIds.push(tokenId)
 		}	  	
 	}
@@ -4605,7 +4607,7 @@ function redraw_light(){
 
 	let promises = []
 	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+
 
 
 	let lightInLosContext = window.lightInLos.getContext('2d');
@@ -4690,6 +4692,7 @@ function redraw_light(){
 				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
+
 
 				if(!window.DM || window.SelectedTokenVision){
 					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
