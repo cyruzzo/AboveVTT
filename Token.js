@@ -1894,7 +1894,7 @@ class Token {
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
-
+				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 				tokenImage.attr("src", this.options.imgsrc);
 
 				if(this.options.disableborder)

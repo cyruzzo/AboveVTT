@@ -42,9 +42,30 @@ async function parse_img(url) {
 			console.log("parse_img is converting", url, "to", parsed);
 			retval = parsed;
 		}
+		if(retval.includes("discordapp.com")){
+			retval = update_old_discord_link(retval)
+		}
 		return await Promise.resolve(retval);	
 }
 
+function update_old_discord_link(link){
+  if(link == 'https://cdn.discordapp.com/attachments/1083353621778923581/1110550133134852206/lightbulb.png'){
+    link = 'https://www.googleapis.com/drive/v3/files/1_QnkvmGct2dzeu-pBO9ofT-828pWvCcn?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I'
+  }
+  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624891105290/star.png"){
+   link = 'https://drive.google.com/uc?id=1F868fVhQnzFALTcnEIXUDeAl3UKZccKA';
+  }
+  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353624652038215/skull.png"){
+    link = "https://drive.google.com/uc?id=1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA"
+  }
+  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1083353625113399376/mappin.png"){
+    link = "https://drive.google.com/uc?id=1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M"
+  }
+  else if(link == "https://cdn.discordapp.com/attachments/1083353621778923581/1148091041589756005/flame1.gif"){
+    link = "https://drive.google.com/uc?id=1eWHXQsHloLuocYOuHnvvd0zymZQMH7sm"
+  }
+  return link;
+}
 /**
  * Waits for a global variable to be set.
  * Then triggers the callback function.
@@ -2012,7 +2033,6 @@ function init_character_page_sidebar() {
 
 	$("#site-main").css({"display": "block", "visibility": "hidden"});
 	$(".dice-rolling-panel").css({"visibility": "visible"});
-	$("div.dice-toolbar").css({"bottom": "35px"});
 	$("#mega-menu-target").hide();
 	$(".ct-character-header-desktop").css({
 		"background": "rgba(0,0,0,.85)"
