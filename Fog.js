@@ -592,6 +592,7 @@ async function do_check_token_visibility() {
 		$(`.aura-element`).show();
 		return;
 	}
+
 	let canvas = document.getElementById("fog_overlay");
 
 	if (canvas.style.diplay == "none")
@@ -656,7 +657,7 @@ async function do_check_token_visibility() {
 
 			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_door_under_light_aura(door, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
-			if (notInLight ) {
+			if (notInLight || $(door).hasClass('secret')) {
 				$(door).css('visibility', 'hidden');
 			}
 			else {
