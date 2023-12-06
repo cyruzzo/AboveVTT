@@ -26,7 +26,7 @@ async function parse_img(url) {
 			console.log("parse_img is converting", url, "to an empty string");
 			retval = "";
 		} else if (retval.trim().startsWith("data:")) {
-			console.warn("parse_img is removing a data url because those are not allowed");
+			console.warn("parse_img is removing a data url because those are not allowed"); 
 			retval = "";
 		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
 			const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
@@ -3107,7 +3107,7 @@ function init_zoom_buttons() {
 	if (window.DM) {
 		zoom_section.css("right","371px");
 	} else {
-		zoom_section.css("left","-198px");
+		zoom_section.css("left","-225px");
 	}
 }
 
