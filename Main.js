@@ -414,10 +414,10 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		clearTimeout(window.YTTIMEOUT);
 		window.YTTIMEOUT = null;
 	}
-	$("#youtube_controls_button").hide();
+	$("#youtube_controls_button").css('visibility', 'hidden');
 	console.log("is video? " + is_video);
 	if (url.includes("youtube.com") || url.includes("youtu.be")) {
-		$("#youtube_controls_button").show();
+		$("#youtube_controls_button").css('visibility', '');
 		$("#scene_map_container").toggleClass('video', true);
 		if (width == null) {
 			width = 1920;
