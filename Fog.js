@@ -582,7 +582,7 @@ async function check_token_visibility(){
 	}
 }
 
-async function do_check_token_visibility() {
+function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
@@ -666,7 +666,7 @@ async function do_check_token_visibility() {
 		}));
 	}
 
-	await Promise.all(promises);
+	Promise.all(promises);
 	console.log("finished");
 }
 
@@ -4745,7 +4745,7 @@ function redraw_light(){
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);	
 		}
 		
-		lightInLosContext.globalCompositeOperation='destination-over';
+		lightInLosContext.globalCompositeOperation='destination-in';
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		
 
@@ -4865,7 +4865,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 			delete window.lightAuraClipPolygon[auraId];
 			return; // remove 0 range light and return
 		}
-		if(window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+		if(window.lightAuraClipPolygon[auraId].numberofwalls == walls.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
 			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
 	}
 	else if(circleRadius == 0){
@@ -4891,7 +4891,8 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 		middle: {
 			x: horizontalTokenMiddle,
 			y: verticalTokenMiddle
-		} 
+		},
+		numberOfWall: walls.length 
 	}
 
 
