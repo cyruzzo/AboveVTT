@@ -2134,7 +2134,7 @@ function drawing_mousemove(e) {
 			mouseX,
 			mouseY
 		);
-		drawClosingArea(context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
+		drawClosingArea(window.temp_context,window.BEGIN_MOUSEX[0], window.BEGIN_MOUSEY[0], !isNaN(window.DRAWFUNCTION));
 	}
 	else if (window.DRAWSHAPE === "3pointRect" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
