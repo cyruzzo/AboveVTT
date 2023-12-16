@@ -581,7 +581,7 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
     }
 
     // now let's add all other folders without filtering by searchTerm because we need the folder to exist in order to add items into it
-    window.tokenListItems
+    await window.tokenListItems
         .filter(item => item.isTypeFolder())
         .sort(SidebarListItem.folderDepthComparator)
         .forEach(async item => {
@@ -592,7 +592,7 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
         });
 
     // now let's add all the other items
-    window.tokenListItems
+    await window.tokenListItems
         .filter(item =>
             !item.isTypeFolder() // we already added all folders so don't include them in this loop
             && item.nameOrContainingFolderMatches(nameFilter)
@@ -608,8 +608,8 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
-    update_pc_token_rows();
-    inject_encounter_monsters();
+    await update_pc_token_rows();
+    await inject_encounter_monsters();
     if(!$('.reveal-hidden-button').hasClass('clicked')){
         $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
     }
