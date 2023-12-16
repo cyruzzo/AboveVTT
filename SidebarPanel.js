@@ -2025,57 +2025,66 @@ function enable_draggable_change_folder(listItemType) {
   switch (listItemType) {
     case ItemType.MyToken:
 
-      redraw_token_list("", false);
+      redraw_token_list("", false).then(()=>{
+         tokensPanel.body.find(".token-row-gear").hide();
+        tokensPanel.body.find(".token-row-button").hide();
+        // tokensPanel.body.find(".folder").removeClass("collapsed");
+        tokensPanel.body.find(" > .custom-token-list > .folder").hide();
+        tokensPanel.body.find(".reorder-button").show();
+        tokensPanel.body.find(".reorder-button").addClass("active");
+        tokensPanel.header.find("input[name='token-search']").hide();
+        tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
+        add_expand_collapse_buttons_to_header(tokensPanel);
 
-      tokensPanel.body.find(".token-row-gear").hide();
-      tokensPanel.body.find(".token-row-button").hide();
-      // tokensPanel.body.find(".folder").removeClass("collapsed");
-      tokensPanel.body.find(" > .custom-token-list > .folder").hide();
-      tokensPanel.body.find(".reorder-button").show();
-      tokensPanel.body.find(".reorder-button").addClass("active");
-      tokensPanel.header.find("input[name='token-search']").hide();
-      tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
-      add_expand_collapse_buttons_to_header(tokensPanel);
+        let myTokensRootItem = tokens_rootfolders.find(i => i.name === RootFolder.MyTokens.name);
+        let myTokensRootFolder = find_html_row(myTokensRootItem, tokensPanel.body);
+        // make sure we expand all folders that can be dropped on
+        myTokensRootFolder.show();
+        myTokensRootFolder.removeClass("collapsed");
+        // myTokensRootFolder.find(".folder").removeClass("collapsed");
 
-      let myTokensRootItem = tokens_rootfolders.find(i => i.name === RootFolder.MyTokens.name);
-      let myTokensRootFolder = find_html_row(myTokensRootItem, tokensPanel.body);
-      // make sure we expand all folders that can be dropped on
-      myTokensRootFolder.show();
-      myTokensRootFolder.removeClass("collapsed");
-      // myTokensRootFolder.find(".folder").removeClass("collapsed");
+        // TODO: disable the draggable that was added here enable_draggable_token_creation
+        // tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
+        let offsetStart = {};
+        tokensPanel.body.find(".sidebar-list-item-row").draggable({
+          containment: tokensPanel.body,
+          appendTo: tokensPanel.body,
+          revert: true,
+          scroll: true,
+          start: function(e, ui){
+            offsetStart= tokensPanel.body.scrollTop();
+          },
+          drag: function(e, ui){
+            ui.position.top = ui.position.top - tokensPanel.body.scrollTop() + offsetStart
+          },
+          helper: function (event) {
+            let draggedRow = $(event.target).closest(".list-item-identifier");
+            let draggedItem = find_sidebar_list_item(draggedRow);
+            if (draggedItem.isTypeFolder()) {
+              draggedRow.addClass("collapsed");
+            }
 
-      // TODO: disable the draggable that was added here enable_draggable_token_creation
-      // tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
-      tokensPanel.body.find(".sidebar-list-item-row").draggable({
-        container: tokensPanel.body,
-        opacity: 0.7,
-        revert: true,
-        scroll: false, // jQuery UI has a bug where scrolling changes the offset of the helper. If we can figure out how to work around that bug, then we can change this to true
-        // axis: "y",  // this helps if we set scroll: true
-        helper: function (event) {
-          let draggedRow = $(event.target).closest(".list-item-identifier");
-          let draggedItem = find_sidebar_list_item(draggedRow);
-          if (draggedItem.isTypeFolder()) {
-            draggedRow.addClass("collapsed");
+            draggedRow.addClass("draggable-sidebar-item-reorder");
+            return draggedRow;
+          },
+          stop: function (event, ui) {
+            let draggedRow = $(event.target).closest(".list-item-identifier");
+            draggedRow.removeClass("draggable-sidebar-item-reorder");
+            if (draggedRow.hasClass("drag-cancelled")) {
+              draggedRow.removeClass("drag-cancelled");
+              redraw_token_list("", false);
+              enable_draggable_change_folder(ItemType.MyToken);
+            }
           }
-          draggedRow.addClass("draggable-sidebar-item-reorder");
-          return draggedRow;
-        },
-        stop: function (event, ui) {
-          let draggedRow = $(event.target).closest(".list-item-identifier");
-          draggedRow.removeClass("draggable-sidebar-item-reorder");
-          if (draggedRow.hasClass("drag-cancelled")) {
-            draggedRow.removeClass("drag-cancelled");
-            redraw_token_list("", false);
-            enable_draggable_change_folder(ItemType.MyToken);
-          }
-        }
       });
 
       myTokensRootFolder.droppable(droppableOptions); // allow dropping on root MyTokens folder
       myTokensRootFolder.find(".folder").droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
       tokensPanel.body.addClass("folder").addClass("not-collapsible");  // allow dropping on folders within MyTokens folder
       tokensPanel.body.droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
+      });
+
+     
 
       break;
     case ItemType.Scene:
