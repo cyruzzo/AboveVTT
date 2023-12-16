@@ -2002,7 +2002,8 @@ async function redraw_scene_list(searchTerm) {
 		}
 
 	}
-
+	if($('.scenes-panel-add-buttons-wrapper button.reorder-button.active').length>0)
+       enable_draggable_change_folder(ItemType.Scene)
 	console.groupEnd();
 }
 
