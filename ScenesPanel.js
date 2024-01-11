@@ -164,8 +164,11 @@ async function getUvttData(url){
 async function getGoogleDriveAPILink(url){
 	return await throttleGoogleApi(async () => {
 		let api_url = url;
-		if(url.startsWith('https://drive.google.com')){
-			let parsed_url = await parse_img(url);
+		if(url.startsWith('https://drive.google.com') && api_url.indexOf("uc?id=") < 0){
+			api_url = await parse_img(url);
+		}
+		else if(api_url.indexOf("uc?id=") > -1){
+			let parsed_url = url;
 			let fileid = parsed_url.split('=')[1];
 			api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 		}

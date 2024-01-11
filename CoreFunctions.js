@@ -758,8 +758,8 @@ async function normalize_scene_urls(scenes) {
   return scenesArray;
 }
 
-const throttleGoogleApi = throttledQueue(2, 6000, true);
-const throttleImage = throttledQueue(10, 1000, true);
+const throttleGoogleApi = throttledQueue(6, 6000);
+const throttleImage = throttledQueue(10, 10000);
 
 function throttledQueue(
   maxRequestsPerInterval,
