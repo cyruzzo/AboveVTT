@@ -32,9 +32,9 @@ async function parse_img(url) {
 			const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
 			console.log("parse_img is converting", url, "to", parsed);
 			retval = parsed;
-			return await throttleImage(() => {
-				return Promise.resolve(retval);
-			})
+			retval = await getGoogleDriveAPILink(retval)	
+			return Promise.resolve(retval);
+			
 		} 
 		else if(retval.includes("dropbox.com")){
 			const splitUrl = url.split('dropbox.com');
