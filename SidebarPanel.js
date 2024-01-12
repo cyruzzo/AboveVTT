@@ -1089,7 +1089,7 @@ function matches_full_path(html, fullPath) {
  * @param listItem {SidebarListItem} the list item that this row will represent
  * @returns {*|jQuery|HTMLElement} that represents a row in the list of items in the sidebar
  */
-async function build_sidebar_list_row(listItem) {
+function build_sidebar_list_row(listItem) {
   console.log('build_sidebar_list_row', listItem.name);
 
   let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
@@ -1107,7 +1107,8 @@ async function build_sidebar_list_row(listItem) {
   if (listItem.type !== "aoe" && !listItem.isTypeScene()){
     let tokenCustomizations = find_token_customization(listItem.type, listItem.id);
     let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
-    let img = $(`<img src="${await parse_img(listingImage)}" alt="${listItem.name} image" loading='lazy' class="token-image" />`);
+    let img = $(`<img src="" alt="${listItem.name} image" class="token-image" />`);
+    updateImgSrc(listingImage, img);
     imgHolder.append(img);
   }
   else{

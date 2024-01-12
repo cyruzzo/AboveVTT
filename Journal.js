@@ -64,6 +64,7 @@ class JournalManager{
 	}
 	
 	build_journal(){
+		console.log('build_journal');
 		let self=this;
 
 		journalPanel.body.empty();
@@ -169,7 +170,7 @@ class JournalManager{
 		journalPanel.body.append(chapter_list);
 		let chaptersWithLaterParents = [];
 		for(let i=0; i<self.chapters.length;i++){
-			console.log('xxx');
+	
 			if(!self.chapters[i].id){
 				self.chapters[i].id = uuid();
 			}
