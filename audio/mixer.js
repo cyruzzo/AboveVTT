@@ -160,61 +160,62 @@ class Mixer extends EventTarget {
      * @param {boolean} play start playing unpaused channels
      */
     syncPlayers(play = true) {
-        const state = this.state();
- 
-        Object.entries(state.channels).forEach(([id, channel]) => {
-            if(!channel?.src){
-                delete this._players[id];
-                return;
-            }
-            let player = this._players[id]
+        throttleImgSrc(() => {
+            const state = this.state();
+     
+            Object.entries(state.channels).forEach(([id, channel]) => {
+                if(!channel?.src){
+                    delete this._players[id];
+                    return;
+                }
+                let player = this._players[id]
 
-            // create new player if needed
-            if (!(player)) {
-                let url = channel.src;
-                if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
-                    const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
-                    console.log("parse drive audio is converting", url, "to", parsed);
-                    url = parsed;
+                // create new player if needed
+                if (!(player)) {
+                    let url = channel.src;
+                    if (url.startsWith("https://drive.google.com")) {
+                        const parsed = parse_img(url);
+                        url = parsed;
+                    }
+                    else if(url.includes('dropbox.com')){       
+                        const splitUrl = url.split('dropbox.com');
+                        const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
+                        console.log("parse dropbox audio is converting", url, "to", parsed);
+                        url = parsed;
+                    }
+                    player = new Audio(url);
+                    player.preload = "metadata";
+                    this._players[id] = player;
                 }
-                else if(url.includes('dropbox.com')){       
-                    const splitUrl = url.split('dropbox.com');
-                    const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-                    console.log("parse dropbox audio is converting", url, "to", parsed);
-                    url = parsed;
+                if(player.paused)
+                    player.load();
+                if (state.paused || channel.paused) {
+                    player.pause();
+                } else if (play) {        
+                    player.volume = state.volume * channel.volume;
+                    player.loop = channel.loop;
+                    if(channel.currentTime != undefined){
+                        player.currentTime = channel.currentTime;
+                    }
+                    player.addEventListener("canplaythrough", (event) => {
+                      /* the audio is now playable; play it if permissions allow */
+                        // sync player        
+                        const state = window.MIXER.state();      
+                        if(this._players[id] && !(state.paused || state.channels[id].paused))
+                            player.play();
+                    }, { once: true });
+                    
                 }
-                player = new Audio(url);
-                player.preload = "metadata";
-                this._players[id] = player;
-            }
-            if(player.paused)
-                player.load();
-            if (state.paused || channel.paused) {
-                player.pause();
-            } else if (play) {        
-                player.volume = state.volume * channel.volume;
-                player.loop = channel.loop;
-                if(channel.currentTime != undefined){
-                    player.currentTime = channel.currentTime;
-                }
-                player.addEventListener("canplaythrough", (event) => {
-                  /* the audio is now playable; play it if permissions allow */
-                    // sync player        
-                    const state = window.MIXER.state();      
-                    if(this._players[id] && !(state.paused || state.channels[id].paused))
-                        player.play();
-                }, { once: true });
-                
-            }
-        });
+            });
 
-        // delete players that no longer have a channel associated with them
-        Object.entries(this._players).forEach(([id, player]) => {
-            if (!(id in state.channels)) {
-                player.pause();
-                delete this._players[id];
-            }
-        });
+            // delete players that no longer have a channel associated with them
+            Object.entries(this._players).forEach(([id, player]) => {
+                if (!(id in state.channels)) {
+                    player.pause();
+                    delete this._players[id];
+                }
+            });
+        })
     }
 
     /**

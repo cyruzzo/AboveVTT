@@ -20,7 +20,7 @@ window.onbeforeunload = function(event)
 /** Parses the given URL for GoogleDrive or Dropbox semantics and returns an updated URL.
  * @param {String} url to parse
  * @return {String} a sanitized and possibly modified url to help with loading maps */
-async function parse_img(url) {
+function parse_img(url) {
 		let retval = url;
 		if (typeof retval !== "string") {
 			console.log("parse_img is converting", url, "to an empty string");
@@ -30,12 +30,17 @@ async function parse_img(url) {
 			retval = "";
 		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
 			const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
-			console.log("parse_img is converting", url, "to", parsed);
-			retval = parsed;
-			retval = await getGoogleDriveAPILink(retval)	
-			return Promise.resolve(retval);
-			
+			const fileid = parsed.split('=')[1];
+			retval = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+			console.log("parse_img is converting", url, "to", retval);
+			return retval;		
 		} 
+		else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") > -1) {
+			const fileid = retval.split('=')[1];
+			retval = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+			console.log("parse_img is converting", url, "to", retval);
+			return retval;
+		}
 		else if(retval.includes("dropbox.com")){
 			const splitUrl = url.split('dropbox.com');
 			const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
@@ -45,7 +50,7 @@ async function parse_img(url) {
 		if(retval.includes("discordapp.com")){
 			retval = update_old_discord_link(retval)
 		}
-		return await Promise.resolve(retval);	
+		return retval;	
 }
 
 function update_old_discord_link(link){

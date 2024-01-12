@@ -28,7 +28,7 @@ function handle_map_toggle_click(event){
 	handle_basic_form_toggle_click(event)
 	// validate image input expects the target to be the input not the t oggle
 
-	validate_image_input($(event.currentTarget).prev().find("input")[0])
+	//validate_image_input($(event.currentTarget).prev().find("input")[0])
 }
 
 
@@ -145,9 +145,7 @@ async function getUvttData(url){
 		let api_url = url;
 		let jsonData = {};
 		if(url.startsWith('https://drive.google.com')){
-			let parsed_url = await parse_img(url);
-			let fileid = parsed_url.split('=')[1];
-			api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+			let api_url = await parse_img(url);
 		}
 		else if(url.includes('dropbox.com')){		
 			let splitUrl = url.split('dropbox.com');
@@ -161,18 +159,9 @@ async function getUvttData(url){
 	})
 }
 
-async function getGoogleDriveAPILink(url){
-	return await throttleGoogleApi(async () => {
-		let api_url = url;
-		if(url.startsWith('https://drive.google.com') && api_url.indexOf("uc?id=") < 0){
-			api_url = await parse_img(url);
-		}
-		else if(api_url.indexOf("uc?id=") > -1){
-			let parsed_url = url;
-			let fileid = parsed_url.split('=')[1];
-			api_url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
-		}
-		return Promise.resolve(api_url);
+function getGoogleDriveAPILink(url){
+	return throttleGoogleApi(() => {
+		return parse_img(url);
 	})
 }
 
@@ -326,7 +315,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || "" }" />`);
 			}else{
 				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
@@ -825,7 +814,7 @@ function edit_scene_vision_settings(scene_id){
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || "" }" />`);
 			}else{
 				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
@@ -1077,7 +1066,7 @@ function edit_scene_dialog(scene_id) {
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" onblur="validate_image_input(this)" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || "" }" />`);
 			}else{
 				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
@@ -1474,8 +1463,8 @@ function edit_scene_dialog(scene_id) {
 	}, 1000);
 	$("#edit_scene_form").find(`[name='player_map']`).attr("placeholder", "Map image or video url here.       Toggle this if video -->");
 	$("#edit_scene_form").find(`[name='dm_map']`).attr("placeholder", "Only the DM will see this image/video");
-	validate_image_input($(playerMapRow).find("input")[0])
-	validate_image_input($(dmMapRow).find("input")[0])
+	//validate_image_input($(playerMapRow).find("input")[0])
+	//validate_image_input($(dmMapRow).find("input")[0])
 }
 
 function display_sources() {

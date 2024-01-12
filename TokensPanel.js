@@ -82,7 +82,7 @@ function migrate_tokendata() {
     let migratedFolders = [];
     let migratedTokens = [];
 
-    const migrateFolderAtPath = async function(oldFolderPath) {
+    const migrateFolderAtPath = function(oldFolderPath) {
         let currentFolderPath = sanitize_folder_path(oldFolderPath);
         let folder = convert_path(currentFolderPath);
         if (folder.tokens) {
@@ -109,7 +109,7 @@ function migrate_tokendata() {
                     newToken.name = tokenKey;
                 }
                 newToken.folderPath = currentFolderPath;
-                newToken.image = await parse_img(newToken.img);
+                newToken.image = parse_img(newToken.img);
                 delete newToken.img;
                 let existing = migratedTokens.find(t => t.name === newToken.name && t.folderPath === newToken.folderPath)
                 if (existing !== undefined) {
@@ -382,7 +382,7 @@ function filter_token_list(searchTerm) {
  */
 function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     console.log("inject_monster_tokens about to call search_monsters");
-    search_monsters(searchTerm, skip, async function (monsterSearchResponse) {
+    search_monsters(searchTerm, skip, function (monsterSearchResponse) {
         let listItems = addedList;
         let remainderItems = 0;
 
@@ -400,12 +400,12 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
             listItems.push(item);
         }
         console.log("search_monsters converted", listItems);
-        let monsterFolder = await find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
+        let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
         if(listItems.length < 10 && monsterSearchResponse.pagination.total > (monsterSearchResponse.pagination.skip + 10)){
-           await inject_monster_tokens(searchTerm, skip + 10, listItems);
+           inject_monster_tokens(searchTerm, skip + 10, listItems);
         }
         else{
-            await inject_monster_list_items(listItems);
+            inject_monster_list_items(listItems);
             if (searchTerm.length > 0) {
                 monsterFolder.removeClass("collapsed");
             }     
@@ -425,7 +425,7 @@ function inject_monster_tokens(searchTerm, skip, addedList=[]) {
     });
 }
 
-async function inject_monster_list_items(listItems) {
+function inject_monster_list_items(listItems) {
     let monsterFolder = find_html_row_from_path(RootFolder.Monsters.path, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
@@ -434,13 +434,13 @@ async function inject_monster_list_items(listItems) {
     let list = monsterFolder.find(`> .folder-item-list`);
     for (let i = 0; i < listItems.length; i++) {
         let item = listItems[i];
-        let row = await build_sidebar_list_row(item);
+        let row = build_sidebar_list_row(item);
         enable_draggable_token_creation(row);
         list.append(row);
     }
 }
 
-async function inject_open5e_monster_list_items(listItems = open5e_monsters) {
+function inject_open5e_monster_list_items(listItems = open5e_monsters) {
     let monsterFolder = find_html_row_from_path(RootFolder.Open5e.path, tokensPanel.body);
     if (monsterFolder === undefined || monsterFolder.length === 0) {
         console.warn("inject_monster_list_items failed to find the monsters folder");
@@ -450,7 +450,7 @@ async function inject_open5e_monster_list_items(listItems = open5e_monsters) {
     for (let i = 0; i < listItems.length; i++) {
         let item = SidebarListItem.open5eMonster(listItems[i]);
         window.open5eListItems.push(item);
-        let row = await build_sidebar_list_row(item);
+        let row = build_sidebar_list_row(item);
         enable_draggable_token_creation(row);
         list.append(row);
     }
@@ -459,7 +459,7 @@ async function inject_open5e_monster_list_items(listItems = open5e_monsters) {
         let loadMoreButton = $(`<button class="ddbeb-button open5e-load-more load-more-button">Load More</button>`);
         loadMoreButton.click(async function(loadMoreClickEvent) {
             console.log("load more!", loadMoreClickEvent);   
-            open5e_monsters = await getNextOpen5e(open5e_monsters, open5e_next);
+            open5e_monsters = getNextOpen5e(open5e_monsters, open5e_next);
             $('.open5e-load-more').remove();
             monsterFolder.find('.folder-item-list').empty();
             inject_open5e_monster_list_items(open5e_monsters);
@@ -542,8 +542,8 @@ async function init_tokens_panel() {
 }
 
 
-async function redraw_token_list_item(item){
-    const row = await build_sidebar_list_row(item);
+function redraw_token_list_item(item){
+    const row = build_sidebar_list_row(item);
     let oldRow = $(`#${item.id}`);
     if (oldRow.length === 0) {
         oldRow = find_html_row_from_path(item.fullPath(), tokensPanel.body)
@@ -557,7 +557,7 @@ async function redraw_token_list_item(item){
  * @param searchTerm {string} the search term used to filter the list of tokens
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
-async function redraw_token_list(searchTerm, enableDraggable = true) {
+function redraw_token_list(searchTerm, enableDraggable = true) {
     if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
@@ -576,30 +576,30 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
 
     // first let's add our root folders
     for (let i = 0; i < tokens_rootfolders.length; i++) {
-        let row = await build_sidebar_list_row(tokens_rootfolders[i]);
+        let row =   build_sidebar_list_row(tokens_rootfolders[i]);
         list.append(row);
     }
 
     // now let's add all other folders without filtering by searchTerm because we need the folder to exist in order to add items into it
-    await window.tokenListItems
+    window.tokenListItems
         .filter(item => item.isTypeFolder())
         .sort(SidebarListItem.folderDepthComparator)
         .forEach(async item => {
-            let row = await build_sidebar_list_row(item);
+            let row = build_sidebar_list_row(item);
             console.debug("appending item", item);
             $(`#${item.parentId} > .folder-item-list`).append(row);
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
     // now let's add all the other items
-    await window.tokenListItems
+    window.tokenListItems
         .filter(item =>
             !item.isTypeFolder() // we already added all folders so don't include them in this loop
             && item.nameOrContainingFolderMatches(nameFilter)
         )
         .sort(SidebarListItem.sortComparator)
         .forEach(async item => {
-            let row = await build_sidebar_list_row(item);
+            let row = build_sidebar_list_row(item);
             if (enableDraggable === true && !item.isTypeEncounter()) {
                 enable_draggable_token_creation(row);
             }
@@ -608,8 +608,8 @@ async function redraw_token_list(searchTerm, enableDraggable = true) {
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
-    await update_pc_token_rows();
-    await inject_encounter_monsters();
+    update_pc_token_rows();
+    inject_encounter_monsters();
     if(!$('.reveal-hidden-button').hasClass('clicked')){
         $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
     }
@@ -877,7 +877,7 @@ function update_pc_token_rows() {
  */
 
 
-async function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
+function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
 
 
     if (listItem === undefined) {
@@ -1144,7 +1144,7 @@ async function create_and_place_token(listItem, hidden = undefined, specificImag
     if (hidden === true || hidden === false) {
         options.hidden = hidden;
     }
-    options.imgsrc = await random_image_for_item(listItem, specificImage);
+    options.imgsrc = random_image_for_item(listItem, specificImage);
     // TODO: figure out if we still need to do this, and where they are coming from
     if(extraOptions != undefined){
         options = {
@@ -1292,8 +1292,8 @@ function alternative_images_for_item(listItem) {
  * @param specificImage {string|undefined} the url of an image to use if it properly parses; if undefined or unparsable, a random image will be returned instead
  * @returns {string} the url an image associated with the provided listItem
  */
-async function random_image_for_item(listItem, specificImage) {
-    let validSpecifiedImage = await parse_img(specificImage);
+function random_image_for_item(listItem, specificImage) {
+    let validSpecifiedImage = parse_img(specificImage);
     if (validSpecifiedImage !== undefined && validSpecifiedImage.length > 0) {
         console.debug("random_image_for_item validSpecifiedImage", validSpecifiedImage);
         return validSpecifiedImage
@@ -1601,7 +1601,7 @@ function create_token_inside(listItem) {
  * @param listItem {SidebarListItem} the item to configure
  * @param placedToken {undefined|Token} the token object that is on the scene
  */
- async function display_aoe_token_configuration_modal(listItem, placedToken = undefined) {
+function display_aoe_token_configuration_modal(listItem, placedToken = undefined) {
     switch (listItem?.type) {
         case ItemType.Aoe:
             break;
@@ -1639,7 +1639,7 @@ function create_token_inside(listItem) {
             $(e.target).blur();
         }
     });
-    await redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
 
 /**
@@ -1677,7 +1677,7 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
     let name = listItem.name;
 
     sidebarPanel.updateHeader(name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
-    await redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 
     // add a "remove all" button between the body and the footer
     if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
@@ -1702,7 +1702,7 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
     // images
     let addImageUrl = async function (newImageUrl) {
         const redraw = customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
-        const didAdd = await customization.addAlternativeImage(newImageUrl);
+        const didAdd = customization.addAlternativeImage(newImageUrl);
         if (!didAdd) {
             return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
         }
@@ -1712,7 +1712,7 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
         } else {
-            sidebarPanel.body.append(await build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
+            sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
         $('#token-configuration-modal .token-image-modal-remove-all-button').show();
         inputWrapper.find(".token-image-modal-url-label-add-wrapper > .token-image-modal-url-label-wrapper > .token-image-modal-footer-title").text(determineLabelText());
@@ -1725,7 +1725,7 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
             customization.setTokenOption("name", newName);
             persist_token_customization(customization);
             sidebarPanel.updateHeader(newName, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
-            await redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             did_change_mytokens_items();
             expand_all_folders_up_to_id(customization.id);
         }
@@ -2168,8 +2168,8 @@ function display_builtin_token_details_modal(listItem, placedToken) {
     }
 }
 
-async function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
-    let parsedImage = await parse_img(imageUrl);
+function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken) {
+    let parsedImage = parse_img(imageUrl);
     let options = find_token_options_for_list_item(listItem);
     if (placedToken) {
         options = {...placedToken.options};
@@ -2190,7 +2190,7 @@ async function build_token_div_for_sidebar_modal(imageUrl, listItem, placedToken
  * @param placedToken {Token|undefined} undefined if this modal does not represnet a token that is placed on the scene; else the Token object that corresponds to a token that is placed on the scene
  * @param drawInline {boolean} If you need to add elements to the body AFTER all the images have been drawn, then pass true. Otherwise, images will be drawn in their own setTimeout to avoid blocking the UI. If you're adding things to the sidebarPanle.body, you might consider adding them to the footer or between the body and the footer instead.
  */
-async function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawInline = false) {
+function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawInline = false) {
     if (sidebarPanel === undefined) {
         console.warn("redraw_token_images_in_modal was called without a sidebarPanel");
         return;
@@ -2209,24 +2209,24 @@ async function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken,
     if (placedToken?.options?.alternativeImages) {
         alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
     }
-    alternativeImages = await Promise.all(alternativeImages.concat(alternative_images_for_item(listItem).map(async image => await parse_img(image))));
+    alternativeImages = alternativeImages.concat(alternative_images_for_item(listItem).map(image => parse_img(image)));
 
-    let placedImg = await parse_img(placedToken?.options?.imgsrc);
+    let placedImg = parse_img(placedToken?.options?.imgsrc);
     if (placedImg.length > 0 && !alternativeImages.includes(placedImg)) {
         // the placedToken image has been changed by the user so put it at the front
-        let tokenDiv = await build_token_div_for_sidebar_modal(placedImg, listItem, placedToken);
+        let tokenDiv = build_token_div_for_sidebar_modal(placedImg, listItem, placedToken);
         tokenDiv.attr("data-token-id", placedToken.options.id);
         modalBody.append(tokenDiv);
     }
 
-    if (alternativeImages.length === 0 && placedImg !== await parse_img(listItem?.image)) {
+    if (alternativeImages.length === 0 && placedImg !== parse_img(listItem?.image)) {
         // if we don't have any alternative images, show the default image
         if(listItem.type == 'pc'){
             const playerId = getPlayerIDFromSheet(listItem.sheet);
             const pc = find_pc_by_player_id(playerId, false)
             listItem.image = pc.image;
         }
-        let tokenDiv = await build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
+        let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
         modalBody.append(tokenDiv);
     }
     if (listItem?.type === ItemType.Aoe) {
@@ -2239,14 +2239,14 @@ async function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken,
 
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
-            let tokenDiv = await build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
+            let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
             setTimeout(async function () {
                 // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
                 // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
                 // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
-                let tokenDiv = await build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
+                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
                 modalBody.append(tokenDiv);
             });
         }
@@ -2285,8 +2285,8 @@ function build_alternative_image_for_modal(image, options, placedToken, listItem
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
         tokenDiv.attr("data-token-id", placedToken.options.id);
-        tokenDiv.on("click", async function() {
-            placedToken.options.imgsrc = await parse_img(image);
+        tokenDiv.on("click", function() {
+            placedToken.options.imgsrc = parse_img(image);
             close_sidebar_modal();
             placedToken.place_sync_persist();
         });
@@ -2438,9 +2438,9 @@ function inject_encounter_monsters() {
                 }
             }
 
-            monsters.forEach(async shortMonster => {
+            monsters.forEach(shortMonster => {
                 let monsterItem = monsterItems.find(item => item.monsterData.id === shortMonster.id);
-                let monsterRow = await build_sidebar_list_row(monsterItem);
+                let monsterRow = build_sidebar_list_row(monsterItem);
                 enable_draggable_token_creation(monsterRow);
                 groupDiv.append(monsterRow);
             });
@@ -2886,13 +2886,13 @@ function display_change_image_modal(placedToken) {
     }
     alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
     console.log("display_change_image_modal", alternativeImages);
-    alternativeImages.forEach(async imgUrl => {
-        const image = await parse_img(imgUrl);
-        const html = $(`<img class="example-token" src="${image}" alt="alternative image" />`);
+    alternativeImages.forEach(imgUrl => {
+        const html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
+        updateImgSrc(imgUrl, html);
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
-        html.on("click", async function (imgClickEvent) {
-            placedToken.options.imgsrc = await parse_img(image);
+        html.on("click", function (imgClickEvent) {
+            placedToken.options.imgsrc = parse_img(image);
             close_sidebar_modal();
             placedToken.place_sync_persist();
         });
@@ -2900,7 +2900,7 @@ function display_change_image_modal(placedToken) {
     });
 
     // this will be called when the user enters a new url
-    const add_token_customization_image = async function(imageUrl) {
+    const add_token_customization_image = function(imageUrl) {
         if(imageUrl.startsWith("data:")){
             alert("You cannot use urls starting with data:");
             return;
@@ -2913,7 +2913,7 @@ function display_change_image_modal(placedToken) {
             placedToken.options.alternativeImages.push(placedToken.options.imgsrc)
         }
         
-        placedToken.options.imgsrc = await parse_img(imageUrl);
+        placedToken.options.imgsrc = parse_img(imageUrl);
         placedToken.options.alternativeImages.push(placedToken.options.imgsrc);
         close_sidebar_modal();
         placedToken.place_sync_persist();

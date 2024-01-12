@@ -758,10 +758,33 @@ async function normalize_scene_urls(scenes) {
   return scenesArray;
 }
 
-const throttleGoogleApi = throttledQueue(6, 6000);
-const throttleImage = throttledQueue(10, 10000);
+function updateImgSrc(url, container){
+  url = parse_img(url)
+  if(url?.includes('google')){
+    throttleImgSrc(() => {
+      container.attr('src', url);
+    })
+   }else{
+    container.attr('src', url);
+   }
+}
+function updateTokenSrc(url, container){
+  url = parse_img(url)
+  if(url?.includes('google')){
+    throttleTokenSrc(() => {
+      container.attr('src', url);
+    })
+   }else{
+    container.attr('src', url);
+   }
+}
+
+const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
+const throttleImgSrc = throttledQueue('throttleImgSrc', 10, 1000);// listing/audio throttle 
+const throttleTokenSrc = throttledQueue('throttleTokenSrc', 1, 2000);// token throttle 
 
 function throttledQueue(
+  timeoutName,
   maxRequestsPerInterval,
   interval,
   evenlySpaced = false
@@ -773,36 +796,46 @@ function throttledQueue(
     interval = interval / maxRequestsPerInterval
     maxRequestsPerInterval = 1
   }
-  const queue = []
-  let lastIntervalStart = 0
-  let numRequestsPerInterval = 0
-  let timeout
+  
+  if(!window.ThrottleQueueTimeout){
+    window.ThrottleQueueTimeout = {};
+
+  }
+  if(!window.ThrottleQueueTimeout[timeoutName]){
+    window.ThrottleQueueTimeout[timeoutName]={};
+  }
+  
+  window.ThrottleQueueTimeout[timeoutName].queue = [];
+  window.ThrottleQueueTimeout[timeoutName].lastIntervalStart = 0
+  window.ThrottleQueueTimeout[timeoutName].numRequestsPerInterval = 0
+  
   /**
    * Gets called at a set interval to remove items from the queue.
    * This is a self-adjusting timer, since the browser's setTimeout is highly inaccurate.
    */
   const dequeue = () => {
-    const intervalEnd = lastIntervalStart + interval
+    const intervalEnd = window.ThrottleQueueTimeout[timeoutName].lastIntervalStart + interval
     const now = Date.now()
     /**
      * Adjust the timer if it was called too early.
      */
     if (now < intervalEnd) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      timeout !== undefined && clearTimeout(timeout)
-      timeout = setTimeout(dequeue, intervalEnd - now)
+      
+      if(window.ThrottleQueueTimeout[timeoutName].timeout !== undefined){
+        clearTimeout(window.ThrottleQueueTimeout[timeoutName].timeout)
+      }
+      window.ThrottleQueueTimeout[timeoutName].timeout = setTimeout(dequeue, intervalEnd - now)
       return
     }
-    lastIntervalStart = now
-    numRequestsPerInterval = 0
-    for (const callback of queue.splice(0, maxRequestsPerInterval)) {
-      numRequestsPerInterval++
+    window.ThrottleQueueTimeout[timeoutName].lastIntervalStart = now
+    window.ThrottleQueueTimeout[timeoutName].numRequestsPerInterval = 0
+    for (const callback of window.ThrottleQueueTimeout[timeoutName].queue.splice(0, maxRequestsPerInterval)) {
       void callback()
     }
-    if (queue.length) {
-      timeout = setTimeout(dequeue, interval)
+    if (window.ThrottleQueueTimeout[timeoutName].queue.length) {
+      window.ThrottleQueueTimeout[timeoutName].timeout = setTimeout(dequeue, interval)
     } else {
-      timeout = undefined
+      window.ThrottleQueueTimeout[timeoutName] = undefined
     }
   }
 
@@ -814,16 +847,16 @@ function throttledQueue(
           .then(resolve)
           .catch(reject)
       const now = Date.now()
-      if (timeout === undefined && now - lastIntervalStart > interval) {
-        lastIntervalStart = now
-        numRequestsPerInterval = 0
+      if (window.ThrottleQueueTimeout[timeoutName].timeout === undefined && now - window.ThrottleQueueTimeout[timeoutName].lastIntervalStart > interval) {
+        window.ThrottleQueueTimeout[timeoutName].lastIntervalStart = now   
       }
-      if (numRequestsPerInterval++ < maxRequestsPerInterval) {
+      if (window.ThrottleQueueTimeout[timeoutName].numRequestsPerInterval < maxRequestsPerInterval) {
+        window.ThrottleQueueTimeout[timeoutName].numRequestsPerInterval++;
         void callback()
       } else {
-        queue.push(callback)
-        if (timeout === undefined) {
-          timeout = setTimeout(dequeue, lastIntervalStart + interval - now)
+        window.ThrottleQueueTimeout[timeoutName].queue.push(callback)
+        if (window.ThrottleQueueTimeout[timeoutName].timeout === undefined) {
+          window.ThrottleQueueTimeout[timeoutName].timeout = setTimeout(dequeue, window.ThrottleQueueTimeout[timeoutName].lastIntervalStart + interval - now)
         }
       }
     })
