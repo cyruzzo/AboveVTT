@@ -780,7 +780,7 @@ function updateTokenSrc(url, container){
 }
 
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
-const throttleImgSrc = throttledQueue('throttleImgSrc', 10, 1000);// listing/audio throttle 
+const throttleImgSrc = throttledQueue('throttleImgSrc', 5, 1000);// listing/audio throttle 
 const throttleTokenSrc = throttledQueue('throttleTokenSrc', 1, 2000);// token throttle 
 
 function throttledQueue(
@@ -835,7 +835,7 @@ function throttledQueue(
     if (window.ThrottleQueueTimeout[timeoutName].queue.length) {
       window.ThrottleQueueTimeout[timeoutName].timeout = setTimeout(dequeue, interval)
     } else {
-      window.ThrottleQueueTimeout[timeoutName] = undefined
+      window.ThrottleQueueTimeout[timeoutName].timeout = undefined
     }
   }
 
