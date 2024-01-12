@@ -1107,7 +1107,7 @@ function build_sidebar_list_row(listItem) {
   if (listItem.type !== "aoe" && !listItem.isTypeScene()){
     let tokenCustomizations = find_token_customization(listItem.type, listItem.id);
     let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
-    let img = $(`<img src="" alt="${listItem.name} image" class="token-image" />`);
+    let img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     updateImgSrc(listingImage, img);
     imgHolder.append(img);
   }

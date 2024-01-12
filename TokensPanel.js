@@ -2887,7 +2887,7 @@ function display_change_image_modal(placedToken) {
     alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
     console.log("display_change_image_modal", alternativeImages);
     alternativeImages.forEach(imgUrl => {
-        const html = $(`<img class="example-token" src="" alt="alternative image" />`);
+        const html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
         updateImgSrc(imgUrl, html);
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
