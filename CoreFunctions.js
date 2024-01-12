@@ -778,7 +778,7 @@ function updateTokenSrc(url, container){
     container.attr('src', url);
    }
 }
-//Google needs to be under 10 requests per second for google drive to function.
+
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
 const throttleImgSrc = throttledQueue('throttleImgSrc', 10, 1000);// listing/audio throttle 
 const throttleTokenSrc = throttledQueue('throttleTokenSrc', 1, 2000);// token throttle 
