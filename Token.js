@@ -1595,7 +1595,7 @@ class Token {
 			const oldImage =  old.find(".token-image,[data-img]")
 			// token uses an image for it's image
 			if (!this.options.imgsrc.startsWith("class")){
-				if(oldImage.attr("src")!=this.options.imgsrc){
+				if(oldImage.attr("src")!=parse_img(this.options.imgsrc)){
 					oldImage.attr("src", parse_img(this.options.imgsrc));
 					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 				}

@@ -2892,7 +2892,7 @@ function display_change_image_modal(placedToken) {
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
         html.on("click", function (imgClickEvent) {
-            placedToken.options.imgsrc = parse_img(image);
+            placedToken.options.imgsrc = parse_img(imgUrl);
             close_sidebar_modal();
             placedToken.place_sync_persist();
         });
