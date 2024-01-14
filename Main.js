@@ -29,16 +29,15 @@ function parse_img(url) {
 			console.warn("parse_img is removing a data url because those are not allowed"); 
 			retval = "";
 		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
-			const parsed = 'https://drive.google.com/uc?id=' + retval.split('/')[5];
-			const fileid = parsed.split('=')[1];
-			retval = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
+			retval = parsed;
 			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
 		else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") > -1) {
 			const fileid = retval.split('=')[1];
-			retval = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
-			console.log("parse_img is converting", url, "to", retval);
+			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
+			retval = parsed;
 			return retval;
 		}
 		else if(retval.includes("dropbox.com")){
