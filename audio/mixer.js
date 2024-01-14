@@ -160,7 +160,7 @@ class Mixer extends EventTarget {
      * @param {boolean} play start playing unpaused channels
      */
     syncPlayers(play = true) {
-        throttleImgSrc(() => {
+        throttleAudioSrc(() => {
             const state = this.state();
      
             Object.entries(state.channels).forEach(([id, channel]) => {
@@ -174,6 +174,15 @@ class Mixer extends EventTarget {
                 if (!(player)) {
                     let url = channel.src;
                     if (url.startsWith("https://drive.google.com")) {
+                        if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+                            const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+                            const fileid = parsed.split('=')[1];
+                            url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;     
+                        } 
+                        else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
+                            const fileid = url.split('=')[1];
+                            url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
+                        }
                         const parsed = parse_img(url);
                         url = parsed;
                     }

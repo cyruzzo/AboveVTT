@@ -780,8 +780,9 @@ function updateTokenSrc(url, container){
 }
 
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
-const throttleImgSrc = throttledQueue('throttleImgSrc', 5, 1000);// listing/audio throttle 
-const throttleTokenSrc = throttledQueue('throttleTokenSrc', 1, 2000);// token throttle 
+const throttleImgSrc = throttledQueue('throttleImgSrc', 10, 1000);// listing throttle 
+const throttleTokenSrc = throttledQueue('throttleTokenSrc', 10, 1000);// token throttle 
+const throttleAudioSrc = throttledQueue('throttleAudioSrc', 1, 2000);// audio throttle 
 
 function throttledQueue(
   timeoutName,
