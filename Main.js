@@ -28,7 +28,7 @@ function parse_img(url) {
 		} else if (retval.trim().startsWith("data:")) {
 			console.warn("parse_img is removing a data url because those are not allowed"); 
 			retval = "";
-		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0) {
+		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0 && retval.indexOf("thumbnail?id=") < 0) {
 			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
 			retval = parsed;
 			console.log("parse_img is converting", url, "to", retval);
@@ -514,7 +514,21 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		else{
 			videoVolume = 0.5 * $("#master-volume input").val()
 		}
-
+		if(url.includes('google')){
+	    if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0 ) {
+	        const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+	        const fileid = parsed.split('=')[1];
+	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;     
+	    } 
+	    else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
+	        const fileid = url.split('=')[1];
+	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
+	    }
+	    else if (url.startsWith("https://drive.google.com") && url.indexOf("thumbnail?id=") > -1) {
+	        const fileid = url.split('=')[1].split('&')[0];
+	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
+	    }
+		}
 		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.5' onloadstart="this.volume=${videoVolume}" id="scene_map" src="${url}" />`);
 		newmap.on("loadeddata", callback);
 		newmap.on("error", map_load_error_cb);

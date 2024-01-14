@@ -161,7 +161,16 @@ async function getUvttData(url){
 
 function getGoogleDriveAPILink(url){
 	return throttleGoogleApi(() => {
-		return parse_img(url);
+		if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+			const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+			const fileid = parsed.split('=')[1];
+			url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;	
+		} 
+		else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
+			const fileid = url.split('=')[1];
+			url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
+		}
+		return url;
 	})
 }
 
