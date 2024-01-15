@@ -2673,6 +2673,32 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     opacity: var(--svg-text-alpha);
 }
 
+
+.ruler-svg-line,
+.ruler-svg-bobbles{
+    border-radius:2px;
+    position:absolute;
+    z-index:80;
+    opacity: var(--svg-text-alpha);
+    transform: scale(var(--scene-scale));
+    transform-origin: top left;
+    pointer-events:none;
+}
+
+.ruler-svg-bobbles{
+     z-index:85;
+}
+.ruler-svg-line line:first-of-type{
+    stroke-width: calc(2 / var(--window-zoom));
+}
+
+.ruler-svg-line line:nth-of-type(2){
+    stroke-width: calc(1 / var(--window-zoom));
+}
+.ruler-svg-bobbles circle{
+    stroke-width: calc(0.5 / var(--window-zoom));
+    r: calc(1 / var(--window-zoom));
+}
 #raycastingCanvas,
 #light_overlay,
 .aura-element-container-clip:not([data-animation])>.islight,

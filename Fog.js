@@ -148,10 +148,8 @@ class WaypointManagerClass {
 	// Draw a nice circle
 	drawBobble(x, y, radius) {
 
-		if(radius == undefined) {
-			radius = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
-		}
 
+		/*
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
 		this.ctx.lineWidth = radius
@@ -159,6 +157,11 @@ class WaypointManagerClass {
 		this.ctx.stroke();
 		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
+		*/
+		let existingBobbles = $('.ruler-svg-bobbles').html();
+	    let newBobble = `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'>`;
+	    $('.ruler-svg-bobbles').html(existingBobbles + newBobble);
+
 	}
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
@@ -217,7 +220,7 @@ class WaypointManagerClass {
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels, labelX, labelY, alpha = 1) {
-		$('.ruler-svg-text').remove();
+		$('.ruler-svg-text, .ruler-svg-line, .ruler-svg-bobbles').remove();
 		$('#VTT').css('--svg-text-alpha', alpha);
 		var cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
@@ -355,6 +358,8 @@ class WaypointManagerClass {
 			textY = snapPointYEnd + (margin * 2) + slopeModifier;
 		}
 
+
+		/*
 		// Draw our 'contrast line'
 		this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.lineWidth = Math.floor(Math.max(25 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
@@ -366,7 +371,7 @@ class WaypointManagerClass {
 		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 2));
 		this.ctx.lineTo(snapPointXEnd, snapPointYEnd);
 		this.ctx.stroke();
-
+	    
 		/*this.ctx.strokeStyle = this.drawStyle.outlineColor
 		this.ctx.fillStyle = this.drawStyle.backgroundColor
 		this.ctx.lineWidth = Math.floor(Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
@@ -378,14 +383,36 @@ class WaypointManagerClass {
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);*/
+		let sceneWidth = Math.floor($('#scene_map').width());
+		let sceneHeight = Math.floor($('#scene_map').height());
+
+
+		let rulerLineSVG = $(`
+			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
+			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
+			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
+
+			</svg>
+		`)
+
+		let rulerBobbleSVG = $(`
+			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
+			</svg>
+		`)
+
 
 		let textSVG = $(`
 			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
 				<text x="1" y="11">
 					${text}
 				</text>
-			<svg>`)
+			</svg>`)
+		$('#VTT').append(rulerLineSVG)	
 		$('#VTT').append(textSVG)
+
+		if($('.ruler-svg-bobbles').length == 0){
+			$('#VTT').append(rulerBobbleSVG)
+		}
 
 		this.drawBobble(snapPointXStart, snapPointYStart);
 		this.drawBobble(snapPointXEnd, snapPointYEnd);
@@ -3299,7 +3326,7 @@ function calculateFourthPoint(point1, point2, point3) {
 }
 function clear_temp_canvas(){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height);
-	$('.ruler-svg-text').remove();
+	$('.ruler-svg-text, .ruler-svg-line, .ruler-svg-bobbles').remove();
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){
