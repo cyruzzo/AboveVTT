@@ -1162,7 +1162,7 @@ function build_sidebar_list_row(listItem) {
           create_token_inside(clickedItem);
         });
         if (listItem.isRootFolder()) {
-          let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Scenes"><span class="material-icons">reorder</span></button>`);
+          let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Tokens"><span class="material-icons">reorder</span></button>`);
           rowItem.append(reorderButton);
           reorderButton.on("click", function (clickEvent) {
             clickEvent.stopPropagation();
@@ -1904,7 +1904,7 @@ function list_item_image_flyout(hoverEvent) {
   }
 }
 
-function disable_draggable_change_folder() {
+function  disable_draggable_change_folder() {
   window.reorderState = undefined;
   $(".token-row-drag-handle").remove();
 
@@ -2001,18 +2001,15 @@ function enable_draggable_change_folder(listItemType) {
       let droppedFolder = $(dropEvent.target);
       if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === RootFolder.Scenes.id) {
         // they dropped it on the header so find the root folder
-        if (listItemType === ItemType.Scene) {
-          move_scene_to_folder(draggedItem, RootFolder.Scenes.id);
-          did_update_scenes();
-          enable_draggable_change_folder(ItemType.Scene);
-        } else if (listItemType === ItemType.MyToken) {
+        if (window.reorderState === ItemType.Scene) {
+          move_item_into_folder_item(draggedItem, RootFolder.Scenes.id);
+        } else if (window.reorderState === ItemType.MyToken) {
           let customization = find_token_customization(draggedItem.type, draggedItem.id);
           customization.parentId = RootFolder.MyTokens.id;
           persist_token_customization(customization);
           rebuild_token_items_list();
-          enable_draggable_change_folder(ItemType.MyToken);
         } else {
-          console.warn("Unable to reorder item by dropping it on the body", listItemType, draggedItem);
+          console.warn("Unable to reorder item by dropping it on the body", window.reorderState, draggedItem);
         }
       } else {
         let folderItem = find_sidebar_list_item(droppedFolder);
@@ -2023,7 +2020,7 @@ function enable_draggable_change_folder(listItemType) {
     }
   };
 
-  switch (listItemType) {
+  switch (window.reorderState) {
     case ItemType.MyToken:
 
       redraw_token_list("", false)
@@ -2074,7 +2071,6 @@ function enable_draggable_change_folder(listItemType) {
           if (draggedRow.hasClass("drag-cancelled")) {
             draggedRow.removeClass("drag-cancelled");
             redraw_token_list("", false);
-            enable_draggable_change_folder(ItemType.MyToken);
           }
         }
       });
@@ -2119,7 +2115,6 @@ function enable_draggable_change_folder(listItemType) {
           if (draggedRow.hasClass("drag-cancelled")) {
             draggedRow.removeClass("drag-cancelled");
             redraw_scene_list("");
-            enable_draggable_change_folder(ItemType.Scene);
           }
         }
       });
@@ -2144,7 +2139,6 @@ function move_item_into_folder_item(listItem, folderItem) {
   } else if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
     move_scene_to_folder(listItem, folderItem.id);
     did_update_scenes();
-    enable_draggable_change_folder(ItemType.Scene);
   } else {
     console.warn("move_item_into_folder_item was called with invalid item type", listItem);
   }
