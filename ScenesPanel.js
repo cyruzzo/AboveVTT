@@ -144,10 +144,10 @@ async function getUvttData(url){
 	return await throttleGoogleApi(async () => {
 		let api_url = url;
 		let jsonData = {};
-		if(url.startsWith('https://drive.google.com')){
-			let api_url = await parse_img(url);
+		if(api_url.startsWith('https://drive.google.com')){
+			api_url = await getGoogleDriveAPILink(api_url);
 		}
-		else if(url.includes('dropbox.com')){		
+		else if(api_url.includes('dropbox.com')){		
 			let splitUrl = url.split('dropbox.com');
 			api_url = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
 		}
@@ -161,13 +161,13 @@ async function getUvttData(url){
 
 function getGoogleDriveAPILink(url){
 	return throttleGoogleApi(() => {
-		if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0) {
+		if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0) {
 			const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
 			const fileid = parsed.split('=')[1];
 			url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;	
 		} 
-		else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
-			const fileid = url.split('=')[1];
+		else if (url.startsWith("https://drive.google.com") && (url.indexOf("uc?id=") > -1 || url.indexOf("thumbnail?id=") > -1 )) {
+			const fileid = url.split('=')[1].split('&')[0];
 			url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;
 		}
 		return url;
