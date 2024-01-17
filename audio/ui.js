@@ -74,9 +74,9 @@ function init_mixer() {
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
             }     
         });
-        var text_calc = $(`<div class='channelName'>Animated Map Audio</span>`);
+        let text_calc = $(`<div class='channelName'>Animated Map Audio</span>`);
         $('body').prepend(text_calc);
-        var nameWidth = $('body').find('div.channelName:first').width();
+        let nameWidth = $('body').find('div.channelName:first').width();
         text_calc.remove();
         channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
@@ -90,9 +90,9 @@ function init_mixer() {
             item.setAttribute("data-id", id);
 
               
-            var text_calc = $(`<div class='channelName'>${channel.name}</span>`);
+            let text_calc = $(`<div class='channelName'>${channel.name}</span>`);
             $('body').prepend(text_calc);
-            var nameWidth = $('body').find('div.channelName:first').width();
+            let nameWidth = $('body').find('div.channelName:first').width();
             text_calc.remove();
             channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
 
@@ -213,8 +213,8 @@ function init_mixer() {
     });
 
 
-    drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels)
-    window.MIXER.onChannelListChange((e) => drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels));
+    drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels);
+    window.MIXER.onChannelListChange((e) =>  drawChannelList(window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).channels));
 
     // clear button
 
