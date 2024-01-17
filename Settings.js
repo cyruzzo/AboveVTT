@@ -741,6 +741,7 @@ function build_example_token(options) {
 	let token = new Token(mergedOptions);
 	token.place(0);
 	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
+	html.find('img.token-image').attr('src', mergedOptions.imgsrc);
 	token.delete(false);
 
 	html.addClass("example-token");
