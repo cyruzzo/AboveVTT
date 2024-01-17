@@ -663,9 +663,8 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
                 } else {         
-                    random_image_for_item(draggedItem).then((img) => {
-                        helper.attr("src", img);
-                    });
+                    helper.attr("src", random_image_for_item(draggedItem));
+                    
                 }
                 helper.addClass("draggable-token-creation");
                 return helper;
