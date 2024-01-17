@@ -34,8 +34,8 @@ function parse_img(url) {
 			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
-		else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") > -1) {
-			const fileid = retval.split('=')[1];
+		else if (retval.startsWith("https://drive.google.com") && (retval.indexOf("uc?id=") > -1 || retval.indexOf("thumbnail?id=") > -1)) {
+			const fileid = retval.split('=')[1].split('&')[0];
 			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
 			retval = parsed;
 			return retval;
