@@ -771,9 +771,7 @@ function updateImgSrc(url, container){
 function updateTokenSrc(url, container){
   url = parse_img(url)
   if(url?.includes('google')){
-    throttleTokenSrc(() => {
       container.attr('src', url);
-    })
    }else{
     container.attr('src', url);
    }
@@ -782,7 +780,7 @@ function updateTokenSrc(url, container){
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle
 const throttleImgSrc = throttledQueue('throttleImgSrc', 100, 1000);// listing throttle 
 const throttleTokenSrc = throttledQueue('throttleTokenSrc', 10, 1000);// token throttle 
-const throttleAudioSrc = throttledQueue('throttleAudioSrc', 1, 2000);// audio throttle 
+const throttleAudioSrc = throttledQueue('throttleAudioSrc', 1, 1000);// audio throttle 
 
 function throttledQueue(
   timeoutName,

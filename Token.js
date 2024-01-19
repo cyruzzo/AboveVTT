@@ -1896,6 +1896,7 @@ class Token {
 				}
 				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 				
+				
 				updateTokenSrc(this.options.imgsrc, tokenImage);
 
 				if(this.options.disableborder)
