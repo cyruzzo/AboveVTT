@@ -810,7 +810,7 @@ class Token {
 			// CONCENTRATION REMINDER
 			let msgdata = {
 				player: this.options.name,
-				img: this.options.imgsrc,
+				img: parse_img(this.options.imgsrc),
 				text: "<b>Check for concentration!!</b>",
 			};
 			window.MB.inject_chat(msgdata);
