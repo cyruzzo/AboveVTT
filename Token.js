@@ -810,7 +810,7 @@ class Token {
 			// CONCENTRATION REMINDER
 			let msgdata = {
 				player: this.options.name,
-				img: this.options.imgsrc,
+				img: parse_img(this.options.imgsrc),
 				text: "<b>Check for concentration!!</b>",
 			};
 			window.MB.inject_chat(msgdata);
@@ -1759,7 +1759,7 @@ class Token {
 					}
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
-					copyImage.attr("src",this.options.imgsrc);
+					copyImage.attr("src", parse_img(this.options.imgsrc));
 					copyImage.css({
 						'min-width': `calc(${oldImage.css('min-width')} / var(--scene-scale))`,
 						'min-height': `calc(${oldImage.css('min-height')} / var(--scene-scale))`
