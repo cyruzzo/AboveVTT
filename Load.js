@@ -84,6 +84,7 @@ window.scripts = [
 	{ src: "SceneData.js" },
 	{ src: "scenedata/bgdia-scene-data.js" },
 	{ src: "scenedata/tod-scene-data.js" },
+	{ src: "scenedata/toa-scene-data.js" },
 	{ src: "ScenesHandler.js" },
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
