@@ -146,9 +146,7 @@ class WaypointManagerClass {
 	}
 
 	// Draw a nice circle
-	drawBobble(x, y, radius) {
-
-
+	drawBobble(x, y, radius, playerId) {
 		/*
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -158,9 +156,9 @@ class WaypointManagerClass {
 		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 		*/
-		let existingBobbles = $('.ruler-svg-bobbles').html();
+		let existingBobbles = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`).html();
 	    let newBobble = `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'>`;
-	    $('.ruler-svg-bobbles').html(existingBobbles + newBobble);
+	    $(`.ruler-svg-bobbles[data-player-id='${playerId}']`).html(existingBobbles + newBobble);
 
 	}
 
@@ -171,7 +169,7 @@ class WaypointManagerClass {
 
 			// Draw an indicator for cosmetic niceness
 			var snapCoords = this.getSnapPointCoords(mousex, mousey);
-			this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
+			//this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 	}
 
 	// Track mouse moving
@@ -182,8 +180,7 @@ class WaypointManagerClass {
 	}
 
 	// On mouse up, clear out the waypoints
-	clearWaypoints() {
-
+	clearWaypoints(cancelFadeout=true) {
 		this.numWaypoints = 0;
 		this.coords = [];
 		this.currentWaypointIndex = 0;
@@ -219,9 +216,9 @@ class WaypointManagerClass {
 
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
-	draw(midlineLabels, labelX, labelY, alpha = 1) {
-		$('.ruler-svg-text, .ruler-svg-line, .ruler-svg-bobbles').remove();
-		$('#VTT').css('--svg-text-alpha', alpha);
+	draw(midlineLabels, labelX, labelY, alpha = 1, playerId=window.PLAYER_ID) {
+		$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
+		
 		var cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		for (var i = 0; i < this.coords.length; i++) {
@@ -229,16 +226,16 @@ class WaypointManagerClass {
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels);
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, playerId), alpha;
 			} else {
-				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY);
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY, playerId, alpha);
 			}
 			cumulativeDistance += this.coords[i].distance;
 		}
 	}
 
 	// Draw a waypoint segment with all the lines and labels etc.
-	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY) {
+	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY, playerId, alpha) {
 
 		// Snap to centre of current grid square
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
@@ -388,7 +385,7 @@ class WaypointManagerClass {
 
 
 		let rulerLineSVG = $(`
-			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
+			<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
 			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
 			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
 
@@ -396,13 +393,13 @@ class WaypointManagerClass {
 		`)
 
 		let rulerBobbleSVG = $(`
-			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
+			<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
 			</svg>
 		`)
 
 
 		let textSVG = $(`
-			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
+			<svg data-player-id='${playerId}' class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
 				<text x="1" y="11">
 					${text}
 				</text>
@@ -410,25 +407,25 @@ class WaypointManagerClass {
 		$('#VTT').append(rulerLineSVG)	
 		$('#VTT').append(textSVG)
 
-		if($('.ruler-svg-bobbles').length == 0){
+		if($(`.ruler-svg-bobbles[data-player-id='${playerId}]'`).length == 0){
 			$('#VTT').append(rulerBobbleSVG)
 		}
-
-		this.drawBobble(snapPointXStart, snapPointYStart);
-		this.drawBobble(snapPointXEnd, snapPointYEnd);
+		$(`svg[data-player-id='${playerId}']`).css('--svg-text-alpha', alpha);
+		this.drawBobble(snapPointXStart, snapPointYStart, undefined, playerId);
+		this.drawBobble(snapPointXEnd, snapPointYEnd, undefined, playerId);
 	}
 
 	/**
 	 * redraws the waypoints using various levels of opacity until completely clear
 	 * then removes all waypoints and resets canvas opacity
 	 */
-	fadeoutMeasuring(){
+	fadeoutMeasuring(playerID){
 		let alpha = 1.0
 		const self = this
 		if(self.ctx == undefined){
 				self.cancelFadeout()
 				self.clearWaypoints();
-				clear_temp_canvas()
+				clear_temp_canvas(playerID)
 				return;
 		} 
 		// only ever allow a single fadeout to occur
@@ -442,12 +439,12 @@ class WaypointManagerClass {
 		function fadeout(){
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
-			self.draw(false, undefined, undefined, alpha)
+			self.draw(false, undefined, undefined, alpha, window.PLAYER_ID)
 			alpha = alpha - 0.08;
 			if (alpha <= 0.0){
 				self.cancelFadeout()
 				self.clearWaypoints();
-				clear_temp_canvas()
+				clear_temp_canvas(playerID)
 			}
 		}
 	}
@@ -2792,7 +2789,7 @@ function drawing_mouseup(e) {
 		console.log("READY");
 	}
 	else if (window.DRAWFUNCTION == "measure") {
-		WaypointManager.fadeoutMeasuring()
+		WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 	}
 
 }
@@ -3324,9 +3321,9 @@ function calculateFourthPoint(point1, point2, point3) {
     var dy = Math.sin(angle) * length;
     return { x: point3.x - dx, y: point3.y - dy };
 }
-function clear_temp_canvas(){
-	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height);
-	$('.ruler-svg-text, .ruler-svg-line, .ruler-svg-bobbles').remove();
+function clear_temp_canvas(playerId){
+	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
+	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){

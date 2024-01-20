@@ -481,7 +481,7 @@ function init_peer_fade_function(playerId) {
       noisy_log("executing PEER_FADE_RULER_FUNCTIONS", playerId);
       const waypointManager = get_peer_waypoint_manager(playerId, undefined);
       waypointManager.clearWaypoints();
-      redraw_peer_rulers();
+      redraw_peer_rulers(playerId);
       if (window.PEER_TOKEN_DRAGGING[playerId]) {
         const html = window.PEER_TOKEN_DRAGGING[playerId];
         delete window.PEER_TOKEN_DRAGGING[playerId];
@@ -664,11 +664,11 @@ function update_peer_ruler(eventData) {
   fade_peer_ruler(eventData.playerId);
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
   const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
-  clear_peer_canvas()
+  clear_peer_canvas(eventData.playerId)
   waypointManager.clearWaypoints()
   waypointManager.numWaypoints = eventData.numWaypoints;
   waypointManager.coords = eventData.coords;
-  redraw_peer_rulers();
+  redraw_peer_rulers(eventData.playerId);
 }
 
 /** adds or updates the location of a mock token to show where a player is actively dragging it
@@ -699,19 +699,20 @@ function peer_is_dragging_token(eventData) {
 }
 
 /** clears other player's rulers from our screen */
-function clear_peer_canvas() {
+function clear_peer_canvas(playerId) {
   const canvas = document.getElementById("peer_overlay");
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
+
+  $(`.ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}'], .ruler-svg-text[data-player-id='${playerId}']`).remove();
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */
-function redraw_peer_rulers() {
-  clear_peer_canvas(); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
-  for (const playerId in window.PEER_RULERS) {
-    const waypointManager = window.PEER_RULERS[playerId];
-    waypointManager.draw(false);
-  }
+function redraw_peer_rulers(playerId) {
+  //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
+  const waypointManager = window.PEER_RULERS[playerId];
+  waypointManager.draw(false, undefined, undefined, undefined, playerId);
+  
 }
 
 /** finds or creates a {@link WaypointManagerClass} for the given player
