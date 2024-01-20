@@ -6569,7 +6569,8 @@ div.ddbc-tab-options--layout-pill>button{
 
 body.preventSelectDefinitelyNot .token.lockedToken,
 body.preventSelectDefinitelyNot .token.lockedToken>img,
-body.preventSelectDefinitelyNot .token.lockedToken>.token-image{
+body.preventSelectDefinitelyNot .token.lockedToken>.token-image,
+body.preventSelectDefinitelyNot .token.lockedToken>.token-image>[data-img]{
     pointer-events: none !important;
 }
 
