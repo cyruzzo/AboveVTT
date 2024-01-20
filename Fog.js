@@ -3321,7 +3321,7 @@ function calculateFourthPoint(point1, point2, point3) {
     var dy = Math.sin(angle) * length;
     return { x: point3.x - dx, y: point3.y - dy };
 }
-function clear_temp_canvas(playerId){
+function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
 	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
 }
