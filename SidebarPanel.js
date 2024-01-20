@@ -507,7 +507,11 @@ class SidebarListItem {
    */
   static Folder(id, folderPath, name, collapsed, parentId, folderType) {
     console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}, folderType: ${folderType}`);
+    if(parentId == undefined && folderPath == RootFolder.Scenes.path){
+        parentId = RootFolder.Scenes.id
+    }
     let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId);
+
     if (collapsed === true || collapsed === false) {
       item.collapsed = collapsed;
     } else {
