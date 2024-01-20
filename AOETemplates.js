@@ -114,6 +114,7 @@ function setup_aoe_button() {
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
         const options = build_aoe_token_options(style, shape, size)
+
         place_aoe_token_in_centre(options)
         $('#select-button').click();
 
@@ -241,14 +242,16 @@ function get_aoe_default_options(){
         disableborder: true,
         square: true,
         restrictPlayerMove: false,
-        hidden: false,
         locked: false,
         disableaura: true,
         legacyaspectratio: false,
         deleteableByPlayers: true,
+        lockRestrictDrop: 'none',
+        auraVisible: false,
+        auraislight: false,
         revealInFog: true,
-        lockRestrictDrop: 'none'
-    };
+        hidden: false
+    }
     return options
 }
 

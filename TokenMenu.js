@@ -469,7 +469,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		
 		body.append(combatButton);
-
+	}
+	if(window.DM){
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
 		hiddenMenuButton.off().on("click", function(clickEvent){
@@ -488,7 +489,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(hiddenMenuButton);
 	}
-
+	
 	if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
 		let addButtonInternals = `Group Tokens<span class="material-icons add-link"></span>`;
 		let removeButtonInternals = `Remove From Group<span class="material-icons link-off"></span>`;

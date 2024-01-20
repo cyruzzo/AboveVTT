@@ -192,38 +192,6 @@ class Token {
 		}).filter(c => c); // remove undefined and empty strings
 	}
 
-	defaultAoeOptions() {
-		if (this.isAoe()) {
-			// look at build_aoe_token_options and set defaults here
-			token_setting_options().forEach(option => {
-				if (!availableToAoe.includes(option.name)) {
-					delete this.options[option.name];
-				}
-			});
-			delete this.options.aura1;
-			delete this.options.aura2;
-
-			this.options = {
-				...this.options,
-				disablestat: true,
-		        hidestat: true,
-		        disableborder: true,
-		        square: true,
-		        restrictPlayerMove: false,
-		        hidden: false,
-		        locked: false,
-		        disableaura: true,
-		        legacyaspectratio: false,
-		        deleteableByPlayers: true,
-		        lockRestrictDrop: 'none',
-		        auraVisible: false,
-				auraislight: false,
-				revealInFog: true
-			}
-			
-		}
-	}
-
 	stopAnimation(){
 		const tok = $(`#tokens div[data-id="${this.options.id}"]`);
 		if (tok.length === 0) {
@@ -1443,9 +1411,7 @@ class Token {
 			// No scene loaded!
 			return;
 		}
-
-		// we don't allow certain options to be set for AOE tokens
-		this.defaultAoeOptions();
+	
 
 		if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 			animationDuration = 1000;
@@ -1779,7 +1745,8 @@ class Token {
 			let tok = $("<div/>");
 			
 			let bar_height = Math.floor(this.sizeHeight() * 0.2);
-
+			// we don't allow certain options to be set for AOE tokens
+			
 			if (bar_height > 60)
 				bar_height = 60;
 
