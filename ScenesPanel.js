@@ -1322,7 +1322,23 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
-	
+	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
+	const playlists = window.MIXER.playlists();
+
+	for(let i in playlists){
+		playlistSelect.append($(`<option value='${i}'>${playlists[i].name}</option>`))
+	}
+
+	const playlistValue = scene.playlist || 0;
+	playlistSelect.val(playlistValue);
+	playlistSelect.find(`option`).removeAttr('selected');
+	playlistSelect.find(`option[value='${playlistValue}']`).attr('selected', 'selected');
+
+
+	const playlistRow = form_row('playlistRow', 'Load Playlist', playlistSelect)
+	playlistRow.attr('title', `This playlist will load when the DM joins this scene. The playlist will not change if 'None' is selected.`)
+	form.append(playlistRow);
+
 	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button type='button'>Manual Grid Data</button>");
 
@@ -1369,6 +1385,8 @@ function edit_scene_dialog(scene_id) {
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
+		scene['playlist'] = playlistSelect.val();
+
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
