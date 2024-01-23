@@ -675,7 +675,10 @@ a.ddbeb-button {
     padding: 0 16px;
     text-transform: uppercase;
 }
-
+select#doorTypeSelectUVTT option,
+select#doorTypeSelectUVTT{
+    text-transform: uppercase;
+}
 #resizeDragMon iframe {
     z-index: -10000;
 }
