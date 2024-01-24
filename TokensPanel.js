@@ -1302,10 +1302,10 @@ function random_image_for_item(listItem, specificImage) {
     if (alternativeImages !== undefined && alternativeImages.length > 0) {
         let randomIndex = getRandomInt(0, alternativeImages.length);
         console.debug("random_image_for_item", alternativeImages, randomIndex);
-        return alternativeImages[randomIndex];
+        return parse_img(alternativeImages[randomIndex]);
     } else {
         console.debug("random_image_for_item alternativeImages empty, returning", listItem.image);
-        return listItem.image;
+        return parse_img(listItem.image);
     }
 }
 

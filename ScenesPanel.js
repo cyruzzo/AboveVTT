@@ -174,13 +174,13 @@ function getGoogleDriveAPILink(url){
 	})
 }
 
-async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId){
+async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId, doorType, doorHidden){
 	//to do
 	let sceneData = await getUvttData(url);
 
 	console.log(sceneData.resolution) // test code to make sure correct file is loaded
 	let aboveSceneData = {
-		...create_full_scene_from_uvtt(sceneData, url),
+		...create_full_scene_from_uvtt(sceneData, url, doorType, doorHidden),
 		title: title,
 		folderPath: folderPath,
 		parentId: parentId
@@ -203,7 +203,7 @@ async function get_map_from_uvtt_file(url){
 	return `data:image/png;base64,${sceneData.image}`
 }
 
-function create_full_scene_from_uvtt(data, url){ //this sets up scene data for import
+function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this sets up scene data for import
 
 	DataFile = data;
 	/*
@@ -216,6 +216,8 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 	let gridSize = 50; 
 
 	let sceneDrawings = []
+
+
 	for(let i = 0; i<DataFile.line_of_sight.length; i++){
 		for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
 			sceneDrawings.push(['line',
@@ -231,7 +233,8 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 		}
 	}
 	for(let i = 0; i<DataFile.portals.length; i++){
-		let color = (DataFile.portals[i].closed) ? 'rgba(255, 100, 255, 1)' : 'rgba(255, 100, 255, 0.5)';
+		let closed = (DataFile.portals[i].closed) ? 'closed' : 'open'
+		let color =  doorColors[doorType][closed];
 		sceneDrawings.push(['line',
 			'wall',
 			color,
@@ -241,6 +244,7 @@ function create_full_scene_from_uvtt(data, url){ //this sets up scene data for i
 			DataFile.portals[i].bounds[1].y*gridSize,
 			12,
 			1,
+			doorHidden
 		])
 	}
 
@@ -1318,7 +1322,23 @@ function edit_scene_dialog(scene_id) {
 	colorPickers.on('change.spectrum', handle_form_grid_on_change); // commit the changes when the user clicks the submit button
 	colorPickers.on('hide.spectrum', handle_form_grid_on_change);   // the hide event includes the original color so let's change it back when we get it
 
-	
+	const playlistSelect = $(`<select id='playlistSceneSelect'><option value='0'>None</option></select>`)
+	const playlists = window.MIXER.playlists();
+
+	for(let i in playlists){
+		playlistSelect.append($(`<option value='${i}'>${playlists[i].name}</option>`))
+	}
+
+	const playlistValue = scene.playlist || 0;
+	playlistSelect.val(playlistValue);
+	playlistSelect.find(`option`).removeAttr('selected');
+	playlistSelect.find(`option[value='${playlistValue}']`).attr('selected', 'selected');
+
+
+	const playlistRow = form_row('playlistRow', 'Load Playlist', playlistSelect)
+	playlistRow.attr('title', `This playlist will load when the DM joins this scene. The playlist will not change if 'None' is selected.`)
+	form.append(playlistRow);
+
 	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button type='button'>Manual Grid Data</button>");
 
@@ -1365,6 +1385,8 @@ function edit_scene_dialog(scene_id) {
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
+		scene['playlist'] = playlistSelect.val();
+
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);
@@ -2480,11 +2502,41 @@ function build_UVTT_import_container(){
 		row.append(rowInputWrapper);
 		return row
 	};
+
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (defaultOn){
+			toggle.addClass("rc-switch-checked")
+		}
+		return toggle
+	}
 	
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 	form.append(form_row('title', 'Scene Title', 'New Scene'));
 	form.append(form_row('player_map', 'UVTT File link', 'URL for .dd2vtt, .uvtt, .df2vtt or other universal vtt file.'));
+	const hiddenDoorToggle = form_toggle('hidden_doors_toggle', null, false, function(event) {
+		handle_basic_form_toggle_click(event);
+	})
+
+	
+
+
+	const doorTypeSelect = $(`<select id='doorTypeSelectUVTT'></select>`);
+	const availableDoors = get_available_doors();
+	for(let i in availableDoors){
+		doorTypeSelect.append(`<option value='${i}'>${availableDoors[i]}</option>`)
+	}
+
+	const doorTypeRow = form_row('door_type_row', 'Door Type', null, doorTypeSelect)
+	form.append(doorTypeRow);
+	const hiddenDoorsDiv = form_row('hidden_doors', 'Import Doors as Hidden', null, hiddenDoorToggle);
+	form.append(hiddenDoorsDiv)
+
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(async function() {
 		console.log("Saving scene changes")
@@ -2493,10 +2545,13 @@ function build_UVTT_import_container(){
 		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
 		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 		container.append(build_combat_tracker_loading_indicator('One moment while we load the UVTT File'));
+		const doorType = $('#doorTypeSelectUVTT').val();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
-		import_uvtt_scene_to_new_scene(formData['player_map'], formData['title'], folderPath, parentId)
+		import_uvtt_scene_to_new_scene(formData['player_map'], formData['title'], folderPath, parentId, doorType, parseInt(formData['hidden_doors_toggle'])==1)
 	});
+
+
 	form.append(submitButton);
 
 

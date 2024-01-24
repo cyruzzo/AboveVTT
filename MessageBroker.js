@@ -1469,6 +1469,7 @@ class MessageBroker {
 				
 				set_default_vttwrapper_size();
 
+
 				if(window.CURRENT_SCENE_DATA.playlist != undefined && window.CURRENT_SCENE_DATA.playlist != 0 && window.DM){
 					window.MIXER.setPlaylist(window.CURRENT_SCENE_DATA.playlist)
 				}

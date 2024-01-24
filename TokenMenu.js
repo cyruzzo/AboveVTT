@@ -3314,7 +3314,7 @@ function qrm_apply_hp_adjustment(healing=false){
 				_hp.val(_max_hp_val);
 			}
 			else{
-				_hp.val(token.hp - damage);
+				_hp.val(Math.max(0, token.hp - damage));
 			}
 			_hp.trigger('change');
 		}
