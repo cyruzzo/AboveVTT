@@ -1466,6 +1466,16 @@ function redraw_light_walls(clear=true){
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
         let hiddenDoor = hidden && !displayWalls ? ` hiddenDoor` : ``;
         let dataHidden = hidden;
+
+
+        let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : `door`;
+
+        if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
+        	doorButton.remove();
+        }
+
+
+
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
 			
@@ -1840,10 +1850,10 @@ function drawing_mousedown(e) {
 			window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 6;
 	}
-	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" ){
+	else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" || window.DRAWFUNCTION === "door-door-convert"){
 		// semi transparent black
 		window.DRAWCOLOR = doorColors[$('#door_types').val()].closed
-		window.DRAWTYPE = "filled"
+		window.DRAWTYPE = (window.DRAWFUNCTION === "door-door-convert") ? 'border' : "filled"
 		window.LINEWIDTH = 12;
 	}
 	else if (window.DRAWFUNCTION === "select"){
@@ -2434,7 +2444,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -2446,8 +2456,9 @@ function drawing_mouseup(e) {
 		let wallLine = [];
 	
 		for(let i=0; i<walls.length; i++){
-
-			let wallInitialScale = walls[8];
+			if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
+				continue;
+			let wallInitialScale = walls[i][8];
 			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 
@@ -2514,16 +2525,27 @@ function drawing_mouseup(e) {
 
 
 			if(left != false || right != false || top != false || bottom != false || fullyInside){
-				if(window.DRAWFUNCTION == "wall-eraser-one" ){
+				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
 					fullyInside = true;
 				}
 				let wallColor;
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
-						let wallId = `${window.DRAWINGS[j][3]}${window.DRAWINGS[j][4]}${window.DRAWINGS[j][5]}${window.DRAWINGS[j][6]}${window.CURRENT_SCENE_DATA.id}`;
-						if(window.TOKEN_OBJECTS[wallId.replaceAll('.', '')]){
-							window.TOKEN_OBJECTS[wallId.replaceAll('.', '')].delete(true)
-						}
+						
+						let doorButton = $(`.door-button[data-x1='${window.DRAWINGS[j][3]}'][data-y1='${window.DRAWINGS[j][4]}'][data-x2='${window.DRAWINGS[j][5]}'][data-y2='${window.DRAWINGS[j][6]}']`);
+
+						let wallId = doorButton.attr('data-id');
+					
+						if(window.TOKEN_OBJECTS[wallId]){						
+							window.TOKEN_OBJECTS[wallId].delete(true)				
+						}	
+						if(doorButton){
+							doorButton.remove();
+						}		
+						if(window.DRAWFUNCTION === "door-door-convert"){
+							window.DRAWINGS[j][2] = window.DRAWCOLOR;
+							break;
+						}	
 						wallColor = window.DRAWINGS[j][2];
 						window.DRAWINGS.splice(j, 1);
 						break;
@@ -3062,7 +3084,7 @@ function handle_drawing_button_click() {
 		target.on('contextmenu', data, drawing_contextmenu);
 	})
 	$("#door_types").click(function(){
-		if(!$(`#draw_door`).hasClass('button-enabled') && !$(`#draw_door_erase`).hasClass('button-enabled')  && !$(`#draw_door_hidden`).hasClass('button-enabled')){
+		if(!$(`#draw_door`).hasClass('button-enabled') && !$(`#draw_door_convert`).hasClass('button-enabled') && !$(`#draw_door_erase`).hasClass('button-enabled')  && !$(`#draw_door_hidden`).hasClass('button-enabled')){
 			$('#wall_menu .ddbc-tab-options__header-heading--is-active:not(#show_walls)').toggleClass(['button-enabled','ddbc-tab-options__header-heading--is-active'], false);
 			$(`#draw_door_erase`).toggleClass(['button-enabled','ddbc-tab-options__header-heading--is-active'], true)
 		}
@@ -3961,7 +3983,13 @@ function init_walls_menu(buttons){
 				 	Hidden Icon
 			</button>
 		</div>`);
-
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_door_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="door-door-convert" data-unique-with="draw">
+				 	Door Convert
+			</button>
+		</div>`);
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
