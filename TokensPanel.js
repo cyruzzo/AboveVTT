@@ -1877,7 +1877,7 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
         borderColorWrapper.hide();
     }
 
-    if(customization.tokenOptions.vision == undefined){
+    if(customization.tokenOptions.vision?.feet == undefined){
         if(listItem.isTypePC()){
             let pcData = find_pc_by_player_id(listItem.id);
             let darkvision = 0;
@@ -1919,13 +1919,13 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
             }
         }
     }
-    if(customization.tokenOptions.light1 == undefined){
+    if(customization.tokenOptions.light1?.feet == undefined){
         customization.tokenOptions.light1 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.light1?.color ? window.TOKEN_SETTINGS?.light1?.color : 'rgba(255, 255, 255, 1)'
         }
     }
-    if(customization.tokenOptions.light2 == undefined){
+    if(customization.tokenOptions.light2?.feet == undefined){
         customization.tokenOptions.light2 = {
             feet: '0',
             color: window.TOKEN_SETTINGS?.light2?.color ? window.TOKEN_SETTINGS?.light2?.color : 'rgba(142, 142, 142, 1)'
