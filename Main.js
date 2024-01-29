@@ -40,6 +40,12 @@ function parse_img(url) {
 			retval = parsed;
 			return retval;
 		}
+		else if(retval.startsWith("https://www.googleapis.com/drive/v3/files/")){ // fix due to 1.5/1.6 beta 
+			const fileid = retval.split('files/')[1].split('?')[0];
+			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
+			retval = parsed;
+			return retval;
+		}
 		else if(retval.includes("dropbox.com")){
 			const splitUrl = url.split('dropbox.com');
 			const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
