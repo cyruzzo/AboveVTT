@@ -659,7 +659,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
             let draggedItem = find_sidebar_list_item(draggedRow);
             if (!draggedItem.isTypeAoe()) {
                 let draggedItem = find_sidebar_list_item(draggedRow);
-                let helper = draggedRow.find("img.token-image").clone();
+                let helper = draggedRow.find(".token-image").clone();
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
                 } else {         
@@ -2315,7 +2315,7 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
     let items = sidebarPanel.body.find(".example-token");
     for (let i = 0; i < items.length; i++) {
         let item = $(items[i]);
-        let imgsrc = item.find("img.token-image").attr("src");
+        let imgsrc = item.find(".token-image").attr("src");
         let tokenDiv = build_alternative_image_for_modal(imgsrc, options, placedToken, listItem);
         item.replaceWith(tokenDiv);
         set_list_item_identifier(tokenDiv, listItem);
@@ -2745,7 +2745,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find("img.token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
@@ -2757,7 +2757,7 @@ function register_custom_token_image_context_menu() {
                     callback: function (itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         let specificImage = undefined;
-                        let imgSrc = opt.$trigger.find("img.token-image").attr("src");
+                        let imgSrc = opt.$trigger.find(".token-image").attr("src");
                         if (imgSrc !== undefined && imgSrc.length > 0) {
                             specificImage = imgSrc;
                         }
@@ -2769,7 +2769,7 @@ function register_custom_token_image_context_menu() {
                 name: "Copy Url",
                 callback: function (itemKey, opt, e) {
                     let selectedItem = $(opt.$trigger[0]);
-                    let imgSrc = selectedItem.find("img").attr("src");
+                    let imgSrc = selectedItem.find(".token-image").attr("src");
                     copy_to_clipboard(imgSrc);
                 }
             };
@@ -2779,7 +2779,7 @@ function register_custom_token_image_context_menu() {
                     name: "Remove",
                     callback: function (itemKey, opt, originalEvent) {
                         let selectedItem = $(opt.$trigger[0]);
-                        let imgSrc = selectedItem.find("img").attr("src");
+                        let imgSrc = selectedItem.find(".token-image").attr("src");
                         let listItem = find_sidebar_list_item(opt.$trigger);
 
                         // if they are removing the image that is set on a token, ask them if they really want to remove it
@@ -2886,7 +2886,13 @@ function display_change_image_modal(placedToken) {
     alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
     console.log("display_change_image_modal", alternativeImages);
     alternativeImages.forEach(imgUrl => {
-        const html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
+        let fileExtention = imgUrl.split('.')[imgUrl.split('.').length-1];
+        let html;
+        if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+            html = $(`<video muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);     
+        } else{
+            html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
+        }
         updateImgSrc(imgUrl, html);
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
