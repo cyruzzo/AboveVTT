@@ -6383,6 +6383,10 @@ input.max_hp[disabled]{
     border-radius:20px !important;
     border: var(--token-border-width) solid #000 !important;
 }
+
+.video-listing{
+    width: 38px;
+}
 .body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;

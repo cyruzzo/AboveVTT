@@ -1865,10 +1865,6 @@ class Token {
 					tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
 				}
 				
-
-
-
-
 				tok.css("--token-scale", imageScale);
 				tok.css("--token-rotation", `${rotation}deg`);
 				if(!(this.options.square)){
