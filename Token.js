@@ -1577,7 +1577,7 @@ class Token {
 				setTokenLight(old, this.options);
 				setTokenBase(old, this.options);
 				setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
-
+				setTokenAudio(this);
 				if(!(this.options.square) && !oldImage.hasClass('token-round')){
 					oldImage.addClass("token-round");
 				}
@@ -2010,7 +2010,7 @@ class Token {
 
 
 			setTokenBase(tok, this.options);
-
+			setTokenAudio(this);
 			let click = {
 				x: 0,
 				y: 0
@@ -3067,6 +3067,12 @@ function token_health_aura(hpPercentage) {
 		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
+}
+
+function setTokenAudio(token){
+	if(token.options.audioChannel){
+		window.MIXER.addChannel(token.options.audioChannel);
+	}
 }
 
 function setTokenAuras (token, options) {
