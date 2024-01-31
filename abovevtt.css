@@ -8171,13 +8171,15 @@ button.journal-view-button.journal-button {
 
 @keyframes lightning {
     0%{
+        scale: 1;
         opacity: 0;
     }
     20%{
+        scale: 1;
         opacity: 0;
     }
     21%{
-        scale: 3.5;
+       scale: 3.5;
        opacity: 1;
     }
     25%{
@@ -8185,17 +8187,22 @@ button.journal-view-button.journal-button {
         scale: 3.5;
     }
     70%{
+        scale: 3.5;
         opacity: 0;
     }
     71%{
-        scale: 5.5;
+       scale: 5.5;
        opacity: 1;
     }
     75%{
-        scale: 5.5;
+        scale: 5.5
         opacity: 0;
     }
+    76%{
+        scale: 1
+    }
     100%{
+        scale: 1;
         opacity: 0%;
     }
 }
