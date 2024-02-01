@@ -159,7 +159,7 @@ class Mixer extends EventTarget {
      * Syncs the mixer state from local storage into native Audio object
      * @param {boolean} play start playing unpaused channels
      */
-    syncPlayers(play = true) {
+    syncPlayers(play = true, skipTime=false) {
         const state = this.state();
  
         Object.entries(state.channels).forEach(([id, channel]) => {
@@ -204,7 +204,7 @@ class Mixer extends EventTarget {
 
                 player.volume = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? state.volume * channel.volume * window.TokenAudioLevels[id] : state.volume * channel.volume : state.volume * channel.volume;
                 player.loop = channel.loop;
-                if(channel.currentTime != undefined){
+                if(channel.currentTime != undefined && !skipTime){
                     player.currentTime = channel.currentTime;
                 }
                 player.addEventListener("canplaythrough", (event) => {
@@ -496,9 +496,9 @@ class Mixer extends EventTarget {
      * @param {InputEvent} e
      */
     _masterSliderOnInput = (e) => {
-        Object.entries(this.channels()).forEach(([id, channel]) =>
-            this._players[id].volume = e.target.value * channel.volume
-        );
+        Object.entries(this.channels()).forEach(([id, channel]) =>{
+            this._players[id].volume  = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? e.target.value * channel.volume * window.TokenAudioLevels[id] : e.target.value * channel.volume : e.target.value * channel.volume;             
+        });
         if(window.YTPLAYER != undefined)
             window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
     }

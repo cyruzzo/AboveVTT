@@ -3157,14 +3157,15 @@ function checkAudioVolume(){
 			}			
 		}
 
-	
-		window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = calcVolume
+		let audioId = currAudioToken.options.audioChannel.audioId;
+		window.TokenAudioLevels[audioId] = calcVolume
 		
 		if(tokensToCheck.length == 0){
-			window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = 0;
+			window.TokenAudioLevels[audioId] = 0;
 			//set volume to 0
 		}
-		window.MIXER.syncPlayers();
+		let audioInMixer = window.MIXER.state().channels[audioId];
+		window.MIXER._players[audioId].volume  = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[audioId] != undefined ? window.MIXER.volume * audioInMixer.volume * window.TokenAudioLevels[audioId] : window.MIXER.volume * audioInMixer.volume : window.MIXER.volume * audioInMixer.volume;             
 		
 	}
 
