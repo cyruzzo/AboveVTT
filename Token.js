@@ -764,7 +764,7 @@ class Token {
 					}
 					else if(imageWidth > imageHeight) {
 						token.children('.token-image').css("--min-width", tokenWidth + 'px');
-						token.children('img').css("min-height", '');
+						token.children('.token-image').css("min-height", '');
 					}
 					else {
 						token.children('.token-image').css("--min-height", tokenHeight + 'px');
@@ -887,11 +887,11 @@ class Token {
 		
 		if (this.options.hidden == false || typeof this.options.hidden == 'undefined'){
 			console.log("Setting combat tracker opacity to 1.0")
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','1.0');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','1.0');
 		}
 		else {
 			console.log("Setting combat tracker opacity to 0.5")
-			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('img').css('opacity','0.5');
+			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('.Avatar_AvatarPortrait__2dP8u').css('opacity','0.5');
 		}
 		//this.options.ct_show = $("#combat_tracker_inside tr[data-target='" + this.options.id + "']").find('input').checked;
 		ct_update_popout();
@@ -1568,10 +1568,29 @@ class Token {
 				old.css("border", "");
 				old.removeClass("tokenselected");
 			}
-			const oldImage =  old.find(".token-image,[data-img]")
+			let oldImage =  old.find(".token-image,[data-img]")
 			// token uses an image for it's image
 			if (!this.options.imgsrc.startsWith("class")){
+
 				if(oldImage.attr("src")!=parse_img(this.options.imgsrc)){
+					let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length-1]
+					let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
+					let imgClass = oldImage.attr('class');
+					if(oldFileExtension !== newFileExtention){
+						oldImage.remove();
+						$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
+						let tokenImage;
+						if(newFileExtention == 'webm' || newFileExtention == 'mp4'  || newFileExtention == 'm4v'){
+							tokenImage = $("<video autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+						} 
+						else{
+							tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+						}
+						oldImage = tokenImage;
+						old.append(tokenImage);
+					}
+					
+				
 					oldImage.attr("src", parse_img(this.options.imgsrc));
 					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 				}

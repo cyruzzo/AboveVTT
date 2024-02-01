@@ -1562,11 +1562,11 @@ div#scene_properties form > div {
 .definitelyNotAToken.hasTooltip.VTTToken::after{
     display:none;
 }
-.definitelyNotAToken.ui-draggable-disabled>img{
+.definitelyNotAToken.ui-draggable-disabled>.token-image{
     cursor: default !important;
 }
 
-.token>img{
+.token>.token-image{
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;
@@ -5799,30 +5799,30 @@ input.max_hp[disabled]{
     bottom: -2px;
 }
 
-.token>img{
+.token>.token-image{
     --aura-width: max(2px, calc(3px / var(--window-zoom)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
 
-.token>img.token-image{
+.token>.token-image{
     min-height: var(--min-height) !important;
     min-width: var(--min-width) !important;
     max-height: var(--max-height) !important;
     max-width: var(--max-width) !important;
 }
-.token[data-notatoken]>img.token-image{
+.token[data-notatoken]>.token-image{
     min-height: calc(var(--min-height) / var(--scene-scale)) !important;
     min-width: calc(var(--min-width) / var(--scene-scale)) !important;
     max-height: calc(var(--max-height) / var(--scene-scale)) !important;
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
-.token[data-notatoken]>img{
+.token[data-notatoken]>.token-image{
     --aura-width: max(calc(2px / var(--scene-scale)), calc(3px / var(--window-zoom) / var(--scene-scale)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom) / var(--scene-scale)));
 }
-.token>.base~img{
+.token>.base~.token-image{
     filter: none;
     border: 0px;
     box-shadow: none;
@@ -5831,7 +5831,7 @@ input.max_hp[disabled]{
 .base.circle:after{
     border-radius: 50%;
 }
-.token>img.freeform {
+.token>.token-image.freeform {
     border: 0px;
     box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
@@ -5840,10 +5840,10 @@ input.max_hp[disabled]{
     --aura-width: max(1px, calc(0.5px / var(--window-zoom)));
     filter:  drop-shadow(#ffffff22 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px var(--aura-width)) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
 }
-.token[data-notatoken]>img.freeform {
+.token[data-notatoken]>.token-image.freeform {
     --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(0.5px / var(--scene-scale)) / var(--window-zoom)));
 }
-.token>img:not(.preserve-aspect-ratio) {
+.token>.token-image:not(.preserve-aspect-ratio) {
     object-fit: cover;
     width: 100%;
     height: 100%;
@@ -6575,16 +6575,16 @@ div.ddbc-tab-options--layout-pill>button{
 [data-notatoken]{
     border:none;
 }
-[data-notatoken]>img{
+[data-notatoken]>.token-image{
     width: var(--token-width) !important;
     height: var(--token-width) !important;
 }
-#tokens .token.definitelyNotAToken>img{
+#tokens .token.definitelyNotAToken>.token-image{
     opacity: 0;
 }
 
 body.preventSelectDefinitelyNot .token.lockedToken,
-body.preventSelectDefinitelyNot .token.lockedToken>img,
+body.preventSelectDefinitelyNot .token.lockedToken>.token-image,
 body.preventSelectDefinitelyNot .token.lockedToken>.token-image,
 body.preventSelectDefinitelyNot .token.lockedToken>.token-image>[data-img]{
     pointer-events: none !important;
