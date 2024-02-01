@@ -6392,6 +6392,10 @@ input.max_hp[disabled]{
     border-radius:20px !important;
     border: var(--token-border-width) solid #000 !important;
 }
+
+.video-listing{
+    width: 38px;
+}
 .body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;
@@ -8067,22 +8071,6 @@ button.journal-view-button.journal-button {
     -webkit-mask-size: contain;
     -webkit-mask-image: var(--mask-1);
 }
-[data-animation='lightning-fx'] .islight:before,
-.aura-element[data-animation='lightning-fx'][id*='aura_']:before {
-    animation: lightning 5s infinite linear;
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background: #ffffff;
-    -webkit-mask-size: contain;
-    mix-blend-mode: overlay;
-    -webkit-mask-image: var(--mask-2);
-}
-
-
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
@@ -8192,13 +8180,15 @@ button.journal-view-button.journal-button {
 
 @keyframes lightning {
     0%{
+        scale: 1;
         opacity: 0;
     }
     20%{
+        scale: 1;
         opacity: 0;
     }
     21%{
-        scale: 3.5;
+       scale: 3.5;
        opacity: 1;
     }
     25%{
@@ -8206,17 +8196,22 @@ button.journal-view-button.journal-button {
         scale: 3.5;
     }
     70%{
+        scale: 3.5;
         opacity: 0;
     }
     71%{
-        scale: 5.5;
+       scale: 5.5;
        opacity: 1;
     }
     75%{
-        scale: 5.5;
+        scale: 5.5
         opacity: 0;
     }
+    76%{
+        scale: 1
+    }
     100%{
+        scale: 1;
         opacity: 0%;
     }
 }
