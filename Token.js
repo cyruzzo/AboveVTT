@@ -2552,6 +2552,7 @@ class Token {
 			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
 			   		debounceLightChecks();
 			   	}
+			   	debounceAudioChecks();
 			   
 				
 			});
@@ -3121,7 +3122,7 @@ function checkAudioVolume(){
 		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
 		let attenuate = currAudioToken.options.audioChannel.attenuate;
 		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
-		let range = currAudioToken.options.audioChannel.range * window.CURRENT_SCENE_DATA.hpps;
+		let range = currAudioToken.options.audioChannel.range * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 
 
 		let currAudioPosition ={
