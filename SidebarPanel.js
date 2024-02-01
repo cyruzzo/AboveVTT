@@ -1397,6 +1397,12 @@ function build_sidebar_list_row(listItem) {
         $("#scenes-panel .player_scenes_button.selected-scene").removeClass("selected-scene");
         $(clickEvent.currentTarget).addClass("selected-scene");
         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id });
+        let playerScene = window.ScenesHandler.scenes.filter(d => d.id == listItem.id)[0];
+        if(playerScene.playlist != undefined){
+          if(playerScene.playlist != undefined && playerScene.playlist != 0){
+            window.MIXER.setPlaylist(playerScene.playlist)
+          }
+        }
         add_zoom_to_storage()
       });
       rowItem.append(switch_dm);

@@ -330,6 +330,9 @@ async function start_above_vtt_for_dm() {
 
   if (activeScene) {
     window.MB.handleScene(activeScene);
+    if(activeScene.data.playlist != undefined && activeScene.data.playlist != 0){
+      window.MIXER.setPlaylist(activeScene.data.playlist)
+    }
   }
 
   did_update_scenes();
