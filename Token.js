@@ -3193,9 +3193,6 @@ function checkAudioVolume(){
 		window.MIXER._players[audioId].volume  = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[audioId] != undefined ? window.MIXER.volume * audioInMixer.volume * window.TokenAudioLevels[audioId] : window.MIXER.volume * audioInMixer.volume : window.MIXER.volume * audioInMixer.volume;             
 		
 	}
-
-	
-
 	
 }
 

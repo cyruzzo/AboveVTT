@@ -242,6 +242,13 @@ class Mixer extends EventTarget {
             }
         }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
+        let audioTokens = $('.audio-token');
+        if(audioTokens.length > 0){
+            for(let i = 0; i < audioTokens.length; i++){
+                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
+            }
+        }
+        
         if(!noSync){
             this.syncPlayers();  
             this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
