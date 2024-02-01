@@ -391,6 +391,26 @@ function token_context_menu_expanded(tokenIds, e) {
 	const someTokensAreAoe = (uniqueAoeList.includes(true));
 
 	if(audioToken != undefined){
+		if(!window.DM)
+			return;
+		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
+		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
+		hiddenMenuButton.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			let hideAll = clickedItem.hasClass("some-active");
+			tokens.forEach(token => {
+				if (hideAll || token.options.hidden !== true) {
+					token.hide();
+				} else {
+					token.show();
+				}
+			});
+
+			clickedItem.removeClass("single-active all-active some-active active-condition");
+			clickedItem.addClass(determine_hidden_classname(tokenIds));
+		});
+		body.append(hiddenMenuButton);
+		
 		let attenuateButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden spatial-audio-off material-icons">Distance based volume</button>`)
 			attenuateButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
@@ -433,6 +453,28 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 
 		body.append(audioRangeInput);
+
+		if (tokens.length === 1) {
+			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
+			notesRow.hover(function (hoverEvent) {
+				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
+					flyout.append(build_notes_flyout_menu(tokenIds));
+				})
+			});
+			body.append(notesRow);
+		}
+	
+
+	
+		let optionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Options</div></div>`);
+		optionsRow.hover(function (hoverEvent) {
+			context_menu_flyout("options-flyout", hoverEvent, function(flyout) {
+				flyout.append(build_options_flyout_menu(tokenIds));
+				update_token_base_visibility(flyout);
+			});
+		});
+		body.append(optionsRow);
+	
 		$("#tokenOptionsPopup").addClass("moveableWindow");
 		$("#tokenOptionsPopup").draggable({
 				addClasses: false,
