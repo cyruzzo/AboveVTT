@@ -95,6 +95,8 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	let door = (tokenIds.length == 1) ? $(`[data-id='${tokenIds}'].door-button`) : undefined;
 
+	let audioToken = (tokenIds.length == 1 && window.TOKEN_OBJECTS[tokenIds].options.audioChannel)  ? $(`[data-id='${tokenIds}']`) : undefined;
+
 	if (tokens.length === 0 && door.length == 0) {
 		console.warn(`token_context_menu_expanded was called with ids: ${JSON.stringify(tokenIds)}, but no matching tokens could be found`);
 		return;
@@ -387,6 +389,89 @@ function token_context_menu_expanded(tokenIds, e) {
 	let uniqueAoeList = [...new Set(isAoeList)];
 	const allTokensAreAoe = (uniqueAoeList.length === 1 && uniqueAoeList[0] === true);
 	const someTokensAreAoe = (uniqueAoeList.includes(true));
+
+	if(audioToken != undefined){
+		let attenuateButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden spatial-audio-off material-icons">Distance based volume</button>`)
+			attenuateButton.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				
+				window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate;
+				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition context-menu-icon-hidden select-to-speak material-icons' : 'none-active context-menu-icon-hidden select-to-speak material-icons';
+				$(this).attr('class', `${classes}`)
+				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+			});
+
+
+		body.append(attenuateButton);
+		let wallsBlockedButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden select-to-speak material-icons">Blocked by Walls</button>`)
+			wallsBlockedButton.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				
+				window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked;
+				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked ? 'single-active active-condition context-menu-icon-hidden select-to-speak material-icons' : 'none-active context-menu-icon-hidden select-to-speak material-icons';
+				$(this).attr('class', `${classes}`)
+				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+			});
+
+		body.append(wallsBlockedButton);
+		let upsq = window.CURRENT_SCENE_DATA.upsq;
+		if (upsq === undefined || upsq.length === 0) {
+			upsq = "ft";
+		}
+		let audioRangeInput = $(`
+			<div class="token-image-modal-footer-select-wrapper" style="display:flex">
+ 				<div class="token-image-modal-footer-title">Range in ${upsq}</div>
+ 				<input type="number" min="${window.CURRENT_SCENE_DATA.fpsq / 2}" step="${window.CURRENT_SCENE_DATA.fpsq /2}"
+			 name="data-token-size-custom" value=${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.range} style="width: 3rem;">
+ 			</div>
+ 		`)
+		audioRangeInput.find('input').off().on("keyup focusout", function(clickEvent){
+			let clickedItem = $(this);
+			
+			window.TOKEN_OBJECTS[tokenIds].options.audioChannel.range = $(this).val();
+			window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+		});
+
+		body.append(audioRangeInput);
+		$("#tokenOptionsPopup").addClass("moveableWindow");
+		$("#tokenOptionsPopup").draggable({
+				addClasses: false,
+				scroll: false,
+				start: function () {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function () {
+					$('.iframeResizeCover').remove();
+
+				}
+			});
+		
+
+		if(e.touches?.length>0){
+			moveableTokenOptions.css("left", Math.max(e.touches[0].clientX - 230, 0) + 'px');
+			if($(moveableTokenOptions).height() + e.touches[0].clientY > window.innerHeight - 20) {
+				moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+			}
+			else {
+				moveableTokenOptions.css("top", e.touches[0].clientY - 10 + 'px');
+			}	
+			$(moveableTokenOptions).toggleClass('touch', true);
+
+			
+		}
+		else{
+			moveableTokenOptions.css("left", Math.max(e.clientX - 230, 0) + 'px');
+			if($(moveableTokenOptions).height() + e.clientY > window.innerHeight - 20) {
+				moveableTokenOptions.css("top", (window.innerHeight - $(moveableTokenOptions).height() - 20 + 'px'));
+			}
+			else {
+				moveableTokenOptions.css("top", e.clientY - 10 + 'px');
+			}	
+			$(moveableTokenOptions).toggleClass('touch', false);
+		}
+		return;
+	}
 
 	// stat block / character sheet
 

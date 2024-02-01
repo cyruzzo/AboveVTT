@@ -53,6 +53,10 @@ let debounceLightChecks = mydebounce(() => {
 		
 }, 20);
 
+let debounceAudioChecks = mydebounce(() => {
+	checkAudioVolume();
+}, 20)
+
 
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
@@ -1577,7 +1581,6 @@ class Token {
 				setTokenLight(old, this.options);
 				setTokenBase(old, this.options);
 				setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
-				setTokenAudio(this);
 				if(!(this.options.square) && !oldImage.hasClass('token-round')){
 					oldImage.addClass("token-round");
 				}
@@ -1886,7 +1889,9 @@ class Token {
 
 
 
-
+			if(this.options.audioChannel){
+				tok.toggleClass('audio-token', true);
+			}
 			tokenImage.css({
 				"max-height": this.sizeHeight(),
 				"max-width": this.sizeWidth()
@@ -2010,7 +2015,6 @@ class Token {
 
 
 			setTokenBase(tok, this.options);
-			setTokenAudio(this);
 			let click = {
 				x: 0,
 				y: 0
@@ -2069,6 +2073,7 @@ class Token {
 								delete window.orig_zoom;
 							}
 						}, 200)
+						debounceAudioChecks();
 					},
 				start: function (event) {
 					
@@ -2575,6 +2580,7 @@ class Token {
 			new Promise(() => this.update_dead_cross(token)),
 			new Promise(() => toggle_player_selectable(this, token)),
 			new Promise(debounceLightChecks),
+			new Promise(debounceAudioChecks)
 		]);
 		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image)').remove();
 
@@ -3069,10 +3075,88 @@ function token_health_aura(hpPercentage) {
 	return hexToRGB(percentToHEX(hpPercentage));
 }
 
-function setTokenAudio(token){
+function setTokenAudio(tokenOnMap, token){
 	if(token.options.audioChannel){
-		window.MIXER.addChannel(token.options.audioChannel);
+		let audioId = token.options.audioChannel?.audioId != undefined ? token.options.audioChannel.audioId : uuid();
+
+		if(window.MIXER.state().channels[audioId] != undefined ){
+			window.MIXER.updateChannel(audioId, token.options.audioChannel);
+		}else{
+			window.MIXER.addChannel(token.options.audioChannel, audioId);
+		}
+		
 	}
+}
+
+function checkAudioVolume(){
+	let audioTokens = $('.audio-token');
+	let tokensToCheck = [];
+
+
+
+	if(window.DM){
+		tokensToCheck = window.CURRENTLY_SELECTED_TOKENS;
+	}else{
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		for(let tokenId in window.TOKEN_OBJECTS){
+			if(tokenId.includes(window.PLAYER_ID) || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
+		  		tokensToCheck.push(tokenId)
+		}
+	}
+	let lightContext = window.lightInLos.getContext('2d')
+	for(let i=0; i< audioTokens.length; i++){
+		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
+		let attenuate = currAudioToken.options.audioChannel.attenuate;
+		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
+		let range = currAudioToken.options.audioChannel.range * window.CURRENT_SCENE_DATA.hpps;
+
+
+		let currAudioPosition ={
+			x: parseInt(currAudioToken.options.left.replace('px', '')) + currAudioToken.sizeWidth()/2,
+			y: parseInt(currAudioToken.options.top.replace('px', '')) + currAudioToken.sizeHeight()/2
+		}
+		for(let checkedTokenId in tokensToCheck){
+			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];
+
+			
+			let checkedTokenPosition ={
+				x: parseInt(checkedToken.options.left.replace('px', '')) + checkedToken.sizeWidth()/2,
+				y: parseInt(checkedToken.options.top.replace('px', '')) + checkedToken.sizeHeight()/2
+			}
+
+
+		  	let dx = checkedTokenPosition.x - currAudioPosition.x,
+		      	dy = checkedTokenPosition.y - currAudioPosition.y;
+		    let distanceApart = Math.sqrt(dx * dx + dy * dy) * window.CURRENT_SCENE_DATA.scale_factor
+		 	let inRange =  distanceApart <= range;
+
+		 	
+		 	
+		 	let calcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
+		 	
+
+			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), lightContext))
+
+			if(setAudio){
+				//set volume to calculated volume
+				currAudioToken.options.audioChannel.tokenVolume[window.PLAYER_ID] = calcVolume;
+			}
+			else{
+				currAudioToken.options.audioChannel.tokenVolume[window.PLAYER_ID] = 0;
+				//set volume to 0
+			};
+					
+		}
+		if(!window.DM){
+			currAudioToken.update_and_sync()
+		}
+		if(window.DM)
+			setTokenAudio($(audioTokens[i]), currAudioToken)
+	}
+
+	
+
+	
 }
 
 function setTokenAuras (token, options) {

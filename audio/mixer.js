@@ -200,7 +200,7 @@ class Mixer extends EventTarget {
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {        
-                player.volume = state.volume * channel.volume;
+                player.volume = channel.tokenVolume[window.PLAYER_ID] != undefined ? state.volume * channel.volume * channel.tokenVolume[window.PLAYER_ID] : state.volume * channel.volume;
                 player.loop = channel.loop;
                 if(channel.currentTime != undefined){
                     player.currentTime = channel.currentTime;
@@ -241,7 +241,7 @@ class Mixer extends EventTarget {
         }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
         if(!noSync){
-            this.syncPlayers();
+            this.syncPlayers();  
             this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
         }
 
@@ -410,9 +410,16 @@ class Mixer extends EventTarget {
      * Add a channel in the mixer
      * @param {Channel} channel
      */
-    addChannel(channel) {
+    addChannel(channel, audioId=false) {
         const state = this.state();
-        state.channels[uuid()] = channel;
+        if(audioId){      
+            state.channels[audioId] = channel;
+            window.TOKEN_OBJECTS[channel.token].options.audioChannel.audioId = audioId;
+        }
+        else{
+            state.channels[uuid()] = channel;
+        }
+
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }

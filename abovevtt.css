@@ -1413,6 +1413,15 @@ div#scene_properties form > div {
     padding: 2px 0px;
 }
 
+.spatial-audio-off.material-icons:before{
+    content:"\ebe8"; 
+    padding: 2px 0px;
+}
+#tokenOptionsContainer .select-to-speak.material-icons:before{
+    font-family: 'Material Symbols Outlined' !important;
+    content:"\f7cf";
+    padding: 2px 0px;
+}
 .door-lock.material-icons:before{
     content:"\e897"; 
     padding: 2px 0px;
@@ -8703,7 +8712,9 @@ li.audio-row:hover .channel-progress-bar-total
     background: #1b9af0 !important;
 }
 
-
+.token-image[src*='assets/icons/speaker.svg']{
+    filter: invert(1) drop-shadow(1px 1px 0px #000) !important;
+}
 #sounds-panel .channel-progress-bar-total{
     width: 35%;
 }
