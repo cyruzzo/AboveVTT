@@ -436,6 +436,10 @@ class Token {
 		let id = this.options.id;
 		let selector = "#tokens div[data-id='" + id + "']";
 		$(selector).remove();
+		if(window.TOKEN_OBJECTS[id]?.options?.audioChannel != undefined){
+			window.MIXER.deleteChannel(window.TOKEN_OBJECTS[id].options.audioChannel.audioId)
+		}
+
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
 		if(!is_player_id(this.options.id)){
