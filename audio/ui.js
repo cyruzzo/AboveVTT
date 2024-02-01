@@ -84,6 +84,12 @@ function init_mixer() {
             if(!channel?.src){
                 return;
             }
+            if(channel?.token){
+                if(window.TOKEN_OBJECTS[channel.token] == undefined){
+                    window.MIXER.deleteChannel(id);
+                    return;
+                }
+            }
             const item = document.createElement("li");
             item.className = "audio-row";
             let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
@@ -98,9 +104,21 @@ function init_mixer() {
 
             //item.append(window.MIXER.channelVolumeSlider(id), window.MIXER.channelProgressBar(id));
             let remove = $('<button class="channel-remove-button"">X</button>');
-            remove.off().on("click", function(){
-                window.MIXER.deleteChannel(id);
-            });
+            if(channel.token == undefined){
+                remove.off().on("click", function(){
+                    window.MIXER.deleteChannel(id);
+                });
+            }
+            else{
+                remove=$('<button class="channel-remove-button" title="Find Token" style="display:inline-block;"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+                //find.tooltip({show: { duration: 1000 }})
+                remove.off().on("click", function(){   
+                    if(channel.token in window.TOKEN_OBJECTS){
+                        window.TOKEN_OBJECTS[channel.token].highlight();        
+                    }
+                })
+            }
+           
             // repeat button
             let loop = $('<button class="channel-loop-button""></button>');
             let loop_svg = $(`<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M7 22 3 18 7 14 8.4 15.45 6.85 17H17V13H19V19H6.85L8.4 20.55ZM5 11V5H17.15L15.6 3.45L17 2L21 6L17 10L15.6 8.55L17.15 7H7V11Z"/></svg>`);
@@ -200,6 +218,8 @@ function init_mixer() {
                 playPauseMixer.toggleClass('pressed', true);
                 $('style#mixer-paused').remove();
             }    
+
+
             $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
 
             mixerChannels.append(item);
@@ -394,9 +414,34 @@ function init_trackLibrary() {
                 window.MIXER.addChannel(channel);
             });
 
+            let track_add_token = $('<button class="track-add-token-mixer"></button>');          
+            let add_token_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');               
+            track_add_token.append(add_token_svg);
+            track_add_token.on('click', function(){
+                const channel = new Channel(track.name, track.src);
+                channel.paused = false;
+                channel.loop = true;     
+                channel.range = 30;
+                channel.attenuate = true;
+                channel.wallsBlocked = true;
+                channel.tokenVolume = {};
+                let options = {
+                    ...default_options(),
+                    ...window.TOKEN_SETTINGS,
+                    tokenStyleSelect: 'noConstraint',
+                    hidden: true,
+                    imgsrc: `${window.EXTENSION_PATH}assets/icons/speaker.svg`,
+                    audioChannel: channel,
+                    name: channel.name
+                }
+
+                options.audioChannel.token = options.id;
+                place_token_in_center_of_view(options);
+            });
 
 
-            $(item).append(track_play_button, track_add_button); 
+
+            $(item).append(track_play_button, track_add_button, track_add_token); 
             trackList.append(item);
         });
     });

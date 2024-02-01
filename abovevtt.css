@@ -1413,6 +1413,15 @@ div#scene_properties form > div {
     padding: 2px 0px;
 }
 
+.spatial-audio-off.material-icons:before{
+    content:"\ebe8"; 
+    padding: 2px 0px;
+}
+#tokenOptionsContainer .select-to-speak.material-icons:before{
+    font-family: 'Material Symbols Outlined' !important;
+    content:"\f7cf";
+    padding: 2px 0px;
+}
 .door-lock.material-icons:before{
     content:"\e897"; 
     padding: 2px 0px;
@@ -8698,7 +8707,9 @@ li.audio-row:hover .channel-progress-bar-total
     background: #1b9af0 !important;
 }
 
-
+.token-image[src*='assets/icons/speaker.svg']{
+    filter: invert(1) drop-shadow(1px 1px 0px #000) !important;
+}
 #sounds-panel .channel-progress-bar-total{
     width: 35%;
 }
@@ -8834,7 +8845,8 @@ button.channel-loop-button{
 .add-track-ok-button,
 .add-track-cancel-button,
 .channel-remove-button,
-.track-add-to-mixer {
+.track-add-to-mixer,
+.track-add-token-mixer {
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -8859,7 +8871,8 @@ button.channel-loop-button{
 .add-track-ok-button:focus,
 .add-track-cancel-button:focus,
 .channel-remove-button:focus,
-.track-add-to-mixer:focus {
+.track-add-to-mixer:focus,
+.track-add-token-mixer:focus {
     outline: none;
 }
 
@@ -8872,7 +8885,8 @@ button.channel-loop-button{
 .add-track-ok-button:hover,
 .add-track-cancel-button:hover,
 .channel-remove-button:hover,
-.track-add-to-mixer:hover  {
+.track-add-to-mixer:hover,
+.track-add-token-mixer:hover  {
     cursor: pointer;
     background: rgb(245, 248, 250);
     border: 1px solid rgb(206, 217, 224);
@@ -8887,11 +8901,14 @@ button.channel-loop-button{
 .add-track-ok-button:active,
 .add-track-cancel-button:active,
 .channel-remove-button:active,
-.track-add-to-mixer:active {
+.track-add-to-mixer:active,
+.track-add-token-mixer:active {
     background-color: rgb(245, 248, 250);
     box-shadow: inset #000 1px 1px 3px 1px;
     transform: translate(1px, 2px) scale(0.8);
 }
+
+
 
 #mixerPlaylists ~ button#add-playlist:active, 
 #mixerPlaylists ~ button#remove-playlist:active{
