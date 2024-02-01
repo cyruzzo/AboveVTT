@@ -3103,7 +3103,7 @@ function checkAudioVolume(){
 	if(window.TokenAudioLevels == undefined){
 		window.TokenAudioLevels ={}
 	}
-
+	
 
 	if(window.DM){
 		let selectedTokens = $('.tokenselected');
@@ -3117,8 +3117,9 @@ function checkAudioVolume(){
 		  		tokensToCheck.push(tokenId)
 		}
 	}
-	let lightContext = window.lightInLos.getContext('2d')
+	let audioContext = window.moveOffscreenCanvasMask.getContext('2d')
 	for(let i=0; i< audioTokens.length; i++){
+		let calcVolume = 0;
 		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
 		let attenuate = currAudioToken.options.audioChannel.attenuate;
 		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
@@ -3146,21 +3147,19 @@ function checkAudioVolume(){
 
 		 	
 		 	
-		 	let calcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
+		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
 		 	
 
-			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), lightContext))
-
+			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), audioContext))
 			if(setAudio){
-				//set volume to calculated volume
-				window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = calcVolume
-			}
-			else{
-				window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = 0;
-				//set volume to 0
-			};
-					
+			//set volume to calculated volume
+				calcVolume = (tempCalcVolume > calcVolume) ? tempCalcVolume : calcVolume
+			}			
 		}
+
+	
+		window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = calcVolume
+		
 		if(tokensToCheck.length == 0){
 			window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = 0;
 			//set volume to 0
