@@ -1516,6 +1516,18 @@ class MessageBroker {
 					return;
 				}
 
+				let mixerState = window.MIXER.state();
+				for(let i in mixerState.channels){
+					if(mixerState.channels[i].token != undefined){
+						window.MIXER.deleteChannel(i);
+					}
+				}
+				let audioTokens = $('.audio-token');
+        if(audioTokens.length > 0){
+            for(let i = 0; i < audioTokens.length; i++){
+                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
+            }
+        }
 				ct_load({
 					loading: true,
 					current: $("#combat_area [data-current]").attr('data-target')

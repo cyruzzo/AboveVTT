@@ -53,6 +53,10 @@ let debounceLightChecks = mydebounce(() => {
 		
 }, 20);
 
+let debounceAudioChecks = mydebounce(() => {
+	checkAudioVolume();
+}, 20)
+
 
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
@@ -436,6 +440,7 @@ class Token {
 		let id = this.options.id;
 		let selector = "#tokens div[data-id='" + id + "']";
 		$(selector).remove();
+
 		if(window.TOKEN_OBJECTS[id]?.options?.audioChannel != undefined){
 			window.MIXER.deleteChannel(window.TOKEN_OBJECTS[id].options.audioChannel.audioId)
 		}
@@ -449,6 +454,8 @@ class Token {
 				localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
 			}
 		}
+
+
 		
 		$("#aura_" + id.replaceAll("/", "")).remove();
 		$(`.aura-element-container-clip[id='${id}']`).remove()
@@ -1600,7 +1607,6 @@ class Token {
 				setTokenLight(old, this.options);
 				setTokenBase(old, this.options);
 				setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
-
 				if(!(this.options.square) && !oldImage.hasClass('token-round')){
 					oldImage.addClass("token-round");
 				}
@@ -1917,7 +1923,9 @@ class Token {
 
 
 
-
+			if(this.options.audioChannel){
+				tok.toggleClass('audio-token', true);
+			}
 			tokenImage.css({
 				"max-height": this.sizeHeight(),
 				"max-width": this.sizeWidth()
@@ -2041,7 +2049,6 @@ class Token {
 
 
 			setTokenBase(tok, this.options);
-
 			let click = {
 				x: 0,
 				y: 0
@@ -2100,6 +2107,7 @@ class Token {
 								delete window.orig_zoom;
 							}
 						}, 200)
+						debounceAudioChecks();
 					},
 				start: function (event) {
 					
@@ -2570,6 +2578,8 @@ class Token {
 			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
 			   		debounceLightChecks();
 			   	}
+			   	debounceAudioChecks();
+			   
 				
 			});
 			
@@ -2591,7 +2601,8 @@ class Token {
 			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
-
+		    if(window.DM)
+				setTokenAudio(tok, this)
 
 			console.groupEnd()
 		}
@@ -2606,6 +2617,7 @@ class Token {
 			new Promise(() => this.update_dead_cross(token)),
 			new Promise(() => toggle_player_selectable(this, token)),
 			new Promise(debounceLightChecks),
+			new Promise(debounceAudioChecks)
 		]);
 		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image)').remove();
 
@@ -3098,6 +3110,91 @@ function token_health_aura(hpPercentage) {
 		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
 	return hexToRGB(percentToHEX(hpPercentage));
+}
+
+function setTokenAudio(tokenOnMap, token){
+	if(token.options.audioChannel){
+		let audioId = token.options.audioChannel?.audioId != undefined ? token.options.audioChannel.audioId : uuid();
+
+		if(window.MIXER.state().channels[audioId] == undefined ){
+			window.MIXER.addChannel(token.options.audioChannel, audioId);
+		}
+		
+	}
+}
+
+function checkAudioVolume(){
+	let audioTokens = $('.audio-token');
+	let tokensToCheck = [];
+	if(window.TokenAudioLevels == undefined){
+		window.TokenAudioLevels ={}
+	}
+	
+
+	if(window.DM){
+		let selectedTokens = $('.tokenselected');
+		for(let i=0; i<selectedTokens.length; i++){
+			tokensToCheck.push($(selectedTokens[i]).attr('data-id'))
+		}
+	}else{
+		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		for(let tokenId in window.TOKEN_OBJECTS){
+			if(tokenId.includes(window.PLAYER_ID) || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
+		  		tokensToCheck.push(tokenId)
+		}
+	}
+	let audioContext = window.moveOffscreenCanvasMask.getContext('2d')
+	for(let i=0; i< audioTokens.length; i++){
+		let calcVolume = 0;
+		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
+		let attenuate = currAudioToken.options.audioChannel.attenuate;
+		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
+		let range = currAudioToken.options.audioChannel.range * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+
+
+		let currAudioPosition ={
+			x: parseInt(currAudioToken.options.left.replace('px', '')) + currAudioToken.sizeWidth()/2,
+			y: parseInt(currAudioToken.options.top.replace('px', '')) + currAudioToken.sizeHeight()/2
+		}
+		for(let checkedTokenId in tokensToCheck){
+			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
+
+			
+			let checkedTokenPosition ={
+				x: parseInt(checkedToken.options.left.replace('px', '')) + checkedToken.sizeWidth()/2,
+				y: parseInt(checkedToken.options.top.replace('px', '')) + checkedToken.sizeHeight()/2
+			}
+
+
+		  	let dx = checkedTokenPosition.x - currAudioPosition.x,
+		      	dy = checkedTokenPosition.y - currAudioPosition.y;
+		    let distanceApart = Math.sqrt(dx * dx + dy * dy) * window.CURRENT_SCENE_DATA.scale_factor
+		 	let inRange =  distanceApart <= range;
+
+		 	
+		 	
+		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
+		 	
+
+			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), audioContext))
+			if(setAudio){
+			//set volume to calculated volume
+				calcVolume = (tempCalcVolume > calcVolume) ? tempCalcVolume : calcVolume
+			}			
+		}
+
+		let audioId = currAudioToken.options.audioChannel.audioId;
+		window.TokenAudioLevels[audioId] = calcVolume
+		
+		if(tokensToCheck.length == 0){
+			window.TokenAudioLevels[audioId] = 0;
+			//set volume to 0
+		}
+		let audioInMixer = window.MIXER.state().channels[audioId];
+		window.MIXER._players[audioId].volume  = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[audioId] != undefined ? window.MIXER.volume * audioInMixer.volume * window.TokenAudioLevels[audioId] : window.MIXER.volume * audioInMixer.volume : window.MIXER.volume * audioInMixer.volume;             
+		
+	}
+	
 }
 
 function setTokenAuras (token, options) {

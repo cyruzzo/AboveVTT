@@ -159,7 +159,7 @@ class Mixer extends EventTarget {
      * Syncs the mixer state from local storage into native Audio object
      * @param {boolean} play start playing unpaused channels
      */
-    syncPlayers(play = true) {
+    syncPlayers(play = true, skipTime=false) {
         const state = this.state();
  
         Object.entries(state.channels).forEach(([id, channel]) => {
@@ -200,9 +200,11 @@ class Mixer extends EventTarget {
             if (state.paused || channel.paused) {
                 player.pause();
             } else if (play) {        
-                player.volume = state.volume * channel.volume;
+     
+
+                player.volume = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? state.volume * channel.volume * window.TokenAudioLevels[id] : state.volume * channel.volume : state.volume * channel.volume;
                 player.loop = channel.loop;
-                if(channel.currentTime != undefined){
+                if(channel.currentTime != undefined && !skipTime){
                     player.currentTime = channel.currentTime;
                 }
                 player.addEventListener("canplaythrough", (event) => {
@@ -240,8 +242,15 @@ class Mixer extends EventTarget {
             }
         }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
+        let audioTokens = $('.audio-token');
+        if(audioTokens.length > 0){
+            for(let i = 0; i < audioTokens.length; i++){
+                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
+            }
+        }
+        
         if(!noSync){
-            this.syncPlayers();
+            this.syncPlayers();  
             this.dispatchEvent(new Event(mixerEvents.ON_CHANGE));
         }
 
@@ -410,9 +419,16 @@ class Mixer extends EventTarget {
      * Add a channel in the mixer
      * @param {Channel} channel
      */
-    addChannel(channel) {
+    addChannel(channel, audioId=false) {
         const state = this.state();
-        state.channels[uuid()] = channel;
+        if(audioId){      
+            state.channels[audioId] = channel;
+            window.TOKEN_OBJECTS[channel.token].options.audioChannel.audioId = audioId;
+        }
+        else{
+            state.channels[uuid()] = channel;
+        }
+
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
@@ -487,9 +503,9 @@ class Mixer extends EventTarget {
      * @param {InputEvent} e
      */
     _masterSliderOnInput = (e) => {
-        Object.entries(this.channels()).forEach(([id, channel]) =>
-            this._players[id].volume = e.target.value * channel.volume
-        );
+        Object.entries(this.channels()).forEach(([id, channel]) =>{
+            this._players[id].volume  = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? e.target.value * channel.volume * window.TokenAudioLevels[id] : e.target.value * channel.volume : e.target.value * channel.volume;             
+        });
         if(window.YTPLAYER != undefined)
             window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
     }
