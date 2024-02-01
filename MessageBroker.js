@@ -1471,6 +1471,7 @@ class MessageBroker {
 
 
 				
+				
         reset_canvas();
         
         apply_zoom_from_storage();
@@ -1521,13 +1522,7 @@ class MessageBroker {
 				});
 
 
-				
-				if(window.CURRENT_SCENE_DATA.playlist != undefined && window.CURRENT_SCENE_DATA.playlist != 0 && window.DM){
-					window.MIXER.setPlaylist(window.CURRENT_SCENE_DATA.playlist)
-				}
-				else{
-					window.MIXER.dispatchEvent(new Event('onChannelListChange'));
-				}
+
 				if(!window.DM) {
 				 	window.MB.sendMessage('custom/myVTT/syncmeup');
 					do_check_token_visibility();
