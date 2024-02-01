@@ -2544,6 +2544,7 @@ class Token {
 			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
 			   		debounceLightChecks();
 			   	}
+			   
 				
 			});
 			
@@ -2565,7 +2566,8 @@ class Token {
 			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
-
+		    if(window.DM)
+				setTokenAudio(tok, this)
 
 			console.groupEnd()
 		}
@@ -3079,9 +3081,7 @@ function setTokenAudio(tokenOnMap, token){
 	if(token.options.audioChannel){
 		let audioId = token.options.audioChannel?.audioId != undefined ? token.options.audioChannel.audioId : uuid();
 
-		if(window.MIXER.state().channels[audioId] != undefined ){
-			window.MIXER.updateChannel(audioId, token.options.audioChannel);
-		}else{
+		if(window.MIXER.state().channels[audioId] == undefined ){
 			window.MIXER.addChannel(token.options.audioChannel, audioId);
 		}
 		
@@ -3091,11 +3091,16 @@ function setTokenAudio(tokenOnMap, token){
 function checkAudioVolume(){
 	let audioTokens = $('.audio-token');
 	let tokensToCheck = [];
-
+	if(window.TokenAudioLevels == undefined){
+		window.TokenAudioLevels ={}
+	}
 
 
 	if(window.DM){
-		tokensToCheck = window.CURRENTLY_SELECTED_TOKENS;
+		let selectedTokens = $('.tokenselected');
+		for(let i=0; i<selectedTokens.length; i++){
+			tokensToCheck.push($(selectedTokens[i]).attr('data-id'))
+		}
 	}else{
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		for(let tokenId in window.TOKEN_OBJECTS){
@@ -3116,7 +3121,7 @@ function checkAudioVolume(){
 			y: parseInt(currAudioToken.options.top.replace('px', '')) + currAudioToken.sizeHeight()/2
 		}
 		for(let checkedTokenId in tokensToCheck){
-			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];
+			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
 
 			
 			let checkedTokenPosition ={
@@ -3139,19 +3144,20 @@ function checkAudioVolume(){
 
 			if(setAudio){
 				//set volume to calculated volume
-				currAudioToken.options.audioChannel.tokenVolume[window.PLAYER_ID] = calcVolume;
+				window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = calcVolume
 			}
 			else{
-				currAudioToken.options.audioChannel.tokenVolume[window.PLAYER_ID] = 0;
+				window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = 0;
 				//set volume to 0
 			};
 					
 		}
-		if(!window.DM){
-			currAudioToken.update_and_sync()
+		if(tokensToCheck.length == 0){
+			window.TokenAudioLevels[currAudioToken.options.audioChannel.audioId] = 0;
+			//set volume to 0
 		}
-		if(window.DM)
-			setTokenAudio($(audioTokens[i]), currAudioToken)
+		window.MIXER.syncPlayers();
+		
 	}
 
 	

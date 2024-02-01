@@ -396,7 +396,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				let clickedItem = $(this);
 				
 				window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate;
-				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition context-menu-icon-hidden select-to-speak material-icons' : 'none-active context-menu-icon-hidden select-to-speak material-icons';
+				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition context-menu-icon-hidden spatial-audio-off material-icons' : 'none-active context-menu-icon-hidden spatial-audio-off material-icons';
 				$(this).attr('class', `${classes}`)
 				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
 			});
