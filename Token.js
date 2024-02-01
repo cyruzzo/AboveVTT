@@ -1506,8 +1506,8 @@ class Token {
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
 				// NEED RESIZING
-				old.find("img").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
-				old.find("img").css({
+				old.find(".token-image").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
+				old.find(".token-image").css({
 					"max-width": this.sizeWidth(),
 					"max-height": this.sizeHeight()
 				});
@@ -1585,7 +1585,7 @@ class Token {
 					oldImage.addClass("token-round");
 				}
 
-				if(old.find("img").hasClass('token-round') && (this.options.square) ){
+				if(old.find(".token-image").hasClass('token-round') && (this.options.square) ){
 					oldImage.removeClass("token-round");
 				}
 				if(this.options.legacyaspectratio == false) {
@@ -1858,13 +1858,21 @@ class Token {
 				}
 				let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
 				let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
-				tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
+				let fileExtention = this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1];
+
+				if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+					tokenImage = $("<video autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+				} 
+				else{
+					tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+				}
+				
 				tok.css("--token-scale", imageScale);
 				tok.css("--token-rotation", `${rotation}deg`);
 				if(!(this.options.square)){
 					tokenImage.addClass("token-round");
 				}
-				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 				
 				
 				updateTokenSrc(this.options.imgsrc, tokenImage);
@@ -2030,7 +2038,7 @@ class Token {
 			let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 			tok.draggable({
-				handle: "img, [data-img]",
+				handle: "img, [data-img], .token-image",
 				stop:
 					function (event) {
 						//remove cover for smooth drag
@@ -3352,10 +3360,10 @@ function setTokenBase(token, options) {
 	$(`.token[data-id='${options.id}']>.base`).remove();
 	let base = $(`<div class='base'></div>`);
 	if(options.size < 150){
-		$(base).toggleClass("large-or-smaller-base", true);
+		base.toggleClass("large-or-smaller-base", true);
 	}
 	else{
-		$(base).toggleClass("large-or-smaller-base", false);
+		base.toggleClass("large-or-smaller-base", false);
 	}
 
 	if (options.tokenStyleSelect === "virtualMiniCircle") {
@@ -3367,7 +3375,7 @@ function setTokenBase(token, options) {
 		base.toggleClass('circle', false);
 	}
 	if (options.tokenStyleSelect !== "noConstraint") {
-		token.children("img").toggleClass("freeform", false);
+		token.children(".token-image").toggleClass("freeform", false);
 		token.toggleClass("freeform", false);
 	}
 
@@ -3375,16 +3383,16 @@ function setTokenBase(token, options) {
 		//Circle
 		options.square = false;
 		options.legacyaspectratio = true;
-		token.children("img").css("border-radius", "50%")
-		token.children("img").removeClass("preserve-aspect-ratio");
+		token.children(".token-image").css("border-radius", "50%")
+		token.children(".token-image").removeClass("preserve-aspect-ratio");
 		token.toggleClass("square", false);
 	}
 	else if(options.tokenStyleSelect === "square"){
 		//Square
 		options.square = true;
 		options.legacyaspectratio = true;
-		token.children("img").css("border-radius", "0");
-		token.children("img").removeClass("preserve-aspect-ratio");
+		token.children(".token-image").css("border-radius", "0");
+		token.children(".token-image").removeClass("preserve-aspect-ratio");
 		token.toggleClass("square", true);
 	}
 	else if(options.tokenStyleSelect === "noConstraint" || options.tokenStyleSelect === "definitelyNotAToken" || options.tokenStyleSelect === "labelToken" ) {
@@ -3406,9 +3414,9 @@ function setTokenBase(token, options) {
 			}
 		}
 
-		token.children("img").css("border-radius", "0");
-		token.children("img").addClass("preserve-aspect-ratio");
-		token.children("img").toggleClass("freeform", true);
+		token.children(".token-image").css("border-radius", "0");
+		token.children(".token-image").addClass("preserve-aspect-ratio");
+		token.children(".token-image").toggleClass("freeform", true);
 		token.toggleClass("freeform", true);
 	}
 	else if(options.tokenStyleSelect === "virtualMiniCircle"){
@@ -3416,16 +3424,16 @@ function setTokenBase(token, options) {
 		//Virtual Mini Circle
 		options.square = true;
 		options.legacyaspectratio = false;
-		token.children("img").css("border-radius", "0");
-		token.children("img").addClass("preserve-aspect-ratio");
+		token.children(".token-image").css("border-radius", "0");
+		token.children(".token-image").addClass("preserve-aspect-ratio");
 	}
 	else if(options.tokenStyleSelect === "virtualMiniSquare"){
 		$(`.token[data-id='${options.id}']`).prepend(base);
 		//Virtual Mini Square
 		options.square = true;
 		options.legacyaspectratio = false;
-		token.children("img").css("border-radius", "0");
-		token.children("img").addClass("preserve-aspect-ratio");
+		token.children(".token-image").css("border-radius", "0");
+		token.children(".token-image").addClass("preserve-aspect-ratio");
 	}
 
 	
@@ -3438,17 +3446,17 @@ function setTokenBase(token, options) {
 
 	if(options.tokenStyleSelect === "virtualMiniCircle" || options.tokenStyleSelect === "virtualMiniSquare"){
 		if(options.disableborder == true){
-			token.children(".base").toggleClass("noborder", true);
+			base.toggleClass("noborder", true);
 		}
 		else{
-			token.children(".base").toggleClass("noborder", false);
+			base.toggleClass("noborder", false);
 		}
 
 		if(options.disableaura == true){
-			token.children(".base").toggleClass("nohpaura", true);
+			base.toggleClass("nohpaura", true);
 		}
 		else{
-			token.children(".base").toggleClass("nohpaura", false);
+			base.toggleClass("nohpaura", false);
 		}
 		token.toggleClass("hasbase", true);
 	}
@@ -3457,31 +3465,31 @@ function setTokenBase(token, options) {
 	}
 
 
-	token.children(".base").toggleClass("border-color-base", false);
-	token.children(".base").toggleClass("grass-base", false);
-	token.children(".base").toggleClass("rock-base", false);
-	token.children(".base").toggleClass("tile-base", false);
-	token.children(".base").toggleClass("sand-base", false);
-	token.children(".base").toggleClass("water-base", false);
+	base.toggleClass("border-color-base", false);
+	base.toggleClass("grass-base", false);
+	base.toggleClass("rock-base", false);
+	base.toggleClass("tile-base", false);
+	base.toggleClass("sand-base", false);
+	base.toggleClass("water-base", false);
 
 
 	if(options.tokenBaseStyleSelect === "border-color"){
-		token.children(".base").toggleClass("border-color-base", true);
+		base.toggleClass("border-color-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "grass"){
-		token.children(".base").toggleClass("grass-base", true);
+		base.toggleClass("grass-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "tile"){
-		token.children(".base").toggleClass("tile-base", true);
+		base.toggleClass("tile-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "sand"){
-		token.children(".base").toggleClass("sand-base", true);
+		base.toggleClass("sand-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "rock"){
-		token.children(".base").toggleClass("rock-base", true);
+		base.toggleClass("rock-base", true);
 	}
 	else if(options.tokenBaseStyleSelect === "water"){
-		token.children(".base").toggleClass("water-base", true);
+		base.toggleClass("water-base", true);
 	}
 
 }
