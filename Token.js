@@ -3256,9 +3256,9 @@ function setTokenAuras (token, options) {
 function setTokenLight (token, options) {
 	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
 
-	const innerlightSize = options.light1.feet.length > 0 ? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerlightSize = options.light2.feet.length > 0 ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const visionSize = options.vision.feet.length > 0 ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerlightSize = options.light1.feet != undefined? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
 
