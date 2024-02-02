@@ -256,9 +256,9 @@ class WaypointManagerClass {
 		const xLength = Math.abs(snapPointXStart - snapPointXEnd);
 		const yLength = Math.abs(snapPointYStart - snapPointYEnd);
 		let distance = Math.max(xLength, yLength);
-		if(xLength > yLength){
+		if(xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1){
 			gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
-		} else if(xLength < yLength){
+		} else if(xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1){
 			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
 		}
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
