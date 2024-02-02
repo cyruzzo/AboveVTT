@@ -471,7 +471,7 @@ function inject_open5e_monster_list_items(listItems = open5e_monsters) {
 }
 
 /** Called on startup. It reads from localStorage, and initializes all the things needed for the TokensPanel to function properly */
-async function init_tokens_panel() {
+function init_tokens_panel() {
     console.log("init_tokens_panel");
 
     tokens_rootfolders = [
@@ -584,7 +584,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
     window.tokenListItems
         .filter(item => item.isTypeFolder())
         .sort(SidebarListItem.folderDepthComparator)
-        .forEach(async item => {
+        .forEach(item => {
             let row = build_sidebar_list_row(item);
             console.debug("appending item", item);
             $(`#${item.parentId} > .folder-item-list`).append(row);
@@ -598,7 +598,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
             && item.nameOrContainingFolderMatches(nameFilter)
         )
         .sort(SidebarListItem.sortComparator)
-        .forEach(async item => {
+        .forEach(item => {
             let row = build_sidebar_list_row(item);
             if (enableDraggable === true && !item.isTypeEncounter()) {
                 enable_draggable_token_creation(row);
@@ -1646,7 +1646,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
  * @param listItem {SidebarListItem} the item to configure
  * @param placedToken {undefined|Token} the token object that is on the scene
  */
-async function display_token_configuration_modal(listItem, placedToken = undefined) {
+ function display_token_configuration_modal(listItem, placedToken = undefined) {
     switch (listItem?.type) {
         case ItemType.MyToken:
         case ItemType.Monster:
@@ -1700,8 +1700,8 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
 
     // images
     let addImageUrl = async function (newImageUrl) {
-        const redraw = customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
-        const didAdd = customization.addAlternativeImage(newImageUrl);
+        const redraw = await customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
+        const didAdd = await customization.addAlternativeImage(newImageUrl);
         if (!didAdd) {
             return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
         }
@@ -2253,7 +2253,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
-            setTimeout(async function () {
+            setTimeout(function () {
                 // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
                 // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
                 // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
