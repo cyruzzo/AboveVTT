@@ -3149,7 +3149,7 @@ function checkAudioVolume(){
 		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
 		let attenuate = currAudioToken.options.audioChannel.attenuate;
 		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
-		let range = currAudioToken.options.audioChannel.range * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+		let range = currAudioToken.options.audioChannel.range/parseFloat(window.CURRENT_SCENE_DATA.fpsq) * parseFloat(window.CURRENT_SCENE_DATA.hpps);
 
 
 		let currAudioPosition ={
@@ -3168,7 +3168,7 @@ function checkAudioVolume(){
 
 		  	let dx = checkedTokenPosition.x - currAudioPosition.x,
 		      	dy = checkedTokenPosition.y - currAudioPosition.y;
-		    let distanceApart = Math.sqrt(dx * dx + dy * dy) * window.CURRENT_SCENE_DATA.scale_factor
+		    let distanceApart = Math.sqrt(dx * dx + dy * dy) 
 		 	let inRange =  distanceApart <= range;
 
 		 	
