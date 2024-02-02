@@ -653,19 +653,22 @@ function do_check_token_visibility() {
 
 			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
+			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
 
 			let inTruesight = false;
 			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
-			if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
+			if (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected)) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
 				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
+			}else if(dmSelected){
+				$(tokenSelector).css({'display': 'flex'});
 			}
 		}));
 	}
