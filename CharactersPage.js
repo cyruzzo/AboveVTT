@@ -415,7 +415,7 @@ function convertToRPGRoller(){
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
       })
-    $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       e.stopImmediatePropagation();
      
       let rollData = {}
@@ -423,7 +423,6 @@ function convertToRPGRoller(){
  
       rollData = getRollData(this)
       
-
 
       let msgdata = {}
       if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
