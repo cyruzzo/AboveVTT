@@ -342,10 +342,10 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undefined, entityId = undefined) {
 	let pressedButton = $(clickEvent.currentTarget).clone();
 	const expression = pressedButton.attr('data-exp');
-	const modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
+	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
 	let rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
-
+	modifier = modifier == 0 ? '+0' : modifier;
 
 	if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){     
 	    let fullExpression = `${expression}${modifier}`.replace(/\s/g, '')
