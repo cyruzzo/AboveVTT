@@ -1709,7 +1709,19 @@ async function display_token_configuration_modal(listItem, placedToken = undefin
         if (redraw) {
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
+           
+            let fileExtention = newImageUrl.split('.')[newImageUrl.split('.').length-1];
+
+            let rowImage;
+            let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
+            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+            } 
+            else{
+                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+            }      
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
+            rowImage.attr('src', parse_img(newImageUrl));
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
@@ -2844,7 +2856,21 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             customization.removeAllAlternativeImages();
             persist_token_customization(customization);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);                  
+           
+            let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
+
+            let rowImage;
+            let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
+            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+            } 
+            else{
+                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+            }      
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
+
+            rowImage.attr('src', listingImage);   
+
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             $(event.currentTarget).hide();
         }
