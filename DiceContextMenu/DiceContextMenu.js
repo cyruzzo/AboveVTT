@@ -16,8 +16,8 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         modifierString = "";
     }
     let menu = new DiceContextMenu();
-    if(window.DM)
-        menu.sendToSection();
+    
+    menu.sendToSection();
    
     if (expression === "1d20" || /^1d20[+-]([0-9]+)/g.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
@@ -29,7 +29,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     }
     menu.onRollClick(dcm => {
 
-        let rollWithIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
+        let rollWithIndex = dcm.checkedRowIndex(1);
 
         let diceRoll;
         if (rollWithIndex === 0) { // advantage
@@ -63,8 +63,8 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
     }
     let menu = new DiceContextMenu()
    
-        if(window.DM)
-            menu.sendToSection()
+        
+        menu.sendToSection()
         
         menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
@@ -72,23 +72,23 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
         )
         menu.onRollClick(dcm => {
 
-            let rollAsIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
+            let rollAsIndex = dcm.checkedRowIndex(1);
 
             let diceRoll;
             if (rollAsIndex === 0) {
                 // crit damage
                 let expressionParts = diceExpression.split("d");
                 let numberOfDice = parseInt(expressionParts[0]) * 2;
-                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1]}${modifierString}`)
+                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1]}`)
             } else if (rollAsIndex === 1) {
                 // flat roll
-                diceRoll = new DiceRoll(`${diceExpression}${modifierString}`);
+                diceRoll = new DiceRoll(`${diceExpression}`);
             } else { // not possible
                 console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
 
 
-            diceRoll.sendToOverride = dcm.checkedRow(0).title;
+            diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
             diceRoll.action = action;
             diceRoll.rollType = rollType;
             diceRoll.name = name;
@@ -121,8 +121,8 @@ class DiceContextMenu {
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
             s.row("Self", svg_self(), sendToText === "Self");
-            if (!window.DM) {
-                s.row("Dungeon Master", svg_dm(), sendToText === "DungeonMaster");
+            if (!window.DM && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true) {
+                s.row("Dungeon Master", svg_dm(), sendToText === "Dungeon Master");
             }
         })
     }

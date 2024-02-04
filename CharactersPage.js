@@ -394,27 +394,32 @@ function convertToRPGRoller(){
     if(urlSplit.length > 0) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
-    $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
-          e.stopPropagation();
-          e.preventDefault();
-          let rollData = {}
-          if($(this).hasClass('avtt-roll-formula-button')){
-             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
-             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
-          }
-          else{
-             rollData = getRollData(this)
-          }
-          
-          
-          if (rollData.rollType === "damage") {
-            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
-              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-          } else {
-            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
-              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-          }
-      })
+    if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+      $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+            e.stopPropagation();
+            e.preventDefault();
+            let rollData = {}
+            if($(this).hasClass('avtt-roll-formula-button')){
+               rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+               rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+            }
+            else{
+               rollData = getRollData(this)
+            }
+            
+            
+            if (rollData.rollType === "damage") {
+              damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+                .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+            } else {
+              standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+                .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+            }
+        })
+    }
+    else{
+      $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller')
+    }
     $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       e.stopImmediatePropagation();
      
@@ -600,6 +605,27 @@ function inject_dice_roll(element) {
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll);
   });
+  element.find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+      e.stopPropagation();
+      e.preventDefault();
+      let rollData = {}
+      if($(this).hasClass('avtt-roll-formula-button')){
+         rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+         rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+      }
+      else{
+         rollData = getRollData(this)
+      }
+      
+      
+      if (rollData.rollType === "damage") {
+        damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+          .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+      } else {
+        standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+          .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+      }
+  })
 }
 
 /**
