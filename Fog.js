@@ -875,7 +875,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
 		return;
 	}
-	if(window.CURRENT_SCENE_DATA.grid != '1'){
+	if(window.CURRENT_SCENE_DATA.grid != '1' && !window.WIZARDING){
 		return;
 	}
 	const gridCanvas = document.getElementById("grid_overlay");
