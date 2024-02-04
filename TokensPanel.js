@@ -1755,7 +1755,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             label: "Video Token",
             type: 'toggle',
             options: [
-                { value: true, label: 'Enabled', description: "Token is using a video file for an image (webm, mp4, m4v, etc.) Use this if the URL does not have the file extention at the end." },
+                { value: true, label: 'Enabled', description: "Token is using a video file for an image. Use this if the URL does not have the file extention at the end (webm, mp4, m4v, etc.)." },
                 { value: false, label: 'Disabled', description: "The Token is using an image file for it's image (png, jpg, gif, etc.)" }
             ],
             defaultValue: false
