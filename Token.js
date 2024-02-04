@@ -1607,6 +1607,10 @@ class Token {
 				setTokenLight(old, this.options);
 				setTokenBase(old, this.options);
 				setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
+				if(this.options.audioChannel){
+					setAudioAura(old, this.options)
+				}
+				
 				if(!(this.options.square) && !oldImage.hasClass('token-round')){
 					oldImage.addClass("token-round");
 				}
@@ -1925,6 +1929,8 @@ class Token {
 
 			if(this.options.audioChannel){
 				tok.toggleClass('audio-token', true);
+				tok.append(`<div class='audio-radius'>`);
+				setAudioAura(tok, this.options)
 			}
 			tokenImage.css({
 				"max-height": this.sizeHeight(),
@@ -3196,6 +3202,25 @@ function checkAudioVolume(){
 	}
 	
 }
+
+function setAudioAura (token, options){
+		
+		const auraRadius = parseFloat(options.audioChannel.range) / parseInt(window.CURRENT_SCENE_DATA.fpsq) * window.CURRENT_SCENE_DATA.hpps;
+		const auraBg = `radial-gradient(transparent ${auraRadius+(parseInt(options.size)/2)-4}px, #fff ${auraRadius+(parseInt(options.size)/2)-4}px ${auraRadius+(parseInt(options.size)/2)}px);`;
+		const totalSize = parseInt(options.size) + (2 * auraRadius);
+		const absPosOffset = (options.size - totalSize) / 2;
+		const auraStyles = `width:${totalSize}px;
+							height:${totalSize}px;
+							left:${absPosOffset}px;
+							top:${absPosOffset}px;
+							background-image:${auraBg};
+							filter: drop-shadow(2px 4px 0px black)
+							`;
+
+		token.find('.audio-radius').attr('style', auraStyles)
+
+}
+
 
 function setTokenAuras (token, options) {
 	if (!options.aura1) return;
