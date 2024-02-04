@@ -600,6 +600,27 @@ function inject_dice_roll(element) {
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll);
   });
+  element.find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+      e.stopPropagation();
+      e.preventDefault();
+      let rollData = {}
+      if($(this).hasClass('avtt-roll-formula-button')){
+         rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+         rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+      }
+      else{
+         rollData = getRollData(this)
+      }
+      
+      
+      if (rollData.rollType === "damage") {
+        damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+          .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+      } else {
+        standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+          .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+      }
+  })
 }
 
 /**
