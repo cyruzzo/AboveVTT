@@ -63,8 +63,8 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
     }
     let menu = new DiceContextMenu()
    
-        if(window.DM)
-            menu.sendToSection()
+        
+        menu.sendToSection()
         
         menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
@@ -79,10 +79,10 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
                 // crit damage
                 let expressionParts = diceExpression.split("d");
                 let numberOfDice = parseInt(expressionParts[0]) * 2;
-                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1]}${modifierString}`)
+                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1]}`)
             } else if (rollAsIndex === 1) {
                 // flat roll
-                diceRoll = new DiceRoll(`${diceExpression}${modifierString}`);
+                diceRoll = new DiceRoll(`${diceExpression}`);
             } else { // not possible
                 console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
@@ -121,9 +121,6 @@ class DiceContextMenu {
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
             s.row("Self", svg_self(), sendToText === "Self");
-            if (!window.DM) {
-                s.row("Dungeon Master", svg_dm(), sendToText === "DungeonMaster");
-            }
         })
     }
 
