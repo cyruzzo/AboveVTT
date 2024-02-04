@@ -1714,7 +1714,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
-            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
                 rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
             } 
             else{
@@ -1746,6 +1746,44 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
         inputWrapper.append(imageUrlInput);
     }
+
+
+
+    if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
+        const videoTokenSetting = {
+            name: "videoToken",
+            label: "Video Token",
+            type: 'toggle',
+            options: [
+                { value: true, label: 'Enabled', description: "Token is using a video file for an image (webm, mp4, m4v, etc.) Use this if the URL does not have the file extention at the end." },
+                { value: false, label: 'Disabled', description: "The Token is using an image file for it's image (png, jpg, gif, etc.)" }
+            ],
+            defaultValue: false
+        };
+        const isVideoToken = (customization?.tokenOptions?.videoToken === true);
+        const videoToggle =  build_toggle_input(videoTokenSetting, isVideoToken, function (isVideoKey, isVideoValue) {
+            customization.setTokenOption(isVideoKey, isVideoValue);
+            persist_token_customization(customization);     
+            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            
+            let rowImage;
+            let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
+            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
+            
+            let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
+            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || isVideoValue){
+                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+            } 
+            else{
+                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+            }      
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
+            rowImage.attr('src', parse_img(listingImage));
+        });
+        inputWrapper.append(videoToggle);
+    }
+
+
 
     if(!listItem.isTypePC()){
         let has_note = (customization.id in window.JOURNAL.notes);
@@ -2861,7 +2899,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
-            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
                 rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
             } 
             else{
@@ -2914,7 +2952,7 @@ function display_change_image_modal(placedToken) {
     alternativeImages.forEach(imgUrl => {
         let fileExtention = imgUrl.split('.')[imgUrl.split('.').length-1];
         let html;
-        if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+        if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || placedToken?.options.videoToken == true){
             html = $(`<video muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);     
         } else{
             html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
