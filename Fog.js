@@ -253,8 +253,10 @@ class WaypointManagerClass {
 			var unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
-		const xLength = Math.abs(snapPointXStart - snapPointXEnd);
-		const yLength = Math.abs(snapPointYStart - snapPointYEnd);
+		const xAdjustment = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
+		const yAdjustment = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
+		const xLength = Math.abs(snapPointXStart - snapPointXEnd)/xAdjustment;
+		const yLength = Math.abs(snapPointYStart - snapPointYEnd)/yAdjustment;
 		let distance = Math.max(xLength, yLength);
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
 		if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
