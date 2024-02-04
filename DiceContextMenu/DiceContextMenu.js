@@ -29,7 +29,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     }
     menu.onRollClick(dcm => {
 
-        let rollWithIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
+        let rollWithIndex = dcm.checkedRowIndex(1);
 
         let diceRoll;
         if (rollWithIndex === 0) { // advantage
@@ -72,7 +72,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
         )
         menu.onRollClick(dcm => {
 
-            let rollAsIndex = (window.DM) ? dcm.checkedRowIndex(1) : dcm.checkedRowIndex(0);
+            let rollAsIndex = dcm.checkedRowIndex(1);
 
             let diceRoll;
             if (rollAsIndex === 0) {
@@ -88,7 +88,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             }
 
 
-            diceRoll.sendToOverride = dcm.checkedRow(0).title;
+            diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
             diceRoll.action = action;
             diceRoll.rollType = rollType;
             diceRoll.name = name;
@@ -121,6 +121,9 @@ class DiceContextMenu {
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
             s.row("Self", svg_self(), sendToText === "Self");
+            if (!window.DM && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true) {
+                s.row("Dungeon Master", svg_dm(), sendToText === "Dungeon Master");
+            }
         })
     }
 
