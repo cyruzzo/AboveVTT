@@ -803,11 +803,13 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 
 
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
-		for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
-		    drawHexagon(x, y);
-		  }
-		}		
+		if(drawGrid == 1 || window.WIZARDING){
+			for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+			   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+			    drawHexagon(x, y);
+			  }
+			}	
+		}	
 		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
 		let hexHeight = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
@@ -816,10 +818,12 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		}
 	}
 	else{
-		for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
-		    drawHexagon(x, y);
-		  }
+		if(drawGrid == 1 || window.WIZARDING){
+			for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+			   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+			    drawHexagon(x, y);
+			  }
+			}
 		}
 		let hexWidth = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		let hexHeight = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
