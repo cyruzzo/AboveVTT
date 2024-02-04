@@ -79,7 +79,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
                 // crit damage
                 let expressionParts = diceExpression.split("d");
                 let numberOfDice = parseInt(expressionParts[0]) * 2;
-                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1]}`)
+                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1].split(/(?=[+-])|(?<=[+-])/g)[0]}${modifierString}`)
             } else if (rollAsIndex === 1) {
                 // flat roll
                 diceRoll = new DiceRoll(`${diceExpression}`);
