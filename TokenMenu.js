@@ -2352,7 +2352,7 @@ function build_options_flyout_menu(tokenIds) {
 			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
 				tokens.forEach(token => {
 					token.options[name] = newValue;
-					token.place_sync_persist();
+					token.place_sync_persist(true);
 				});
 			});
 			body.append(inputWrapper);

@@ -1573,11 +1573,11 @@ class Token {
 			// token uses an image for it's image
 			if (!this.options.imgsrc.startsWith("class")){
 
-				if(oldImage.attr("src")!=parse_img(this.options.imgsrc)){
+				if(oldImage.attr("src")!=parse_img(this.options.imgsrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
 					let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length-1]
 					let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
 					let imgClass = oldImage.attr('class');
-					if(oldFileExtension !== newFileExtention){
+					if(oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken){
 						oldImage.remove();
 						$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
 						let tokenImage;
@@ -1590,8 +1590,8 @@ class Token {
 						oldImage = tokenImage;
 						old.append(tokenImage);
 					}
+					window.videoTokenOld[this.options.id] = this.options.videoToken;
 					
-				
 					oldImage.attr("src", parse_img(this.options.imgsrc));
 					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 				}
@@ -1936,7 +1936,11 @@ class Token {
 				"max-height": this.sizeHeight(),
 				"max-width": this.sizeWidth()
 			});
-		
+			if(window.videoTokenOld == undefined){
+				window.videoTokenOld = {};
+			}
+			window.videoTokenOld[this.options.id] = this.options.videoToken;
+
 
 			tok.attr("data-id", this.options.id);
 
