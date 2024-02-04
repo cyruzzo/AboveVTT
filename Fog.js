@@ -807,7 +807,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 
 
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
-		if(drawGrid == 1){
+		if(drawGrid == 1 || window.WIZARDING){
 			for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
 			   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
 			    drawHexagon(x, y);
@@ -815,6 +815,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 			}	
 		}
 			
+
 		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
 		let hexHeight = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
@@ -823,7 +824,7 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		}
 	}
 	else{
-		if(drawGrid == 1){
+		if(drawGrid == 1 || window.WIZARDING){
 			for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
 			   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
 			    drawHexagon(x, y);
@@ -872,6 +873,9 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	if(window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1){
 		let type = (window.CURRENT_SCENE_DATA.gridType == 2) ? false : true;
 		redraw_hex_grid(hpps, vpps, offsetX, offsetY, color, lineWidth, subdivide, dash, type)
+		return;
+	}
+	if(window.CURRENT_SCENE_DATA.grid != '1'){
 		return;
 	}
 	const gridCanvas = document.getElementById("grid_overlay");
