@@ -16,8 +16,8 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
         modifierString = "";
     }
     let menu = new DiceContextMenu();
-    if(window.DM)
-        menu.sendToSection();
+    
+    menu.sendToSection();
    
     if (expression === "1d20" || /^1d20[+-]([0-9]+)/g.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
