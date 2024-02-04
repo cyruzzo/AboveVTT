@@ -256,12 +256,13 @@ class WaypointManagerClass {
 		const xLength = Math.abs(snapPointXStart - snapPointXEnd);
 		const yLength = Math.abs(snapPointYStart - snapPointYEnd);
 		let distance = Math.max(xLength, yLength);
-		if(xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1){
+		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
+		if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
 			gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
-		} else if(xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1){
+		} else if((xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean' )|| (window.CURRENT_SCENE_DATA.gridType == 3 && rulerType == 'euclidean')){
 			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
 		}
-		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
+		
 
 		const eucDistance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
 		distance = Math.round(distance / gridSize);
@@ -653,19 +654,22 @@ function do_check_token_visibility() {
 
 			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
+			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
 
 			let inTruesight = false;
 			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
-			if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
+			if (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected)) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
 				$(tokenSelector).css({'opacity': 1, 'display': 'flex'});
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					$(auraSelector).show();
+			}else if(dmSelected){
+				$(tokenSelector).css({'display': 'flex'});
 			}
 		}));
 	}
@@ -777,7 +781,7 @@ function clear_grid(){
 	const gridContext = gridCanvas.getContext("2d");
 	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 }
-function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true){
+function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
 	const gridCanvas = document.getElementById("grid_overlay");
 	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
 	gridCanvas.height = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
@@ -809,7 +813,9 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 			    drawHexagon(x, y);
 			  }
 			}	
-		}	
+		}
+			
+
 		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
 		let hexHeight = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
@@ -1111,7 +1117,7 @@ function reset_canvas() {
 
 	window.temp_canvas = document.getElementById("temp_overlay");;
 	window.temp_context = window.temp_canvas.getContext("2d");
-	if (window.CURRENT_SCENE_DATA && (window.CURRENT_SCENE_DATA.grid == "1" || window.WIZARDING) && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
+	if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.hpps > 10 && window.CURRENT_SCENE_DATA.vpps > 10) {
 		//alert(window.CURRENT_SCENE_DATA.hpps + " "+ window.CURRENT_SCENE_DATA.vpps);
 		if(window.WIZARDING){
 			$("#VTT").css("--scene-scale", 1)
@@ -1131,7 +1137,7 @@ function reset_canvas() {
 		}
 		//alert('inizio 1');
 
-		if (window.CURRENT_SCENE_DATA.grid == "1" && !window.WIZARDING) {
+		if (!window.WIZARDING) {
 			redraw_grid()
 		}
 		//alert('sopravvissuto');
