@@ -201,7 +201,14 @@ class Mixer extends EventTarget {
                 player.pause();
             } else if (play) {        
      
-
+                if(channel.token){
+                    if(window.TokenAudioLevels == undefined){
+                        window.TokenAudioLevels = {}
+                    }
+                    if(window.TokenAudioLevels[id] == undefined){
+                        window.TokenAudioLevels[id] = 0;
+                    }
+                }
                 player.volume = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? state.volume * channel.volume * window.TokenAudioLevels[id] : state.volume * channel.volume : state.volume * channel.volume;
                 player.loop = channel.loop;
                 if(channel.currentTime != undefined && !skipTime){

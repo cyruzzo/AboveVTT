@@ -3130,6 +3130,10 @@ function setTokenAudio(tokenOnMap, token){
 		let audioId = token.options.audioChannel?.audioId != undefined ? token.options.audioChannel.audioId : uuid();
 
 		if(window.MIXER.state().channels[audioId] == undefined ){
+			if(window.TokenAudioLevels == undefined){
+				window.TokenAudioLevels = {}
+			}
+			window.TokenAudioLevels[audioId] = 0;
 			window.MIXER.addChannel(token.options.audioChannel, audioId);
 		}
 		
