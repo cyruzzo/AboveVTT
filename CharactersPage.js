@@ -599,8 +599,7 @@ function inject_dice_roll(element) {
   element.append(updatedInnerHtml);
   element.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
     clickEvent.stopPropagation();
-    if(window.sendToTab != undefined)
-      return;
+  
     const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
     const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
     window.diceRoller.roll(diceRoll);
