@@ -4743,7 +4743,7 @@ function redraw_light(){
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
 
-			if(window.lightAuraClipPolygon[auraId]){	
+			if((window.lightAuraClipPolygon[auraId] && (!window.SelectedTokenVision || selectedIds.length == 0)) || (window.SelectedTokenVision && window.lightAuraClipPolygon[auraId] && found)){	
 				lightInLosContext.globalCompositeOperation='source-over';
 				lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 			}
@@ -4761,7 +4761,10 @@ function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
+ 				
 
+ 			
+ 				
 				if(!window.DM || window.SelectedTokenVision){
 					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
 						tempDarkvisionCtx.globalCompositeOperation='source-over';
