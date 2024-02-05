@@ -496,7 +496,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				window.all_token_objects[token.options.id].options.init = init.val()
 				window.all_token_objects[token.options.id].sync = mydebounce(function(e) {				
 					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
-				}, 500);
+				}, 10);
 			
 				token.options.init = init.val();
 				if(!!window.TOKEN_OBJECTS[token.options.id]){
@@ -845,7 +845,7 @@ function ct_load(data=null){
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 					window.all_token_objects[data[i]['data-target']].sync = mydebounce(function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', this.options);
-					}, 500);
+					}, 10);
 				}
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
