@@ -2352,7 +2352,7 @@ function build_options_flyout_menu(tokenIds) {
 			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
 				tokens.forEach(token => {
 					token.options[name] = newValue;
-					token.place_sync_persist();
+					token.place_sync_persist(true);
 				});
 			});
 			body.append(inputWrapper);
@@ -2908,7 +2908,7 @@ function add_to_quick_roll_menu(token){
 	let img;
 	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
 
-	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v'){
+	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
 		img = $(`<video muted width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
 	} 
 	else{

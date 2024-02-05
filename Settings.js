@@ -240,6 +240,16 @@ function token_setting_options() {
 				{ value: false, label: 'Disabled', description: "Token line of sight will be disabled and token vision/light can not be used." }
 			],
 			defaultValue: true
+		},
+		{
+			name: "videoToken",
+			label: "Video Token",
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Enabled', description: "Token is using a video file for an image (webm, mp4, m4v, etc.) Use this if the URL does not have the file extention at the end." },
+				{ value: false, label: 'Disabled', description: "The Token is using an image file for it's image (png, jpg, gif, etc.)" }
+			],
+			defaultValue: false
 		}
 	];
 }
