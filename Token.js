@@ -1939,7 +1939,7 @@ class Token {
 			if(window.videoTokenOld == undefined){
 				window.videoTokenOld = {};
 			}
-			if(this.options.videoToken != undefined){
+			if(this.options.videoToken == true){
 				window.videoTokenOld[this.options.id] = this.options.videoToken;
 			}
 			
