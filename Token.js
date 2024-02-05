@@ -1939,7 +1939,10 @@ class Token {
 			if(window.videoTokenOld == undefined){
 				window.videoTokenOld = {};
 			}
-			window.videoTokenOld[this.options.id] = this.options.videoToken;
+			if(this.options.videoToken != undefined){
+				window.videoTokenOld[this.options.id] = this.options.videoToken;
+			}
+			
 
 
 			tok.attr("data-id", this.options.id);
