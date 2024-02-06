@@ -4746,10 +4746,12 @@ function redraw_light(){
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
 
-			if((window.lightAuraClipPolygon[auraId] && (!window.SelectedTokenVision || selectedIds.length == 0)) || (window.SelectedTokenVision && window.lightAuraClipPolygon[auraId] && found)){	
+			if(window.lightAuraClipPolygon[auraId]?.canvas != undefined){
 				lightInLosContext.globalCompositeOperation='source-over';
 				lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 			}
+			
+			
 
 
 
@@ -4931,7 +4933,10 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	let blackVision = (window.TOKEN_OBJECTS[auraId].options.vision.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
 	let lightRadius =((parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)*blackLight1)+(parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
-	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : ((window.DM && $(`.tokenselected[data-id='${auraId}']`).length>0) || window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined)) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
+	
+	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0)
+
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || !window.SelectedTokenVision && window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] != undefined){
