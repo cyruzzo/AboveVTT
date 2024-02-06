@@ -95,7 +95,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	let door = (tokenIds.length == 1) ? $(`[data-id='${tokenIds}'].door-button`) : undefined;
 
-	let audioToken = (tokenIds.length == 1 && window.TOKEN_OBJECTS[tokenIds].options.audioChannel)  ? $(`[data-id='${tokenIds}']`) : undefined;
+	
 
 	if (tokens.length === 0 && door.length == 0) {
 		console.warn(`token_context_menu_expanded was called with ids: ${JSON.stringify(tokenIds)}, but no matching tokens could be found`);
@@ -384,6 +384,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		return;
 	}
 
+	let audioToken = (tokenIds.length == 1 && window.TOKEN_OBJECTS[tokenIds]?.options?.audioChannel) ? $(`[data-id='${tokenIds}']`) : undefined;
 	// Aoe tokens are treated differently from everything else so we need to check this more often
 	let isAoeList = tokens.map(t => t.isAoe());
 	let uniqueAoeList = [...new Set(isAoeList)];
