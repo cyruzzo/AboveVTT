@@ -259,11 +259,14 @@ class WaypointManagerClass {
 		const yLength = Math.abs(snapPointYStart - snapPointYEnd)/yAdjustment;
 		let distance = Math.max(xLength, yLength);
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
-		if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
-			gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
-		} else if((xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean' )|| (window.CURRENT_SCENE_DATA.gridType == 3 && rulerType == 'euclidean')){
-			gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
+		if(window.CURRENT_SCENE_DATA.gridType != undefined){
+			if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
+				gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
+			} else if((xLength < yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean' )|| (window.CURRENT_SCENE_DATA.gridType == 3 && rulerType == 'euclidean')){
+				gridSize = window.hexGridSize.height/window.CURRENT_SCENE_DATA.scale_factor;
+			}
 		}
+		
 		
 
 		const eucDistance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
