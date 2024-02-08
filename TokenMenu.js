@@ -424,6 +424,38 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 			body.append(groupTokens);
 		}
+		let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
+		let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
+
+
+		body.append(toTopMenuButton);
+		body.append(toBottomMenuButton);
+
+		toTopMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff >= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = tokenzindexdiff + 1;
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
+
+		toBottomMenuButton.off().on("click", function(tokenIds){
+			tokens.forEach(token => {			
+				$(".token").each(function(){	
+					let tokenId = $(this).attr('data-id');	
+					let tokenzindexdiff = window.TOKEN_OBJECTS[tokenId].options.zindexdiff;
+					if (tokenzindexdiff <= window.TOKEN_OBJECTS[token.options.id].options.zindexdiff && tokenId != token.options.id) {
+						window.TOKEN_OBJECTS[token.options.id].options.zindexdiff = Math.max(tokenzindexdiff - 1, -5000);
+					}		
+				});
+				token.place_sync_persist();
+			});
+		});
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
 		hiddenMenuButton.off().on("click", function(clickEvent){
