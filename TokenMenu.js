@@ -394,7 +394,36 @@ function token_context_menu_expanded(tokenIds, e) {
 	if(audioToken != undefined){
 		if(!window.DM)
 			return;
-
+		if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
+			let addButtonInternals = `Group Tokens<span class="material-icons add-link"></span>`;
+			let removeButtonInternals = `Remove From Group<span class="material-icons link-off"></span>`;
+			let groupTokens = $(`<button class='${determine_grouped_classname(tokenIds)} context-menu-icon-grouped material-icons'></button>`);
+			if (groupTokens.hasClass('single-active')) {
+				// they are all in a group. Make it a remove button
+				groupTokens.addClass("remove-from-group");
+				groupTokens.html(removeButtonInternals);
+			} else {
+				// if any are not in the combat tracker, make it an add button.
+				groupTokens.addClass("add-to-group");
+				groupTokens.html(addButtonInternals);
+			}
+			groupTokens.off().on("click", function(clickEvent){
+				let clickedItem = $(this);
+				let groupAll = clickedItem.hasClass("some-active");
+				let group = uuid();
+				tokens.forEach(token => {
+					if (groupAll || clickedItem.hasClass('add-to-group')) {
+						token.options.groupId = group;
+					} else {
+						token.options.groupId = undefined;
+					}
+					token.place_sync_persist();
+				});
+				clickedItem.removeClass("single-active all-active some-active active-condition");
+				clickedItem.addClass(determine_grouped_classname(tokenIds));
+			});
+			body.append(groupTokens);
+		}
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
 		hiddenMenuButton.off().on("click", function(clickEvent){
@@ -465,36 +494,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 			body.append(notesRow);
 		}
-		if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
-			let addButtonInternals = `Group Tokens<span class="material-icons add-link"></span>`;
-			let removeButtonInternals = `Remove From Group<span class="material-icons link-off"></span>`;
-			let groupTokens = $(`<button class='${determine_grouped_classname(tokenIds)} context-menu-icon-grouped material-icons'></button>`);
-			if (groupTokens.hasClass('single-active')) {
-				// they are all in a group. Make it a remove button
-				groupTokens.addClass("remove-from-group");
-				groupTokens.html(removeButtonInternals);
-			} else {
-				// if any are not in the combat tracker, make it an add button.
-				groupTokens.addClass("add-to-group");
-				groupTokens.html(addButtonInternals);
-			}
-			groupTokens.off().on("click", function(clickEvent){
-				let clickedItem = $(this);
-				let groupAll = clickedItem.hasClass("some-active");
-				let group = uuid();
-				tokens.forEach(token => {
-					if (groupAll || clickedItem.hasClass('add-to-group')) {
-						token.options.groupId = group;
-					} else {
-						token.options.groupId = undefined;
-					}
-					token.place_sync_persist();
-				});
-				clickedItem.removeClass("single-active all-active some-active active-condition");
-				clickedItem.addClass(determine_grouped_classname(tokenIds));
-			});
-			body.append(groupTokens);
-		}
+
 
 	
 		let optionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Options</div></div>`);
