@@ -50,6 +50,7 @@ let debounceLightChecks = mydebounce(() => {
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 		redraw_light();
+		debounceAudioChecks();
 		
 }, 20);
 
@@ -2584,16 +2585,11 @@ class Token {
 				}
 
 				window.MULTIPLE_TOKEN_SELECTED = (count > 1);
-				draw_selected_token_bounding_box(); // update rotation bounding box
+		
 				if(window.DM){
 			   		$("[id^='light_']").css('visibility', "visible");
 			   	}
-			   	else if(window.TOKEN_OBJECTS[tokID].options.itemType == 'pc' || window.TOKEN_OBJECTS[tokID].options.shared_vision){
-			   		debounceLightChecks();
-			   	}
-			   	debounceAudioChecks();
-			   
-				
+				draw_selected_token_bounding_box(); // update rotation bounding box
 			});
 			
 			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness){

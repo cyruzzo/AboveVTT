@@ -4835,7 +4835,10 @@ function redraw_light(){
 	if(!window.DM || window.SelectedTokenVision){
 		do_check_token_visibility();
 	}
-
+	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
+		debounceAudioChecks();
+	}
+	
 	if(Math.abs(startTime-Date.now()) > 250){
 		debounceLightChecks = mydebounce(() => {	
 				if(window.DRAGGING)
