@@ -823,7 +823,7 @@ class Token {
 		this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 		//this.options.hpstring=old.find(".hpbar").val();
 		//this.options.size=old.width();
-		if (old.css("opacity") == 0.5)
+		if (old.css("opacity") == 0.5 || (!window.DM && old.css('display') == 'none'))
 			this.options.hidden = true;
 		else
 			delete this.options.hidden;
@@ -2167,7 +2167,7 @@ class Token {
 					
 
 					window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
-					window.dragSelectedTokens = $(".token.tokenselected"); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
+					window.dragSelectedTokens = $(`.token.tokenselected, .token[data-group-id='${self.options.groupId}'][style*=' display: none;']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 					
 					if (self.selected && window.dragSelectedTokens.length>1) {
 						for (let tok of window.dragSelectedTokens){
@@ -3678,7 +3678,7 @@ async function do_draw_selected_token_bounding_box() {
 	for(let index in groupIDs){
 		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
 		tokens.each(function(){
-			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')) || $(this).css('display') == 'none')
+			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
 				return;
 			$(this).toggleClass('tokenselected', true);	
 			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
@@ -3691,15 +3691,17 @@ async function do_draw_selected_token_bounding_box() {
 			if (window.CURRENTLY_SELECTED_TOKENS == undefined || window.CURRENTLY_SELECTED_TOKENS.length == 0) {
 				return;
 			}
-
 			// find the farthest edges of our tokens
 			let top = undefined;
 			let bottom = undefined;
 			let right = undefined;
 			let left = undefined;
 			for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+				
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
+				if(!window.DM && $(`div.token[data-id='${id}']`).css('display') == 'none')
+					continue;
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 				let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
 				let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
