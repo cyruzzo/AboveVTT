@@ -1595,6 +1595,48 @@ class Token {
 					
 					oldImage.attr("src", parse_img(this.options.imgsrc));
 					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
+					oldImage.off('dblclick.highlightToken').on('dblclick.highlightToken', function(e) {
+						self.highlight(true); // dont scroll
+						let data = {
+							id: self.options.id
+						};
+						window.MB.sendMessage('custom/myVTT/highlight', data);
+					})
+
+					oldImage.off('click.selectToken').on('click.selectToken', function() {
+						let parentToken = $(this).parent(".VTTToken");
+						if (parentToken.hasClass("pause_click")) {
+							return;
+						}
+						let tokID = parentToken.attr('data-id');
+						let groupID = parentToken.attr('data-group-id');
+						let thisSelected = !(parentToken.hasClass('tokenselected'));
+						let count = 0;
+						if (shiftHeld == false) {
+							deselect_all_tokens();
+						}
+						if (thisSelected == true) {
+							parentToken.addClass('tokenselected');
+							toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
+						} else {
+							parentToken.removeClass('tokenselected');
+						}				
+
+						window.TOKEN_OBJECTS[tokID].selected = thisSelected;
+
+						for (let id in window.TOKEN_OBJECTS) {
+							if (id.selected == true) {
+								count++;
+							}			
+						}
+
+						window.MULTIPLE_TOKEN_SELECTED = (count > 1);
+				
+						if(window.DM){
+					   		$("[id^='light_']").css('visibility', "visible");
+					   	}
+						draw_selected_token_bounding_box(); // update rotation bounding box
+					});
 				}
 
 				if(this.options.disableborder){
@@ -2549,7 +2591,7 @@ class Token {
 				tok.removeClass("ui-state-disabled");
 			}
 
-			tok.find(".token-image").on('dblclick', function(e) {
+			tok.find(".token-image").on('dblclick.highlightToken', function(e) {
 				self.highlight(true); // dont scroll
 				let data = {
 					id: self.options.id
@@ -2557,7 +2599,7 @@ class Token {
 				window.MB.sendMessage('custom/myVTT/highlight', data);
 			})
 
-			tok.find(".token-image").on('click', function() {
+			tok.find(".token-image").on('click.selectToken', function() {
 				let parentToken = $(this).parent(".VTTToken");
 				if (parentToken.hasClass("pause_click")) {
 					return;
