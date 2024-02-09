@@ -870,7 +870,7 @@ class Token {
 		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.maxHp);
 
 
-		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || this.options.disablestat == true || (!this.isPlayer() && !window.DM && !this.options.player_owned)) {
+		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || (!this.isPlayer() && !window.DM && !this.options.player_owned)) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
