@@ -3461,6 +3461,8 @@ function setTokenLight (token, options) {
 }
 
 function setTokenBase(token, options) {
+	if(options.imgsrc?.startsWith("class"))
+		return;
 	$(`.token[data-id='${options.id}']>.base`).remove();
 	let base = $(`<div class='base'></div>`);
 	if(options.size < 150){
