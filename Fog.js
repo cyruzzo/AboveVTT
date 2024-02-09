@@ -572,7 +572,7 @@ function check_single_token_visibility(id){
 	
 	const inFog = playerTokenId != id && is_token_under_fog(id, fogContext); // this token is in fog
 	
-	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) && window.CURRENT_SCENE_DATA.darkness_filter > 0)); // this token is not in light, the player is using vision/light and darkness > 0
+	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) )); // this token is not in light, the player is using vision/light and darkness > 0
 	
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
@@ -657,7 +657,7 @@ function do_check_token_visibility() {
 			
 			const inFog = (playerTokenId != id && is_token_under_fog(id, ctx)); // this token is in fog and not the players token
 
-			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
 
@@ -4628,8 +4628,12 @@ function redraw_light(){
 
 	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
 	
+	if(window.walls.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
+		moveOffscreenContext.fillStyle = "white";
+	}else{
+		moveOffscreenContext.fillStyle = "black";
+	}
 	
-	moveOffscreenContext.fillStyle = "black";
 	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 
@@ -4805,6 +4809,15 @@ function redraw_light(){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
+		if(!window.DM || window.SelectedTokenVision){
+			draw_darkness_aoe_to_canvas(lightInLosContext);
+
+			lightInLosContext.globalCompositeOperation='source-over';
+			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
+
+			truesightCanvasContext.globalCompositeOperation='destination-in';
+			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
+		}
 	}
 	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
 		lightInLosContext.globalCompositeOperation='destination-over';
