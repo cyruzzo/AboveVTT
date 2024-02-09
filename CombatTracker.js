@@ -553,7 +553,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	max_hp.css('font-size','11px');
 	//max_hp.css('width','20px');
 
-	if((token.options.hidestat == true && !window.DM && token.options.name != window.PLAYER_NAME) || token.options.disablestat || (!(token.options.id.startsWith("/profile")) && !window.DM && !token.options.player_owned)) {
+	if((token.options.hidestat == true && !window.DM && token.options.name != window.PLAYER_NAME) || (!(token.options.id.startsWith("/profile")) && !window.DM && !token.options.player_owned)) {
 		divider.css('visibility', 'hidden');
 		hp.css('visibility', 'hidden');
 		max_hp.css('visibility', 'hidden');
