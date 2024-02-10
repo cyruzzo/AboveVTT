@@ -5418,7 +5418,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     height: 30px;  
 }
 
-.VTTToken img.freeform ~ .hpbar:after {
+.VTTToken.freeform .hpbar:after {
     display: var(--token-hpbar-display);
     transition: none;
     position: absolute;
@@ -5758,6 +5758,9 @@ input.max_hp[disabled]{
     z-index: -1;
     border: inset 5px var(--token-border-color, #ffffff44);
 }
+[data-notatoken].token>.base{
+    border-width: calc(5px / var(--scene-scale));
+}
 
 .token>.base,
 .token>.base ~ .hpvisualbar{
@@ -5798,12 +5801,28 @@ input.max_hp[disabled]{
     right: -2px;
     bottom: -2px;
 }
+[data-notatoken] .base.circle:before{
+    top: calc(-5px / var(--scene-scale));
+    left: calc(-5px / var(--scene-scale));
+    right: calc(-5px / var(--scene-scale));
+    bottom: calc(-5px / var(--scene-scale));
+}
+[data-notatoken] .base.large-or-smaller-base.circle:before{
+    top: calc(-2px / var(--scene-scale));
+    left: calc(-2px / var(--scene-scale));
+    right: calc(-2px / var(--scene-scale));
+    bottom: calc(-2px / var(--scene-scale));
+}
 
 .token>.token-image{
     --aura-width: max(2px, calc(3px / var(--window-zoom)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+}
+.token[data-notatoken]>.token-image{
+    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(3px / var(--scene-scale)) / var(--window-zoom)));
+    --zoom-border-width: max(calc(calc(2px / var(--scene-scale)) / var(--scene-scale)), calc(calc(var(--token-border-width) / var(--scene-scale)) * 1.5 / var(--window-zoom)));
 }
 
 .token>.token-image{
@@ -6163,6 +6182,10 @@ input.max_hp[disabled]{
     content:'';
     --mask-size:calc(98% - 2px / var(--window-zoom));
 }
+.VTTToken[data-notatoken]:not(.freeform) .hpvisualbar:before{
+    --mask-size:calc(98% - calc(2px / var(--scene-scale)) / var(--window-zoom));
+}
+
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size:calc(98% - 7px / var(--window-zoom));
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
@@ -6176,6 +6199,14 @@ input.max_hp[disabled]{
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
+}
+
+.VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size:calc(98% - calc(7px / var(--scene-scale)) / var(--window-zoom));
+    height: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
+    width: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
+    top: min( calc(-2.5px / var(--scene-scale)), calc(calc(-2.5px / var(--scene-scale)) / var(--window-zoom)));
+    left: min( calc(-2.5px / var(--scene-scale)), calc(calc(-2.5px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -6199,17 +6230,33 @@ input.max_hp[disabled]{
     -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 100%), linear-gradient(to top, #0000 var(--mask-size), #000 100%), linear-gradient(to bottom, #0000 var(--mask-size), #000 100%), linear-gradient(to right, #0000 var(--mask-size), #000 100%);
     clip-path: none;
 }
+
+.VTTToken[data-notatoken] .base.square ~ .hpvisualbar:before{
+    --mask-size:calc(95% - calc(2px / var(--scene-scale)) / var(--window-zoom));
+}
 .VTTToken .base ~ .hpvisualbar:before {
     top: 5px;
     left: 5px;
     right: 5px;
     bottom: 5px;
 }
+.VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
+    top: calc(5px / var(--scene-scale));
+    left: calc(5px / var(--scene-scale));
+    right: calc(5px / var(--scene-scale));
+    bottom: calc(5px / var(--scene-scale));
+}
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
     left: 2px;
     right: 2px;
     bottom: 2px;
+}
+.VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
+    top: calc(2px / var(--scene-scale));
+    left: calc(2px / var(--scene-scale));
+    right: calc(2px / var(--scene-scale));
+    bottom: calc(2px / var(--scene-scale));
 }
 .hpvisualbar{
     pointer-events: none;
@@ -6561,12 +6608,12 @@ div.ddbc-tab-options--layout-pill>button{
     border:none;
 } 
 
-#tokens .underDarkness .token-image{
+#tokens .underDarkness .token-image,
+#tokens .underDarkness .base,
+#tokens .underDarkness .hpvisualbar{
     opacity: 0 !important;
 }
-#tokens .underDarkness .base{
-    opacity: 0;
-}
+
 .audio-token .audio-radius{
     position: absolute;
     border-radius: 50%;
