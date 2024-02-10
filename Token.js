@@ -2129,7 +2129,7 @@ class Token {
 						tok.removeAttr("data-dragging")
 						tok.removeAttr("data-drag-x")
 						tok.removeAttr("data-drag-y")
-					
+						$(`[data-notatoken][data-id='${self.options.id}']`).toggleClass(['ui-draggable-dragging', 'pause_click'], false);
 				
 						// finish measuring
 						// drop the temp overlay back down so selection works correctly
@@ -2177,6 +2177,8 @@ class Token {
 					
 					self.prepareWalkableArea()
 					window.orig_zoom = window.ZOOM;
+
+					$(`[data-notatoken][data-id='${self.options.id}']`).toggleClass(['ui-draggable-dragging', 'pause_click'], true);
 
 					if(self.selected == false && $(".token.tokenselected").length>0){
 						for (let tok of $(".token.tokenselected")){
