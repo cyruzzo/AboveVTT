@@ -4640,6 +4640,9 @@ function redraw_light(){
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
 	let selectedTokens = $('.tokenselected');
+	if(window.SelectedTokenVision){
+		light_auras = light_auras.add(selectedTokens)
+	}
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	if(selectedTokens.length>0){
 		if(window.SelectedTokenVision){
@@ -4698,6 +4701,13 @@ function redraw_light(){
 			let tokenPos = {
 				x: (parseInt(currentLightAura.css('left'))+(parseInt(currentLightAura.css('width'))/2)),
 				y: (parseInt(currentLightAura.css('top'))+(parseInt(currentLightAura.css('height'))/2))
+			}
+
+			if(currentLightAura.hasClass('tokenselected')){
+				tokenPos = {
+					x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
+					y: tokenPos.y / window.CURRENT_SCENE_DATA.scale_factor
+				}
 			}
 			
 			if(window.lineOfSightPolygons == undefined){
@@ -4950,9 +4960,9 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	let lightRadius =((parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)*blackLight1)+(parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
-	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0)
+	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0 || $(`.tokenselected`).length == 0)
 
-	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || !window.SelectedTokenVision && window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] != undefined){
