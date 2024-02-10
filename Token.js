@@ -834,7 +834,7 @@ class Token {
 		// is the DM
 		// not the DM and player controlled
 		// AND stats aren't disabled and has hp bar
-		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && !this.options.disablestat && old.has(".hp").length > 0) {
+		if ( ( (!(this.options.monster > 0)) || window.DM || (!window.DM && this.options.player_owned)) && old.has(".hp").length > 0) {
 			if (old.find(".hp").val().trim().startsWith("+") || old.find(".hp").val().trim().startsWith("-")) {
 				old.find(".hp").val(Math.max(0, this.hp + parseInt(old.find(".hp").val())));
 			}
