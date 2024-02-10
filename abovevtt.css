@@ -6561,12 +6561,12 @@ div.ddbc-tab-options--layout-pill>button{
     border:none;
 } 
 
-#tokens .underDarkness .token-image{
+#tokens .underDarkness .token-image,
+#tokens .underDarkness .base,
+#tokens .underDarkness .hpvisualbar{
     opacity: 0 !important;
 }
-#tokens .underDarkness .base{
-    opacity: 0;
-}
+
 .audio-token .audio-radius{
     position: absolute;
     border-radius: 50%;

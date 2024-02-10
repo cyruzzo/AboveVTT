@@ -1778,7 +1778,7 @@ class Token {
 							'opacity': this.options.hidden ? '0.5' : '1'
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-				        tokenClone.children('div:not(.base):not(.token-image)').remove();    
+				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();    
 				        $('#token_map_items').append(tokenClone);
 					}
 					else{
@@ -1797,7 +1797,7 @@ class Token {
 		    				'--token-rotation': old.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1'
 						})
-						copyToken.children('div:not(.base):not(.token-image)').remove()
+						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
 					}
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
@@ -2648,7 +2648,7 @@ class Token {
 						opacity: this.options.hidden ? '0.5' : '1'
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-			        tokenClone.children('div:not(.base):not(.token-image)').remove();      
+			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();      
 			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
@@ -2670,7 +2670,7 @@ class Token {
 			new Promise(debounceLightChecks),
 			new Promise(debounceAudioChecks)
 		]);
-		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image)').remove();
+		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();
 
 		console.groupEnd()
 
