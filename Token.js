@@ -729,7 +729,6 @@ class Token {
 		}
 		if(this.options.disableborder) {
 			token.css('--token-border-color', 'transparent');
-			$("token:before").css('--token-border-color', 'transparent');
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
@@ -737,7 +736,6 @@ class Token {
 				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (1/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 1;
 			}
 			token.css('--token-border-color', this.options.color);
-			$("token:before").css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
 		}
 		if(!this.options.enablepercenthpbar){
@@ -785,6 +783,18 @@ class Token {
 		    '--max-width': tokenWidth + 'px',
 			'--max-height': tokenHeight + 'px',
 		});
+
+		let underdarknessToken = $(`[data-notatoken][data-id='${this.options.id}']`)
+		underdarknessToken.css({
+			'--token-hpbar-display': token.css('--token-hpbar-display'),
+			'--token-temp-hpbar': token.css('--token-temp-hpbar'),
+			'--token-hpbar-aura-color': token.css('--token-hpbar-aura-color'), 
+			'--token-border-color': token.css('--token-border-color'), 
+			'--token-hp-aura-color': token.css('--token-hp-aura-color'),
+			'--hp-percentage': token.css('--hp-percentage'),
+			'--token-temp-hp': token.css('--token-temp-hp'),
+		})
+
 
 		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
@@ -1775,7 +1785,8 @@ class Token {
 							'max-width': `var(--token-width)`,
 							'max-height': `var(--token-height)`,
 							'--z-index-diff': old.css('--z-index-diff'),
-							'opacity': this.options.hidden ? '0.5' : '1'
+							'opacity': this.options.hidden ? '0.5' : '1',
+							'--hp-percentage': `${this.hpPercentage}%`
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();    
@@ -1795,7 +1806,8 @@ class Token {
 							'--z-index-diff': old.css('--z-index-diff'),
 							'--token-scale': old.css('--token-scale'),
 		    				'--token-rotation': old.css('--token-rotation'),
-							'opacity': this.options.hidden ? '0.5' : '1'
+							'opacity': this.options.hidden ? '0.5' : '1',
+							'--hp-percentage': `${this.hpPercentage}%`
 						})
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
 					}
