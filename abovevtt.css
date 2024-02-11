@@ -3104,6 +3104,13 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     animation: mymove 5s infinite alternate ease-in-out ;
 }
+#token_map_items .underDarkness .aoe-token-tileable{
+    background-size: calc(300px / var(--scene-scale));
+    filter: none;
+}
+#token_map_items .underDarkness .aoe-border-basic{
+    border-width: calc(10px / var(--scene-scale));
+}
 @keyframes mymove {
     from{
         opacity: 0.3
@@ -6201,11 +6208,11 @@ input.max_hp[disabled]{
 }
 
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(98% - calc(7px / var(--scene-scale)) / var(--window-zoom));
-    height: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
-    width: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
-    top: min( calc(-3.5px / var(--scene-scale)), calc(calc(-3.5px / var(--scene-scale)) / var(--window-zoom)));
-    left: min( calc(-3.5px / var(--scene-scale)), calc(calc(-3.5px / var(--scene-scale)) / var(--window-zoom)));
+    --mask-size: calc(98% - calc(7px / var(--scene-scale)) / var(--window-zoom));
+    width: calc(100% + 1.5px);
+    height: calc(100% + 1.5px);
+    top: -1px;
+    left: -1px;
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
