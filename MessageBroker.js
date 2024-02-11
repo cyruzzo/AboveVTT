@@ -258,6 +258,8 @@ class MessageBroker {
 		if (trackHistory) {
 			window.MB.track_message_history(data);
 		}
+
+
 		if(window.DM && data.data.injected_data?.rollTitle == 'Initiative'){
 			let total = data.data.injected_data?.result;
 			let entityid = data.data.injected_data?.playerId;
@@ -319,6 +321,8 @@ class MessageBroker {
 								let neweight = li.height();
 								li.height(oldheight);
 								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
+								let output = $(`<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
 								img.magnificPopup({type: 'image', closeOnContentClick: true });
 
@@ -1195,10 +1199,10 @@ class MessageBroker {
 			return $("<div/>");
 		//notify_gamelog();
 
-		var d = new Date();
-		var datetime = d.toISOString();
-		var timestamp = d.toLocaleTimeString();
-		var datestamp = d.toLocaleDateString();
+		let d = new Date();
+		let datetime = d.toISOString();
+		let timestamp = d.toLocaleTimeString();
+		let datestamp = d.toLocaleDateString();
 		
 		if (is_encounters_page() || is_characters_page()) {
 			return $(`
@@ -1232,14 +1236,18 @@ class MessageBroker {
 			`);
 		}*/
 
-		var newentry = $("<div/>");
+		let newentry = $("<div/>");
 		newentry.attr('class', 'GameLogEntry_GameLogEntry__2EMUj GameLogEntry_Other__1rv5g Flex_Flex__3cwBI Flex_Flex__alignItems-flex-end__bJZS_ Flex_Flex__justifyContent-flex-start__378sw');
 		newentry.append($("<p role='img' class='Avatar_Avatar__131Mw Flex_Flex__3cwBI'><img class='Avatar_AvatarPortrait__3cq6B' src='" + data.img + "'></p>"));
-		var container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
+		let container = $("<div class='GameLogEntry_MessageContainer__RhcYB Flex_Flex__3cwBI Flex_Flex__alignItems-flex-start__HK9_w Flex_Flex__flexDirection-column__sAcwk'></div>");
 		container.append($("<div class='GameLogEntry_Line__3fzjk Flex_Flex__3cwBI Flex_Flex__justifyContent-space-between__1FcfJ'><span>" + data.player + "</span></div>"));
-		var entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
+		let entry = $("<div class='GameLogEntry_Message__1J8lC GameLogEntry_Collapsed__1_krc GameLogEntry_Other__1rv5g Flex_Flex__3cwBI'>" + data.text + "</div>");
 		container.append(entry);
 
+		
+
+
+		
 		container.append($("<time datetime='" + datetime + "' class='GameLogEntry_TimeAgo__zZTLH TimeAgo_TimeAgo__2M8fr'></time"));
 
 		newentry.append(container);
@@ -1254,7 +1262,7 @@ class MessageBroker {
 
 
 	handleToken(msg) {
-		var data = msg.data;
+		let data = msg.data;
 		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		let auraislightchanged = false;
 		if(data.id == undefined)

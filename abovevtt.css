@@ -3119,8 +3119,21 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
         opacity: 0.7
     }
   }
-
-
+.above-vtt-container-roll-output{
+    position: absolute;
+    top: 24px;
+    left: 0px;
+    width: 220px;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #716f6f;
+    font-size: 10px;
+    font-weight: bold;
+}
+.abovevtt-roll-container{
+    position:relative;
+}
 
 div.token-image {
     width: 100%;
