@@ -1051,6 +1051,29 @@ class MessageBroker {
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
 				}
+				if(msg.data.rolls != undefined){
+					let critSuccess = false;
+					let critFail = false;
+					for(let i=0; i<msg.data.rolls.length; i++){
+						let roll = msg.data.rolls[i];
+						for (let j=0; j<roll.diceNotation.set.length; j++){
+							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
+								if(roll.diceNotation.set[j].dice[k].dieValue == parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))){
+									critSuccess = true
+								}
+								else if(roll.diceNotation.set[j].dice[k].dieValue == 1){
+									critFail = true;
+								}
+							}
+						}
+					}
+					setTimeout(function(){
+							$(`ol>li[class*='GameLogEntry']:first-of-type`).toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
+					
+					}, 100)
+				}
+
+				
 				if (!window.DM)
 					return;
 				

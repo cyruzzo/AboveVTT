@@ -295,16 +295,46 @@ class DiceRoller {
             let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
             let modifier = (roll.rolls.length > 1 && diceRoll.expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
             
+
+            let critSuccess = false;
+            let critFail = false;
+
+            let results = roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
+            let diceNotations = roll.notation.split(/[+-]/g);
+
+            if(!diceNotations[diceNotations.length-1].includes('d')){
+               diceNotations.splice(diceNotations.length-1, 1)
+            }
+
+
+
+            for(let i=0; i<diceNotations.length; i++){
+
+                results[i] = results[i].replace(/[0-9]+d/g, '').replace(/[\]\[]/g, '')
+                let resultsArray = results[i].split(',');
+                for(let j=0; j<resultsArray.length; j++){
+                    if(parseInt(resultsArray[j]) == parseInt(diceNotations[i].split('d')[1])){
+                        critSuccess = true;
+                    }
+                    if(parseInt(resultsArray[j]) == 1){
+                        critFail = true;
+                    }
+                }
+            }
+            let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
+
+
             if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 msgdata = {
                 player: window.PLAYER_NAME,
                   img: window.PLAYER_IMG,
-                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
+                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex ${critClass}" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
                   whisper: (diceRoll.sendToOverride == "DungeonMaster") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
                   result: roll.total,
-                  playerId: window.PLAYER_ID
+                  playerId: window.PLAYER_ID,
+                  sendTo: window.sendToTab 
                 };
             }                         
             else{

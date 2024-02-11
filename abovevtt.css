@@ -5146,7 +5146,6 @@ div#selectedTokensBorderRotationGrabberConnector,
     max-height: 100%;
 }
 .aboveDiceTotal{
-    width: 25px;
     display: block;
     text-align: center;
     font-weight: 700;
@@ -6289,6 +6288,24 @@ input.max_hp[disabled]{
     color: #9c2727;
     opacity: 0.8;
 }
+
+[class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+    color:#0a0 !important;
+}
+[class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+    color:#a00 !important;
+}
+[class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
+[class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+    color:#00a !important;
+}
+
+
 .glc-game-log>div>div[class*="-Title"] {
     margin-bottom: 7px;
 }
