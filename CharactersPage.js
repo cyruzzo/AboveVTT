@@ -430,17 +430,46 @@ function convertToRPGRoller(){
       
 
       let msgdata = {}
+
+
+      let critSuccess = false;
+      let critFail = false;
+
+      let results = rollData.roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
+      let diceNotations = rollData.roll.notation.split(/[+-]/g);
+
+      if(!diceNotations[diceNotations.length-1].includes('d')){
+         diceNotations.splice(diceNotations.length-1, 1)
+      }
+
+
+      for(let i=0; i<diceNotations.length; i++){
+
+          results[i] = results[i].replace(/[0-9]+d/g, '').replace(/[\]\[]/g, '')
+          let resultsArray = results[i].split(',');
+          for(let j=0; j<resultsArray.length; j++){
+              if(parseInt(resultsArray[j]) == parseInt(diceNotations[i].split('d')[1])){
+                  critSuccess = true;
+              }
+              if(parseInt(resultsArray[j]) == 1){
+                  critFail = true;
+              }
+          }
+      }
+      let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
+
       if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
 
         msgdata = {
           player: window.PLAYER_NAME,
           img: window.PLAYER_IMG,
-          text: `<div class="tss-24rg5g-DiceResultContainer-Flex" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
+          text: `<div class="tss-24rg5g-DiceResultContainer-Flex ${critClass}" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
           whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
           rollType: rollData.rollType,
           rollTitle: rollData.rollTitle,
           result: rollData.roll.total,
-          playerId: window.PLAYER_ID
+          playerId: window.PLAYER_ID,
+          sendTo: window.sendToTab
         };
       }
       else{
