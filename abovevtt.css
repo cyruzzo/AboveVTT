@@ -5759,7 +5759,7 @@ input.max_hp[disabled]{
     border: inset 5px var(--token-border-color, #ffffff44);
 }
 [data-notatoken].token>.base{
-    border-width: calc(5px / var(--scene-scale));
+    border-width: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
 }
 
 .token>.base,
@@ -5772,6 +5772,8 @@ input.max_hp[disabled]{
     margin: 5% 0 0 5%;
 }
 
+
+
 .VTTToken .base{
     filter: drop-shadow(0.5px 0px 1px #000b);
 }
@@ -5780,7 +5782,7 @@ input.max_hp[disabled]{
 }
 
 .token[data-notatoken]>.base.large-or-smaller-base{
-    border-width: max(calc(2px / var(--scene-scale)), calc(calc(2px / var(--window-zoom)) / var(--scene-scale)));
+    border-width: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
 }
 
 .base.circle:before{
@@ -5808,10 +5810,10 @@ input.max_hp[disabled]{
     bottom: calc(-5px / var(--scene-scale));
 }
 [data-notatoken] .base.large-or-smaller-base.circle:before{
-    top: calc(-2px / var(--scene-scale));
-    left: calc(-2px / var(--scene-scale));
-    right: calc(-2px / var(--scene-scale));
-    bottom: calc(-2px / var(--scene-scale));
+    top: calc(-5px / var(--scene-scale));
+    left: calc(-5px / var(--scene-scale));
+    right: calc(-5px / var(--scene-scale));
+    bottom: calc(-5px / var(--scene-scale));
 }
 
 .token>.token-image{
@@ -5819,10 +5821,6 @@ input.max_hp[disabled]{
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
-}
-.token[data-notatoken]>.token-image{
-    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(3px / var(--scene-scale)) / var(--window-zoom)));
-    --zoom-border-width: max(calc(calc(2px / var(--scene-scale)) / var(--scene-scale)), calc(calc(var(--token-border-width) / var(--scene-scale)) * 1.5 / var(--window-zoom)));
 }
 
 .token>.token-image{
@@ -5838,8 +5836,10 @@ input.max_hp[disabled]{
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
 .token[data-notatoken]>.token-image{
-    --aura-width: max(calc(2px / var(--scene-scale)), calc(3px / var(--window-zoom) / var(--scene-scale)));
-    --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom) / var(--scene-scale)));
+    --aura-width: max(1px, calc(calc(1px / var(--window-zoom)) / var(--scene-scale)));
+    --zoom-border-width: max(1px, calc(calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)) / var(--scene-scale)));
+    border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
 .token>.base~.token-image{
     filter: none;
@@ -6205,8 +6205,8 @@ input.max_hp[disabled]{
     --mask-size:calc(98% - calc(7px / var(--scene-scale)) / var(--window-zoom));
     height: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
     width: calc(100% +  calc(5px / var(--scene-scale)) / min(1, var(--window-zoom)));
-    top: min( calc(-2.5px / var(--scene-scale)), calc(calc(-2.5px / var(--scene-scale)) / var(--window-zoom)));
-    left: min( calc(-2.5px / var(--scene-scale)), calc(calc(-2.5px / var(--scene-scale)) / var(--window-zoom)));
+    top: min( calc(-3.5px / var(--scene-scale)), calc(calc(-3.5px / var(--scene-scale)) / var(--window-zoom)));
+    left: min( calc(-3.5px / var(--scene-scale)), calc(calc(-3.5px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -6241,10 +6241,10 @@ input.max_hp[disabled]{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-    top: calc(5px / var(--scene-scale));
-    left: calc(5px / var(--scene-scale));
-    right: calc(5px / var(--scene-scale));
-    bottom: calc(5px / var(--scene-scale));
+    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
@@ -6253,10 +6253,10 @@ input.max_hp[disabled]{
     bottom: 2px;
 }
 .VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
-    top: calc(2px / var(--scene-scale));
-    left: calc(2px / var(--scene-scale));
-    right: calc(2px / var(--scene-scale));
-    bottom: calc(2px / var(--scene-scale));
+    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
 }
 .hpvisualbar{
     pointer-events: none;

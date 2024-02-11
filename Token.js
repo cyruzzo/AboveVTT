@@ -716,8 +716,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 6;
-				tokenHeight = tokenHeight - 6;
+				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
+				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -742,6 +742,10 @@ class Token {
 			token.css('--token-hpbar-display', 'none');
 		}
 		else {
+			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
+				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
+				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
+			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
 				token.css('--token-temp-hpbar', "#4444ffbd");
@@ -794,6 +798,12 @@ class Token {
 			'--hp-percentage': token.css('--hp-percentage'),
 			'--token-temp-hp': token.css('--token-temp-hp'),
 		})
+		underdarknessToken.children('.token-image').css({
+			'--min-width': token.children('.token-image').css("--min-width"),
+			'--min-height': token.children('.token-image').css("--min-width"),
+			'--max-width': tokenWidth + 'px',
+			'--max-height': tokenHeight + 'px',
+		})
 
 
 		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
@@ -814,7 +824,7 @@ class Token {
 	 * @returns scale of token
 	 */
 	get_token_scale(){
-		if (this.maxHp <= 0 || this.options.disableaura) {
+		if (this.maxHp <= 0 || (this.options.disableaura && !this.options.enablepercenthpbar)) {
 			return 1;
 		}
 		return (((this.options.size - 15) * 100) / this.options.size) / 100;
@@ -1786,7 +1796,7 @@ class Token {
 							'max-height': `var(--token-height)`,
 							'--z-index-diff': old.css('--z-index-diff'),
 							'opacity': this.options.hidden ? '0.5' : '1',
-							'--hp-percentage': `${this.hpPercentage}%`
+							'--hp-percentage': `${this.hpPercentage}%`,
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();    
@@ -1807,18 +1817,13 @@ class Token {
 							'--token-scale': old.css('--token-scale'),
 		    				'--token-rotation': old.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1',
-							'--hp-percentage': `${this.hpPercentage}%`
+							'--hp-percentage': `${this.hpPercentage}%`,
 						})
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
 					}
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
 					copyImage.attr("src", parse_img(this.options.imgsrc));
-					copyImage.css({
-						'min-width': `calc(${oldImage.css('min-width')} / var(--scene-scale))`,
-						'min-height': `calc(${oldImage.css('min-height')} / var(--scene-scale))`
-					})
-
 			}  	
 			else{
 	    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
@@ -2342,8 +2347,8 @@ class Token {
 					let zoom = parseFloat(window.ZOOM);
 
 					let original = ui.originalPosition;
-					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
-					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseInt(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
+					let tokenX = (ui.position.left - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeWidth())/2)) / parseFloat(window.ZOOM);
+					let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / parseFloat(window.ZOOM);
 					let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
 					if (should_snap_to_grid()) {
@@ -2369,7 +2374,7 @@ class Token {
 
 					if(!window.DM && window.playerTokenAuraIsLight){
 						const left = (tokenPosition.x + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
-						const top = (tokenPosition.y + (parseFloat(self.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
+						const top = (tokenPosition.y + (parseFloat(self.sizeHeight()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 						if(typeof left != 'number' || isNaN(left) || typeof top != 'number' || isNaN(top)){
 							showErrorMessage(
 							  Error(`One of these values is not a number: Size: ${self.sizeWidth()}, Scene Scale: ${window.CURRENT_SCENE_DATA.scale_factor}, x: ${tokenPosition.x}, y: ${tokenPosition.y}, zoom: ${zoom}, Hpps: ${window.CURRENT_SCENE_DATA.hpps}, Vpps: ${window.CURRENT_SCENE_DATA.vpps}, Containment area: ${JSON.stringify(self.walkableArea)}, OffsetX: ${window.CURRENT_SCENE_DATA.offsetx}, OffsetY: ${window.CURRENT_SCENE_DATA.offsety}`),
@@ -2401,11 +2406,11 @@ class Token {
 					const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 					if (allowTokenMeasurement) {
 						const tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
-						const tokenMidY = tokenPosition.y + Math.round(self.sizeWidth() / 2);
+						const tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
 
 						clear_temp_canvas();
 						WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
-						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeWidth() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+						WaypointManager.draw(false, Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 					}
 					if (!self.options.hidden) {
 						sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
@@ -2451,8 +2456,8 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', parseInt(tokenPosition.x / window.CURRENT_SCENE_DATA.scale_factor) + "px");
+						el.css('top', parseInt(tokenPosition.y / window.CURRENT_SCENE_DATA.scale_factor)  + "px");
 					}
 
 
@@ -2562,8 +2567,8 @@ class Token {
 								}
 								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
 								if (selEl.length > 0) {
-									selEl.css('left', tokLeft/window.CURRENT_SCENE_DATA.scale_factor  + "px");
-									selEl.css('top', tokTop/window.CURRENT_SCENE_DATA.scale_factor + "px");
+									selEl.css('left', parseInt(tokLeft/window.CURRENT_SCENE_DATA.scale_factor)  + "px");
+									selEl.css('top', parseInt(tokTop/window.CURRENT_SCENE_DATA.scale_factor) + "px");
 								}
 							}
 						}													
