@@ -1071,9 +1071,18 @@ class MessageBroker {
 							}
 						}
 					}
+
+
 					setTimeout(function(){
-							$(`ol>li[class*='GameLogEntry']:first-of-type`).toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
-					
+						let target;
+						let listItems = $(`ol>li[class*='GameLogEntry']`);
+						for(let i = 0; i<listItems.length; i++){
+							if($(listItems[i]).find('[class*="Pending"]').length > 0)
+								continue;
+							target = $(listItems[i]);
+							break;
+						}
+						target.toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
 					}, 100)
 				}
 
