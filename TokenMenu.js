@@ -2972,7 +2972,7 @@ function add_to_quick_roll_menu(token){
 	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
 
 	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
-		img = $(`<video muted width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
+		img = $(`<video disableRemotePlayback muted width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
 	} 
 	else{
 		img = $(`<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);

@@ -1115,7 +1115,7 @@ function build_sidebar_list_row(listItem) {
     let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
          
     if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || tokenCustomizations?.tokenOptions?.videoToken == true){
-        img = $(`<video muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
+        img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
     } else{
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
