@@ -384,9 +384,9 @@ function map_load_error_cb(e) {
 	if (typeof src === "string") {
 		let specificMessage = `Please make sure the image is accessible to anyone on the internet.`;
 		if (src.includes("drive.google") || window.CURRENT_SCENE_DATA.map.includes("drive.google")) {
-			specificMessage = `It looks like you're using a Google Drive image. Please make sure the "Get link" modal says "Anyone on the internet with this link can view".`;
+			showGoogleDriveWarning();
 		}
-		if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
+		else if (confirm(`Map could not be loaded!\n${specificMessage}\nYou may also need to disable ad blockers.\nWould you like to try loading the image in a separate tab to verify that it's accessible? If you are currently logged in to google, you will need to log out or open the image in a different browser or an incognito window to truly test it.`)) {
 			if (window.DM || confirm(`SPOILER ALERT!!!\nIf you click OK, you might see the entire map without fog of war. However, the map isn't loading at all so you will probably see a broken link. Are you sure you want to test this image?`)) {
 				window.open(window.CURRENT_SCENE_DATA.map, '_blank');
 			}

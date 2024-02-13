@@ -2478,7 +2478,7 @@ function build_UVTT_import_container(){
 
 		        
 		      </div>
-		      <div id='uvtt instructions'>Note: Currently Dropbox and Google Drive public links are supported. In Google Drive this means making sure 'anyone with the link' can view it. Other hosting sites may work but due to the type of file many will not, discord for example does not work.</div>
+		      <div id='uvtt instructions'>Note: Currently Dropbox is supported. Other hosting sites may work but due to the type of file many will not.</div>
 		      <div id='uvtt instructions'>UVTT Maps will take longer to load then regularly hosted images.</div>
 
 		    </section>
