@@ -1715,7 +1715,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
-                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
@@ -1772,7 +1772,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             
             let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || isVideoValue){
-                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
@@ -2900,7 +2900,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
-                rowImage = $(`<video muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
@@ -2953,7 +2953,7 @@ function display_change_image_modal(placedToken) {
         let fileExtention = imgUrl.split('.')[imgUrl.split('.').length-1];
         let html;
         if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || placedToken?.options.videoToken == true){
-            html = $(`<video muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);     
+            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);     
         } else{
             html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
         }

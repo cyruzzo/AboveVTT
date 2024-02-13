@@ -454,7 +454,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
 
 	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
-		img = $("<video muted width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
+		img = $("<video disableRemotePlayback muted width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	} 
 	else{
 		img = $("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
