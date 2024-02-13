@@ -191,6 +191,9 @@ class Mixer extends EventTarget {
                     console.log("parse dropbox audio is converting", url, "to", parsed);
                     url = parsed;
                 }
+                else if(url.startsWith("https://onedrive.live.com/embed?")){
+                   url = url.replace('embed?', 'download?')
+                }
                 player = new Audio(url);
                 player.preload = "metadata";
                 this._players[id] = player;
