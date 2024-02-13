@@ -260,6 +260,28 @@ function showErrorMessage(error, ...extraInfo) {
   }
 }
 
+function showGoogleDriveWarning(){
+  let container = $("#above-vtt-error-message");
+  let containerHTML = $(`
+      <div id="above-vtt-error-message">
+        <h2>Google Drive Issue</h2>
+        <h3 id="error-message">Google has made changes</h3>
+        <div id="error-message-details"><p>Google has made some changes to google drive links that may cause maps and other images/audio/video to no longer load. </p><p>They no longer support (it was never officially supported) google drive as a public host.</p> <p>We suggesting moving to other hosts such as dropbox, onedrive, imgur, or your prefered hosting solution.</p><p> For more information or help with other hosting options see our discord: <a href='https://discord.com/channels/815028457851191326/823177610149756958/1201995534038990909'>Google Drive Issue</a></p></div>
+        <div class="error-message-buttons">
+          <button id="close-error-button">Close</button>
+        </div>
+      </div>
+    `)
+  if (container.length === 0) {
+    container = containerHTML;
+    $(document.body).append(container);
+  }
+  else {
+    container.html(containerHTML);
+  }
+  $("#close-error-button").on("click", removeError);
+}
+
 /** Displays an error to the user, and looks for matching github issues
  * @param {Error} error an error object to be parsed and displayed
  * @param {string|*[]} extraInfo other relevant information */
