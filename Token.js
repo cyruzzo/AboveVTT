@@ -3317,6 +3317,7 @@ function setTokenAuras (token, options) {
 							--color2: ${options.aura2.color};	
 							--gradient: ${auraBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
+							--radius: ${auraRadius}px;
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3397,6 +3398,7 @@ function setTokenLight (token, options) {
 							--color2: ${options.light2.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light2.color};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
+							--radius: ${lightRadius}px;
 							`;
 
 
@@ -3412,6 +3414,8 @@ function setTokenLight (token, options) {
 							background-image:${visionBg};
 							left:${optionsLeft + visionAbsPosOffset}px;
 							top:${optionsTop + visionAbsPosOffset}px;
+							--vision-radius: ${visionRadius}px;
+							--vision-color: ${options.vision.color};
 							`;
 		
 
