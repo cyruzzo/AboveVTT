@@ -3397,6 +3397,7 @@ function setTokenLight (token, options) {
 							--color2: ${options.light2.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light2.color};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
+							--light-radius: ${lightRadius}px;
 							`;
 
 

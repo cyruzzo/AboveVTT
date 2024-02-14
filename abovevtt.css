@@ -6772,10 +6772,7 @@ body.preventSelectDefinitelyNot .token.lockedToken>.token-image>[data-img]{
     box-shadow: 0px 0px 0px 3px #f00;
 }
 
-@keyframes aurafx-flicker{
-    0%  {filter: blur(10px);}
-    100%{filter: blur(15px);}
-}
+
 
 .aurafx-flicker{
     mix-blend-mode: plus-lighter;
@@ -8049,11 +8046,21 @@ button.journal-view-button.journal-button {
 
 
 /*light/aura animations*/
-
+[data-animation='static-blur-fx'] .islight,
+.aura-element[data-animation='static-blur-fx']{
+    --light1-blur-size: calc(var(--light-radius) * 0.9);
+    --light2-blur-size: calc(var(--light-radius) * 1.1);
+    --transparency-blur-size: calc(var(--light-radius) * 1.9);
+    background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
+}
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
-    animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%)
+    --light1-blur-size: calc(var(--light-radius) * 0.9);
+    --light2-blur-size: calc(var(--light-radius) * 1.1);
+    --transparency-blur-size: calc(var(--light-radius) * 1.9);
+    animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
+    background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 
 
@@ -8254,8 +8261,6 @@ button.journal-view-button.journal-button {
 }
 
 
-
-
 @keyframes bubble {
      0%{
         opacity: 0;
@@ -8366,12 +8371,11 @@ button.journal-view-button.journal-button {
 }
 
 @keyframes aurafx-flicker{
-      0% {
-        filter: blur(15px) brightness(0.7);
+      0% { 
+        opacity: 0.7;
         transform: scale(0.975);
       }
       100% {
-        filter: blur(20px);
         transform: scale(0.995);
       }
 }

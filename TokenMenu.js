@@ -1014,6 +1014,7 @@ function build_token_auras_inputs(tokenIds) {
 	`);
 	let animationPresets = {
 		'None': 'none',
+		'Static Blur': 'static-blur-fx',
 		'Flicker': 'flicker-fx',	
 		'Rays': 'rays-fx',
 		'Dome': 'force-fx',
@@ -1403,6 +1404,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	let animationPresets = {
 		'None': 'none',
+		'Static Blur': 'static-blur-fx',
 		'Flicker': 'flicker-fx',	
 		'Rays': 'rays-fx',
 		'Dome': 'force-fx',
