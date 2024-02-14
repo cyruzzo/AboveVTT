@@ -8048,17 +8048,21 @@ button.journal-view-button.journal-button {
 /*light/aura animations*/
 [data-animation='static-blur-fx'] .islight,
 .aura-element[data-animation='static-blur-fx']{
-    --light1-blur-size: calc(var(--light-radius) * 0.9);
-    --light2-blur-size: calc(var(--light-radius) * 1.1);
-    --transparency-blur-size: calc(var(--light-radius) * 1.9);
+    --light1-blur-size: calc(var(--radius) * 0.9);
+    --light2-blur-size: calc(var(--radius) * 1.1);
+    --transparency-blur-size: calc(var(--radius) * 1.9);
     background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
+}
+
+[data-animation='static-blur-fx'] .darkvision{
+    background-image: radial-gradient(var(--vision-color) calc(var(--vision-radius) * 0.9), #00000000 var(--vision-radius)) !important;
 }
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
-    --light1-blur-size: calc(var(--light-radius) * 0.9);
-    --light2-blur-size: calc(var(--light-radius) * 1.1);
-    --transparency-blur-size: calc(var(--light-radius) * 1.9);
+    --light1-blur-size: calc(var(--radius) * 0.9);
+    --light2-blur-size: calc(var(--radius) * 1.1);
+    --transparency-blur-size: calc(var(--radius) * 1.9);
     animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
     background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
