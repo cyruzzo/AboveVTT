@@ -194,11 +194,14 @@ function init_jitsi_box() {
 
 	$("#jitsi_close").click(
 		function () {		
-			window.myLocalVideostream.getTracks().forEach(function(track) {
-				track.stop();
-				window.myLocalVideostream.removeTrack(track);
-			});
-			window.myLocalVideostream		
+			if(window.myLocalVideostream != undefined){
+				window.myLocalVideostream.getTracks().forEach(function(track) {
+					track.stop();
+					window.myLocalVideostream.removeTrack(track);
+				});
+			}
+			
+				
 			window.MB.sendMessage("custom/myVTT/videoPeerDisconnect", {id: window.videoPeer.id})
 			window.videoPeer.destroy();
 			$("#peervideo-entry-modal").remove();
