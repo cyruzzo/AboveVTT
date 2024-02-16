@@ -8286,7 +8286,7 @@ button.journal-view-button.journal-button {
 }
 
 .dice-rolling-panel .dice-toolbar{
-    bottom: 35px;
+    bottom: 35px !important;
 }
 
 @keyframes bubble {
