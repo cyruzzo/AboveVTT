@@ -78,7 +78,9 @@ function joinRoom(room = window.gameId) {
                 document.querySelector('select#audioSource').appendChild(option);
             }
         };
-   
+        if($('#audioSource').val() == '' || $('#videoSource').val() == '' || $('#audioSource').val() == null || $('#videoSource').val() == null){
+            alert('It appears your permissions for camera/microphone are set to disabled on dndbeyond please enable these and refresh. Alternatively you are missing a video and/or audio input device.')
+        }
     });
 
 
