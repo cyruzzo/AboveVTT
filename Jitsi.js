@@ -100,7 +100,7 @@ function init_jitsi_popout() {
 }
 
 function init_jitsi_box() {
-	jitsi_box = $(`
+	/*jitsi_box = $(`
 		<div id="meet">
 		<button id="jitsi_switch" class="hasTooltip button-icon" data-name="Fullscreen (v)">
 			<span class="material-icons button-icon">
@@ -119,13 +119,35 @@ function init_jitsi_box() {
 		</button>
 		<div id="jitsi_container" style="width: 100%; height: 100%;"></div>
 		</div>`
-	);
+	);*/
 
-	
+	jitsi_box = $(`  
+		<div class="peervideo-entry-modal" id="peervideo-entry-modal">
+		    <div class="video-meet-area">
+
+		        <!-- Local Video Element-->
+		        <video id="local-video"></video>
+		        <div class="meet-controls-bar">
+		            <button onclick="startScreenShare()">Screen Share</button>
+		            <button id="jitsi_close" class="hasTooltip button-icon" data-name="Disconnect">
+						<span class="material-icons button-icon">
+							cancel
+						</span>
+					</button>
+					<select id="videoSource" style='width:100px'></select>
+					<select id="audioSource" style='width:100px'></select>
+		    	</div>
+		    </div>
+    	</div>
+    `)
+
+
+
+
 	
 	jitsi_box.css("z-index", "100");
 
-	// JITSI WORKAROUND
+	/*// JITSI WORKAROUND
 	var observer = new MutationObserver(function( mutations ){
 		console.log("Got Mutations");
 		console.log(mutations);
@@ -155,28 +177,35 @@ function init_jitsi_box() {
 	observer.observe(jitsi_box.find("#jitsi_container").get(0), config);
 
 	// END OF JITSI WORKAROUND
-
+*/
 	$("#site").append(jitsi_box);
 	
 
 	
 	$("#jitsi_switch").css("position", "absolute").css("top", 0).css("left", 0);
 	$("#jitsi_switch").click(jitsi_switch);
-	$("#jitsi_close").css("position", "absolute").css("top", 0).css("left", "64px");
+
+
+	joinRoom();
+	
+	
+	
+	$("#jitsi_close").css("float", 'right')
 
 	$("#jitsi_close").click(
-		function () {
-			$("#meet").remove();
+		function () {		
+			window.myLocalVideostream.getTracks().forEach(function(track) {
+				track.stop();
+				window.myLocalVideostream.removeTrack(track);
+			});
+			window.myLocalVideostream		
+			window.MB.sendMessage("custom/myVTT/videoPeerDisconnect", {id: window.videoPeer.id})
+			window.videoPeer.destroy();
+			$("#peervideo-entry-modal").remove();
 			create_jitsi_button();
-			reposition_player_sheet();
 		}
 	);
 
-	$("#jitsi_pop").css("position", "absolute").css("top", 0).css("left", "32px");
-	$("#jitsi_pop").click(init_jitsi_popout);
-
-	init_jitsi(false);
-	jitsi_bottom();
 }
 
 function jitsi_modal() {

@@ -288,6 +288,7 @@ async function start_above_vtt_common() {
   window.PeerManager = new PeerManager();
   window.MB = new MessageBroker();
   init_audio_mixer();
+  create_jitsi_button();
 }
 
 async function start_above_vtt_for_dm() {

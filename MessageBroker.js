@@ -1145,6 +1145,22 @@ class MessageBroker {
 			if (msg.eventType === "custom/myVTT/peerConnect") {
 				window.PeerManager.receivedPeerConnect(msg);
 			}
+			if (msg.eventType === "custom/myVTT/videoPeerConnect") {
+				if(msg.data.id != window.myVideoPeerID){
+					let call = window.videoPeer.call(msg.data.id, window.myLocalVideostream)
+          call.on('stream', (stream) => {
+              window.videoConnectedPeers.push(msg.data.id);
+              setRemoteStream(stream, call.peer);   
+              call.on('close', () => {
+                $(`video#${call.peer}`).remove();
+            	})   
+          })
+          window.currentPeers.push(call);
+				}
+			}
+			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
+					$(`video#${msg.data.id}`).remove();
+			}
 
 		};
 
