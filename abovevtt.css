@@ -8253,8 +8253,30 @@ button.journal-view-button.journal-button {
     rotate:200deg;
 }
 
+.video-meet-area{
+    z-index: 100;
+    position: fixed;
+    bottom: 0;
+    width: calc(100vW - 360px);
+    height: 169px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.meet-controls-bar{
+    position: absolute;
+    bottom: 0px;
+}
 
+.video-meet-area video {
+    width: 200px;
+    padding: 0 0 0 5px;
+}
 
+.dice-rolling-panel .dice-toolbar{
+    bottom: 35px;
+}
 
 @keyframes bubble {
      0%{
