@@ -103,7 +103,8 @@
 			"Main.js",
 			"MonsterStatBlock.js",
 			"PeerManager.js",
-			"PeerCommunication.js"
+			"PeerCommunication.js",
+			"peerVideo.js"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
