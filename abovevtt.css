@@ -8267,22 +8267,29 @@ button.journal-view-button.journal-button {
 .video-meet-area{
     z-index: 100;
     position: fixed;
-    bottom: 0;
+    bottom: 0px;
     width: calc(100vW - 360px);
-    height: 169px;
+    min-height: 133px;
+    height: fit-content;
+    padding-bottom: 26px;
     display: flex;
     flex-direction: row;
-    align-items: center;
     justify-content: center;
+    flex-wrap: wrap-reverse;
+    align-items: stretch;
+    align-content: center;
+    pointer-events: none;
 }
 .meet-controls-bar{
     position: absolute;
     bottom: 0px;
+    pointer-events: auto;
 }
 
 .video-meet-area video {
     width: 200px;
-    padding: 0 0 0 5px;
+    padding: 5px 0 0 5px;
+    pointer-events: auto;
 }
 
 .dice-rolling-panel .dice-toolbar{

@@ -21,7 +21,7 @@ function setRemoteStream(stream, peerId) {
     let video = $(`.remote-video#${peerId}`);
     video.remove()
 
-    video = $(`<video class='remote-video' id='${peerId}'></video>`)
+    video = $(`<video controls class='remote-video' id='${peerId}'></video>`)
     $(`.video-meet-area`).append(video)
     
     video[0].srcObject = stream;
@@ -43,30 +43,6 @@ function joinRoom(room = window.gameId) {
     if(window.videoConnectedPeers == undefined){
         window.videoConnectedPeers = [player_id];
     }
-    navigator.mediaDevices.enumerateDevices().then(function (devices) {
-        for(let i = 0; i < devices.length; i ++){
-            let device = devices[i];
-            if (device.kind === 'videoinput') {
-                let option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || 'camera ' + (i + 1);
-                document.querySelector('select#videoSource').appendChild(option);
-            }
-            if (device.kind === 'audioinput') {
-                let option = document.createElement('option');
-                option.value = device.deviceId;
-                option.text = device.label || 'microphone ' + (i + 1);
-                document.querySelector('select#audioSource').appendChild(option);
-            }
-        };
-    });
-    $('select#videoSource').off('change.videoSource').on('change.videoSource', function(){
-         getMediaDevice();
-    })
-    $('select#audioSource').off('change.videoSource').on('change.videoSource', function(){
-         getMediaDevice();     
-    })
-
     window.videoPeer.on('open', (id) => {
         console.log("Connected with Id: " + id)
         window.myVideoPeerID = id;
@@ -86,30 +62,64 @@ function joinRoom(room = window.gameId) {
 
         window.currentPeers.push(call);
     })
+    navigator.mediaDevices.enumerateDevices().then(function (devices) {
+        for(let i = 0; i < devices.length; i ++){
+            let device = devices[i];
+            if (device.kind === 'videoinput') {
+                let option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || 'camera ' + (i + 1);
+                document.querySelector('select#videoSource').appendChild(option);
+            }
+            if (device.kind === 'audioinput') {
+                let option = document.createElement('option');
+                option.value = device.deviceId;
+                option.text = device.label || 'microphone ' + (i + 1);
+                document.querySelector('select#audioSource').appendChild(option);
+            }
+        };
+   
+    });
+
+
+    $('select#videoSource').off('change.videoSource').on('change.videoSource', function(){
+         getMediaDevice();
+    })
+    $('select#audioSource').off('change.videoSource').on('change.videoSource', function(){
+         getMediaDevice();     
+    })
+
+
+    
 }
 function getMediaDevice(){
+    let audioDeviceNotAvailable = $('#audioSource').val() == '';
+    let videoDeviceNotAvailable = $('#videoSource').val() == '';
+
+    let videoConditions = videoDeviceNotAvailable ? false : {
+        deviceId: {
+                exact: $('select#videoSource').val()
+        },   
+        width: {
+            exact: 854
+        },
+        height: {
+            exact: 480
+        },
+        frameRate: 25,
+        aspectRatio: {
+            exact: 854 / 480,
+        }
+    }
+    let audioConditions = audioDeviceNotAvailable ? false : {
+        deviceId: {
+            exact: $('select#audioSource').val()
+        }    
+    }
      getUserMedia(
         { 
-            video:  {
-                deviceId: {
-                        exact: $('select#videoSource').val()
-                },   
-                width: {
-                    exact: 426
-                },
-                height: {
-                    exact: 240
-                },
-                    frameRate: 25,
-                    aspectRatio: {
-                    exact: 426 / 240,
-                },
-            }, 
-            audio: {
-                deviceId: {
-                    exact: $('select#audioSource').val()
-                }    
-            },
+            video: videoConditions, 
+            audio: audioConditions,
         }, (stream) => {
         window.myLocalVideostream = stream;
         setLocalStream(window.myLocalVideostream)
