@@ -8285,6 +8285,9 @@ button.journal-view-button.journal-button {
     padding: 0 0 0 5px;
 }
 
+.dice-rolling-panel .dice-toolbar{
+    bottom: 35px;
+}
 
 @keyframes bubble {
      0%{
