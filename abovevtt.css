@@ -8060,9 +8060,10 @@ button.journal-view-button.journal-button {
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
-    --light1-blur-size: calc(var(--radius) * 0.9);
-    --light2-blur-size: calc(var(--radius) * 1.1);
-    --transparency-blur-size: calc(var(--radius) * 1.9);
+    --light1-blur-size: calc(var(--radius) * var(--light1-blur-size-animated));
+    --light2-blur-size: calc(var(--radius) * var(--light2-blur-size-animated));
+    --transparency-blur-size: calc(var(--radius) * var(--transparency-blur-size-animated));
+    opacity: 0.7;
     animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
     background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
@@ -8404,14 +8405,37 @@ button.journal-view-button.journal-button {
         transform: rotate(0deg) scale(1.5);
     }
 }
+@property --light1-blur-size-animated {
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 0;
+  inherits: false;
+}
 
+@property --light2-blur-size-animated{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 0;
+  inherits: false;
+}
+@property --transparency-blur-size-animated{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 0;
+  inherits: false;
+}
+@property --opacity{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 1;
+  inherits: false;
+}
 @keyframes aurafx-flicker{
       0% { 
-        opacity: 0.7;
-        transform: scale(0.975);
+        --light1-blur-size-animated: 0.7;
+        --light2-blur-size-animated: 1;
+        --transparency-blur-size-animated: 1.6;
       }
       100% {
-        transform: scale(0.995);
+        --light1-blur-size-animated: 0.9;
+        --light2-blur-size-animated: 1.2;
+        --transparency-blur-size-animated: 1.8;
       }
 }
 @keyframes aurafx-rotate{
