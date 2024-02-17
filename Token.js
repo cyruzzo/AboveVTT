@@ -3318,7 +3318,7 @@ function setTokenAuras (token, options) {
 							--gradient: ${auraBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${auraRadius}px;
-							--radius2: ${totallight}px;
+							--radius2: ${totalAura}px;
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
