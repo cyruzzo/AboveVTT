@@ -5860,16 +5860,20 @@ input.max_hp[disabled]{
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
-.token>.base~.token-image{
+#VTT .token>.base~.token-image{
     filter: none;
     border: 0px;
     box-shadow: none;
+}
+#VTT .token.isAoe .token-image{
+  border: 0px;
 }
 .base.circle,
 .base.circle:after{
     border-radius: 50%;
 }
-.token>.token-image.freeform {
+
+#VTT .token>.token-image.freeform {
     border: 0px;
     box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
@@ -6189,6 +6193,10 @@ input.max_hp[disabled]{
 
 #tokens {
     z-index: 40;
+}
+
+.isAoe .hpvisualbar{
+    display: none !important;
 }
 
 .VTTToken:not(.freeform) .hpvisualbar:before{
