@@ -3300,7 +3300,7 @@ function setTokenAuras (token, options) {
 		// use sizeWidth and sizeHeight???
 		const totalAura = innerAuraSize + outerAuraSize;
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
-		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px);`;
+		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px ${totalAura}px);`;
 		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
 		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
@@ -3317,7 +3317,8 @@ function setTokenAuras (token, options) {
 							--color2: ${options.aura2.color};	
 							--gradient: ${auraBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
-							--radius: ${auraRadius}px;
+							--radius1: ${auraRadius}px;
+							--radius2: ${totallight}px;
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3385,7 +3386,7 @@ function setTokenLight (token, options) {
 		// use sizeWidth and sizeHeight???
 		const totallight = innerlightSize + outerlightSize;
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
-		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px);`;
+		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px ${totallight}px);`;
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
 		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
@@ -3398,7 +3399,8 @@ function setTokenLight (token, options) {
 							--color2: ${options.light2.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light2.color};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
-							--radius: ${lightRadius}px;
+							--radius1: ${lightRadius}px;
+							--radius2: ${totallight}px;
 							`;
 
 
