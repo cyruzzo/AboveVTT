@@ -3305,6 +3305,14 @@ function setTokenAuras (token, options) {
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
 		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
+		
+		const color1Values = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
+		const color2Values = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
+		const opacity1Value = options.aura1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+		const opacity2Value = options.aura2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+		
+
+
 		const auraStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							left:${absPosOffset}px;
@@ -3313,12 +3321,14 @@ function setTokenAuras (token, options) {
 							left:${parseFloat(options.left.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor + absPosOffset}px;
 							top:${parseFloat(options.top.replace('px', ''))/window.CURRENT_SCENE_DATA.scale_factor + absPosOffset}px;
 							display:${showAura};
-							--color1: ${options.aura1.color};
-							--color2: ${options.aura2.color};	
+							--color1: ${color1Values};
+							--color2: ${color2Values};	
+							--opacity1: ${opacity1Value};
+							--opacity2: ${opacity2Value};
 							--gradient: ${auraBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${auraRadius}px;
-							--radius2: ${totallight}px;
+							--radius2: ${totalAura}px;
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3389,14 +3399,24 @@ function setTokenLight (token, options) {
 		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px ${totallight}px);`;
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
+		
+		const color1Values = options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
+		const color2Values = options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
+		const daylightValues = window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
+		const opacity1Value = options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+		const opacity2Value = options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+		const daylightOpacityValue = window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+
 		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							background-image:${lightBg};
 							left:${optionsLeft + absPosOffset}px;
 							top:${optionsTop+ absPosOffset}px;
-							--color1: ${options.light1.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light1.color};
-							--color2: ${options.light2.daylight ? window.CURRENT_SCENE_DATA.daylight : options.light2.color};
+							--color1: ${options.light1.daylight ? daylightValues : color1Values};
+							--color2: ${options.light2.daylight ? daylightValues : color2Values};
+							--opacity1: ${options.light1.daylight ? daylightOpacityValue : opacity1Value};
+							--opacity2: ${options.light2.daylight ? daylightOpacityValue : opacity2Value};
 							--gradient: ${lightBg};
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${lightRadius}px;

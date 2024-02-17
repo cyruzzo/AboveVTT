@@ -5865,6 +5865,15 @@ input.max_hp[disabled]{
     border: 0px;
     box-shadow: none;
 }
+
+#VTT .token.isAoe .token-image{
+  border: 0px;
+}
+
+#token_map_items .token:before {
+    display: none;
+}
+
 .base.circle,
 .base.circle:after{
     border-radius: 50%;
@@ -8051,7 +8060,7 @@ button.journal-view-button.journal-button {
     --light1-blur-size: calc(var(--radius1) * 0.8);
     --light2-blur-size: calc(var(--radius2) * 0.8);
     --transparency-blur-size: calc(var(--light2-blur-size) * 1.2);
-    background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 
 [data-animation='static-blur-fx'] .darkvision{
@@ -8063,9 +8072,8 @@ button.journal-view-button.journal-button {
     --light1-blur-size: calc(var(--radius1) * var(--light1-blur-size-animated));
     --light2-blur-size: calc(var(--radius2) * var(--light2-blur-size-animated));
     --transparency-blur-size: calc(var(--light2-blur-size) * var(--transparency-blur-size-animated));
-    opacity: 0.7;
     animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
-    background-image: radial-gradient(var(--color1) var(--light1-blur-size), var(--color2) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 .reduceMovement [data-animation='flicker-fx'] .islight,
 .reduceMovement .aura-element[data-animation='flicker-fx']{
@@ -8320,11 +8328,11 @@ button.journal-view-button.journal-button {
 
 @keyframes lightning {
     0%{
-        scale: 1;
+        scale: 3.5;
         opacity: 0;
     }
     20%{
-        scale: 1;
+        scale: 3.5;
         opacity: 0;
     }
     21%{
@@ -8336,7 +8344,7 @@ button.journal-view-button.journal-button {
         scale: 3.5;
     }
     70%{
-        scale: 3.5;
+        scale: 5.5;
         opacity: 0;
     }
     71%{
@@ -8344,15 +8352,12 @@ button.journal-view-button.journal-button {
        opacity: 1;
     }
     75%{
-        scale: 5.5
+        scale: 5.5;
         opacity: 0;
     }
-    76%{
-        scale: 1
-    }
     100%{
-        scale: 1;
-        opacity: 0%;
+        scale: 5.5;
+        opacity: 0;
     }
 }
 
@@ -8433,11 +8438,13 @@ button.journal-view-button.journal-button {
 }
 @keyframes aurafx-flicker{
       0% { 
+        --opacity: 0.5;
         --light1-blur-size-animated: 0.7;
         --light2-blur-size-animated: 0.8;
         --transparency-blur-size-animated: 1.2;
       }
       100% {
+        --opacity: 1;
         --light1-blur-size-animated: 0.8;
         --light2-blur-size-animated: 0.8;
         --transparency-blur-size-animated: 1.3;
