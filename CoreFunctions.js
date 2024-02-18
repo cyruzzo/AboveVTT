@@ -780,23 +780,27 @@ async function normalize_scene_urls(scenes) {
   return scenesArray;
 }
 
-function updateImgSrc(url, container){
+function updateImgSrc(url, container, video){
   url = parse_img(url)
-  if(url?.includes('google')){
+  if(video == true && url?.includes('onedrive')){
+    container.attr('src', url.replace('embed?', 'download?'));
+  }
+  else if(url?.includes('google')){
     throttleImgSrc(() => {
       container.attr('src', url);
     })
-   }else{
+  }else{
     container.attr('src', url);
-   }
+  }
 }
-function updateTokenSrc(url, container){
+function updateTokenSrc(url, container, video=false){
   url = parse_img(url)
-  if(url?.includes('google')){
-      container.attr('src', url);
-   }else{
+  if(video == true && url?.includes('onedrive')){
+    container.attr('src', url.replace('embed?', 'download?'));
+  }
+  else{
     container.attr('src', url);
-   }
+  }
 }
 
 const throttleGoogleApi = throttledQueue('throttleGoogleApi', 1, 5000); // map throttle

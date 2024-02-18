@@ -1113,14 +1113,15 @@ function build_sidebar_list_row(listItem) {
     let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
     let img;
     let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
-         
+    let video = false;
     if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || tokenCustomizations?.tokenOptions?.videoToken == true){
         img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
+        video = true;
     } else{
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
   
-    updateImgSrc(listingImage, img);
+    updateImgSrc(listingImage, img, video);
     imgHolder.append(img);
   }
   else{

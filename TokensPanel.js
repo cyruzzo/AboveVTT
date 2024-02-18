@@ -1714,14 +1714,16 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
+            let video = false;
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                video = true;
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
             }      
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
-            rowImage.attr('src', parse_img(newImageUrl));
+            updateTokenSrc(newImageUrl, rowImage, video);
         } else {
             sidebarPanel.body.append(build_token_div_for_sidebar_modal(newImageUrl, listItem, placedToken));
         }
@@ -1771,14 +1773,16 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
             
             let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
+            let video=false;
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || isVideoValue){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                video = true;
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
             }      
-            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
-            rowImage.attr('src', parse_img(listingImage));
+            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);         
+            updateTokenSrc(listingImage, rowImage, video);
         });
         inputWrapper.append(videoToggle);
     }
@@ -2899,16 +2903,17 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
+            let video = false;
             if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                video = true;
             } 
             else{
                 rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
             }      
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
 
-            rowImage.attr('src', listingImage);   
-
+            updateTokenSrc(listingImage, rowImage, video);
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             $(event.currentTarget).hide();
         }
@@ -2952,12 +2957,14 @@ function display_change_image_modal(placedToken) {
     alternativeImages.forEach(imgUrl => {
         let fileExtention = imgUrl.split('.')[imgUrl.split('.').length-1];
         let html;
+        let video = false;
         if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || placedToken?.options.videoToken == true){
-            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);     
+            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);  
+            video = true;   
         } else{
             html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
         }
-        updateImgSrc(imgUrl, html);
+        updateImgSrc(imgUrl, html, video);
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
         html.on("click", function (imgClickEvent) {
