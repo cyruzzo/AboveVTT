@@ -5837,10 +5837,11 @@ input.max_hp[disabled]{
 
 .token>.token-image{
     --aura-width: max(2px, calc(3px / var(--window-zoom)));
-    --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(var(--token-border-width) * 1.5 / var(--window-zoom)));
+    --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(calc(var(--token-border-width) * 1.5) * var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
+
 
 .token>.token-image{
     min-height: var(--min-height) !important;
@@ -5854,13 +5855,13 @@ input.max_hp[disabled]{
     max-height: calc(var(--max-height) / var(--scene-scale)) !important;
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
-.token[data-notatoken]>.token-image{
+#token_map_items .token[data-notatoken]>.token-image{
     --aura-width: max(1px, calc(calc(1px / var(--window-zoom)) / var(--scene-scale)));
-    --zoom-border-width: max(1px, calc(calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)) / var(--scene-scale)));
+    --zoom-border-width: max(1px, calc(calc(calc(var(--token-border-width) * 1.5) * var(--window-zoom)) / var(--scene-scale)));
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
-.token>.base~.token-image{
+#VTT .token>.base~.token-image{
     filter: none;
     border: 0px;
     box-shadow: none;
@@ -5878,7 +5879,8 @@ input.max_hp[disabled]{
 .base.circle:after{
     border-radius: 50%;
 }
-.token>.token-image.freeform {
+
+#VTT .token>.token-image.freeform {
     border: 0px;
     box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
@@ -6198,6 +6200,10 @@ input.max_hp[disabled]{
 
 #tokens {
     z-index: 40;
+}
+
+.isAoe .hpvisualbar{
+    display: none !important;
 }
 
 .VTTToken:not(.freeform) .hpvisualbar:before{
