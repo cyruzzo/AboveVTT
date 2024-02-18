@@ -8078,7 +8078,7 @@ button.journal-view-button.journal-button {
     --light1-blur-size: calc(var(--radius1) * var(--light1-blur-size-animated));
     --light2-blur-size: calc(var(--radius2) * var(--light2-blur-size-animated));
     --transparency-blur-size: calc(var(--light2-blur-size) * var(--transparency-blur-size-animated));
-    animation: aurafx-flicker 2s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
+    animation: aurafx-flicker 3s infinite alternate linear(1.22 -19.85%, 0.93 -0.74%, 0.46 13.24%, 0.71 34.56%, 0.46 58.82%, 0.74 70.59%, 1 100%);
     background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 .reduceMovement [data-animation='flicker-fx'] .islight,
@@ -8444,7 +8444,7 @@ button.journal-view-button.journal-button {
 }
 @keyframes aurafx-flicker{
       0% { 
-        --opacity: 0.5;
+        --opacity: 0.7;
         --light1-blur-size-animated: 0.7;
         --light2-blur-size-animated: 0.8;
         --transparency-blur-size-animated: 1.2;

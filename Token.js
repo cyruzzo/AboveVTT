@@ -1598,12 +1598,14 @@ class Token {
 					let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length-1]
 					let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
 					let imgClass = oldImage.attr('class');
+					let video = false;
 					if(oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken){
 						oldImage.remove();
 						$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
 						let tokenImage;
 						if(newFileExtention == 'webm' || newFileExtention == 'mp4'  || newFileExtention == 'm4v' || this.options.videoToken == true){
-							tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+							tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");			
+							video = true;
 						} 
 						else{
 							tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
@@ -1613,7 +1615,7 @@ class Token {
 					}
 					window.videoTokenOld[this.options.id] = this.options.videoToken;
 					
-					oldImage.attr("src", parse_img(this.options.imgsrc));
+					updateTokenSrc(this.options.imgsrc, oldImage, video)
 					$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(this.options.imgsrc));
 					oldImage.off('dblclick.highlightToken').on('dblclick.highlightToken', function(e) {
 						self.highlight(true); // dont scroll
@@ -1951,9 +1953,10 @@ class Token {
 				let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 				let fileExtention = this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1];
-
+				let video = false;
 				if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || this.options.videoToken == true){
 					tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+					video = true;
 				} 
 				else{
 					tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
@@ -1966,7 +1969,7 @@ class Token {
 				}
 				
 				
-				updateTokenSrc(this.options.imgsrc, tokenImage);
+				updateTokenSrc(this.options.imgsrc, tokenImage, video);
 
 				if(this.options.disableborder)
 					tokenImage.css("border-width","0");

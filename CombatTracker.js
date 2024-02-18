@@ -452,16 +452,16 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		entry.attr('data-stat', token.options.stat)
 
 	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
-
+	let video = false;
 	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
 		img = $("<video disableRemotePlayback muted width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
+		video = true;
 	} 
 	else{
 		img = $("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	}
 
-
-	img.attr('src', parse_img(token.options.imgsrc));
+	updateImgSrc(token.options.imgsrc, img, video);
 	img.css('border','3px solid '+token.options.color);
 	if (token.options.hidden == true){
 		img.css('opacity','0.5');

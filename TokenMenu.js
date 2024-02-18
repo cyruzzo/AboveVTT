@@ -2972,15 +2972,16 @@ function add_to_quick_roll_menu(token){
 	//qrm_entry.tooltip({show: { duration: 1000 }});
 	let img;
 	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
-
+	let video = false;
 	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
 		img = $(`<video disableRemotePlayback muted width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
+		video = true;
 	} 
 	else{
 		img = $(`<img width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
 	}
 
-	img.attr('src', parse_img(token.options.imgsrc));
+	updateImgSrc(token.options.imgsrc, img, video);
 	img.css('border','3px solid '+token.options.color);
 	img.css('margin', '2px 2px');
 	if (token.options.hidden == true){
