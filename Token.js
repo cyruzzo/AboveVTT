@@ -601,10 +601,13 @@ class Token {
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
 			
 			if(!dontscroll){
-			$("html,body").animate({
-				scrollTop: pageY + window.VTTMargin,
-				scrollLeft: pageX + window.VTTMargin
-			}, 500);
+				if($("#hide_rightpanel").hasClass("point-right")) {
+   					pageX += 190; // 190 = half gamelog + scrollbar
+   				}
+				$("html,body").animate({
+					scrollTop: pageY + window.VTTMargin,
+					scrollLeft: pageX + window.VTTMargin
+				}, 500);
 			}
 
 

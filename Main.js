@@ -3210,6 +3210,10 @@ function init_help_menu() {
 							<dd>Show/hide character sheet (players only)</dd>
 						<dl>
 						<dl>
+							<dt>SHIFT+SPACE</dt>
+							<dd>Center Player Token (players only)</dd>
+						<dl>
+						<dl>
 							<dt>Q</dt>
 							<dd>Show/hide sidebar</dd>
 						<dl>
