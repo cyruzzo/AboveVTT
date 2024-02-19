@@ -1178,7 +1178,10 @@ class MessageBroker {
 		// Ensure we have an initial delay (15 seconds) before attempting re-connects to let everything load (every 4 seconds)
 		setTimeout(setInterval(function() {
 			   	forceDdbWsReconnect();
+			   	self.reconnectDisconnectedAboveWs();
 		}, 4000), 15000);
+
+
 	}
 
   handleCT(data){
@@ -1822,6 +1825,26 @@ class MessageBroker {
 		}
 		else{
 			self.loadAboveWS(null);
+		}
+	}
+
+	reconnectDisconnectedAboveWs(){
+		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS){
+				let msgdata = {
+						player: window.PLAYER_NAME,
+						img: window.PLAYER_IMG,
+						text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
+						whisper: window.PLAYER_NAME
+				};
+				this.inject_chat(msgdata);	
+				this.loadAboveWS(function(){
+					let msgdata = {
+							player: window.PLAYER_NAME,
+							img: window.PLAYER_IMG,
+							text: `${window.PLAYER_NAME} has reconnected.`
+					};
+					window.MB.inject_chat(msgdata);
+				});		
 		}
 	}
 }
