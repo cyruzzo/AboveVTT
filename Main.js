@@ -2566,7 +2566,7 @@ function init_ui() {
 	});
 
 	// AVOID ANNOYING TEXT SELECTIONS
-	$("body").disableSelection();
+
 
 	/*fog.on("",function(){
 	//	if(!$("#select-button").hasClass("button-enabled"))
