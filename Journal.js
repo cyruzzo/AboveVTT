@@ -805,6 +805,11 @@ class JournalManager{
 	add_journal_roll_buttons(target, tokenId=undefined){
 		console.group("add_journal_roll_buttons")
 		
+		let pastedButtons = target.find('.avtt-roll-button').add('.integrated-dice__container');
+
+		for(let i=0; i<pastedButtons.length; i++){
+			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
+		}
 
 		const rollImage = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
 		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.name : window.PLAYER_NAME
