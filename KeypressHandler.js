@@ -101,11 +101,21 @@ Mousetrap.bind('0', function () {
 
 Mousetrap.bind('space', function (e) {     //collapse/show character sheet
 	e.preventDefault();
+    if(shiftHeld)
+        return;
     if(!window.DM) {
         $('#sheet_button').click()
     }
     else{
         $('#pause_players').click()
+    }
+});
+Mousetrap.bind('shift+space', function (e) {     //collapse/show character sheet
+    e.preventDefault();
+    if(!window.DM) {
+        let tokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr('data-id');
+        if(tokenId != undefined)
+            window.TOKEN_OBJECTS[tokenId].highlight();   
     }
 });
 
