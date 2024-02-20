@@ -8308,8 +8308,37 @@ button.journal-view-button.journal-button {
 
 .video-meet-area video {
     width: 200px;
-    padding: 5px 0 0 5px;
+    margin: 5px 0px 0px 5px;
     pointer-events: auto;
+    background: var(--token-image, #000) center top no-repeat, #00000070;
+    border: ridge 3px #555555;
+    box-shadow: inset 1px 1px 3px #000;
+    background-size:contain;
+}
+
+.video-meet-area video::-webkit-media-controls-panel {
+    border-radius: 0px;
+    color: #fff;
+    background:transparent;
+    bottom:0px;
+    position:relative;
+    height:100%;
+}
+
+
+
+.video-meet-area video::-webkit-media-controls-enclosure {
+    width:100%;
+    background-color:#80808091;
+    border-radius: 0px;
+    display: none;
+    position:absolute;
+    max-height:40px;
+    padding:0px !important;
+}
+
+.video-meet-area video:hover::-webkit-media-controls-enclosure {
+    display: flex;
 }
 
 .dice-rolling-panel .dice-toolbar{

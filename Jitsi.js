@@ -126,7 +126,7 @@ function init_jitsi_box() {
 		    <div class="video-meet-area">
 
 		        <!-- Local Video Element-->
-		        <video id="local-video"></video>
+		        <video controls id="local-video"></video>
 		        <div class="meet-controls-bar">
 		            <button onclick="startScreenShare()">Screen Share</button>
 		            <button id="jitsi_close" class="hasTooltip button-icon" data-name="Disconnect">
