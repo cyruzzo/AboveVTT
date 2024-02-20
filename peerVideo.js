@@ -172,22 +172,28 @@ function startScreenShare() {
     if (screenSharing) {
         stopScreenSharing()
     }
-    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+    screenSharing = true;
+    let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
+    let audioConditions = audioDeviceNotAvailable ? false : {
+        deviceId: $('select#audioSource').val() 
+    }
+    navigator.mediaDevices.getDisplayMedia({ video: true, audio: true}).then((stream) => {
+
         screenStream = stream;
         let videoTrack = screenStream.getVideoTracks()[0];
         videoTrack.onended = () => {
             stopScreenSharing()
         }
-        if (window.videoPeer) {
-            for(let i in window.currentPeers){
-                let sender = window.currentPeers[i].peerConnection.getSenders().find(function (s) {
-                    return s.track.kind == videoTrack.kind;
-                })
-                sender.replaceTrack(videoTrack)
-                screenSharing = true
-            }
-            setLocalStream(stream)
-           
+        screenStream.addTrack(window.myLocalVideostream.getAudioTracks()[0])
+        for(let i in window.currentPeers){
+          let call = window.videoPeer.call(window.currentPeers[i].peer, screenStream)
+          call.on('stream', (stream) => {
+            setRemoteStream(stream, call.peer);   
+            call.on('close', () => {
+                $(`video#${call.peer}`).remove();
+            })   
+          })
+
         }
         console.log(screenStream)
     })
