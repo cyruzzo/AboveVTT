@@ -31,6 +31,17 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+
+button[id^=jitsi_]{
+    height: 27px;
+}
+
+button#startScreenShare{
+    height: 27px;
+    background: #fff;
+    border: 0px;
+    border-radius: 5px;
+}
 .percentageLoaded{
     height: 10px;
     position: absolute;
@@ -8308,7 +8319,12 @@ button.journal-view-button.journal-button {
     bottom: 0px;
     pointer-events: auto;
 }
-
+#jitsi_close span.material-icons.button-icon
+{
+    margin: -3px -3px;
+    bottom: -3px;
+    position: relative;
+}
 .video-meet-area video {
     width: 200px;
     margin: 5px 0px 0px 5px;
@@ -8317,6 +8333,7 @@ button.journal-view-button.journal-button {
     border: ridge 3px #555555;
     box-shadow: inset 1px 1px 3px #000;
     background-size:contain;
+    object-fit:fill;
 }
 
 .video-meet-area video::-webkit-media-controls-panel {
