@@ -187,13 +187,19 @@ function startScreenShare() {
         stopScreenSharing()
     }
     screenSharing = true;
-    navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+
+    let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
+    let audioConditions = audioDeviceNotAvailable ? false : {
+        deviceId: $('select#audioSource').val() 
+    }
+    navigator.mediaDevices.getDisplayMedia({ video: true, audio: true}).then((stream) => {
         screenStream = stream;
         let videoTrack = screenStream.getVideoTracks()[0];
         videoTrack.onended = () => {
             stopScreenSharing()
         }
 
+        screenStream.addTrack(window.myLocalVideostream.getAudioTracks()[0])
         for(let i in window.currentPeers){
           let call = window.videoPeer.call(window.currentPeers[i].peer, screenStream)
           call.on('stream', (stream) => {
