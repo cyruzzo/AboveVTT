@@ -1155,6 +1155,7 @@ class MessageBroker {
                 $(`video#${call.peer}`).remove();
             	})   
           })
+          window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
           window.currentPeers.push(call);
 				}
 			}

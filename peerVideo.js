@@ -2,7 +2,6 @@ const PRE = "AboveVTT"
 const SUF = "MEET"
 let room_id;
 let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-let local_stream;
 let screenStream;
 window.videoPeer = null;
 window.currentPeers = [];
@@ -12,6 +11,23 @@ let screenSharing = false;
 function setLocalStream(stream) {
 
     let video = document.getElementById("local-video");
+    let tokenImage;
+    if(window.DM){
+        tokenImage = `url(${dmAvatarUrl})`
+    }
+    else{
+        let token = $(`#tokens .token[data-id*='/characters/${window.PLAYER_ID}'] img.token-image`);
+
+        if(token.length>0){
+            tokenImage = `url(${token.attr('src')})`;
+        }
+        else{
+           let pc = window.pcs.filter(d=> d.sheet.endsWith(PLAYER_ID))
+           tokenImage = `url(${pc[0].image})`;;
+        }        
+    }
+
+    $(video).css('--token-image', tokenImage);
     video.srcObject = stream;
     video.muted = true;
     video.play();
@@ -20,8 +36,25 @@ function setRemoteStream(stream, peerId) {
 
     let video = $(`.remote-video#${peerId}`);
     video.remove()
+    let tokenImage;
+    if(peerId == room_id){
+        tokenImage = `url(${dmAvatarUrl})`
+    }
+    else{
+        let tokenId = peerId.replace(/[a-zA-Z]+/g, '');
+        let token = $(`#tokens .token[data-id*='/characters/${tokenId}'] img.token-image`);
+
+        if(token.length>0){
+            tokenImage = `url(${token.attr('src')})`;
+        }
+        else{
+           let pc = window.pcs.filter(d=> d.sheet.endsWith(tokenId))
+           tokenImage = `url(${pc[0].image})`;;
+        }        
+    }
 
     video = $(`<video controls class='remote-video' id='${peerId}'></video>`)
+    $(video).css('--token-image', tokenImage);
     $(`.video-meet-area`).append(video)
     
     video[0].srcObject = stream;
@@ -59,7 +92,7 @@ function joinRoom(room = window.gameId) {
                 $(`video#${call.peer}`).remove();
             })
         })
-
+        window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
         window.currentPeers.push(call);
     })
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
@@ -78,7 +111,9 @@ function joinRoom(room = window.gameId) {
                 document.querySelector('select#audioSource').appendChild(option);
             }
         };
-        if($('#audioSource').val() == '' || $('#videoSource').val() == '' || $('#audioSource').val() == null || $('#videoSource').val() == null){
+        let option = $(`<option value=''>Disable Camera</option>`);
+        $('select#videoSource').append(option);
+        if($('#audioSource').val() == '' || $('#videoSource option:nth-of-type(2)').val() == '' || $('#audioSource').val() == null || $('#videoSource option:nth-of-type(2)').val() == null){
             alert('It appears your permissions for camera/microphone are set to disabled on dndbeyond please enable these and refresh. Alternatively you are missing a video and/or audio input device.')
         }
     });
@@ -95,8 +130,8 @@ function joinRoom(room = window.gameId) {
     
 }
 function getMediaDevice(){
-    let audioDeviceNotAvailable = $('#audioSource').val() == '';
-    let videoDeviceNotAvailable = $('#videoSource').val() == '';
+    let audioDeviceNotAvailable = $('select#audioSource').val() == '';
+    let videoDeviceNotAvailable = $('select#videoSource').val() == '';
 
     let videoConditions = videoDeviceNotAvailable ? false : {
         deviceId: {
@@ -160,7 +195,7 @@ function startScreenShare() {
 
 function stopScreenSharing() {
     if (!screenSharing) return;
-    let videoTrack = local_stream.getVideoTracks()[0];
+    let videoTrack = window.myLocalVideostream.getVideoTracks()[0];
     if (window.videoPeer) {
         for(let i in window.currentPeers){
             let sender = window.currentPeers[i].peerConnection.getSenders().find(function (s) {
@@ -168,7 +203,7 @@ function stopScreenSharing() {
             })
             sender.replaceTrack(videoTrack)
         }
-        setLocalStream(stream)
+        setLocalStream(window.myLocalVideostream)
     }
     screenStream.getTracks().forEach(function (track) {
         track.stop();
