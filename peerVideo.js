@@ -96,6 +96,9 @@ function joinRoom(room = window.gameId) {
         window.currentPeers.push(call);
     })
     navigator.mediaDevices.enumerateDevices().then(function (devices) {
+        let option = $(`<option value='disable'>Disable Camera</option>`);
+
+        $('select#videoSource').append(option);
         for(let i = 0; i < devices.length; i ++){
             let device = devices[i];
             if (device.kind === 'videoinput') {
@@ -111,8 +114,7 @@ function joinRoom(room = window.gameId) {
                 document.querySelector('select#audioSource').appendChild(option);
             }
         };
-        let option = $(`<option value=''>Disable Camera</option>`);
-        $('select#videoSource').append(option);
+        
         if($('#audioSource').val() == '' || $('#videoSource option:nth-of-type(2)').val() == '' || $('#audioSource').val() == null || $('#videoSource option:nth-of-type(2)').val() == null){
             alert('It appears your permissions for camera/microphone are set to disabled on dndbeyond please enable these and refresh. Alternatively you are missing a video and/or audio input device.')
         }
@@ -130,8 +132,8 @@ function joinRoom(room = window.gameId) {
     
 }
 function getMediaDevice(){
-    let audioDeviceNotAvailable = $('select#audioSource').val() == '';
-    let videoDeviceNotAvailable = $('select#videoSource').val() == '';
+    let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
+    let videoDeviceNotAvailable = $('select#videoSource').val() == '' || $('select#videoSource').val() == null || $('select#videoSource').val() == 'disable';
 
     let videoConditions = videoDeviceNotAvailable ? false : {
         deviceId: {
@@ -159,10 +161,22 @@ function getMediaDevice(){
             audio: audioConditions,
         }, (stream) => {
         window.myLocalVideostream = stream;
-        setLocalStream(window.myLocalVideostream)
 
-           
-        window.MB.sendMessage("custom/myVTT/videoPeerConnect", {id: window.myVideoPeerID});              
+        setLocalStream(window.myLocalVideostream)
+        if(window.currentPeers.length == 0){
+            window.MB.sendMessage("custom/myVTT/videoPeerConnect", {id: window.myVideoPeerID});  
+        }
+        else{
+            for(let i in window.currentPeers){
+              let call = window.videoPeer.call(window.currentPeers[i].peer, window.myLocalVideostream)
+              call.on('stream', (stream) => {
+                setRemoteStream(stream, call.peer);   
+                call.on('close', () => {
+                    $(`video#${call.peer}`).remove();
+                })   
+              })
+            }
+        }   
         
     }, (err) => {
         console.log(err)
@@ -173,17 +187,18 @@ function startScreenShare() {
         stopScreenSharing()
     }
     screenSharing = true;
+
     let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
     let audioConditions = audioDeviceNotAvailable ? false : {
         deviceId: $('select#audioSource').val() 
     }
     navigator.mediaDevices.getDisplayMedia({ video: true, audio: true}).then((stream) => {
-
         screenStream = stream;
         let videoTrack = screenStream.getVideoTracks()[0];
         videoTrack.onended = () => {
             stopScreenSharing()
         }
+
         screenStream.addTrack(window.myLocalVideostream.getAudioTracks()[0])
         for(let i in window.currentPeers){
           let call = window.videoPeer.call(window.currentPeers[i].peer, screenStream)
@@ -193,26 +208,18 @@ function startScreenShare() {
                 $(`video#${call.peer}`).remove();
             })   
           })
-
         }
+        setLocalStream(screenStream)
         console.log(screenStream)
     })
 }
 
 function stopScreenSharing() {
     if (!screenSharing) return;
-    let videoTrack = window.myLocalVideostream.getVideoTracks()[0];
-    if (window.videoPeer) {
-        for(let i in window.currentPeers){
-            let sender = window.currentPeers[i].peerConnection.getSenders().find(function (s) {
-                return s.track.kind == videoTrack.kind;
-            })
-            sender.replaceTrack(videoTrack)
-        }
-        setLocalStream(window.myLocalVideostream)
-    }
+    
+    getMediaDevice();
     screenStream.getTracks().forEach(function (track) {
         track.stop();
     });
-    screenSharing = false
+
 }
