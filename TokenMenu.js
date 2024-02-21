@@ -983,7 +983,15 @@ function build_token_auras_inputs(tokenIds) {
 			<div class="token-config-aura-wrapper">
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Animation</div>
+					<div class="token-image-modal-footer-title"><button id='editAnimations'>Edit</button></div>
 					<select class="token-config-animation-preset">
+						<option value=""></option>
+					</select>
+				</div>
+				<div class="token-image-modal-footer-select-wrapper">		
+					<div class="token-image-modal-footer-title">Preset</div>
+					<div class="token-image-modal-footer-title"><button id='editPresets'>Edit</button></div>
+					<select class="token-config-aura-preset">
 						<option value=""></option>
 					</select>
 				</div>
@@ -1028,11 +1036,123 @@ function build_token_auras_inputs(tokenIds) {
 		'Snow': 'snow-fx',
 		'Bubble': 'bubble-fx'
 	}
+	if(localStorage.getItem('AURA_PRESETS') == null){
+		window.AURA_PRESETS = [
+			{
+				name: 'No Aura (0/0)',
+				aura1: {
+					feet: '0'
+				},
+				aura2: {
+					feet: '0'
+				}	
+			},
+			{
+				name: 'Paladin (10/0)',
+				aura1: {
+					feet: '10',
+					color: 'rgba(255, 255, 139, 0.5)'
+				},
+				aura2: {
+					feet: '0',
+					color: "rgba(255, 255, 139, 0)"
+				}
+			},
+			{
+				name: 'Paladin (30/0)',
+				aura1: {
+					feet: '30',
+					color: 'rgba(255, 255, 139, 0.5)'
+				},
+				aura2: {
+					feet: '0',
+					color: "rgba(255, 255, 139, 0)"
+				}
+			},
+			{
+				name: 'Spirit Guardians (15/0)',
+				aura1: {
+					feet: '15',
+					color: 'rgba(255, 255, 139, 0.5)'
+				},
+				aura2: {
+					feet: '0',
+					color: "rgba(100, 100, 20, 0)"
+				}
+			},
+		]
+	}
+	else{
+		window.AURA_PRESETS = JSON.parse(localStorage.getItem('AURA_PRESETS'));
+	}
+	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
+		create_aura_presets_edit();		
+	})
+	wrapper.find(".token-config-aura-preset").on("change", function(e) {
+
+		let preset = e.target.value;
+		let selectedPreset = window.AURA_PRESETS.filter(d=> d.name == preset)[0]
+		
+		if(!selectedPreset) {
+			console.warn("somehow got an unexpected preset", preset, e);
+			return;
+		}
+		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
+
+
+		if(selectedPreset.aura1.feet){
+			wrapper.find("input[name='aura1']").val(selectedPreset.aura1.feet);
+		}
+		
+		if(selectedPreset.aura2.feet){
+			wrapper.find("input[name='aura2']").val(selectedPreset.aura2.feet);
+		}
+
+
+		if(selectedPreset.aura1.color){
+			wrapper.find("input[name='aura1Color']").spectrum("set", selectedPreset.aura1.color);
+		}
+		
+		if(selectedPreset.aura2.color){
+			wrapper.find("input[name='aura2Color']").spectrum("set", selectedPreset.aura2.color);
+		}
+
+		
+		
+
+		tokens.forEach(token => {
+			token.options.aura1.feet = (selectedPreset.aura1.feet) ? selectedPreset.aura1.feet : token.options.aura1.feet;
+			token.options.aura2.feet = (selectedPreset.aura2.feet) ? selectedPreset.aura2.feet : token.options.aura2.feet;
+			token.options.aura1.color = (selectedPreset.aura1.color) ? selectedPreset.aura1.color : token.options.aura1.color;
+			token.options.aura2.color = (selectedPreset.aura2.color) ? selectedPreset.aura2.color : token.options.aura2.color;
+			token.place_sync_persist();
+		});
+	});
+	for(let i in window.AURA_PRESETS){
+		wrapper.find('.token-config-aura-preset').append(`<option value="${window.AURA_PRESETS[i].name}">${window.AURA_PRESETS[i].name}</option>`)
+	}
+
+
+	if(localStorage.getItem('ANIMATION_PRESETS') == null){
+		window.ANIMATION_PRESETS = [];
+	}
+	else{
+		window.ANIMATION_PRESETS = JSON.parse(localStorage.getItem('ANIMATION_PRESETS'));
+	}
+
 	for(let option in animationPresets){
 		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
+	for(let i in window.ANIMATION_PRESETS){
+		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
+	}
+	wrapper.find('#editAnimations').off('click.editPresets').on('click.editPresets', function(){
+		create_animation_presets_edit();		
+	})
 	const auraOption = {
 		name: "auraVisible",
 		label: "Enable Token Auras",
@@ -1139,51 +1259,29 @@ function build_token_auras_inputs(tokenIds) {
 	colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
 
-	wrapper.find(".token-config-aura-preset").on("change", function(e) {
-		let feet1 = "";
-		let feet2 = "";
-		let preset = e.target.value;
-		if (preset === "candle") {
-			feet1 = "5";
-			feet2 = "5";
-		} else if (preset === "torch") {
-			feet1 = "20";
-			feet2 = "20";
-		} else if (preset === "lamp") {
-			feet1 = "15";
-			feet2 = "30";
-		} else if (preset === "lantern") {
-			feet1 = "30";
-			feet2 = "30";
-		} else {
-			console.warn("somehow got an unexpected preset", preset, e);
-		}
-		let wrapper = $(e.target).closest(".token-config-aura-wrapper");
-		wrapper.find("input[name='aura1']").val(feet1);
-		wrapper.find("input[name='aura2']").val(feet2);
-
-		let color1 = "rgba(255, 129, 0, 0.3)";
-		let color2 = "rgba(255, 255, 0, 0.1)";
-		wrapper.find("input[name='aura1Color']").spectrum("set", color1);
-		wrapper.find("input[name='aura2Color']").spectrum("set", color2);
-
-		tokens.forEach(token => {
-			token.options.aura1.feet = feet1;
-			token.options.aura2.feet = feet2;
-			token.options.aura1.color = color1;
-			token.options.aura2.color = color2;
-			token.place_sync_persist();
-		});
-	});
 	wrapper.find(".token-config-animation-preset").on("change", function(e) {
 
 		let preset = e.target.value;
-
+		let customPreset = false;
+		if(window.ANIMATION_PRESETS && window.ANIMATION_PRESETS.some(d=> d.name == e.target.value)){
+			customPreset = window.ANIMATION_PRESETS.filter(d=> d.name == e.target.value)[0]
+		}
 		tokens.forEach(token => {
-
-			token.options.animation= {
-				...token.options.animation,
-				aura: preset
+			if(customPreset == false){
+				token.options.animation= {
+					...token.options.animation,
+					aura: preset,
+					customAuraMask: undefined,
+					customAuraRotate: undefined
+				}
+			}
+			else{
+				token.options.animation= {
+					...token.options.animation,
+					aura: preset,
+					customAuraMask: customPreset.mask,
+					customAuraRotate: customPreset.rotate
+				}
 			}
 			token.place_sync_persist();
 		});
@@ -1270,6 +1368,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 			<div class="token-config-aura-wrapper">			
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Animation</div>
+					<div class="token-image-modal-footer-title"><button id='editAnimations'>Edit</button></div>
 					<select class="token-config-animation-preset">
 						<option value=""></option>
 					</select>
@@ -1402,6 +1501,13 @@ function build_token_light_inputs(tokenIds, door=false) {
 		window.LIGHT_PRESETS = JSON.parse(localStorage.getItem('LIGHT_PRESETS'));
 	}
 
+	if(localStorage.getItem('ANIMATION_PRESETS') == null){
+		window.ANIMATION_PRESETS = [];
+	}
+	else{
+		window.ANIMATION_PRESETS = JSON.parse(localStorage.getItem('ANIMATION_PRESETS'));
+	}
+
 	let animationPresets = {
 		'None': 'none',
 		'Static Blur': 'static-blur-fx',
@@ -1434,6 +1540,12 @@ function build_token_light_inputs(tokenIds, door=false) {
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
 
+	for(let i in window.ANIMATION_PRESETS){
+		let allTokenSelected = tokens.map(t => t.options.animation?.light);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
+	}
+
 	for(let option in darkVisionType){
 		let allTokenSelected = tokens.map(t => t.options.sight);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
@@ -1442,6 +1554,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 	
 	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
 		create_light_presets_edit();		
+	})
+	wrapper.find('#editAnimations').off('click.editPresets').on('click.editPresets', function(){
+		create_animation_presets_edit();		
 	})
 	wrapper.find('.daylight').off('click.editDaylight').on('click.editDaylight', function(){
 		$(this).toggleClass('active-daylight');
@@ -1621,13 +1736,30 @@ function build_token_light_inputs(tokenIds, door=false) {
 	wrapper.find(".token-config-animation-preset").on("change", function(e) {
 
 		let preset = e.target.value;
+		let customPreset = false;
+		if(window.ANIMATION_PRESETS && window.ANIMATION_PRESETS.some(d=> d.name == e.target.value)){
+			customPreset = window.ANIMATION_PRESETS.filter(d=> d.name == e.target.value)[0]
+		}
 
 		tokens.forEach(token => {
+			if(customPreset == false){
+				token.options.animation= {
+					...token.options.animation,
+					light: preset,
+					customLightMask: undefined,
+					customLightRotate: undefined
 
-			token.options.animation= {
-				...token.options.animation,
-				light: preset
+				}
 			}
+			else{
+				token.options.animation= {
+					...token.options.animation,
+					light: preset,
+					customLightMask: customPreset.mask,
+					customLightRotate: customPreset.rotate
+				}
+			}
+			
 			token.place_sync_persist();
 		});
 	});
@@ -1652,7 +1784,118 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	return body;
 }
+function create_aura_presets_edit(){
+	let dialog = $('#edit_preset_aura_dialog')
 
+	dialog.remove();
+	dialog = $(`<div id='edit_preset_aura_dialog'></div>`);
+	
+		
+
+	let upsq = 'ft';
+	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+		upsq = window.CURRENT_SCENE_DATA.upsq;
+	}
+	let aura_presets = $('<div id="aura_presets_properties"/>');
+	dialog.append(aura_presets);
+
+	let titleRow = $(`
+		<div class='aura_preset_title_row'>
+				<div>
+					<h3 style="margin-bottom:0px;">Name</h3>
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Inner Aura</h3>			
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Outer Aura</h3>	
+				</div>
+			</div>
+			`)
+	aura_presets.append(titleRow);
+	for(let i in window.AURA_PRESETS){
+		let row = $(`
+			<div class='aura_preset_row' data-index='${i}'>
+				<input class='aura_preset_title' value='${window.AURA_PRESETS[i].name}'></input>
+				<div class="menu-inner-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="aura-radius" name="aura1" type="text" value="${(window.AURA_PRESETS[i].aura1?.feet) ? window.AURA_PRESETS[i].aura1.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="aura1Color" value="${(window.AURA_PRESETS[i].aura1?.color) ? window.AURA_PRESETS[i].aura1.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</div>
+				<div class="menu-outer-aura">
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
+						<input class="aura-radius" name="aura2" type="text" value="${(window.AURA_PRESETS[i].aura2?.feet) ? window.AURA_PRESETS[i].aura2.feet : ``}" style="width: 3rem" />
+					</div>
+					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+						<div class="token-image-modal-footer-title">Color</div>
+						<input class="spectrum" name="aura2Color" value="${(window.AURA_PRESETS[i].aura2?.color) ? window.AURA_PRESETS[i].aura2.color : `rgba(0, 0, 0, 0)`}" >
+					</div>
+				</div>
+				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+
+			</div>
+		`)
+		row.find('input.aura_preset_title').off('change.name').on('change.name', function(){
+			window.AURA_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
+			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
+		})
+		row.find('input[class*="radius"]').off('change.radius').on('change.radius', function(){
+			let auraname = $(this).attr('name');
+			window.AURA_PRESETS[i][auraname].feet = $(this).val();
+			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
+		})
+		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
+			window.AURA_PRESETS.splice(i, 1);
+			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
+			create_aura_presets_edit();
+		})
+		let colorPickers = row.find('input.spectrum');
+		colorPickers.spectrum({
+			type: "color",
+			showInput: true,
+			showInitial: true,
+			containerClassName: 'prevent-sidebar-modal-close',
+			clickoutFiresChange: true,
+			appendTo: "parent"
+		});
+
+		const colorPickerChange = function(e, tinycolor) {
+			let auraName = e.target.name.replace("Color", "");
+			window.AURA_PRESETS[i][auraName].color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+			console.log(auraName, e, tinycolor);
+			localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
+		};
+		colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+		colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+		colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+		aura_presets.append(row);
+
+	}
+
+	let addButton = $(`<div id='addAuraPreset'>+</div>`)
+
+	addButton.off('click.addPreset').on('click.addPreset', function(){
+		window.AURA_PRESETS.push({
+			name: 'New Preset',
+			aura1: {
+			},
+			aura2: {
+			}
+		});
+		localStorage.setItem('AURA_PRESETS', JSON.stringify(window.AURA_PRESETS));
+		create_aura_presets_edit();
+	});
+	aura_presets.append(addButton);
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
+}
 function create_light_presets_edit(){
 	let dialog = $('#edit_preset_light_dialog')
 
@@ -1780,7 +2023,88 @@ function create_light_presets_edit(){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
+function create_animation_presets_edit(){
+	let dialog = $('#edit_preset_animation_dialog')
 
+	dialog.remove();
+	dialog = $(`<div id='edit_preset_animation_dialog'></div>`);
+	
+		
+
+	let upsq = 'ft';
+	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+		upsq = window.CURRENT_SCENE_DATA.upsq;
+	}
+	let animation_presets = $('<div id="animation_presets_properties"/>');
+	dialog.append(animation_presets);
+
+	let titleRow = $(`
+		<div class='animation_preset_title_row'>
+				<div>
+					<h3 style="margin-bottom:0px;">Name</h3>
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Transparency Mask</h3>			
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Rotate</h3>			
+				</div>
+			</div>
+			`)
+	animation_presets.append(titleRow);
+	for(let i in window.ANIMATION_PRESETS){
+		
+
+		let row = $(`
+			<div class='animation_preset_row' data-index='${i}'>
+				<input class='animation_preset_title' value='${window.ANIMATION_PRESETS[i].name}'></input>
+				<input class='animation_preset_mask' placeholder='transparency mask url' value='${window.ANIMATION_PRESETS[i].mask}'></input>
+				<button name="rotate_button" type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].rotate === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button>
+				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+			</div>
+		`)
+
+		let input = row.find('button[name="rotate_button"]');
+
+	  input.click(function(clickEvent) {
+	  	let isChecked = $(clickEvent.currentTarget).hasClass("rc-switch-checked");
+	  	$(clickEvent.currentTarget).toggleClass("rc-switch-checked", !isChecked)
+	   	window.ANIMATION_PRESETS[i].rotate = !isChecked;
+	   	localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+	  });
+		row.find('input.animation_preset_title').off('change.name').on('change.name', function(){
+			window.ANIMATION_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		})
+		row.find('input[class*="animation_preset_mask"]').off('change.mask').on('change.mask', function(){
+			window.ANIMATION_PRESETS[i].mask = $(this).val();
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		})
+		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
+			window.ANIMATION_PRESETS.splice(i, 1);
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+			create_animation_presets_edit();
+		})
+		
+		animation_presets.append(row);
+
+	}
+
+	let addButton = $(`<div id='addAnimationPreset'>+</div>`)
+
+	addButton.off('click.addPreset').on('click.addPreset', function(){
+		window.ANIMATION_PRESETS.push({
+			name: 'New Preset',
+			mask: '',
+			rotate: false,
+		});
+		localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		create_animation_presets_edit();
+	});
+	animation_presets.append(addButton);
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
+}
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");

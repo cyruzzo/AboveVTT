@@ -3352,7 +3352,16 @@ function setTokenAuras (token, options) {
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
 		if(options.animation?.aura && options.animation?.aura != 'none'){
-			token.parent().parent().find("#aura_" + tokenId).attr('data-animation', options.animation.aura)
+			if(options.animation.customAuraMask != undefined){
+				if(options.animation.customAuraRotate == true){
+					token.parent().parent().find("#aura_" + tokenId).attr('data-animation', 'aurafx-rotate')
+				}
+				token.parent().parent().find("#aura_" + tokenId).attr('data-custom-animation', 'true')
+				token.parent().parent().find("#aura_" + tokenId).css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
+			}
+			else{
+				token.parent().parent().find("#aura_" + tokenId).attr('data-animation', options.animation.aura)
+			}				
 		}
 		else{
 			token.parent().parent().find("#aura_" + tokenId).removeAttr('data-animation')
@@ -3464,7 +3473,18 @@ function setTokenLight (token, options) {
 		
 
 		if(options.animation?.light && options.animation?.light != 'none'){
-			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
+
+			if(options.animation.customLightMask != undefined){
+				if(options.animation.customLightRotate == true){
+					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', 'aurafx-rotate')
+				}
+				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
+				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
+			}
+			else{
+				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', options.animation.light)
+			}
+			
 		}
 		else{
 			token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").removeAttr('data-animation')

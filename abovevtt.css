@@ -8086,6 +8086,15 @@ button.journal-view-button.journal-button {
 [data-animation='static-blur-fx'] .darkvision{
     background-image: radial-gradient(var(--vision-color) calc(var(--vision-radius) * 0.9), #00000000 var(--vision-radius)) !important;
 }
+[data-custom-animation] .islight,
+.aura-element[data-custom-animation]{
+ -webkit-mask-image: var(--custom-mask-image);
+ -webkit-mask-size: contain;
+}
+[data-animation='aurafx-rotate'] .islight,
+.aura-element[data-animation='aurafx-rotate'][id*='aura_'] {
+    animation: aurafx-rotate 40s infinite linear;
+}
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
@@ -8659,7 +8668,9 @@ button.journal-view-button.journal-button {
     width: 45%;
     display:inline-block;
 }
-#light_presets_properties .light_preset_row {
+#light_presets_properties .light_preset_row,
+#animation_presets_properties .animation_preset_row,
+#aura_presets_properties .aura_preset_row  {
     display: flex;
     align-content: center;
     align-items: center;
@@ -8668,7 +8679,10 @@ button.journal-view-button.journal-button {
     margin: 10px 5px;
 }
 
-.light_preset_title{
+.light_preset_title,
+.animation_preset_title,
+.animation_preset_mask,
+.aura_preset_title{
     background-color: #fff;
     background: #fff none;
     border: 1px solid #ddd;
@@ -8681,7 +8695,12 @@ button.journal-view-button.journal-button {
     -moz-transition: .2s linear border,0.2s linear box-shadow;
     transition: .2s linear border,0.2s linear box-shadow;
 }
-#light_presets_properties .light_preset_row>div{
+.animation_preset_mask{
+    width: 520px;
+}
+#light_presets_properties .light_preset_row>div,
+#animation_presets_properties .animation_preset_row>div,
+#aura_presets_properties .aura_preset_row>div{
     color: #666;
     font-size: 12px;
     line-height: 100%;
@@ -8689,18 +8708,24 @@ button.journal-view-button.journal-button {
     text-align:center;
     margin:0px 30px;
 }
-#light_presets_properties .light_preset_row>div>div{
+#light_presets_properties .light_preset_row>div>div,
+#animation_presets_properties .animation_preset_row>div>div,
+#aura_presets_properties .aura_preset_row>div>div{
     color: #666;
     font-size: 12px;
     line-height: 100%;
     margin:5px 0px;
 }
-#light_presets_properties .light_preset_row>div>h3{
+#light_presets_properties .light_preset_row>div>h3,
+#animation_presets_properties .animation_preset_row>div>h3,
+#aura_presets_properties .aura_preset_row>div>h3{
     color: #000;
     font-size: 12px
 }
 div#addLightPreset,
-div.removePreset{
+div.removePreset,
+div#addAnimationPreset,
+div#addAuraPreset{
     font-size:30px;
     text-align:center;
     line-height:100%;
@@ -8720,20 +8745,28 @@ div.removePreset{
     background: rgb(235, 241, 245);
     transform: scale(0.8);
 }
-#light_presets_properties div.removePreset svg rect{
+#light_presets_properties div.removePreset svg rect,
+#animation_presets_properties div.removePreset svg rect,
+#aura_presets_properties div.removePreset svg rect{
     fill: #F00;
     height: 80px;
     width: 10px;
     transform: translate(45px, 10px);
 }
 
-#light_presets_properties div.removePreset{
+#light_presets_properties div.removePreset,
+#animation_presets_properties div.removePreset,
+#aura_presets_properties div.removePreset{
     fill: #d00;
     width:20px;
     height:20px;
     margin:0px !important;
 }
-.light_preset_title_row {
+
+
+.light_preset_title_row,
+.animation_preset_title_row,
+.aura_preset_title_row  {
     position: sticky;
     top: 0px;
     display: flex;
@@ -8742,16 +8775,26 @@ div.removePreset{
     background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
     z-index: 1;
 }
+.animation_preset_title_row,
+#animation_presets_properties .animation_preset_row{
+    justify-content: space-between;
+}
 
-.light_preset_title_row>div>h3 {
+.light_preset_title_row>div>h3,
+.animation_preset_title_row>div>h3,
+.aura_preset_title_row>div>h3 {
     font-size: 12px;
     margin: 10px 75px; 
 }
-#edit_preset_light_dialog{
+#edit_preset_light_dialog,
+#edit_preset_animation_dialog,
+#edit_preset_aura_dialog{
     height: 100%;
     overflow-y: scroll;
 }
-button#editPresets {
+button#editPresets,
+button#editAnimations,
+button#editAuras  {
     font-size:10px;
     font-weight: 600;
     color: #9f9f9f;
@@ -8763,6 +8806,9 @@ button#editPresets {
     height: 20px;
     position:relative;
     cursor: pointer;
+}
+button#editAnimations {
+    left: -40px;
 }
 #qrm_dialog .roll_mods_button {
     display: block;
