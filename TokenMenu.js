@@ -983,6 +983,7 @@ function build_token_auras_inputs(tokenIds) {
 			<div class="token-config-aura-wrapper">
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Animation</div>
+					<div class="token-image-modal-footer-title"><button id='editAnimations'>Edit</button></div>
 					<select class="token-config-animation-preset">
 						<option value=""></option>
 					</select>
@@ -1033,6 +1034,14 @@ function build_token_auras_inputs(tokenIds) {
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
+	for(let i in window.ANIMATION_PRESETS){
+		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
+	}
+	wrapper.find('#editAnimations').off('click.editPresets').on('click.editPresets', function(){
+		create_animation_presets_edit();		
+	})
 	const auraOption = {
 		name: "auraVisible",
 		label: "Enable Token Auras",
@@ -1178,12 +1187,26 @@ function build_token_auras_inputs(tokenIds) {
 	wrapper.find(".token-config-animation-preset").on("change", function(e) {
 
 		let preset = e.target.value;
-
+		let customPreset = false;
+		if(window.ANIMATION_PRESETS && window.ANIMATION_PRESETS.some(d=> d.name == e.target.value)){
+			customPreset = window.ANIMATION_PRESETS.filter(d=> d.name == e.target.value)[0]
+		}
 		tokens.forEach(token => {
-
-			token.options.animation= {
-				...token.options.animation,
-				aura: preset
+			if(customPreset == false){
+				token.options.animation= {
+					...token.options.animation,
+					aura: preset,
+					customAuraMask: undefined,
+					customAuraRotate: undefined
+				}
+			}
+			else{
+				token.options.animation= {
+					...token.options.animation,
+					aura: preset,
+					customAuraMask: customPreset.mask,
+					customAuraRotate: customPreset.rotate
+				}
 			}
 			token.place_sync_persist();
 		});
@@ -1270,6 +1293,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 			<div class="token-config-aura-wrapper">			
 				<div class="token-image-modal-footer-select-wrapper">
 					<div class="token-image-modal-footer-title">Animation</div>
+					<div class="token-image-modal-footer-title"><button id='editAnimations'>Edit</button></div>
 					<select class="token-config-animation-preset">
 						<option value=""></option>
 					</select>
@@ -1402,6 +1426,13 @@ function build_token_light_inputs(tokenIds, door=false) {
 		window.LIGHT_PRESETS = JSON.parse(localStorage.getItem('LIGHT_PRESETS'));
 	}
 
+	if(localStorage.getItem('ANIMATION_PRESETS') == null){
+		window.ANIMATION_PRESETS = [];
+	}
+	else{
+		window.ANIMATION_PRESETS = JSON.parse(localStorage.getItem('ANIMATION_PRESETS'));
+	}
+
 	let animationPresets = {
 		'None': 'none',
 		'Static Blur': 'static-blur-fx',
@@ -1434,6 +1465,12 @@ function build_token_light_inputs(tokenIds, door=false) {
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
 
+	for(let i in window.ANIMATION_PRESETS){
+		let allTokenSelected = tokens.map(t => t.options.animation?.light);
+		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
+		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
+	}
+
 	for(let option in darkVisionType){
 		let allTokenSelected = tokens.map(t => t.options.sight);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
@@ -1442,6 +1479,9 @@ function build_token_light_inputs(tokenIds, door=false) {
 	
 	wrapper.find('#editPresets').off('click.editPresets').on('click.editPresets', function(){
 		create_light_presets_edit();		
+	})
+	wrapper.find('#editAnimations').off('click.editPresets').on('click.editPresets', function(){
+		create_animation_presets_edit();		
 	})
 	wrapper.find('.daylight').off('click.editDaylight').on('click.editDaylight', function(){
 		$(this).toggleClass('active-daylight');
@@ -1621,13 +1661,30 @@ function build_token_light_inputs(tokenIds, door=false) {
 	wrapper.find(".token-config-animation-preset").on("change", function(e) {
 
 		let preset = e.target.value;
+		let customPreset = false;
+		if(window.ANIMATION_PRESETS && window.ANIMATION_PRESETS.some(d=> d.name == e.target.value)){
+			customPreset = window.ANIMATION_PRESETS.filter(d=> d.name == e.target.value)[0]
+		}
 
 		tokens.forEach(token => {
+			if(customPreset == false){
+				token.options.animation= {
+					...token.options.animation,
+					light: preset,
+					customLightMask: undefined,
+					customLightRotate: undefined
 
-			token.options.animation= {
-				...token.options.animation,
-				light: preset
+				}
 			}
+			else{
+				token.options.animation= {
+					...token.options.animation,
+					light: preset,
+					customLightMask: customPreset.mask,
+					customLightRotate: customPreset.rotate
+				}
+			}
+			
 			token.place_sync_persist();
 		});
 	});
@@ -1780,7 +1837,88 @@ function create_light_presets_edit(){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
+function create_animation_presets_edit(){
+	let dialog = $('#edit_preset_animation_dialog')
 
+	dialog.remove();
+	dialog = $(`<div id='edit_preset_animation_dialog'></div>`);
+	
+		
+
+	let upsq = 'ft';
+	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
+		upsq = window.CURRENT_SCENE_DATA.upsq;
+	}
+	let animation_presets = $('<div id="animation_presets_properties"/>');
+	dialog.append(animation_presets);
+
+	let titleRow = $(`
+		<div class='animation_preset_title_row'>
+				<div>
+					<h3 style="margin-bottom:0px;">Name</h3>
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Transparency Mask</h3>			
+				</div>
+				<div>
+					<h3 style="margin-bottom:0px;">Rotate</h3>			
+				</div>
+			</div>
+			`)
+	animation_presets.append(titleRow);
+	for(let i in window.ANIMATION_PRESETS){
+		
+
+		let row = $(`
+			<div class='animation_preset_row' data-index='${i}'>
+				<input class='animation_preset_title' value='${window.ANIMATION_PRESETS[i].name}'></input>
+				<input class='animation_preset_mask' placeholder='transparency mask url' value='${window.ANIMATION_PRESETS[i].mask}'></input>
+				<button name="rotate_button" type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].rotate === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button>
+				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+			</div>
+		`)
+
+		let input = row.find('button[name="rotate_button"]');
+
+	  input.click(function(clickEvent) {
+	  	let isChecked = $(clickEvent.currentTarget).hasClass("rc-switch-checked");
+	  	$(clickEvent.currentTarget).toggleClass("rc-switch-checked", !isChecked)
+	   	window.ANIMATION_PRESETS[i].rotate = !isChecked;
+	   	localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+	  });
+		row.find('input.animation_preset_title').off('change.name').on('change.name', function(){
+			window.ANIMATION_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		})
+		row.find('input[class*="animation_preset_mask"]').off('change.mask').on('change.mask', function(){
+			window.ANIMATION_PRESETS[i].mask = $(this).val();
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		})
+		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
+			window.ANIMATION_PRESETS.splice(i, 1);
+			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+			create_animation_presets_edit();
+		})
+		
+		animation_presets.append(row);
+
+	}
+
+	let addButton = $(`<div id='addAnimationPreset'>+</div>`)
+
+	addButton.off('click.addPreset').on('click.addPreset', function(){
+		window.ANIMATION_PRESETS.push({
+			name: 'New Preset',
+			mask: '',
+			rotate: false,
+		});
+		localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		create_animation_presets_edit();
+	});
+	animation_presets.append(addButton);
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
+}
 function build_menu_stat_inputs(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStatDiv'></div>");
