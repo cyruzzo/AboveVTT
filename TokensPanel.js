@@ -2010,16 +2010,16 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         customization.setTokenOption("auraislight", newValue);
         persist_token_customization(customization);
         if (newValue) {
-            inputWrapper.find(".token-config-aura-wrapper").show();
+            inputWrapper.find(".token-config-aura-wrapper.light").show();
         } else {
-            inputWrapper.find(".token-config-aura-wrapper").hide();
+            inputWrapper.find(".token-config-aura-wrapper.light").hide();
         }
     });
    
     inputWrapper.append(enabledLightInput);
 
 
-    let lightInputs = `<div class="token-config-aura-wrapper"><div class="menu-vision-aura">
+    let lightInputs = `<div class="token-config-aura-wrapper light"><div class="menu-vision-aura">
                     <h3 style="margin-bottom:0px;">Darkvision</h3>
                     <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
                         <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
@@ -2076,14 +2076,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
 
 
-    inputWrapper.find(".token-config-aura-wrapper").prepend(revealVisionInput);
+    inputWrapper.find(".token-config-aura-wrapper.light").prepend(revealVisionInput);
     
 
     inputWrapper.find("h3.token-image-modal-footer-title").after(enabledLightInput);
     if (auraIsLightEnabled) {
-        inputWrapper.find(".token-config-aura-wrapper").show();
+        inputWrapper.find(".token-config-aura-wrapper.light").show();
     } else {
-        inputWrapper.find(".token-config-aura-wrapper").hide();
+        inputWrapper.find(".token-config-aura-wrapper.light").hide();
     }
 
     let radiusInputs = inputWrapper.find('input.light-radius, input.vision-radius');
@@ -2102,6 +2102,101 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         }
     });
 
+
+    if(customization.tokenOptions.aura1?.feet == undefined){
+        customization.tokenOptions.aura1 = {
+            feet: '0',
+            color: window.TOKEN_SETTINGS?.aura1?.color ? window.TOKEN_SETTINGS?.aura1?.color : 'rgba(255, 255, 100, 0.5)'
+        }
+    }
+    if(customization.tokenOptions.aura2?.feet == undefined){
+        customization.tokenOptions.aura2 = {
+            feet: '0',
+            color: window.TOKEN_SETTINGS?.aura2?.color ? window.TOKEN_SETTINGS?.aura2?.color : 'rgba(255, 255, 100, 0.5)'
+        }
+    }
+
+
+    let uniqueAura1Feet = customization.tokenOptions.aura1.feet;
+    let uniqueAura2Feet = customization.tokenOptions.aura2.feet;
+    let uniqueAura1Color = customization.tokenOptions.aura1.color;
+    let uniqueAura2Color = customization.tokenOptions.aura2.color;
+
+    const auraOption = {
+        name: "auraVisible",
+        label: "Enable Token Auras",
+        type: "toggle",
+        options: [
+            { value: true, label: "Visible", description: "Token Auras are visible." },
+            { value: false, label: "Hidden", description: "Token Auras are hidden." }
+        ],
+        defaultValue: false
+    };
+    let auraIsEnabled = (customization.tokenOptions.auraVisible != undefined) ? customization.tokenOptions.auraVisible : false;
+    let enabledAuraInput = build_toggle_input( auraOption, auraIsEnabled, function(name, newValue) {
+        console.log(`${name} setting is now ${newValue}`);
+        customization.setTokenOption("auraVisible", newValue);
+        persist_token_customization(customization);
+        if (newValue) {
+            inputWrapper.find(".token-config-aura-wrapper.aura").show();
+        } else {
+            inputWrapper.find(".token-config-aura-wrapper.aura").hide();
+        }
+    });
+   
+    inputWrapper.append(enabledAuraInput);
+      let auraInputs = `
+        <div class="token-config-aura-wrapper aura">
+            <div class="menu-inner-aura">
+                <h3 style="margin-bottom:0px;">Inner Aura</h3>
+                <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                    <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                    <input class="aura-radius" name="aura1" type="text" value="${uniqueAura1Feet}" style="width: 3rem" />
+                </div>
+                <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                    <div class="token-image-modal-footer-title">Color</div>
+                    <input class="spectrum" name="aura1Color" value="${uniqueAura1Color}" >
+                </div>
+            </div>
+            <div class="menu-outer-aura">
+                <h3 style="margin-bottom:0px;">Outer Aura</h3>
+                <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                    <div class="token-image-modal-footer-title">Radius (${window.CURRENT_SCENE_DATA.upsq})</div>
+                    <input class="aura-radius" name="aura2" type="text" value="${uniqueAura2Feet}" style="width: 3rem" />
+                </div>
+                <div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
+                    <div class="token-image-modal-footer-title">Color</div>
+                    <input class="spectrum" name="aura2Color" value="${uniqueAura2Color}" >
+                </div>
+            </div>
+        </div>`;
+
+       inputWrapper.append(auraInputs);
+
+
+    inputWrapper.find("h3.token-image-modal-footer-title").after(enabledAuraInput);
+    if (auraIsEnabled) {
+        inputWrapper.find(".token-config-aura-wrapper.aura").show();
+    } else {
+        inputWrapper.find(".token-config-aura-wrapper.aura").hide();
+    }
+
+    let auraRadiusInputs = inputWrapper.find('input.aura-radius');
+    auraRadiusInputs.on('keyup', function(event) {
+        let newRadius = event.target.value;
+        if (event.key == "Enter" && newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+    auraRadiusInputs.on('focusout', function(event) {
+        let newRadius = event.target.value;
+        if (newRadius !== undefined && newRadius.length > 0) {
+            customization.tokenOptions[event.target.name]['feet'] = newRadius;
+            persist_token_customization(customization);
+        }
+    });
+
     let colorPickers = inputWrapper.find('input.spectrum');
     colorPickers.spectrum({
         type: "color",
@@ -2112,6 +2207,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         appendTo: "parent"
     });
 
+    inputWrapper.find("input[name='aura1Color']").spectrum("set", uniqueAura1Color);
+    inputWrapper.find("input[name='aura2Color']").spectrum("set", uniqueAura2Color);
     inputWrapper.find("input[name='light1Color']").spectrum("set", uniqueLight1Color);
     inputWrapper.find("input[name='light2Color']").spectrum("set", uniqueLight2Color);
     const colorPickerChange = function(e, tinycolor) {
@@ -2125,6 +2222,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
     colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
     colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
 
 
     // token options override
@@ -2144,6 +2242,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         redraw_settings_panel_token_examples(customization.tokenOptions);
         decorate_modal_images(sidebarPanel, listItem, placedToken);
     });
+
     inputWrapper.append(tokenOptionsButton);
     inputWrapper.append(`<br />`);
 }
