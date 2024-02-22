@@ -8073,7 +8073,9 @@ button.journal-view-button.journal-button {
     background: #fff;
 }
 
-
+.aura-element{
+    rotate: var(--rotation);
+}
 /*light/aura animations*/
 [data-animation='static-blur-fx'] .islight,
 .aura-element[data-animation='static-blur-fx']{
