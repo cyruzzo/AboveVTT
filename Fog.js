@@ -4710,6 +4710,7 @@ function redraw_light(){
 			}
 
 
+
 			if(currentLightAura.hasClass('tokenselected') && $(`.aura-element-container-clip[data-id='${auraId}']`).length == 0 ){
 				tokenPos = {
 					x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
