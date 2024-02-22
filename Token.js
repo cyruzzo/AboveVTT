@@ -488,7 +488,7 @@ class Token {
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
-		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg")
+		$(`.aura-element-container-clip[id='${this.options.id}'] .aura-element, .aura-element[data-id='${this.options.id}']`).css('--rotation', newRotation + "deg");
 	}
 	moveUp() {	
 		let tinyToken = (Math.round(parseFloat(this.options.gridSquares)*2)/2 < 1) || this.isAoe();	
@@ -3336,6 +3336,7 @@ function setTokenAuras (token, options) {
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${auraRadius}px;
 							--radius2: ${totalAura}px;
+							--rotation: ${options.rotation}deg;
 							`;
 		if (token.parent().parent().find("#aura_" + tokenId).length > 0) {
 			token.parent().parent().find("#aura_" + tokenId).attr("style", auraStyles);	
@@ -3437,6 +3438,7 @@ function setTokenLight (token, options) {
 							--animation-width: ${totalSize < 150 ? `${totalSize * 3}px, ${totalSize * 3}px` : `cover`};
 							--radius1: ${lightRadius}px;
 							--radius2: ${totallight}px;
+							--rotation: ${options.rotation}deg;
 							`;
 
 
@@ -3454,6 +3456,7 @@ function setTokenLight (token, options) {
 							top:${optionsTop + visionAbsPosOffset}px;
 							--vision-radius: ${visionRadius}px;
 							--vision-color: ${options.vision.color};
+							--rotation: ${options.rotation}deg;
 							`;
 		
 

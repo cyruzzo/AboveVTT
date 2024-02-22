@@ -339,6 +339,9 @@ async function start_above_vtt_for_dm() {
   did_update_scenes();
 
   startup_step("Start up complete");
+  window.MB.sendMessage("custom/myVTT/DMAvatar", {
+    avatar: dmAvatarUrl
+  })
   remove_loading_overlay();
 }
 
