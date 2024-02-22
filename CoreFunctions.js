@@ -20,6 +20,7 @@ $(function() {
   document.cookie="Ratings=;path=/;domain=.dndbeyond.com;expires=Thu, 01 Jan 1970 00:00:00 GMT";
   if (is_encounters_page()) {
     window.DM = true; // the DM plays from the encounters page
+    dmAvatarUrl = $('#site-bar').attr('user-avatar');
   } else if (is_campaign_page()) {
     // The owner of the campaign (the DM) is the only one with private notes on the campaign page
     window.DM = $(".ddb-campaigns-detail-body-dm-notes-private").length === 1;
@@ -371,7 +372,7 @@ function add_issues_to_error_message(issues, errorMessage) {
  * @return {String} "THE DM" */
 const dm_id = "THE DM";
 // Use Acererak as the avatar, because he's on the DMG cover... but also because he's the fucking boss!
-const dmAvatarUrl = "https://www.dndbeyond.com/avatars/thumbnails/30/787/140/140/636395106768471129.jpeg";
+let dmAvatarUrl = "https://www.dndbeyond.com/avatars/thumbnails/30/787/140/140/636395106768471129.jpeg";
 const defaultAvatarUrl = "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/characters/default-avatar.png";
 
 /** an object that mimics window.pcs, but specific to the DM */
