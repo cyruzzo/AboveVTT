@@ -116,7 +116,7 @@ function joinRoom(room = window.gameId) {
         };
         
         if($('#audioSource').val() == '' || $('#videoSource option:nth-of-type(2)').val() == '' || $('#audioSource').val() == null || $('#videoSource option:nth-of-type(2)').val() == null){
-            alert('It appears your permissions for camera/microphone are set to disabled on dndbeyond please enable these and refresh. Alternatively you are missing a video and/or audio input device.')
+            alert('It appears your camera and/or microphone permissions are disabled for dndbeyond. Please enable these in your browser settings and refresh. Alternatively you are missing a video and/or audio input device.')
         }
     });
 
