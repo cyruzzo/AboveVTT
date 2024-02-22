@@ -683,6 +683,11 @@ class MessageBroker {
 					
 				}
 			}
+			if(msg.eventType=="custom/myVTT/DMAvatar"){
+				dmAvatarUrl = msg.data.avatar;
+				$(`.player-card[data-player-id=''] .player-token img`).attr('src', dmAvatarUrl);
+			}
+		
 			if(msg.eventType=="custom/myVTT/pausePlayer"){
 				if(!window.DM){
 					$("#VTT").toggleClass('paused', msg.data.paused);
@@ -726,6 +731,9 @@ class MessageBroker {
 						window.MB.sendMessage("custom/myVTT/enabledicestreamingfeature")
 					}
 					window.JOURNAL.sync();
+					window.MB.sendMessage("custom/myVTT/DMAvatar", {
+						avatar: dmAvatarUrl
+					})
 				}
 
 				if (msg.data && msg.data.player_id && msg.data.pc) {
@@ -1655,6 +1663,9 @@ class MessageBroker {
 			}
 			// also sync the journal
 			window.JOURNAL?.sync();
+			window.MB.sendMessage("custom/myVTT/DMAvatar", {
+				avatar: dmAvatarUrl
+			})
 			window.MB.sendMessage("custom/myVTT/pausePlayer",{
 				paused: $('#pause_players').hasClass('paused')
 			});
