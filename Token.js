@@ -2205,8 +2205,8 @@ class Token {
 
 					$(`[data-notatoken][data-id='${self.options.id}']`).toggleClass(['ui-draggable-dragging', 'pause_click'], true);
 
-					if(self.selected == false && $(".token.tokenselected").length>0){
-						for (let tok of $(".token.tokenselected")){
+					if(self.selected == false && $("#tokens .token.tokenselected").length>0){
+						for (let tok of $("#tokens .token.tokenselected")){
 							let id = $(tok).attr("data-id");
 							window.TOKEN_OBJECTS[id].selected = false;
 							$("#tokens [data-id='" + id + "']").toggleClass("tokenselected", false)
@@ -3219,7 +3219,7 @@ function checkAudioVolume(){
 			tokensToCheck.push($(selectedTokens[i]).attr('data-id'))
 		}
 	}else{
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+		let playerTokenId = $(`#tokens .token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		for(let tokenId in window.TOKEN_OBJECTS){
 			if(tokenId.includes(window.PLAYER_ID) || window.TOKEN_OBJECTS[tokenId].options.player_owned == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 		  		tokensToCheck.push(tokenId)
