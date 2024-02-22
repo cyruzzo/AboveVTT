@@ -4645,7 +4645,7 @@ function redraw_light(){
 
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
-	let selectedTokens = $('.tokenselected');
+	let selectedTokens = $('#tokens .tokenselected');
 	if(window.SelectedTokenVision){
 		light_auras = light_auras.add(selectedTokens)
 	}
@@ -4709,14 +4709,14 @@ function redraw_light(){
 				y: (parseInt(currentLightAura.css('top'))+(parseInt(currentLightAura.css('height'))/2))
 			}
 
-			if(currentLightAura.hasClass('tokenselected') && $(`.aura-element-container-clip[data-id=${auraId}]`).length == 0 ){
+
+
+			if(currentLightAura.hasClass('tokenselected') && $(`.aura-element-container-clip[data-id='${auraId}']`).length == 0 ){
 				tokenPos = {
 					x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
 					y: tokenPos.y / window.CURRENT_SCENE_DATA.scale_factor
 				}	
 			}
-
-
 
 
 			
@@ -4790,9 +4790,7 @@ function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
- 				
-
- 			
+ 	
  				
 				if(!window.DM || window.SelectedTokenVision){
 					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
