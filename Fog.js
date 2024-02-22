@@ -4703,12 +4703,14 @@ function redraw_light(){
 				y: (parseInt(currentLightAura.css('top'))+(parseInt(currentLightAura.css('height'))/2))
 			}
 
-			if(currentLightAura.hasClass('tokenselected')){
+			if(currentLightAura.hasClass('tokenselected') && $(`.token.underDarkness[data-id='${auraId}']`).length==0){
 				tokenPos = {
 					x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
 					y: tokenPos.y / window.CURRENT_SCENE_DATA.scale_factor
-				}
+				}	
 			}
+
+
 			
 			if(window.lineOfSightPolygons == undefined){
 				window.lineOfSightPolygons = {};
