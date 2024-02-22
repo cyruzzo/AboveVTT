@@ -4386,8 +4386,14 @@ function particleUpdate(x, y) {
 };
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
-	lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-	movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+	if(auraId != undefined && window.TOKEN_OBJECTS[auraId].options.underDarkness){
+		lightPolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
+		movePolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
+	}else{
+		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
+	}
+
 	let prevClosestWall = null;
     let prevClosestPoint = null;
    	let prevClosestBarrier = null;
@@ -4703,12 +4709,14 @@ function redraw_light(){
 				y: (parseInt(currentLightAura.css('top'))+(parseInt(currentLightAura.css('height'))/2))
 			}
 
-			if(currentLightAura.hasClass('tokenselected') && $(`.token.underDarkness[data-id='${auraId}']`).length==0){
+			if(currentLightAura.hasClass('tokenselected')){
 				tokenPos = {
 					x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
 					y: tokenPos.y / window.CURRENT_SCENE_DATA.scale_factor
 				}	
 			}
+
+
 
 
 			
