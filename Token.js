@@ -3213,7 +3213,7 @@ function checkAudioVolume(){
 	}
 	
 
-	if(window.DM){
+	if(window.DM || window.SelectedTokenVision == true){
 		let selectedTokens = $('.tokenselected');
 		for(let i=0; i<selectedTokens.length; i++){
 			tokensToCheck.push($(selectedTokens[i]).attr('data-id'))
@@ -3225,7 +3225,7 @@ function checkAudioVolume(){
 		  		tokensToCheck.push(tokenId)
 		}
 	}
-	let audioContext = window.moveOffscreenCanvasMask.getContext('2d')
+
 	for(let i=0; i< audioTokens.length; i++){
 		let calcVolume = 0;
 		let currAudioToken = window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')];
@@ -3242,6 +3242,18 @@ function checkAudioVolume(){
 			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
 
 			
+
+			let tokenMovePolygon = window.lineOfSightPolygons[tokensToCheck[checkedTokenId]]?.move
+			let audioCanvas = document.createElement('canvas');
+			let audioCanvasCtx = audioCanvas.getContext('2d');
+			audioCanvas.width = $("#raycastingCanvas").width();
+			audioCanvas.height =  $("#raycastingCanvas").height();
+			
+			
+			if(tokenMovePolygon != undefined){
+				drawPolygon(audioCanvasCtx, tokenMovePolygon, 'rgba(255, 255, 255, 1)', true); 	
+			}
+
 			let checkedTokenPosition ={
 				x: parseInt(checkedToken.options.left.replace('px', '')) + checkedToken.sizeWidth()/2,
 				y: parseInt(checkedToken.options.top.replace('px', '')) + checkedToken.sizeHeight()/2
@@ -3258,7 +3270,7 @@ function checkAudioVolume(){
 		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
 		 	
 
-			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), audioContext))
+			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_under_light_aura($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
 			if(setAudio){
 			//set volume to calculated volume
 				calcVolume = (tempCalcVolume > calcVolume) ? tempCalcVolume : calcVolume
