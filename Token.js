@@ -1827,9 +1827,13 @@ class Token {
 						})
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
 					}
+
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 					let oldImage = old.find('.token-image');
-					copyImage.attr("src", parse_img(this.options.imgsrc));
+
+					if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
+						copyImage.attr("src", parse_img(this.options.imgsrc));
+					}
 
 			}  	
 			else{
@@ -1956,6 +1960,7 @@ class Token {
 				let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
 				let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 				this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
+				
 				let fileExtention = this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1];
 				let video = false;
 				if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || this.options.videoToken == true){
