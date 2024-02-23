@@ -8223,12 +8223,20 @@ button.journal-view-button.journal-button {
     animation: aurafx-rotate 40s infinite linear, lightning-circle-fx 6s infinite linear;
     -webkit-mask-size: contain;
     -webkit-mask-image: var(--mask-1);
+    --light1-blur-size: var(--radius1);
+    --light2-blur-size: var(--radius2);
+    --transparency-blur-size: var(--light2-blur-size);
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
     animation: aurafx-rotate 30s infinite linear;
     -webkit-mask-size: contain;
+    --light1-blur-size: var(--radius1);
+    --light2-blur-size: var(--radius2);
+    --transparency-blur-size: var(--light2-blur-size);
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
 }
 
 [data-animation='hurricane-fx'] .islight:before,
@@ -8241,7 +8249,7 @@ button.journal-view-button.journal-button {
     height: 100%;
     top: 0;
     left: 0;
-    background: #ffffff;
+    background: rgba(255, 255, 255, var(--opacity));
     -webkit-mask-size: contain;
     mix-blend-mode: overlay;
 }
@@ -8265,7 +8273,10 @@ button.journal-view-button.journal-button {
     height: 100%;
     top: 0;
     left: 0;
-    background-image: var(--gradient);
+    --light1-blur-size: var(--radius1);
+    --light2-blur-size: var(--radius2);
+    --transparency-blur-size: var(--light2-blur-size);
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
     -webkit-mask-size: var(--animation-width);
     overflow:hidden;
     border-radius:50%;
@@ -8277,7 +8288,7 @@ button.journal-view-button.journal-button {
 {
     animation: snow 5s infinite 2.5s linear;
     --starting-deg: 230deg;
-    opacity:0;
+    --opacity:0;
 }
 
 
@@ -8300,8 +8311,11 @@ button.journal-view-button.journal-button {
     height: 100%;
     top: 0;
     left: 0;
-    opacity: 0;
-    background-image: var(--gradient);
+    --opacity: 0;
+    --light1-blur-size: var(--radius1);
+    --light2-blur-size: var(--radius2);
+    --transparency-blur-size: var(--light2-blur-size);
+    background-image: radial-gradient(rgba(var(--color1), calc(var(--opacity1) * var(--opacity))) var(--light1-blur-size), rgba(var(--color2), calc(var(--opacity2) * var(--opacity))) calc(var(--light1-blur-size) * 1.3) var(--light2-blur-size), transparent var(--transparency-blur-size)) !important;
     -webkit-mask-size: var(--animation-width);
 }
 
@@ -8381,15 +8395,15 @@ button.journal-view-button.journal-button {
 
 @keyframes bubble {
      0%{
-        opacity: 0;
+        --opacity: 0;
         transform: scale(1);
     }
     50%{
-         opacity: 1;
+         --opacity: 1;
     }
     100%{
         transform: scale(1.4);
-        opacity: 0;
+        --opacity: 0;
     }
 }
 
@@ -8398,64 +8412,64 @@ button.journal-view-button.journal-button {
 @keyframes lightning {
     0%{
         scale: 3.5;
-        opacity: 0;
+        --opacity: 0;
     }
     20%{
         scale: 3.5;
-        opacity: 0;
+        --opacity: 0;
     }
     21%{
        scale: 3.5;
-       opacity: 1;
+       --opacity: 1;
     }
     25%{
-        opacity: 0;
+        --opacity: 0;
         scale: 3.5;
     }
     70%{
         scale: 5.5;
-        opacity: 0;
+        --opacity: 0;
     }
     71%{
        scale: 5.5;
-       opacity: 1;
+       --opacity: 1;
     }
     75%{
         scale: 5.5;
-        opacity: 0;
+        --opacity: 0;
     }
     100%{
         scale: 5.5;
-        opacity: 0;
+        --opacity: 0;
     }
 }
 
 @keyframes snow {
     0%{
-        opacity: 0;
+        --opacity: 0;
         transform: scale(1);
         rotate: calc(var(--starting-deg) + 200deg);
     }
     25%{
         rotate: calc(var(--starting-deg) + 200deg);
-        opacity: 1;
+        --opacity: 1;
     }
     50%{
         rotate: calc(var(--starting-deg) + 200deg);
-        opacity: 0;
+        --opacity: 0;
     }
     51%{
         rotate: var(--starting-deg);
-        opacity: 0;
+        --opacity: 0;
     }
     75%{
         rotate: var(--starting-deg);
-        opacity: 1;
+        --opacity: 1;
     }
     100%{
         rotate: var(--starting-deg);
         transform: scale(0.5);
-        opacity: 0;
+        --opacity: 0;
     }
 }
 
@@ -8531,85 +8545,85 @@ button.journal-view-button.journal-button {
 
 @keyframes lightning-circle-fx{
     0% {
-        opacity:1;
+        --opacity:1;
         -webkit-mask-image: var(--mask-1);
     }
     5%{
-        opacity:0;
+        --opacity:0;
     }
     26.3% {
-        opacity:0;
+        --opacity:0;
         -webkit-mask-image: var(--mask-1);
     }
 
     27.7% {
-        opacity:1;
+        --opacity:1;
         -webkit-mask-image: var(--mask-2);
     }
     30%{
-        opacity:0;
+        --opacity:0;
     }
     36%{
-        opacity:0;
+        --opacity:0;
          -webkit-mask-image: var(--mask-2);
     }
     37% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-3);
     }
     40%{
-        opacity:0;
+        --opacity:0;
     }
     48%{
-         opacity:0;
+         --opacity:0;
           -webkit-mask-image: var(--mask-3);
     }
     50% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-2);
     }
     55%{
-        opacity:0;
+        --opacity:0;
     }
     66%{
-         opacity:0;
+         --opacity:0;
           -webkit-mask-image: var(--mask-2);
     }
     67% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-3);
     }
     70%{
-        opacity:0;
+        --opacity:0;
     }
     81%{
-         opacity:0;
+         --opacity:0;
           -webkit-mask-image: var(--mask-3);
     }
     82% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-1);
     }
     85%{
-        opacity:0;
+        --opacity:0;
     }
     93%{
-         opacity:0;
+         --opacity:0;
           -webkit-mask-image: var(--mask-1);
     }
     94% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-2);
     }
     98%{
-        opacity:0;
+        --opacity:0;
     }
     99%{
-         opacity:0;
+         --opacity:0;
           -webkit-mask-image: var(--mask-2);
     }
     100% {
-         opacity:1;
+         --opacity:1;
         -webkit-mask-image: var(--mask-1);
     }
     
