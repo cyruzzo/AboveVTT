@@ -2237,7 +2237,7 @@ class Token {
 					
 
 					window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
-					window.dragSelectedTokens = $(`.token.tokenselected, .token[data-group-id='${self.options.groupId}'][style*=' display: none;']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
+					window.dragSelectedTokens = $(`#tokens .token.tokenselected, #tokens .token[data-group-id='${self.options.groupId}'][style*=' display: none;']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 					
 					if (self.selected && window.dragSelectedTokens.length>1) {
 						for (let tok of window.dragSelectedTokens){
