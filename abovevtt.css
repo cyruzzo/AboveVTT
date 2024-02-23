@@ -97,7 +97,10 @@ button.daylight span.material-symbols-outlined {
 .joindm {
     position: relative;
 }
-
+#VTT{
+    -webkit-user-select: none; 
+    user-select: none; 
+}
 
 .above_delete {
     width: 400px;
