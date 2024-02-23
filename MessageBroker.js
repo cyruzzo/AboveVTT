@@ -1842,21 +1842,26 @@ class MessageBroker {
 
 	reconnectDisconnectedAboveWs(){
 		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS){
-				let msgdata = {
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
-						whisper: window.PLAYER_NAME
-				};
-				this.inject_chat(msgdata);	
-				this.loadAboveWS(function(){
-					let msgdata = {
-							player: window.PLAYER_NAME,
-							img: window.PLAYER_IMG,
-							text: `${window.PLAYER_NAME} has reconnected.`
-					};
-					window.MB.inject_chat(msgdata);
-				});		
+			let msgdata = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
+					whisper: window.PLAYER_NAME
+			};
+			this.inject_chat(msgdata);	
+			this.loadAboveWS(function(){ 
+				setTimeout(
+					function(){
+						let msgdata = {
+								player: window.PLAYER_NAME,
+								img: window.PLAYER_IMG,
+								text: `${window.PLAYER_NAME} has reconnected.`
+						};
+
+						window.MB.inject_chat(msgdata);
+					}, 4000)
+				}
+			);		
 		}
 	}
 }
