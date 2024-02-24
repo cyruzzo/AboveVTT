@@ -1785,7 +1785,6 @@ class Token {
 					'--token-scale': old.css('--token-scale'),
     				'--token-rotation': old.css('--token-rotation')
 				})
-
 			}
 			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
 					old.toggleClass('underDarkness', true);
@@ -2115,8 +2114,8 @@ class Token {
 				tokenClone.css({
 					left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
 					top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
-					width: `calc(${tok.css('width')} / var(--scene-scale))`,
-					height: `calc(${tok.css('height')} / var(--scene-scale))`
+					width: `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+					height: `calc(${this.sizeHeight()}px / var(--scene-scale))`
 				})
 		        tokenClone.attr('data-darkness', `darkness_${this.options.id}`);
 		        tokenClone.find('.conditions').remove();
@@ -2673,8 +2672,8 @@ class Token {
 					tokenClone.css({
 						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
 						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
-						'--token-width': `calc(${tok.css('width')} / var(--scene-scale))`,
-						'--token-height': `calc(${tok.css('width')} / var(--scene-scale))`,
+						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
 						height: `var(--token-height)`,
 						opacity: this.options.hidden ? '0.5' : '1'

@@ -6701,10 +6701,12 @@ div.ddbc-tab-options--layout-pill>button{
 [data-notatoken]{
     border:none;
 }
-[data-notatoken]>.token-image{
+[data-notatoken]:not(.isAoe)>.token-image{
     width: var(--token-width) !important;
     height: var(--token-width) !important;
 }
+
+
 #tokens .token.definitelyNotAToken>.token-image{
     opacity: 0;
 }
