@@ -207,16 +207,6 @@ function change_zoom(newZoom, x, y, reset = false) {
 
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
 
-
-	if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
-		tabCommunicationChannel.postMessage({
-   			msgType: 'projectionZoom',
-   			newZoom: newZoom,
-   			x: x,
-   			y: y,
-   			sceneId: window.CURRENT_SCENE_DATA.id
-   		})
-	}
 	
 	console.groupEnd()
 }
