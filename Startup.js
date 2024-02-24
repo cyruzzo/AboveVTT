@@ -20,6 +20,8 @@ $(function() {
               x: window.pageXOffset + window.innerWidth/2 - sidebarSize/2,
               y: window.pageYOffset + window.innerHeight/2,
               sceneId: window.CURRENT_SCENE_DATA.id,
+              innerHeight: window.innerHeight,
+              zoom: window.ZOOM
             });
       }
     }, true);
@@ -118,10 +120,25 @@ $(function() {
             }
             else if(event.data.msgType == 'projectionScroll' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
               let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
-              window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);
-            }
-            else if(event.data.msgType == 'projectionZoom' && event.data.sceneId == window.CURRENT_SCENE_DATA.id){
-              change_zoom(event.data.newZoom, event.data.x, event.data.y);
+              let windowRatio = window.innerHeight / event.data.innerHeight;
+
+              if(windowRatio == 1 && window.ZOOM == event.data.zoom){
+                window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2); 
+              }
+              else{
+                throttleProjectionScroll(function(){
+                  if(windowRatio != 1){
+                    change_zoom(event.data.zoom);
+                    window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);          
+                    change_zoom(event.data.zoom * windowRatio)
+                  }
+                  else{              
+                    change_zoom(event.data.zoom);
+                    window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);    
+                  }
+                })
+              }
+           
             }
 
           }
@@ -143,6 +160,8 @@ $(function() {
       });  
   }
 });
+
+const throttleProjectionScroll = throttle((f) => f(), 1000/10)
 
 function addExtensionPathStyles(){ // some above server images moved out of extension package
   let styles = `<style id='aboveExtensionPathStyles'>
