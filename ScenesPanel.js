@@ -216,17 +216,33 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 	let gridSize = 50; 
 
 	let sceneDrawings = []
-
+	let mapOriginX = DataFile.resolution.map_origin?.x != undefined ? DataFile.resolution.map_origin.x : 0;
+	let mapOriginY = DataFile.resolution.map_origin?.y != undefined ? DataFile.resolution.map_origin.y : 0;
+	let mapSizeX = DataFile.resolution.map_size.x;
+	let mapSizeY = DataFile.resolution.map_size.y;
 
 	for(let i = 0; i<DataFile.line_of_sight.length; i++){
 		for(let j = 1; j<DataFile.line_of_sight[i].length; j++){
+
+			if((DataFile.line_of_sight[i][j-1].x) < mapOriginX && (DataFile.line_of_sight[i][j].x) < mapOriginX){
+				continue;
+			}
+			if((DataFile.line_of_sight[i][j-1].y) < mapOriginY && (DataFile.line_of_sight[i][j].y) < mapOriginY){
+				continue;
+			}
+			if((DataFile.line_of_sight[i][j-1].x) > mapOriginX+mapSizeX && (DataFile.line_of_sight[i][j-1].x) > mapOriginX + mapSizeX){
+				continue;
+			}
+			if((DataFile.line_of_sight[i][j-1].y) > mapOriginY+mapSizeY && (DataFile.line_of_sight[i][j].y) > mapOriginY + mapSizeY){
+				continue;
+			}
 			sceneDrawings.push(['line',
 				'wall',
 				"rgba(0, 255, 0, 1)",
-				DataFile.line_of_sight[i][j-1].x*gridSize,
-				DataFile.line_of_sight[i][j-1].y*gridSize,
-				DataFile.line_of_sight[i][j].x*gridSize,
-				DataFile.line_of_sight[i][j].y*gridSize,
+				(DataFile.line_of_sight[i][j-1].x-mapOriginX)*gridSize,
+				(DataFile.line_of_sight[i][j-1].y-mapOriginY)*gridSize,
+				(DataFile.line_of_sight[i][j].x-mapOriginX)*gridSize,
+				(DataFile.line_of_sight[i][j].y-mapOriginY)*gridSize,
 				6,
 				1,
 			])
@@ -235,13 +251,25 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 	for(let i = 0; i<DataFile.portals.length; i++){
 		let closed = (DataFile.portals[i].closed) ? 'closed' : 'open'
 		let color =  doorColors[doorType][closed];
+		if((DataFile.portals[i].bounds[0].x) < mapOriginX && (DataFile.portals[i].bounds[1].x) < mapOriginX){
+			continue;
+		}
+		if((DataFile.portals[i].bounds[0].y) < mapOriginY && (DataFile.portals[i].bounds[1].y) < mapOriginY){
+			continue;
+		}
+		if((DataFile.portals[i].bounds[0].x) > mapOriginX+mapSizeX && (DataFile.portals[i].bounds[1].x) > mapOriginX + mapSizeX){
+			continue;
+		}
+		if((DataFile.portals[i].bounds[0].y) > mapOriginY+mapSizeY && (DataFile.portals[i].bounds[1].y) > mapOriginY + mapSizeY){
+			continue;
+		}
 		sceneDrawings.push(['line',
 			'wall',
 			color,
-			DataFile.portals[i].bounds[0].x*gridSize,
-			DataFile.portals[i].bounds[0].y*gridSize,
-			DataFile.portals[i].bounds[1].x*gridSize,
-			DataFile.portals[i].bounds[1].y*gridSize,
+			(DataFile.portals[i].bounds[0].x-mapOriginX)*gridSize,
+			(DataFile.portals[i].bounds[0].y-mapOriginY)*gridSize,
+			(DataFile.portals[i].bounds[1].x-mapOriginX)*gridSize,
+			(DataFile.portals[i].bounds[1].y-mapOriginY)*gridSize,
 			12,
 			1,
 			doorHidden
@@ -263,6 +291,18 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 
 	let sceneTokens = {};
 	for(let i = 0; i<DataFile.lights.length; i++){
+		if((DataFile.lights[i].position.x) < mapOriginX){
+			continue;
+		}
+		if((DataFile.lights[i].position.y) < mapOriginY){
+			continue;
+		}
+		if((DataFile.lights[i].position.x) > mapOriginX+mapSizeX){
+			continue;
+		}
+		if((DataFile.lights[i].position.y) > mapOriginY+mapSizeY){
+			continue;
+		}
 
 		let hexTransparency = parseInt(DataFile.lights[i].color.substring(DataFile.lights[i].color.length - 2, DataFile.lights[i].color.length), 16)/255;
 		let intensity = DataFile.lights[i].intensity;
@@ -289,8 +329,8 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 				feet: '0',
 				color: 'rgba(255, 255, 255, 0.5)'
 			},
-			left : `${DataFile.lights[i].position.x * gridSize - gridSize/4}px`,
-			top : `${DataFile.lights[i].position.y * gridSize - gridSize/4}px`,
+			left : `${(DataFile.lights[i].position.x - mapOriginX) * gridSize - gridSize/4}px`,
+			top : `${(DataFile.lights[i].position.y - mapOriginY) * gridSize - gridSize/4}px`,
 			gridSquares: 0.5,
 			size: gridSize/2,
 			auraislight: true	
@@ -306,8 +346,8 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 		'vpps': gridSize,
 		'height': gridSize * DataFile.resolution.map_size.y,
 		'width': gridSize * DataFile.resolution.map_size.x,
-		'offsetx': DataFile.resolution.map_origin.x * gridSize,
-		'offsety': DataFile.resolution.map_origin.y * gridSize,
+		'offsetx': 0,
+		'offsety': 0,
 		'scale_factor': 1,
 		'drawings': sceneDrawings,
 		'tokens': sceneTokens,
