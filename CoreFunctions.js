@@ -217,7 +217,16 @@ function showErrorMessage(error, ...extraInfo) {
     error = new Error(error?.toString());
   }
   const stack = error.stack || new Error().stack;
-
+  if(stack.includes('Internal Server Error') && stack.includes('AboveApi.getScene')){
+    if(!window.DM){
+      extraInfo.push('<br/><b>The last scene players were on may have been deleted by the DM. Ask the DM to click the player button beside an existing scene. Even if one is already highlighted click it again to update the server info.</b>')
+    }
+    else{
+      extraInfo.push('<br/><b>The scene you are trying to load does not exist. You may have deleted it - try setting the DM scene to an existing map.</b>')
+    }
+    
+  }
+  
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
       return JSON.stringify(ei);
