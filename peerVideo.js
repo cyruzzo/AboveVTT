@@ -1,7 +1,6 @@
 const PRE = "AboveVTT"
 const SUF = "MEET"
 let room_id;
-let getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 let screenStream;
 window.videoPeer = null;
 window.currentPeers = [];
@@ -137,17 +136,17 @@ function getMediaDevice(){
 
     let videoConditions = videoDeviceNotAvailable ? false : {
         deviceId: {
-                exact: $('select#videoSource').val()
+            exact: $('select#videoSource').val()
         },   
         width: {
-            exact: 854
+            ideal: 854
         },
         height: {
-            exact: 480
+            ideal: 480
         },
         frameRate: 25,
         aspectRatio: {
-            exact: 854 / 480,
+            ideal: 854 / 480,
         }
     }
     let audioConditions = audioDeviceNotAvailable ? false : {
@@ -155,11 +154,11 @@ function getMediaDevice(){
             exact: $('select#audioSource').val()
         }    
     }
-     getUserMedia(
+    navigator.mediaDevices.getUserMedia(
         { 
             video: videoConditions, 
             audio: audioConditions,
-        }, (stream) => {
+        }).then( (stream) => {
         window.myLocalVideostream = stream;
 
         setLocalStream(window.myLocalVideostream)
@@ -178,7 +177,7 @@ function getMediaDevice(){
             }
         }   
         
-    }, (err) => {
+    }).catch((err) => {
         console.log(err)
     })
 }
