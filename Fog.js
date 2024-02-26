@@ -574,11 +574,15 @@ function check_single_token_visibility(id){
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) )); // this token is not in light, the player is using vision/light and darkness > 0
 	
+	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+
+
+
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
 	}
-	if (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight)) {
+	if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight))) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
@@ -661,12 +665,14 @@ function do_check_token_visibility() {
 			
 			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
 
+			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+
 			let inTruesight = false;
 			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
-			if (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected)) {
+			if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected))) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
@@ -1084,31 +1090,7 @@ function reset_canvas() {
 	redraw_light();
 	redraw_fog();
 
-	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
- 	if(window.DM && darknessPercent < 40){
- 		darknessPercent = 40;
- 		$('#raycastingCanvas').css('opacity', '0');
- 	}
- 	else if(window.DM){
- 		$('#raycastingCanvas').css('opacity', '');
- 	}
 
-
- 	if(!parseInt(darknessfilter) && window.walls.length>4){
- 		$('#outer_light_container').css({
- 			'mix-blend-mode': 'unset',
- 			'background':  '#FFF',
- 			'opacity': '0.3'
- 		});
- 	} else{
- 		$('#outer_light_container').css({
- 			'mix-blend-mode': '',
- 			'background': '',
- 			'opacity': ''
- 		});
- 	}
- 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 
  	delete window.lightAuraClipPolygon;
  	delete window.lineOfSightPolygons;
@@ -1152,6 +1134,33 @@ function reset_canvas() {
 	}
 	apply_zoom_from_storage();
 	redraw_text();
+}
+function check_darkness_value(){
+	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+ 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
+ 	if(window.DM && darknessPercent < 40){
+ 		darknessPercent = 40;
+ 		$('#raycastingCanvas').css('opacity', '0');
+ 	}
+ 	else if(window.DM){
+ 		$('#raycastingCanvas').css('opacity', '');
+ 	}
+
+
+ 	if(!parseInt(darknessfilter) && window.walls.length>4){
+ 		$('#outer_light_container').css({
+ 			'mix-blend-mode': 'unset',
+ 			'background':  '#FFF',
+ 			'opacity': '0.3'
+ 		});
+ 	} else{
+ 		$('#outer_light_container').css({
+ 			'mix-blend-mode': '',
+ 			'background': '',
+ 			'opacity': ''
+ 		});
+ 	}
+ 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
 }
 
 function redraw_fog() {
@@ -1608,20 +1617,7 @@ function redraw_light_walls(clear=true){
 
 	$('.door-button[removeAfterDraw]').remove();
 
-	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	if(!parseInt(darknessfilter) && window.walls.length>4){
- 		$('#light_container').css({
- 			'mix-blend-mode': 'unset',
- 			'background': '#FFF',
- 			'opacity': '0.3'
- 		});
- 	} else{
- 		$('#light_container').css({
- 			'mix-blend-mode': '',
- 			'background': '',
- 			'opacity': ''
- 		});
- 	}
+	check_darkness_value();
  
 }
 
