@@ -3375,6 +3375,9 @@ function setTokenAuras (token, options) {
 				if(options.animation.customAuraRotate == true){
 					token.parent().parent().find("#aura_" + tokenId).attr('data-animation', 'aurafx-rotate')
 				}
+				else{
+					token.parent().parent().find("#aura_" + tokenId).attr('data-animation', '')
+				}
 				token.parent().parent().find("#aura_" + tokenId).attr('data-custom-animation', 'true')
 				token.parent().parent().find("#aura_" + tokenId).css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
 			}
@@ -3498,6 +3501,9 @@ function setTokenLight (token, options) {
 			if(options.animation.customLightMask != undefined){
 				if(options.animation.customLightRotate == true){
 					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', 'aurafx-rotate')
+				}
+				else{
+					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', '')
 				}
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
