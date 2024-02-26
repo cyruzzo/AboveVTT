@@ -2469,8 +2469,8 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', parseInt(tokenPosition.x / window.CURRENT_SCENE_DATA.scale_factor) + "px");
-						el.css('top', parseInt(tokenPosition.y / window.CURRENT_SCENE_DATA.scale_factor)  + "px");
+						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 					}
 
 
