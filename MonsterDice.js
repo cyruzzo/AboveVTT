@@ -297,7 +297,7 @@ function scan_player_creature_pane(target) {
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
 	});
-	$(target).find(".avtt-roll-button").click(clickHandler);
+	$(target).find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 	console.groupEnd()
 }
