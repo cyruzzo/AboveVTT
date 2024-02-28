@@ -1,6 +1,6 @@
 button[id$='-button'],
 button[id$='_button'],
-button[id^=jitsi_],
+button[id^=peerVideo_],
 #combat_tracker > button,
 body > button,
 #addscene,
@@ -32,7 +32,7 @@ body > button,
     font-size: 12px;
 }
 
-button[id^=jitsi_]{
+button[id^=peerVideo_]{
     height: 27px;
 }
 
@@ -123,7 +123,7 @@ button.daylight span.material-symbols-outlined {
 
 button[id$='-button']:hover,
 button[id$='_button']:hover,
-button[id^=jitsi_]:hover,
+button[id^=peerVideo_]:hover,
 #combat_tracker > button:hover,
 body > button:hover,
 #addscene:hover,
@@ -8366,7 +8366,31 @@ button.journal-view-button.journal-button {
     bottom: 0px;
     pointer-events: auto;
 }
-#jitsi_close span.material-icons.button-icon
+.meet-controls-bar select{
+    background: none rgb(255, 255, 255);
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset;
+    color: rgb(0, 0, 0);
+    padding: 4px;
+    transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+
+#peerVideo_mute_mic.muted{
+    background:#d86565;
+}
+#peerVideo_mute_mic span:before{
+    content:"\e029";
+    font-family: "Material Symbols Outlined", sans-serif !important;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+}
+#peerVideo_mute_mic.muted span:before{
+    content:"\e02b";
+}
+
+    
+   
+#peerVideo_close span.material-icons.button-icon
 {
     margin: -3px -3px;
     bottom: -3px;

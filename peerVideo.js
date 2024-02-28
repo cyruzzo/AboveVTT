@@ -6,7 +6,92 @@ window.videoPeer = null;
 window.currentPeers = [];
 let screenSharing = false;
 
+function init_peerVideo_box() {
 
+
+    peerVideo_box = $(`  
+        <div class="peervideo-entry-modal" id="peervideo-entry-modal">
+            <div class="video-meet-area">
+
+                <!-- Local Video Element-->
+                <video controls id="local-video"></video>
+                <div class="meet-controls-bar">
+                    <button id="startScreenShare" onclick="startScreenShare()">Screen Share</button>
+                    <button id="peerVideo_close" class="hasTooltip button-icon" data-name="Disconnect">
+                        <span class="material-icons button-icon">
+                            cancel
+                        </span>
+                    </button>
+                    <button id="peerVideo_mute_mic" class="hasTooltip button-icon" data-name="muteMic">
+                        <span class="material-symbols-outlined button-icon">
+                        </span>
+                    </button>
+                    <select id="videoSource" style='width:100px'></select>
+                    <select id="audioSource" style='width:100px'></select>
+                </div>
+            </div>
+        </div>
+    `)
+
+
+
+
+    
+    peerVideo_box.css("z-index", "100");
+
+    $("#site").append(peerVideo_box);
+    
+
+    
+    $("#peerVideo_switch").css("position", "absolute").css("top", 0).css("left", 0);
+
+
+
+    joinRoom();
+   
+
+    $("#peerVideo_mute_mic").off('click.videoClose').on('click.videoClose', function(){
+        $(this).toggleClass('muted');
+        window.myLocalVideostream.getAudioTracks()[0].enabled = !$(this).hasClass('muted');
+    });
+    $("#peerVideo_close, #peerVideo_mute_mic").css("float", 'right')
+
+    $("#peerVideo_close").off('click.videoClose').on('click.videoClose', 
+        function () {       
+            if(window.myLocalVideostream != undefined){
+                window.myLocalVideostream.getTracks().forEach(function(track) {
+                    track.stop();
+                    window.myLocalVideostream.removeTrack(track);
+                });
+            }
+            
+                
+            window.MB.sendMessage("custom/myVTT/videoPeerDisconnect", {id: window.videoPeer.id})
+            window.videoPeer.destroy();
+            $("#peervideo-entry-modal").remove();
+            create_peerVideo_button();
+        }
+    );
+
+}
+
+function create_peerVideo_button() {
+
+    b = $("<div id='peerVideo_switch' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Connect video call'><div class='ddbc-tab-options__header-heading'><span>VIDEO</span><span class='material-icons button-icon' style='margin: -3px 0px -3px 3px'>video_call</span></div></div>");
+    b.css("position", "fixed");
+    b.css("bottom", "3px");
+    b.css("left", "3px");
+    b.css("gap", "6px");
+    b.css("display", "inline-flex");
+    b.css("z-index", 9999);
+    $("body").append(b);
+
+    b.click(function () {
+        $(this).remove();
+        init_peerVideo_box();
+        reposition_player_sheet();
+    });
+}
 function setLocalStream(stream) {
 
     let video = document.getElementById("local-video");
@@ -65,6 +150,7 @@ function joinRoom(room = window.gameId) {
     console.log("Joining Room")
     room_id = PRE + room + SUF;
     player_id = PRE + window.PLAYER_ID + SUF;
+  
     if(window.DM)
         player_id = room_id;
     if(window.videoPeer != null){
@@ -77,10 +163,8 @@ function joinRoom(room = window.gameId) {
     }
     window.videoPeer.on('open', (id) => {
         console.log("Connected with Id: " + id)
-        window.myVideoPeerID = id;
-    
+        window.myVideoPeerID = id;   
         getMediaDevice();
-
     })
     window.videoPeer.on('call', (call) => {
         call.answer(window.myLocalVideostream);
@@ -133,7 +217,7 @@ function joinRoom(room = window.gameId) {
 function getMediaDevice(){
     let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
     let videoDeviceNotAvailable = $('select#videoSource').val() == '' || $('select#videoSource').val() == null || $('select#videoSource').val() == 'disable';
-
+    let micVolume = $("#peerVideo_mute_mic").hasClass('muted') ? 0.0 : 1.0
     let videoConditions = videoDeviceNotAvailable ? false : {
         deviceId: {
             exact: $('select#videoSource').val()
@@ -152,7 +236,8 @@ function getMediaDevice(){
     let audioConditions = audioDeviceNotAvailable ? false : {
         deviceId: {
             exact: $('select#audioSource').val()
-        }    
+        },
+        volume: micVolume   
     }
     navigator.mediaDevices.getUserMedia(
         { 
@@ -188,8 +273,10 @@ function startScreenShare() {
     screenSharing = true;
 
     let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
+    let micVolume = $("#peerVideo_mute_mic").hasClass('muted') ? 0.0 : 1.0
     let audioConditions = audioDeviceNotAvailable ? false : {
-        deviceId: $('select#audioSource').val() 
+        deviceId: $('select#audioSource').val(),
+        volume: micVolume 
     }
     navigator.mediaDevices.getDisplayMedia({ video: true, audio: true}).then((stream) => {
         screenStream = stream;
