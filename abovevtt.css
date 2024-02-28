@@ -5878,13 +5878,16 @@ input.max_hp[disabled]{
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
-#VTT .token>.base~.token-image{
+#VTT .token>.base~.token-image,
+#token-configuration-modal .token>.base~.token-image
+{
     filter: none;
     border: 0px;
     box-shadow: none;
 }
 
-#VTT .token.isAoe .token-image{
+#VTT .token.isAoe .token-image,
+#token-configuration-modal .token.isAoe .token-image{
   border: 0px;
 }
 
@@ -5897,7 +5900,8 @@ input.max_hp[disabled]{
     border-radius: 50%;
 }
 
-#VTT .token>.token-image.freeform {
+#VTT .token>.token-image.freeform,
+#token-configuration-modal .token>.token-image.freeform{
     border: 0px;
     box-shadow: none;
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
