@@ -75,7 +75,7 @@ Mousetrap.bind('v', function () {       //video fullscreen toggle
     if(shiftHeld)
         return;
 
-    $('#jitsi_switch').click()
+    $('#peerVideo_switch').click()
 });
 
 Mousetrap.bind('shift+v', function () {       //check token vision

@@ -2665,7 +2665,6 @@ function init_ui() {
 
 
 
-	//create_jitsi_button();
 
 	// EXPERRIMENTAL DRAG TO MOVE
 	var curDown = false,
@@ -3690,7 +3689,7 @@ function toggle_player_sheet_size() {
 }
 
 /**
- * If the window size changes, or if they open jitsi, or anything like that, we want to update the character sheet css without toggling the size.
+ * If the window size changes, or if they open peerVideo, or anything like that, we want to update the character sheet css without toggling the size.
  * This is explicitly the opposite behavior as toggle_player_sheet_size().
  */
 function reposition_player_sheet() {
@@ -3855,8 +3854,8 @@ function reset_character_sheet_css() {
 	$(".ddbc-character-tidbits__menu-callout").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 
 	let maxHeight = window.innerHeight - 26;
-	if ($("#jitsi_container").length > 0) {
-		maxHeight -= $("#jitsi_container").height();
+	if ($("#peerVideo_container").length > 0) {
+		maxHeight -= $("#peerVideo_container").height();
 	}
 	$(".ct-character-sheet__inner").css({
 		"position": "fixed",
