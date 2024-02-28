@@ -934,9 +934,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     let options = {...window.TOKEN_SETTINGS}
     // set up whatever you need to. We'll override a few things after
-    if(extraOptions == undefined){
-        options = {...options, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
-    }
+   
+    options = {...options, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    
     
     options.name = listItem.name;
 
@@ -1144,13 +1144,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         options.hidden = hidden;
     }
     options.imgsrc = random_image_for_item(listItem, specificImage);
-    // TODO: figure out if we still need to do this, and where they are coming from
+
     if(extraOptions != undefined){
         options = {
             ...options,
             ...extraOptions
         }
     }
+    // TODO: figure out if we still need to do this, and where they are coming from
     delete options.undefined;
     delete options[""];
     console.log("create_and_place_token about to place token with options", options, hidden);
