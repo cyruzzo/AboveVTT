@@ -4630,6 +4630,19 @@ button.avtt-roll-formula-button {
     color: #394B59;
     padding: 9px;
 }
+.abovevtt-slash-command-journal button {
+    color: #b43c35;
+    border: 1px solid #b43c35;
+    border-radius: 4px;
+    background-color: #fff;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+    line-height: 18px;
+    letter-spacing: 1px;
+    padding: 1px 4px 0;
+}
 .MuiPaper-root {
     padding: 0px 16px;
     width: 100px;
