@@ -245,7 +245,7 @@ function getMediaDevice(){
             audio: audioConditions,
         }).then( (stream) => {
         window.myLocalVideostream = stream;
-
+        window.myLocalVideostream.getAudioTracks()[0].enabled = !$("#peerVideo_mute_mic").hasClass('muted');
         setLocalStream(window.myLocalVideostream)
         if(window.currentPeers.length == 0){
             window.MB.sendMessage("custom/myVTT/videoPeerConnect", {id: window.myVideoPeerID});  
