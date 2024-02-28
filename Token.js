@@ -846,12 +846,7 @@ class Token {
 		this.options.left = old.css("left");
 		this.options.top = old.css("top");
 		this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
-		//this.options.hpstring=old.find(".hpbar").val();
-		//this.options.size=old.width();
-		if (old.css("opacity") == 0.5 || (!window.DM && old.css('display') == 'none'))
-			this.options.hidden = true;
-		else
-			delete this.options.hidden;
+
 		
 		// one of either
 		// is a monster?
