@@ -605,7 +605,7 @@ function init_character_list_page_without_avtt() {
 
 /** Called from our character sheet observer for Dice Roll formulae.
  * @param element the jquery element that we observed changes to */
-function inject_dice_roll(element) {
+function inject_dice_roll(element, clear=true) {
   if (element.find("button.avtt-roll-formula-button").length > 0) {
     console.debug("inject_dice_roll already has a button")
     return;
@@ -623,7 +623,9 @@ function inject_dice_roll(element) {
       updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
     }
   }
-  element.empty();
+  if(clear == true){
+    element.empty();
+  }
   console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
   element.append(updatedInnerHtml);
   element.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {

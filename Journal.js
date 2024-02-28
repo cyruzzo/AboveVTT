@@ -847,11 +847,32 @@ class JournalManager{
 			
 		
 		let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
+
+		let slashCommandElements = $(currentElement).find('.abovevtt-slash-command-journal')
 	
 		let $newHTML = $(updated);
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
+
+	    $newHTML.find('.abovevtt-slash-command-journal').each(function(index){			
+			const slashCommands = [...slashCommandElements[index].innerHTML.matchAll(multiDiceRollCommandRegex)];
+			if (slashCommands.length === 0) return;
+			console.debug("inject_dice_roll slashCommands", slashCommands);
+			let updatedInnerHtml = slashCommandElements[index].innerHTML;
+			try {
+			  const diceRoll = DiceRoll.fromSlashCommand(slashCommands[0][0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+			  updatedInnerHtml = updatedInnerHtml.replace(slashCommands[0][0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${slashCommands[0][0]}">${diceRoll.expression}</button>`);
+			} catch (error) {
+			  console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", slashCommands, slashCommands[0][0]);
+			  updatedInnerHtml = updatedInnerHtml.replace(slashCommands[0][0], '');
+			}
+			$(this).empty().append(updatedInnerHtml);
+	    })
+
+		
+		
+		
 
 
 		$(target).html($newHTML);
@@ -871,9 +892,42 @@ class JournalManager{
 		
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
+
+
 	
 		$(target).find(".avtt-roll-button").click(clickHandler);
 		$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+
+		$(target).find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+		clickEvent.stopPropagation();
+
+			const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
+			const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+			window.diceRoller.roll(diceRoll);
+		});
+		$(target).find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+		  e.stopPropagation();
+		  e.preventDefault();
+		  let rollData = {}
+		  if($(this).hasClass('avtt-roll-formula-button')){
+		     rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+		     rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+		  }
+		  else{
+		     rollData = getRollData(this)
+		  }
+		  
+		  
+		  if (rollData.rollType === "damage") {
+		    damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+		      .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+		  } else {
+		    standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+		      .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+		  }
+		})
+
+
 		console.groupEnd()
 	}
 
@@ -1044,6 +1098,12 @@ class JournalManager{
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
                 return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
+            input = input.replace(/\[roll\](.*?)\[\/roll\]/g, function(m){
+            	let roll = m.replace(/<\/?p>/g, '').replace(/\s?\[roll\]\s?|\s?\[\/roll\]\s?/g, '').replace('[/roll]', '');   	
+                return `<span class="abovevtt-slash-command-journal">${roll}</span>`
+            })
+
+            
 
             input = input.replace(/\[monster\](.*?)\[\/monster\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
@@ -1074,9 +1134,6 @@ class JournalManager{
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
-	    	
-	    	
-	   
 	    
 
         $(target).html($newHTML);
@@ -1195,7 +1252,8 @@ class JournalManager{
 			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },
 			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
-			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' }
+			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
+			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]},
 			   	{ title: 'Statblock Seperator', block: 'div', wrapper: false, classes:'abovevtt-mon-stat-block__separator'}
 			],
@@ -1724,6 +1782,10 @@ class JournalManager{
 
 			      .custom-pc-sheet.custom-stat{
 			      	color: #08a1e3;
+			      }
+
+			      .abovevtt-slash-command-journal{
+			      	color: #b43c35;
 			      }
 				  
 			      .custom-ac.custom-stat{
