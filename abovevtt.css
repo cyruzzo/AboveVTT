@@ -746,7 +746,7 @@ select#doorTypeSelectUVTT{
 
 .body-rpgcharacter-sheet #fog_overlay {
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
-
+    pointer-events:none;
 }
 
 #combat_tracker_inside .ui-resizable-s,
@@ -4643,11 +4643,12 @@ button.avtt-roll-formula-button {
     letter-spacing: 1px;
     padding: 1px 4px 0;
 }
-.MuiPaper-root {
+.MuiPaper-root:not(.MuiAlert-root) {
     padding: 0px 16px;
     width: 100px;
     pointer-events: auto;
 }
+
 .MuiListItemText-root {
     flex: 1 1 auto;
     min-width: 0;
