@@ -394,7 +394,9 @@ async function start_above_vtt_for_players() {
         hide_sidebar();
       }
     }, 1000);
-
+    if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
+      $("#youtube_controls_button").css('visibility', 'hidden');
+    }
   });
 
   startup_step("Fetching scene from AboveVTT server");

@@ -2853,8 +2853,10 @@ function init_zoom_buttons() {
 		if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
 			iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
 			$(`#scene_map_container`).css('z-index', '');
+			$(`#fog_overlay`).css('z-index', '21');
 		} else {
 			iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+			$(`#fog_overlay`).css('z-index', '101');
 			$(`#scene_map_container`).css('z-index', '100');
 		}
 	});	
