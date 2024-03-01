@@ -2816,11 +2816,11 @@ async function build_tutorial_import_list_item(scene, logo, allowMagnific = true
 	}
 	if (scene.grid) tags.push("Grid Aligned");
 	if (scene.player_map_is_video && scene.player_map_is_video !== "0") tags.push("Video Map");
-	if (Array.isArray(scene.tokens) && scene.tokens.length > 0) tags.push("Tokens");
+	if (scene.tokens && Object.keys(scene.tokens).length > 0) tags.push("Tokens");
 	if (scene.dm_map) tags.push("DM Map");
 	if (typeof description !== "string" || description.length === 0 && tags.length > 0) {
 		const tagString = tags
-			.slice(0, 3) // This might be overkill, but only display the first 3 tags.
+			.slice(0, 4) // This might be overkill, but only display the first 4 tags.
 			.map(t => `&bull; ${t}`).join("<br>");
 		description = `
 			<p><strong>This Scene Has:</strong></p>
