@@ -1424,7 +1424,7 @@ function register_token_row_context_menu() {
                 };
             }
 
-            if(rowItem.isTypeFolder() || rowItem.isTypePC()){
+            if(rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter()){
                 menuItems["border"] = "---";
 
                 menuItems['Hide/Reveal'] = {
