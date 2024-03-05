@@ -1755,7 +1755,9 @@ class Token {
 			else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
 				old.draggable("enable");
 			}
-			old.toggleClass('lockedToken', this.options.locked)
+			if(!this.options.id.includes('exampleToken')){
+				old.toggleClass('lockedToken', this.options.locked==true)
+			}
 			this.update_health_aura(old);
 
 			// store custom token info if available
@@ -2605,7 +2607,9 @@ class Token {
 					this.options.restrictPlayerMove = false;
 				}
 			}
-			tok.toggleClass('lockedToken', this.options.locked)
+			if(!this.options.id.includes('exampleToken')){
+				tok.toggleClass('lockedToken', this.options.locked==true)
+			}	
 			if(this.options.locked ){
 				if(window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){		
 					tok.draggable("disable");

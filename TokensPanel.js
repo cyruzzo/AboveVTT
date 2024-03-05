@@ -2890,10 +2890,12 @@ function monster_search_filter_query_param() {
 
 function register_custom_token_image_context_menu() {
     $.contextMenu({
-        selector: ".custom-token-image-item",
+        selector: ".custom-token-image-item, #token-change-image-modal .example-token",
         build: function(element, e) {
             let items = {};
-            if (!element.hasClass("change-token-image-item")) {
+            let foundElement = find_sidebar_list_item(element)
+            let tokenChangeImage = element.parents().find('#token-change-image-modal').length>0
+            if (!element.hasClass("change-token-image-item") && !tokenChangeImage) {
                 items.place = {
                     name: "Place Token",
                     callback: function (itemKey, opt, originalEvent) {
@@ -2922,23 +2924,35 @@ function register_custom_token_image_context_menu() {
             items.copy = {
                 name: "Copy Url",
                 callback: function (itemKey, opt, e) {
-                    let selectedItem = $(opt.$trigger[0]);
-                    let imgSrc = selectedItem.find(".token-image").attr("src");
-                    copy_to_clipboard(imgSrc);
+                      
+                        let selectedItem = $(opt.$trigger[0]);
+                        let imgSrc = selectedItem.find(".token-image").attr("src");
+                        if(tokenChangeImage){
+                            imgSrc = selectedItem.attr("src");
+                        }
+                        copy_to_clipboard(imgSrc); 
                 }
             };
-            if (!element.hasClass("change-token-image-item") && find_sidebar_list_item(element).type !== 'builtinToken' && find_sidebar_list_item(element).type !== 'ddbToken') {
+            if (!element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
                     callback: function (itemKey, opt, originalEvent) {
                         let selectedItem = $(opt.$trigger[0]);
                         let imgSrc = selectedItem.find(".token-image").attr("src");
+                        if(tokenChangeImage){
+                            imgSrc = selectedItem.attr("src");
+                        }
+                        
                         let listItem = find_sidebar_list_item(opt.$trigger);
+                        
 
                         // if they are removing the image that is set on a token, ask them if they really want to remove it
                         let placedTokenId = selectedItem.attr("data-token-id");
                         let placedToken = window.TOKEN_OBJECTS[placedTokenId];
+                        if(placedToken !== undefined){
+                            placedToken.options.alternativeImages = placedToken.options.alternativeImages.filter(d => d !== imgSrc);
+                        }
                         if (placedToken !== undefined && placedToken.options.imgsrc === imgSrc) {
                             let continueRemoving = confirm("This image is set on the token. Removing it will remove the image on the token as well. Are you sure you want to remove this image?")
                             if (!continueRemoving) {
@@ -2948,7 +2962,7 @@ function register_custom_token_image_context_menu() {
                             placedToken.place_sync_persist();
                         }
 
-                        if (listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC() || listItem?.isTypeOpen5eMonster()) {
+                        if (!tokenChangeImage && listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC() || listItem?.isTypeOpen5eMonster()) {
                             let customization = find_token_customization(listItem.type, listItem.id);
                             if (!customization) {
                                 showError("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
@@ -2959,7 +2973,7 @@ function register_custom_token_image_context_menu() {
                             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
                             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
                             redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
-                        } else {
+                        } else if (!tokenChangeImage) {
                             showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
                             return;
                         }
@@ -3052,6 +3066,12 @@ function display_change_image_modal(placedToken) {
     if (listItem?.alternativeImages) {
         alternativeImages = alternativeImages.concat(listItem.alternativeImages);
     }
+    if (listItem != undefined){
+        let customization = find_token_customization(listItem.type, listItem.id);
+        if (customization) {
+            alternativeImages = alternativeImages.concat(customization.alternativeImages());
+        }
+    }
     alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
     console.log("display_change_image_modal", alternativeImages);
     alternativeImages.forEach(imgUrl => {
@@ -3059,10 +3079,10 @@ function display_change_image_modal(placedToken) {
         let html;
         let video = false;
         if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || placedToken?.options.videoToken == true){
-            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" loading="lazy" alt="alternative image" />`);  
+            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" data-token-id='${placedToken?.options.id}' loading="lazy" alt="alternative image" />`);  
             video = true;   
         } else{
-            html = $(`<img class="example-token" loading="lazy" alt="alternative image" />`);
+            html = $(`<img class="example-token" loading="lazy" data-token-id='${placedToken?.options.id}' alt="alternative image" />`);
         }
         updateImgSrc(imgUrl, html, video);
         // the user is changing their token image, allow them to simply click an image
@@ -3081,20 +3101,21 @@ function display_change_image_modal(placedToken) {
             alert("You cannot use urls starting with data:");
             return;
         }
+       
         if(!placedToken.options.alternativeImages){
-            placedToken.options.alternativeImages =[];
+           placedToken.options.alternativeImages =[];
         }
         if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-
-            placedToken.options.alternativeImages.push(placedToken.options.imgsrc)
+           placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
         }
-        
         placedToken.options.imgsrc = parse_img(imageUrl);
-        placedToken.options.alternativeImages.push(placedToken.options.imgsrc);
+        if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+            placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+        }
         close_sidebar_modal();
         placedToken.place_sync_persist();
     };
-
+   
     let imageUrlInput = sidebarPanel.build_image_url_input("Use a different image", add_token_customization_image);
     sidebarPanel.inputWrapper.append(imageUrlInput);
 
