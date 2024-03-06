@@ -1530,10 +1530,11 @@ class Token {
 				}
 			}
 
+			let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
+			old.find(".token-image").css("--token-border-width", tokenBorderWidth);
 
 			if (old.attr('width') !== this.sizeWidth() || old.attr('height') !== this.sizeHeight()) {
-				// NEED RESIZING
-				old.find(".token-image").css("--token-border-width", (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px");
+				// NEED RESIZING			
 				old.find(".token-image").css({
 					"max-width": this.sizeWidth(),
 					"max-height": this.sizeHeight()
@@ -1799,6 +1800,7 @@ class Token {
 							'--z-index-diff': old.css('--z-index-diff'),
 							'opacity': this.options.hidden ? '0.5' : '1',
 							'--hp-percentage': `${this.hpPercentage}%`,
+							"--token-border-width": tokenBorderWidth
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();    
@@ -1820,6 +1822,7 @@ class Token {
 		    				'--token-rotation': old.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1',
 							'--hp-percentage': `${this.hpPercentage}%`,
+							"--token-border-width": tokenBorderWidth
 						})
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
 					}
