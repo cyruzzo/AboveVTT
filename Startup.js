@@ -207,9 +207,7 @@ function addExtensionPathStyles(){ // some above server images moved out of exte
 
     [data-animation='lightning-fx'] .islight,
     .aura-element[data-animation='lightning-fx'][id*='aura_'] {
-        --mask-1: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning1.png");
-        --mask-2: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning2.png");
-        --mask-3: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning3.png");
+        --mask-1: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightningcircle.png");
     }
 
     [data-animation='magic-circle-fx'] .islight,
