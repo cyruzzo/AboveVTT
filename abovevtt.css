@@ -8240,7 +8240,6 @@ button.journal-view-button.journal-button {
 
 [data-animation='lightning-fx'] .islight,
 .aura-element[data-animation='lightning-fx'][id*='aura_'] {
-    animation: aurafx-rotate 40s infinite linear, lightning-circle-fx 6s infinite linear;
     -webkit-mask-size: contain;
     -webkit-mask-image: var(--mask-1);
     --light1-blur-size: var(--radius1);
