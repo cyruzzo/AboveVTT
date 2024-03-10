@@ -7,6 +7,7 @@ body > button,
 .scene button,
 #combat_tracker_inside button,
 #edit_dialog button:not(.rc-switch),
+#edit_scene_form button:not(.rc-switch),
 #mega_importer button,
 #prewiz td button,
 #wizard_popup button,
@@ -130,6 +131,7 @@ body > button:hover,
 .scene button:hover,
 #combat_tracker_inside button:hover,
 #edit_dialog button:not(.rc-switch):hover,
+#edit_scene_form button:not(.rc-switch):hover,
 #mega_importer button:hover,
 #prewiz td button:hover,
 #wizard_popup button:hover,
@@ -935,7 +937,8 @@ div#scene_selector,
     position: absolute !important;
 }
 
-#edit_dialog button:not(.rc-switch){
+#edit_dialog button:not(.rc-switch),
+#edit_scene_form button:not(.rc-switch){
     background:none;
     border-radius:5px;
 
@@ -5872,8 +5875,33 @@ input.max_hp[disabled]{
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
 }
+button.dropboxChooser{
+    padding-left: 18px !important;
+    position: relative;
+}
 
+button.dropboxChooser.token-row-button{
+    position: relative;
+    padding-left: 0px !important;
+}
 
+button.dropboxChooser.token-row-button span.dropin-btn-status{
+    -webkit-background-size: 100px 20px;
+    left: 1px;
+    width: 26px;
+    position: relative;
+    display: block;
+    height: 20px;
+}
+button span.dropin-btn-status{
+    background-image: url(https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png);
+    background-size: 60px 14px;
+    -webkit-background-size: 60px 14px;
+    width: 15px;
+    position: absolute;
+    height: 15px;
+    left: 2px;
+}
 .token>.token-image{
     min-height: var(--min-height) !important;
     min-width: var(--min-width) !important;

@@ -204,6 +204,52 @@ function removeError() {
   delete window.logSnapshot;
 }
 
+function createCustomDropboxChooser(text, options){
+  let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
+  button.off('click.dropbox').on('click.dropbox', function(){
+    Dropbox.choose(options)
+  })
+  return button;
+}
+
+function dropBoxOptions(callback, multiselect = false, fileType=['images', 'video']){
+
+  let options = {
+     // Required. Called when a user selects an item in the Chooser.
+      success: function(files) {
+        callback(files)
+          //alert("Here's the file link: " + files[0].link)
+      },
+
+      // Optional. Called when the user closes the dialog without selecting a file
+      // and does not include any parameters.
+      cancel: function() {
+
+      },
+
+      // Optional. "preview" (default) is a preview link to the document for sharing,
+      // "direct" is an expiring link to download the contents of the file. For more
+      // information about link types, see Link types below.
+      linkType: "preview", // or "direct"
+
+      // Optional. A value of false (default) limits selection to a single file, while
+      // true enables multiple file selection.
+      multiselect: multiselect, // or true
+
+      // Optional. This is a list of file extensions. If specified, the user will
+      // only be able to select files with these extensions. You may also specify
+      // file types, such as "video" or "images" in the list. For more information,
+      // see File types below. By default, all extensions are allowed.
+      extensions: fileType,
+
+      // Optional. A value of false (default) limits selection to files,
+      // while true allows the user to select both folders and files.
+      // You cannot specify `linkType: "direct"` when using `folderselect: true`.
+      folderselect: false, // or true
+  }
+
+  return options
+}
 /** Displays an error to the user. Only use this if you don't want to look for matching github issues
  * @see showError
  * @param {Error} error an error object to be parsed and displayed

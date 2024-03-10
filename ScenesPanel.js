@@ -1217,18 +1217,26 @@ function edit_scene_dialog(scene_id) {
 
 	form.append(form_row('title', 'Scene Title'))
 	const playerMapRow = form_row('player_map', 'Map link', null, true)
-	
+
+
+	const dropBoxOptions1 = dropBoxOptions(function(links){playerMapRow.find('input').val(links[0].link)});
+	const dropBoxbutton1 = createCustomDropboxChooser('Choose Map from Dropbox', dropBoxOptions1);
+
 	const dmMapRow = form_row('dm_map', 'DM Only Map', null, true)
-	
+
+	const dropBoxOptions2 = dropBoxOptions(function(links){dmMapRow.find('input').val(links[0].link)});
+	const dropBoxbutton2 = createCustomDropboxChooser('Choose DM Map from Dropbox', dropBoxOptions2);
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
+	playerMapRow.append(dropBoxbutton1);
 	playerMapRow.attr('title', `This map will be shown to everyone if DM map is off or only players if the DM map is on. If you are using your own maps you will have to upload them to a public accessible place. Eg. discord, imgur, dropbox, gdrive etc.`)
 	
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
+	dmMapRow.append(dropBoxbutton2);
 	dmMapRow.attr('title', `This map will be shown to the DM only. It is used for a nearly indentical map to the main map that had secrets embedded in it that you don't want your players to see. Both maps must have links.`)
-	form.append(playerMapRow)
+	form.append(playerMapRow)	
 	form.append(dmMapRow)
 	// add a row but override the normal input with a toggle
 	form.append(form_row('dmMapToggle',
@@ -2559,10 +2567,13 @@ function build_UVTT_import_container(){
 	form.on('submit', function(e) { e.preventDefault(); });
 	form.append(form_row('title', 'Scene Title', 'New Scene'));
 	form.append(form_row('player_map', 'UVTT File link', 'URL for .dd2vtt, .uvtt, .df2vtt or other universal vtt file.'));
+	const dropBoxOptions1 = dropBoxOptions(function(links){$('#player_map_row input').val(links[0].link)}, false, ['.dd2vtt', '.uvtt', '.df2vtt']);
+	const dropBoxbutton1 = createCustomDropboxChooser('Choose UVTT file from Dropbox', dropBoxOptions1);
+	form.append(dropBoxbutton1);
+
 	const hiddenDoorToggle = form_toggle('hidden_doors_toggle', null, false, function(event) {
 		handle_basic_form_toggle_click(event);
 	})
-
 	
 
 

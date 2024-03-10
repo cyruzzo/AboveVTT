@@ -1560,13 +1560,13 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
  * Creates a new "My Token" object within a folder
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
-function create_token_inside(listItem) {
+function create_token_inside(listItem, tokenName = "New Token", tokenImage = '') {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let newTokenName = "New Token";
+    let newTokenName = tokenName;
     const newTokenCount = window.TOKEN_CUSTOMIZATIONS
         .filter(tc => tc.parentId === listItem.id && tc.name().startsWith(newTokenName))
         .length;
@@ -1582,15 +1582,20 @@ function create_token_inside(listItem) {
     let customization = TokenCustomization.MyToken(
         uuid(),
         listItem.id,
-        { name: newTokenName }
+        { name: newTokenName,
+          alternativeImages: [tokenImage],
+          videoToken: (['.mp4', '.webm', '.mkv'].some(d => tokenImage.includes(d))) ? true : false 
+        }
     );
     persist_token_customization(customization, function (didSucceed, error) {
         console.log("create_token_inside created a new item", customization);
         did_change_mytokens_items();
         const newItem = window.tokenListItems.find(li => li.type === ItemType.MyToken && li.id === customization.id);
         if (didSucceed && newItem) {
-            display_token_configuration_modal(newItem);
-        } else {
+            if(tokenImage == ''){
+                display_token_configuration_modal(newItem);
+            } 
+        } else {    
             showError(error, "Failed to create My Token", customization);
         }
     });
@@ -1748,6 +1753,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     if(!listItem?.isTypeBuiltinToken() && !listItem?.isTypeDDBToken()){
         let imageUrlInput = sidebarPanel.build_image_url_input(determineLabelText(), addImageUrl);
         inputWrapper.append(imageUrlInput);
+        const dropboxOptions = dropBoxOptions(function(links){
+            for(let i = 0; i<links.length; i++){
+               addImageUrl(links[i].link)
+            }
+        }, true);
+        const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+        dropboxButton.toggleClass('token-row-button', true);
+        inputWrapper.append(dropboxButton);
     }
 
 
@@ -3118,6 +3131,26 @@ function display_change_image_modal(placedToken) {
    
     let imageUrlInput = sidebarPanel.build_image_url_input("Use a different image", add_token_customization_image);
     sidebarPanel.inputWrapper.append(imageUrlInput);
+    //dropbox button
+    const dropboxOptions = dropBoxOptions(function(links){
+        for(let i = 0; i<links.length; i++){
+            if(!placedToken.options.alternativeImages){
+               placedToken.options.alternativeImages =[];
+            }
+            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+               placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+            placedToken.options.imgsrc = parse_img(links[i].link);
+            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+        }
+        close_sidebar_modal();
+        placedToken.place_sync_persist();       
+    }, true);
+    const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+    dropboxButton.toggleClass('token-row-button', true);
+    sidebarPanel.inputWrapper.append(dropboxButton);
 
     let inputWrapper = sidebarPanel.inputWrapper;
     sidebarPanel.footer.find(`.token-image-modal-add-button`).remove();
