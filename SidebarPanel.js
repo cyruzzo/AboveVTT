@@ -1167,6 +1167,15 @@ function build_sidebar_list_row(listItem) {
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_folder_inside(clickedItem);
         });
+        //import dropbox
+        const dropboxOptions = dropBoxOptions(function(links){
+            for(let i = 0; i<links.length; i++){
+              create_token_inside(listItem, links[i].name, links[i].link);
+            }       
+        }, true);
+        const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+        dropboxButton.toggleClass('token-row-button', true);
+        rowItem.append(dropboxButton);
         let addToken = $(`<button class="token-row-button" title="Create New Token"><span class="material-icons">person_add_alt_1</span></button>`);
         rowItem.append(addToken);
         addToken.on("click", function (clickEvent) {

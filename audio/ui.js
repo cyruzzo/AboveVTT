@@ -323,6 +323,15 @@ function init_trackLibrary() {
     searchTrackLibary.off().on('change keyup blur search', (e) => {      
         debounceSearch(e.target.value);
     });
+
+    //import dropbox
+    const dropboxOptions = dropBoxOptions(function(links){
+        for(let i = 0; i<links.length; i++){
+            trackLibrary.addTrack(links[i].name, links[i].link);  
+        }
+    }, true, ['audio'], true);
+    const dropBoxbutton = createCustomDropboxChooser('Add from Dropbox', dropboxOptions);
+
     // import csv button
     const importCSV = document.createElement('button');
     importCSV.textContent = "Import CSV";
@@ -535,7 +544,7 @@ function init_trackLibrary() {
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, importCSV, addTrack, importTrackFields, trackList);
 }
 
 function init() {
