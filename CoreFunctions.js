@@ -217,6 +217,9 @@ function dropBoxOptions(callback, multiselect = false, fileType=['images', 'vide
   let options = {
      // Required. Called when a user selects an item in the Chooser.
       success: function(files) {
+        for(let i = 0; i<files.length; i++){
+          files[i].name = files[i].name.replace(/\..*$/g, '')
+        }
         callback(files)
           //alert("Here's the file link: " + files[0].link)
       },
