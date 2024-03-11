@@ -451,9 +451,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(token.options.stat)
 		entry.attr('data-stat', token.options.stat)
 
-	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
+
 	let video = false;
-	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
+
+	if(['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))){
 		img = $("<video disableRemotePlayback muted width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 		video = true;
 	} 

@@ -1619,7 +1619,7 @@ class Token {
 						oldImage.remove();
 						$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
 						let tokenImage;
-						if(newFileExtention == 'webm' || newFileExtention == 'mp4'  || newFileExtention == 'm4v' || this.options.videoToken == true){
+						if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
 							tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");			
 							video = true;
 						} 
@@ -1980,7 +1980,7 @@ class Token {
 				
 				let fileExtention = this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1];
 				let video = false;
-				if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || this.options.videoToken == true){
+				if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
 					tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
 					video = true;
 				} 

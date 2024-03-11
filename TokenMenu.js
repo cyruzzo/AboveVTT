@@ -3295,9 +3295,8 @@ function add_to_quick_roll_menu(token){
 	qrm_entry.attr("data-name", token.options.name);
 	//qrm_entry.tooltip({show: { duration: 1000 }});
 	let img;
-	let fileExtention = token.options.imgsrc.split('.')[token.options.imgsrc.split('.').length-1];
 	let video = false;
-	if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || token.options.videoToken == true){
+	if(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))){
 		img = $(`<video disableRemotePlayback muted width=42 height=42 class='Avatar_AvatarPortrait__2dP8u' title='${token.options.name}'>`);
 		video = true;
 	} 
