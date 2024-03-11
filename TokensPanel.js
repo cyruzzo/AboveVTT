@@ -1583,8 +1583,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '')
         uuid(),
         listItem.id,
         { name: newTokenName,
-          alternativeImages: [tokenImage],
-          videoToken: (['.mp4', '.webm', '.mkv'].some(d => tokenImage.includes(d))) ? true : false 
+          alternativeImages: [tokenImage]
         }
     );
     persist_token_customization(customization, function (didSucceed, error) {
@@ -1716,12 +1715,11 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
            
-            let fileExtention = newImageUrl.split('.')[newImageUrl.split('.').length-1];
 
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             let video = false;
-            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
+            if(customization?.tokenOptions?.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => newImageUrl.includes(d)))){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
@@ -1786,9 +1784,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
             
-            let fileExtention = listingImage.split('.')[listingImage.split('.').length-1];
             let video=false;
-            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || isVideoValue){
+            if(isVideoValue || (['.mp4', '.webm', '.m4v'].some(d => listingImage.includes(d)))){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
@@ -3031,7 +3028,7 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             let rowImage;
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             let video = false;
-            if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || customization?.tokenOptions?.videoToken == true){
+            if(customization?.tokenOptions?.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => listingImage.includes(d)))){
                 rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
@@ -3088,10 +3085,9 @@ function display_change_image_modal(placedToken) {
     alternativeImages = [...new Set(alternativeImages)]; // clear out any duplicates
     console.log("display_change_image_modal", alternativeImages);
     alternativeImages.forEach(imgUrl => {
-        let fileExtention = imgUrl.split('.')[imgUrl.split('.').length-1];
         let html;
         let video = false;
-        if(fileExtention == 'webm' || fileExtention == 'mp4'  || fileExtention == 'm4v' || placedToken?.options.videoToken == true){
+        if(placedToken?.options.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => imgUrl.includes(d)))){
             html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" data-token-id='${placedToken?.options.id}' loading="lazy" alt="alternative image" />`);  
             video = true;   
         } else{

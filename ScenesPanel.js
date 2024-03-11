@@ -2078,15 +2078,19 @@ async function redraw_scene_list(searchTerm) {
 	console.groupEnd();
 }
 
-async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path) {
+async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "") {
 
-	let newSceneName = "New Scene";
+	let newSceneName = sceneName;
 	let newSceneCount = window.sceneListItems.filter(item => item.parentId === parentId && item.name.startsWith(newSceneName)).length;
 	if (newSceneCount > 0) {
 		newSceneName = `${newSceneName} ${newSceneCount}`;
 	}
 
 	let sceneData = default_scene_data();
+	sceneData.player_map = mapUrl;
+	if(['.mp4', '.webm','.m4v'].some(d => mapUrl.includes(d))){
+		sceneData.player_map_is_video = '1';
+	}
 	sceneData.title = newSceneName;
 	sceneData.parentId = parentId;
 	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
@@ -2480,6 +2484,7 @@ async function create_scene_root_container(fullPath, parentId) {
 		create_scene_inside(parentId, fullPath);
 	});
 
+
 	const UVTT = await build_tutorial_import_list_item({
 		"title": "Import from UVTT File",
 		"description": "Build a scene using a Universal Virtual Tabletop file",
@@ -2494,7 +2499,24 @@ async function create_scene_root_container(fullPath, parentId) {
 		e.preventDefault();
 		build_UVTT_import_window();
 	});
+	const dropboxImport = await build_tutorial_import_list_item({
+		"title": "Dropbox Image or Video",
+		"description": "Build a scene using a Dropbox image or video file.",
+		"category": "Scenes",
+		"player_map": "",
+	}, `${window.EXTENSION_PATH}images/Dropbox_Icon.svg`, false);
 
+	const dropboxOptionsImport = dropBoxOptions(function(files){
+		create_scene_inside(parentId, fullPath, files[0].name, files[0].link);
+	});
+	dropboxImport.css("width", "25%");
+	sectionHtml.find("ul").append(dropboxImport);
+	dropboxImport.find(".listing-card__callout").hide();
+	dropboxImport.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		Dropbox.choose(dropboxOptionsImport)
+	});
 
 	const recentlyVisited = build_recently_visited_scene_imports_section();
 	container.find(".no-results").before(recentlyVisited);
