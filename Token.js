@@ -655,17 +655,33 @@ class Token {
 	update_dead_cross(token){
 		if(this.maxHp > 0) {
 			// add a cross if it doesn't exist
+
 			if(token.find(".dead").length === 0) 
 				token.prepend(`<div class="dead" hidden></div>`);
 			// update cross scale
 			const deadCross = token.find('.dead')
-			deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / 10}px;`)
-			// check token death
-			if (this.hp > 0) {
-				deadCross.hide()
-			} else {
-				deadCross.show()
+			if(token.hasClass('underDarkness')){
+				deadCross.hide();
+				const underdarknessToken = $(`[data-notatoken][data-id='${token.attr('data-id')}']`);
+				const underdarknessDeadCross = underdarknessToken.find('.dead')
+				underdarknessDeadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / window.CURRENT_SCENE_DATA.scale_factor / 10}px;`)
+				// check token death
+				if (this.hp > 0) {
+					underdarknessDeadCross.hide()
+				} else {
+					underdarknessDeadCross.show()
+				}
 			}
+			else{
+				deadCross.attr("style", `transform:scale(${this.get_token_scale()});--size: ${parseInt(this.options.size) / 10}px;`)
+				// check token death
+				if (this.hp > 0) {
+					deadCross.hide()
+				} else {
+					deadCross.show()
+				}
+			}
+		
 		}
 	}
 
@@ -1800,10 +1816,11 @@ class Token {
 							'--z-index-diff': old.css('--z-index-diff'),
 							'opacity': this.options.hidden ? '0.5' : '1',
 							'--hp-percentage': `${this.hpPercentage}%`,
-							"--token-border-width": tokenBorderWidth
+							"--token-border-width": tokenBorderWidth,
+							'border-width': old.find('.token-image').css('border-width')
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();    
+				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
 				        $('#token_map_items').append(tokenClone);
 					}
 					else{
@@ -1822,9 +1839,10 @@ class Token {
 		    				'--token-rotation': old.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1',
 							'--hp-percentage': `${this.hpPercentage}%`,
-							"--token-border-width": tokenBorderWidth
+							"--token-border-width": tokenBorderWidth,
+							'border-width': old.find('.token-image').css('border-width')
 						})
-						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove()
+						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
 					}
 
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
@@ -2681,7 +2699,7 @@ class Token {
 						opacity: this.options.hidden ? '0.5' : '1'
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
-			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();      
+			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();      
 			        $('#token_map_items').append(tokenClone);
 				}	
 		    }
@@ -2703,7 +2721,7 @@ class Token {
 			new Promise(debounceLightChecks),
 			new Promise(debounceAudioChecks)
 		]);
-		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image):not(.hpvisualbar)').remove();
+		$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();
 
 		console.groupEnd()
 
