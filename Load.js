@@ -107,6 +107,8 @@ window.scripts = [
 	{ src: "CampaignPage.js" },
 	{ src: "CharactersPage.js" },
 	{ src: "audio/index.js", type: "module" },
+	{ src: "onedrive/onedrivemsal.js" },
+	{ src: "onedrive/onedrivepicker.js" },
 	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
 	{ src: "Startup.js", type: "module" }
 

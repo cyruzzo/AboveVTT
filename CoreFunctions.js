@@ -204,6 +204,16 @@ function removeError() {
   delete window.logSnapshot;
 }
 
+
+function createCustomOnedriveChooser(text, callback = function(){}){
+  let button = $(`<button class="launchPicker">${text}</button>`)
+  button.off('click.onedrive').on('click.onedrive', function(e){
+    launchPicker(e, callback);
+  })
+  return button;
+}
+
+
 function createCustomDropboxChooser(text, options){
   let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
   button.off('click.dropbox').on('click.dropbox', function(){

@@ -1221,6 +1221,7 @@ function edit_scene_dialog(scene_id) {
 
 	const dropBoxOptions1 = dropBoxOptions(function(links){playerMapRow.find('input').val(links[0].link)});
 	const dropBoxbutton1 = createCustomDropboxChooser('Choose Map from Dropbox', dropBoxOptions1);
+	const onedriveButton1 = createCustomOnedriveChooser('Choose Map from Onedrive', function(links){playerMapRow.find('input').val(links)})
 
 	const dmMapRow = form_row('dm_map', 'DM Only Map', null, true)
 
@@ -1230,6 +1231,7 @@ function edit_scene_dialog(scene_id) {
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
 	playerMapRow.append(dropBoxbutton1);
+	playerMapRow.append(onedriveButton1);
 	playerMapRow.attr('title', `This map will be shown to everyone if DM map is off or only players if the DM map is on. If you are using your own maps you will have to upload them to a public accessible place. Eg. discord, imgur, dropbox, gdrive etc.`)
 	
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
