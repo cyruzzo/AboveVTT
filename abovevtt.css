@@ -5887,12 +5887,20 @@ button.dropboxChooser.token-row-button{
 }
 
 button.dropboxChooser.token-row-button span.dropin-btn-status{
-    -webkit-background-size: 100px 20px;
+    background-size: 100px 20px;
     left: 1px;
     width: 26px;
     position: relative;
     display: block;
     height: 20px;
+}
+
+.sidebar-list-item-row-item button.dropboxChooser.token-row-button span.dropin-btn-status{
+    background-image: none;
+    mask-image: url(https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png);
+    mask-size: 100px 20px;
+    mask-position: 50px 0px;
+    background: #000;
 }
 button span.dropin-btn-status{
     background-image: url(https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png);
