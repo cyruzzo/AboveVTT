@@ -4805,7 +4805,7 @@ function redraw_light(){
  	
  				
 				if(!window.DM || window.SelectedTokenVision){
-					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
+					if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
 						tempDarkvisionCtx.globalCompositeOperation='source-over';
 						drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 						tempDarkvisionCtx.globalCompositeOperation='destination-in';
