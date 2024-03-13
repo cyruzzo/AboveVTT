@@ -652,7 +652,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	build_adventures(callback) {
 		var self = this;
 		if(Object.keys(self.sources).length!=0){
-			setTimeout(callback,1000);
+			setTimeout(callback,4000);
 			return;
 		}
 		
