@@ -2396,8 +2396,8 @@ class Token {
 
 
 					ui.position = {
-						left: tokenPosition.x,
-						top: tokenPosition.y
+						left: Math.round(tokenPosition.x),
+						top: Math.round(tokenPosition.y)
 					};
 				
 				
@@ -2458,36 +2458,36 @@ class Token {
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
 					}
 					el = ui.helper.parent().parent().find("#light_" + ui.helper.attr("data-id").replaceAll("/", ""));
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
 					}
 					el = ui.helper.parent().parent().find("#vision_" + ui.helper.attr("data-id").replaceAll("/", ""));
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
 					}
 					el = ui.helper.parent().parent().find(`[data-darkness='darkness_${ui.helper.attr("data-id").replaceAll("/", "")}']`);
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
 					}
 					el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id")}']`);
 					if (el.length > 0) {
 						let currLeft = parseFloat(el.attr("data-left"));
 						let currTop = parseFloat(el.attr("data-top"));
-						el.css('left', (currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
-						el.css('top', (currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+						el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
+						el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
 					}
 
 
@@ -2510,8 +2510,8 @@ class Token {
 									let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1) || curr.isAoe();
 									let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
 	
-									tokenY =  tokenPosition.y;
-									tokenX = tokenPosition.x;
+									tokenY =  Math.round(tokenPosition.y);
+									tokenX = Math.round(tokenPosition.x);
 								}
 
 								$(tok).css('left', tokenX + "px");
@@ -2563,8 +2563,8 @@ class Token {
 								if (selEl.length > 0) {
 									const selElWidth = parseFloat(selEl.css('width'))/2;
 									const selElHeight = parseFloat(selEl.css('height'))/2;
-									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
-									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
+									const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
 									selEl.css('left', auraLeft  + "px");
 									selEl.css('top', auraTop + "px");
 								}
@@ -2572,8 +2572,8 @@ class Token {
 								if (selEl.length > 0) {
 									const selElWidth = parseFloat(selEl.css('width'))/2;
 									const selElHeight = parseFloat(selEl.css('height'))/2;
-									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
-									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
+									const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
 									selEl.css('left', auraLeft  + "px");
 									selEl.css('top', auraTop + "px");
 								}
@@ -2581,8 +2581,8 @@ class Token {
 								if (selEl.length > 0) {
 									const selElWidth = parseFloat(selEl.css('width'))/2;
 									const selElHeight = parseFloat(selEl.css('height'))/2;
-									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
-									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
+									const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
 									selEl.css('left', auraLeft  + "px");
 									selEl.css('top', auraTop + "px");
 								}
@@ -2590,15 +2590,15 @@ class Token {
 								if (selEl.length > 0) {
 									const selElWidth = parseFloat(selEl.css('width'))/2;
 									const selElHeight = parseFloat(selEl.css('height'))/2;
-									const auraLeft = tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth;
-									const auraTop = tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight;
+									const auraLeft = Math.round(tokMidLeft/window.CURRENT_SCENE_DATA.scale_factor - selElWidth);
+									const auraTop = Math.round(tokMidTop/window.CURRENT_SCENE_DATA.scale_factor - selElHeight);
 									selEl.css('left', auraLeft  + "px");
 									selEl.css('top', auraTop + "px");
 								}
 								selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
 								if (selEl.length > 0) {
-									selEl.css('left', parseInt(tokLeft/window.CURRENT_SCENE_DATA.scale_factor)  + "px");
-									selEl.css('top', parseInt(tokTop/window.CURRENT_SCENE_DATA.scale_factor) + "px");
+									selEl.css('left', Math.round(parseInt(tokLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
+									selEl.css('top', Math.round(parseInt(tokTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
 								}
 							}
 						}													
