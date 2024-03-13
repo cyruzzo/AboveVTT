@@ -3292,9 +3292,9 @@ function checkAudioVolume(){
 		 	
 		 	
 		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
-		 	
+		 	 
 
-			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_in_move_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
+			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
 			if(setAudio){
 			//set volume to calculated volume
 				calcVolume = (tempCalcVolume > calcVolume) ? tempCalcVolume : calcVolume
