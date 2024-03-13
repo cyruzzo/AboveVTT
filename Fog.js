@@ -4990,7 +4990,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
 
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius, 'rgba(255, 255, 255, 1)', true, 0)
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS['/profile/100666635/characters/42485945'].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
 	
 
 	window.lightAuraClipPolygon[auraId] = {
