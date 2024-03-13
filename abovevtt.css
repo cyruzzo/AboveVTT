@@ -6301,8 +6301,8 @@ button span.dropin-btn-status{
 
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size: calc(100% - 4px / min(1, var(--scene-scale)));
-    height: calc(100% + 6px / min(1, var(--scene-scale)));
-    width: calc(100% + 6px / min(1, var(--scene-scale)));
+    height: calc(100% + 7px / min(1, var(--scene-scale)));
+    width: calc(100% + 7px / min(1, var(--scene-scale)));
     top: min(-3px, calc(-3px / min(1, var(--scene-scale))));
     left: min(-3px, calc(-3px / min(1, var(--scene-scale))));
 }

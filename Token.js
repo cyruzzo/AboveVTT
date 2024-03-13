@@ -763,8 +763,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
-				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
+				tokenWidth = (this.options.underDarkness == true) ? Math.round(tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor)) : Math.round(tokenWidth - 6);
+				tokenHeight = (this.options.underDarkness == true) ? Math.round(tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor)) : Math.round(tokenHeight - 6);
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
