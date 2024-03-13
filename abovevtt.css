@@ -6754,9 +6754,6 @@ div.ddbc-tab-options--layout-pill>button{
 }
 
 
-#tokens .token.definitelyNotAToken>.token-image{
-    visibility: hidden;
-}
 
 body.preventSelectDefinitelyNot .token.lockedToken,
 body.preventSelectDefinitelyNot .token.lockedToken>.token-image,
