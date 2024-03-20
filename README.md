@@ -1,6 +1,6 @@
 # AboveVTT
 
-AboveVTT is a project that integrates a VTT inside your DnDBeyond campaign.
+AboveVTT is a project that integrates a VTT inside your DnDBeyond campaign. 
 
 # Disclaimer
 
