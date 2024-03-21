@@ -1403,6 +1403,20 @@ function register_token_row_context_menu() {
                         copy_to_clipboard(itemToCopy.image);
                     }
                 };
+                menuItems["sendToGamelog"] = {
+                    name: "Send to Gamelog",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let imgHtml = $(rowHtml).find('.sidebar-list-item-row-img').html();
+                        imgHtml = imgHtml.replace('video-listing', '');
+                        imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay');
+                        let msgdata = {
+                            player: window.PLAYER_NAME,
+                            img: window.PLAYER_IMG, 
+                            text: imgHtml,
+                        };
+                        window.MB.inject_chat(msgdata)
+                    }
+                };
             }
 
             if (rowItem.canEdit() ) {
@@ -2941,6 +2955,24 @@ function register_custom_token_image_context_menu() {
                             imgSrc = selectedItem.attr("src");
                         }
                         copy_to_clipboard(imgSrc); 
+                }
+            };
+            items.sendToGamelog = {
+                name: "Send to Gamelog",
+                callback: function (itemKey, opt, e) {
+                    let imgHtml = $(opt.$trigger[0]).find('.token-image').clone()
+                    if(imgHtml.length == 0 && $(opt.$trigger[0]).hasClass('example-token')){
+                        imgHtml = $(opt.$trigger[0]).clone()
+                    }
+                    imgHtml.removeAttr('style class');
+                    imgHtml = imgHtml[0].outerHTML;
+                    imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay');
+                    let msgdata = {
+                        player: window.PLAYER_NAME,
+                        img: window.PLAYER_IMG, 
+                        text: imgHtml,
+                    };
+                    window.MB.inject_chat(msgdata)
                 }
             };
             if (!element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {
