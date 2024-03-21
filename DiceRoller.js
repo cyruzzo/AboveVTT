@@ -498,7 +498,7 @@ class DiceRoller {
                 // all DDB dice types will be grouped together. For example: "1d4+2d6-3d8+4d10-5d20+1d100-2d20kh1+2d20kl1-1d3" turns into "9d20+5d10+3d8+2d6+1d4"
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
-                let rolledExpressions = r.diceNotationStr.match(allDiceRegex);
+                let rolledExpressions = this.#pendingDiceRoll.expression.match(allDiceRegex);
                 console.debug("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
