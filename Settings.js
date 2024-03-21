@@ -306,6 +306,17 @@ function avtt_settings() {
 			],
 			defaultValue: false
 		}
+		,
+		{
+			name: "highlightScrolling",
+			label: "Allow Scrolling to Highlighted Token",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Allow", description: `When a token is highlighted, it center the screen on that token` },
+				{ value: false, label: "Never", description: `When a token is highlighted, it will keep your screen settings as is` }
+			],
+			defaultValue: true
+		}
 	];
 
 	if (window.DM) {

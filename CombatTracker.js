@@ -261,6 +261,9 @@ function init_combat_tracker(){
 				$("[data-current] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
+			window.TOKEN_OBJECTS[newTarget].highlight(!get_avtt_setting_value("highlightScrolling"));
+			window.MB.sendMessage("custom/myVTT/highlight", {id: newTarget});
+			
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
 				delete window.TOKEN_OBJECTS[currentTarget].options.round;
@@ -451,9 +454,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(token.options.stat)
 		entry.attr('data-stat', token.options.stat)
 
-
+	
 	let video = false;
-
+	
 	if(['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))){
 		img = $("<video disableRemotePlayback muted width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 		video = true;

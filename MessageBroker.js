@@ -595,7 +595,7 @@ class MessageBroker {
 			}
 			if (msg.eventType == "custom/myVTT/highlight") {
 				if (msg.data.id in window.TOKEN_OBJECTS) {
-					window.TOKEN_OBJECTS[msg.data.id].highlight(true);
+					window.TOKEN_OBJECTS[msg.data.id].highlight(!get_avtt_setting_value("highlightScrolling"));
 				}
 			}
 			if (msg.eventType == "custom/myVTT/pointer") {
@@ -1227,7 +1227,7 @@ class MessageBroker {
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
@@ -1842,47 +1842,26 @@ class MessageBroker {
 
 	reconnectDisconnectedAboveWs(){
 		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS){
-			if(window.reconnectAttemptAbovews == undefined){
-				window.reconnectAttemptAbovews = 0;
-			}
-
-		
-			window.reconnectAttemptAbovews++;
-			if(window.reconnectAttemptAbovews > 5)
-				return;
-
-			if(window.reconnectAttemptAbovews < 5){
-				let msgdata = {
+			let msgdata = {
 					player: window.PLAYER_NAME,
 					img: window.PLAYER_IMG,
 					text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
 					whisper: window.PLAYER_NAME
-				};
-				this.inject_chat(msgdata);	
-				this.loadAboveWS(function(){ 
-					setTimeout(
-						function(){
-							let msgdata = {
-									player: window.PLAYER_NAME,
-									img: window.PLAYER_IMG,
-									text: `${window.PLAYER_NAME} has reconnected.`
-							};
+			};
+			this.inject_chat(msgdata);	
+			this.loadAboveWS(function(){ 
+				setTimeout(
+					function(){
+						let msgdata = {
+								player: window.PLAYER_NAME,
+								img: window.PLAYER_IMG,
+								text: `${window.PLAYER_NAME} has reconnected.`
+						};
 
-							window.MB.inject_chat(msgdata);
-						}, 4000)
-					}
-				);
-			}
-			else {
-				let msgdata = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<span><p>You have disconnected from the AboveVTT websocket 5 times. It is likely you are experiencing connection issues. </p><p>Reconnect messages/forced reconnect will be disabled until refresh.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program.</p></span>`,
-					whisper: window.PLAYER_NAME
-				};
-				this.inject_chat(msgdata);
-			}
-					
+						window.MB.inject_chat(msgdata);
+					}, 4000)
+				}
+			);		
 		}
 	}
 }
