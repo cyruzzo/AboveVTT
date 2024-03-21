@@ -1227,7 +1227,7 @@ class MessageBroker {
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
