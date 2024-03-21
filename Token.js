@@ -1360,10 +1360,12 @@ class Token {
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
 								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
 								window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+								add_stat_block_hover(tooltipHtml);
 					            flyout.append(tooltipHtml);
 					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 					            sendToGamelogButton.css({ "float": "right" });
@@ -1411,6 +1413,7 @@ class Token {
 					                    remove_tooltip(500);
 					                }
 					            });
+
 					            flyout.css("background-color", "#fff");
 					        });
 			        	}, 500);		
@@ -1418,6 +1421,7 @@ class Token {
 					},
 					'mouseout': function(e){
 						clearTimeout(hoverNoteTimer)
+						remove_tooltip(500);
 					}
 			
 			    });

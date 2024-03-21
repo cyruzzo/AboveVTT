@@ -1913,9 +1913,15 @@ function position_flyout_right_of(container, flyout) {
   flyout.css("left", container[0].getBoundingClientRect().left + container.width());
 }
 
-function remove_sidebar_flyout() {
+function remove_sidebar_flyout(removeHoverNote) {
   console.log("remove_sidebar_flyout");
-  $(`.sidebar-flyout`).remove();
+  let flyouts = $(`.sidebar-flyout`)
+  let hovered = $(`.tooltip-flyout:hover`).length>0 == true;
+  if(removeHoverNote == false){
+    flyouts = $(`.sidebar-flyout:not('.note-flyout')`)
+  }
+  if(!hovered)
+    flyouts.remove();
 }
 
 function list_item_image_flyout(hoverEvent) {
