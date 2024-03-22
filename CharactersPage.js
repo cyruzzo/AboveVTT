@@ -351,13 +351,16 @@ function init_characters_pages(container = $(document)) {
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
         if(window.sendToTab != false || event.data.tab == undefined){
-            window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;      
+            window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
+        }
+        if(window.sendToTabRPGRoller != false || event.data.rpgTab == undefined){
+          window.sendToTabRPGRoller = (window.self != window.top) ? event.data.iframeTab : event.data.rpgTab;   
         }
       }
       if(event.data.msgType =='removeObserver'){
         $('.integrated-dice__container').off('click.rpg-roller'); 
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-        window.sendToTab = undefined;
+        window.sendToTabRPGRoller = undefined;
         setTimeout(function(){
           tabCommunicationChannel.postMessage({
            msgType: 'isAboveOpen'
@@ -422,7 +425,7 @@ function convertToRPGRoller(){
     }
     $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       e.stopImmediatePropagation();
-     
+      
       let rollData = {}
 
  
@@ -469,7 +472,7 @@ function convertToRPGRoller(){
           rollTitle: rollData.rollTitle,
           result: rollData.roll.total,
           playerId: window.PLAYER_ID,
-          sendTo: window.sendToTab
+          sendTo: window.sendToTabRPGRoller
         };
       }
       else{
@@ -693,7 +696,7 @@ function observe_character_sheet_changes(documentToObserve) {
         const mutationParent = mutationTarget.parent();
 
        
-        if((!is_abovevtt_page() && window.sendToTab !== undefined) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
+        if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
           debounceConvertToRPGRoller();
         else
           $('.integrated-dice__container').off('click.rpg-roller');
@@ -717,7 +720,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
-          if(is_abovevtt_page() || window.sendToTab != undefined){
+          if(is_abovevtt_page() || (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)){
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
               inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
             }else{

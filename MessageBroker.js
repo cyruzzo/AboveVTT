@@ -321,7 +321,7 @@ class MessageBroker {
 								let neweight = li.height();
 								li.height(oldheight);
 								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
-								let output = $(`<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
 								img.magnificPopup({type: 'image', closeOnContentClick: true });
