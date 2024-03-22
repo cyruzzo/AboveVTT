@@ -462,9 +462,15 @@ class DiceRoller {
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
         if (!this.#waitingForRoll) {
-            // TODO: update DM rolls with dmAvatarUrl
-            console.debug("not capturing: ", message);
-            this.ddbDispatch(message);
+            console.debug("swap image only, not capturing: ", message);
+            let ddbMessage = { ...message };
+            if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
+                ddbMessage.data.context.avatarUrl = dmAvatarUrl
+            }
+            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+                ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
+            }
+            this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/pending") {
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };
@@ -637,7 +643,11 @@ class DiceRoller {
         }
         if (isValid(this.#pendingDiceRoll.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = this.#pendingDiceRoll.avatarUrl;
-        }
+        } else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId){
+            ddbMessage.data.context.avatarUrl = dmAvatarUrl
+        } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+            ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
+        }      
         if (isValid(this.#pendingDiceRoll.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
         }
