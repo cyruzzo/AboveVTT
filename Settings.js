@@ -1158,9 +1158,7 @@ async function export_scene_context(sceneId){
 
 
 async function export_scenes_folder_context(folderId){
-	build_import_loading_indicator('Preparing Export File');
-	
-	let path = window.ScenesHandler.scenes.filter(d => d.parentId == folderId && d.itemType == 'scene')[0].folderPath;
+	build_import_loading_indicator('Preparing Export File');  
 
 
 	let ids = [];
