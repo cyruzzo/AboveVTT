@@ -324,16 +324,21 @@ class MessageBroker {
 								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
-								img.magnificPopup({type: 'image', closeOnContentClick: true });
+								if(img.is('img')){
+									img.magnificPopup({type: 'image', closeOnContentClick: true });
+								}
+								else if(img.is('video')){
+									img.magnificPopup({type: 'iframe', closeOnContentClick: true});
+								}
+								img.css({
+									'display': 'block',
+									'width': '100%'
+								});
 
 								if (img[0]) {
 									img[0].onload = () => {
 										if (img[0].naturalWidth > 0) {
 											li.find('.chat-link').css('display', 'none');
-											img.css({
-												'display': 'block',
-												'width': '100%'
-											});
 										}
 									}
 								}

@@ -1406,9 +1406,13 @@ function register_token_row_context_menu() {
                 menuItems["sendToGamelog"] = {
                     name: "Send to Gamelog",
                     callback: function(itemKey, opt, originalEvent) {
-                        let imgHtml = $(rowHtml).find('.sidebar-list-item-row-img').html();
+                        let imgHtml = $(rowHtml).find('.sidebar-list-item-row-img').clone();
+                        imgHtml.find('img, video').addClass('magnify');
+                        imgHtml.find('img, video').attr('href', imgHtml.find('img, video').attr('src'));
+                        imgHtml = imgHtml.html();
                         imgHtml = imgHtml.replace('video-listing', '');
-                        imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay');
+                        imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
+
                         let msgdata = {
                             player: window.PLAYER_NAME,
                             img: window.PLAYER_IMG, 
@@ -2965,8 +2969,10 @@ function register_custom_token_image_context_menu() {
                         imgHtml = $(opt.$trigger[0]).clone()
                     }
                     imgHtml.removeAttr('style class');
+                    imgHtml.addClass('magnify');                         
+                    imgHtml.attr('href', imgHtml.attr('src'));
                     imgHtml = imgHtml[0].outerHTML;
-                    imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay');
+                    imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
                     let msgdata = {
                         player: window.PLAYER_NAME,
                         img: window.PLAYER_IMG, 
