@@ -100,7 +100,8 @@ class ChatObserver {
         } else if (validateUrl(text)) {
             data.text = `
                 <a class='chat-link' href='${text}' target='_blank' rel='noopener noreferrer'>${text}</a>
-                <img width=200 class='magnify' src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Image' style='display: none'/>
+                <img width=100% class='magnify' src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Image' style='display: none'/>
+                <video width=100% class='magnify' autoplay muted loop src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Video' style='display: none'/>
             `; // `href` is not valid on `img` tags, but magnific uses it so make sure it's there
         } else {
             data.text = `<div class="custom-gamelog-message">${text}</div>`

@@ -324,24 +324,35 @@ class MessageBroker {
 								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
-								if(img.is('img')){
-									img.magnificPopup({type: 'image', closeOnContentClick: true });
-								}
-								else if(img.is('video')){
-									img.magnificPopup({type: 'iframe', closeOnContentClick: true});
-								}
-								img.css({
-									'display': 'block',
-									'width': '100%'
-								});
-
-								if (img[0]) {
-									img[0].onload = () => {
-										if (img[0].naturalWidth > 0) {
-											li.find('.chat-link').css('display', 'none');
-										}
+								for(let i in img){
+									if($(img[i]).is('img')){
+										$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
+										img[i].onload = () => {
+											if (img[i].naturalWidth > 0) {
+												$(img[i]).css({
+													'display': 'block',
+													'width': '100%'
+												});
+												li.find('.chat-link').css('display', 'none');
+											}
+										}		
+									}
+									else if($(img[i]).is('video')){
+										$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
+											img[i].addEventListener('loadeddata', function() {
+										    	if(img[i].videoWidth > 0) {
+															$(img[i]).css({
+																'display': 'block',
+																'width': '100%'
+															});
+															li.find('.chat-link').css('display', 'none');
+														}
+										}, false);
 									}
 								}
+								
+
+								
 
 								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
 									let btn = $("<button>Show to Players</button>")
