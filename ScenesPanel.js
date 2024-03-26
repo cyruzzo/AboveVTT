@@ -1221,22 +1221,22 @@ function edit_scene_dialog(scene_id) {
 
 	const dropBoxOptions1 = dropBoxOptions(function(links){playerMapRow.find('input').val(links[0].link)});
 	const dropBoxbutton1 = createCustomDropboxChooser('Choose Map from Dropbox', dropBoxOptions1);
-	const onedriveButton1 = createCustomOnedriveChooser('Choose Map from Onedrive', function(links){playerMapRow.find('input').val(links)})
+	const onedriveButton1 = createCustomOnedriveChooser('Choose Map from Onedrive', function(links){playerMapRow.find('input').val(links[0].link)})
 
 	const dmMapRow = form_row('dm_map', 'DM Only Map', null, true)
 
 	const dropBoxOptions2 = dropBoxOptions(function(links){dmMapRow.find('input').val(links[0].link)});
 	const dropBoxbutton2 = createCustomDropboxChooser('Choose DM Map from Dropbox', dropBoxOptions2);
+	const onedriveButton2 = createCustomOnedriveChooser('Choose DM Map from Onedrive', function(links){dmMapRow.find('input').val(links[0].link)})
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
-	playerMapRow.append(dropBoxbutton1);
-	playerMapRow.append(onedriveButton1);
+	playerMapRow.append(dropBoxbutton1, onedriveButton1);
 	playerMapRow.attr('title', `This map will be shown to everyone if DM map is off or only players if the DM map is on. If you are using your own maps you will have to upload them to a public accessible place. Eg. discord, imgur, dropbox, gdrive etc.`)
 	
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
-	dmMapRow.append(dropBoxbutton2);
+	dmMapRow.append(dropBoxbutton2, onedriveButton2);
 	dmMapRow.attr('title', `This map will be shown to the DM only. It is used for a nearly indentical map to the main map that had secrets embedded in it that you don't want your players to see. Both maps must have links.`)
 	form.append(playerMapRow)	
 	form.append(dmMapRow)
@@ -2519,6 +2519,27 @@ async function create_scene_root_container(fullPath, parentId) {
 		e.preventDefault();
 		Dropbox.choose(dropboxOptionsImport)
 	});
+
+	const onedriveImport = await build_tutorial_import_list_item({
+		"title": "Onedrive Image or Video",
+		"description": "Build a scene using a Onedrive image or video file.",
+		"category": "Scenes",
+		"player_map": "",
+	}, `${window.EXTENSION_PATH}images/Onedrive_Icon.svg`, false);
+
+
+	onedriveImport.css("width", "25%");
+	sectionHtml.find("ul").append(onedriveImport);
+	onedriveImport.find(".listing-card__callout").hide();
+	onedriveImport.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+    	launchPicker(e, function(files){
+			create_scene_inside(parentId, fullPath, files[0].name, files[0].link);
+		});
+	});
+
+
 
 	const recentlyVisited = build_recently_visited_scene_imports_section();
 	container.find(".no-results").before(recentlyVisited);

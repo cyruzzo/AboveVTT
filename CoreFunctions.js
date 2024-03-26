@@ -204,15 +204,14 @@ function removeError() {
   delete window.logSnapshot;
 }
 
-
-function createCustomOnedriveChooser(text, callback = function(){}){
-  let button = $(`<button class="launchPicker">${text}</button>`)
+function createCustomOnedriveChooser(text, callback = function(){}, selectionMode = 'single', selectionType = ['photo', 'video']){
+  let button = $(`<button class="launchPicker"><span class='onedrive-btn-status'></span>${text}</button>`);
   button.off('click.onedrive').on('click.onedrive', function(e){
-    launchPicker(e, callback);
+    e.stopPropagation();
+    launchPicker(e, callback, selectionMode, selectionType);
   })
   return button;
 }
-
 
 function createCustomDropboxChooser(text, options){
   let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
@@ -229,7 +228,7 @@ function dropBoxOptions(callback, multiselect = false, fileType=['images', 'vide
      // Required. Called when a user selects an item in the Chooser.
       success: function(files) {
         for(let i = 0; i<files.length; i++){
-          files[i].name = files[i].name.replace(/\..*$/g, '')
+          files[i].name = files[i].name.replace(/\.[0-9a-zA-Z]*$/g, '')
         }
         callback(files)
           //alert("Here's the file link: " + files[0].link)

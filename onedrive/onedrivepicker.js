@@ -7,7 +7,7 @@
     }
 
     const app = new msal.PublicClientApplication(msalParams);
-    let cId = null;
+
 
 
     async function getToken(scopesArray = ["onedrive.readwrite"]) {
@@ -23,6 +23,7 @@
             accessToken = resp.accessToken;
 
 
+
         } catch (e) {
 
             // per examples we fall back to popup
@@ -30,45 +31,42 @@
             app.setActiveAccount(resp.account);
 
             if (resp.idToken) {
-
                 const resp2 = await app.acquireTokenSilent(authParams);
                 accessToken = resp2.accessToken;
-                cId = resp2.idTokenClaims.oid.replace(/-/g, "").slice(16)
             }
         }
 
         return accessToken;
     }
+
+    async function getEmbedToken(scopesArray = ["files.readwrite"]) {
+
+        let accessToken = "";
+
+        authParams = { scopes: scopesArray };
+
+
+        // per examples we fall back to popup
+        const resp = await app.loginPopup(authParams);
+        app.setActiveAccount(resp.account);
+
+        if (resp.idToken) {
+            const resp2 = await app.acquireTokenSilent(authParams);
+            accessToken = resp2.accessToken;
+        }
+        
+
+        return accessToken;
+    }
     const baseUrl = "https://onedrive.live.com/picker";
 
-    // the options we pass to the picker page through the querystring
-    const channelId = uuid();
-    const params = {
-        sdk: "8.0",
-        entry: {
-            oneDrive: {
-                files: {},
-            }
-        },
-        authentication: {},
-        messaging: {
-            origin: "https://www.dndbeyond.com",
-            channelId: channelId
-        },
-        typesAndSources: {
-            mode: "files",
-            pivots: {
-                oneDrive: true,
-                recent: true,
-            },
-        },
-    };
+
 
     let win = null;
     let port = null;
-    async function getEmbedLink(fileid){
+    async function getEmbedLink(fileid, embedToken){
         let embedData = null
-        let embedToken = await getToken(["files.readwrite"])
+
         await $.ajax({
             url: `https://graph.microsoft.com/v1.0/me/drive/items/${fileid}/createLink`,
             type: 'post',
@@ -84,9 +82,35 @@
         });
         return embedData.link.webUrl
     }    
-    async function launchPicker(e, callback=function(){}) {
+    async function launchPicker(e, callback=function(){}, selectionMode, selectionType) {
 
         e.preventDefault();
+        // the options we pass to the picker page through the querystring
+        const channelId = uuid();
+        let params = {
+            sdk: "8.0",
+            entry: {
+                oneDrive: {
+                    files: {},
+                }
+            },
+            authentication: {},
+            messaging: {
+                origin: "https://www.dndbeyond.com",
+                channelId: channelId
+            },
+            typesAndSources: {
+                mode: "files",
+                filters: selectionType,
+                pivots: {
+                    oneDrive: true,
+                    recent: true,
+                },
+            },
+            selection: {
+              mode: selectionMode
+            }
+        };
 
         win = window.open("", "Picker", "width=800,height=600")
         const authToken = await getToken();
@@ -169,9 +193,17 @@
                                     case "pick":
                            
                                         console.log(`Picked: ${JSON.stringify(command)}`);
-
-                                        let embedLink = await getEmbedLink(command.items[0].id)
-                                        callback(embedLink);
+                                        let embedToken = await getEmbedToken();
+                                        let embedLinks=[];
+                                        for(let i=0; i<command.items.length; i++){
+                                            let embedLink = await getEmbedLink(command.items[i].id, embedToken);
+                                            embedLinks.push({
+                                                name: command.items[i].name.replace(/\.[0-9a-zA-Z]*$/g, ''),
+                                                link: embedLink,
+                                                type: command.items[i].name.replace(/.*(\.[0-9a-zA-Z]*)$/g, '$1')
+                                            });
+                                        }
+                                        callback(embedLinks);
                                         port.postMessage({
                                             type: "result",
                                             id: message.data.id,
@@ -218,7 +250,5 @@
 
     }
 
-    async function messageListener(message, callback = function(){}) {
-        
-    }
+
 
