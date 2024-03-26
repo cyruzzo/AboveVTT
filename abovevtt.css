@@ -4024,6 +4024,7 @@ div#importer_area>div>div:first-of-type {
     font-family: Roboto, "Open Sans", Helvetica, sans-serif;
     text-align: left;
     white-space: nowrap;
+    width: 0px;
 }
 .sidebar-list-item-row-details div {
     display: flex;
@@ -6019,10 +6020,6 @@ button span.onedrive-btn-status{
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
     width: 90px;
-}
-#myTokensFolder>.sidebar-list-item-row-item:first-of-type .addTokenMenu:hover,
-#myTokensFolder>.sidebar-list-item-row-item:first-of-type .hover-add-button:hover~.addTokenMenu {
-    width: 100px;
 }
 
 .addTokenMenu button {
