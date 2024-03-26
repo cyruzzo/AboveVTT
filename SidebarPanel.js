@@ -1173,6 +1173,7 @@ function build_sidebar_list_row(listItem) {
             }       
         }, true);
         const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+
         dropboxButton.toggleClass('token-row-button', true);     
 
         const oneDriveButton = createCustomOnedriveChooser('', function(links){
@@ -1185,12 +1186,13 @@ function build_sidebar_list_row(listItem) {
      
 
         let addTokenMenu = $(`<div class='addTokenMenu'></div>`)
-        addTokenMenu.append(dropboxButton, oneDriveButton);
+
+        
        
         let addToken = $(`<button class="token-row-button hover-add-button" title="Create New Token"><span class="material-icons">person_add_alt_1</span></button>`);
-        
-        rowItem.append(addToken, addTokenMenu);
-        addToken.on("click", function (clickEvent) {s
+        addTokenMenu.append(addToken, dropboxButton, oneDriveButton);
+        rowItem.append(addTokenMenu);
+        addToken.on("click", function (clickEvent) {
           let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_token_inside(clickedItem);

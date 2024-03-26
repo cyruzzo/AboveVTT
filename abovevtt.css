@@ -5956,6 +5956,7 @@ button span.dropin-btn-status{
     height: 15px;
     left: 2px;
 }
+
 button.launchPicker{
     padding-left: 18px !important;
     position: relative;
@@ -6003,18 +6004,19 @@ button span.onedrive-btn-status{
 }
 
 .addTokenMenu {
-    display: inline-block;
-    width: 0px;
+    display: flex;
+    width: 34px;
     overflow: hidden;
     transition: 250ms width 0ms;
+    flex-direction:row-reverse;
 }
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
-    width: 69px;
+    width: 102px;
 }
 #myTokensFolder>.sidebar-list-item-row-item:first-of-type .addTokenMenu:hover,
 #myTokensFolder>.sidebar-list-item-row-item:first-of-type .hover-add-button:hover~.addTokenMenu {
-    width: 102px;
+    width: 113px;
 }
 
 .addTokenMenu button {
