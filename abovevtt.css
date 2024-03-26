@@ -6012,20 +6012,21 @@ button span.onedrive-btn-status{
 
 .addTokenMenu {
     display: flex;
-    width: 30px;
+    width: 34px;
     overflow: hidden;
     transition: 250ms width 0ms;
     flex-direction:row-reverse;
+
 }
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
-    width: 90px;
+    width: 102px;
 }
 
 .addTokenMenu button {
     display: inline-block;
     height: 100%;
-    margin: 0px;
+    margin: 0px 2px;
 }
 
 .token>.token-image{
