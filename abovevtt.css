@@ -3953,12 +3953,12 @@ div#importer_area>div>div:first-of-type {
 .folder.collapsed .folder-item-list {
     display: none;
 }
-.encounter > .sidebar-list-item-row-item > .token-row-button,
-.folder > .sidebar-list-item-row-item > .token-row-button {
+.encounter > .sidebar-list-item-row-item .token-row-button,
+.folder > .sidebar-list-item-row-item .token-row-button {
     background-color: rgb(235, 241, 245);
 }
-.encounter.collapsed > .sidebar-list-item-row-item > .token-row-button,
-.folder.collapsed > .sidebar-list-item-row-item > .token-row-button {
+.encounter.collapsed > .sidebar-list-item-row-item .token-row-button,
+.folder.collapsed > .sidebar-list-item-row-item .token-row-button {
     background-color: #fff;
 }
 .sidebar-list-item-row {
@@ -5928,6 +5928,7 @@ button.dropboxChooser{
 button.dropboxChooser.token-row-button{
     position: relative;
     padding-left: 0px !important;
+    display:inline-block;
 }
 
 button.dropboxChooser.token-row-button span.dropin-btn-status{
