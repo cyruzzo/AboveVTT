@@ -58,9 +58,7 @@ $(function() {
         }
       }).then(()=>{
         addExtensionPathStyles();
-        $('body').append(`
-            <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>
-          `)
+        $('body').append(`<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="h3iaoazdu0wqrfd"></script>`)
       }).then(() => {     
 
         let lastSendToDefault = localStorage.getItem(`${gameId}-sendToDefault`, gamelog_send_to_text()); 
