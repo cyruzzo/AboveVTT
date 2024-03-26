@@ -1426,7 +1426,7 @@ function import_readfile() {
 					window.JOURNAL.notes[id]=DataFile.notes[id];
 				}
 				for(let i=0; i < DataFile.journalchapters.length; i++){
-					let chapterIndex = window.JOURNAL.chapters.findIndex(d => d.title == DataFile.journalchapters[i].title)
+					let chapterIndex = window.JOURNAL.chapters.findIndex(d => d.id == DataFile.journalchapters[i].id)
 					if(chapterIndex != -1){
 						for(let j = 0; j < DataFile.journalchapters[i].notes.length; j++){
 							if(!window.JOURNAL.chapters[chapterIndex].notes.includes(DataFile.journalchapters[i].notes[j]))
