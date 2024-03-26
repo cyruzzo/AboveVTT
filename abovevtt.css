@@ -5942,6 +5942,9 @@ button.dropboxChooser.token-row-button span.dropin-btn-status{
 
 .sidebar-list-item-row-item button.dropboxChooser.token-row-button span.dropin-btn-status{
     background-image: none;
+    -webkit-mask-image: url(https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png);
+    -webkit-mask-size: 100px 20px;
+    -webkit-mask-position: 50px 0px;
     mask-image: url(https://www.dropbox.com/static/metaserver/static/images/widgets/dbx-saver-status-2x.png);
     mask-size: 100px 20px;
     mask-position: 50px 0px;
@@ -5975,16 +5978,9 @@ button.launchPicker.token-row-button span.onedrive-btn-status{
     display: block;
     height: 20px;
 }
-.sidebar-list-item-row-item button.launchPicker.token-row-button span.onedrive-btn-status{
-    background-image: none;
-    mask-image: var(--onedrive-svg);
-    mask-size: 25px 20px;
-    mask-repeat: no-repeat;
-    mask-position: 0px 0px;
-    background: #000;
-}
 button span.onedrive-btn-status{
     background-image: var(--onedrive-svg);
+    -webkit-background-position: 0px 2px;
     background-position: 0px 2px;
     width: 15px;
     position: absolute;
@@ -5992,7 +5988,17 @@ button span.onedrive-btn-status{
     left: 2px;
     background-repeat: no-repeat;
 }
-
+.sidebar-list-item-row-item button.launchPicker.token-row-button span.onedrive-btn-status{
+    background-image: none;
+    -webkit-mask-image: var(--onedrive-svg);
+    -webkit-mask-size: 25px 20px;
+    -webkit-mask-position: 0px 0px;
+    mask-image: var(--onedrive-svg);
+    mask-size: 25px 20px;
+    mask-repeat: no-repeat;
+    mask-position: 0px 0px;
+    background: #000;
+}
 #sounds-panel button.dropboxChooser, #sounds-panel button.launchPicker {
     width: 23px;
     padding: 0px !important;
