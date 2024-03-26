@@ -6005,23 +6005,24 @@ button span.onedrive-btn-status{
 
 .addTokenMenu {
     display: flex;
-    width: 34px;
+    width: 30px;
     overflow: hidden;
     transition: 250ms width 0ms;
     flex-direction:row-reverse;
 }
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
-    width: 102px;
+    width: 90px;
 }
 #myTokensFolder>.sidebar-list-item-row-item:first-of-type .addTokenMenu:hover,
 #myTokensFolder>.sidebar-list-item-row-item:first-of-type .hover-add-button:hover~.addTokenMenu {
-    width: 113px;
+    width: 100px;
 }
 
 .addTokenMenu button {
     display: inline-block;
     height: 100%;
+    margin: 0px;
 }
 
 .token>.token-image{
