@@ -34,7 +34,7 @@ async function getOpen5e(results = [], search = ''){
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
+    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -459,7 +459,7 @@ function inject_open5e_monster_list_items(listItems = open5e_monsters) {
         let loadMoreButton = $(`<button class="ddbeb-button open5e-load-more load-more-button">Load More</button>`);
         loadMoreButton.click(async function(loadMoreClickEvent) {
             console.log("load more!", loadMoreClickEvent);   
-            open5e_monsters = getNextOpen5e(open5e_monsters, open5e_next);
+            open5e_monsters = await getNextOpen5e(open5e_monsters, open5e_next);
             $('.open5e-load-more').remove();
             monsterFolder.find('.folder-item-list').empty();
             inject_open5e_monster_list_items(open5e_monsters);
@@ -1401,6 +1401,24 @@ function register_token_row_context_menu() {
                     callback: function(itemKey, opt, originalEvent) {
                         let itemToCopy = find_sidebar_list_item(opt.$trigger);
                         copy_to_clipboard(itemToCopy.image);
+                    }
+                };
+                menuItems["sendToGamelog"] = {
+                    name: "Send to Gamelog",
+                    callback: function(itemKey, opt, originalEvent) {
+                        let imgHtml = $(rowHtml).find('.sidebar-list-item-row-img').clone();
+                        imgHtml.find('img, video').addClass('magnify');
+                        imgHtml.find('img, video').attr('href', imgHtml.find('img, video').attr('src'));
+                        imgHtml = imgHtml.html();
+                        imgHtml = imgHtml.replace('video-listing', '');
+                        imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
+
+                        let msgdata = {
+                            player: window.PLAYER_NAME,
+                            img: window.PLAYER_IMG, 
+                            text: imgHtml,
+                        };
+                        window.MB.inject_chat(msgdata)
                     }
                 };
             }
@@ -2941,6 +2959,26 @@ function register_custom_token_image_context_menu() {
                             imgSrc = selectedItem.attr("src");
                         }
                         copy_to_clipboard(imgSrc); 
+                }
+            };
+            items.sendToGamelog = {
+                name: "Send to Gamelog",
+                callback: function (itemKey, opt, e) {
+                    let imgHtml = $(opt.$trigger[0]).find('.token-image').clone()
+                    if(imgHtml.length == 0 && $(opt.$trigger[0]).hasClass('example-token')){
+                        imgHtml = $(opt.$trigger[0]).clone()
+                    }
+                    imgHtml.removeAttr('style class');
+                    imgHtml.addClass('magnify');                         
+                    imgHtml.attr('href', imgHtml.attr('src'));
+                    imgHtml = imgHtml[0].outerHTML;
+                    imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
+                    let msgdata = {
+                        player: window.PLAYER_NAME,
+                        img: window.PLAYER_IMG, 
+                        text: imgHtml,
+                    };
+                    window.MB.inject_chat(msgdata)
                 }
             };
             if (!element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {

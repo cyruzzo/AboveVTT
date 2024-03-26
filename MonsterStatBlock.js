@@ -828,13 +828,14 @@ const fetch_tooltip = mydebounce((dataTooltipHref, callback) => {
 
 function display_tooltip(tooltipJson, container, clientY) {
     if (typeof tooltipJson?.Tooltip === "string") {
-        remove_tooltip();
+        remove_tooltip(0, false);
 
         console.log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip;
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
             flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+            flyout.addClass("tooltip-flyout")
             const tooltipHtml = $(tooltipHtmlString);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
@@ -885,13 +886,13 @@ function display_tooltip(tooltipJson, container, clientY) {
 }
 
 let removeToolTipTimer = undefined;
-function remove_tooltip(delay = 0) {
+function remove_tooltip(delay = 0, removeHoverNote = true) {
     if (delay > 0) {
-        removeToolTipTimer = setTimeout(remove_sidebar_flyout, delay);
+        removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
     } else {
         clearTimeout(removeToolTipTimer);
         removeToolTipTimer = undefined;
-        remove_sidebar_flyout();
+        remove_sidebar_flyout(removeHoverNote);
     }
 }
 
@@ -902,13 +903,18 @@ function add_stat_block_hover(statBlockContainer) {
             const dataTooltipHref = $(hoverEvent.currentTarget).attr("data-tooltip-href");
             if (typeof dataTooltipHref === "string") {
                 fetch_tooltip(dataTooltipHref, function (tooltipJson) {
-                    let container = $(hoverEvent.target).closest("#resizeDragMon");
+
+                    let container = $(hoverEvent.target).closest(".sidebar-flyout");
+                    if(container.find('.tooltip-header').length === 0){
+                      container = $(hoverEvent.target).closest("#resizeDragMon");
+                    }
                     if (container.length === 0) {
                         container = $(hoverEvent.target).closest(".sidebar-modal");
                     }
                     if (container.length === 0) {
                         container = is_characters_page() ? $(".ct-sidebar__pane-content") : $(".sidebar__pane-content");
                     }
+
                     display_tooltip(tooltipJson, container, hoverEvent.clientY);
                 });
             }

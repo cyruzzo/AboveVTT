@@ -485,6 +485,7 @@ function set_avtt_setting_value(name, newValue) {
 		    tabCommunicationChannel.postMessage({
 		      msgType: 'setupObserver',
 		      tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+		      rpgTab: (window.EXPERIMENTAL_SETTINGS['rpgRoller'] ==  true) ? window.PLAYER_ID : undefined,
 		      iframeTab: window.PLAYER_ID,
 		      rpgRoller: newValue
 		    })
@@ -495,6 +496,7 @@ function set_avtt_setting_value(name, newValue) {
 			 	tabCommunicationChannel.postMessage({
 	   		      msgType: 'setupObserver',
 	  		      tab: (window.EXPERIMENTAL_SETTINGS['disableSendToTab'] ==  true) ? undefined : window.PLAYER_ID,
+	  		      rpgTab: (window.EXPERIMENTAL_SETTINGS['rpgRoller'] ==  true) ? window.PLAYER_ID : undefined,
 				  iframeTab: window.PLAYER_ID,
 	   		      rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
 	  		    })
@@ -1156,9 +1158,7 @@ async function export_scene_context(sceneId){
 
 
 async function export_scenes_folder_context(folderId){
-	build_import_loading_indicator('Preparing Export File');
-	
-	let path = window.ScenesHandler.scenes.filter(d => d.parentId == folderId && d.itemType == 'scene')[0].folderPath;
+	build_import_loading_indicator('Preparing Export File');  
 
 
 	let ids = [];

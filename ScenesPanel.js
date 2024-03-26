@@ -2502,11 +2502,11 @@ async function create_scene_root_container(fullPath, parentId) {
 		build_UVTT_import_window();
 	});
 	const dropboxImport = await build_tutorial_import_list_item({
-		"title": "Import from Dropbox",
-		"description": "Build a scene using a Dropbox image/video",
+		"title": "Dropbox Image or Video",
+		"description": "Build a scene using a Dropbox image or video file.",
 		"category": "Scenes",
 		"player_map": "",
-	}, "", false);
+	}, `${window.EXTENSION_PATH}images/Dropbox_Icon.svg`, false);
 
 	const dropboxOptionsImport = dropBoxOptions(function(files){
 		create_scene_inside(parentId, fullPath, files[0].name, files[0].link);

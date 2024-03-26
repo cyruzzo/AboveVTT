@@ -216,7 +216,8 @@ function createCustomOnedriveChooser(text, callback = function(){}){
 
 function createCustomDropboxChooser(text, options){
   let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
-  button.off('click.dropbox').on('click.dropbox', function(){
+  button.off('click.dropbox').on('click.dropbox', function(e){
+    e.stopPropagation();
     Dropbox.choose(options)
   })
   return button;

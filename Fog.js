@@ -485,17 +485,32 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 	else
 		return false;
 }
-
-function is_token_under_light_aura(tokenid, lightContext=undefined){
-	if(lightContext == undefined){
-		lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
+function is_token_in_raycasting_context(tokenid, rayContext=undefined){
+	if(rayContext == undefined){
+		rayContext = $("#raycastingCanvas")[0].getContext('2d');
 	}
 
-	let pixeldata = lightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
+	let pixeldata = rayContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor),(parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor), 1, 1).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
+		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4){
 			return true;
+		}
+	}
+				
+	return  false;
+}
+function is_token_under_light_aura(tokenid, lightContext=undefined){
+	if(lightContext == undefined){
+		lightContext = window.lightInLos.getContext('2d');
+	}
+
+	let pixeldata = lightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor,  window.TOKEN_OBJECTS[tokenid].sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor).data;
+	
+	for(let i=0; i<pixeldata.length; i+=4){
+		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4){
+			return true;
+		}
 	}
 				
 	return  false;
@@ -572,7 +587,7 @@ function check_single_token_visibility(id){
 	
 	const inFog = playerTokenId != id && is_token_under_fog(id, fogContext); // this token is in fog
 	
-	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) )); // this token is not in light, the player is using vision/light and darkness > 0
+	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id)) || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) )); // this token is not in light, the player is using vision/light and darkness > 0
 	
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
@@ -636,6 +651,7 @@ function do_check_token_visibility() {
 	let promises = [];
 
 	let lightContext = window.lightInLos.getContext('2d');
+	let rayContext = $('#raycastingCanvas')[0].getContext('2d');
 	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
 
 	let truesightContext;
@@ -661,7 +677,7 @@ function do_check_token_visibility() {
 			
 			const inFog = (playerTokenId != id && is_token_under_fog(id, ctx)); // this token is in fog and not the players token
 
-			const notInLight = (inFog || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
 
@@ -4789,7 +4805,7 @@ function redraw_light(){
  	
  				
 				if(!window.DM || window.SelectedTokenVision){
-					if(currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight')){
+					if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
 						tempDarkvisionCtx.globalCompositeOperation='source-over';
 						drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 						tempDarkvisionCtx.globalCompositeOperation='destination-in';
@@ -4990,7 +5006,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
 
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius, 'rgba(255, 255, 255, 1)', true, 0)
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
 	
 
 	window.lightAuraClipPolygon[auraId] = {
