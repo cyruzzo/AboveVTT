@@ -321,22 +321,38 @@ class MessageBroker {
 								let neweight = li.height();
 								li.height(oldheight);
 								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
-								let output = $(`<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
-								img.magnificPopup({type: 'image', closeOnContentClick: true });
-
-								if (img[0]) {
-									img[0].onload = () => {
-										if (img[0].naturalWidth > 0) {
-											li.find('.chat-link').css('display', 'none');
-											img.css({
-												'display': 'block',
-												'width': '100%'
-											});
-										}
+								for(let i in img){
+									if($(img[i]).is('img')){
+										$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
+										img[i].onload = () => {
+											if (img[i].naturalWidth > 0) {
+												$(img[i]).css({
+													'display': 'block',
+													'width': '100%'
+												});
+												li.find('.chat-link').css('display', 'none');
+											}
+										}		
+									}
+									else if($(img[i]).is('video')){
+										$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
+											img[i].addEventListener('loadeddata', function() {
+										    	if(img[i].videoWidth > 0) {
+															$(img[i]).css({
+																'display': 'block',
+																'width': '100%'
+															});
+															li.find('.chat-link').css('display', 'none');
+														}
+										}, false);
 									}
 								}
+								
+
+								
 
 								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
 									let btn = $("<button>Show to Players</button>")
@@ -1227,7 +1243,7 @@ class MessageBroker {
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
@@ -1842,26 +1858,47 @@ class MessageBroker {
 
 	reconnectDisconnectedAboveWs(){
 		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS){
-			let msgdata = {
+			if(window.reconnectAttemptAbovews == undefined){
+				window.reconnectAttemptAbovews = 0;
+			}
+
+		
+			window.reconnectAttemptAbovews++;
+			if(window.reconnectAttemptAbovews > 5)
+				return;
+
+			if(window.reconnectAttemptAbovews < 5){
+				let msgdata = {
 					player: window.PLAYER_NAME,
 					img: window.PLAYER_IMG,
 					text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
 					whisper: window.PLAYER_NAME
-			};
-			this.inject_chat(msgdata);	
-			this.loadAboveWS(function(){ 
-				setTimeout(
-					function(){
-						let msgdata = {
-								player: window.PLAYER_NAME,
-								img: window.PLAYER_IMG,
-								text: `${window.PLAYER_NAME} has reconnected.`
-						};
+				};
+				this.inject_chat(msgdata);	
+				this.loadAboveWS(function(){ 
+					setTimeout(
+						function(){
+							let msgdata = {
+									player: window.PLAYER_NAME,
+									img: window.PLAYER_IMG,
+									text: `${window.PLAYER_NAME} has reconnected.`
+							};
 
-						window.MB.inject_chat(msgdata);
-					}, 4000)
-				}
-			);		
+							window.MB.inject_chat(msgdata);
+						}, 4000)
+					}
+				);
+			}
+			else {
+				let msgdata = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: `<span><p>You have disconnected from the AboveVTT websocket 5 times. It is likely you are experiencing connection issues. </p><p>Reconnect messages/forced reconnect will be disabled until refresh.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program.</p></span>`,
+					whisper: window.PLAYER_NAME
+				};
+				this.inject_chat(msgdata);
+			}
+					
 		}
 	}
 }

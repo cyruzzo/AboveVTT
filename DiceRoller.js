@@ -462,9 +462,15 @@ class DiceRoller {
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
         if (!this.#waitingForRoll) {
-            // TODO: update DM rolls with dmAvatarUrl
-            console.debug("not capturing: ", message);
-            this.ddbDispatch(message);
+            console.debug("swap image only, not capturing: ", message);
+            let ddbMessage = { ...message };
+            if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
+                ddbMessage.data.context.avatarUrl = dmAvatarUrl
+            }
+            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+                ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
+            }
+            this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/pending") {
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };
@@ -498,7 +504,7 @@ class DiceRoller {
                 // all DDB dice types will be grouped together. For example: "1d4+2d6-3d8+4d10-5d20+1d100-2d20kh1+2d20kl1-1d3" turns into "9d20+5d10+3d8+2d6+1d4"
                 // all the values are in the same order as the DDB expression so iterate over the expression, and pull out the values that correspond
                 let matchedValues = {}; // { d20: [1, 18], ... }
-                let rolledExpressions = r.diceNotationStr.match(allDiceRegex);
+                let rolledExpressions = this.#pendingDiceRoll.expression.match(allDiceRegex);
                 console.debug("rolledExpressions: ", rolledExpressions);
                 let valuesToMatch = r.result.values;
                 rolledExpressions.forEach(diceExpression => {
@@ -637,7 +643,11 @@ class DiceRoller {
         }
         if (isValid(this.#pendingDiceRoll.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = this.#pendingDiceRoll.avatarUrl;
-        }
+        } else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId){
+            ddbMessage.data.context.avatarUrl = dmAvatarUrl
+        } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+            ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
+        }      
         if (isValid(this.#pendingDiceRoll.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
         }
