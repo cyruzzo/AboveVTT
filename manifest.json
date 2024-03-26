@@ -101,7 +101,8 @@
 			"MonsterStatBlock.js",
 			"PeerManager.js",
 			"PeerCommunication.js",
-			"peerVideo.js"
+			"peerVideo.js",
+			"onedrive/*"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}

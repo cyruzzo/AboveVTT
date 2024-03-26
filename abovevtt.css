@@ -3953,12 +3953,12 @@ div#importer_area>div>div:first-of-type {
 .folder.collapsed .folder-item-list {
     display: none;
 }
-.encounter > .sidebar-list-item-row-item > .token-row-button,
-.folder > .sidebar-list-item-row-item > .token-row-button {
+.encounter > .sidebar-list-item-row-item .token-row-button,
+.folder > .sidebar-list-item-row-item .token-row-button {
     background-color: rgb(235, 241, 245);
 }
-.encounter.collapsed > .sidebar-list-item-row-item > .token-row-button,
-.folder.collapsed > .sidebar-list-item-row-item > .token-row-button {
+.encounter.collapsed > .sidebar-list-item-row-item .token-row-button,
+.folder.collapsed > .sidebar-list-item-row-item .token-row-button {
     background-color: #fff;
 }
 .sidebar-list-item-row {
@@ -5928,6 +5928,7 @@ button.dropboxChooser{
 button.dropboxChooser.token-row-button{
     position: relative;
     padding-left: 0px !important;
+    display:inline-block;
 }
 
 button.dropboxChooser.token-row-button span.dropin-btn-status{
@@ -5955,6 +5956,72 @@ button span.dropin-btn-status{
     height: 15px;
     left: 2px;
 }
+button.launchPicker{
+    padding-left: 18px !important;
+    position: relative;
+}
+
+button.launchPicker.token-row-button{
+    position: relative;
+    padding-left: 0px !important;
+    display:inline-block;
+}
+
+button.launchPicker.token-row-button span.onedrive-btn-status{
+    left: 1px;
+    width: 26px;
+    position: relative;
+    display: block;
+    height: 20px;
+}
+.sidebar-list-item-row-item button.launchPicker.token-row-button span.onedrive-btn-status{
+    background-image: none;
+    mask-image: var(--onedrive-svg);
+    mask-size: 25px 20px;
+    mask-repeat: no-repeat;
+    mask-position: 0px 0px;
+    background: #000;
+}
+button span.onedrive-btn-status{
+    background-image: var(--onedrive-svg);
+    background-position: 0px 2px;
+    width: 15px;
+    position: absolute;
+    height: 15px;
+    left: 2px;
+    background-repeat: no-repeat;
+}
+
+#sounds-panel button.dropboxChooser, #sounds-panel button.launchPicker {
+    width: 23px;
+    padding: 0px !important;
+    height: 21px;
+    top: -4px;
+}
+#sounds-panel button.dropboxChooser span, #sounds-panel button.launchPicker span{
+    top: 2px;
+}
+
+.addTokenMenu {
+    display: inline-block;
+    width: 0px;
+    overflow: hidden;
+    transition: 250ms width 0ms;
+}
+.addTokenMenu:hover,
+.hover-add-button:hover~.addTokenMenu {
+    width: 69px;
+}
+#myTokensFolder>.sidebar-list-item-row-item:first-of-type .addTokenMenu:hover,
+#myTokensFolder>.sidebar-list-item-row-item:first-of-type .hover-add-button:hover~.addTokenMenu {
+    width: 102px;
+}
+
+.addTokenMenu button {
+    display: inline-block;
+    height: 100%;
+}
+
 .token>.token-image{
     min-height: var(--min-height) !important;
     min-width: var(--min-width) !important;

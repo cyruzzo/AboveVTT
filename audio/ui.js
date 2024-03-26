@@ -330,7 +330,13 @@ function init_trackLibrary() {
             trackLibrary.addTrack(links[i].name, links[i].link);  
         }
     }, true, ['audio'], true);
-    const dropBoxbutton = createCustomDropboxChooser('Add from Dropbox', dropboxOptions);
+    const dropBoxbutton = createCustomDropboxChooser(' ', dropboxOptions);
+    let audioArray = ['.aac', '.aif', '.aifc', '.aiff', '.au', '.flac', '.m4a', '.mid', '.mp3', '.m4p', '.m4b', '.m4r', '.ogg', '.opus', '.ra', '.ram', '.spx', '.wav', '.wm']
+    const oneDriveButton = createCustomOnedriveChooser(' ', function(links){
+        for(let i = 0; i<links.length; i++){
+            trackLibrary.addTrack(links[i].name, links[i].link);  
+        }   
+    }, 'multiple', audioArray);
 
     // import csv button
     const importCSV = document.createElement('button');
@@ -544,7 +550,7 @@ function init_trackLibrary() {
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, oneDriveButton, importCSV, addTrack, importTrackFields, trackList);
 }
 
 function init() {

@@ -1578,7 +1578,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
  * Creates a new "My Token" object within a folder
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
-function create_token_inside(listItem, tokenName = "New Token", tokenImage = '') {
+function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='') {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
@@ -1604,6 +1604,10 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '')
           alternativeImages: [tokenImage]
         }
     );
+    if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
+        customization.tokenOptions.videoToken = true;
+    }
+
     persist_token_customization(customization, function (didSucceed, error) {
         console.log("create_token_inside created a new item", customization);
         did_change_mytokens_items();
@@ -1722,11 +1726,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     }
 
     // images
-    let addImageUrl = async function (newImageUrl) {
+    let addImageUrl = async function (newImageUrl, type='') {
         const redraw = await customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
         const didAdd = await customization.addAlternativeImage(newImageUrl);
         if (!didAdd) {
             return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
+        }
+        if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
+            customization.tokenOptions.videoToken = true;
         }
         persist_token_customization(customization);
         if (redraw) {
@@ -1775,8 +1782,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             }
         }, true);
         const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
+        const oneDriveButton = createCustomOnedriveChooser('', function(links){
+            for(let i = 0; i<links.length; i++){
+               addImageUrl(links[i].link, links[i].type)
+            }    
+        }, 'multiple')
         dropboxButton.toggleClass('token-row-button', true);
-        inputWrapper.append(dropboxButton);
+        oneDriveButton.toggleClass('token-row-button', true);
+        inputWrapper.append(dropboxButton, oneDriveButton);
     }
 
 
@@ -3184,7 +3197,25 @@ function display_change_image_modal(placedToken) {
     }, true);
     const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
     dropboxButton.toggleClass('token-row-button', true);
-    sidebarPanel.inputWrapper.append(dropboxButton);
+
+    const oneDriveButton = createCustomOnedriveChooser('', function(links){
+        for(let i = 0; i<links.length; i++){
+            if(!placedToken.options.alternativeImages){
+               placedToken.options.alternativeImages =[];
+            }
+            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+               placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+            placedToken.options.imgsrc = parse_img(links[i].link);
+            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
+                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+        }
+        close_sidebar_modal();
+        placedToken.place_sync_persist();      
+    }, 'multiple')
+    oneDriveButton.toggleClass('token-row-button', true);
+    sidebarPanel.inputWrapper.append(dropboxButton, oneDriveButton);
 
     let inputWrapper = sidebarPanel.inputWrapper;
     sidebarPanel.footer.find(`.token-image-modal-add-button`).remove();
