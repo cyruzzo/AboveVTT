@@ -7,9 +7,9 @@
 		{
 			"matches": [
 				"https://www.dndbeyond.com/campaigns/*",
-				"https://www.dndbeyond.com/encounters/*abovevtt=true",
-                "https://www.dndbeyond.com/profile/*/characters/*abovevtt=true",
-				"https://www.dndbeyond.com/characters/*abovevtt=true"
+				"https://www.dndbeyond.com/encounters/*abovevtt=true*",
+                "https://www.dndbeyond.com/profile/*/characters/*abovevtt=true*",
+				"https://www.dndbeyond.com/characters/*abovevtt=true*"
 			],
 			"exclude_matches": [
 				"https://www.dndbeyond.com/campaigns/join/*"
