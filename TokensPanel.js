@@ -1411,7 +1411,7 @@ function register_token_row_context_menu() {
                         imgHtml.find('img, video').attr('href', imgHtml.find('img, video').attr('src'));
                         imgHtml = imgHtml.html();
                         imgHtml = imgHtml.replace('video-listing', '');
-                        imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
+                        imgHtml = imgHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
 
                         let msgdata = {
                             player: window.PLAYER_NAME,
@@ -2985,7 +2985,7 @@ function register_custom_token_image_context_menu() {
                     imgHtml.addClass('magnify');                         
                     imgHtml.attr('href', imgHtml.attr('src'));
                     imgHtml = imgHtml[0].outerHTML;
-                    imgHtml = imgHtml.replace('disableremoteplayback', 'autoplay loop');
+                    imgHtml = imgHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
                     let msgdata = {
                         player: window.PLAYER_NAME,
                         img: window.PLAYER_IMG, 

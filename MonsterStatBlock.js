@@ -46,8 +46,9 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
 }
 
 function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
+    const token = window.TOKEN_OBJECTS[tokenId];
     const html = (customStatBlock) ? $(`
-    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : build_monster_stat_block(statBlock);
+    <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : build_monster_stat_block(statBlock, token);
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
     container.append(html);
@@ -56,7 +57,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       window.JOURNAL.add_journal_roll_buttons(html, tokenId);
       window.JOURNAL.add_journal_tooltip_targets(html);
 
-      const token = window.TOKEN_OBJECTS[tokenId];
+      
       $(container).find('.add-input').each(function(){
         let numberFound = $(this).attr('data-number');
         const spellName = $(this).attr('data-spell');
@@ -71,13 +72,21 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         $(this).find('p').remove();
         $(this).after(input)
       })
+      container.find(`.avtt-stat-block-container`).append(`<div class="image" style="display: block;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
+            src="${token.options.imgsrc}"
+            class="monster-image"
+            style="max-width: 100%;">
+            </div>
+            <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
+                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${token.options.imgsrc}" target='_blank' >Send Image To Gamelog</a>
+            </div>`)
     }
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();
         e.preventDefault();
         const imgContainer = $(e.target).parent().prev();
-        imgContainer.find("img").attr("href", imgContainer.find("img").attr("src"));
-        imgContainer.find("img").addClass("magnify");
+        imgContainer.find("img, video").attr("href", imgContainer.find("img, video").attr("src"));
+        imgContainer.find("img, video").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
     container.find("p>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
@@ -96,7 +105,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     })
 
     if(!customStatBlock)
-      container.find("div.image").append(statBlock.imageHtml());
+      container.find("div.image").append(statBlock.imageHtml(token));
     container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
     if(!customStatBlock)
       scan_monster(container, statBlock, tokenId);
@@ -107,7 +116,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     $("span.hideme").parent().parent().hide();
 }
 
-function build_monster_stat_block(statBlock) {
+function build_monster_stat_block(statBlock, token) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
@@ -351,7 +360,7 @@ function build_monster_stat_block(statBlock) {
             <div class="image" style="display: block;"></div>
             <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                 <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
-                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${statBlock.data.largeAvatarUrl}" target='_blank' >Send Image To Gamelog</a>
+                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${token.options.imgsrc == statBlock.data.avatarUrl ? statBlock.data.largeAvatarUrl : token.options.imgsrc}" target='_blank' >Send Image To Gamelog</a>
             </div>
 
 
@@ -715,10 +724,10 @@ class MonsterStatBlock {
         return hidemeHack;
     }
 
-    imageHtml() {
+    imageHtml(token) {
         // const url = this.findBestAvatarUrl();
-        let img = $(`<img
-            src="${this.data.largeAvatarUrl}"
+        let img = $(`<${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
+            src="${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}"
             alt="${this.data.name}"
             class="monster-image"
             style="max-width: 100%;"
@@ -761,7 +770,7 @@ class MonsterStatBlock {
         });
 
 
-        let html = $(`<a href="${this.data.largeAvatarUrl}" data-title="<a target='_blank' href='${this.data.largeAvatarUrl}' class='link link-full'>View Full Image</a>"
+        let html = $(`<a href="${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}" data-title="<a target='_blank' href='${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}' class='link link-full'>View Full Image</a>"
            target="_blank"></a>`);
         html.append(img);
         return html;
@@ -926,6 +935,7 @@ function add_stat_block_hover(statBlockContainer) {
 
 function send_html_to_gamelog(outerHtml) {
     console.log("send_html_to_gamelog", outerHtml);
+    outerHtml = outerHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
     let html = window.MB.encode_message_text(outerHtml);
     const data = {
         player: window.PLAYER_NAME,
