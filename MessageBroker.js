@@ -324,7 +324,7 @@ class MessageBroker {
 								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
-								for(let i in img){
+								for(let i=0; i<img.length; i++){
 									if($(img[i]).is('img')){
 										$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
 										img[i].onload = () => {
