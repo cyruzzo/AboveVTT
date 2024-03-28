@@ -1175,6 +1175,7 @@ function build_sidebar_list_row(listItem) {
         const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
 
         dropboxButton.toggleClass('token-row-button', true);     
+        dropboxButton.attr('title', 'Create token from Dropbox'); 
 
         const oneDriveButton = createCustomOnedriveChooser('', function(links){
             for(let i = 0; i<links.length; i++){
@@ -1182,7 +1183,7 @@ function build_sidebar_list_row(listItem) {
             }       
         }, 'multiple')
         oneDriveButton.toggleClass('token-row-button one-drive-button', true);
-
+        oneDriveButton.attr('title', 'Create token from Onedrive'); 
      
 
         let addTokenMenu = $(`<div class='addTokenMenu'></div>`)
