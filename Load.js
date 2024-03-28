@@ -86,6 +86,7 @@ window.scripts = [
 	{ src: "scenedata/doip-scene-data.js" },
 	{ src: "scenedata/lmop-scene-data.js" },
 	{ src: "scenedata/pbtso-scene-data.js" },
+	{ src: "scenedata/loe-scene-data.js" },
 	{ src: "ScenesHandler.js" },
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
