@@ -932,6 +932,30 @@ function inject_join_exit_abovevtt_button() {
   const tabletPosition = $(".ct-character-sheet-tablet .ct-main-tablet > .ct-main-tablet__campaign");
   const mobilePosition = $(".ct-character-sheet-mobile .ct-main-mobile > .ct-main-mobile__campaign");
 
+  if ( $(`#character-header-adjust-style`).length == 0){
+      $(`body`).append($(`<style id='character-header-adjust-style'>
+        .ct-character-header-desktop__group--beyond20>.ct-beyond20-settings-button span,
+        .ct-character-header-desktop__group--share span.ct-character-header-desktop__button-label
+        {
+          display:none;
+        }
+        .ct-beyond20-settings-button{
+          padding: 4px 6px;
+        }
+        .ct-character-header-desktop__group--share>.ct-character-header-desktop__button{
+          padding: 6px 6px;
+        }
+        .ct-character-header-desktop__button{
+          margin-right: 12px;
+        }
+        .ddbc-character-tidbits{
+          min-width: 0px !important;
+        }
+        </style>`));
+  }
+
+
+
   const buttonText = is_abovevtt_page() ? "Exit AboveVTT" : "Join AboveVTT";
   const button = $(`<a id="avtt-character-join-button" class="ct-character-header-desktop__button" style="float:right;"><img style="height:18px;" src="${window.EXTENSION_PATH + "assets/avtt-logo.png"}" title="AboveVTT Logo" />${buttonText}</a>`);
 
