@@ -1068,7 +1068,7 @@ function ctxScale(canvasid){
 	});
 }
 
-function reset_canvas() {
+function reset_canvas(apply_zoom=true) {
 	let sceneMapWidth = $("#scene_map").width();
 	let sceneMapHeight = $("#scene_map").height();
 
@@ -1148,7 +1148,8 @@ function reset_canvas() {
 	else {
 		ctx_grid.clearRect(0, 0, canvas_grid.width, canvas_grid.height);
 	}
-	apply_zoom_from_storage();
+	if(apply_zoom)
+		apply_zoom_from_storage();
 	redraw_text();
 }
 function check_darkness_value(){

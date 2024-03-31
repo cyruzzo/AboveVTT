@@ -1401,248 +1401,305 @@ class MessageBroker {
 	async handleScene(msg) {
 		console.debug("handlescene", msg);
 
-		window.DRAWINGS = [];
+
+		let isCurrentScene = window.CURRENT_SCENE_DATA?.id != undefined && msg.data.id == window.CURRENT_SCENE_DATA.id
+		let isSameScaleAndMaps = isCurrentScene && 
+															(msg.data.scale_factor == window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion || 
+																((msg.data.scale_factor == undefined || msg.data.scale_factor=='') && window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion == 1)) && 
+																	msg.data.dm_map == window.CURRENT_SCENE_DATA.dm_map && msg.data.player_map == window.CURRENT_SCENE_DATA.player_map &&
+																		window.CURRENT_SCENE_DATA.hpps==parseFloat(msg.data.hpps*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion) &&
+																			window.CURRENT_SCENE_DATA.vpps==parseFloat(msg.data.vpps*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion)
+		
+
+		if(isSameScaleAndMaps){
+			let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+			let conversion = window.CURRENT_SCENE_DATA.conversion;
+
+			window.CURRENT_SCENE_DATA = {
+				...msg.data,
+				conversion: conversion,
+				scale_factor: scaleFactor
+			};
+			window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : `rgba(255, 255, 255, 1)`
+	 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
+
+	 		if(!window.CURRENT_SCENE_DATA.scale_factor)
+				window.CURRENT_SCENE_DATA.scale_factor = 1;
+			window.CURRENT_SCENE_DATA.vpps=parseFloat(msg.data.vpps*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+			window.CURRENT_SCENE_DATA.hpps=parseFloat(msg.data.hpps*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+			window.CURRENT_SCENE_DATA.offsetx=parseFloat(msg.data.offsetx*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+			window.CURRENT_SCENE_DATA.offsety=parseFloat(msg.data.offsety*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion);
+
+			// Store current scene width and height
+			let mapHeight = await $("#scene_map").height();
+			let mapWidth = await $("#scene_map").width();
 	
-		window.sceneRequestTime = Date.now();
-    let lastSceneRequestTime = window.sceneRequestTime;   
-		window.TOKEN_OBJECTS = {};
-		window.videoTokenOld = {};
-		let data = msg.data;
-		let self=this;
 
-			if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
-				data.map=data.dm_map;
-				if(data.dm_map_is_video=="1")
-					data.is_video=true;
+			
+			// Scale map according to scaleFactor
+			$("#VTT").css("--scene-scale", scaleFactor)
+			window.CURRENT_SCENE_DATA.width = mapWidth;
+			window.CURRENT_SCENE_DATA.height = mapHeight;
+			
+
+			if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
+				const a = 2 * Math.PI / 6;
+				const hexWidth = window.CURRENT_SCENE_DATA.hpps * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
+				const hexHeight = window.CURRENT_SCENE_DATA.hpps * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
+				window.hexGridSize = {
+					width: hexWidth,
+					height: hexHeight
+				}
 			}
-			else{
-				data.map=data.player_map;
-				if(data.player_map_is_video=="1")
-					data.is_video=true;
-			}
 
-		for(const i in msg.data.tokens){
-			if(i == msg.data.tokens[i].id)
-				continue;
-			msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
-			delete msg.data.tokens[i];
-		}
-		msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
-		window.CURRENT_SCENE_DATA = msg.data;
-		window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : `rgba(255, 255, 255, 1)`
- 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
-		if(window.DM){
-			window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
-		}
-
-		if(!window.CURRENT_SCENE_DATA.scale_factor)
-			window.CURRENT_SCENE_DATA.scale_factor = 1;
-		window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.scale_factor);
-		window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.scale_factor);
-		window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.scale_factor);
-		window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.scale_factor);
-		$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
-		console.log("SETTO BACKGROUND A " + msg.data);
-		$("#tokens").children().remove();
-		$(".aura-element[id^='aura_'").remove();
-		$(".aura-element-container-clip").remove();
-		$("[data-darkness]").remove();
-		$("[data-notatoken]").remove();
-
-		let old_src = $("#scene_map").attr('src');
-		$('.import-loading-indicator').remove();
-		if(data.UVTTFile == 1){
-			build_import_loading_indicator("Loading UVTT Map");
-			data.map = await get_map_from_uvtt_file(data.player_map);
+			reset_canvas(false);
 		}
 		else{
-			await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
-		}
-		$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
-		if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
+			window.DRAWINGS = [];
+		
+			window.sceneRequestTime = Date.now();
+	    let lastSceneRequestTime = window.sceneRequestTime;   
+			window.TOKEN_OBJECTS = {};
+			window.videoTokenOld = {};
+			let data = msg.data;
+			let self=this;
 
-
-			if (data.fog_of_war == 1) {
-				window.FOG_OF_WAR = true;
-				window.REVEALED = data.reveals;
-			}
-			else {
-				window.FOG_OF_WAR = false;
-				window.REVEALED = [];
-			}
-			if (typeof data.drawings !== "undefined") {
-				window.DRAWINGS = data.drawings;
-
-			}
-			else {
-				window.DRAWINGS = [];
-			}
-			window.LOADING = true;
-			load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
-				console.group("load_scenemap callback")
-				if(!window.CURRENT_SCENE_DATA.scale_factor)
-					window.CURRENT_SCENE_DATA.scale_factor = 1;
-				let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
-				// Store current scene width and height
-				let mapHeight = $("#scene_map").height();
-				let mapWidth = $("#scene_map").width();
-				window.CURRENT_SCENE_DATA.conversion = 1;
-
-				if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
-					let conversion = 2;
-					if(mapWidth >= mapHeight){
-						conversion = 1980 / mapWidth;
-					}
-					else{
-						conversion = 1980 / mapHeight;
-					}
-					mapHeight = mapHeight*conversion;
-					mapWidth = mapWidth*conversion;
-					$("#scene_map").css({
-						'height': mapHeight,
-						'width': mapWidth
-					});
-					scaleFactor = scaleFactor / conversion		
-					window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
-					window.CURRENT_SCENE_DATA.conversion = conversion;
+				if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
+					data.map=data.dm_map;
+					if(data.dm_map_is_video=="1")
+						data.is_video=true;
 				}
-				else if(!data.scale_check){ //older than 0.98
-					window.CURRENT_SCENE_DATA = {
-						...window.CURRENT_SCENE_DATA,
-						hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
-						vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
-						offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
-						offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
-					}
-				}
-				$('.import-loading-indicator .percentageLoaded').css('width', `10%`);	
-				window.CURRENT_SCENE_DATA.width = mapWidth;
-				window.CURRENT_SCENE_DATA.height = mapHeight;
-				
-
-				if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
-					const a = 2 * Math.PI / 6;
-					const hexWidth = window.CURRENT_SCENE_DATA.hpps * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
-					const hexHeight = window.CURRENT_SCENE_DATA.hpps * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
-					window.hexGridSize = {
-						width: hexWidth,
-						height: hexHeight
-					}
+				else{
+					data.map=data.player_map;
+					if(data.player_map_is_video=="1")
+						data.is_video=true;
 				}
 
-				// Scale map according to scaleFactor
-				$("#VTT").css("--scene-scale", scaleFactor)
-				$('#loadingStyles').remove(); // incase 2nd load
-				if(!window.DM){
-					$('body').append($(`<style id='loadingStyles'>
-						.token,
-						.door-button,
-						.aura-element-container-clip{
-							display: none !important;
+			for(const i in msg.data.tokens){
+				if(i == msg.data.tokens[i].id)
+					continue;
+				msg.data.tokens[msg.data.tokens[i].id] = msg.data.tokens[i];
+				delete msg.data.tokens[i];
+			}
+			msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
+			window.CURRENT_SCENE_DATA = msg.data;
+			window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : `rgba(255, 255, 255, 1)`
+	 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
+			if(window.DM){
+				window.ScenesHandler.scene=window.CURRENT_SCENE_DATA;
+			}
+
+			if(!window.CURRENT_SCENE_DATA.scale_factor)
+				window.CURRENT_SCENE_DATA.scale_factor = 1;
+			window.CURRENT_SCENE_DATA.vpps=parseFloat(window.CURRENT_SCENE_DATA.vpps*window.CURRENT_SCENE_DATA.scale_factor);
+			window.CURRENT_SCENE_DATA.hpps=parseFloat(window.CURRENT_SCENE_DATA.hpps*window.CURRENT_SCENE_DATA.scale_factor);
+			window.CURRENT_SCENE_DATA.offsetx=parseFloat(window.CURRENT_SCENE_DATA.offsetx*window.CURRENT_SCENE_DATA.scale_factor);
+			window.CURRENT_SCENE_DATA.offsety=parseFloat(window.CURRENT_SCENE_DATA.offsety*window.CURRENT_SCENE_DATA.scale_factor);
+			$('#vision_menu #draw_line_width').val(window.CURRENT_SCENE_DATA.hpps);
+			console.log("SETTO BACKGROUND A " + msg.data);
+			$("#tokens").children().remove();
+			$(".aura-element[id^='aura_'").remove();
+			$(".aura-element-container-clip").remove();
+			$("[data-darkness]").remove();
+			$("[data-notatoken]").remove();
+
+			let old_src = $("#scene_map").attr('src');
+			$('.import-loading-indicator').remove();
+			if(data.UVTTFile == 1){
+				build_import_loading_indicator("Loading UVTT Map");
+				data.map = await get_map_from_uvtt_file(data.player_map);
+			}
+			else{
+				await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
+			}
+			$('.import-loading-indicator .percentageLoaded').css('width', `0%`);
+			if(msg.data.id == window.CURRENT_SCENE_DATA.id){ // incase another map was loaded before we get uvtt data back
+
+
+				if (data.fog_of_war == 1) {
+					window.FOG_OF_WAR = true;
+					window.REVEALED = data.reveals;
+				}
+				else {
+					window.FOG_OF_WAR = false;
+					window.REVEALED = [];
+				}
+				if (typeof data.drawings !== "undefined") {
+					window.DRAWINGS = data.drawings;
+
+				}
+				else {
+					window.DRAWINGS = [];
+				}
+				window.LOADING = true;
+				load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+					console.group("load_scenemap callback")
+					if(!window.CURRENT_SCENE_DATA.scale_factor)
+						window.CURRENT_SCENE_DATA.scale_factor = 1;
+					let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
+					// Store current scene width and height
+					let mapHeight = await $("#scene_map").height();
+					let mapWidth = await $("#scene_map").width();
+					window.CURRENT_SCENE_DATA.conversion = 1;
+
+					if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+						let conversion = 2;
+						if(mapWidth >= mapHeight){
+							conversion = 1980 / mapWidth;
 						}
-						.token[data-id*='${window.PLAYER_ID}']{
-							display: flex !important;
+						else{
+							conversion = 1980 / mapHeight;
 						}
-						
-						.aura-element-container-clip[id*='${window.PLAYER_ID}']{
-							display:unset !important;
+						mapHeight = mapHeight*conversion;
+						mapWidth = mapWidth*conversion;
+						$("#scene_map").css({
+							'height': mapHeight,
+							'width': mapWidth
+						});
+						scaleFactor = scaleFactor / conversion		
+						window.CURRENT_SCENE_DATA.scale_factor = scaleFactor;
+						window.CURRENT_SCENE_DATA.conversion = conversion;
+					}
+					else if(!data.scale_check){ //older than 0.98
+						window.CURRENT_SCENE_DATA = {
+							...window.CURRENT_SCENE_DATA,
+							hpps: window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor,
+							vpps: window.CURRENT_SCENE_DATA.vpps / window.CURRENT_SCENE_DATA.scale_factor,
+							offsetx: window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor,
+							offsety: window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor
 						}
-					</style>`))
-				}
-
-				
-				set_default_vttwrapper_size();
-
-
-				
-				
-        reset_canvas();
-        
-        apply_zoom_from_storage();
-				
-				// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
-				if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
-					$("#scene_map").stop();
-					$("#scene_map").css("opacity","0");
-					console.log("switching back to player map");
-					$("#scene_map").off("load");
-					$("#scene_map").on("load", () => {
-						$("#scene_map").css('opacity', 1)
-						$("#darkness_layer").show();
-					});
+					}
+					$('.import-loading-indicator .percentageLoaded').css('width', `10%`);	
+					window.CURRENT_SCENE_DATA.width = mapWidth;
+					window.CURRENT_SCENE_DATA.height = mapHeight;
 					
-				
-					$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
-					$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
-				}
-				console.log("LOADING TOKENS!");
-				let tokensLength = Object.keys(data.tokens).length;
-				let count = 0;
-				const tokenLoop = async function(data, count, tokensLength){
-						for (let id in data.tokens) {
-							if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
-								return;
-							}
-							await self.handleToken({
-								data: data.tokens[id],
-								loading: true,
-								persist: false			
-							})
-							count += 1;
-							await async_sleep(0.01);
-							$('.import-loading-indicator .percentageLoaded').css('width', `${20 + count/tokensLength*75}%`)
-							
+
+					if(window.CURRENT_SCENE_DATA.gridType == 2 || window.CURRENT_SCENE_DATA.gridType == 3){
+						const a = 2 * Math.PI / 6;
+						const hexWidth = window.CURRENT_SCENE_DATA.hpps * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
+						const hexHeight = window.CURRENT_SCENE_DATA.hpps * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
+						window.hexGridSize = {
+							width: hexWidth,
+							height: hexHeight
 						}
 					}
-	
-				await tokenLoop(data, count, tokensLength);
-				if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
-					return;
-				}
 
-				let mixerState = window.MIXER.state();
-				for(let i in mixerState.channels){
-					if(mixerState.channels[i].token != undefined){
-						window.MIXER.deleteChannel(i);
+					// Scale map according to scaleFactor
+					$("#VTT").css("--scene-scale", scaleFactor)
+					$('#loadingStyles').remove(); // incase 2nd load
+					if(!window.DM){
+						$('body').append($(`<style id='loadingStyles'>
+							.token,
+							.door-button,
+							.aura-element-container-clip{
+								display: none !important;
+							}
+							.token[data-id*='${window.PLAYER_ID}']{
+								display: flex !important;
+							}
+							
+							.aura-element-container-clip[id*='${window.PLAYER_ID}']{
+								display:unset !important;
+							}
+						</style>`))
 					}
-				}
-				let audioTokens = $('.audio-token');
-        if(audioTokens.length > 0){
-            for(let i = 0; i < audioTokens.length; i++){
-                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
-            }
-        }
-				ct_load({
-					loading: true,
-					current: $("#combat_area [data-current]").attr('data-target')
+
+					
+					set_default_vttwrapper_size();
+
+
+					
+					
+	        reset_canvas();
+	        
+	        apply_zoom_from_storage();
+					
+					// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
+					if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
+						$("#scene_map").stop();
+						$("#scene_map").css("opacity","0");
+						console.log("switching back to player map");
+						$("#scene_map").off("load");
+						$("#scene_map").on("load", () => {
+							$("#scene_map").css('opacity', 1)
+							$("#darkness_layer").show();
+						});
+						
+					
+						$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
+						$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
+					}
+					console.log("LOADING TOKENS!");
+					let tokensLength = Object.keys(data.tokens).length;
+					let count = 0;
+					const tokenLoop = async function(data, count, tokensLength){
+							for (let id in data.tokens) {
+								if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
+									return;
+								}
+								await self.handleToken({
+									data: data.tokens[id],
+									loading: true,
+									persist: false			
+								})
+								count += 1;
+								await async_sleep(0.01);
+								$('.import-loading-indicator .percentageLoaded').css('width', `${20 + count/tokensLength*75}%`)
+								
+							}
+						}
+		
+					await tokenLoop(data, count, tokensLength);
+					if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
+						return;
+					}
+
+					let mixerState = window.MIXER.state();
+					for(let i in mixerState.channels){
+						if(mixerState.channels[i].token != undefined){
+							window.MIXER.deleteChannel(i);
+						}
+					}
+					let audioTokens = $('.audio-token');
+	        if(audioTokens.length > 0){
+	            for(let i = 0; i < audioTokens.length; i++){
+	                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
+	            }
+	        }
+					ct_load({
+						loading: true,
+						current: $("#combat_area [data-current]").attr('data-target')
+					});
+
+
+
+					if(!window.DM) {
+					 	window.MB.sendMessage('custom/myVTT/syncmeup');
+						do_check_token_visibility();
+					}
+
+					$('.import-loading-indicator .percentageLoaded').css('width', '95%');	
+					if (window.EncounterHandler !== undefined) {
+						fetch_and_cache_scene_monster_items();
+					}
+					did_update_scenes();
+					if (window.reorderState === ItemType.Scene) {
+						enable_draggable_change_folder(ItemType.Scene);
+					}
+					update_pc_token_rows();
+					$('.import-loading-indicator').remove();
+					$('#loadingStyles').remove();
+					delete window.LOADING;
+					if(!window.DM)
+						do_check_token_visibility()
+					console.groupEnd()
+					delete window.newLoad;
 				});
+				
+				remove_loading_overlay();
+			}
 
-
-
-				if(!window.DM) {
-				 	window.MB.sendMessage('custom/myVTT/syncmeup');
-					do_check_token_visibility();
-				}
-
-				$('.import-loading-indicator .percentageLoaded').css('width', '95%');	
-				if (window.EncounterHandler !== undefined) {
-					fetch_and_cache_scene_monster_items();
-				}
-				did_update_scenes();
-				if (window.reorderState === ItemType.Scene) {
-					enable_draggable_change_folder(ItemType.Scene);
-				}
-				update_pc_token_rows();
-				$('.import-loading-indicator').remove();
-				$('#loadingStyles').remove();
-				delete window.LOADING;
-				if(!window.DM)
-					do_check_token_visibility()
-				console.groupEnd()
-				delete window.newLoad;
-			});
-			
-			remove_loading_overlay();
+		
 		}
 		// console.groupEnd()
 	}
