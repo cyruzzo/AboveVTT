@@ -582,11 +582,7 @@ function init_character_sheet_page() {
 
 /** actions to take on the characters list when AboveVTT is NOT running */
 function init_character_list_page_without_avtt() {
-  if (!is_characters_list_page()) {
-    window.location_href_observer?.disconnect();
-    delete window.oldHref;
-    return;
-  }
+
 
   inject_join_button_on_character_list_page();
 
@@ -595,13 +591,20 @@ function init_character_list_page_without_avtt() {
   window.oldHref = document.location.href;
   if (window.location_href_observer) {
     window.location_href_observer.disconnect();
+    delete window.location_href_observer;
   }
   window.location_href_observer = new MutationObserver(function(mutationList, observer) {
     if (oldHref !== document.location.href) {
-      console.log("Detected location change from", oldHref, "to", document.location.href);
-      window.oldHref = document.location.href;
-      init_characters_pages();
+      if (!is_characters_list_page()) {
+        console.log("Detected location change from", oldHref, "to", document.location.href);
+        window.oldHref = document.location.href;
+        init_characters_pages();
+      }
+      else{
+        init_character_list_page_without_avtt()
+      }
     }
+    
   });
   window.location_href_observer.observe(document.querySelector("body"), { childList: true, subtree: true });
 }
