@@ -470,7 +470,7 @@ class WaypointManagerClass {
 
 
 function is_token_under_fog(tokenid, fogContext=undefined){
-	if(window.DM)
+	if(window.DM && !window.SelectedTokenVision)
 		return false;
 
 	if(fogContext == undefined){
@@ -480,7 +480,7 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] >= 253)
+	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] >= 100)
 		return true;
 	else
 		return false;
