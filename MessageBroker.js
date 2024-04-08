@@ -1457,7 +1457,9 @@ class MessageBroker {
 				}
 			}
 
-			reset_canvas(false);
+			await reset_canvas(false);
+			if(!window.DM || window.SelectedTokenVision)
+				check_token_visibility();
 		}
 		else{
 			window.DRAWINGS = [];
