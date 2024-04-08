@@ -1151,6 +1151,7 @@ function reset_canvas(apply_zoom=true) {
 	if(apply_zoom)
 		apply_zoom_from_storage();
 	redraw_text();
+	return;
 }
 function check_darkness_value(){
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
