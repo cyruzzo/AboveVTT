@@ -471,7 +471,7 @@ function replace_stat_block_tidbits(target) {
 /** finds all things that should be rollable, and wraps them inside a button that can roll rpgDiceRoller dice
  * @param target {jQuery} the jQuery element that contains modifiers HTML */
 function replace_stat_block_description(target) {
-	const currentElement = $(target).clone()
+	let currentElement = $(target).clone()
 	if (currentElement.find(".avtt-roll-button").length === 0) {
 		// apply most specific regex first matching all possible ways to write a dice notation
 		// to account for all the nuances of DNDB dice notation.
