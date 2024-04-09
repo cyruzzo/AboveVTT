@@ -687,7 +687,7 @@ class JournalManager{
 			
 		}
 		let note_text=$("<div class='note-text'/>");
-		note_text.append(DOMPurify.sanitize(self.notes[id].text,{ADD_TAGS: ['img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg','iframe','a','video','ul','ol','li'], ADD_ATTR: ['allowfullscreen', 'allow', 'scrolling','src','frameborder','width','height']}));
+		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		
 		this.translateHtmlAndBlocks(note_text);	
 		this.add_journal_roll_buttons(note_text);
@@ -1270,6 +1270,7 @@ class JournalManager{
 			   {title: 'DDB Sourcebook Link', value: 'int_source_link'},
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items)', value: 'tooltip-hover'}
 			],
+			valid_children : '+body[style]',
 			setup: function (editor) { 
 				editor.on('NodeChange', async function (e) {
 					// When an image is inserted into the editor
