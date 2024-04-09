@@ -1117,8 +1117,21 @@ class MessageBroker {
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
 				if (msg.data.action == "Initiative") {
 					console.log(msg.data);
-					var total = msg.data.rolls[0].result.total;
+					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
+					let dexScore = window.pcs.filter(d=> d.characterId == msg.data.context.entityId)[0].abilities[1].score;		
+					if(dexScore){
+						total = parseFloat(total + dexScore/100).toFixed(2);
+					}
+					let combatSettingData
+					if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+						combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+						if(combatSettingData['tie_breaker'] !='1'){
+							total = parseInt(total);
+						}
+					}else{
+						total = parseInt(total);
+					}
 					console.log("cerco " + entityid);
 					
 					$("#tokens .VTTToken").each(

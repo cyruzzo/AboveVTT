@@ -5067,7 +5067,8 @@ div#selectedTokensBorderRotationGrabberConnector,
 #text_controller_title_bar_exit:hover,
 #combat_tracker_title_bar_exit:hover,
 #token_options_title_bar_exit:hover,
-.popout-button:hover {
+.popout-button:hover,
+#combat_tracker_title_bar_settings:hover {
     background: #ddd3;
     transition: all linear 0.2s;
 }
@@ -5140,7 +5141,19 @@ div#selectedTokensBorderRotationGrabberConnector,
     width: 20px;
     height: 20px
 }
-
+#combat_tracker_title_bar_settings{
+    position: absolute;
+    right: 60px;
+    width: 20px;
+    height: 20px
+}
+#combat_tracker_title_bar_settings span{
+    height: 20px;
+    width: 20px;
+    font-size: 20px;
+    line-height: 25px;
+    color: #ddd;
+}
 .popout-button {
     position: absolute;
     right: 30px;
@@ -5462,10 +5475,10 @@ div#selectedTokensBorderRotationGrabberConnector,
 #round_number_label input{
     border-radius: 3px;
     border-color: #ddd;
-    width: 30px !important;
-    height:22px;
-    text-align:center;
-    font-size: 14px !important;
+    width: 39px !important;
+    height: 19px;
+    text-align: center;
+    font-size: 13px !important;
 }
 #combat_area td input:not(.init){
     border-radius: 3px;
@@ -5495,7 +5508,7 @@ div#selectedTokensBorderRotationGrabberConnector,
 }
 
 #combat_area td button{
-    margin: 0px 2px;
+    margin: 0px 1px;
 }
 #site #combat_area tr td{
     padding-bottom: 4px;
@@ -5607,7 +5620,7 @@ input.max_hp[disabled]{
 .findSVG,
 .delSVG,
 .statSVG {
-    width: 20px
+    width: 16px
 }
 
 .rollSVG{

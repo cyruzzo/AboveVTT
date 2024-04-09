@@ -15927,7 +15927,7 @@ DDB_EXTRAS = {
 				"statBlock": false
 			}
 		},
-	}
+	},
 	"doip/circle-of-thunder/MapCircleOfThunder": {
 		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/753/850/540/map-cot-dm.jpg",
 		"reveals": [
