@@ -755,6 +755,8 @@ select#doorTypeSelectUVTT{
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw {
     bottom:-45px;  
+    background: none;
+    border-width:0px;
 }
 
 #combat_tracker_inside .ui-resizable-e,
