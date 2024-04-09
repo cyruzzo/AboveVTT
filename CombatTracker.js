@@ -44,6 +44,7 @@ function init_combat_tracker(){
 	ct_inside.hide();
 	$('#site').append(ct_inside);
 	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
+	const ct_title_bar_settings = $(`<div id='combat_tracker_title_bar_settings'><span class="material-symbols-outlined">settings</span></div>`)
 	const ct_title_bar_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
 	ct_area=$("<table id='combat_area'/>");
@@ -95,7 +96,8 @@ function init_combat_tracker(){
 			});
 		}
 	});
-	
+	ct_title_bar_settings.click(function(){openCombatTrackerSettings()});
+	ct_title_bar.append(ct_title_bar_settings);
 	ct_title_bar.append(ct_title_bar_exit);
 	ct_inside.append(ct_title_bar);
 	ct_list_wrapper.append(ct_area);
@@ -244,6 +246,12 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(combatSettingData['scroll_to_next'] == '1'){
+						window.TOKEN_OBJECTS[currentTarget].highlight();
+					}
+				}
 			}
 
 		}
@@ -270,9 +278,16 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
+				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(combatSettingData['scroll_to_next'] == '1'){
+						window.TOKEN_OBJECTS[newTarget].highlight();
+					}
+				}
 			}
+
 		}
-		
+
 		debounceCombatPersist();
 		ct_update_popout();
 		if(window.childWindows['Combat Tracker'] != undefined)
@@ -311,6 +326,12 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
+				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(combatSettingData['scroll_to_next'] == '1'){
+						window.TOKEN_OBJECTS[newTarget].highlight();
+					}
+				}
 			}
 		}
 		
@@ -386,12 +407,132 @@ function init_combat_tracker(){
 		frame_z_index_when_click($(this));
 	});
 }
+function openCombatTrackerSettings(){
+	let combatSettingData = {};
+	if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) == null){
+		combatSettingData = {
+			tie_breaker: 0,
+			scroll_to_next: 0
+		}
+	}else{
+		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+	}
+	function form_row(name, title, inputOverride=null, imageValidation=false) {
+		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
+		const rowLabel = $("<div style='display: inline-block; width:80%'>" + title + "</div>");
+		rowLabel.css("font-weight", "bold");
+		const rowInputWrapper = $("<div style='display:inline-block; width:20%; padding-right:8px' />");
+		let rowInput
+		if(!inputOverride){
+			if (imageValidation){
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${combatSettingData[name] || "" }" />`);
+			}else{
+				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${combatSettingData[name] || ""}" />`);
+			}
+			 
+		}
+		else{
+			rowInput = inputOverride
+		}
+		
+		rowInputWrapper.append(rowInput);
+		row.append(rowLabel);
+		row.append(rowInputWrapper);
+		return row
+	};
 
+	function form_toggle(name, hoverText, defaultOn, callback){
+		const toggle = $(
+			`<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+			class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+		if (!hoverText) toggle.removeClass("sidebar-hovertext")
+		toggle.on("click", callback)
+		if (combatSettingData[name] === '1' || defaultOn){
+			toggle.addClass("rc-switch-checked")
+		}
+		return toggle
+	}
+
+
+	$("#edit_dialog").remove();
+
+
+	console.log('edit_scene_dialog');
+	$("#scene_selector").attr('disabled', 'disabled');
+	dialog = $(`<div id='edit_dialog'></div>`);
+	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
+
+
+	scene_properties = $('<div id="scene_properties"/>');
+	dialog.append(scene_properties);
+
+
+
+	adjust_create_import_edit_container(dialog, undefined, undefined, 2000, 300);
+
+	let container = scene_properties;
+
+	container.empty();
+
+	const form = $("<form id='edit_scene_form'/>");
+	form.on('submit', function(e) { e.preventDefault(); });
+
+
+
+	let tieBreakerToggle = form_toggle('tie_breaker', 'Adds the dex score as a decimal to tie break initiative', combatSettingData['tie_breaker'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let tieBreakerRow = form_row(`tie_breaker`, `Add Tie Breaker to Initiative Rolls`, tieBreakerToggle)
+	if(window.DM){
+		form.append(tieBreakerRow);
+	}
+	let scrollToNextToggle = form_toggle('scroll_to_next', 'Scroll to Token on Next/Prev', combatSettingData['scroll_to_next'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let scrollToNextRow = form_row(`scroll_to_next`, `Scrolls the view to the current tokens turn`, scrollToNextToggle)
+	form.append(scrollToNextRow);
+	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
+	cancel.click(function() {
+		$("#sources-import-main-container").remove();
+		$(".ddb-classes-page-stylesheet").remove();
+		$("#scene_selector").removeAttr("disabled");
+		
+	})
+	const submitButton = $("<button type='button'>Save</button>");
+	submitButton.click(async function() {
+		let settings = {};
+		const formData = await get_edit_form_data();
+		for (key in formData) {
+			settings[key] = formData[key];
+		}
+
+
+				
+		localStorage.setItem(`abovevtt-combat-tracker-settings-${window.DM}`, JSON.stringify(settings))
+
+
+
+		$("#sources-import-main-container").remove();
+		$("#scene_selector").removeAttr("disabled");
+		$("#scene_selector_toggle").click();
+
+	});
+
+	form.append(submitButton);
+	form.append(cancel);
+	//		f.append(export_grid);
+	container.css('opacity', '0.0');
+	container.append(form);
+	
+	container.animate({
+		opacity: '1.0'
+	}, 1000);
+}
 function ct_reorder(persist=true) {
 	var items = $("#combat_area").children().sort(
 		function(a, b) {
-			var vA = (isNaN(parseInt($(".init", a).val()))) ? -1 : parseInt($(".init", a).val());
-			var vB =  (isNaN(parseInt($(".init", b).val()))) ? -1 : parseInt($(".init", b).val());
+			var vA = (isNaN(parseFloat($(".init", a).val()))) ? -1 : parseFloat($(".init", a).val());
+			var vB =  (isNaN(parseFloat($(".init", b).val()))) ? -1 : parseFloat($(".init", b).val());
 			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 		});
 
@@ -468,7 +609,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		img.css('opacity','0.5');
 	}
 	entry.append($("<td/>").append(img));
-	let init=$("<input class='init' maxlength=2'>");
+	let init=$("<input class='init' maxlength=5'>");
 	init.css('-webkit-appearance','none');
 	if(window.DM && typeof(token.options.init) == 'undefined'){
 
@@ -863,6 +1004,12 @@ function ct_load(data=null){
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
+					if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null && window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
+						let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+						if(combatSettingData['scroll_to_next'] == '1'){
+							window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
+						}
+					}
 					if(window.all_token_objects[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"') || window.all_token_objects[data[i]['data-target']].options.player_owned){
 						$("#endplayerturn").toggleClass('enabled', true);
 						$("#endplayerturn").prop('disabled', false);

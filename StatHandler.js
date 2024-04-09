@@ -51,15 +51,34 @@ class StatHandler {
 				let expression = "1d20+" + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
-				callback(roll.total);
+				let total = parseFloat(roll.total + data.stats[1].value/100).toFixed(2);
+				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(combatSettingData['tie_breaker'] !='1'){
+						total = parseInt(total);
+					}
+				}else{
+					total = parseInt(total);
+				}
+				callback(total);
 			}, open5eSlug);
 		}
 		else if(monsterid =='customStat'){
-			let modifier = parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit);
+			let modifier = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit) : 0;
 			let expression = (!isNaN(modifier)) ? "1d20+" + modifier : '0';
 			let roll = new rpgDiceRoller.DiceRoll(expression);
+			let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? ((modifier*2)+10)/100 : 0
 			console.log(expression + "->" + roll.total);
-			callback(roll.total);
+			let total = parseFloat(roll.total + decimalAdd).toFixed(2);
+			if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+				let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+				if(combatSettingData['tie_breaker'] !='1'){
+					total = parseInt(total);
+				}
+			}else{
+				total = parseInt(total);
+			}
+			callback(total);
 		}
 		else{
 			this.getStat(monsterid, function(stat) {
@@ -67,7 +86,16 @@ class StatHandler {
 				let expression = "1d20+" + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
-				callback(roll.total);
+				let total = parseFloat(roll.total + stat.data.stats[1].value/100).toFixed(2);
+				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
+					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(combatSettingData['tie_breaker'] !='1'){
+						total = parseInt(total);
+					}
+				}else{
+					total = parseInt(total);
+				}
+				callback(total);
 			}, open5eSlug);
 		}
 
