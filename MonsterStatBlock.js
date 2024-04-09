@@ -360,7 +360,7 @@ function build_monster_stat_block(statBlock, token) {
             <div class="image" style="display: block;"></div>
             <div style="display:flex;flex-direction:row;width:100%;justify-content:space-between;padding:10px;">
                 <a class="ddbeb-button monster-details-link" href="${statBlock.data.url}" target='_blank' >View Details Page</a>
-                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${token.options.imgsrc == statBlock.data.avatarUrl ? statBlock.data.largeAvatarUrl : token.options.imgsrc}" target='_blank' >Send Image To Gamelog</a>
+                <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${token?.options?.imgsrc == statBlock.data.avatarUrl || token?.options?.imgsrc == undefined ? statBlock.data.largeAvatarUrl : token.options.imgsrc}" target='_blank' >Send Image To Gamelog</a>
             </div>
 
 
@@ -726,8 +726,8 @@ class MonsterStatBlock {
 
     imageHtml(token) {
         // const url = this.findBestAvatarUrl();
-        let img = $(`<${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'}
-            src="${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}"
+        let img = $(`<${(token?.options?.videoToken != undefined && (token?.options?.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token?.options?.imgsrc.includes(d)))) ? 'video disableremoteplayback muted' : 'img'}
+            src="${token?.options?.videoToken == undefined || token?.options?.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}"
             alt="${this.data.name}"
             class="monster-image"
             style="max-width: 100%;"
@@ -770,7 +770,7 @@ class MonsterStatBlock {
         });
 
 
-        let html = $(`<a href="${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}" data-title="<a target='_blank' href='${token.options.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}' class='link link-full'>View Full Image</a>"
+        let html = $(`<a href="${token?.options?.videoToken == undefined || token?.options?.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}" data-title="<a target='_blank' href='${token?.options?.videoToken == undefined || token?.options?.imgsrc == this.data.avatarUrl ? this.data.largeAvatarUrl : token.options.imgsrc}' class='link link-full'>View Full Image</a>"
            target="_blank"></a>`);
         html.append(img);
         return html;
