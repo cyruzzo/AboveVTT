@@ -489,7 +489,7 @@ function openCombatTrackerSettings(){
 	let scrollToNextToggle = form_toggle('scroll_to_next', 'Scroll to Token on Next/Prev', combatSettingData['scroll_to_next'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
-	let scrollToNextRow = form_row(`scroll_to_next`, `Scrolls the view to the current tokens turn`, scrollToNextToggle)
+	let scrollToNextRow = form_row(`scroll_to_next`, `Auto Scroll on Next/Prev`, scrollToNextToggle)
 	form.append(scrollToNextRow);
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
