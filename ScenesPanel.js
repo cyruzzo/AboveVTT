@@ -1046,6 +1046,7 @@ function edit_scene_vision_settings(scene_id){
     const colorPickerChange = function(e, tinycolor) {
         window.CURRENT_SCENE_DATA.daylight = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
  		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
+ 		redraw_drawn_light();
     };
     colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
     colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
@@ -1071,7 +1072,7 @@ function edit_scene_vision_settings(scene_id){
 		$("#sources-import-main-container").remove();
 		$(".ddb-classes-page-stylesheet").remove();
 		$("#scene_selector").removeAttr("disabled");
-		
+		redraw_drawn_light();	
 	})
 	const submitButton = $("<button type='button'>Save</button>");
 	submitButton.click(async function() {
