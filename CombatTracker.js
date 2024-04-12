@@ -246,12 +246,10 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
-				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-					if(combatSettingData['scroll_to_next'] == '1'){
-						window.TOKEN_OBJECTS[currentTarget].highlight();
-					}
-				}
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['scroll_to_next'] == '1'){
+					window.TOKEN_OBJECTS[currentTarget].highlight();
+				}	
 			}
 
 		}
@@ -278,11 +276,9 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
-				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-					if(combatSettingData['scroll_to_next'] == '1'){
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['scroll_to_next'] == '1'){
+					window.TOKEN_OBJECTS[newTarget].highlight();
 				}
 			}
 
@@ -326,11 +322,9 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
-				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-					if(combatSettingData['scroll_to_next'] == '1'){
-						window.TOKEN_OBJECTS[newTarget].highlight();
-					}
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['scroll_to_next'] == '1'){
+					window.TOKEN_OBJECTS[newTarget].highlight();
 				}
 			}
 		}
@@ -407,7 +401,7 @@ function init_combat_tracker(){
 		frame_z_index_when_click($(this));
 	});
 }
-function openCombatTrackerSettings(){
+function getCombatTrackersettings(){
 	let combatSettingData = {};
 	if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) == null){
 		combatSettingData = {
@@ -417,6 +411,11 @@ function openCombatTrackerSettings(){
 	}else{
 		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
 	}
+	return combatSettingData;
+}
+function openCombatTrackerSettings(){
+	let combatSettingData = getCombatTrackersettings();
+
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
 		const rowLabel = $("<div style='display: inline-block; width:80%'>" + title + "</div>");
@@ -1004,8 +1003,8 @@ function ct_load(data=null){
 				
 				if(data[i]['current']){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
-					if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null && window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
-						let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
+					if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
+						let combatSettingData = getCombatTrackersettings();
 						if(combatSettingData['scroll_to_next'] == '1'){
 							window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
 						}

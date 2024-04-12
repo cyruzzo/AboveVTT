@@ -596,7 +596,7 @@ class Token {
 
 
 		let old_op = old.css('opacity');
-		if (old.is(":visible")) {
+		if (old.is(":visible") || window.DM) {
 			let pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
 			let pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
