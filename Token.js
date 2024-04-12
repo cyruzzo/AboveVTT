@@ -469,8 +469,8 @@ class Token {
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
-		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow rotating if the token is locked
-		if (window.DM && this.options.locked) return; // don't allow rotating if the token is locked
+		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && this.options.name != window.PLAYER_NAME) return; // don't allow rotating if the token is locked
+		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
 		// this is copied from the place() function. Rather than calling place() every time the draggable.drag function executes, 
@@ -522,9 +522,9 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
-		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
-
+		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && this.options.name != window.PLAYER_NAME) return; // don't allow rotating if the token is locked
+		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
+		
 		// Save handle params
 		top = parseFloat(top);
 		left = parseFloat(left);
@@ -596,7 +596,7 @@ class Token {
 
 
 		let old_op = old.css('opacity');
-		if (old.is(":visible")) {
+		if (old.is(":visible") || window.DM) {
 			let pageX = Math.round(parseInt(this.options.left) * window.ZOOM - ($(window).width() / 2));
 			let pageY = Math.round(parseInt(this.options.top) * window.ZOOM - ($(window).height() / 2));
 			console.log(this.options.left + " " + this.options.top + "->" + pageX + " " + pageY);
