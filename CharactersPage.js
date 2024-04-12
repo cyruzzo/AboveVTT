@@ -344,21 +344,21 @@ function init_characters_pages(container = $(document)) {
       if(event.data.msgType == 'setupObserver'){
          observe_character_sheet_changes($(document));
         if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
-          $('.integrated-dice__container').off('click.rpg-roller'); 
+          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
         }else{
           convertToRPGRoller();
         }
 
         window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
         if(window.sendToTab != false || event.data.tab == undefined){
-            window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
+          window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
         }
         if(window.sendToTabRPGRoller != false || event.data.rpgTab == undefined){
           window.sendToTabRPGRoller = (window.self != window.top) ? event.data.iframeTab : event.data.rpgTab;   
         }
       }
       if(event.data.msgType =='removeObserver'){
-        $('.integrated-dice__container').off('click.rpg-roller'); 
+        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTabRPGRoller = undefined;
         setTimeout(function(){
@@ -379,26 +379,26 @@ function init_characters_pages(container = $(document)) {
   }
 }
 
-const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 1500)
+const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
 
 
 const debounceRemoveRPGRoller =  mydebounce(() => {
-    $('.integrated-dice__container').off('click.rpg-roller'); 
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
     delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-}, 1500)
+}, 20)
 
 
 function convertToRPGRoller(){
     if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-      $(`.integrated-dice__container:not('.above-aoe')`).off('click.rpg-roller')
+      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller')
       return;
     }
     let urlSplit = window.location.href.split("/");
-    if(urlSplit.length > 0) {
+    if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
     if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-      $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
             e.stopPropagation();
             e.preventDefault();
             let rollData = {}
@@ -421,7 +421,7 @@ function convertToRPGRoller(){
         })
     }
     else{
-      $(`.integrated-dice__container:not('.above-aoe')`).off('contextmenu.rpg-roller')
+      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
     }
     $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       e.stopImmediatePropagation();
@@ -429,7 +429,7 @@ function convertToRPGRoller(){
       let rollData = {}
 
  
-      rollData = getRollData(this)
+      rollData = getRollData(this);
       
 
       let msgdata = {}
@@ -462,7 +462,6 @@ function convertToRPGRoller(){
       let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
       if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-
         msgdata = {
           player: window.PLAYER_NAME,
           img: window.PLAYER_IMG,
@@ -495,7 +494,6 @@ function convertToRPGRoller(){
           msg: msgdata,
         });
       }
-
     });
 }
 
@@ -702,7 +700,7 @@ function observe_character_sheet_changes(documentToObserve) {
         if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
           debounceConvertToRPGRoller();
         else
-          $('.integrated-dice__container').off('click.rpg-roller');
+          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
         
         mutation.removedNodes.forEach(function(removed_node) {
           if($(removed_node).hasClass("ct-game-log-pane")) {
