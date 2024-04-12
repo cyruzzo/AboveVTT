@@ -1594,9 +1594,7 @@ function init_sheet() {
 
 		if (window.innerWidth < 1200 || !is_player_sheet_open()) {
 			sheet_resize_button.hide();
-		}
-		// we're playing on the character page so return early to prevent an iframe from also loading the character sheet
-		
+		}		
 	}
 
 	let container = $("<div id='sheet'></div>");
@@ -1978,7 +1976,9 @@ function close_player_sheet()
 		window.character_sheet_observer.disconnect();
 		delete window.character_sheet_observer;
 	}
-
+	if(!window.DM){
+			observe_character_sheet_changes($(document));
+	}
 }
 
 /**
