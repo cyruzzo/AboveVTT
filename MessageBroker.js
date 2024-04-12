@@ -261,10 +261,18 @@ class MessageBroker {
 
 
 		if(window.DM && data.data.injected_data?.rollTitle == 'Initiative'){
-			let total = data.data.injected_data?.result;
+			let total = parseFloat(data.data.injected_data?.result);
 			let entityid = data.data.injected_data?.playerId;
 
-			
+			let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
+			if(dexScore){
+				total = parseFloat(total + dexScore/100).toFixed(2);
+			}
+
+			let combatSettingData = getCombatTrackersettings();
+			if(combatSettingData['tie_breaker'] !='1'){
+				total = parseInt(total);
+			}
 			$("#tokens .VTTToken").each(
 				function(){
 					let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
@@ -1123,13 +1131,9 @@ class MessageBroker {
 					if(dexScore){
 						total = parseFloat(total + dexScore/100).toFixed(2);
 					}
-					let combatSettingData
-					if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-						combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-						if(combatSettingData['tie_breaker'] !='1'){
-							total = parseInt(total);
-						}
-					}else{
+		
+					let combatSettingData = getCombatTrackersettings();
+					if(combatSettingData['tie_breaker'] !='1'){
 						total = parseInt(total);
 					}
 					console.log("cerco " + entityid);

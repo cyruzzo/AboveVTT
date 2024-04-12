@@ -52,12 +52,8 @@ class StatHandler {
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + data.stats[1].value/100).toFixed(2);
-				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-					if(combatSettingData['tie_breaker'] !='1'){
-						total = parseInt(total);
-					}
-				}else{
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['tie_breaker'] !='1'){
 					total = parseInt(total);
 				}
 				callback(total);
@@ -70,12 +66,8 @@ class StatHandler {
 			let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? ((modifier*2)+10)/100 : 0
 			console.log(expression + "->" + roll.total);
 			let total = parseFloat(roll.total + decimalAdd).toFixed(2);
-			if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-				let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-				if(combatSettingData['tie_breaker'] !='1'){
-					total = parseInt(total);
-				}
-			}else{
+			let combatSettingData = getCombatTrackersettings();
+			if(combatSettingData['tie_breaker'] !='1'){
 				total = parseInt(total);
 			}
 			callback(total);
@@ -87,12 +79,8 @@ class StatHandler {
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + stat.data.stats[1].value/100).toFixed(2);
-				if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) != null){
-					let combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
-					if(combatSettingData['tie_breaker'] !='1'){
-						total = parseInt(total);
-					}
-				}else{
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['tie_breaker'] !='1'){
 					total = parseInt(total);
 				}
 				callback(total);
