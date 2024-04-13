@@ -161,7 +161,7 @@ function init_mixer() {
                     window.MIXER.updateChannel(id, channel);
                     if(window.MIXER.paused){
                         window.MIXER.togglePaused();
-                        const playPause = $('.mixer-play-pause-button');s
+                        const playPause = $('.mixer-play-pause-button');
                         const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
                         const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
                         pause_svg.css('display', 'block');
