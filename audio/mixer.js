@@ -195,7 +195,7 @@ class Mixer extends EventTarget {
                    url = url.replace('embed?', 'download?')
                 }
                 player = new Audio(url);
-                player.preload = "metadata";
+                player.preload = "none";
                 this._players[id] = player;
             }
             if(player.paused)
@@ -217,13 +217,11 @@ class Mixer extends EventTarget {
                 if(channel.currentTime != undefined && !skipTime){
                     player.currentTime = channel.currentTime;
                 }
-                player.addEventListener("canplaythrough", (event) => {
-                  /* the audio is now playable; play it if permissions allow */
-                    // sync player        
-                    const state = window.MIXER.state();      
-                    if(this._players[id] && !(state.paused || state.channels[id].paused))
-                        player.play();
-                }, { once: true });
+                   
+                const currentState = window.MIXER.state();      
+                if(this._players[id] && !(currentState.paused || currentState.channels[id].paused))
+                    player.play();
+            
                 
             }
         });

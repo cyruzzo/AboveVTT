@@ -388,12 +388,17 @@ function init_trackLibrary() {
             .sort((a, b) => a[1].name.toUpperCase().localeCompare(b[1].name.toUpperCase()))); //sort Track Library alphabetically
         sortedTL.forEach((track, id) => {
             const item = document.createElement("li");
-            item.textContent = track.name;
             item.className = "audio-row";
             item.setAttribute("data-id", id);
             item.setAttribute("data-src", track.src);
-            
-        
+            $(item).append($(`<div class='trackNameOverflow'><div class='track-name'>${track.name}</div></div>`))
+
+
+            let text_calc = $(`<div class='track-name'>${track.name}/span>`);
+            $('body').prepend(text_calc);
+            let nameWidth = $('body').find('div.track-name:first').width();
+            text_calc.remove();
+            $(item).find('.track-name').css("--name-width-overflow", (250 - nameWidth < 0) ? 240 - nameWidth+'px' : 0);
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
