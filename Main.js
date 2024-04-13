@@ -1707,74 +1707,6 @@ function init_player_sheet(pc_sheet, loadWait = 0) {
 	}
 }
 
-/**
- * Observers character sheet for AOE spells.
- * @param {DOMObject} documentToObserve documentToObserve is `$(document)` on the characters page, and `$(event.target).contents()` every where else
- */
-function observe_character_sheet_aoe(documentToObserve) {
-
-	const mutation_target = documentToObserve.get(0);
-	const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-	let container = $("#sheet");
-	if (is_characters_page()) {
-		container = $(".ct-character-sheet__inner");
-	}
-
-	const aoe_observer = new MutationObserver(function() {
-		const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
-		if (icons.length > 0) {
-			icons.wrap(function() {
-				$(this).addClass("above-vtt-visited");
-				const button = $("<button class='above-aoe integrated-dice__container'></button>");
-
-				const spellContainer = $(this).closest('.ct-spells-spell')
-				const name = spellContainer.find(".ddbc-spell-name").first().text()
-				let color = "default"
-				const feet = $(this).prev().find(".ddbc-distance-number__number").first().text()
-				const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
-				if (dmgIcon.length == 1){
-					color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
-				}
-				let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
-				shape = sanitize_aoe_shape(shape)
-				button.attr("title", "Place area of effect token")
-				button.attr("data-shape", shape);
-				button.attr("data-style", color);
-				button.attr("data-size", Math.round(feet / window.CURRENT_SCENE_DATA.fpsq));
-				button.attr("data-name", name);
-
-				// Players need the token side panel for this to work for them.
-				// adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
-				// set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
-				// enable_draggable_token_creation(button);
-				button.css("border-width","1px");
-				button.click(function(e) {
-					e.stopPropagation();
-					// hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
-					if(!window.DM)
-						hide_player_sheet();
-					else
-						close_player_sheet();
-
-					let options = build_aoe_token_options(color, shape, feet / window.CURRENT_SCENE_DATA.fpsq, name)
-					if(name == 'Darkness' || name == 'Maddening Darkness' ){
-						options = {
-							...options,
-							darkness: true
-						}
-					}
-					place_aoe_token_in_centre(options)
-					// place_token_in_center_of_view only works for the DM
-					// place_token_in_center_of_view(options)
-				});
-				return button;
-			});
-			console.log(`${icons.length} aoe spells discovered`);
-		}
-	});
-
-	aoe_observer.observe(mutation_target, mutation_config);
-}
 
 /**
  * Opens the character sheet window.
@@ -1926,8 +1858,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			}
 
 		}
-
-		observe_character_sheet_aoe($(event.target).contents());
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
 

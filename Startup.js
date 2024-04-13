@@ -385,7 +385,6 @@ async function start_above_vtt_for_players() {
   reposition_player_sheet();
   hide_player_sheet();
   $("#loading_overlay").css("z-index", 0); // Allow them to see their character sheets, etc even if the DM isn't online yet
-  observe_character_sheet_aoe($(document));
 
   $(window).off("resize").on("resize", function() {
     if (window.showPanel === undefined) {
