@@ -742,10 +742,9 @@ function observe_character_sheet_changes(documentToObserve) {
             button.click(function(e) {
               e.stopPropagation();
               // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
-              if(!window.DM)
-                window.top.hide_player_sheet();
-              else
-                window.top.close_player_sheet();
+             
+              window.top.hide_player_sheet();
+              window.top.minimize_player_sheet();
 
               let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
               if(name == 'Darkness' || name == 'Maddening Darkness' ){
