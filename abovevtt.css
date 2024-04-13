@@ -9226,6 +9226,10 @@ li.audio-row:hover .channel-progress-bar-total
     outline: none;
 
 }
+#mixer-channels{
+    max-height: 400px;
+    overflow-y: auto;
+}
 #mixer-channels .volume-control{
     left: 0;
     width: calc(40% + 2px)
@@ -9295,7 +9299,8 @@ button.channel-loop-button{
     left: 20px;
 }
 
-.channelNameOverflow {
+.channelNameOverflow,
+.trackNameOverflow {
     width: 100px;
     display: inline-block;
     overflow: hidden;
@@ -9303,11 +9308,16 @@ button.channel-loop-button{
     text-overflow: ellipsis;
     height: 16px;
 }
-.channelNameOverflow:hover .channelName {
+.trackNameOverflow{
+    width: 250px;
+}
+.channelNameOverflow:hover .channelName,
+.trackNameOverflow:hover .track-name {
     margin-left: var(--name-width-overflow);
 }
 
-.channelName{
+.channelName,
+.track-name{
     transition: margin 800ms ease-in 250ms;
     text-overflow: ellipsis;
     display: inline;
