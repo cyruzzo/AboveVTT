@@ -3610,6 +3610,9 @@ function hide_player_sheet() {
 	$("#sheet_resize_button").hide();
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").removeClass("ddbc-tab-options__header-heading--is-active");
 }
+function minimize_player_sheet(){
+	$('#sheet').dblclick()
+}
 
 /**
  * When playing on the characters page, this will toggle the width of the character sheet.
