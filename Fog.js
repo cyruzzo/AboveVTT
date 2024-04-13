@@ -405,7 +405,7 @@ class WaypointManagerClass {
 
 
 		let textSVG = $(`
-			<svg data-player-id='${playerId}' class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width};'>
+			<svg data-player-id='${playerId}' class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width}px;'>
 				<text x="1" y="11">
 					${text}
 				</text>
