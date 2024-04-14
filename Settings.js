@@ -1360,12 +1360,14 @@ function import_readfile() {
 		if (DataFile.tokencustomizations !== undefined) {
 			DataFile.tokencustomizations.forEach(json => {
 				try {
-					let importedCustomization = TokenCustomization.fromJson(json);
-					let existing = customizations.find(tc => tc.tokenType === importedCustomization.tokenType && tc.id === importedCustomization.id);
-					if (existing) {
-						existing.alternativeImages().forEach(img => importedCustomization.addAlternativeImage(img));
-					} else {
-						customizations.push(importedCustomization);
+					if(json != null){
+						let importedCustomization = TokenCustomization.fromJson(json);
+						let existing = customizations.find(tc => tc.tokenType === importedCustomization.tokenType && tc.id === importedCustomization.id);
+						if (existing) {
+							customizations[customizations.indexOf(existing)] = importedCustomization
+						} else {
+							customizations.push(importedCustomization);
+						}
 					}
 				} catch (error) {
 					console.error("Failed to parse TokenCustomization from json", json);

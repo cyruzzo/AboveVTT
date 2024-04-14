@@ -1441,7 +1441,79 @@ function register_token_row_context_menu() {
                     }
                 };
             }
+            if((find_token_customization(rowItem.type, rowItem.id) != undefined || rowItem.isTypeFolder()) && !rowItem.isTypeEncounter() && rowItem.folderType != 'encounter'){
+                menuItems['export'] = {
+                    name: rowItem.isTypeFolder() ? "Export Folder" : "Export Token",
+                    callback: function (itemKey, opt, e) {
+                        let customization_export = function(tokenCustomizations) {
+                            build_import_loading_indicator('Preparing Export File');
+                            let DataFile = {
+                                version: 2,
+                                scenes: [{}],
+                                tokencustomizations: [],
+                                notes: {},
+                                journalchapters: [],
+                                soundpads: {}
+                            };
+                            let currentdate = new Date(); 
+                            let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+                                        
+                            DataFile.tokencustomizations = tokenCustomizations;
 
+                            DataFile.notes = Object.fromEntries(Object.entries(window.JOURNAL.notes).filter(([key, value]) => window.JOURNAL.notes[key].statBlock == true && tokenCustomizations.filter(d => d?.id == key)[0] != undefined));
+                            download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-token.abovevtt`,"text/plain");
+                                
+                            $(".import-loading-indicator").remove();        
+                        }
+                        let exportTokenFolder = function(exportItems, toExport){                        
+                            for(let i = 0; i<exportItems.length; i++){
+                                if(exportItems[i].tokenType == 'folder'){
+                                    let subExportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => d.parentId == exportItems[i].id) 
+                                    exportTokenFolder(subExportItems, toExport);
+                                }
+                                toExport.push(exportItems[i]);
+                            }
+                        };
+
+                        let findAncestor = function(exportItem, found=[]) {           
+                            if(exportItem ==undefined){
+                                return found; 
+                            }
+                            let parent = window.TOKEN_CUSTOMIZATIONS.find(d => exportItem.parentId == d.id);
+                            if (parent) {
+                                found.push(parent);
+                                return findAncestor(parent, found);
+                            } else {
+                                return found;
+                            }
+                        };
+                       
+                        if(rowItem.isTypeFolder()){
+                            let toExport = [];
+                            let exportItems = window.TOKEN_CUSTOMIZATIONS.filter(d => (d.parentId == rowItem.id && d.rootId == "myTokensFolder") || (d.tokenType == rowItem.folderType && rowItem.parentId == "_" && d.rootId != "myTokensFolder"));         
+                            exportTokenFolder(exportItems, toExport);
+                            
+                            let selectedExportItem = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id);
+                            if(selectedExportItem != undefined)
+                                toExport.push(selectedExportItem)
+                            
+                            
+                            
+                            let ancestors = findAncestor(selectedExportItem); 
+                            if(ancestors.length>0)
+                                toExport = toExport.concat(ancestors);
+
+                            customization_export(toExport);
+                        }
+                        else{
+                           let exportItems = window.TOKEN_CUSTOMIZATIONS.find(d => d.id == rowItem.id)
+                           let ancestors = findAncestor(exportItems); 
+                           exportItems = [exportItems].concat(ancestors);
+                           customization_export(exportItems);
+                        }
+                    }
+                };
+            }
             if(rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter()){
                 menuItems["border"] = "---";
 
@@ -1515,10 +1587,10 @@ function create_mytoken_folder_inside(listItem) {
     let newFolder = TokenCustomization.Folder(uuid(), listItem.id, RootFolder.MyTokens.id, { name: newFolderName });
     persist_token_customization(newFolder, function(didSucceed, errorType) {
         if (didSucceed) {
-            did_change_mytokens_items();
-            let newListItem = window.tokenListItems.find(li => li.type === ItemType.Folder && li.id === newFolder.id);
-            display_folder_configure_modal(newListItem);
-            expand_all_folders_up_to_item(newListItem);
+                did_change_mytokens_items();
+                let newListItem = window.tokenListItems.find(li => li.type === ItemType.Folder && li.id === newFolder.id);
+                display_folder_configure_modal(newListItem);
+                expand_all_folders_up_to_item(newListItem);
         } else {
             showError(errorType, "create_mytoken_folder_inside failed to create a new folder");
         }

@@ -359,6 +359,9 @@ class TokenCustomization {
         if (Array.isArray(this.tokenOptions.alternativeImages)) {
             clearedOptions.alternativeImages = [...this.tokenOptions.alternativeImages];
         }
+        if (this.tokenOptions.statBlock !== undefined) {
+            clearedOptions.statBlock = this.tokenOptions.statBlock;
+        }
         this.tokenOptions = clearedOptions;
     }
 
