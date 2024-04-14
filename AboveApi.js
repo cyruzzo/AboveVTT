@@ -122,21 +122,30 @@ class AboveApi {
     // never upload data urls
     const sanitizedScenes = await normalize_scene_urls(scenes);
     console.log(`AboveApi.migrateScenes about to upload`, sanitizedScenes);
-
-    const url = this.#buildUrl("migrate");
-    const config = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(sanitizedScenes)
+    if(JSON.stringify(sanitizedScenes).length > 4000000) {
+      let newScenes1 = sanitizedScenes.slice(0, parseInt(sanitizedScenes.length/2))
+      let newScenes2 = sanitizedScenes.slice(parseInt(sanitizedScenes.length/2), sanitizedScenes.length)
+      await AboveApi.migrateScenes(window.gameId, newScenes1);
+      await AboveApi.migrateScenes(window.gameId, newScenes2);
     }
-    const request = await fetch(url, config);
-    console.log("AboveApi.migrateScenes request", request);
-    const response = await request.text();
-    console.log("AboveApi.migrateScenes response", response);
-    localStorage.setItem(`Migrated${gameId}`, "1");
+    else{
+      const url = this.#buildUrl("migrate");
+      const config = {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sanitizedScenes)
+      }
+
+      const request = await fetch(url, config);
+      console.log("AboveApi.migrateScenes request", request);
+      const response = await request.text();
+      console.log("AboveApi.migrateScenes response", response);
+      localStorage.setItem(`Migrated${gameId}`, "1");
+    }
+    
     return sanitizedScenes;
   }
 

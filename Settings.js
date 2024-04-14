@@ -1214,6 +1214,42 @@ async function export_scenes_folder_context(folderId){
 
 
 }
+async function export_main_scenes_folder_backup(){
+	build_import_loading_indicator('Preparing Export File');  
+
+	let folderId = "scenesFolder"
+	let ids = [];
+	const getIds = function(folderId){
+		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
+
+		for(let scene in scenesInFolder){
+			ids.push(scenesInFolder[scene].id)
+			if(scenesInFolder[scene].itemType != 'scene'){
+				getIds(scenesInFolder[scene].id)
+			}
+		}
+	}
+
+	getIds(folderId);
+	let scenes = []
+		
+	for(let id in ids){
+		let scene = await AboveApi.getScene(ids[id]);
+		let currentSceneData = {
+			...scene.data
+		} 
+		let tokensObject = {}
+		for(let token in scene.data.tokens){
+			let tokenId = scene.data.tokens[token].id;
+			tokensObject[tokenId] = scene.data.tokens[token];		
+		}
+		currentSceneData.tokens = tokensObject;
+		scenes.push(currentSceneData)
+	}
+	
+	return scenes;
+}
+
 
 function export_token_customization() {
 	build_import_loading_indicator('Preparing Export File');
@@ -1288,6 +1324,7 @@ function export_file() {
 	};
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	let firstError = false;
 	AboveApi.exportScenes()
 		.then(scenes => {
 			DataFile.scenes = scenes;
@@ -1299,11 +1336,28 @@ function export_file() {
 			DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
 			download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
 		})
-		.catch(error => {
-			showError(error, "export_scenes failed to fetch from the cloud");
+		.catch(error => {	
+			firstError = true;	//data is probably too large to get from https - fallback on individually grabbing scenes.
+			export_main_scenes_folder_backup()
+			.then(scenes => {
+				DataFile.scenes = scenes;
+				DataFile.tokencustomizations = window.TOKEN_CUSTOMIZATIONS;
+				DataFile.notes = window.JOURNAL.notes;
+				DataFile.journalchapters = window.JOURNAL.chapters;
+				DataFile.soundpads = window.SOUNDPADS;
+				DataFile.mixerstate = window.MIXER.state();
+				DataFile.tracklibrary = Array.from(window.TRACK_LIBRARY.map().entries());
+				download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}.abovevtt`,"text/plain");
+				$(".import-loading-indicator").remove();	
+			})
+			.catch(error2 => {
+				showError(error2, "export_scenes failed to fetch from the cloud");
+			})
 		})
 		.finally(() => {
-			$(".import-loading-indicator").remove();
+			if(!firstError){
+				$(".import-loading-indicator").remove();
+			}	
 		});
 }
 
