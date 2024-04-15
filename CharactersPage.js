@@ -688,6 +688,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     });
 
+
     if(is_abovevtt_page()){
       if($('.dice-rolling-panel').length == 0 && window.diceWarning == undefined){
         showDiceDisabledWarning();

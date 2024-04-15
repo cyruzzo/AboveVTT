@@ -59922,13 +59922,13 @@ var PRESET = {
 	                "feet": "10"
 	            },
 	            "id": "669e4d9b-b8e2-43c4-b81b-29e8bfe42177",
-	            "imgsrc": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+	            "imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/tokens/flame2.gif",
 	            "locked": true,
 	            "light2": {
 	                "color": "rgba(255, 156.649424, 92.61599999999999, 0.5)",
 	                "feet": "10"
 	            },
-	            "image": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+	            "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/tokens/flame2.gif",
 	            "ac": "",
 	            "aura2": {
 	                "color": "rgba(255, 255, 0, 0.1)",
@@ -65443,13 +65443,13 @@ const SCENE_IMPORT_DATA = [
 							"feet": "10"
 						},
 						"id": "669e4d9b-b8e2-43c4-b81b-29e8bfe42177",
-						"imgsrc": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+						"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/tokens/flame2.gif",
 						"locked": true,
 						"light2": {
 							"color": "rgba(255, 156.649424, 92.61599999999999, 0.5)",
 							"feet": "10"
 						},
-						"image": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+						"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/tokens/flame2.gif",
 						"ac": "",
 						"aura2": {
 							"color": "rgba(255, 255, 0, 0.1)",

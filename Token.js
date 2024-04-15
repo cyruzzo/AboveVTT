@@ -2146,8 +2146,9 @@ class Token {
 		        	$('#light_container').append(tokenClone);
 		    }
 
-
-			this.update_opacity(tok, true);
+		    if(!this.options.id.includes('exampleToken')){
+				this.update_opacity(tok, true);
+		    }
 
 			setTokenAuras(tok, this.options);
 			if(!this.options.id.includes('exampleToken')){
