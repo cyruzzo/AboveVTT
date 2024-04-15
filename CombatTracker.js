@@ -617,8 +617,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				</g>
 			</svg></div>
 	`);
-		
-	entry.append($("<td/>").append(window.DM ? img : img, ac));
+	let imageRow = $("<td/>");
+	imageRow.append(img)
+	if(window.DM){
+		imageRow.append(ac)
+	}
+	entry.append(imageRow);
 	let init=$("<input class='init' maxlength=5'>");
 	init.css('-webkit-appearance','none');
 	if(window.DM && typeof(token.options.init) == 'undefined'){
