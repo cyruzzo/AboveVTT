@@ -31,7 +31,7 @@ const builtInTokens = [
   {
     "name": "Flame 2",
     "folderPath": "/Overlays",
-    "image": "https://cutewallpaper.org/21/fire-gif-transparent-background/Fire-PNG-Gif-Transparent-Fire-GifPNG-Images-PlusPNG.gif",
+    "image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/tokens/flame2.gif",
     "disableborder": true,
     "square": true
   },
