@@ -607,7 +607,18 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if (token.options.hidden == true){
 		img.css('opacity','0.5');
 	}
-	entry.append($("<td/>").append(img));
+	let acValue = token.ac;
+	let ac =	$(`
+			<div class='ac'><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="ac_shield" x="0px" y="0px" viewBox="6.991001129150391 0 45.999996185302734 59.981998443603516" xml:space="preserve" height="18px" width="18px">
+				<g xmlns="http://www.w3.org/2000/svg" transform="translate(6 0)">
+					<path d="M51.991,7.982c-14.628,0-21.169-7.566-21.232-7.64c-0.38-0.456-1.156-0.456-1.536,0c-0.064,0.076-6.537,7.64-21.232,7.64   c-0.552,0-1,0.448-1,1v19.085c0,10.433,4.69,20.348,12.546,26.521c3.167,2.489,6.588,4.29,10.169,5.352   c0.093,0.028,0.189,0.042,0.285,0.042s0.191-0.014,0.285-0.042c3.581-1.063,7.002-2.863,10.169-5.352   c7.856-6.174,12.546-16.088,12.546-26.521V8.982C52.991,8.43,52.544,7.982,51.991,7.982z "></path>
+					<path d="M50.991,28.067   c0,9.824-4.404,19.151-11.782,24.949c-2.883,2.266-5.983,3.92-9.218,4.921c-3.235-1-6.335-2.655-9.218-4.921   C13.395,47.219,8.991,37.891,8.991,28.067V9.971c12.242-0.272,18.865-5.497,21-7.545c2.135,2.049,8.758,7.273,21,7.545V28.067z" style="fill:white;"></path>
+					<text style="font-size:34px;color:#000;" transform="translate(${acValue> 9 ? 9 : 20},40)">${acValue}</text>
+				</g>
+			</svg></div>
+	`);
+		
+	entry.append($("<td/>").append(window.DM ? img : img, ac));
 	let init=$("<input class='init' maxlength=5'>");
 	init.css('-webkit-appearance','none');
 	if(window.DM && typeof(token.options.init) == 'undefined'){
