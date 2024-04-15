@@ -1201,6 +1201,11 @@ class Token {
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
 		}
+		if(window.DM){
+			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
+			ct_update_popout();
+		}
+
 		console.groupEnd()
 	}
 

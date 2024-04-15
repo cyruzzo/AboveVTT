@@ -32,7 +32,13 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
-
+table#combat_area .ac{
+    position: absolute;
+    top: 21px;
+    left: 21px;
+    width: 18px;
+    height: 18px;
+}
 button[id^=peerVideo_]{
     height: 27px;
 }
