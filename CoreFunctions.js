@@ -329,6 +329,28 @@ function showErrorMessage(error, ...extraInfo) {
   }
 }
 
+function showDiceDisabledWarning(){
+  window.diceWarning = 1;
+  let container = $("#above-vtt-error-message");
+  let containerHTML = $(`
+      <div id="above-vtt-error-message">
+        <h2>DDB dice roller not detected</h2>
+        <div id="error-message-details">Dice must be enabled on the character sheet for AboveVTT to function properly.</div>
+        <div class="error-message-buttons">
+          <button id="close-error-button">Close</button>
+        </div>
+      </div>
+    `)
+  if (container.length === 0) {
+    container = containerHTML;
+    $(document.body).append(container);
+  }
+  else {
+    container.html(containerHTML);
+  }
+  $("#close-error-button").on("click", removeError);
+}
+
 function showGoogleDriveWarning(){
   let container = $("#above-vtt-error-message");
   let containerHTML = $(`

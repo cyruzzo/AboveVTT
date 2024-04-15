@@ -414,6 +414,9 @@ async function start_above_vtt_for_players() {
     console.error("There isn't a player map! we need to display something!");
     startup_step("Start up complete. Waiting for DM to send us a map");
   }
+  if($('.dice-rolling-panel').length == 0){
+    showDiceDisabledWarning();
+  }
 }
 
 function startup_step(stepDescription) {
