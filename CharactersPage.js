@@ -688,11 +688,14 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     });
 
-    if($('.dice-rolling-panel').length == 0 && window.diceWarning == undefined){
-      showDiceDisabledWarning();
-    }
-    else if($('.dice-rolling-panel').length > 0){
-      delete window.diceWarning;
+
+    if(is_abovevtt_page()){
+      if($('.dice-rolling-panel').length == 0 && window.diceWarning == undefined){
+        showDiceDisabledWarning();
+      }
+      else if($('.dice-rolling-panel').length > 0){
+        delete window.diceWarning;
+      }
     }
 
     // handle updates to element changes that would strip our buttons
