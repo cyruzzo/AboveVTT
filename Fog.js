@@ -1554,7 +1554,7 @@ function redraw_light_walls(clear=true){
 						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
 						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
 						openCloseDoorButton.toggleClass('locked', !locked);
-						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x && parseInt(d[4]) == y && parseInt(d[5]) == width && parseInt(d[6]) == height))  
+						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
 		            
 		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
 		                let data = ['line',
