@@ -9315,7 +9315,7 @@ button.channel-loop-button{
     height: 16px;
 }
 .trackNameOverflow{
-    width: 250px;
+    width: 230px;
 }
 .channelNameOverflow:hover .channelName,
 .trackNameOverflow:hover .track-name {
