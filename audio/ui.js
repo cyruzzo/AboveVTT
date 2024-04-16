@@ -74,10 +74,10 @@ function init_mixer() {
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
             }     
         });
-        let text_calc = $(`<div class='channelName'>Animated Map Audio</span>`);
+        let text_calc = $(`<div class='track-name'>Animated Map Audio.....</div>`);
         $('body').prepend(text_calc);
-        let nameWidth = $('body').find('div.channelName:first').width();
-        text_calc.remove();
+        let nameWidth = text_calc.width();
+
         channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
         Object.entries(channels).forEach(([id, channel]) => {
@@ -95,11 +95,12 @@ function init_mixer() {
             let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>${channel.name}</div></div>`)
             item.setAttribute("data-id", id);
 
-              
-            let text_calc = $(`<div class='channelName'>${channel.name}</span>`);
-            $('body').prepend(text_calc);
-            let nameWidth = $('body').find('div.channelName:first').width();
-            text_calc.remove();
+
+            let text_calc = $('body>div.track-name:first');
+            text_calc.html(`$${channel.name}.....`);
+            let nameWidth = text_calc.width();
+
+
             channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
 
             //item.append(window.MIXER.channelVolumeSlider(id), window.MIXER.channelProgressBar(id));
@@ -392,12 +393,11 @@ function init_trackLibrary() {
             item.setAttribute("data-id", id);
             item.setAttribute("data-src", track.src);
             $(item).append($(`<div class='trackNameOverflow'><div class='track-name'>${track.name}</div></div>`))
-
-
-            let text_calc = $(`<div class='track-name'>${track.name}/span>`);
-            $('body').prepend(text_calc);
-            let nameWidth = $('body').find('div.track-name:first').width();
-            text_calc.remove();
+     
+            let text_calc = $('body>div.track-name:first');
+            text_calc.html(`${track.name}.....`);
+            let nameWidth = text_calc.width();
+            
             $(item).find('.track-name').css("--name-width-overflow", (250 - nameWidth < 0) ? 240 - nameWidth+'px' : 0);
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
