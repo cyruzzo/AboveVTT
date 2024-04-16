@@ -9324,7 +9324,7 @@ button.channel-loop-button{
 
 .channelName,
 .track-name{
-    transition: margin 800ms ease-in 250ms;
+    transition: margin var(--overflow-speed, 800ms) linear 250ms;
     text-overflow: ellipsis;
     display: inline;
 }

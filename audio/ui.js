@@ -74,7 +74,8 @@ function init_mixer() {
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
             }     
         });
-        let text_calc = $(`<div class='track-name'>Animated Map Audio.....</div>`);
+        let text_calc = $('body>div.track-name:first');
+        text_calc.html(`Animated Map Audio.....`)
         $('body').prepend(text_calc);
         let nameWidth = text_calc.width();
 
@@ -101,7 +102,10 @@ function init_mixer() {
             let nameWidth = text_calc.width();
 
 
-            channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
+            channelNameDiv.find(".channelName").css({
+                "--name-width-overflow": (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0,
+                "--overflow-speed": (100 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
+            });
 
             //item.append(window.MIXER.channelVolumeSlider(id), window.MIXER.channelProgressBar(id));
             let remove = $('<button class="channel-remove-button"">X</button>');
@@ -376,7 +380,9 @@ function init_trackLibrary() {
         trackSrc.val([]);
     });
     importTrackFields.append(trackName, trackSrc, okButton, cancelButton);
-
+    if($('body>div.track-name:first').length == 0){
+        $('body').append(`<div class='track-name'/>`)
+    }
     // track list
     const trackList = document.createElement("ul");
     trackList.id = 'track-list';
@@ -398,7 +404,11 @@ function init_trackLibrary() {
             text_calc.html(`${track.name}.....`);
             let nameWidth = text_calc.width();
             
-            $(item).find('.track-name').css("--name-width-overflow", (250 - nameWidth < 0) ? 240 - nameWidth+'px' : 0);
+
+            $(item).find('.track-name').css({
+                "--name-width-overflow": (230 - nameWidth < 0) ? 220 - nameWidth+'px' : 0,
+                "--overflow-speed": (230 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
+            });
             // play button
             let track_play_button = $('<button class="track-play-pause-button"></button>');          
             let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
