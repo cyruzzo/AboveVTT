@@ -592,7 +592,7 @@ class Token {
 
 		self.doing_highlight = true;
 		let selector = "div[data-id='" + this.options.id + "']";
-		let old = $("#tokens").find(selector);
+		let old = $(`#tokens ${selector}, #token_map_items ${selector}`);
 
 
 		let old_op = old.css('opacity');
