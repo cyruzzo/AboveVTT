@@ -465,6 +465,10 @@ class Mixer extends EventTarget {
             throw `Channel ${id} does not exist in mixer`;
         }
         state.channels[id] = channel;
+        if(channel.token != undefined){
+            window.TOKEN_OBJECTS[channel.token].options.audioChannel.volume = channel.volume;
+            window.TOKEN_OBJECTS[channel.token].sync();
+        }
         this._write(state);
     }
 
