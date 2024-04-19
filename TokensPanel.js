@@ -729,7 +729,13 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 const tokenSize = token_size_for_item(draggedItem);
                 const width = Math.round(window.CURRENT_SCENE_DATA.hpps) * tokenSize;
                 const helperWidth = width / (1.0 / window.ZOOM);
-                $(ui.helper).css('width', `${helperWidth}px`);
+                $(ui.helper).css({
+                    'width': `${helperWidth}px`,
+                    'max-width': `${helperWidth}px`,
+                    'max-height': `${helperWidth}px`,
+                    'min-width': `${helperWidth}px`,
+                    'min-height': `${helperWidth}px`
+                });
             }
             $(this).draggable('instance').offset.click = {
                 left: Math.floor(ui.helper.width() / 2),
@@ -1213,6 +1219,7 @@ function token_size_for_item(listItem) {
             }
             return tokenSize;
         case ItemType.Monster:
+        case ItemType.Open5e:
          options = find_token_options_for_list_item(listItem);
             tokenSizeSetting = parseFloat(options.tokenSize);
             if (isNaN(tokenSizeSetting)) {
@@ -1258,11 +1265,6 @@ function alternative_images_for_item(listItem) {
         case ItemType.MyToken:
         case ItemType.PC:
         case ItemType.Monster:
-            customization = find_token_customization(listItem.type, listItem.id);
-            if (customization) {
-                alternativeImages = customization.alternativeImages();
-            }
-            break;
         case ItemType.Open5e:
             customization = find_token_customization(listItem.type, listItem.id);
             if (customization) {
