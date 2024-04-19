@@ -805,7 +805,7 @@ class JournalManager{
 	add_journal_roll_buttons(target, tokenId=undefined){
 		console.group("add_journal_roll_buttons")
 		
-		let pastedButtons = target.find('.avtt-roll-button').add('.integrated-dice__container');
+		let pastedButtons = target.find('.avtt-roll-button').add(target.find('.integrated-dice__container'));
 
 		for(let i=0; i<pastedButtons.length; i++){
 			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
@@ -932,6 +932,11 @@ class JournalManager{
 	}
 
     translateHtmlAndBlocks(target) {
+    	let pastedButtons = target.find('.avtt-roll-button').add(target.find('.integrated-dice__container'));
+
+		for(let i=0; i<pastedButtons.length; i++){
+			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
+		}
     	data = $(target).clone().html();
 
         let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
@@ -1134,7 +1139,7 @@ class JournalManager{
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
-	    
+
 
         $(target).html($newHTML);
     }
