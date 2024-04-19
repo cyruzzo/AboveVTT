@@ -218,9 +218,9 @@ class Mixer extends EventTarget {
                     player.currentTime = channel.currentTime;
                 }
                    
-                const currentState = window.MIXER.state();      
+                const currentState = window.MIXER.state();    
                 if(this._players[id] && !(currentState.paused || currentState.channels[id].paused))
-                    player.play();
+                    this.playaudio(id);
             
                 
             }
@@ -233,6 +233,24 @@ class Mixer extends EventTarget {
                 delete this._players[id];
             }
         });
+    }
+
+    async playaudio(id) {
+      
+      try {
+        await this._players[id].play();
+        $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('playing pressed', true)
+        $(`#mixer-channels .audio-row[data-id='${id}'] svg.play-svg`).css('display', 'none');
+        $(`#mixer-channels .audio-row[data-id='${id}'] svg.pause-svg`).css('display', 'block');
+        $(`#mixer-channels .audio-row[data-id='${id}'] .url-validator`).css('display', 'none');
+        $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('audio-error', false);
+      } catch (err) {
+        $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('playing pressed', false);
+        $(`#mixer-channels .audio-row[data-id='${id}'] svg.play-svg`).css('display', 'block');
+        $(`#mixer-channels .audio-row[data-id='${id}'] svg.pause-svg`).css('display', 'none');
+        $(`#mixer-channels .audio-row[data-id='${id}'] .url-validator`).css('display', 'none');
+        $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('audio-error', true);
+      }
     }
 
     /**

@@ -6787,11 +6787,34 @@ div.ddbc-tab-options--layout-pill>button{
     animation: shake .1s linear;
     animation-iteration-count: 1;
 }
+.sidebar__pane-content .audio-error{
+    animation: audio-shake .1s linear;
+    position:relative;
+    animation-iteration-count: 5;
+    background: #d44 !important;
+}
+.sidebar__pane-content .audio-error:hover:before {
+    content: 'Failed to load track - double check link is valid';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -24px;
+    width: 349px;
+    color: #ddd;
+    font-size: 16px;
+    background: #950000;
+    border-radius: 5px;
+    opacity: 100%;
+    border: 2px solid #000;
+}
 @keyframes shake {
     0% { left: -1px; }
     100% { right: -1px; }
 }
-
+@keyframes audio-shake {
+    0% { left: -1px; }
+    100% { right: -1px; }
+}
 .url-validator {
     position: absolute;
     top: -2px;
@@ -6817,6 +6840,19 @@ div.ddbc-tab-options--layout-pill>button{
     width: 24px;
     height: 24px;
 }
+
+.url-validator.loading.audio {
+    animation: spin 4s infinite linear;
+    background: none;
+    position: absolute;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    left: 1px;
+    top: 1px;
+    transform-origin: center center;
+}
+
 
 .url-validator.loading:before{
     display:none;

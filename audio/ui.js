@@ -130,27 +130,29 @@ function init_mixer() {
             loop.append(loop_svg);
 
             // play/pause button
-            let channel_play_pause = $('<button class="channel-play-pause-button""></button>');
-            let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');
-            let pause_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M14 19V5H18V19ZM6 19V5H10V19Z"/></svg>');
-            
+            let channel_play_pause = $('<button class="channel-play-pause-button"></button>');
+            let play_svg = $('<svg class="play-svg" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');
+            let pause_svg = $('<svg class="pause-svg" xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M14 19V5H18V19ZM6 19V5H10V19Z"/></svg>');
+            let validIcon = $(`<span style='display:none;' title="Loading Track" class="material-icons url-validator loading audio">autorenew</span>`)
+
             channel_play_pause.append(play_svg);
 
             //Activate Swap button when channel.paused
 
             channel_play_pause.append(pause_svg);
+            channel_play_pause.append(validIcon);
             if(channel.paused) {
                 play_svg.css('display', 'block');
                 pause_svg.css('display', 'none');
-                channel_play_pause.toggleClass('playing', false);
-                channel_play_pause.toggleClass('pressed', false);
+                channel_play_pause.toggleClass('playing pressed', false);
             }
-            else {
-                pause_svg.css('display', 'block');
+            else{
                 play_svg.css('display', 'none');
-                channel_play_pause.toggleClass('playing', true);
-                channel_play_pause.toggleClass('pressed', true);
+                pause_svg.css('display', 'none');
+                validIcon.css('display', 'block');
+                channel_play_pause.toggleClass('audio-error', false);
             }
+
                 
             channel_play_pause.append(play_svg);
             channel_play_pause.append(pause_svg);
@@ -159,9 +161,9 @@ function init_mixer() {
                 const channel = window.MIXER.state().channels[id]
                 if(channel.paused) {
                     play_svg.css('display', 'none');
-                    pause_svg.css('display', 'block');
-                    channel_play_pause.toggleClass('playing', true);
-                    channel_play_pause.toggleClass('pressed', true);
+                    pause_svg.css('display', 'none');
+                    validIcon.css('display', 'block');
+
                     channel.paused = false;
                     window.MIXER.updateChannel(id, channel);
                     if(window.MIXER.paused){
