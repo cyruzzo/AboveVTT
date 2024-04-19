@@ -1109,10 +1109,12 @@ function export_current_scene(){
 	delete DataFile.scenes[0].itemType;
 	delete DataFile.scenes[0].map;
 	for(tokenID in window.TOKEN_OBJECTS){
-		for(noteID in window.JOURNAL.notes){
-			if(tokenID == noteID){
-				DataFile.notes[tokenID] = window.JOURNAL.notes[noteID];
-			}
+		let statBlockID = window.TOKEN_OBJECTS[tokenID].options.statBlock
+		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
+			DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+		}
+		if(window.JOURNAL.notes[tokenID] != undefined){
+			DataFile.notes[tokenID] = window.JOURNAL.notes[noteID];
 		}
 	}
 	let currentdate = new Date(); 
@@ -1139,11 +1141,14 @@ async function export_scene_context(sceneId){
 	delete DataFile.scenes[0].itemType;
 	let tokensObject = {}
 	for(let token in scene.data.tokens){
+
 		let tokenId = scene.data.tokens[token].id;
-		for(let noteID in window.JOURNAL.notes){
-			if( tokenId == noteID){
-				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
-			}
+		let statBlockID = scene.data.tokens[token].statBlock
+		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
+			DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+		}
+		if(window.JOURNAL.notes[tokenId] != undefined){
+			DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
 		}
 		tokensObject[tokenId] = scene.data.tokens[token];		
 	}
@@ -1191,10 +1196,12 @@ async function export_scenes_folder_context(folderId){
 		let tokensObject = {}
 		for(let token in scene.data.tokens){
 			let tokenId = scene.data.tokens[token].id;
-			for(let noteID in window.JOURNAL.notes){
-				if( tokenId == noteID){
-					DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
-				}
+			let statBlockID = scene.data.tokens[token].statBlock
+			if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
+				DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+			}
+			if(window.JOURNAL.notes[tokenId] != undefined){
+				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
 			}
 			tokensObject[tokenId] = scene.data.tokens[token];		
 		}
