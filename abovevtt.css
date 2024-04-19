@@ -7733,7 +7733,11 @@ button.journal-view-button.journal-button {
         column-count: 2
     }
 }
-
+.note-text .one-column-stat,
+.custom-stat-block .one-column-stat {
+    -webkit-column-count:1;
+    column-count: 1;
+}
 .custom-stat-block .Basic-Text-Frame-2 {
     border: 1px solid #d4d0ce;
     background: white;

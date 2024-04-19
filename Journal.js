@@ -830,16 +830,20 @@ class JournalManager{
 		// to account for all the nuances of DNDB dice notation.
 		// numbers can be swapped for any number in the following comment
 		// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-		const damageRollRegex = /([(\s>])(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([)\s<,])/gi
+		const damageRollRegexBracket = /(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
+		const damageRollRegex = /([:\s>])(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([:\s<,])/gi
 		// matches " +1 " or " + 1 "
-		const hitRollRegex = /(?<![0-9]+d[0-9]+)([(\s>])([+-]\s?[0-9]+)([)\s<,])/gi
+		const hitRollRegexBracket = /(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
+		const hitRollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])/gi
 		const dRollRegex = /\s(\s?d[0-9]+)\s/gi
 		const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</gi
 		const rechargeRegEx = /(Recharge [0-6]?\s?[–-]?\s?[0-6])/gi
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
+			.replaceAll(damageRollRegexBracket, `<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1$2$5</button>`)
 			.replaceAll(damageRollRegex, `$1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$5`)
+			.replaceAll(hitRollRegexBracket, `<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1$2$3</button>`)
 			.replaceAll(hitRollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`)
 			.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
 			.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
@@ -1249,7 +1253,8 @@ class JournalManager{
 			      { title: 'Rules Text', block: 'div', wrapper: true, classes: 'rules-text' },
 			      { title: 'Ripped Paper', block: 'div', wrapper: true, classes: 'block-torn-paper' },
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
-			      { title: 'Stat Block Paper', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
+			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
+			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			    ] },
 			    { title: 'Custom Statblock Stats', items: [
@@ -1337,8 +1342,12 @@ class JournalManager{
 				        -webkit-column-count:2;
 				        column-count: 2
 				    }
-				}
 
+				}
+				.one-column-stat {
+					-webkit-column-count:1;
+					column-count: 1;
+				}
 				.Basic-Text-Frame-2 {
 				    border: 1px solid #d4d0ce;
 				    background: white;
