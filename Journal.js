@@ -48,19 +48,40 @@ class JournalManager{
 	
 	sync(){
 		let self=this;
+
 		if(window.DM){
 			window.MB.sendMessage('custom/myVTT/JournalChapters',{
 				chapters: self.chapters
-				});
-			
+			});
+			let sendNotes = [];
 			for(let i in self.notes){
-				if(self.notes[i].player)
-					window.MB.sendMessage('custom/myVTT/note',{
-						id: i,
-						note:self.notes[i]
-					});
+				if(self.notes[i].player){
+					self.notes[i].id = i;
+					sendNotes.push(self.notes[i])
+				}
 			}
+
+			self.sendNotes(sendNotes)
+			
 		}
+	}
+
+	sendNotes(sendNotes){
+
+		let self=this;
+		if(JSON.stringify(sendNotes).length > 128000) {
+			let sendNotes1 = sendNotes.slice(0, parseInt(sendNotes.length/2))
+      		let sendNotes2 = sendNotes.slice(parseInt(sendNotes.length/2), sendNotes.length)
+      		self.sendNotes(sendNotes1);
+      		self.sendNotes(sendNotes2);
+		}
+		else{
+			window.MB.sendMessage('custom/myVTT/notesSync',{
+				notes: sendNotes
+			});
+		}
+
+
 	}
 	
 	build_journal(){

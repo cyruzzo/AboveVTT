@@ -707,6 +707,20 @@ class MessageBroker {
 					
 				}
 			}
+			if(msg.eventType=="custom/myVTT/notesSync"){
+				if(!window.DM){
+
+					for(let i in msg.data.notes){
+						let noteId = msg.data.notes[i].id;
+						window.JOURNAL.notes[noteId] = msg.data.notes[i];
+						delete window.JOURNAL.notes[noteId].id;
+						if(msg.data.notes[i].id in window.TOKEN_OBJECTS){
+							window.TOKEN_OBJECTS[msg.data.id].place();	
+						}	
+					}			
+					window.JOURNAL.build_journal();				
+				}
+			}
 			if(msg.eventType=="custom/myVTT/DMAvatar"){
 				dmAvatarUrl = msg.data.avatar;
 				$(`.player-card[data-player-id=''] .player-token img`).attr('src', dmAvatarUrl);
@@ -1758,8 +1772,6 @@ class MessageBroker {
               window.MB.sendMessage("custom/myVTT/changeyoutube",data);
           }
 			}
-			// also sync the journal
-			window.JOURNAL?.sync();
 			window.MB.sendMessage("custom/myVTT/DMAvatar", {
 				avatar: dmAvatarUrl
 			})
