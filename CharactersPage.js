@@ -703,12 +703,20 @@ function observe_character_sheet_changes(documentToObserve) {
       try {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
-
-       
-        if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
-          debounceConvertToRPGRoller();
-        else
-          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
+         mutation.addedNodes.forEach(function(added_node){
+          if($(added_node).hasClass('integrated-dice__container')){
+            if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
+              debounceConvertToRPGRoller();
+            else
+              $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');           
+          }
+        })
+        if(mutationTarget[0].nodeName == 'BUTTON' && mutationTarget.attr('name') == 'rpgRoller'){
+          if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
+            debounceConvertToRPGRoller();
+          else
+            $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
+        }
         
         mutation.removedNodes.forEach(function(removed_node) {
           if($(removed_node).hasClass("ct-game-log-pane")) {
@@ -797,7 +805,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
           }
             
-          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default')) {
+          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane')) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
