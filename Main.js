@@ -691,7 +691,7 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		// This only happens when `is_character_page() == true` and the user clicked the gamelog tab.
 		// This is an important distinction, because we switch to the gamelog tab when the user clicks info on their character sheet that causes details to be displayed instead of the gamelog.
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
-		$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click()
+		$("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
 	}
 
 }
@@ -1596,81 +1596,82 @@ function init_sheet() {
 			sheet_resize_button.hide();
 		}		
 	}
-
-	let container = $("<div id='sheet'></div>");
-	let iframe = $("<iframe src=''></iframe>")
-	container.append(iframe);
-
-	var buttonleft = 0;
-	var buttonprev = 0;
-
-	const player_close_title_button=$('<div id="player_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
-	container.append(player_close_title_button);
-	player_close_title_button.click(function() {
-		close_player_sheet();
-	});
-
-	var reload_button = $('<div id="reload_player_frame_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>)');
-
-
-	reload_button.click(function() {
-		let iframe = $("#sheet").find("iframe");
-		let currentSrc = iframe.attr('src');
-		iframe.attr('src', currentSrc);
-	});
-	container.append(reload_button);
-
-	$("#site").append(container);
-
-
-	/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
-	$("#sheet").addClass("moveableWindow");
-	if(!$("#sheet").hasClass("minimized")){
-		$("#sheet").addClass("restored");
-	}
-	$("#sheet").resizable({
-		addClasses: false,
-		handles: "all",
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		},
-		minWidth: 200,
-		minHeight: 200
-	});
-
-	$("#sheet").mousedown(function(){
-		frame_z_index_when_click($(this));
-	});
-	$("#sheet").draggable({
-		addClasses: false,
-		scroll: false,
-		containment: "#windowContainment",
-		start: function () {
-			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-		},
-		stop: function () {
-			$('.iframeResizeCover').remove();
-		}
-	});
-	minimize_player_window_double_click($("#sheet"));
-
-	if (!window.DM) {
-
-		sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
-		sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
-		sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
-
-		$(".avtt-sidebar-controls").append(sheet_button);
-
-		sheet_button.click(function(e) {
-			toggle_player_sheet();
+	if($("#sheet").length == 0){
+		let container = $("<div id='sheet'></div>");
+		let iframe = $("<iframe src=''></iframe>")
+		container.append(iframe);
+	
+		var buttonleft = 0;
+		var buttonprev = 0;
+	
+		const player_close_title_button=$('<div id="player_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
+		container.append(player_close_title_button);
+		player_close_title_button.click(function() {
+			close_player_sheet();
 		});
+	
+		var reload_button = $('<div id="reload_player_frame_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>)');
+	
+	
+		reload_button.click(function() {
+			let iframe = $("#sheet").find("iframe");
+			let currentSrc = iframe.attr('src');
+			iframe.attr('src', currentSrc);
+		});
+		container.append(reload_button);
+	
+		$("#site").append(container);
+	
+	
+		/*Set draggable and resizeable on player sheets. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
+		$("#sheet").addClass("moveableWindow");
+		if(!$("#sheet").hasClass("minimized")){
+			$("#sheet").addClass("restored");
+		}
+		$("#sheet").resizable({
+			addClasses: false,
+			handles: "all",
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			},
+			minWidth: 200,
+			minHeight: 200
+		});
+	
+		$("#sheet").mousedown(function(){
+			frame_z_index_when_click($(this));
+		});
+		$("#sheet").draggable({
+			addClasses: false,
+			scroll: false,
+			containment: "#windowContainment",
+			start: function () {
+				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+			},
+			stop: function () {
+				$('.iframeResizeCover').remove();
+			}
+		});
+		minimize_player_window_double_click($("#sheet"));
+	
+		if (!window.DM) {
+	
+			sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
+			sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
+			sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
+	
+			$(".avtt-sidebar-controls").append(sheet_button);
+	
+			sheet_button.click(function(e) {
+				toggle_player_sheet();
+			});
+		}
 	}
 }
 
@@ -1979,7 +1980,7 @@ function init_character_page_sidebar() {
 	}
 
 	// Open the gamelog, and lock it open
-	$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click()
+	$("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
 	$(".ct-sidebar__control--unlock").click();
 
 	$("#site-main").css({"display": "block", "visibility": "hidden"});
@@ -2056,7 +2057,7 @@ function init_character_page_sidebar() {
  */
 function monitor_character_sidebar_changes() {
 
-	$("div.ct-character-header__group--game-log[aria-roledescription='Game Log']").click(function(event) {
+	$("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click(function(event) {
 		if (event.originalEvent !== undefined) {
 			// the user actually clicked the button. Make sure we switch tabs
 			$("#switch_gamelog").click();

@@ -231,6 +231,7 @@ class MessageBroker {
 
 	/// this will find all pending messages and reprocess them if needed. This is necessary on the characters page because DDB removes/injects the gamelog frequently. Any time they inject it, this gets called
 	reprocess_chat_message_history() {
+
 		for (let i = 0; i < window.MB.chat_message_history.length; i++) {
 			window.MB.chat_pending_messages.push(window.MB.chat_message_history[i]);
 		}
