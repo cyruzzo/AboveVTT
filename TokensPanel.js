@@ -1204,14 +1204,33 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
             
             if(options.customStat == undefined){
-                options.customStat = {}
+                options.customStat = {
+                    '0': {
+                        mod: '+0'
+                    },
+                    '1': {
+                        mod: '+0'
+                    },
+                    '2': {
+                        mod: '+0'
+                    },
+                    '3': {
+                        mod: '+0'
+                    },
+                    '4': {
+                        mod: '+0'
+                    },
+                    '5': {
+                        mod: '+0'
+                    }
+                }
             }
-            options.customStat[0]['save'] = (matchStrSave.value != undefined) ? matchStrSave.value[1] : (options.customStat[0]['mod'] != undefined) ? options.customStat[0]['mod'] : '+0';
-            options.customStat[1]['save'] = (matchDexSave.value != undefined) ? matchDexSave.value[1] : (options.customStat[1]['mod'] != undefined) ? options.customStat[1]['mod'] : '+0';
-            options.customStat[2]['save'] = (matchConSave.value != undefined) ? matchConSave.value[1] : (options.customStat[2]['mod'] != undefined) ? options.customStat[2]['mod'] : '+0';
-            options.customStat[3]['save'] = (matchIntSave.value != undefined) ? matchIntSave.value[1] : (options.customStat[3]['mod'] != undefined) ? options.customStat[3]['mod'] : '+0';
-            options.customStat[4]['save'] = (matchWisSave.value != undefined) ? matchWisSave.value[1] : (options.customStat[4]['mod'] != undefined) ? options.customStat[4]['mod'] : '+0';
-            options.customStat[5]['save'] = (matchChaSave.value != undefined) ? matchChaSave.value[1] : (options.customStat[5]['mod'] != undefined) ? options.customStat[5]['mod'] : '+0';
+            options.customStat[0]['save'] = (matchStrSave.value != undefined) ? matchStrSave.value[1] : options.customStat[0]['mod'];
+            options.customStat[1]['save'] = (matchDexSave.value != undefined) ? matchDexSave.value[1] : options.customStat[1]['mod'];
+            options.customStat[2]['save'] = (matchConSave.value != undefined) ? matchConSave.value[1] : options.customStat[2]['mod'];
+            options.customStat[3]['save'] = (matchIntSave.value != undefined) ? matchIntSave.value[1] : options.customStat[3]['mod'];
+            options.customStat[4]['save'] = (matchWisSave.value != undefined) ? matchWisSave.value[1] : options.customStat[4]['mod'];
+            options.customStat[5]['save'] = (matchChaSave.value != undefined) ? matchChaSave.value[1] : options.customStat[5]['mod'];
         }
 
         let newAC = $(statText).find('.custom-ac.custom-stat').text();
