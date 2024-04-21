@@ -467,7 +467,7 @@ class DiceRoller {
             if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
                 ddbMessage.data.context.avatarUrl = dmAvatarUrl
             }
-            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId) && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
             }
             this.ddbDispatch(ddbMessage);
