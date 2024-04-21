@@ -1236,12 +1236,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let newAC = $(statText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = statText.matchAll(/Armor Class[\s<:&]\D+\b([0-9]+)\b/gi).next()
+            let match = statText.matchAll(/Armor Class[\s<:&][\s\S]+?\b([0-9]+)\b/gi).next()
             if(match.value != undefined){
                 newAC = match.value[1] 
             }
             else{
-                match = statText.matchAll(/[Aa][Cc][\s<:&]\D+\b([0-9]+)\b/gi).next()
+                match = statText.matchAll(/[Aa][Cc][\s<:&][\s\S]+?\b([0-9]+)\b/gi).next()
                 if(match.value != undefined){
                     newAC = match.value[1] 
                 }
