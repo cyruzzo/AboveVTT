@@ -153,6 +153,21 @@ body > button:hover,
     background-image: none;
     background: #e6e6e6;
 }
+[class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex'] {
+    padding: 8px 10px;
+    color: rgb(92, 112, 128);
+    background: rgb(245, 248, 250);
+    border: 1px solid rgb(206, 217, 224);
+    border-radius: 0.75rem 0.75rem 0.75rem 0px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    flex-direction: row;
+    -webkit-box-pack: center;
+    justify-content: center;
+}
 
 .custom-gamelog-message {
     width: 100%;

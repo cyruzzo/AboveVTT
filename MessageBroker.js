@@ -376,7 +376,7 @@ class MessageBroker {
 
 						}
 					});
-					if(!found){
+					if(!found && $('.ct-game-log-pane').length>0){
 						console.warn(`couldn't find a message matching ${JSON.stringify(current)}`);
 						// It's possible that we could lose messages due to this not being here, but
 						// if we push the message here, we can end up in an infinite loop.
@@ -1129,7 +1129,10 @@ class MessageBroker {
 							target = $(listItems[i]);
 							break;
 						}
-						target.toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
+						if(target != undefined){
+							target.toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
+						}
+						
 					}, 100)
 				}
 
