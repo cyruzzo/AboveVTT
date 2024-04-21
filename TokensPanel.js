@@ -1108,25 +1108,25 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
 
         if(averageHP == ''){
-            let match = statText.matchAll(/Hit Points[\s<:&]\D+\b([0-9]+)\b/g).next()
+            let match = statText.matchAll(/Hit Points[\s<:&][\s\S]+?\b([0-9]+)\b/g).next()
             if(match.value != undefined){
                 averageHP = match.value[1] 
             }
             else{
-                match = statText.matchAll(/[Hh][Pp][\s<:&]\D+\b([0-9]+)\b/g).next()
+                match = statText.matchAll(/[Hh][Pp][\s<:&][\s\S]+?\b([0-9]+)\b/g).next()
                 if(match.value != undefined){
                     averageHP = match.value[1] 
                 }
             }
         }
         if(hitDiceData == ''){
-            const hpRollRegex = /Hit Points.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi
+            const hpRollRegex = /Hit Points[\s<:&][\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi
             let match = statText.matchAll(hpRollRegex).next()
             if(match.value != undefined){
                 hitDiceData = match.value[1] 
             }
             else{
-                match = statText.matchAll(/hp.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi).next()
+                match = statText.matchAll(/hp[\s<:&][\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi).next()
                 if(match.value != undefined){
                     hitDiceData = match.value[1] 
                 }
