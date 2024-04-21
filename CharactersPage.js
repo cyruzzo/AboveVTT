@@ -797,7 +797,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
           }
             
-          if (mutationTarget.find(".ct-game-log-pane").length>0) {
+          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default')) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
