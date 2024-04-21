@@ -1149,7 +1149,7 @@ class JournalManager{
                 return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
-      
+
  
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
