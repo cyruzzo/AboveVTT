@@ -60,10 +60,10 @@ class StatHandler {
 			}, open5eSlug);
 		}
 		else if(monsterid =='customStat'){
-			let modifier = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit) : window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customStat[1]?.mod) : 0;
+			let modifier = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit) : (window.TOKEN_OBJECTS[tokenId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customStat[1].mod) : 0;
 			let expression = (!isNaN(modifier)) ? "1d20+" + modifier : '0';
 			let roll = new rpgDiceRoller.DiceRoll(expression);
-			let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined || window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined) ? ((modifier*2)+10)/100 : 0
+			let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[tokenId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined)) ? ((modifier*2)+10)/100 : 0
 			console.log(expression + "->" + roll.total);
 			let total = parseFloat(roll.total + decimalAdd).toFixed(2);
 			let combatSettingData = getCombatTrackersettings();
