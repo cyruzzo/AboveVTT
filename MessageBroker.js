@@ -443,7 +443,7 @@ class MessageBroker {
 			if(msg.sender){ // THIS MESSAGE CONTAINS DATA FOR TELEMEMTRY (from AboveWS)
 				if(msg.sender==self.mysenderid){
 					self.stats.reflected++;
-					console.error("WARNING. WE RECEIVED BACK OUR OWN MESSAGE");
+					console.warn("WARNING. WE RECEIVED BACK OUR OWN MESSAGE - IGNORING");
 					return;
 				}
 
@@ -1871,7 +1871,7 @@ class MessageBroker {
 			data: data,
 		}
 
-			message.cloud=1;
+		message.cloud=1;
 
 		if(!["custom/myVTT/switch_scene","custom/myVTT/update_scene"].includes(eventType))
 			message.sequence=this.above_sequence++;

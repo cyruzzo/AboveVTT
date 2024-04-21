@@ -2755,14 +2755,7 @@ function init_buttons() {
 
 	$(".GameLogHeader_Container__36cXS").hide();
 
-	// STREAMING STUFF
 
-	window.STREAMPEERS = {};
-	window.MYSTREAMID = uuid();
-	window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
-	if(window.EXPERIMENTAL_SETTINGS['streamDiceRolls']){
-		enable_dice_streaming_feature(window.JOINTHEDICESTREAM );
-	}
 	
 
 	init_keypress_handler();
