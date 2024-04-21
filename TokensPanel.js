@@ -1120,13 +1120,13 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
         }
         if(hitDiceData == ''){
-            const hpRollRegex = /Hit Points.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/g
+            const hpRollRegex = /Hit Points.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi
             let match = statText.matchAll(hpRollRegex).next()
             if(match.value != undefined){
                 hitDiceData = match.value[1] 
             }
             else{
-                match = statText.matchAll(/[Hh][Pp].*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/g).next()
+                match = statText.matchAll(/hp.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi).next()
                 if(match.value != undefined){
                     hitDiceData = match.value[1] 
                 }
@@ -1135,7 +1135,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
          switch (options['defaultmaxhptype']) {
             case 'max':
                 if(hitDiceData != ''){
-                    const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/g
+                    const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/gi
                     const regexMatch = hitDiceData.matchAll(regex).next();
                     hpVal = regexMatch.value[1] * regexMatch.value[2] + parseInt(`${regexMatch.value[3]}${regexMatch.value[4]}`); 
                 }
@@ -1163,16 +1163,66 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         if(newInit){
             options.customInit = newInit
         }
+        if(options.customStat == undefined){
+            let match = statText.matchAll(/STR[<\s][\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)/gi).next()
+            if(match.value != undefined){
+                const str = match.value[1] != undefined ? match.value[1] : '+0'
+                const dex = match.value[2] != undefined ? match.value[2] : '+0'
+                const con = match.value[3] != undefined ? match.value[3] : '+0'
+                const int = match.value[4] != undefined ? match.value[4] : '+0'
+                const wis = match.value[5] != undefined ? match.value[5] : '+0'
+                const cha = match.value[6] != undefined ? match.value[6] : '+0'
+
+                options.customStat ={
+                    '0': {
+                        mod: str
+                    },
+                    '1': {
+                        mod: dex
+                    },
+                    '2': {
+                        mod: con
+                    },
+                    '3': {
+                        mod: int
+                    },
+                    '4': {
+                        mod: wis
+                    },
+                    '5': {
+                        mod: cha
+                    }
+                }
+            }
+
+            let matchStrSave = statText.matchAll(/Saving Throw[\s\S]+?str[\s]+([+-][0-9]+)?/gi).next()
+            let matchDexSave = statText.matchAll(/Saving Throw[\s\S]+?dex[\s]+([+-][0-9]+)?/gi).next()
+            let matchConSave = statText.matchAll(/Saving Throw[\s\S]+?con[\s]+([+-][0-9]+)?/gi).next()
+            let matchIntSave = statText.matchAll(/Saving Throw[\s\S]+?int[\s]+([+-][0-9]+)?/gi).next()
+            let matchWisSave = statText.matchAll(/Saving Throw[\s\S]+?wis[\s]+([+-][0-9]+)?/gi).next()
+            let matchChaSave = statText.matchAll(/Saving Throw[\s\S]+?cha[\s]+([+-][0-9]+)?/gi).next()
+
+            
+            if(options.customStat == undefined){
+                options.customStat = {}
+            }
+            options.customStat[0]['save'] = (matchStrSave.value != undefined) ? matchStrSave.value[1] : (options.customStat[0]['mod'] != undefined) ? options.customStat[0]['mod'] : '+0';
+            options.customStat[1]['save'] = (matchDexSave.value != undefined) ? matchDexSave.value[1] : (options.customStat[1]['mod'] != undefined) ? options.customStat[1]['mod'] : '+0';
+            options.customStat[2]['save'] = (matchConSave.value != undefined) ? matchConSave.value[1] : (options.customStat[2]['mod'] != undefined) ? options.customStat[2]['mod'] : '+0';
+            options.customStat[3]['save'] = (matchIntSave.value != undefined) ? matchIntSave.value[1] : (options.customStat[3]['mod'] != undefined) ? options.customStat[3]['mod'] : '+0';
+            options.customStat[4]['save'] = (matchWisSave.value != undefined) ? matchWisSave.value[1] : (options.customStat[4]['mod'] != undefined) ? options.customStat[4]['mod'] : '+0';
+            options.customStat[5]['save'] = (matchChaSave.value != undefined) ? matchChaSave.value[1] : (options.customStat[5]['mod'] != undefined) ? options.customStat[5]['mod'] : '+0';
+        }
 
         let newAC = $(statText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = statText.matchAll(/Armor Class[\s<:&]\D+\b([0-9]+)\b/g).next()
+            let match = statText.matchAll(/Armor Class[\s<:&]\D+\b([0-9]+)\b/gi).next()
             if(match.value != undefined){
                 newAC = match.value[1] 
             }
             else{
-                match = statText.matchAll(/[Aa][Cc][\s<:&]\D+\b([0-9]+)\b/g).next()
+                match = statText.matchAll(/[Aa][Cc][\s<:&]\D+\b([0-9]+)\b/gi).next()
                 if(match.value != undefined){
                     newAC = match.value[1] 
                 }
