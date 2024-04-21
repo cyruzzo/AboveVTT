@@ -3614,7 +3614,9 @@ function qrm_fetch_stat(token) {
 		//if its an custom token, give no bonus. But still allow a roll (if it has stats) 
 		//if has stats
 		save_dropdown_value = parseInt($('#qrm_save_dropdown').val());
-		roll_bonus = token.options.customStat[save_dropdown_value]['save']
+		if(token.options.customStat != undefined){
+			roll_bonus = token.options.customStat[save_dropdown_value]['save']
+		}
 		if(roll_bonus == undefined){
 			roll_bonus = "+"+0;	
 		}
