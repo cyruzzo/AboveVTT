@@ -805,7 +805,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
           }
             
-          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default')) {
+          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane')) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
