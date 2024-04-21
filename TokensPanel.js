@@ -1195,12 +1195,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 }
             }
 
-            let matchStrSave = statText.matchAll(/Saving Throw[\s\S]+?str[\s]+([+-][0-9]+)?/gi).next()
-            let matchDexSave = statText.matchAll(/Saving Throw[\s\S]+?dex[\s]+([+-][0-9]+)?/gi).next()
-            let matchConSave = statText.matchAll(/Saving Throw[\s\S]+?con[\s]+([+-][0-9]+)?/gi).next()
-            let matchIntSave = statText.matchAll(/Saving Throw[\s\S]+?int[\s]+([+-][0-9]+)?/gi).next()
-            let matchWisSave = statText.matchAll(/Saving Throw[\s\S]+?wis[\s]+([+-][0-9]+)?/gi).next()
-            let matchChaSave = statText.matchAll(/Saving Throw[\s\S]+?cha[\s]+([+-][0-9]+)?/gi).next()
+            let matchStrSave = statText.matchAll(/Saving Throw[\s\S]+?str[\s]?([+-][0-9]+)?/gi).next()
+            let matchDexSave = statText.matchAll(/Saving Throw[\s\S]+?dex[\s]?([+-][0-9]+)?/gi).next()
+            let matchConSave = statText.matchAll(/Saving Throw[\s\S]+?con[\s]?([+-][0-9]+)?/gi).next()
+            let matchIntSave = statText.matchAll(/Saving Throw[\s\S]+?int[\s]?([+-][0-9]+)?/gi).next()
+            let matchWisSave = statText.matchAll(/Saving Throw[\s\S]+?wis[\s]?([+-][0-9]+)?/gi).next()
+            let matchChaSave = statText.matchAll(/Saving Throw[\s\S]+?cha[\s]?([+-][0-9]+)?/gi).next()
 
             
             if(options.customStat == undefined){
@@ -1225,12 +1225,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     }
                 }
             }
-            options.customStat[0]['save'] = (matchStrSave.value != undefined) ? matchStrSave.value[1] : options.customStat[0]['mod'];
-            options.customStat[1]['save'] = (matchDexSave.value != undefined) ? matchDexSave.value[1] : options.customStat[1]['mod'];
-            options.customStat[2]['save'] = (matchConSave.value != undefined) ? matchConSave.value[1] : options.customStat[2]['mod'];
-            options.customStat[3]['save'] = (matchIntSave.value != undefined) ? matchIntSave.value[1] : options.customStat[3]['mod'];
-            options.customStat[4]['save'] = (matchWisSave.value != undefined) ? matchWisSave.value[1] : options.customStat[4]['mod'];
-            options.customStat[5]['save'] = (matchChaSave.value != undefined) ? matchChaSave.value[1] : options.customStat[5]['mod'];
+            options.customStat[0]['save'] = (matchStrSave.value && matchStrSave.value[1] != undefined) ? matchStrSave.value[1] : options.customStat[0]['mod'];
+            options.customStat[1]['save'] = (matchDexSave.value && matchDexSave.value[1] != undefined) ? matchDexSave.value[1] : options.customStat[1]['mod'];
+            options.customStat[2]['save'] = (matchConSave.value && matchConSave.value[1] != undefined) ? matchConSave.value[1] : options.customStat[2]['mod'];
+            options.customStat[3]['save'] = (matchIntSave.value && matchIntSave.value[1] != undefined) ? matchIntSave.value[1] : options.customStat[3]['mod'];
+            options.customStat[4]['save'] = (matchWisSave.value && matchWisSave.value[1] != undefined) ? matchWisSave.value[1] : options.customStat[4]['mod'];
+            options.customStat[5]['save'] = (matchChaSave.value && matchChaSave.value[1] != undefined) ? matchChaSave.value[1] : options.customStat[5]['mod'];
         }
 
         let newAC = $(statText).find('.custom-ac.custom-stat').text();
