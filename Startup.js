@@ -67,6 +67,14 @@ $(function() {
           $(`[class*='listItemTextRoot']:contains('${lastSendToDefault}')`).click();
         }
         $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
+          // STREAMING STUFF
+
+        window.STREAMPEERS = {};
+        window.MYSTREAMID = uuid();
+        window.JOINTHEDICESTREAM = window.EXPERIMENTAL_SETTINGS['streamDiceRolls'];
+        if(window.EXPERIMENTAL_SETTINGS['streamDiceRolls']){
+          enable_dice_streaming_feature(window.JOINTHEDICESTREAM );
+        }
         tabCommunicationChannel.addEventListener ('message', (event) => {
           if(event.data.msgType == 'CharacterData' && !find_pc_by_player_id(event.data.characterId, false))
             return;

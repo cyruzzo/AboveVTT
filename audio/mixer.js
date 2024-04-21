@@ -262,6 +262,9 @@ class Mixer extends EventTarget {
         if(!setPlaylist && window.DM){
             let selectedPlaylistID = this.selectedPlaylist();
             if(selectedPlaylistID != undefined){
+                if(state.playlists[selectedPlaylistID] == undefined){
+                    state.playlists[selectedPlaylistID] = {};
+                }
                 state.playlists[selectedPlaylistID].channels = state.channels;
                 state.playlists[selectedPlaylistID].volume = state.volume;
                 state.playlists[selectedPlaylistID].paused = state.paused;
