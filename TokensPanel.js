@@ -1104,8 +1104,34 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     if(options.statBlock){
         const statText = window.JOURNAL.notes[options.statBlock].text
-        const hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
-        const averageHP = $(statText).find('.custom-avghp.custom-stat').text();
+        let hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
+        let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
+
+        if(averageHP == ''){
+            let match = statText.matchAll(/Hit Points[\s<:&]\D+\b([0-9]+)\b/g).next()
+            if(match.value != undefined){
+                averageHP = match.value[1] 
+            }
+            else{
+                match = statText.matchAll(/[Hh][Pp][\s<:&]\D+\b([0-9]+)\b/g).next()
+                if(match.value != undefined){
+                    averageHP = match.value[1] 
+                }
+            }
+        }
+        if(hitDiceData == ''){
+            const hpRollRegex = /Hit Points.*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/g
+            let match = statText.matchAll(hpRollRegex).next()
+            if(match.value != undefined){
+                hitDiceData = match.value[1] 
+            }
+            else{
+                match = statText.matchAll(/[Hh][Pp].*\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/g).next()
+                if(match.value != undefined){
+                    hitDiceData = match.value[1] 
+                }
+            }
+        }
          switch (options['defaultmaxhptype']) {
             case 'max':
                 if(hitDiceData != ''){
@@ -1115,13 +1141,13 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 }
                 break;
             case 'roll':
-                if(hitDiceData != ''){
+                if(hitDiceData && hitDiceData != ''){
                     hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).total;
                 }
                 break;
             case 'average':
             default:
-                if(averageHP != ''){
+                if(averageHP && averageHP != ''){
                     hpVal = averageHP;          
                 }
                 break;
@@ -1138,7 +1164,22 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.customInit = newInit
         }
 
-        const newAC = $(statText).find('.custom-ac.custom-stat').text();
+        let newAC = $(statText).find('.custom-ac.custom-stat').text();
+
+        if(newAC == ''){
+            let match = statText.matchAll(/Armor Class[\s<:&]\D+\b([0-9]+)\b/g).next()
+            if(match.value != undefined){
+                newAC = match.value[1] 
+            }
+            else{
+                match = statText.matchAll(/[Aa][Cc][\s<:&]\D+\b([0-9]+)\b/g).next()
+                if(match.value != undefined){
+                    newAC = match.value[1] 
+                }
+            }
+        }
+
+
         options.armorClass = (newAC) ? newAC : options.armorClass;
         options.monster = 'customStat'
     }
