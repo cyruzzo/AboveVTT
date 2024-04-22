@@ -704,7 +704,7 @@ function observe_character_sheet_changes(documentToObserve) {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
          mutation.addedNodes.forEach(function(added_node){
-          if($(added_node).hasClass('integrated-dice__container')){
+          if($(added_node).hasClass('integrated-dice__container') || $(added_node).find('.integrated-dice__container')){
             if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
               debounceConvertToRPGRoller();
             else
