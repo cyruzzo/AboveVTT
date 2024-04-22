@@ -1908,7 +1908,9 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             return "Add More Custom Images";
         }
     }
-
+    const debounceRedrawToken = mydebounce((sidebarPanel, listItem, placedToken) => {
+        redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+    }, 100)
     // images
     let addImageUrl = async function (newImageUrl, type='') {
         const redraw = await customization.alternativeImages().length === 0;  // if it's the first custom image we need to redraw the entire body; else we can just append new ones
@@ -1921,7 +1923,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         }
         persist_token_customization(customization);
         if (redraw) {
-            redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
+            debounceRedrawToken(sidebarPanel, listItem, placedToken);
             let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
            
 
