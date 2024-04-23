@@ -1450,7 +1450,7 @@ function forceDdbWsReconnect() {
 			DDB_WS_OBJ = window[key];
 		}
 
-		if (DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') {
+		if ((DDB_WS_OBJ && DDB_WS_OBJ.status == 'disconnected') || (window.MB.ws.readyState != window.MB.ws.OPEN)) {
 			console.log("Detected that DDBs WebSocket is disconnected - attempting to force reconnect.");
 			DDB_WS_OBJ.reset();
 			DDB_WS_OBJ.connect();
