@@ -1602,7 +1602,6 @@ div#scene_properties form > div {
     pointer-events: none;
 }
 
-
 .definitelyNotAToken.ui-draggable-disabled>.token-image{
     cursor: default !important;
 }
