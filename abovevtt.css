@@ -1206,6 +1206,9 @@ input {
     z-index: 10000;
     position: absolute;
 }
+.avtt-stat-block-container .detail-content{
+    width: 100%;
+}
 
 #sources-import-main-container {
     top: 86px;
@@ -1599,9 +1602,7 @@ div#scene_properties form > div {
     pointer-events: none;
 }
 
-.definitelyNotAToken.hasTooltip.VTTToken::after{
-    display:none;
-}
+
 .definitelyNotAToken.ui-draggable-disabled>.token-image{
     cursor: default !important;
 }
@@ -1654,9 +1655,12 @@ div#scene_properties form > div {
         var(--positive-shadow)  var(--positive-shadow) 0px  #000,
         0px 0px 5px #000;
 }
-.labelToken.hasTooltip[data-notatoken]:after,
-.labelToken.hasTooltip[data-notatoken]:hover:after{
+#tokens .underDarkness.labelToken.hasTooltip:after,
+#tokens .underDarkness.labelToken.hasTooltip:hover:after{
     content:'';
+}
+.definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
+    display:none;
 }
 .dead {
     position: absolute;
@@ -4849,8 +4853,41 @@ div#selectedTokensBorderRotationGrabberConnector,
 	z-index:2;
     transform: scale(var(--window-zoom));
 }
+.mon-stat-block{
+    padding: 15px 10px;
+}
+.more-info footer{
+    padding: 0px;
+}
+.mon-stat-block{
+    padding: 15px 10px;
+  
+}
+.ddbc-creature-block__name {
+    font-size: 30px;
+}
+.monster-details .more-info footer{
+    padding: 0px;
+    height: 20px;
+}
 
-
+.monster-details .more-info footer .source.monster-source {
+    font-size: inherit;
+    font-family: inherit;
+    font-style: inherit;
+    margin-top: 0px;
+    float:left;
+}
+.monster-details .more-info.details-more-info:after {
+    display:none
+}
+.monster-details .more-info-content{
+    padding: 0px !important;
+}
+.monster-details,
+.detail-content .image{
+    margin-bottom:0px;
+}
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
 	z-index: 57000;
@@ -5422,7 +5459,12 @@ div#selectedTokensBorderRotationGrabberConnector,
 #sheet .ui-resizable-sw{
     bottom: -7px;  
 }
-
+.moveableWindow  .ui-resizable-handle {
+    background: none;
+    border: none;
+    display: block;
+    position: absolute;
+}
 .resize_drag_window .ui-resizable-se,
 #resizeDragMon .ui-resizable-se,
 #sheet .ui-resizable-se{
