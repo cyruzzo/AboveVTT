@@ -1599,7 +1599,7 @@ div#scene_properties form > div {
     pointer-events: none;
 }
 
-.definitelyNotAToken.hasTooltip.VTTToken::after{
+.definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
     display:none;
 }
 .definitelyNotAToken.ui-draggable-disabled>.token-image{
