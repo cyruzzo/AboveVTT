@@ -1633,6 +1633,18 @@ div#scene_properties form > div {
 .hasTooltip.CTToken:hover:after {
     transition: visibility 0s ease-in-out 0s;
 }
+[class*='GameLogEntries'] p[class*='InfoItem'] {
+    margin:0px
+}
+[class*='GameLogEntries'] p[class*='InfoItem']:first-of-type {
+    font-weight:600
+}
+
+[class*='GameLogEntries'] [class*='detail__properties']{
+padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
 
 .labelToken.hasTooltip:after,
 .labelToken.hasTooltip:hover:after{
