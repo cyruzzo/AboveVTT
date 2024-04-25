@@ -3657,6 +3657,11 @@ div.ct-sidebar__pane-content > div.selected-tab {
     z-index: 21;
 }
 
+/*this may be a DDB bug - as the `Send to (default)` button scrolls off screen and messess with our layout as at 4/25/2024*/
+.ct-sidebar__pane-content>div:first-of-type{
+    height:100%;
+}
+
 /* Make a few adjustments for when it's a modal because we nest it inside or .sidebar-modal and change the UI slightly  */
 .sidebar-modal .sidebar-panel-content,
 .sidebar-modal .sidebar-panel-content .sidebar-panel-header,
