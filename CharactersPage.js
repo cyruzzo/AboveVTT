@@ -778,8 +778,9 @@ function observe_character_sheet_changes(documentToObserve) {
           console.log(`${icons.length} aoe spells discovered`);
         }
 
-        if(mutationTarget.hasClass('alertify') || mutationTarget.find('.alertify').length>0){
-          $('.alertify').remove();
+        if((mutationTarget.hasClass('.ajs-ok') || mutationTarget.find('.ajs-ok').length>0) && $('.alertify ~ div.alertify:last-of-type').length>0){
+         $('.alertify ~ div.alertify .ajs-button.ajs-ok').click();
+         $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
         }
         if (mutationTarget.hasClass('ct-sidebar__pane-content') && mutationTarget.find('.ct-creature-pane').length>0) {
           scan_player_creature_pane(mutationTarget);
