@@ -778,7 +778,9 @@ function observe_character_sheet_changes(documentToObserve) {
           console.log(`${icons.length} aoe spells discovered`);
         }
 
-  
+        if(mutationTarget.hasClass('alertify') || mutationTarget.find('.alertify').length>0){
+          $('.alertify').remove();
+        }
         if (mutationTarget.hasClass('ct-sidebar__pane-content') && mutationTarget.find('.ct-creature-pane').length>0) {
           scan_player_creature_pane(mutationTarget);
         }

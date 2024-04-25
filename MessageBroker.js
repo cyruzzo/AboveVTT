@@ -1103,17 +1103,19 @@ class MessageBroker {
 					replace_gamelog_message_expressions(gamelogItem);
 				}
 				if(msg.data.rolls != undefined){
-					let critSuccess = false;
-					let critFail = false;
+					let critSuccess = {};
+					let critFail = {};
 					for(let i=0; i<msg.data.rolls.length; i++){
 						let roll = msg.data.rolls[i];
+						critSuccess[i] = false;
+						critFail[i] = false;
 						for (let j=0; j<roll.diceNotation.set.length; j++){
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
 								if(roll.diceNotation.set[j].dice[k].dieValue == parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))){
-									critSuccess = true
+									critSuccess[i] = true
 								}
 								else if(roll.diceNotation.set[j].dice[k].dieValue == 1){
-									critFail = true;
+									critFail[i] = true;
 								}
 							}
 						}
@@ -1126,11 +1128,29 @@ class MessageBroker {
 						for(let i = 0; i<listItems.length; i++){
 							if($(listItems[i]).find('[class*="Pending"]').length > 0)
 								continue;
-							target = $(listItems[i]);
-							break;
+							for(let j = 0; j < msg.data.rolls.length; j++){
+								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']`);
+								if(totals.length == msg.data.rolls.length){
+									for(let k = 0; k<totals.length; k++){
+											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
+												break;
+											target = $(listItems[i]);
+									}
+								}
+							}		
 						}
 						if(target != undefined){
-							target.toggleClass(`${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`, true)
+
+							for(let i = 0; i<msg.data.rolls.length; i++){
+								let row = i
+								if(!target.hasClass('tss-8-Collapsed-ref')){
+									row = row*2+1
+								}else{
+									row++;
+								}
+								target.find(`[class*='DiceResultContainer']:nth-of-type(${row})`).toggleClass(`${critSuccess[i] && critFail[i] ? 'crit-mixed' : critSuccess[i] ? 'crit-success' : critFail[i] ? 'crit-fail' : ''}`, true)
+								
+							}
 						}
 						
 					}, 100)
