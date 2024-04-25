@@ -1088,7 +1088,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
     toInject.append(sidebar.find(".ct-sidebar__header").clone());
 
     // these are optional, but if they're here, grab them
-    toInject.append(sidebarPaneContent.find(".ddbc-property-list").clone());
+    toInject.append(sidebarPaneContent.find("[role='list']").clone());
     toInject.append(sidebarPaneContent.find(".ct-spell-detail__level-school").clone());
     toInject.append(sidebarPaneContent.find(".ct-speed-manage-pane__speeds").clone());
     toInject.append(sidebarPaneContent.find(".ct-armor-manage-pane__items").clone());
@@ -1107,7 +1107,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
     }
 
     // now clean up any edit elements
-    toInject.find(".ct-container-pane__pencil").remove();
+    toInject.find(".ct-sidebar__header-primary [class*='styles_button']").remove();
 
     if(is_abovevtt_page()){
       let html = window.MB.encode_message_text(toInject[0].outerHTML);
