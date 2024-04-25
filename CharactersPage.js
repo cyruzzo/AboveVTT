@@ -787,12 +787,15 @@ function observe_character_sheet_changes(documentToObserve) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
           if(is_abovevtt_page() || (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)){
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
-              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:last-of-type'));
+              inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:first-of-type'));
             }else{
-              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:last-of-type'));
+              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:first-of-type'));
             }
             
           }
+        }
+        else if(mutationTarget.closest(".ct-game-log-pane").length > 0){
+          $('#castbutton').remove();
         }
          
 
