@@ -610,11 +610,11 @@ function update_peer_cursor(eventData) {
     $("#VTT").append(cursorPosition);
     cursorPosition.css("transform", "scale(" + 1/window.ZOOM + ")");
   }
+  cursorPosition.css('background', eventData.color);
   cursorPosition.stop();
   cursorPosition.animate({
     top: eventData.y,
-    left: eventData.x,
-    background: eventData.color
+    left: eventData.x
   }, peer_animation_timout, "linear");
   cursorPosition.fadeIn();
 }
