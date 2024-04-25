@@ -1636,24 +1636,34 @@ div#scene_properties form > div {
 
 .labelToken.hasTooltip:after,
 .labelToken.hasTooltip:hover:after{
-    content: attr(data-name);
+     content: attr(data-name);
     opacity: 1;
     background: none;
     color: #fff;
     transition: none;
     visibility: visible;
-    font-size: var(--font-size-zoom);
-    bottom: calc(-1 * (var(--font-size-zoom) + var(--font-size-zoom) / 1.5));
+    font-size: 12px;
+    bottom: -36px;
     pointer-events: none;
-    --positive-shadow: calc(1px / var(--window-zoom));
-    --negative-shadow: calc(-1px / var(--window-zoom));
+    --positive-shadow: 1px;
+    --negative-shadow: -1px;
+    left: auto;
     font-weight: bold;
-    text-shadow: 0px 0px 0px #000,
-        var(--negative-shadow) var(--negative-shadow) 0px #000,  
-        var(--positive-shadow) var(--negative-shadow) 0px  #000,
-        var(--negative-shadow)  var(--positive-shadow) 0px  #000,
-        var(--positive-shadow)  var(--positive-shadow) 0px  #000,
+    transform: scale(calc(1 / var(--window-zoom)));
+    text-shadow: 0px 0px 0px #000, 
+        var(--negative-shadow) var(--negative-shadow) 0px #000, 
+        var(--positive-shadow) var(--negative-shadow) 0px #000, 
+        var(--negative-shadow) var(--positive-shadow) 0px #000, 
+        var(--positive-shadow) var(--positive-shadow) 0px #000, 
         0px 0px 5px #000;
+    }
+
+#token_map_items .labelToken.hasTooltip:after, 
+#token_map_items .labelToken.hasTooltip:hover:after {
+    font-size: calc(12px / var(--scene-scale));
+    --positive-shadow: calc(1px / var(--scene-scale));
+    --negative-shadow: calc(-1px / var(--scene-scale));
+    bottom: calc(-36px / var(--scene-scale));
 }
 #tokens .underDarkness.labelToken.hasTooltip:after,
 #tokens .underDarkness.labelToken.hasTooltip:hover:after{
