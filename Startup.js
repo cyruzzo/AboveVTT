@@ -10,6 +10,7 @@ $(function() {
     console.log("startup calling init_splash");
     window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
+    addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
     $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
     window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
       event.stopImmediatePropagation();
@@ -164,6 +165,7 @@ $(function() {
           iframeTab: window.PLAYER_ID,
           rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
         })
+        sendBeyond20Event('register-generic-tab', {action:'register-generic-tab'});
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);
@@ -173,6 +175,20 @@ $(function() {
 
 const throttleProjectionScroll = throttle((f) => f(), 1000/10)
 
+function addBeyond20EventListener(name, callback) {
+    const event = ["Beyond20_" + name, (evt) => {
+        const detail = evt.detail || [];
+        callback(...detail)
+    }, false];
+    document.addEventListener(...event);
+    return event;
+}
+function sendBeyond20Event(name, ...args) {
+    // You would need a function isFirefox to check if the extension is running in Firefox
+    const detail = navigator.userAgent.match(/firefox|fxios/i) ? cloneInto(args, window) : args;
+    const event = new CustomEvent("Beyond20_" + name, { "detail": detail });
+    document.dispatchEvent(event);
+}
 function addExtensionPathStyles(){ // some above server images moved out of extension package
   let styles = `<style id='aboveExtensionPathStyles'>
     body{
