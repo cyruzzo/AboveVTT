@@ -1114,7 +1114,7 @@ function export_current_scene(){
 			DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 		}
 		if(window.JOURNAL.notes[tokenID] != undefined){
-			DataFile.notes[tokenID] = window.JOURNAL.notes[noteID];
+			DataFile.notes[tokenID] = window.JOURNAL.notes[tokenID];
 		}
 	}
 	let currentdate = new Date(); 
@@ -1148,7 +1148,7 @@ async function export_scene_context(sceneId){
 			DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 		}
 		if(window.JOURNAL.notes[tokenId] != undefined){
-			DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+			DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
 		}
 		tokensObject[tokenId] = scene.data.tokens[token];		
 	}
@@ -1201,7 +1201,7 @@ async function export_scenes_folder_context(folderId){
 				DataFile.notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 			}
 			if(window.JOURNAL.notes[tokenId] != undefined){
-				DataFile.notes[tokenId] = window.JOURNAL.notes[noteID];
+				DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
 			}
 			tokensObject[tokenId] = scene.data.tokens[token];		
 		}
