@@ -122,6 +122,15 @@ class Token {
 				temp: this.tempHp
 			};
 		}
+		if(window.DM && this.options.hp > newValue && this.hasCondition("Concentration(Reminder)")){
+			// CONCENTRATION REMINDER
+			let msgdata = {
+				player: this.options.name,
+				img: parse_img(this.options.imgsrc),
+				text: `<b>Check for concentration! If damage was from a single source DC ${Math.floor((this.options.hp - newValue)/2) > 10 ? Math.floor((this.options.hp - newValue)/2) : 10}</b>`,
+			};
+			window.MB.inject_chat(msgdata);
+		}
 		this.options.hp = newValue; // backwards compatibility
 	}
 
@@ -826,15 +835,7 @@ class Token {
 		})
 
 
-		if(window.DM && this.hp < $(`.token[data-id='${this.options.id}'] input.hp`).val() && this.hasCondition("Concentration(Reminder)")){
-			// CONCENTRATION REMINDER
-			let msgdata = {
-				player: this.options.name,
-				img: parse_img(this.options.imgsrc),
-				text: "<b>Check for concentration!!</b>",
-			};
-			window.MB.inject_chat(msgdata);
-		}
+
 		
 		console.groupEnd()
 	}
@@ -876,7 +877,6 @@ class Token {
 			if (old.find(".max_hp").val().trim().startsWith("+") || old.find(".max_hp").val().trim().startsWith("-")) {
 				old.find(".max_hp").val(Math.max(0, this.maxHp + parseInt(old.find(".max_hp").val())));
 			}
-
 			this.hp = parseInt(old.find(".hp").val()) - this.tempHp;
 			this.maxHp = parseInt(old.find(".max_hp").val());
 			
@@ -1000,14 +1000,14 @@ class Token {
 		hpbar.append(maxhp_input);
 		if (!this.isPlayer()) {
 			hp_input.change(function(e) {
-				hp_input.val(hp_input.val().trim());
+				$(this).val($(this).val().trim());
 				self.update_and_sync(e);
 				let tokenID = $(this).parent().parent().attr("data-id");
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].hp = hp_input.val();
+					window.all_token_objects[tokenID].hp = $(this).val();
 				}			
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].hp = hp_input.val();
+					window.TOKEN_OBJECTS[tokenID].hp = $(this).val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 			});
@@ -1015,13 +1015,13 @@ class Token {
 				$(e.target).select();
 			});
 			maxhp_input.change(function(e) {
-				maxhp_input.val(maxhp_input.val().trim());
+				$(this).val($(this).val().trim());
 				self.update_and_sync(e);
 				if(window.all_token_objects[tokenID] != undefined){
-					window.all_token_objects[tokenID].maxHp = maxhp_input.val();
+					window.all_token_objects[tokenID].maxHp = $(this).val();
 				}
 				if(window.TOKEN_OBJECTS[tokenID] != undefined){		
-					window.TOKEN_OBJECTS[tokenID].maxHp = maxhp_input.val();
+					window.TOKEN_OBJECTS[tokenID].maxHp = $(this).val();
 					window.TOKEN_OBJECTS[tokenID].update_and_sync()
 				}
 			});

@@ -1004,7 +1004,7 @@ class JournalManager{
                 });
             // Find cover rules
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(total cover|heavily obscured|lightly obscured)(?![^<]+>|\w|\[)/gi,
+                /(?<!]|;|#|\w|<[^>]+)(total cover|heavily obscured|lightly obscured|half cover|three-quarters cover|Instant Death|Death Saving Throws|Falling|Suffocating|Surprise|Underwater|Advantage|Disadvantage|Concentration)(?![^<]+>|\w|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
