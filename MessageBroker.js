@@ -320,6 +320,7 @@ class MessageBroker {
 							console.log("TROVATOOOOOOOOOOOOOOOOO");
 							let oldheight=li.height();
 							let newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
+
 							if(newlihtml=="") {
 								li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 							} else if (injection_data.dmonly && window.DM) { 
@@ -327,6 +328,10 @@ class MessageBroker {
 								
 							li.animate({ opacity: 0 }, animationDuration, function() {
 							 	li.html(newlihtml);
+							 	window.JOURNAL.translateHtmlAndBlocks(li);	
+								window.JOURNAL.add_journal_roll_buttons(li);
+								window.JOURNAL.add_journal_tooltip_targets(li);
+								add_stat_block_hover(li)
 								let neweight = li.height();
 								li.height(oldheight);
 								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
@@ -1822,7 +1827,6 @@ class MessageBroker {
 
 	inject_chat(injected_data) {
 		var msgid = this.chat_id + this.chat_counter++;
-
 		var data = {
 			player_name: window.PLAYER_NAME,
 			injected_data: injected_data,
