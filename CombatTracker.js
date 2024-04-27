@@ -726,17 +726,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			var selector = "div[data-id='" + token.options.id + "']";
 			var old = $("#tokens").find(selector);
 		
-			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
-				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
+			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
+				$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
 			}
 
-			old.find(".hp").val(hp_input.val().trim());	
+			old.find(".hp").val($(this).val().trim());	
 
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].hp = hp_input.val();
+				window.all_token_objects[token.options.id].hp = $(this).val();
 			}			
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].hp = hp_input.val();
+				window.TOKEN_OBJECTS[token.options.id].hp = $(this).val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 		});
@@ -747,16 +747,16 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			var selector = "div[data-id='" + token.options.id + "']";
 			var old = $("#tokens").find(selector);
 
-			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
-				maxhp_input.val(Math.max(0, token.maxHp + parseInt(maxhp_input.val())));
+			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
+				$(this).val(Math.max(0, token.maxHp + parseInt($(this).val())));
 			}
 
-			old.find(".max_hp").val(maxhp_input.val().trim());
+			old.find(".max_hp").val($(this).val().trim());
 			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].maxHp = maxhp_input.val();
+				window.all_token_objects[token.options.id].maxHp = $(this).val();
 			}
 			if(window.TOKEN_OBJECTS[token.options.id] != undefined){		
-				window.TOKEN_OBJECTS[token.options.id].maxHp = maxhp_input.val();
+				window.TOKEN_OBJECTS[token.options.id].maxHp = $(this).val();
 				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}			
 		});
