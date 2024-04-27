@@ -3834,7 +3834,7 @@ function qrm_apply_hp_adjustment(healing=false){
 			damage = -damage
 		}
 		
-		if(token.options.monster > 0){
+		if(token.options.hitPointInfo.maximum>0 && token.options.itemType != 'pc'){
 			let _hp = $(this).find('#qrm_hp');
 			let _max_hp = $(this).find('#qrm_maxhp');
 
