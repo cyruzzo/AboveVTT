@@ -345,6 +345,7 @@ function init_characters_pages(container = $(document)) {
          observe_character_sheet_changes($(document));
         if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
           $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
         }else{
           convertToRPGRoller();
         }
@@ -359,6 +360,7 @@ function init_characters_pages(container = $(document)) {
       }
       if(event.data.msgType =='removeObserver'){
         $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTabRPGRoller = undefined;
         setTimeout(function(){
@@ -384,6 +386,7 @@ const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
 
 const debounceRemoveRPGRoller =  mydebounce(() => {
     $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
     delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
 }, 20)
 
@@ -391,45 +394,48 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 function convertToRPGRoller(){
     if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
       $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller')
+      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
       return;
     }
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
     }
-    if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
-            e.stopPropagation();
-            e.preventDefault();
-            let rollData = {}
-            if($(this).hasClass('avtt-roll-formula-button')){
-               rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
-               rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
-            }
-            else{
-               rollData = getRollData(this)
-            }
-            
-            
-            if (rollData.rollType === "damage") {
-              damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
-                .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-            } else {
-              standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
-                .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-            }
-      })
-    }
-    else{
-      $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-    }
+
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+          let rollData = {} 
+          if($(this).hasClass('avtt-roll-formula-button')){
+             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+          }
+          else{
+             rollData = getRollData(this)
+          }
+          if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
+            return;
+          }
+          e.stopPropagation();
+          e.preventDefault();
+
+          
+          
+          if (rollData.rollType === "damage") {
+            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          } else {
+            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          }
+    })
+ 
     $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+      let rollData = {} 
+      rollData = getRollData(this);
+      if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
+        return;
+      }
       e.stopImmediatePropagation();
       
-      let rollData = {}
-
- 
-      rollData = getRollData(this);
       
 
       let msgdata = {}
@@ -705,10 +711,13 @@ function observe_character_sheet_changes(documentToObserve) {
         const mutationParent = mutationTarget.parent();
          mutation.addedNodes.forEach(function(added_node){
           if($(added_node).hasClass('integrated-dice__container') || $(added_node).find('.integrated-dice__container')){
-            if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
+            if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top){
               debounceConvertToRPGRoller();
-            else
-              $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');           
+            }
+            else{
+              $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+              $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller') 
+            }         
           }
         })
         if(mutationTarget[0].nodeName == 'BUTTON' && mutationTarget.attr('name') == 'rpgRoller'){
@@ -716,6 +725,7 @@ function observe_character_sheet_changes(documentToObserve) {
             debounceConvertToRPGRoller();
           else
             $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
+            $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
         }
         
         mutation.removedNodes.forEach(function(removed_node) {
