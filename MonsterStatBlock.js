@@ -92,15 +92,15 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.find("p>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
       let outerP = event.target.closest('p').outerHTML;
-      const regExFeature = new RegExp(`<p>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
-      let matched = `<p>${outerP.matchAll(regExFeature).next().value[1]}</p>`;
+      const regExFeature = new RegExp(`<p(.+)?>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
+      let matched = `<p>${outerP.matchAll(regExFeature).next().value[2]}</p>`;
       send_html_to_gamelog(matched);
     })
      container.find("p>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
       let outerP = event.target.closest('p').outerHTML;
-      const regExFeature = new RegExp(`<p>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
-      let matched = `<p>${outerP.matchAll(regExFeature).next().value[1]}</p>`;
+      const regExFeature = new RegExp(`<p(.+)?>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
+      let matched = `<p>${outerP.matchAll(regExFeature).next().value[2]}</p>`;
       send_html_to_gamelog(matched);
     })
 
