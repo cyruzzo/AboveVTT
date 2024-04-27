@@ -113,6 +113,7 @@ class Token {
 		return 0;
 	}
 	set baseHp(newValue) {
+		let currentHP = this.options.hitPointInfo ? this.options.hitPointInfo.current : this.options.hp
 		if (this.options.hitPointInfo) {
 			this.options.hitPointInfo.current = newValue;
 		} else {
@@ -122,7 +123,7 @@ class Token {
 				temp: this.tempHp
 			};
 		}
-		if(window.DM && this.options.hp > newValue && this.hasCondition("Concentration(Reminder)")){
+		if(window.DM && currentHP > newValue && this.hasCondition("Concentration(Reminder)")){
 			// CONCENTRATION REMINDER
 			let msgdata = {
 				player: this.options.name,
@@ -132,6 +133,9 @@ class Token {
 			window.MB.inject_chat(msgdata);
 		}
 		this.options.hp = newValue; // backwards compatibility
+	}
+	check_concentration(newValue){
+		
 	}
 
 	/** @return {number} the value of this token's temp HP */

@@ -639,6 +639,7 @@ const debounce_pc_token_update = mydebounce(() => {
       let token = window.TOKEN_OBJECTS[pc?.sheet];     
       if (token) {
         let currentImage = token.options.imgsrc;
+        token.hp = pc.hitPointInfo.current;
         token.options = {
           ...token.options,
           ...pc,
