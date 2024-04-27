@@ -193,7 +193,7 @@ function addBeyond20EventListener(name, callback) {
 }
 function sendBeyond20Event(name, ...args) {
     // You would need a function isFirefox to check if the extension is running in Firefox
-    const detail = navigator.userAgent.match(/firefox|fxios/i) ? cloneInto(args, window) : args;
+    const detail = args;
     const event = new CustomEvent("Beyond20_" + name, { "detail": detail });
     document.dispatchEvent(event);
 }
