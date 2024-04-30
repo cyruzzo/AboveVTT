@@ -2264,7 +2264,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		}
 	});
 
-	if ($(".roll-button").length == 0 || window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+	if ($(".roll-button").length == 0) {
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
 		$("body").append(rollButton);
 		rollButton.on("click", function (e) {
