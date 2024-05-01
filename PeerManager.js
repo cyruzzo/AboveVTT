@@ -6,7 +6,7 @@ class PeerManager {
   enabled = false;
 
   /** @return {Peer} - our private reference to the peerjs object */
-  peer = new Peer();
+  peer = new Peer(`AboveVTT-${window.gameId}-${uuid()}`);
 
   /** @return {PeerConnection[]} List of peers that we are connecting/connected to */
   connections = [];
