@@ -1387,7 +1387,7 @@ function edit_scene_dialog(scene_id) {
 
 
 	const playlistRow = form_row('playlistRow', 'Load Playlist', playlistSelect)
-	playlistRow.attr('title', `This playlist will load when the DM joins this scene. The playlist will not change if 'None' is selected.`)
+	playlistRow.attr('title', `This playlist will load when the DM moves players to this scene. The playlist will not change if 'None' is selected.`)
 	form.append(playlistRow);
 
 	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
