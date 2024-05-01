@@ -7517,7 +7517,18 @@ button.journal-view-button.journal-button {
     border-bottom: 2px solid #bc0f0f;
     margin: 10px 0
 }
-
+[class*='MessageContainer-Flex'] div[role='listitem'] p,
+[class*='MessageContainer-Flex'] div[role='listitem'] span {
+    color: rgb(92, 112, 128);
+}
+[class*='MessageContainer-Flex'] div[role='listitem'] p,
+[class*='MessageContainer-Flex'] div[role='listitem'] span{
+    margin-left:2px
+}
+[class*='MessageContainer-Flex'] div[role='listitem']
+{ 
+    display:flex;
+}
 .note-text .stat-block-ability-scores-stat {
     width: 33.33333%;
     padding: 10px 5px;
