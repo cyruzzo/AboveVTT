@@ -1747,7 +1747,7 @@ class Token {
 					this.options.restrictPlayerMove = true;
 					this.options.locked = false;
 				}
-				else if(this.options.lockRestrictDrop == "lock"){
+				else if(this.options.lockRestrictDrop == "lock" || this.options.lockRestrictDrop == "declutter"){
 					this.options.locked = true;
 				}
 				else if(this.options.lockRestrictDrop == "none"){
@@ -2639,10 +2639,7 @@ class Token {
 					this.options.restrictPlayerMove = true;
 					this.options.locked = false;
 				}
-				else if(this.options.lockRestrictDrop == "lock"){
-					this.options.locked = true;
-				}
-				else if(this.options.lockRestrictDrop == "declutter"){
+				else if(this.options.lockRestrictDrop == "lock" || this.options.lockRestrictDrop == "declutter"){
 					this.options.locked = true;
 				}
 				else if(this.options.lockRestrictDrop == "none"){
