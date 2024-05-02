@@ -50,6 +50,7 @@ function token_setting_options() {
 				{ value: "none", label: "None", description: "Token is freely moveable by all players and the DM." },
 				{ value: "restrict", label: "Restrict player access", description: "Players will not be able to move this token unless it is thier owned PC Token. Will not be added to Players group selections." },
 				{ value: "lock", label: "Lock", description: "Locks token for both DM and Players. Will not be added to group selections." },
+				{ value: "declutter", label: "Lock and Declutter Hidden", description: "Locks token for both DM and Players. Will fully hide for DM when hidden."}
 			],
 			defaultValue: "none"
 		},

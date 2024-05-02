@@ -1787,6 +1787,7 @@ class Token {
 			}
 			if(!this.options.id.includes('exampleToken')){
 				old.toggleClass('lockedToken', this.options.locked==true)
+				old.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 			}
 			this.update_health_aura(old);
 
@@ -1834,6 +1835,8 @@ class Token {
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
+				        tokenClone.toggleClass('lockedToken', this.options.locked==true)
+						tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 				        $('#token_map_items').append(tokenClone);
 					}
 					else{
@@ -1856,6 +1859,8 @@ class Token {
 							'border-width': old.find('.token-image').css('border-width')
 						})
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
+						copyToken.toggleClass('lockedToken', this.options.locked==true)
+						copyToken.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 					}
 
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
@@ -2637,6 +2642,9 @@ class Token {
 				else if(this.options.lockRestrictDrop == "lock"){
 					this.options.locked = true;
 				}
+				else if(this.options.lockRestrictDrop == "declutter"){
+					this.options.locked = true;
+				}
 				else if(this.options.lockRestrictDrop == "none"){
 					this.options.locked = false;
 					this.options.restrictPlayerMove = false;
@@ -2644,6 +2652,7 @@ class Token {
 			}
 			if(!this.options.id.includes('exampleToken')){
 				tok.toggleClass('lockedToken', this.options.locked==true)
+				tok.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 			}	
 			if(this.options.locked ){
 				if(window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){		
@@ -2713,6 +2722,8 @@ class Token {
 						opacity: this.options.hidden ? '0.5' : '1'
 					})
 			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
+			        tokenClone.toggleClass('lockedToken', this.options.locked==true)
+					tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();      
 			        $('#token_map_items').append(tokenClone);
 				}	
