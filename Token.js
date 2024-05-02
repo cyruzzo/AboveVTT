@@ -454,10 +454,7 @@ class Token {
 		let id = this.options.id;
 		let selector = "#tokens div[data-id='" + id + "']";
 		$(selector).remove();
-
-		if(window.TOKEN_OBJECTS[id]?.options?.audioChannel != undefined){
-			window.MIXER.deleteChannel(window.TOKEN_OBJECTS[id].options.audioChannel.audioId)
-		}
+	
 
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
@@ -477,6 +474,9 @@ class Token {
 		$(`[data-notatoken='notatoken_${id}']`).remove()
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
+		}
+		if(this.options.audioChannel.audioId != undefined){
+			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
 		debounceLightChecks();
 		update_pc_token_rows();
