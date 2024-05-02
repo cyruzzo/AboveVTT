@@ -9372,6 +9372,7 @@ li.audio-row:hover .channel-progress-bar-total
 #mixer-channels{
     max-height: 400px;
     overflow-y: auto;
+    padding-bottom: 2px;
 }
 #mixer-channels .volume-control{
     left: 0;
