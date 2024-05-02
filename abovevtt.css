@@ -7028,7 +7028,9 @@ body.preventSelectDefinitelyNot .token.lockedToken>.token-image,
 body.preventSelectDefinitelyNot .token.lockedToken>.token-image>[data-img]{
     pointer-events: none !important;
 }
-
+body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
+    display: none !important;
+}
 .door-button #note{
     position: absolute;
     right: -4px;
