@@ -146,6 +146,7 @@ $(function() {
               }
               else{
                 throttleProjectionScroll(function(){
+                  window.Projecting = true;
                   if(windowRatio != 1){
                     change_zoom(event.data.zoom);
                     window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);          
@@ -156,6 +157,7 @@ $(function() {
                     window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);    
                   }
                 })
+                
               }
            
             }
@@ -181,7 +183,14 @@ $(function() {
   }
 });
 
-const throttleProjectionScroll = throttle((f) => f(), 1000/10)
+const throttleProjectionScroll = throttle(async (f) => {
+    if(window.Projecting == undefined){
+      await f();
+      setTimeout(function(){
+        delete window.Projecting;
+      }, 1000/60)     
+    }
+}, 1000/60)
 
 function addBeyond20EventListener(name, callback) {
     const event = ["Beyond20_" + name, (evt) => {
