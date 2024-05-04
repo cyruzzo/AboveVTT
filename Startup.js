@@ -16,6 +16,7 @@ $(function() {
       event.stopImmediatePropagation();
       if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
             let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+            let center = center_of_view(); 
             tabCommunicationChannel.postMessage({
               msgType: 'projectionScroll',
               x: window.pageXOffset + window.innerWidth/2 - sidebarSize/2,
@@ -26,7 +27,8 @@ $(function() {
                    document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ),
               scrollPercentageX:  (window.pageXOffset + window.innerWidth/2 - sidebarSize/2) / Math.max( document.body.scrollWidth, document.body.offsetWidth, 
                    document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth ),
-              zoom: window.ZOOM
+              zoom: window.ZOOM,
+              mapPos: convert_point_from_view_to_map(center.x, center.y)
             });
       }
     }, true);
@@ -152,11 +154,8 @@ $(function() {
                 throttleProjectionScroll(function(){
                   window.Projecting = true;
                   if(windowRatio != 1 && window.ZOOM == event.data.zoom * windowRatio){
-                   const newX = event.data.scrollPercentageX * Math.max( document.body.scrollWidth, document.body.offsetWidth, 
-                   document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth );
-                   const newY =  event.data.scrollPercentageY * Math.max( document.body.scrollHeight, document.body.offsetHeight, 
-                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );  
-                    window.scroll(newX - window.innerWidth/2 + sidebarSize/2, newY - window.innerHeight/2);    
+                    let viewPos = convert_point_from_map_to_view(event.data.mapPos.x, event.data.mapPos.y) 
+                    window.scroll(viewPos.x - window.innerWidth/2 + sidebarSize/2 - 20, viewPos.y - window.innerHeight/2 - 20);  //20 for scrollbar  
                   }
                   else if(windowRatio != 1){
                     change_zoom(event.data.zoom);
