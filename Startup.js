@@ -22,6 +22,10 @@ $(function() {
               y: window.pageYOffset + window.innerHeight/2,
               sceneId: window.CURRENT_SCENE_DATA.id,
               innerHeight: window.innerHeight,
+              scrollPercentageY: (window.pageYOffset + window.innerHeight/2) / Math.max( document.body.scrollHeight, document.body.offsetHeight, 
+                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ),
+              scrollPercentageX:  (window.pageXOffset + window.innerWidth/2 - sidebarSize/2) / Math.max( document.body.scrollWidth, document.body.offsetWidth, 
+                   document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth ),
               zoom: window.ZOOM
             });
       }
@@ -147,7 +151,14 @@ $(function() {
               else{
                 throttleProjectionScroll(function(){
                   window.Projecting = true;
-                  if(windowRatio != 1){
+                  if(windowRatio != 1 && window.ZOOM == event.data.zoom * windowRatio){
+                   const newX = event.data.scrollPercentageX * Math.max( document.body.scrollWidth, document.body.offsetWidth, 
+                   document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth );
+                   const newY =  event.data.scrollPercentageY * Math.max( document.body.scrollHeight, document.body.offsetHeight, 
+                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );  
+                    window.scroll(newX - window.innerWidth/2 + sidebarSize/2, newY - window.innerHeight/2);    
+                  }
+                  else if(windowRatio != 1){
                     change_zoom(event.data.zoom);
                     window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);          
                     change_zoom(event.data.zoom * windowRatio)
@@ -183,6 +194,7 @@ $(function() {
   }
 });
 
+
 const throttleProjectionScroll = throttle(async (f) => {
     if(window.Projecting == undefined){
       await f();
@@ -191,6 +203,7 @@ const throttleProjectionScroll = throttle(async (f) => {
       }, 1000/60)     
     }
 }, 1000/60)
+
 
 function addBeyond20EventListener(name, callback) {
     const event = ["Beyond20_" + name, (evt) => {
