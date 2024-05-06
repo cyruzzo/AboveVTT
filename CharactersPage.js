@@ -792,7 +792,7 @@ function observe_character_sheet_changes(documentToObserve) {
            $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-button.ajs-ok').click();
            $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
         }
-        if (mutationTarget.hasClass('ct-sidebar__pane-content') && mutationTarget.find('.ct-creature-pane').length>0) {
+        if ($(mutation.addedNodes[0]).hasClass('ct-creature-pane') && mutationTarget.find('.ct-creature-pane').length>0) {
           scan_player_creature_pane(mutationTarget);
         }
 
