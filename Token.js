@@ -475,7 +475,7 @@ class Token {
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
-		if(this.options.audioChannel.audioId != undefined){
+		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
 		debounceLightChecks();
