@@ -7172,10 +7172,7 @@ div.note[id^="ui-id"] {
     max-height: calc(100% - 33px) !important;
 
 }
-.body-rpgcharacter-sheet div.note[id^="ui-id"] {
-    height:100% !important;
-    overflow: auto;
-}
+
 .tooltip-body-description-text.note-text img{
     max-width: 100%;
     height: auto;
