@@ -3730,14 +3730,16 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
 
 	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
+	let height = `${$.position?.scrollbarWidth() ? 520 - $.position.scrollbarWidth() : 520}px`
+	let searchableHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
+  let containerHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
+  $('.ct-primary-box').css({
+    '--content-height': height,
+    '--container-height': containerHeight,
+    '--searchable-height': searchableHeight,
+    "height": "610px",
+  });
 
-	$(".ct-primary-box").css({ "height": "610px" });
-	let height = `${$.position?.scrollbarWidth() ? 510 - $.position.scrollbarWidth() : 510}px`
-  $('.ct-primary-box').css('--content-height', height);
-	// these need a little more space due to the filter search bar
-	$(".ct-extras").css({ "height": "540px" });
-	$(".ct-equipment").css({ "height": "540px" });
-	$(".ct-spells").css({ "height": "540px" });
 
 	player_sheet_layout = "thin";
 
