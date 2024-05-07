@@ -2128,7 +2128,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     borderColorWrapper.removeClass("border-color-wrapper"); // sets display:block!important; but we want to be able to hide this one
     const specificBorderColorSetting = {
         name: 'specificBorderColor',
-        label: 'Specific Border Color',
+        label: 'Specify Border Color',
         type: 'toggle',
         options: [
             { value: true, label: "Specific Color", description: "The token will use the specified color." },
