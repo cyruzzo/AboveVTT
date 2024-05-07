@@ -1133,7 +1133,11 @@ class MessageBroker {
 						for(let i = 0; i<listItems.length; i++){
 							if($(listItems[i]).find('[class*="Pending"]').length > 0)
 								continue;
+							if(target != undefined)
+								break;
 							for(let j = 0; j < msg.data.rolls.length; j++){
+								if(target != undefined)
+										break;
 								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']`);
 								if(totals.length == msg.data.rolls.length){
 									for(let k = 0; k<totals.length; k++){
@@ -1141,6 +1145,7 @@ class MessageBroker {
 												break;
 											target = $(listItems[i]);
 									}
+									
 								}
 							}		
 						}
