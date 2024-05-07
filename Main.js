@@ -3553,11 +3553,11 @@ function show_player_sheet() {
 	});
 	$(".ct-character-sheet__inner").css({
 		"visibility": "visible",
-		"z-index": 3
+		"z-index": 110
 	});
 	$(".site-bar").css({
 		"visibility": "visible",
-		"z-index": 3
+		"z-index": 110
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead
@@ -3732,7 +3732,8 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
 
 	$(".ct-primary-box").css({ "height": "610px" });
-	$(".ddbc-tab-options__content").css({ "height": "510px" });
+	let height = `${$.position?.scrollbarWidth() ? 510 - $.position.scrollbarWidth() : 510}px`
+  $('.ct-primary-box').css('--content-height', height);
 	// these need a little more space due to the filter search bar
 	$(".ct-extras").css({ "height": "540px" });
 	$(".ct-equipment").css({ "height": "540px" });
@@ -3774,8 +3775,11 @@ function reset_character_sheet_css() {
 	$(".ct-character-sheet__inner").css({"visibility": "visible", "overflow-x": "hidden"});
 
 	$(".ddbc-character-tidbits__menu-callout").css({"visibility": "hidden", "width": "0px", "height": "0px"});
-
 	let maxHeight = window.innerHeight - 26;
+	if($.position?.scrollbarWidth()){
+		maxHeight -= $.position.scrollbarWidth();
+	}
+
 	if ($("#peerVideo_container").length > 0) {
 		maxHeight -= $("#peerVideo_container").height();
 	}
