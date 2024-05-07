@@ -834,9 +834,15 @@ function observe_character_sheet_changes(documentToObserve) {
         
           if(mutationTarget.hasClass("ddbc-tab-list__content")){
             if (!is_player_sheet_full_width()) {
-              let height = `${$.position?.scrollbarWidth() ? 510 - $.position.scrollbarWidth() : 510}px`
-              $('.ct-primary-box').css('--content-height', height);
-              $(".ct-primary-box").css({ "height": "610px" });
+              let height = `${$.position?.scrollbarWidth() ? 520 - $.position.scrollbarWidth() : 520}px`
+              let searchableHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
+              let containerHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
+              $('.ct-primary-box').css({
+                '--content-height': height,
+                '--container-height': containerHeight,
+                '--searchable-height': searchableHeight,
+                "height": "610px",
+              });
               // these need a little more space due to the filter search bar
               $(".ct-extras").css({ "height": "540px" });
               $(".ct-equipment").css({ "height": "540px" });

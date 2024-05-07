@@ -304,7 +304,7 @@ button .ddbc-tab-options__header-heading .menu-option{
     border: solid black 1px;
 }
 
-div.avtt-sidebar-controls {
+.body-rpgcharacter-sheet div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
 }
 .ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] #chat-text {
@@ -1433,10 +1433,17 @@ div#scene_properties form > div {
 
 #zoom_buttons {
     position: absolute;
-    top: 2px;
+    top: -3px;
     z-index: 57000;
     display: flex;
     flex-direction: row;
+}
+[class*='styles_controls'] #zoom_buttons svg{
+    height: 20px;
+    width: 20px;
+}
+.body-rpgcharacter-sheet #zoom_buttons{
+    top: 2px;
 }
 
 .condition-lock.material-symbols-outlined {
@@ -2103,6 +2110,19 @@ div#combat_button{
 .ct-primary-box [class*='styles_tabList'] .ddbc-tab-options__content{
 
     height: var(--content-height, 560px);
+}
+.ct-primary-box [class*='styles_tabList'] section{
+    height: var(--container-height, 602px);
+}
+.ct-primary-box [class*='styles_tabList'] section.ct-extras,
+.ct-primary-box [class*='styles_tabList'] section.ct-equipment,
+.ct-primary-box [class*='styles_tabList'] section.ct-spells{
+    height: var(--searchable-height, 602px);
+}
+
+   
+.ct-character-sheet__inner{
+    max-height: calc(100% - 28px);
 }
 .hpbar {
     z-index: 3;
