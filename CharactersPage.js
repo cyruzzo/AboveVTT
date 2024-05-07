@@ -114,7 +114,7 @@ function send_character_hp(maxhp) {
 
 
 function read_abilities(container = $(document)) {
-  const scoreOnTop = container.find('.ddbc-ability-summary__primary .ddbc-signed-number--large').length === 0;
+  const scoreOnTop = container.find(`.ddbc-ability-summary__primary [class*='styles_signed'][class*='styles_large']`).length === 0;
 
   let abilitiesObject = [
     {name: 'str', save: 0, score: 0, label: 'Strength', modifier: 0},
@@ -127,15 +127,17 @@ function read_abilities(container = $(document)) {
 
   for(let i = 0; i < 6; i++){
     if(scoreOnTop){
-      abilitiesObject[i].score = parseInt($( container.find(`.ddbc-ability-summary__primary button`)[i] ).text());
+      abilitiesObject[i].score = parseInt($( container.find(`.ddbc-ability-summary__primary button`)[i]).text());
+      abilitiesObject[i].modifier = parseInt($( container.find(`.ddbc-ability-summary__secondary`)[i]).text());
     }
     else{
-      abilitiesObject[i].score =  parseInt($( container.find(`.ddbc-ability-summary__secondary`)[i] ).text());
+      abilitiesObject[i].score =  parseInt($( container.find(`.ddbc-ability-summary__secondary`)[i]).text());
+      abilitiesObject[i].modifier = parseInt($( container.find(`.ddbc-ability-summary__primary button`)[i]).text());
     }
 
-    abilitiesObject[i].modifier = parseInt($( container.find(`.ddbc-signed-number--large`)[i] ).attr('aria-label').replace(/\s/g, ''));
+    
 
-    abilitiesObject[i].save = parseInt($( container.find(`.ddbc-saving-throws-summary__ability-modifier .ddbc-signed-number`)[i] ).attr('aria-label').replace(/\s/g, ''));
+    abilitiesObject[i].save = parseInt($( container.find(`.ddbc-saving-throws-summary__ability-modifier [class*='styles_numberDisplay']`)[i]).text());
   }
 
   return abilitiesObject;
@@ -802,7 +804,7 @@ function observe_character_sheet_changes(documentToObserve) {
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
               inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:first-of-type'));
             }else{
-              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__pane-content>div:first-of-type'));
+              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__inner [class*="styles_content"]>div:first-of-type'));
             }
             
           }

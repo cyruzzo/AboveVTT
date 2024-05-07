@@ -921,7 +921,7 @@ function add_stat_block_hover(statBlockContainer) {
                         container = $(hoverEvent.target).closest(".sidebar-modal");
                     }
                     if (container.length === 0) {
-                        container = is_characters_page() ? $(".ct-sidebar__pane-content") : $(".sidebar__pane-content");
+                        container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
                     }
 
                     display_tooltip(tooltipJson, container, hoverEvent.clientY);

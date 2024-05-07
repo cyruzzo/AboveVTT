@@ -304,17 +304,17 @@ button .ddbc-tab-options__header-heading .menu-option{
     border: solid black 1px;
 }
 
-div.ct-sidebar__controls {
+div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
 }
-div.ct-sidebar__pane-content--is-dark-mode #chat-text {
+.ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] #chat-text {
     color: #bfccd6;
     background: #313739;
 }
-div.ct-sidebar__pane-content--is-dark-mode .dice-roller img {
+.ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] .dice-roller img {
     filter: invert(0.6) sepia(1) saturate(0.5) hue-rotate(175deg);
 }
-div.ct-sidebar__pane-content--is-dark-mode .sidebar-panel-content {
+.ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] .sidebar-panel-content {
     color: black;
 }
 
@@ -1433,7 +1433,7 @@ div#scene_properties form > div {
 
 #zoom_buttons {
     position: absolute;
-    top: -3px;
+    top: 2px;
     z-index: 57000;
     display: flex;
     flex-direction: row;
@@ -2190,7 +2190,7 @@ div#combat_button{
     position: relative;
 }
 
-/* .ct-sidebar__controls, */
+/* .avtt-sidebar-controls, */
 .sidebar__controls {
     position: relative;
     margin: 0 !important;
@@ -2251,7 +2251,10 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #journal-panel .sidebar-panel-body>ul.folder-item-list{
     height: 100%;
 }
-.ct-sidebar__controls .tab-btn,
+.ct-sidebar__inner [class*='styles_pane'] [class*='styles_border']{
+    display: none;
+}
+.avtt-sidebar-controls .tab-btn,
 .sidebar__controls .tab-btn {
     background-color: #f2f2f2;
     margin: 0 2px;
@@ -2266,58 +2269,58 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     flex-grow: 1;
 }
 
-.ct-sidebar__controls .tab-btn .sidebar-tab-image > div,
+.avtt-sidebar-controls .tab-btn .sidebar-tab-image > div,
 .sidebar__controls .tab-btn .sidebar-tab-image > div {
     width: 100%;
     height: 80%;
     margin: 5% 0 0 0;
     background-color: #838383;
 }
-.ct-sidebar__controls .tab-btn.selected-tab .sidebar-tab-image > div,
+.avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > div,
 .sidebar__controls .tab-btn.selected-tab .sidebar-tab-image > div {
     height: 100%;
     margin-top: 0%;
     background-color: #000;
 }
-.ct-sidebar__controls .tab-btn .sidebar-tab-image > svg,
+.avtt-sidebar-controls .tab-btn .sidebar-tab-image > svg,
 .sidebar__controls .tab-btn .sidebar-tab-image > svg {
     width: 100%;
     height: 80%;
     margin: 5% 0 0 0;
     color: #838383;
 }
-.ct-sidebar__controls .tab-btn.selected-tab .sidebar-tab-image > svg,
+.avtt-sidebar-controls .tab-btn.selected-tab .sidebar-tab-image > svg,
 .sidebar__controls .tab-btn.selected-tab .sidebar-tab-image > svg {
     height: 90%;
     margin-top: 2%;
     color: #000;
 }
 
-.ct-sidebar__controls .tab-btn.selected-tab,
+.avtt-sidebar-controls .tab-btn.selected-tab,
 .sidebar__controls .tab-btn.selected-tab {
     width: 50px;
 }
 
-.ct-sidebar__controls .tab-btn.selected-tab.blue-tab,
+.avtt-sidebar-controls .tab-btn.selected-tab.blue-tab,
 .sidebar__controls .tab-btn.selected-tab.blue-tab {
     background-color: rgb(235, 241, 245);
 }
 
-.ct-sidebar__controls .tab-btn.notification,
+.avtt-sidebar-controls .tab-btn.notification,
 .sidebar__controls .tab-btn.notification {
     background-color: var(--player-border-color, #e40712);;
 }
-.ct-sidebar__controls .tab-btn.notification svg,
+.avtt-sidebar-controls .tab-btn.notification svg,
 .sidebar__controls .tab-btn.notification svg {
     color: white;
 }
 
-.ct-sidebar__controls .tab-btn.leading-edge,
+.avtt-sidebar-controls .tab-btn.leading-edge,
 .sidebar__controls .tab-btn.leading-edge {
     margin-left: 0px;
 }
 
-.ct-sidebar__controls .tab-btn.trailing-edge,
+.avtt-sidebar-controls .tab-btn.trailing-edge,
 .sidebar__controls .tab-btn.trailing-edge {
     margin-right: 0px;
 }
@@ -2675,7 +2678,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 
-.ct-sidebar__controls button,
+.avtt-sidebar-controls button,
 .sidebar__controls button{
 	font-size: 10px;
 }
@@ -3394,7 +3397,7 @@ ul.context-menu-list > li {
 #hide_rightpanel {
 	position: absolute;
 	left: -32px;
-    top: -3px;
+    top: 2px;
 }
 
 #site .mfp-wrap {
@@ -3666,7 +3669,8 @@ body {
 }
 
 .sidebar__pane-content .sidebar-panel-content,
-.ct-sidebar__pane-content .sidebar-panel-content {
+.ct-sidebar__pane-content .sidebar-panel-content,
+.ct-sidebar__inner [class*='styles_content'] .sidebar-panel-content{
     position: fixed;
     top: 30px;
     right: 0px;
@@ -3675,13 +3679,29 @@ body {
     height: calc(-45px + 100vh);
 }
 div.sidebar__pane-content > div.selected-tab,
-div.ct-sidebar__pane-content > div.selected-tab {
+div.ct-sidebar__pane-content > div.selected-tab,
+.ct-sidebar__inner [class*='styles_content'] div.sidebar-panel-content.selected-tab
+{
     z-index: 21;
 }
 
 /*this may be a DDB bug - as the `Send to (default)` button scrolls off screen and messess with our layout as at 4/25/2024*/
-.ct-sidebar__pane-content>div:first-of-type{
+.ct-sidebar__pane-content>div:first-of-type,
+.ct-sidebar__inner [class*='styles_content']>div:first-of-type{
     height:100%;
+}
+
+.ct-sidebar__inner>[class*='styles_controls']{
+    margin: 0px 0px 3px 0px;
+}
+
+.ct-sidebar__inner [class*='styles_content']{
+    --border: none;
+    padding-bottom: 0px;
+}
+
+.sidebar-panel-content{
+    color: #000;
 }
 
 /* Make a few adjustments for when it's a modal because we nest it inside or .sidebar-modal and change the UI slightly  */
