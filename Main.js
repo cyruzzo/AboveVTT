@@ -1116,13 +1116,10 @@ function minimize_player_monster_window_double_click(titleBar) {
  * @returns void
  */
 function init_controls() {
-
-	if ($("#switch_gamelog").length > 0) {
-		// no need to do this more than once. DDB rips things out when you resize the window which is why this could be called multiple times
+	if($("#switch_gamelog").length > 0){
 		return;
 	}
 
-	init_sidebar_tabs();
 
 	if (is_characters_page()) {
 		$(".ct-sidebar").css("top", "-2px");
@@ -1131,9 +1128,11 @@ function init_controls() {
 	}
 	$(".sidebar").css("height", "calc(100vh - 24px)");
 
-	$(".sidebar__control--lock").closest("span.sidebar__control-group.sidebar__control-group--lock > button").click(); // Click on the padlock icon  // This is safe to call multiple times
+	$(".ct-sidebar__inner button[aria-label='Unlocked']").click(); // Click on the padlock icon  // This is safe to call multiple times
+	$("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
 
-	let sidebarControlsParent = is_characters_page() ? $(".ct-sidebar__controls") : $(".sidebar__controls");
+	init_sidebar_tabs();
+	let sidebarControlsParent = is_characters_page() ? $(".ct-sidebar__inner>[class*='styles_controls']") : $(".sidebar__controls");
 	sidebarControlsParent.find(".avtt-sidebar-controls").remove();
 	sidebarControlsParent.children().css({ "visibility": "hidden", "width": "0px", "height": "0px", "position": "absolute" });
 	sidebarControlsParent.css({ "display": "block", "visibility": "visible", "height": "28px", "position": "relative", "top": "0px", "left": "0px" });
@@ -1568,7 +1567,7 @@ function observe_character_sheet_companion(documentToObserve){
  * Prepare character sheet window.
  * @returns void
  */
-function init_sheet() {
+function  init_sheet() {
 	if (is_characters_page()) {
 
 		// in case we're re-initializing, remove these before adding them again
@@ -1577,14 +1576,14 @@ function init_sheet() {
 
 		// when playing on the characters page, we need to do a little bit of UI manipulation so we do that here
 		var sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
-		sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
+		sheet_button.css({ "position": "absolute", "top": "2px", "left": "-80px", "z-index": "999" });
 		sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_button);
 		sheet_button.click(function(e) {
 			toggle_player_sheet();
 		});
 		var sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
-		sheet_resize_button.css({ "position": "absolute", "top": "-3px", "left": "-314px", "z-index": "999" });
+		sheet_resize_button.css({ "position": "absolute", "top": "2px", "left": "-314px", "z-index": "999" });
 		sheet_resize_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_resize_button);
 		// $(".ct-character-sheet__inner").append(sheet_resize_button);
@@ -1660,18 +1659,6 @@ function init_sheet() {
 		});
 		minimize_player_window_double_click($("#sheet"));
 	
-		if (!window.DM) {
-	
-			sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
-			sheet_button.css({ "position": "absolute", "top": "-3px", "left": "-80px", "z-index": "999" });
-			sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
-	
-			$(".avtt-sidebar-controls").append(sheet_button);
-	
-			sheet_button.click(function(e) {
-				toggle_player_sheet();
-			});
-		}
 	}
 }
 
@@ -1996,7 +1983,9 @@ function init_character_page_sidebar() {
 	$(".ct-sidebar__pane-top").hide();
 	$(".ct-sidebar__pane-bottom").hide();
 	$(".ct-sidebar__pane-gap").hide();
-	$(".ct-sidebar__pane-content").css({"border": "none", "padding-bottom": "0px"});
+
+
+	$(".ct-sidebar__inner [class*='styles_content']").css({"border": "none", "padding-bottom": "0px"});
 	$(".ct-sidebar__portal").css({
 		"right": "0px",
 		"position": "fixed",
