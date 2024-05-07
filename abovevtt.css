@@ -2093,7 +2093,15 @@ div#combat_button{
 .dnd-condition {
     cursor: pointer;
 }
-
+.ct-primary-box [class*='styles_tabButton']{
+    text-wrap: nowrap;
+}
+.ct-primary-box [class*='styles_tabs']{
+    gap: 0.9rem;
+}
+.ct-primary-box [class*='styles_tabList'] .ddbc-tab-options__content{
+    height: var(--content-height);
+}
 .hpbar {
     z-index: 3;
     background: #fd9696;

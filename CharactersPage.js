@@ -516,6 +516,9 @@ function getRollData(rollButton){
     else if($(rollButton).find('.ddbc-healing-icon').length > 0){
       expression = $(rollButton).text().replace(/\s/g, '');
     }
+    else if($(rollButton).find('[class*="styles_numberDisplay"]').length > 0){
+      expression = `1d20${$(rollButton).text().replace(/\s/g, '')}`;
+    }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
       expression = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command')).expression;
     }
@@ -749,8 +752,8 @@ function observe_character_sheet_changes(documentToObserve) {
             const spellContainer = $(this).closest('.ct-spells-spell')
             const name = spellContainer.find(".ddbc-spell-name").first().text()
             let color = "default"
-            const feet = $(this).prev().find(".ddbc-distance-number__number").first().text()
-            const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon')
+            const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
+            const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
             if (dmgIcon.length == 1){
               color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
             }
@@ -831,8 +834,9 @@ function observe_character_sheet_changes(documentToObserve) {
         
           if(mutationTarget.hasClass("ddbc-tab-list__content")){
             if (!is_player_sheet_full_width()) {
+              let height = `${$.position?.scrollbarWidth() ? 510 - $.position.scrollbarWidth() : 510}px`
+              $('.ct-primary-box').css('--content-height', height);
               $(".ct-primary-box").css({ "height": "610px" });
-              $(".ddbc-tab-options__content").css({ "height": "510px" });
               // these need a little more space due to the filter search bar
               $(".ct-extras").css({ "height": "540px" });
               $(".ct-equipment").css({ "height": "540px" });
