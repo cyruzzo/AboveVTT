@@ -1138,11 +1138,15 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/gi
                     const regexMatch = hitDiceData.matchAll(regex).next();
                     hpVal = regexMatch.value[1] * regexMatch.value[2] + parseInt(`${regexMatch.value[3]}${regexMatch.value[4]}`); 
+                }else if(averageHP && averageHP != ''){
+                    hpVal = averageHP;          
                 }
                 break;
             case 'roll':
                 if(hitDiceData && hitDiceData != ''){
                     hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).total;
+                }else if(averageHP && averageHP != ''){
+                    hpVal = averageHP;          
                 }
                 break;
             case 'average':
@@ -1236,14 +1240,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let newAC = $(statText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = statText.matchAll(/Armor Class[\s<:&][\s\S]+?\b([0-9]+)\b/gi).next()
-            if(match.value != undefined){
-                newAC = match.value[1] 
+            let match = statText.match(/Armor Class[\s\D]+([0-9]+)/i)
+            if(match && match[1] != undefined){
+                newAC = match[1]
             }
             else{
-                match = statText.matchAll(/[Aa][Cc][\s<:&][\s\S]+?\b([0-9]+)\b/gi).next()
-                if(match.value != undefined){
-                    newAC = match.value[1] 
+                match = statText.match(/[Aa][Cc][\s\D]+([0-9]+)/i)
+                if(match && match[1] != undefined){
+                    newAC = match[1]
                 }
             }
         }
