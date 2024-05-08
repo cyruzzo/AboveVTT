@@ -7176,7 +7176,9 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
     animation: aurafx-flicker 4s infinite alternate ease-in-out
 }
 
-
+[class*='MessageContainer-Flex'] .ct-creature-pane__full-image img{
+    max-width:100%
+}
 .reduceMovement [data-animation],
 .reduceMovement [data-animation]:before,
 .reduceMovement [data-animation]:after,

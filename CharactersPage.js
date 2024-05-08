@@ -547,10 +547,10 @@ function getRollData(rollButton){
     } 
     if(rollType == 'damage' || rollType == 'attack' || rollType == 'heal'){
       if($(rollButton).parents(`.ddbc-combat-attack--spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('.ddbc-spell-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('[class*="styles_spellName"]').text();
       }
       else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ddbc-spell-name').text();
+        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ct-spells-spell__label').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
         rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
