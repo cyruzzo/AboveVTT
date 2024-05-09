@@ -737,6 +737,12 @@ function observe_character_sheet_changes(documentToObserve) {
         const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
         if (spells.length > 0){
           $(spells).addClass("above-vtt-visited");
+          $(spells).css({
+            '-webkit-user-select': 'none',
+            '-ms-user-select': 'none',
+            'user-select': 'none',
+          })
+  
           spells.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
@@ -747,10 +753,10 @@ function observe_character_sheet_changes(documentToObserve) {
               let diceRoll;
               if(data.expression != undefined){
                     if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                       if(shiftHeld){
+                       if(e.shiftKey){
                         diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                        }
-                       else if(ctrlHeld){
+                       else if(e.ctrlKey || e.metaKey){
                         diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
                        }else{
                         diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
@@ -767,6 +773,11 @@ function observe_character_sheet_changes(documentToObserve) {
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
         if (attackIcons.length > 0){
           $(attackIcons).addClass("above-vtt-visited");
+          $(attackIcons).css({
+            '-webkit-user-select': 'none',
+            '-ms-user-select': 'none',
+            'user-select': 'none',
+          })
           attackIcons.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
 
@@ -776,10 +787,10 @@ function observe_character_sheet_changes(documentToObserve) {
               let diceRoll;
               if(data.expression != undefined){
                 if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                   if(shiftHeld){
+                   if(e.shiftKey){
                     diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                    }
-                   else if(ctrlHeld){
+                   else if(e.ctrlKey || e.metaKey){
                     diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
                    }else{
                     diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
