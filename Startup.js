@@ -107,7 +107,7 @@ $(function() {
                   event.data.msg.img,
                   "character",
                   event.data.msg.playerId
-                ));
+                ), event.data.multiroll);
               }
             }       
             return;

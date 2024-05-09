@@ -374,6 +374,7 @@ class DiceRoller {
                 tabCommunicationChannel.postMessage({
                       msgType: 'roll',
                       msg: msgdata,
+                      multiroll: multiroll,
                     });
                 return true;
             }               

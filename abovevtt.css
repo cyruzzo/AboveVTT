@@ -4720,11 +4720,7 @@ span.exhaustion-pip.last{
     pointer-events:none;
     opacity: 0;
 }
-.ddbc-combat-attack__icon, .ct-spells-spell__action{
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
+
 .chat-text-wrapper.sidebar-hover-text:hover:before {
     transition: opacity 500ms linear 500ms;
     opacity: 1;
