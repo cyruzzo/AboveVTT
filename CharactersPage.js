@@ -739,7 +739,6 @@ function observe_character_sheet_changes(documentToObserve) {
           $(spells).addClass("above-vtt-visited");
           spells.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
-            document.getSelection().removeAllRanges();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
 
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
@@ -763,7 +762,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 window.diceRoller.roll(diceRoll, true);
               }
             }     
-
           });
         }
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
@@ -771,7 +769,7 @@ function observe_character_sheet_changes(documentToObserve) {
           $(attackIcons).addClass("above-vtt-visited");
           attackIcons.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
-            document.getSelection().removeAllRanges();
+
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
             for(let i = 0; i<rollButtons.length; i++){             
               let data = getRollData(rollButtons[i]);
@@ -793,7 +791,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 window.diceRoller.roll(diceRoll, true);
 
               }
-            }    
+            }   
 
           });
         }
