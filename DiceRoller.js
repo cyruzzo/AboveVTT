@@ -293,7 +293,7 @@ class DiceRoller {
                 clearTimeout(this.#multirollTimeout)
                 this.#multirollTimeout = setTimeout(function() {
                       window.diceRoller.roll(diceRoll, multiroll);
-                }, 1000);
+                }, 50);
                 return;
             }
             let msgdata = {}
