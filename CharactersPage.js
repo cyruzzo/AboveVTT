@@ -438,70 +438,7 @@ function convertToRPGRoller(){
       }
       e.stopImmediatePropagation();
       
-      
-
-      let msgdata = {}
-
-
-      let critSuccess = false;
-      let critFail = false;
-
-      let results = rollData.roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
-      let diceNotations = rollData.roll.notation.split(/[+-]/g);
-
-      if(!diceNotations[diceNotations.length-1].includes('d')){
-         diceNotations.splice(diceNotations.length-1, 1)
-      }
-
-
-      for(let i=0; i<diceNotations.length; i++){
-
-          results[i] = results[i].replace(/[0-9]+d/g, '').replace(/[\]\[]/g, '')
-          let resultsArray = results[i].split(',');
-          for(let j=0; j<resultsArray.length; j++){
-              if(parseInt(resultsArray[j]) == parseInt(diceNotations[i].split('d')[1])){
-                  critSuccess = true;
-              }
-              if(parseInt(resultsArray[j]) == 1){
-                  critFail = true;
-              }
-          }
-      }
-      let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
-
-      if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-        msgdata = {
-          player: window.PLAYER_NAME,
-          img: window.PLAYER_IMG,
-          text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${rollData.roll.output.replace(rollData.regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollData.rollTitle}: <span class='abovevtt-roll-${rollData.rollType}'>${rollData.rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${rollData.roll.total}</span></div></div></div>`,
-          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
-          rollType: rollData.rollType,
-          rollTitle: rollData.rollTitle,
-          result: rollData.roll.total,
-          playerId: window.PLAYER_ID,
-          sendTo: window.sendToTabRPGRoller
-        };
-      }
-      else{
-        msgdata = {
-          player: window.PLAYER_NAME,
-          img: window.PLAYER_IMG,
-          whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
-          playerId: window.PLAYER_ID,
-          rollData: rollData,
-          sendTo: window.sendToTab 
-        };
-      }
-   
-      if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-        window.MB.inject_chat(msgdata);
-      }
-      else if(!is_abovevtt_page()){
-        tabCommunicationChannel.postMessage({
-          msgType: 'roll',
-          msg: msgdata,
-        });
-      }
+      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
     });
 }
 
@@ -800,15 +737,30 @@ function observe_character_sheet_changes(documentToObserve) {
         const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
         if (spells.length > 0){
           $(spells).addClass("above-vtt-visited");
-          spells.click(function(e) {
+          spells.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
+            document.getSelection().removeAllRanges();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
-            let rollData = [];
+
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
-            for(let i = 0; i<rollButtons.length; i++){             
-              let data = getRollData(rollButtons[i]);
+            for(let i = 0; i<rollButtons.length; i++){  
+              let data = getRollData(rollButtons[i]);           
+              let diceRoll;
               if(data.expression != undefined){
-                window.diceRoller.roll(new DiceRoll(data.expression, data.rollTitle, data.rollType), true);
+                    if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+                       if(shiftHeld){
+                        diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                       }
+                       else if(ctrlHeld){
+                        diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                       }else{
+                        diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                       }
+                    }
+                    else{
+                      diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                    }
+                window.diceRoller.roll(diceRoll, true);
               }
             }     
 
@@ -817,14 +769,29 @@ function observe_character_sheet_changes(documentToObserve) {
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
         if (attackIcons.length > 0){
           $(attackIcons).addClass("above-vtt-visited");
-          attackIcons.click(function(e) {
+          attackIcons.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
-            let rollData = [];
+            document.getSelection().removeAllRanges();
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
             for(let i = 0; i<rollButtons.length; i++){             
               let data = getRollData(rollButtons[i]);
+              let diceRoll;
               if(data.expression != undefined){
-                window.diceRoller.roll(new DiceRoll(data.expression, data.rollTitle, data.rollType), true);
+                if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+                   if(shiftHeld){
+                    diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                   }
+                   else if(ctrlHeld){
+                    diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                   }else{
+                    diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                   }
+                }
+                else{
+                  diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                }
+                window.diceRoller.roll(diceRoll, true);
+
               }
             }    
 
