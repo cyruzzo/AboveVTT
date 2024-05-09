@@ -1110,17 +1110,46 @@ class MessageBroker {
 				if(msg.data.rolls != undefined){
 					let critSuccess = {};
 					let critFail = {};
+
+
 					for(let i=0; i<msg.data.rolls.length; i++){
 						let roll = msg.data.rolls[i];
 						critSuccess[i] = false;
 						critFail[i] = false;
+
 						for (let j=0; j<roll.diceNotation.set.length; j++){
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
-								if(roll.diceNotation.set[j].dice[k].dieValue == parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))){
-									critSuccess[i] = true
+								if(roll.diceNotation.set[j].dice[k].dieValue == parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
+									if(roll.rollKind == 'advantage'){
+										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
+											critSuccess[i] = true;
+										}
+										else if(k==0 && roll.diceNotation.set[j].dice[k+1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
+											critSuccess[i] = true;
+										}
+									}
+									else if(roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue){
+										critSuccess[i] = true;
+									}
+									else if(roll.rollKind != 'disadvantage'){
+										critSuccess[i] = true;
+									}		
 								}
-								else if(roll.diceNotation.set[j].dice[k].dieValue == 1){
-									critFail[i] = true;
+								else if(roll.diceNotation.set[j].dice[k].dieValue == 1 && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
+									if(roll.rollKind == 'disadvantage'){
+										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue){
+											critFail[i] = true;
+										}
+										else if(k==0 && roll.diceNotation.set[j].dice[k+1].dieValue >= roll.diceNotation.set[j].dice[k].dieValue){
+											critFail[i] = true;
+										}
+									}
+									else if(roll.rollKind == 'advantage' && roll.diceNotation.set[j].dice[1].dieValue == roll.diceNotation.set[j].dice[0].dieValue){
+										critFail[i] = true;
+									}
+									else if(roll.rollKind != 'advantage'){
+										critFail[i] = true;
+									}		
 								}
 							}
 						}
