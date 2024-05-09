@@ -1560,7 +1560,7 @@ function display_sources() {
 	}
 }
 
-function display_chapters(selectedChapter) {
+function display_chapters(selectedChapter, notOwned = false) {
 	$("#chapter_select").empty();
 	$("#scene_select").empty();
 
@@ -1592,9 +1592,20 @@ function display_chapters(selectedChapter) {
 	}
 }
 
-function display_scenes() {
+function display_scenes(notOwned = false) {
+
+
+
 	var source_name = $("#source_select").val();
 	var chapter_name = $("#chapter_select").val();
+	if(notOwned){
+		let area = $("#importer_area");
+		area.empty();
+		area.css("opacity", "0");
+		area.animate({ opacity: "1" }, 300);
+		area.append($(`<div>Chapter not available. You may not own it or it is not fully released yet. You can check if you have access to the chapter here here: <a target="_blank" id='check_chapter_access' href='/sources/${source_name}/${chapter_name}'>https://www.dndbeyond.com/sources/${source_name}/${chapter_name}</a></div> `)) 
+		return;
+	}
 	fill_importer(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes, 0);
 	console.log(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes);
 	console.log("mostrati...");

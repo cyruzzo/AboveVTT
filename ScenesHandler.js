@@ -731,7 +731,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		f.hide();
 		$("#site").append(f);
 		f.on("load", function(event) {
-			var iframe = $(event.target);
+			let iframe = $(event.target);
 			console.log('caricato ' + window.frames['scraper'].location.href);
 
 			if (window.frames['scraper'].location.href != adventure_url) {
@@ -819,14 +819,23 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			});		
 		}
 
-		var f = $("<iframe src='" + chapter_url + "'></iframe>");
+		let f = $("<iframe src='" + chapter_url + "'></iframe>");
 
 		f.hide();
 		$("#site").append(f);
 
 
 		f.on("load", function(event) {
-			var iframe = $(event.target);
+			let iframe = $(event.target);
+			if(iframe.contents().length == 0){
+				let notOwned = true;
+				iframe.remove();
+				console.log('Book failed to load - probably do not own it');
+				callback(notOwned);
+				return;
+			}
+
+
 			iframe.contents().find("figure").each(function(idx) { // FIGURE + FIGCAPTION. 
 				var id = $(this).attr('id');
 				if (typeof id == typeof undefined)
