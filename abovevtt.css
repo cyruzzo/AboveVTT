@@ -54,6 +54,9 @@ button#startScreenShare{
     position: absolute;
     background: #0F0;
 }
+#check_chapter_access{
+    color: #0376e9;
+}
 button.daylight {
     position: relative;
     height: 20px;
