@@ -245,6 +245,7 @@ class DiceRoller {
     #pendingDiceRoll = undefined;
     #pendingMessage = undefined;
     #timeoutId = undefined;
+    #multirollTimeout = undefined
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -277,16 +278,23 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the dice expression to parse and roll. EG: 1d20+4
      * @returns {boolean} whether or not dice were rolled
      */
-    roll(diceRoll) {
+    roll(diceRoll, multiroll = false) {
         try {
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
                 return false;
             }
 
-            if (this.#waitingForRoll) {
+            if (this.#waitingForRoll && !multiroll) {
                 console.warn("parseAndRoll called while we were waiting for another roll to finish up");
                 return false;
+            }
+            else if(this.#waitingForRoll && multiroll){
+                clearTimeout(this.#multirollTimeout)
+                this.#multirollTimeout = setTimeout(function() {
+                      window.diceRoller.roll(diceRoll, multiroll);
+                }, 1000);
+                return;
             }
             let msgdata = {}
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
@@ -469,7 +477,7 @@ class DiceRoller {
             }
             else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId) && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
-            }
+            }         
             this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/pending") {
             console.log("capturing pending message: ", message);
