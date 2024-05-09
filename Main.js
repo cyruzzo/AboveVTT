@@ -2071,15 +2071,15 @@ function inject_chat_buttons() {
 	}
 	// AGGIUNGI CHAT
 	// the text has to be up against the left for it to style correctly
-	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;<br/>
-'/r 1d20'&#xa;<br/>
-'/roll 1d4 punch:damage'&#xa;<br/>
-'/hit 2d20kh1+2 longsword ADV'&#xa;<br/>
-'/dmg 1d8-2 longsword'&#xa;<br/>
-'/save 2d20kl1 DEX DISADV'&#xa;<br/>
-'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;<br/>
-Advantage: 2d20kh1 (keep highest)&#xa;<br/>
-Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
+	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;
+'/r 1d20'&#xa;
+'/roll 1d4 punch:damage'&#xa;
+'/hit 2d20kh1+2 longsword ADV'&#xa;
+'/dmg 1d8-2 longsword'&#xa;
+'/save 2d20kl1 DEX DISADV'&#xa;
+'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;
+Advantage: 2d20kh1 (keep highest)&#xa;
+Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 '/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
 
 	$(".glc-game-log").append($(`
@@ -2308,7 +2308,6 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;<br/>
 		window.chatObserver = new ChatObserver();
 	}
 	window.chatObserver.observe($("#chat-text"));
-
 	$(".GameLog_GameLog__2z_HZ").scroll(function() {
 		if ($(this).scrollTop() >= 0) {
 			$(this).removeClass("highlight-gamelog");

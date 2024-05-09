@@ -4704,12 +4704,27 @@ span.exhaustion-pip.last{
     inset: 0px 0px 0px auto !important;
     right: 0px !important;
  }
-.chat-text-wrapper.sidebar-hovertext:before{
- bottom: 100px;
- text-align: left;
- white-space: pre;
+
+.chat-text-wrapper.sidebar-hover-text:before  {
+    transition: opacity 0ms;
+    content: attr(data-hover);
+    display:block;
+    position:absolute;
+    white-space: pre;
+    bottom: 100px;
+    text-align: left;
+    background:rgb(18, 18, 18);
+    padding:5px;
+    border:1px solid #ababab;
+    border-radius:5px;
+    pointer-events:none;
+    opacity: 0;
 }
 
+.chat-text-wrapper.sidebar-hover-text:hover:before {
+    transition: opacity 500ms linear 500ms;
+    opacity: 1;
+}
 .sidebar-hovertext:hover:before {
     opacity: 1;
     visibility: visible;
