@@ -1003,7 +1003,7 @@ class JournalManager{
                 });
             // Find cover rules
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(total cover|heavily obscured|lightly obscured|half cover|three-quarters cover|Instant Death|Death Saving Throws|Falling|Suffocating|Surprise|Underwater|Advantage|Disadvantage|Concentration)(?![^<]+>|\w|\[)/gi,
+                /(?<!]|;|#|\w|\-|<[^>]+)(total cover|heavily obscured|lightly obscured|half cover|three-quarters cover|Instant Death|Death Saving Throws|Falling|Suffocating|Surprise|Underwater|Advantage|Disadvantage|Concentration)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
@@ -1014,7 +1014,7 @@ class JournalManager{
             );
             // Find conditions
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)(?![^<]+>\w||\[)/gi,
+                /(?<!]|;|#|\w|<[^>]+)(blinded|charmed|deafened|exhaustion|frightened|grappled|incapacitated|invisible|paralyzed|petrified|poisoned|prone|restrained|stunned|unconscious)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
@@ -1025,7 +1025,7 @@ class JournalManager{
             );
             // Find skills
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)(?![^<]+>\w||\[)/gi,
+                /(?<!]|;|#|\-|\w|<[^>]+)(athletics|acrobatics|sleight of hand|stealth|arcana|history|investigation|nature|religion|animal handling|insight|medicine|perception|survival|deception|intimidation|performance|persuasion)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
 
                 	
@@ -1036,7 +1036,7 @@ class JournalManager{
             );
             // Find opportunity attacks
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(opportunity attack)s(?![^<]+>|\[)|(?<!\]|;|#|<[^>]+)(opportunity attack)(?![^<]+>|\w|\[)/gi,
+                /(?<!]|;|#|\-|\w|<[^>]+)(opportunity attack)s(?![^<]+>|\[)|(?<!\]|;|#|<[^>]+)(opportunity attack)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
                 }
@@ -1044,7 +1044,7 @@ class JournalManager{
 
             // Find senses
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(truesight|blindsight|darkvision|tremorsense)(?![^<]+>|\w|\[)/gi,
+                /(?<!]|;|#|\w|\-|<[^>]+)(truesight|blindsight|darkvision|tremorsense)(?![^<]+>|\-|\w|\[)/gi,
                  function(m){
                 	
                 	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
@@ -1054,7 +1054,7 @@ class JournalManager{
 
             // Find actions
             input = input.replace(
-                /(?<!]|;|#|\w|<[^>]+)(dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell)(?![^<]+>|\w|\[)/gim,
+                /(?<!]|;|#|\w|\-|<[^>]+)(dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell)(?![^<]+>|\-|\w|\[)/gim,
                 function(m){
      
                 	
