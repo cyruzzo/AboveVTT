@@ -1730,9 +1730,9 @@ padding-bottom: 5px;
 .ct_dead img{
     filter: saturate(0);
 }
-.hp,
-.max_hp,
-td:nth-of-type(4){
+#combat_area .hp,
+#combat_area .max_hp,
+#combat_area td:nth-of-type(4){
     color: #000000dd;
 }
 .ct_dead .hp,
@@ -6588,7 +6588,7 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(98% - 7px / var(--window-zoom));
+    --mask-size:calc(98% - 7px);
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
     height: calc(100% + 5px / min(1, var(--window-zoom)));
     width: calc(100% + 5px / min(1, var(--window-zoom)));
@@ -6603,7 +6603,7 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size: calc(100% - 4px / min(1, var(--scene-scale)));
+    --mask-size: calc(100% - 7px / min(1, var(--scene-scale)));
     height: calc(100% + 7px / min(1, var(--scene-scale)));
     width: calc(100% + 7px / min(1, var(--scene-scale)));
     top: min(-3px, calc(-3px / min(1, var(--scene-scale))));
