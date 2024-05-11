@@ -821,8 +821,8 @@ class SidebarListItem {
   /** @returns {boolean} true if the name partially matches the searchTerm or if the containing folder name partially matches the searchTerm */
   nameOrContainingFolderMatches(searchTerm) {
     if (typeof this.name !== "string") return false;
-    let scenesPath = this.fullPath().split('Scenes/')[1]
-    return !scenesPath || scenesPath.match(new RegExp(searchTerm, 'i'))
+    let fullPath = this.fullPath().replace(/^(\/Scenes)/i, '')
+    return fullPath.match(new RegExp(searchTerm, 'i')) != null;
   }
 }
 
