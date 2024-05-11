@@ -6568,7 +6568,14 @@ button span.onedrive-btn-status{
 .isAoe .hpvisualbar{
     display: none !important;
 }
-
+.ct-character-sheet__inner,
+.ct-sidebar__inner *,
+.moveableWindow *,
+.sidebar *,
+.sidebar-flyout,
+.note{
+    overscroll-behavior: contain;
+}
 .VTTToken:not(.freeform) .hpvisualbar:before{
     display: var(--token-hpbar-display);
     transition: none;
