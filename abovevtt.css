@@ -6573,7 +6573,8 @@ button span.onedrive-btn-status{
 .moveableWindow *,
 .sidebar *,
 .sidebar-flyout,
-.note{
+.note,
+.sources-import-main-container *{
     overscroll-behavior: contain;
 }
 .VTTToken:not(.freeform) .hpvisualbar:before{
