@@ -679,7 +679,29 @@ function token_context_menu_expanded(tokenIds, e) {
 			clickedItem.removeClass("single-active all-active some-active active-condition");
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
+
 		body.append(hiddenMenuButton);
+
+		let lockSettings = token_setting_options().filter((d) => d.name == 'lockRestrictDrop')[0];
+
+		let selectedTokenSettings = tokens.map(t => t.options.lockRestrictDrop);
+		let uniqueSettings = [...new Set(selectedTokenSettings)];
+		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
+		if (uniqueSettings.length === 1) {
+			currentValue = uniqueSettings[0];
+		}
+		let lockDropdown = build_dropdown_input(lockSettings, currentValue, function(name, newValue) {
+			tokens.forEach(token => {
+				token.options[name] = newValue;
+				token.place_sync_persist();
+			});
+		});
+		let lockTitle = lockDropdown.find('.token-image-modal-footer-title')
+		lockTitle.empty();
+		lockTitle.toggleClass('material-icons door-lock', true);
+		lockTitle.toggleClass('token-image-modal-footer-title', false);
+
+		body.append(lockDropdown);
 	}
 	
 	if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
@@ -741,10 +763,11 @@ function token_context_menu_expanded(tokenIds, e) {
 	// End Quick Group Roll 
 	let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 	let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
-
+	let sendToGamelogButton = $("<button class='material-icons send-to'>Send To Gamelog</button>")
 
 	body.append(toTopMenuButton);
 	body.append(toBottomMenuButton);
+	body.append(sendToGamelogButton);
 
 	toTopMenuButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {
@@ -769,6 +792,13 @@ function token_context_menu_expanded(tokenIds, e) {
 				}		
 			});
 			token.place_sync_persist();
+		});
+	});
+
+	sendToGamelogButton.off().on("click", function(tokenIds){
+		tokens.forEach(token => {											    	           
+            const tokenImage = (`<div class="image" style="display: block;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} src='${token.options.imgsrc}'/>  </div>`);
+            send_html_to_gamelog(tokenImage);
 		});
 	});
 

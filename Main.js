@@ -496,6 +496,21 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 
 	}
+	else if(url.startsWith("https://mega.nz/embed")){
+		let newmap = $('<div style="width:' + width + 'px;height:' + height + `px;position:absolute;top:0;left:0;z-index:10" id="scene_map" ></div>`);
+		let megaIframe = $(`<iframe width="1920" height="1080" frameborder="0" src="${url}" allowfullscreen ></iframe>`)
+		megaIframe.on('load', function(){
+			megaIframe.contents().find('video').attr('autoplay', 'true');
+			megaIframe.contents().find('video').attr('repeat', 'true');
+		})
+
+
+		newmap.append(megaIframe);
+
+		$("#map_items").append(newmap);
+		callback();
+		$("#scene_map_container").toggleClass('map-loading', false);
+	}
 	else {
 		console.log("LOAD MAP " + width + " " + height);
 		$("#scene_map_container").toggleClass('video', true);
