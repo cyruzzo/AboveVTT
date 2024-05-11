@@ -2908,6 +2908,9 @@ div#selectedTokensBorder {
 #tokenOptionsContainer .open-menu:before {
     content: "\e9bd" !important;
 }
+#tokenOptionsContainer .send-to:before {
+    content: "\ea77" !important;
+}
 
 .icon-edit:before,
 .context-menu-icon-edit:before {
@@ -6564,7 +6567,28 @@ button span.onedrive-btn-status{
 #tokens {
     z-index: 40;
 }
-
+#tokenOptionsPopup>#tokenOptionsContainer>div[data-option-name='lockRestrictDrop'] select{
+    background: none !important;
+    max-width:unset;
+    min-width: unset;
+    width:100%;
+    padding-left:20px;
+    font-family: Roboto, Open Sans, Helvetica, sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 5px 0px 5px 22px;
+    font-size:10px;
+    color: #738694;
+    margin-top:2px;
+    height: 24px;
+}
+#tokenOptionsPopup>#tokenOptionsContainer>div[data-option-name='lockRestrictDrop'] .door-lock {
+    position:absolute;
+    left:-1px;
+    padding:3px 0px;
+    font-size:16px;  
+}
 .isAoe .hpvisualbar{
     display: none !important;
 }
