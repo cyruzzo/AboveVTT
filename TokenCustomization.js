@@ -139,11 +139,11 @@ class TokenCustomization {
      * @returns {TokenCustomization} a typed object instead of the raw JSON object that was given
      */
     static fromJson(obj) {
-        return new TokenCustomization(obj.id, obj.tokenType, obj.parentId, obj.rootId, obj.tokenOptions);
+        return new TokenCustomization(obj.id, obj.tokenType, obj.parentId, obj.rootId, obj.tokenOptions, obj.color);
     }
 
     // never call this directly! use the static functions above
-    constructor(id, tokenType, parentId, rootId, tokenOptions) {
+    constructor(id, tokenType, parentId, rootId, tokenOptions, color=undefined) {
         if (tokenType === ItemType.Monster) {
             id = `${id}`; // DDB uses numbers for monster ids, but we want to use strings to keep everything consistent
         }
@@ -163,6 +163,7 @@ class TokenCustomization {
         this.tokenType = tokenType;
         this.parentId = parentId;
         this.rootId = rootId;
+        this.color = color;
         if (typeof tokenOptions === "object") {
             this.tokenOptions = {...tokenOptions}; // copy it
         } else {

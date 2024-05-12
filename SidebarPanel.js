@@ -489,13 +489,14 @@ class SidebarListItem {
    * @param folderPath {string} the folder this item is in
    * @param parentId {string|undefined} a string id of the folder this item is in
    */
-  constructor(id, name, image, type, folderPath = RootFolder.Root.path, parentId = "root") {
+  constructor(id, name, image, type, folderPath = RootFolder.Root.path, parentId = "root", color = undefined) {
     this.id = id;
     this.name = name;
     this.image = image;
     this.type = type;
     this.folderPath = sanitize_folder_path(folderPath);
     this.parentId = parentId;
+    this.color = color;
   }
 
   /**
@@ -508,12 +509,12 @@ class SidebarListItem {
    * @param folderType {string} the ItemType that this folder contains
    * @returns {SidebarListItem} the list item this creates
    */
-  static Folder(id, folderPath, name, collapsed, parentId, folderType) {
+  static Folder(id, folderPath, name, collapsed, parentId, folderType, color = '#F4B459') {
     console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}, folderType: ${folderType}`);
     if(parentId == undefined && folderPath == RootFolder.Scenes.path){
         parentId = RootFolder.Scenes.id
     }
-    let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId);
+    let item = new SidebarListItem(id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Folder, folderPath, parentId, color);
 
     if (collapsed === true || collapsed === false) {
       item.collapsed = collapsed;
@@ -1116,7 +1117,16 @@ function build_sidebar_list_row(listItem) {
     let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
     let img;
     let video = false;
-    if(tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage.includes(d))){
+    if(listingImage?.includes != undefined && listingImage.includes('folder.svg')){
+    img = $(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 309.267 309.267" style="enable-background:new 0 0 309.267 309.267;" xml:space="preserve">
+        <g>
+          <path style="fill:${listItem.color ? `${listItem.color}` : '#D0994B'};" d="M260.944,43.491H125.64c0,0-18.324-28.994-28.994-28.994H48.323c-10.67,0-19.329,8.65-19.329,19.329   v222.286c0,10.67,8.659,19.329,19.329,19.329h212.621c10.67,0,19.329-8.659,19.329-19.329V62.82   C280.273,52.15,271.614,43.491,260.944,43.491z"/>
+          <path style="fill:#E4E7E7;" d="M28.994,72.484h251.279v77.317H28.994V72.484z"/>
+          <path style="fill:${listItem.color ? listItem.color : '#F4B459'};" d="M19.329,91.814h270.609c10.67,0,19.329,8.65,19.329,19.329l-19.329,164.298   c0,10.67-8.659,19.329-19.329,19.329H38.658c-10.67,0-19.329-8.659-19.329-19.329L0,111.143C0,100.463,8.659,91.814,19.329,91.814z   "/>
+        </g>
+    </svg>`)
+    }
+    else if(tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage.includes(d))){
         img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
         video = true;
     } else{
@@ -1663,16 +1673,7 @@ function display_folder_configure_modal(listItem) {
     if (updatedFullPath) {
       // the name has been changed. Update the input so we know it has been changed later
       set_full_path(input, updatedFullPath);
-      console.log('inside updatedFullPath');
-      if (itemType === ItemType.Scene) {
-        console.log('updatedFullPath should be updating scenes here');
-        did_update_scenes();
-      } else {
-        console.log('updatedFullPath should NOT be updating scenes here');
-        rebuild_token_items_list();
-        redraw_token_list();
-      }
-      expand_all_folders_up_to_id(foundItem.id);
+      console.log('inside updatedFullPath');      
       sidebarModal.updateHeader(newFolderName, updatedFullPath, "Edit or delete this folder.");
       console.log('returning updatedFullPath');
       return updatedFullPath;
@@ -1684,9 +1685,42 @@ function display_folder_configure_modal(listItem) {
     }
   }
 
+  
+
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_list_item_identifier(folderNameInput, listItem);
   sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
+
+
+
+  let folderColor = listItem.color ? listItem.color : '#F4B459';
+
+  let folderColorInput = `<div class="token-image-modal-footer-select-wrapper">
+              <div class="token-image-modal-footer-select-wrapper">
+                 <div class="token-image-modal-footer-title">Folder Color</div>
+                  <div style="padding-left: 2px">
+                      <input class="spectrum" name="folderColor" value="${folderColor}" >
+                  </div>
+              </div>`;
+
+  sidebarModal.body.append(folderColorInput);
+  let colorPickers = sidebarModal.body.find('input.spectrum');
+  colorPickers.spectrum({
+      type: "color",
+      showInput: true,
+      showInitial: true,
+      containerClassName: 'prevent-sidebar-modal-close',
+      clickoutFiresChange: true,
+      appendTo: "parent"
+  });
+  sidebarModal.body.find("input[name='folderColor']").spectrum("set", listItem.color);
+  const colorPickerChange = function(e, tinycolor) {
+      listItem.color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
+
+  };
+  colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
+  colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
+  colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
   if (itemType === ItemType.MyToken) {
     let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
@@ -1708,6 +1742,21 @@ function display_folder_configure_modal(listItem) {
       expand_all_folders_up_to_id(listItem?.id);
       // did_update_scenes();
     }
+    if(itemType === ItemType.MyToken){
+      let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
+      customization.color = listItem.color;
+      persist_token_customization(customization);
+      rebuild_token_items_list();
+      redraw_token_list();    
+    }
+    else{
+      let sceneIndex = window.ScenesHandler.scenes.findIndex( d => d.id == listItem.id);
+      window.ScenesHandler.scenes[sceneIndex].color = listItem.color;
+      window.ScenesHandler.persist_scene(sceneIndex);
+      did_update_scenes();
+    }
+    expand_all_folders_up_to_id(listItem.id);
+
   });
   sidebarModal.body.append(saveButton);
 

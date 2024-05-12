@@ -283,7 +283,7 @@ function rebuild_token_items_list() {
     window.TOKEN_CUSTOMIZATIONS
         .filter(tc => tc.tokenType === ItemType.Folder && tc.fullPath().startsWith(RootFolder.MyTokens.path))
         .forEach(tc => {
-            tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId, ItemType.MyToken))
+            tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId, ItemType.MyToken, tc.color))
         })
 
     // My Tokens

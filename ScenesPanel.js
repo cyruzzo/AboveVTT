@@ -1900,7 +1900,7 @@ function rebuild_scene_items_list() {
 
 	window.sceneListFolders = window.ScenesHandler.scenes
 		.filter(s => s.itemType === ItemType.Folder)
-		.map(f => SidebarListItem.Folder(f.id, folder_path_of_scene(f), f.title, true, f.parentId, ItemType.Scene))
+		.map(f => SidebarListItem.Folder(f.id, folder_path_of_scene(f), f.title, true, f.parentId, ItemType.Scene, f.color))
 		.sort(SidebarListItem.sortComparator);
 
 	window.sceneListItems = window.ScenesHandler.scenes
