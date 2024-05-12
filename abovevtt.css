@@ -4053,10 +4053,13 @@ div#importer_area>div>div:first-of-type {
     border-width: 0;
     overflow: hidden;
 }
+#folder-configuration-modal .token-image-modal-footer-select-wrapper {
+    margin-top: 5px;
+}
 .encounter .folder-item-list,
 .folder .folder-item-list {
-    padding-left: 6px;
-    padding-top: 0.3em;
+    padding-left: 8px;
+    padding-top: 0.5em;
     cursor: default;
 }
 .encounter .folder-item-list:empty:before,
