@@ -41,8 +41,8 @@ function token_setting_options() {
 				{ value: "none", label: "None", description: "Tokens will not have a health visual" }
 			],
 			defaultValue: "aura"
-      },
-      {
+      	},
+      	{
 			name: 'lockRestrictDrop',
 			label: 'Token Lock',
 			type: 'dropdown',

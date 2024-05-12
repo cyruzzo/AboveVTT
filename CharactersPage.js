@@ -563,36 +563,50 @@ function init_character_list_page_without_avtt() {
 /** Called from our character sheet observer for Dice Roll formulae.
  * @param element the jquery element that we observed changes to */
 function inject_dice_roll(element, clear=true) {
-  if (element.find("button.avtt-roll-formula-button").length > 0) {
+  if (element.find(".integrated-dice__container").length > 0) {
     console.debug("inject_dice_roll already has a button")
     return;
   }
-  const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
-  if (slashCommands.length === 0) return;
-  console.debug("inject_dice_roll slashCommands", slashCommands);
-  let updatedInnerHtml = element.text();
-  for (const command of slashCommands) {
-    try {
-      const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-      updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
-    } catch (error) {
-      console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
-      updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
+  if(element.hasClass("ddbc-note-components__component--damage")){
+    element.find('.ddbc-damage').toggleClass('above-vtt-visited ddb-note-roll', true);
+  }
+  else{
+    const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
+    if (slashCommands.length === 0) return;
+    console.debug("inject_dice_roll slashCommands", slashCommands);
+    let updatedInnerHtml = element.text();
+    for (const command of slashCommands) {
+      try {
+        const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+        updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
+      } catch (error) {
+        console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
+        updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
+      }
     }
+    if(clear == true){
+      element.empty();
+    }
+    console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
+    element.append(updatedInnerHtml);
   }
-  if(clear == true){
-    element.empty();
-  }
-  console.debug("inject_dice_roll updatedInnerHtml", updatedInnerHtml);
-  element.append(updatedInnerHtml);
-  element.find("button.avtt-roll-formula-button").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
+
+
+  element.find(".integrated-dice__container, .ddb-note-roll").off('click.avttRoll').on('click.avttRoll', function(clickEvent) {
     clickEvent.stopPropagation();
-  
-    const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
-    const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-    window.diceRoller.roll(diceRoll);
+    
+    if($(this).hasClass('avtt-roll-formula-button')){
+      const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
+      const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+      window.diceRoller.roll(diceRoll);
+    }
+    else{
+      let rollData = getRollData(this);
+      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+    }
+   
   });
-  element.find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+  element.find(`.integrated-dice__container, .ddb-note-roll`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
       e.stopPropagation();
       e.preventDefault();
       let rollData = {}
@@ -742,7 +756,21 @@ function observe_character_sheet_changes(documentToObserve) {
             '-ms-user-select': 'none',
             'user-select': 'none',
           })
-  
+          spells.off().on('mouseover.color', function(e){
+            if(e.shiftKey){
+              $(this).toggleClass('advantageHover', true)
+            }
+            else if(e.ctrlKey || e.metaKey){
+              $(this).toggleClass('disadvantageHover', true)
+            }else{
+              $(this).toggleClass('advantageHover', false)
+              $(this).toggleClass('disadvantageHover', false)
+            }
+          })
+          spells.off('mouseleave.color').on('mouseleave.color', function(e){
+            $(this).toggleClass('advantageHover', false)
+            $(this).toggleClass('disadvantageHover', false)
+          })
           spells.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
@@ -769,7 +797,44 @@ function observe_character_sheet_changes(documentToObserve) {
               }
             }     
           });
+          if($(`style#advantageHover`).length == 0){
+              $('body').append(`
+                <style id='advantageHover'>
+                .ddbc-combat-attack__icon.above-vtt-visited,
+                .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will{
+                  border: 1px solid var(--theme-color, #ddd);
+                  border-radius: 5px;
+                  padding: 3px;
+                  margin: 0px 2px 0px 0px;
+                }
+                #site .advantageHover svg [fill="#b0b7bd"], 
+                #site .advantageHover svg [fill="#242528"],
+                #site .advantageHover svg .prefix__st0,
+                #site .advantageHover svg .prefix__st2,
+                #site .advantageHover svg .prefix__st4,
+                #site .advantageHover svg [fill="#b0b7bd"] *, 
+                #site .advantageHover svg [fill="#242528"] *{
+                  fill: #4fcf4f !important;
+                }
+                #site .advantageHover {
+                  color: #4fcf4f !important;
+                }
+                #site .disadvantageHover svg [fill="#b0b7bd"], 
+                #site .disadvantageHover svg [fill="#242528"],
+                #site .disadvantageHover svg .prefix__st0,
+                #site .disadvantageHover svg .prefix__st2,
+                #site .disadvantageHover svg .prefix__st4,
+                #site .disadvantageHover svg [fill="#b0b7bd"] *, 
+                #site .disadvantageHover svg [fill="#242528"] *{
+                    fill: #bb4242 !important;
+                }
+                #site .disadvantageHover {
+                  color: #4fcf4f !important;
+                }
+              </style>`);
+          }
         }
+
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
         if (attackIcons.length > 0){
           $(attackIcons).addClass("above-vtt-visited");
@@ -777,6 +842,21 @@ function observe_character_sheet_changes(documentToObserve) {
             '-webkit-user-select': 'none',
             '-ms-user-select': 'none',
             'user-select': 'none',
+          })
+          attackIcons.off().on('mouseover.color', function(e){
+            if(e.shiftKey){
+              $(this).toggleClass('advantageHover', true)
+            }
+            else if(e.ctrlKey || e.metaKey){
+              $(this).toggleClass('disadvantageHover', true)
+            }else{
+              $(this).toggleClass('advantageHover', false)
+              $(this).toggleClass('disadvantageHover', false)
+            }
+          })
+          attackIcons.off('mouseleave.color').on('mouseleave.color', function(e){
+            $(this).toggleClass('advantageHover', false)
+            $(this).toggleClass('disadvantageHover', false)
           })
           attackIcons.off('click.multiroll').on('click.multiroll', function(e) {
             e.stopPropagation();
@@ -805,7 +885,58 @@ function observe_character_sheet_changes(documentToObserve) {
             }   
 
           });
+          if($(`style#advantageHover`).length == 0){
+              $('body').append(`
+                <style id='advantageHover'>
+                .ddbc-combat-attack__icon.above-vtt-visited,
+                .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will,
+                .ddb-note-roll{
+                  border: 1px solid var(--theme-color, #ddd);
+                  border-radius: 5px;
+                  padding: 3px;
+                  margin: 0px 2px 0px 0px;
+                }
+                #site .advantageHover svg [fill="#b0b7bd"], 
+                #site .advantageHover svg [fill="#242528"],
+                #site .advantageHover svg .prefix__st0,
+                #site .advantageHover svg .prefix__st2,
+                #site .advantageHover svg .prefix__st4,
+                #site .advantageHover svg [fill="#b0b7bd"] *, 
+                #site .advantageHover svg [fill="#242528"] *{
+                  fill: #4fcf4f !important;
+                }
+                #site .advantageHover  span{
+                  color: #4fcf4f !important;
+                }
+                #site .disadvantageHover svg [fill="#b0b7bd"], 
+                #site .disadvantageHover svg [fill="#242528"],
+                #site .disadvantageHover svg .prefix__st0,
+                #site .disadvantageHover svg .prefix__st2,
+                #site .disadvantageHover svg .prefix__st4,
+                #site .disadvantageHover svg [fill="#b0b7bd"] *, 
+                #site .disadvantageHover svg [fill="#242528"] *{
+                    fill: #bb4242 !important;
+                }
+                #site .disadvantageHover span{
+                  color: #bb4242 !important;
+                }
+              </style>`);
+          }
+        
         }
+
+        $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
+          let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
+          if(e.shiftKey){
+            $(target).toggleClass('advantageHover', true)
+          }
+          else if(e.ctrlKey || e.metaKey){
+            $(target).toggleClass('disadvantageHover', true)
+          }else{
+            $(target).toggleClass('advantageHover', false)
+            $(target).toggleClass('disadvantageHover', false)
+          }
+        });
         if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type').length>0 && !$('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text().includes('Beyond 20 Settings')){
            $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-button.ajs-ok').click();
            $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
