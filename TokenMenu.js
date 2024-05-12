@@ -797,7 +797,8 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	sendToGamelogButton.off().on("click", function(tokenIds){
 		tokens.forEach(token => {											    	           
-            const tokenImage = (`<div class="image" style="display: block;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} src='${token.options.imgsrc}'/>  </div>`);
+            const tokenImage = (`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${token.options.imgsrc}' src='${token.options.imgsrc}'/>  </div>`);
+           
             send_html_to_gamelog(tokenImage);
 		});
 	});
