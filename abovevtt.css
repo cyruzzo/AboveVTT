@@ -2898,7 +2898,12 @@ div#selectedTokensBorder {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
 
 }
-
+.advatageHover svg [fill="#b0b7bd"], .advatageHover svg [fill="#242528"]{
+    fill: #0F0;
+}
+.disadvatageHover svg [fill="#b0b7bd"], .advatageHover svg [fill="#242528"]{
+    fill: #F00;
+}
 #tokenOptionsContainer .to-top:before {
     content: "\e25a" !important;
 }
@@ -2911,7 +2916,6 @@ div#selectedTokensBorder {
 #tokenOptionsContainer .send-to:before {
     content: "\ea77" !important;
 }
-
 .icon-edit:before,
 .context-menu-icon-edit:before {
     content: "\e3c9" !important;
@@ -3230,7 +3234,7 @@ div#selectedTokensBorder {
   }
 .above-vtt-container-roll-output{
     position: absolute;
-    top: 15px;
+    top: 11px;
     left: 0px;
     width: 220px;
     text-wrap: nowrap;
@@ -3239,6 +3243,7 @@ div#selectedTokensBorder {
     color: #716f6f;
     font-size: 10px;
     font-weight: bold;
+    line-height: 14px;
 }
 .abovevtt-roll-container{
     position:relative;
@@ -3259,7 +3264,7 @@ div#selectedTokensBorder {
     flex: 1 1 auto;
     min-width: 0px;
     overflow: hidden;
-    top: -6px;
+    top: -13px;
     position: relative;
 }
 .abovevtt-roll-container [class*='Total-Other-Collapsed-Pending-Flex'] {
