@@ -1022,7 +1022,7 @@ function edit_scene_vision_settings(scene_id){
 
 	let playerViewLabel = $('<div class="player_map_preview_label">Player view will see the map image even when behind walls at less than 100% darkness opacity. If token vision/light is enabled tokens will be hidden when out of line of sight otherwise line of sight will be ignored.</div>')
 	let leaveTrail = form_row('visionTrail',
-			'Explored Trail (Trail resets on refresh/rejoin)',
+			'Explored Trail',
 			form_toggle("visionTrail",null, false,  function(event) {
 				handle_basic_form_toggle_click(event);
 			})
