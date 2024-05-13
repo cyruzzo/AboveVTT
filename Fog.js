@@ -1099,7 +1099,7 @@ function reset_canvas(apply_zoom=true) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
-
+	$('#exploredCanvas').remove();
 	redraw_light_walls();
 	redraw_drawings();
 	redraw_drawn_light();
@@ -4675,6 +4675,8 @@ function redraw_light(){
 	 			'opacity': '1'
 	 		});
 
+		 	$('#exploredCanvas').css('opacity', '0');
+		 
 		 	
 	  	}
 	  	
@@ -4700,6 +4702,7 @@ function redraw_light(){
 	 			'opacity': ''
 	 		});
   		}
+  		$('#exploredCanvas').css('opacity', '');
   	}
 
 
@@ -4877,6 +4880,30 @@ function redraw_light(){
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	if(window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+		let exploredCanvas = document.getElementById("exploredCanvas");
+		if($('#exploredCanvas').length == 0){
+			exploredCanvas =  document.createElement("canvas")
+			exploredCanvas.width = canvasWidth;
+			exploredCanvas.height = canvasHeight;
+
+			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.fillStyle = "black";
+			exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
+			$(exploredCanvas).attr('id', 'exploredCanvas');
+
+			$('#outer_light_container').append(exploredCanvas)	
+		}
+
+		let exploredCanvasContext = exploredCanvas.getContext('2d');
+		exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+	}
+	else{
+		$('#exploredCanvas').remove();
+	}
+
+
+
 	if(!window.DM || window.SelectedTokenVision){
 		do_check_token_visibility();
 	}
