@@ -1923,7 +1923,7 @@ function render_source_chapter_in_iframe(url) {
 		const iframeContents = $(event.target).contents();
 
 		iframeContents.find(".site-bar").hide();
-		iframeContents.find("#site-main > header").hide();
+
 		iframeContents.find("#mega-menu-target").hide();
 		iframeContents.find(".ad-container").hide();
 		iframeContents.find("#site > footer").hide();
