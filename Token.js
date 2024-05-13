@@ -1837,6 +1837,7 @@ class Token {
 				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
 				        tokenClone.toggleClass('lockedToken', this.options.locked==true)
 						tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
+						tokenClone.attr('data-name', old.attr('data-name'));
 				        $('#token_map_items').append(tokenClone);
 					}
 					else{
@@ -1861,6 +1862,7 @@ class Token {
 						copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
 						copyToken.toggleClass('lockedToken', this.options.locked==true)
 						copyToken.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
+						copyToken.attr('data-name', old.attr('data-name'));
 					}
 
 					let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
