@@ -2761,6 +2761,16 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     mix-blend-mode:multiply;
     opacity: 0;
 }
+#exploredCanvas{
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    filter: blur(calc(5px / var(--scene-scale)));
+    mix-blend-mode: lighten;
+    opacity: 0.2; 
+    z-index: 23;
+}
+
 .body-rpgcharacter-sheet #raycastingCanvas{
     opacity: 1;
 }
@@ -3818,6 +3828,7 @@ div.ct-sidebar__pane-content > div.selected-tab,
     line-height: 1.4;
     margin: 4px 6px 2px 2px;
 }
+
 
 span.add-input.slots {
     display: block;
@@ -6379,6 +6390,26 @@ button span.onedrive-btn-status{
     height: 24px;
     border-radius: 5px;
     padding: 0;
+}
+
+.lightRowLabel{
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    margin: 4px 6px 2px 2px;
+    display: inline-block;
+}
+
+.lightRow{
+    width:100%; 
+    display:flex;
+}
+.lightRowInput{
+    flex-grow:1;
+}
+.lightRow .sp-replacer.sp-light{
+    float:left;
 }
 .image-scale-input-range {
     width: 100%;

@@ -860,14 +860,14 @@ function edit_scene_vision_settings(scene_id){
 	let scene = window.ScenesHandler.scenes[scene_id];
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
-		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
-		const rowLabel = $("<div style='display: inline-block; width:30%'>" + title + "</div>");
-		rowLabel.css("font-weight", "bold");
-		const rowInputWrapper = $("<div style='display:inline-block; width:60%; padding-right:8px' />");
+		const row = $(`<div class='lightRow' id='${name}_row'/>`);
+		const rowLabel = $("<div class='lightRowLabel'>" + title + "</div>");
+		rowLabel.css("font-weight", "700");
+		const rowInputWrapper = $("<div style='display:inline-block; flex-grow: 1; padding-right:8px' />");
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
-				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || "" }" />`);
+				rowInput = $(`<input type="text" onClick="this.select();" name=${name} style='width:100%;' autocomplete="off" value="${scene[name] || "" }" />`);
 			}else{
 				rowInput = $(`<input type="text" name=${name} style='width:100%' autocomplete="off" value="${scene[name] || ""}" />`);
 			}
@@ -876,7 +876,8 @@ function edit_scene_vision_settings(scene_id){
 		else{
 			rowInput = inputOverride
 		}
-		
+
+		rowInput.toggleClass('lightRowInput', true)
 		rowInputWrapper.append(rowInput);
 		row.append(rowLabel);
 		row.append(rowInputWrapper);
@@ -1020,12 +1021,17 @@ function edit_scene_vision_settings(scene_id){
 	});
 
 	let playerViewLabel = $('<div class="player_map_preview_label">Player view will see the map image even when behind walls at less than 100% darkness opacity. If token vision/light is enabled tokens will be hidden when out of line of sight otherwise line of sight will be ignored.</div>')
+	let leaveTrail = form_row('visionTrail',
+			'Explored Trail (Trail resets on refresh/rejoin)',
+			form_toggle("visionTrail",null, false,  function(event) {
+				handle_basic_form_toggle_click(event);
+			})
+		)
 
 
-
-    let daylightInput = $(`<div class="token-image-modal-footer-select-wrapper">
-                    <div class="token-image-modal-footer-title">Daylight Color - For light drawings and token light</div>
-                    <div style="padding-left: 2px">
+    let daylightInput = $(`<div class="lightRow">
+                    <div class="lightRowLabel">Daylight Color - For light drawings and token light</div>
+                    <div class="lightRowInput" style="padding-left: 2px">
                         <input class="spectrum" name="daylightColor" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
                     </div>
                 </div>
@@ -1053,7 +1059,7 @@ function edit_scene_vision_settings(scene_id){
     colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
 
-	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel, daylightInput);
+	form.append(playerPreviewVisibleMap, playerPreviewHiddenMap, playerViewLabel, leaveTrail, daylightInput);
 
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
