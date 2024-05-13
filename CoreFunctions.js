@@ -130,6 +130,28 @@ function monitor_console_logs() {
     });
   }
 }
+function openDB() {
+  const DBOpenRequest = window.indexedDB.open(`AboveVTT-${window.gameId}`);
+  DBOpenRequest.onsuccess = (e) => {
+    window.exploredIndexedDb = DBOpenRequest.result;
+  };
+  DBOpenRequest.onerror = (e) => {
+    console.warn(e);
+  };
+  DBOpenRequest.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      // Create an objectStore to hold information about our customers. We're
+      // going to use "ssn" as our key path because it's guaranteed to be
+      // unique - or at least that's what I was told during the kickoff meeting.
+      const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+  };
+}
+function deleteDB(){
+  exploredIndexedDb.close();
+  let deleteDB = window.indexedDB.deleteDatabase(`AboveVTT-${window.gameId}`);
+  deleteDB.onsuccess = function(e) { openDB(); };
+}
 
 function process_monitored_logs() {
   const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);

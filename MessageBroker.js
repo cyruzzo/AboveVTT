@@ -1559,7 +1559,7 @@ class MessageBroker {
 		}
 		else{
 			window.DRAWINGS = [];
-		
+			$('#exploredCanvas').remove();
 			window.sceneRequestTime = Date.now();
 	    let lastSceneRequestTime = window.sceneRequestTime;   
 			window.TOKEN_OBJECTS = {};

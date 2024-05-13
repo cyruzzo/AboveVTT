@@ -1099,7 +1099,7 @@ function reset_canvas(apply_zoom=true) {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		return;
 	}
-	$('#exploredCanvas').remove();
+	
 	redraw_light_walls();
 	redraw_drawings();
 	redraw_drawn_light();
@@ -4569,6 +4569,8 @@ function detectInLos(x, y) {
 	return true;
 	
 }
+	
+
 
 function redraw_light(){
 	let startTime = Date.now();
@@ -4881,6 +4883,9 @@ function redraw_light(){
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 	if(window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+		if(!exploredIndexedDb){
+		
+		}
 		let exploredCanvas = document.getElementById("exploredCanvas");
 		if($('#exploredCanvas').length == 0){
 			exploredCanvas =  document.createElement("canvas")
@@ -4893,15 +4898,40 @@ function redraw_light(){
 			$(exploredCanvas).attr('id', 'exploredCanvas');
 
 			$('#outer_light_container').append(exploredCanvas)	
+			exploredIndexedDb.transaction(["exploredData"])
+			  .objectStore(`exploredData`)
+			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
+			 	if(event?.target?.result?.exploredData){
+				  	let img = new Image;
+					img.onload = function(){
+					  exploredCanvasContext.drawImage(img,0,0); 
+					};
+					img.src = event.target.result.exploredData;
+				}
+			  
+			};		
 		}
 
 		let exploredCanvasContext = exploredCanvas.getContext('2d');
 		exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+
+
+
+		let dataURI = exploredCanvas.toDataURL('image/jpg')
+
+		let storeImage = exploredIndexedDb.transaction([`exploredData`], "readwrite")
+		let objectStore = storeImage.objectStore(`exploredData`)
+		let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
+		deleteRequest.onsuccess = (event) => {
+		  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+		};
+		deleteRequest.onerror = (event) => {
+		  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+		};
 	}
 	else{
 		$('#exploredCanvas').remove();
 	}
-
 
 
 	if(!window.DM || window.SelectedTokenVision){
@@ -4936,7 +4966,8 @@ function redraw_light(){
 		}, 20);
 	}
 }
-	
+
+
 
 function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
 

@@ -36,6 +36,8 @@ $(function() {
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
       .then(() => {                   // load settings
+        window.exploredIndexedDb;
+        openDB();
         window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
