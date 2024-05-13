@@ -858,7 +858,8 @@ function observe_character_sheet_changes(documentToObserve) {
             $(this).toggleClass('advantageHover', false)
             $(this).toggleClass('disadvantageHover', false)
           })
-          attackIcons.off('click.multiroll').on('click.multiroll', function(e) {
+          attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
+            e.preventDefault();
             e.stopPropagation();
 
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
