@@ -1490,9 +1490,9 @@ function import_readfile() {
 			if(DataFile.notes){
 				for(let id in DataFile.notes){			
 					if(DataFile.notes[id].statBlock == true){
-						if(window.JOURNAL.statBlock == undefined)
-							window.JOURNAL.statBlock = {};
-						window.JOURNAL.statBlock[id] = DataFile.notes[id];
+						if(window.JOURNAL.statBlocks == undefined)
+							window.JOURNAL.statBlocks = {};
+						window.JOURNAL.statBlocks[id] = DataFile.notes[id];
 					}else{
 						window.JOURNAL.notes[id] = DataFile.notes[id];
 					}
