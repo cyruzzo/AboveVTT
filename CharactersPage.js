@@ -775,7 +775,7 @@ function observe_character_sheet_changes(documentToObserve) {
             e.stopPropagation();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
 
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
+            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);          
             for(let i = 0; i<rollButtons.length; i++){  
               let data = getRollData(rollButtons[i]);           
               let diceRoll;
@@ -837,6 +837,50 @@ function observe_character_sheet_changes(documentToObserve) {
 
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
         if (attackIcons.length > 0){
+          if(!window.CHARACTER_AVTT_SETTINGS){
+            window.CHARACTER_AVTT_SETTINGS = {}
+          }
+          if($('#versatileSetting').length == 0 && $('.ddb-combat-item-attack__damage--is-versatile').length>0){
+            window.CHARACTER_AVTT_SETTINGS.versatile = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
+            if(!window.CHARACTER_AVTT_SETTINGS.versatile){
+              window.CHARACTER_AVTT_SETTINGS.versatile =  'both'
+            }
+            let settingOption = { 
+                name: "versatile",
+                label: "Versatile rolls",
+                type: "dropdown",
+                options: [
+                  { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
+                  { value: "1", label: "1-Handed", description: "1-handed rolls will be rolled." },
+                  { value: "2", label: "2-Handed", description: "2-handed rolls will be rolled." }
+                ],
+                defaultValue: "both"
+            }
+            let wrapper = $(`
+             <div id='versatileSetting' style='font-size: 10px;display: flex;flex-grow: 0;align-items: center;' data-option-name="${settingOption.name}">
+               <div style="margin-right: 3px;font-weight: 700;font-size: 11px;">${settingOption.label}:</div>
+             </div>
+           `);
+
+            let input = $(`<select name="${settingOption.name}" style='font-size: 10px; padding:0px'></select>`);
+
+            for (const option of settingOption.options) {
+              input.append(`<option value="${option.value}">${option.label}</option>`);
+            }
+            if (window.CHARACTER_AVTT_SETTINGS.versatile !== undefined) {
+              input.find(`option[value='${window.CHARACTER_AVTT_SETTINGS.versatile}']`).attr('selected','selected');
+            } 
+            const currentlySetOption = settingOption.options.find(o => o.value === window.CHARACTER_AVTT_SETTINGS.versatile) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+            input.change(function(event) {
+              let newValue = event.target.value;
+              window.CHARACTER_AVTT_SETTINGS[settingOption.name] = newValue;
+              localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(newValue));
+              const updatedOption = settingOption.options.find(o => o.value === newValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
+            });
+            wrapper.append(input);
+
+            $('.ct-primary-box__tab--actions .ct-actions h2').after(wrapper)
+          }
           $(attackIcons).addClass("above-vtt-visited");
           $(attackIcons).css({
             '-webkit-user-select': 'none',
@@ -861,9 +905,19 @@ function observe_character_sheet_changes(documentToObserve) {
           attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
             e.preventDefault();
             e.stopPropagation();
-
+            let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
+                         
             let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
-            for(let i = 0; i<rollButtons.length; i++){             
+            for(let i = 0; i<rollButtons.length; i++){  
+              let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
+              if(isVersatileDamage && versatileRoll =='1'){
+                if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] != rollButtons[i])
+                  continue;
+              }
+              else if(isVersatileDamage && versatileRoll =='2'){
+                if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] == rollButtons[i])
+                  continue;
+              }           
               let data = getRollData(rollButtons[i]);
               let diceRoll;
               if(data.expression != undefined){

@@ -407,6 +407,7 @@ function avtt_settings() {
 		defaultValue: false
 	})
 
+
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool
 		settings.push({
