@@ -148,19 +148,19 @@ function openDB() {
   };
 }
 function deleteDB(){
-
   let d = confirm("DELETE ALL LOCAL EXPLORE DATA (CANNOT BE UNDONE)");
   if (d === true) {
-    exploredIndexedDb.close();
-    exploredIndexedDb = undefined;   
-    exploredCanvas =  document.getElementById("exploredCanvas");
-    if(exploredCanvas != undefined){
-      let exploredCanvasContext = exploredCanvas.getContext('2d');
-      exploredCanvasContext.fillStyle = "black";
-      exploredCanvasContext.fillRect(0,0,exploredCanvas.width,exploredCanvas.height); 
-    }
-    let deleteDB = window.indexedDB.deleteDatabase(`AboveVTT-${window.gameId}`);
-    deleteDB.onsuccess = function(e) { openDB(); alert('This campaigns local explored vision data has been cleared.')};
+    const objectStore = exploredIndexedDb.transaction([`exploredData`], "readwrite").objectStore('exploredData');
+    const objectStoreRequest = objectStore.clear();
+    objectStoreRequest.onsuccess = function(event) {       
+      exploredCanvas =  document.getElementById("exploredCanvas");
+      if(exploredCanvas != undefined){
+        let exploredCanvasContext = exploredCanvas.getContext('2d');
+        exploredCanvasContext.fillStyle = "black";
+        exploredCanvasContext.fillRect(0,0,exploredCanvas.width,exploredCanvas.height); 
+      }
+      alert('This campaigns local explored vision data has been cleared.')
+    };
   }
 }
 
