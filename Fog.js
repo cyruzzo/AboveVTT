@@ -5061,11 +5061,11 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	lightCanvas.height =  $("#raycastingCanvas").height();
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
-	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
+	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(50, 50, 50, 1)', true);
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
 
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(50, 50, 50, 1)', true, 0)
 	
 
 	window.lightAuraClipPolygon[auraId] = {
