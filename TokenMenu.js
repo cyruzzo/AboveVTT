@@ -539,6 +539,22 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 		});
 		body.append(optionsRow);
+
+		if(window.DM) {
+			body.append(`<hr style="opacity: 0.3" />`);
+			let deleteTokenMenuButton = $("<button class='deleteMenuButton icon-close-red material-icons'>Delete</button>")
+		 	body.append(deleteTokenMenuButton);
+		 	deleteTokenMenuButton.off().on("click", function(){
+		 		if(!$(e.target).hasClass("tokenselected")){
+		 			deselect_all_tokens();
+		 		}
+		 		tokens.forEach(token => {
+		 			token.selected = true;
+		 		});
+				delete_selected_tokens();
+				close_token_context_menu();
+		 	});
+		 }
 	
 		$("#tokenOptionsPopup").addClass("moveableWindow");
 		$("#tokenOptionsPopup").draggable({
