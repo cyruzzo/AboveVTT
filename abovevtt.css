@@ -2767,7 +2767,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     position: absolute;
     filter: blur(calc(5px / var(--scene-scale)));
     mix-blend-mode: lighten;
-    opacity: 0.2; 
+    opacity: 0.3; 
     z-index: 23;
 }
 
