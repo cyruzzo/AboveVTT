@@ -295,7 +295,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
 }
 
 function build_aoe_token_image(token, scale, rotation){
-    let tokenImageContainer = $(`<div class=token-image style='transform:scale(${scale}) rotate(${rotation}deg)'>`);
+    let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
     console.debug("build_aoe_token_image aoeClassName", aoeClassName);
     let tokenImage = $(`<div data-img="true" style='transform:scale(1) rotate(0)' class='${aoeClassName}'></div>`);
