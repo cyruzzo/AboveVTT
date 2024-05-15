@@ -4903,29 +4903,31 @@ function redraw_light(){
 				  	let img = new Image;
 					img.onload = function(){
 					  exploredCanvasContext.drawImage(img,0,0); 
+					  exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 					};
 					img.src = event.target.result.exploredData;
 				}
-			  
 			};		
 		}
+		else{
+			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 
-		let exploredCanvasContext = exploredCanvas.getContext('2d');
-		exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 
 
+			let dataURI = exploredCanvas.toDataURL('image/jpg')
 
-		let dataURI = exploredCanvas.toDataURL('image/jpg')
-
-		let storeImage = exploredIndexedDb.transaction([`exploredData`], "readwrite")
-		let objectStore = storeImage.objectStore(`exploredData`)
-		let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
-		deleteRequest.onsuccess = (event) => {
-		  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
-		};
-		deleteRequest.onerror = (event) => {
-		  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
-		};
+			let storeImage = exploredIndexedDb.transaction([`exploredData`], "readwrite")
+			let objectStore = storeImage.objectStore(`exploredData`)
+			let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
+			deleteRequest.onsuccess = (event) => {
+			  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+			};
+			deleteRequest.onerror = (event) => {
+			  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+			};
+		}
+	
 	}
 
 	else{
