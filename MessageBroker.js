@@ -536,9 +536,11 @@ class MessageBroker {
 					}
 				}
 			}
-
-	
-
+			if(msg.eventType == "custom/myVTT/deleteExplore"){
+				if(!window.DM){
+					deleteExploredScene(msg.data.sceneId)
+				}
+			}
 			if(msg.eventType == "custom/myVTT/place-extras-token"){
 				if(window.DM){
 					let left = parseInt(msg.data.centerView.x);
