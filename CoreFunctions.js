@@ -159,9 +159,35 @@ function deleteDB(){
         exploredCanvasContext.fillStyle = "black";
         exploredCanvasContext.fillRect(0,0,exploredCanvas.width,exploredCanvas.height); 
       }
+      redraw_light();
       alert('This campaigns local explored vision data has been cleared.')
     };
   }
+}
+function deleteCurrentExploredScene(){
+  let d = confirm("DELETE CURRENT SCENE EXPLORE DATA (CANNOT BE UNDONE)");
+  if (d === true) {
+    deleteExploredScene(window.CURRENT_SCENE_DATA.id)
+  }
+}
+
+function deleteExploredScene(sceneId){
+    const deleteRequest = exploredIndexedDb
+     .transaction([`exploredData`], "readwrite")
+     .objectStore('exploredData')
+     .delete(`explore${window.gameId}${sceneId}`);
+    deleteRequest.onsuccess = function(event) {  
+      if(sceneId == window.CURRENT_SCENE_DATA.id){
+        let exploredCanvas = $('#exploredCanvas')
+        if(exploredCanvas.length > 0){
+          let exploredCanvasContext = exploredCanvas[0].getContext('2d');
+          exploredCanvasContext.fillStyle = "black";
+          exploredCanvasContext.fillRect(0,0,exploredCanvas[0].width,exploredCanvas[0].height); 
+        }
+        redraw_light();
+        alert('Scene Explore Trail Data Cleared')
+      }        
+    };
 }
 
 function process_monitored_logs() {
