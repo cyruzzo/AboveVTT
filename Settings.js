@@ -680,10 +680,8 @@ function init_settings() {
 		}
 	}
 
-	let clearSceneExploredData = $(`<button id='clearExploredData' onclick='deleteCurrentExploredScene()' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Clear locally stored explored scene data from this scene">Clear Current Scene Explored Data</button>`)
-		
+	let clearSceneExploredData = $(`<button id='clearExploredData' onclick='deleteCurrentExploredScene()' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Clear locally stored explored scene data from this scene">Clear Current Scene Explored Data</button>`)	
 	let clearExploredData = $(`<button id='clearExploredData' onclick='deleteDB()' class="sidebar-panel-footer-button sidebar-hover-text" data-hover="Clear locally stored explored scene data from this campaign">Clear Campaign Explored Data</button>`)
-
 
 
 	let optOutOfAll = $(`<button class="token-image-modal-remove-all-button" title="Reset to defaults." style="width:100%;padding:8px;margin:10px 0px 30px 0px;">Reset to Defaults</button>`);
@@ -718,6 +716,7 @@ function init_settings() {
 	else{
 		body.append(optOutOfAll);
 	}
+
 
 
 	toggle_peer_settings_visibility(get_avtt_setting_value("peerStreaming"));

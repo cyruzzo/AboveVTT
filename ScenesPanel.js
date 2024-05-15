@@ -1027,7 +1027,17 @@ function edit_scene_vision_settings(scene_id){
 				handle_basic_form_toggle_click(event);
 			})
 		)
-
+	leaveTrail.find('#visionTrail_toggle').parent().css('flex-grow','')
+	let deleteExploreButton = $(`<button id='deletePlayersExploreData'>Clear player explore data for this scene</button>`)
+	deleteExploreButton.off('click.deleteExplore').on('click.deleteExplore', function(){
+		let d = confirm("You are sending a messsage to connected players that will clear their explored data for this scene. This cannot be undone. Continue?")
+		if(d === true){
+			window.MB.sendMessage("custom/myVTT/deleteExplore", {
+	        	sceneId: scene.id,
+	    	});
+		}
+	})
+	leaveTrail.append(deleteExploreButton)
 
     let daylightInput = $(`<div class="lightRow">
                     <div class="lightRowLabel">Daylight Color - For light drawings and token light</div>
@@ -1302,13 +1312,27 @@ function edit_scene_dialog(scene_id) {
 						'Line of Sight/Darkness Opacity',
 						darknessFilterRange)
 	);
-	form.append(form_row('visionTrail',
+
+	let leaveTrail = form_row('visionTrail',
 			'Player Explored Vision Trail',
 			form_toggle("visionTrail",null, false,  function(event) {
 				handle_basic_form_toggle_click(event);
 			})
 		)
-	);
+	leaveTrail.find('#visionTrail_toggle').parent().css('flex-grow','')
+	let deleteExploreButton = $(`<button id='deletePlayersExploreData' style='position: absolute; left: 36%;'>Clear player explore data for this scene</button>`)
+	deleteExploreButton.off('click.deleteExplore').on('click.deleteExplore', function(){
+		let d = confirm("You are sending a messsage to connected players that will clear their explored data for this scene. This cannot be undone. Continue?")
+		if(d === true){
+			window.MB.sendMessage("custom/myVTT/deleteExplore", {
+	        	sceneId: scene.id,
+	    	});
+		}
+	})
+	leaveTrail.append(deleteExploreButton)
+
+	form.append(leaveTrail);
+
 	form.append(form_row('disableSceneVision',
 			'Disable token vision/light',
 			form_toggle("disableSceneVision",null, false,  function(event) {
