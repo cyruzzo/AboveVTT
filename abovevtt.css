@@ -2769,6 +2769,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     mix-blend-mode: lighten;
     opacity: 0.3; 
     z-index: 23;
+    filter: blur(calc(5px* var(--scene-scale)));
 }
 
 .body-rpgcharacter-sheet #raycastingCanvas{
