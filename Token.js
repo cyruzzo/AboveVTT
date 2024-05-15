@@ -1725,7 +1725,7 @@ class Token {
 				// token is an aoe div that uses styles instead of an image
 				// do something with it maybe?
 				// re-calc the border width incase the token has changed size
-				oldImage.css(`transform:scale("${imageScale}") rotate("${rotation}deg");`)
+				oldImage.css(`transform:scale(var(--token-scale)) rotate(--token-rotation));`)
 
 			}
 
