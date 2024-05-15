@@ -444,6 +444,8 @@ function convertToRPGRoller(){
 
 function getRollData(rollButton){
     let expression = '';
+    let rollType = 'custom';
+    let rollTitle = 'AboveVTT';
     if($(rollButton).find('.ddbc-damage__value').length>0){
       expression = $(rollButton).find('.ddbc-damage__value').text().replace(/\s/g, '');
     }
@@ -458,16 +460,23 @@ function getRollData(rollButton){
     }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
       expression = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command')).expression;
+      let title = $(rollButton).attr('title').split(':');
+      if(title != undefined && title[0] != undefined){
+        rollTitle = title[0];
+      }
+      if(title != undefined && title[1] != undefined){
+        rollType = title[1];
+      }  
     }
     if(expression == ''){
       return {
         expression: undefined,
       }
     }
+
     let roll = new rpgDiceRoller.DiceRoll(expression); 
     let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
-    let rollType = 'custom';
-    let rollTitle = 'AboveVTT';
+
     if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
       rollType = 'save'
       rollTitle = $(rollButton).closest(`.ddbc-saving-throws-summary__ability`).find('.ddbc-saving-throws-summary__ability-name abbr').text();
@@ -573,12 +582,19 @@ function inject_dice_roll(element, clear=true) {
   else{
     const slashCommands = [...element.text().matchAll(multiDiceRollCommandRegex)];
     if (slashCommands.length === 0) return;
+
     console.debug("inject_dice_roll slashCommands", slashCommands);
     let updatedInnerHtml = element.text();
     for (const command of slashCommands) {
       try {
+        let iconRoll = command[0].startsWith('/ir');
+        let originalCommand = command[0];
+        if(iconRoll){
+          command[0] = command[0].replace(/^(\/ir)/i, '/r')
+          command[1] = 'r';
+        }
         const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-        updatedInnerHtml = updatedInnerHtml.replace(command[0], `<button class='avtt-roll-formula-button integrated-dice__container' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
+        updatedInnerHtml = updatedInnerHtml.replace(originalCommand, `<button class='avtt-roll-formula-button integrated-dice__container ${iconRoll ? 'abovevtt-icon-roll' : ''}' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
       } catch (error) {
         console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
         updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
@@ -907,7 +923,7 @@ function observe_character_sheet_changes(documentToObserve) {
             e.stopPropagation();
             let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                          
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);
+            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'), .integrated-dice__container.abovevtt-icon-roll`);
             for(let i = 0; i<rollButtons.length; i++){  
               let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
               if(isVersatileDamage && versatileRoll =='1'){
