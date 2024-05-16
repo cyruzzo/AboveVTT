@@ -2765,11 +2765,10 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     top: 0px;
     left: 0px;
     position: absolute;
-    filter: blur(calc(5px / var(--scene-scale)));
     mix-blend-mode: lighten;
     opacity: 0.3; 
     z-index: 23;
-    filter: blur(calc(5px* var(--scene-scale)));
+    filter: brightness(3) blur(calc(5px* var(--scene-scale)));
 }
 
 .body-rpgcharacter-sheet #raycastingCanvas{
