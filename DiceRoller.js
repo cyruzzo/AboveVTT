@@ -716,7 +716,7 @@ function getCharacterStatModifiers(entityType, entityId) {
                 "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
                 "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
                 "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
-                "pb": parseInt($(".ct-proficiency-bonus-box__value .ddbc-signed-number__number").text())
+                "pb": parseInt($(".ct-proficiency-bonus-box__value").text())
             };
             console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
             return statMods
