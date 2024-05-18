@@ -330,8 +330,8 @@ function showErrorMessage(error, ...extraInfo) {
   removeError();
   window.logSnapshot = process_monitored_logs(false);
 
-  console.log("showErrorMessage", ...extraInfo, error);
-  if (error?.constructor?.name !== "Error") {
+  console.log("showErrorMessage", ...extraInfo, error.stack);
+  if (!(error instanceof Error)) {
     error = new Error(error?.toString());
   }
   const stack = error.stack || new Error().stack;
@@ -360,7 +360,7 @@ function showErrorMessage(error, ...extraInfo) {
         <h2>An unexpected error occurred!</h2>
         <h3 id="error-message">${error.message}</h3>
         <div id="error-message-details">${extraStrings}</div>
-        <pre id="error-message-stack" style="display: none">${error.message}<br/>${extraStrings}</pre>
+        <pre id="error-message-stack" style='max-height: 200px;'>${error.message}<br/>${extraStrings}</pre>
         <div id="error-github-issue"></div>
         <div class="error-message-buttons">
           <button id="close-error-button">Close</button>
@@ -436,7 +436,7 @@ function showGoogleDriveWarning(){
  * @param {Error} error an error object to be parsed and displayed
  * @param {string|*[]} extraInfo other relevant information */
 function showError(error, ...extraInfo) {
-  if (error?.constructor?.name !== "Error") {
+  if (!(error instanceof Error)) {
     error = new Error(error);
   }
   $('#loadingStyles').remove();
