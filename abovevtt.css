@@ -6945,7 +6945,7 @@ button span.onedrive-btn-status{
     transition-delay: 0;
 }
 
-.sp-container {
+.sidebar-panel-body .sp-container {
     position: fixed !important;
 }
 #combat_area tr.CTToken:before{
