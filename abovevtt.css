@@ -4744,6 +4744,7 @@ span.exhaustion-pip.last{
     border-radius:5px;
     pointer-events:none;
     opacity: 0;
+    color: #fff;
 }
 
 .chat-text-wrapper.sidebar-hover-text:hover:before {
