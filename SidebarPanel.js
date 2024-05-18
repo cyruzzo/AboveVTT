@@ -49,7 +49,6 @@ function init_sidebar_tabs() {
 
   observe_hover_text($(".sidebar__inner"));
   observe_hover_text($(".sidebar-panel-content"));
-  observe_hover_text($(".chat-text-wrapper").parent());
 }
 
 function sidebar_modal_is_open() {
@@ -68,7 +67,7 @@ function display_sidebar_modal(sidebarPanel) {
 }
 
 function observe_hover_text(sidebarPanelContent) {
-  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text", function(hoverEvent) {
+  sidebarPanelContent.off("mouseenter mouseleave").on("mouseenter mouseleave", ".sidebar-hover-text:not(.chat-text-wrapper)", function(hoverEvent) {
     const displayText = $(hoverEvent.currentTarget).attr("data-hover");
     if (typeof displayText === "string" && displayText.length > 0) {
       if (hoverEvent.type === "mouseenter") {
