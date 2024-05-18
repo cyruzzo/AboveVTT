@@ -6948,6 +6948,9 @@ button span.onedrive-btn-status{
 .sidebar-panel-body .sp-container {
     position: fixed !important;
 }
+.sp-palette-container {
+    min-width: 176px;
+}
 #combat_area tr.CTToken:before{
     content:  '???';
     font-size: 12px;
