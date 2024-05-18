@@ -6190,13 +6190,13 @@ button span.onedrive-btn-status{
 }
 .sidebar-list-item-row-item button.launchPicker.token-row-button span.onedrive-btn-status{
     background-image: none;
-    -webkit-mask-image: var(--onedrive-svg);
-    -webkit-mask-size: 25px 20px;
-    -webkit-mask-position: 0px 0px;
-    mask-image: var(--onedrive-svg);
-    mask-size: 25px 20px;
+    -webkit-mask-image: var(--onedrive-mask);
+    -webkit-mask-size: 25px 17px;
+    -webkit-mask-position: 0px 2px;
+    mask-image: var(--onedrive-mask);
+    mask-size: 25px 17px;
     mask-repeat: no-repeat;
-    mask-position: 0px 0px;
+    mask-position: 0px 2px;
     background: #000;
 }
 #sounds-panel button.dropboxChooser, #sounds-panel button.launchPicker {
