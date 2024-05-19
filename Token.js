@@ -3441,7 +3441,6 @@ function setTokenAuras (token, options) {
 
 function setTokenLight (token, options) {
 	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
-
 	const innerlightSize = options.light1.feet != undefined? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
@@ -3480,12 +3479,12 @@ function setTokenLight (token, options) {
 		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
 		
-		const color1Values = options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
-		const color2Values = options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
-		const daylightValues = window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join();
-		const opacity1Value = options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
-		const opacity2Value = options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
-		const daylightOpacityValue = window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1);
+		const color1Values = options?.light1?.color ? options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join() : '255, 255, 255';
+		const color2Values = options?.light2?.color ? options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join() : '142, 142, 142';
+		const daylightValues = window.CURRENT_SCENE_DATA?.daylight ? window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join() : '255, 255, 255';
+		const opacity1Value = options?.light1?.color ? options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
+		const opacity2Value = options?.light2?.color ? options.light2.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
+		const daylightOpacityValue = window.CURRENT_SCENE_DATA?.daylight ? window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 
 		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
 		const lightStyles = `width:${totalSize }px;
@@ -3507,7 +3506,7 @@ function setTokenLight (token, options) {
 
 
 		const visionRadius = visionSize ? (visionSize + (optionsSize / 2)) : 0;
-		const visionBg = `radial-gradient(${options.vision.color} ${visionRadius}px, #00000000 ${visionRadius}px)`;
+		const visionBg = `radial-gradient(${options.vision.color ? options.vision.color : `rgba(142, 142, 142, 1)`} ${visionRadius}px, #00000000 ${visionRadius}px)`;
 		const totalVisionSize = optionsSize + (2 * visionSize);
 		const visionAbsPosOffset = (optionsSize - totalVisionSize) / 2;
 		const visionStyles = `width:${totalVisionSize }px;
