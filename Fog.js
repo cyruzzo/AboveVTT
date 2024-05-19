@@ -5035,11 +5035,19 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	if(window.DM && !window.SelectedTokenVision)
 		return;
 	
-	let blackLight1 = (window.TOKEN_OBJECTS[auraId].options.light1.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
-	let blackLight2 = (window.TOKEN_OBJECTS[auraId].options.light2.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
-	let blackVision = (window.TOKEN_OBJECTS[auraId].options.vision.color.match(/rgba\(0, 0, 0.*/g)) ? 0 : 1;
-	let lightRadius =((parseInt(window.TOKEN_OBJECTS[auraId].options.light1.feet)*blackLight1)+(parseInt(window.TOKEN_OBJECTS[auraId].options.light2.feet)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
-	let darkvisionRadius = parseInt(window.TOKEN_OBJECTS[auraId].options.vision.feet)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
+	let visionColor = window.TOKEN_OBJECTS[auraId]?.options?.vision?.color ? window.TOKEN_OBJECTS[auraId].options.vision.color : `rgba(0,0,0,0)`;
+	let visionRange = window.TOKEN_OBJECTS[auraId]?.options?.vision?.feet ? window.TOKEN_OBJECTS[auraId].options.vision.color : 0;
+
+	let light1Color = window.TOKEN_OBJECTS[auraId]?.options?.light1?.color ? window.TOKEN_OBJECTS[auraId].options.light1.color : `rgba(0,0,0,0)`;
+	let light2Color = window.TOKEN_OBJECTS[auraId]?.options?.light2?.color ? window.TOKEN_OBJECTS[auraId].options.light1.color : `rgba(0,0,0,0)`;
+	let light1Range = window.TOKEN_OBJECTS[auraId]?.options?.light1?.feet ? window.TOKEN_OBJECTS[auraId].options.light1.feet : 0;
+	let light2Range = window.TOKEN_OBJECTS[auraId]?.options?.light2?.feet ? window.TOKEN_OBJECTS[auraId].options.light2.feet : 0;
+
+	let blackLight1 = light1Color.match(/rgba\(0, 0, 0.*/g) ? 0 : 1;
+	let blackLight2 = light2Color.match(/rgba\(0, 0, 0.*/g) ? 0 : 1;
+	let blackVision = visionColor.match(/rgba\(0, 0, 0.*/g) ? 0 : 1;
+	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseInt(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
 	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0 || $(`.tokenselected`).length == 0)
 
