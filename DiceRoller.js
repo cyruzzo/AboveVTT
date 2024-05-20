@@ -245,7 +245,9 @@ class DiceRoller {
     #pendingDiceRoll = undefined;
     #pendingMessage = undefined;
     #timeoutId = undefined;
-    #multirollTimeout = undefined
+    #multirollTimeout = undefined;
+    #multiRollArray = [];
+    #critAttackAction = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -290,11 +292,14 @@ class DiceRoller {
                 return false;
             }
             else if(this.#waitingForRoll && multiroll){
-                setTimeout(function() {
-                      window.diceRoller.roll(diceRoll, multiroll);
-                }, 50);
+                this.#multiRollArray.push(diceRoll);
                 return;
             }
+            let self = this;
+            this.#timeoutId = setTimeout(function () {
+                console.warn("DiceRoller timed out after 10 seconds!");
+                self.#resetVariables();
+            }, this.timeoutDuration);
             let msgdata = {}
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
@@ -332,6 +337,7 @@ class DiceRoller {
 
 
             if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+
                 msgdata = {
                 player: window.PLAYER_NAME,
                   img: window.PLAYER_IMG,
@@ -343,6 +349,16 @@ class DiceRoller {
                   playerId: window.PLAYER_ID,
                   sendTo: window.sendToTab 
                 };
+                if(rollType == 'attack'){     
+                    if(critSuccess == true){
+                        this.#critAttackAction = rollTitle;     
+                    }
+                    else{
+                        this.#critAttackAction = undefined;  
+                    }
+                   
+                }
+               
             }                         
             else{
                 let rollData = {
@@ -366,7 +382,12 @@ class DiceRoller {
 
 
             if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-                window.MB.inject_chat(msgdata);
+                setTimeout(function(){
+                    window.MB.inject_chat(msgdata);
+                    self.#resetVariables();
+                    self.nextRoll(undefined)
+                
+                }, 100)
                 return true;
             }
             else if(!is_abovevtt_page() && window.sendToTab != undefined){
@@ -385,7 +406,7 @@ class DiceRoller {
 
             // we're about to roll dice so we need to know if we should capture DDB messages.
             // This also blocks other attempts to roll until we've finished processing
-            let self = this;
+       
             this.#timeoutId = setTimeout(function () {
                 console.warn("DiceRoller timed out after 10 seconds!");
                 self.#resetVariables();
@@ -404,7 +425,75 @@ class DiceRoller {
             return false;
         }
     }
+    nextRoll(msg){
+        if(this.#multiRollArray.length == 0){
+            this.#critAttackAction = undefined;
+            return;
+        }
+        if(msg != undefined){
+            if(msg.data.rolls[0].rollType == 'attack'){
+                let critSuccess = {};
+                let critFail = {};
 
+
+                for(let i=0; i<msg.data.rolls.length; i++){
+                    let roll = msg.data.rolls[i];
+                    critSuccess[i] = false;
+                    critFail[i] = false;
+
+                    for (let j=0; j<roll.diceNotation.set.length; j++){
+                        for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
+                            if(roll.diceNotation.set[j].dice[k].faceValue == parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', '')) && roll.result.values.includes(roll.diceNotation.set[j].dice[k].faceValue)){
+                                if(roll.rollKind == 'advantage'){
+                                    if(k>0 && roll.diceNotation.set[j].dice[k-1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+                                        critSuccess[i] = true;
+                                    }
+                                    else if(k==0 && roll.diceNotation.set[j].dice[k+1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){
+                                        critSuccess[i] = true;
+                                    }
+                                }
+                                else if(roll.rollKind == 'disadvantage' && roll.diceNotation.set[j].dice[1].faceValue == roll.diceNotation.set[j].dice[0].faceValue){
+                                    critSuccess[i] = true;
+                                }
+                                else if(roll.rollKind != 'disadvantage'){
+                                    critSuccess[i] = true;
+                                }       
+                            }
+                        }
+                    }
+                }
+
+               
+                if(critSuccess[0] == true){
+                    this.#critAttackAction = msg.data.action;
+                }
+                else{
+                    this.#critAttackAction = undefined;
+                }
+            }
+        }
+        
+        
+        let diceRoll = this.#multiRollArray.shift();
+        if(this.#critAttackAction != undefined && diceRoll.rollType == 'damage'){
+            let diceType = diceRoll.expression.match(/d[0-9]+/i)[0];
+            let critDice = diceRoll.diceToRoll[diceType] * 2;    
+            let maxRoll = diceRoll.diceToRoll[diceType] * parseInt(diceType.replace('d', ''));
+
+            if(window.CHARACTER_AVTT_SETTINGS.crit == 0){
+                let newExpression = diceRoll.expression.replace(/^[0-9]+d/i, `${critDice}d`);
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId));
+            }
+            else if(window.CHARACTER_AVTT_SETTINGS.crit == 1){
+                let newExpression = `${diceRoll.expression}+${maxRoll}`;
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId));
+            }
+        }
+        else{
+            this.roll(diceRoll);
+        }
+
+    }
     /**
      * clicks the DDB dice and then clicks the roll button
      * @param diceRoll {DiceRoll} the DiceRoll object to roll
@@ -491,6 +580,7 @@ class DiceRoller {
             console.log("altered fulfilled message: ", alteredMessage);
             this.ddbDispatch(alteredMessage);
             this.#resetVariables();
+            this.nextRoll(message);
         }
         console.groupEnd();
     }
