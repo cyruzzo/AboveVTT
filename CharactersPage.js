@@ -856,46 +856,67 @@ function observe_character_sheet_changes(documentToObserve) {
           if(!window.CHARACTER_AVTT_SETTINGS){
             window.CHARACTER_AVTT_SETTINGS = {}
           }
-          if($('#versatileSetting').length == 0 && $('.ddb-combat-item-attack__damage--is-versatile').length>0){
-            window.CHARACTER_AVTT_SETTINGS.versatile = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
-            if(!window.CHARACTER_AVTT_SETTINGS.versatile){
-              window.CHARACTER_AVTT_SETTINGS.versatile =  'both'
+          if($('#critSetting').length == 0){
+            let urlSplit = window.location.href.split("/");
+            window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
+            window.CHARACTER_AVTT_SETTINGS = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
+            if(!(typeof window.CHARACTER_AVTT_SETTINGS === 'object')){
+              window.CHARACTER_AVTT_SETTINGS = {};
             }
+            
             let settingOption = { 
-                name: "versatile",
-                label: "Versatile rolls",
-                type: "dropdown",
-                options: [
-                  { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
-                  { value: "1", label: "1-Handed", description: "1-handed rolls will be rolled." },
-                  { value: "2", label: "2-Handed", description: "2-handed rolls will be rolled." }
-                ],
-                defaultValue: "both"
+                "versatile":{
+                  label: "Versatile rolls",
+                  type: "dropdown",
+                  options: [
+                    { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
+                    { value: "1", label: "1-Handed", description: "1-handed rolls will be rolled." },
+                    { value: "2", label: "2-Handed", description: "2-handed rolls will be rolled." }
+                  ],
+                  defaultValue: "both"
+                },
+                "crit":{
+                  label: "Crit Type",
+                  type: "dropdown",
+                  options:[
+                    { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
+                    { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
+                    ],
+                  defaultValue: "0"
+                }
             }
-            let wrapper = $(`
-             <div id='versatileSetting' style='font-size: 10px;display: flex;flex-grow: 0;align-items: center;' data-option-name="${settingOption.name}">
-               <div style="margin-right: 3px;font-weight: 700;font-size: 11px;">${settingOption.label}:</div>
-             </div>
-           `);
 
-            let input = $(`<select name="${settingOption.name}" style='font-size: 10px; padding:0px'></select>`);
+            for(let i in settingOption){
+                if(window.CHARACTER_AVTT_SETTINGS[i] == undefined){
+                  window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
+                }
+               let wrapper = $(`
+                 <div id='${i}Setting' style='font-size: 10px;display: inline-flex;flex-grow: 0;align-items: center;' data-option-name="${i}">
+                   <div style="margin-right: 3px; margin-left: 10px; font-weight: 700;font-size: 11px;">${settingOption[i].label}:</div>
+                 </div>
+               `);
 
-            for (const option of settingOption.options) {
-              input.append(`<option value="${option.value}">${option.label}</option>`);
+                let input = $(`<select name="${i}" style='font-size: 10px; padding:0px'></select>`);
+
+                for (const option of settingOption[i].options) {
+                  input.append(`<option value="${option.value}">${option.label}</option>`);
+                }
+                if (window.CHARACTER_AVTT_SETTINGS[i] !== undefined) {
+                  input.find(`option[value='${window.CHARACTER_AVTT_SETTINGS[i]}']`).attr('selected','selected');
+                } 
+                const currentlySetOption = settingOption[i].options.find(o => o.value === window.CHARACTER_AVTT_SETTINGS[i]) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
+                input.change(function(event) {
+                  let newValue = event.target.value;
+                  window.CHARACTER_AVTT_SETTINGS[i] = newValue;
+                  localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
+                  const updatedOption = settingOption[i].options.find(o => o.value === newValue) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
+                });
+                wrapper.append(input);
+
+                $('.ct-primary-box__tab--actions .ct-actions h2').after(wrapper)
             }
-            if (window.CHARACTER_AVTT_SETTINGS.versatile !== undefined) {
-              input.find(`option[value='${window.CHARACTER_AVTT_SETTINGS.versatile}']`).attr('selected','selected');
-            } 
-            const currentlySetOption = settingOption.options.find(o => o.value === window.CHARACTER_AVTT_SETTINGS.versatile) || settingOption.options.find(o => o.value === settingOption.defaultValue);
-            input.change(function(event) {
-              let newValue = event.target.value;
-              window.CHARACTER_AVTT_SETTINGS[settingOption.name] = newValue;
-              localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(newValue));
-              const updatedOption = settingOption.options.find(o => o.value === newValue) || settingOption.options.find(o => o.value === settingOption.defaultValue);
-            });
-            wrapper.append(input);
-
-            $('.ct-primary-box__tab--actions .ct-actions h2').after(wrapper)
+            $('.ct-primary-box__tab--actions .ct-actions h2').after(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings:</span>`)
+           
           }
           $(attackIcons).addClass("above-vtt-visited");
           $(attackIcons).css({
