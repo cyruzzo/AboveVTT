@@ -1435,10 +1435,8 @@ function build_sidebar_list_row(listItem) {
         $(clickEvent.currentTarget).addClass("selected-scene");
         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id });
         let playerScene = window.ScenesHandler.scenes.filter(d => d.id == listItem.id)[0];
-        if(playerScene.playlist != undefined){
-          if(playerScene.playlist != undefined && playerScene.playlist != 0){
-            window.MIXER.setPlaylist(playerScene.playlist)
-          }
+        if(playerScene.playlist != undefined  && playerScene.playlist != 0 && window.MIXER.state().playlists[playerScene.playlist] != undefined){
+          window.MIXER.setPlaylist(playerScene.playlist)
         }
         add_zoom_to_storage()
       });
