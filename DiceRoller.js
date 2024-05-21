@@ -390,8 +390,8 @@ class DiceRoller {
                 setTimeout(function(){
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
-                    self.nextRoll(undefined, critRange)      
-                }, 100)
+                    self.nextRoll(undefined, critRange, critType)      
+                }, 200)
                 return true;
             }
             else if(!is_abovevtt_page() && window.sendToTab != undefined){
@@ -404,8 +404,8 @@ class DiceRoller {
                           critType: critType
                         });
                     self.#resetVariables();
-                    self.nextRoll(undefined, critRange)
-                }, 100)
+                    self.nextRoll(undefined, critRange, critType)
+                }, 200)
                 return true;
             }               
 
@@ -436,7 +436,7 @@ class DiceRoller {
             return false;
         }
     }
-    nextRoll(msg = undefined, critRange = 20){
+    nextRoll(msg = undefined, critRange = 20, critType = 2){
         if(this.#multiRollArray.length == 0){
             this.#critAttackAction = undefined;
             return;
@@ -493,20 +493,20 @@ class DiceRoller {
             let diceType = diceRoll.expression.match(/d[0-9]+/i)[0];
             let critDice = diceRoll.diceToRoll[diceType] * 2;    
             let maxRoll = diceRoll.diceToRoll[diceType] * parseInt(diceType.replace('d', ''));
-            if(this.#pendingCritType == 0){
+            if(critType == 0){
                 let newExpression = diceRoll.expression.replace(/^[0-9]+d/i, `${critDice}d`);
-                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true);
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
             }
-            else if(this.#pendingCritType == 1){
+            else if(critType == 1){
                 let newExpression = `${diceRoll.expression}+${maxRoll}`;
-                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true);
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
             }
-            else if(this.#pendingCritType == 2){
-                this.roll(new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true);
+            else if(critType == 2){
+                this.roll(new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
             }
         }
         else{
-            this.roll(diceRoll, true);
+            this.roll(diceRoll, true, critRange, critType);
         }
 
     }
@@ -596,7 +596,7 @@ class DiceRoller {
             console.log("altered fulfilled message: ", alteredMessage);
             this.ddbDispatch(alteredMessage);
             this.#resetVariables();
-            this.nextRoll(message, this.#pendingCritRange);
+            this.nextRoll(message, this.#pendingCritRange, this.#pendingCritType);
         }
         console.groupEnd();
     }
