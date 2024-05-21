@@ -856,7 +856,7 @@ function observe_character_sheet_changes(documentToObserve) {
           if(!window.CHARACTER_AVTT_SETTINGS){
             window.CHARACTER_AVTT_SETTINGS = {}
           }
-          if($('#critSetting').length == 0){
+          if($('#icon-roll-optons').length == 0){
             let urlSplit = window.location.href.split("/");
             window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
             window.CHARACTER_AVTT_SETTINGS = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
@@ -916,7 +916,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   color: var(--theme-contrast);
                 '>
             </div>`)
-            let closeOptions = $(`<div 
+            let closeOptions = $(`<div id='close-icon-roll-options' 
               style='z-index: 99999;
                 height: 100%;
                 width: 100%;
@@ -971,15 +971,14 @@ function observe_character_sheet_changes(documentToObserve) {
 
                 options.append(wrapper)
             }
-            let settings = $(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
-            settings.off().on('click', function(){
-              options.css('display', 'block');
-              closeOptions.css('display', 'block');
-            })
-
-            $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
-           
+  
           }
+          let settings = $(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+          settings.off().on('click', function(){
+            $('#close-icon-roll-options').css('display', 'block');
+            $('#icon-roll-options').css('display', 'block');
+          }) 
+          $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
           $(attackIcons).addClass("above-vtt-visited");
           $(attackIcons).css({
             '-webkit-user-select': 'none',
