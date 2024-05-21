@@ -1202,7 +1202,7 @@ class MessageBroker {
 					return;
 				
 				// CHECK FOR INIT ROLLS (auto add to combat tracker)
-				if (msg.data.action == "Initiative") {
+				if (msg.data.action.toLowerCase() == "initiative") {
 					console.log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
