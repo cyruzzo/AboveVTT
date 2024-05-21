@@ -1206,6 +1206,7 @@ function build_sidebar_list_row(listItem) {
         addTokenMenu.append(addToken, dropboxButton, oneDriveButton);
         rowItem.append(addTokenMenu);
         addToken.on("click", function (clickEvent) {
+          clickEvent.stopPropagation();
           let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_token_inside(clickedItem);
@@ -1235,6 +1236,7 @@ function build_sidebar_list_row(listItem) {
         let addScene = $(`<button class="token-row-button" title="Create New Scene"><span class="material-icons">add_photo_alternate</span></button>`);
         rowItem.append(addScene);
         addScene.on("click", function (clickEvent) {
+          clickEvent.stopPropagation();
           let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
           let clickedItem = find_sidebar_list_item(clickedRow);
           create_scene_root_container(clickedItem.fullPath(), listItem.id);
@@ -1480,6 +1482,7 @@ function build_sidebar_list_row(listItem) {
  */
 function did_click_row(clickEvent) {
   clickEvent.stopPropagation();
+
   console.log("did_click_row", clickEvent);
   let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
   let clickedItem = find_sidebar_list_item(clickedRow);
