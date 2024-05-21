@@ -111,7 +111,7 @@ $(function() {
                   event.data.msg.img,
                   "character",
                   event.data.msg.playerId
-                ), event.data.multiroll);
+                ), event.data.multiroll, event.data.critRange, event.data.critType);
               }
             }       
             return;

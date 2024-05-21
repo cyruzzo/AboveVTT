@@ -1121,7 +1121,10 @@ class MessageBroker {
 
 						for (let j=0; j<roll.diceNotation.set.length; j++){
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
-								if(roll.diceNotation.set[j].dice[k].dieValue == parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
+								let reduceCrit = 0;
+								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20)
+                  reduceCrit = 20 - msg.data.critRange;
+								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
 									if(roll.rollKind == 'advantage'){
 										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
 											critSuccess[i] = true;

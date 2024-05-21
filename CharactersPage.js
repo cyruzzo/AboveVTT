@@ -809,7 +809,7 @@ function observe_character_sheet_changes(documentToObserve) {
                     else{
                       diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
                     }
-                window.diceRoller.roll(diceRoll, true);
+                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2);
               }
             }     
           });
@@ -860,7 +860,7 @@ function observe_character_sheet_changes(documentToObserve) {
             let urlSplit = window.location.href.split("/");
             window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
             window.CHARACTER_AVTT_SETTINGS = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
-            if(!(typeof window.CHARACTER_AVTT_SETTINGS === 'object')){
+            if(!(typeof window.CHARACTER_AVTT_SETTINGS === 'object') || window.CHARACTER_AVTT_SETTINGS === null){
               window.CHARACTER_AVTT_SETTINGS = {};
             }
             
@@ -881,22 +881,68 @@ function observe_character_sheet_changes(documentToObserve) {
                   options:[
                     { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
                     { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
+                    { value: "2", label: "Manual", description: "Rolls are not modified based on crit" },
                     ],
                   defaultValue: "0"
+                },
+                "critRange":{
+                  label: "Crit Range",
+                  type: "input",
+                  inputType: 'number',
+                  max: '20',
+                  min: '1',
+                  step: '1',
+                  defaultValue: "20"
                 }
             }
-
+            let options = $(`<div id='icon-roll-options' 
+              style= 'z-index: 100000;
+                  width: 20%;
+                  height: 20%;
+                  max-width: 300px;
+                  max-height: 300px;
+                  min-width: 100px;
+                  min-height: 200px;
+                  position: fixed;
+                  display: none;
+                  left: 50%;
+                  top: 50%;
+                  transform: translate(-50%, -50%);
+                  background: var(--theme-background-solid);
+                  box-shadow: 0px 0px 4px var(--theme-contrast);
+                  padding-right: 5px;
+                  border-radius: 15px;
+                  border: 1px solid var(--theme-contrast);
+                  color: var(--theme-contrast);
+                '>
+            </div>`)
+            let closeOptions = $(`<div 
+              style='z-index: 99999;
+                height: 100%;
+                width: 100%;
+                position: fixed;
+                top: 0px;
+                left: 0px;
+                background: rgba(0, 0, 0, 0.4);
+                display: none;'/>`)
+            closeOptions.off().on('click', function(){
+              options.css('display', 'none');
+              closeOptions.css('display', 'none');
+            })
+            options.append(closeOptions);
+            $('body').append(closeOptions, options);
             for(let i in settingOption){
                 if(window.CHARACTER_AVTT_SETTINGS[i] == undefined){
                   window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
                 }
                let wrapper = $(`
-                 <div id='${i}Setting' style='font-size: 10px;display: inline-flex;flex-grow: 0;align-items: center;' data-option-name="${i}">
-                   <div style="margin-right: 3px; margin-left: 10px; font-weight: 700;font-size: 11px;">${settingOption[i].label}:</div>
+                 <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 10px 0px 10px 0px;align-items: center;' data-option-name="${i}">
+                   <div style="margin-right: 3px; margin-left: 10px; flex-grow: 1;font-weight: 700;font-size: 14px;">${settingOption[i].label}:</div>
                  </div>
                `);
-
-                let input = $(`<select name="${i}" style='font-size: 10px; padding:0px'></select>`);
+               let input;
+               if(settingOption[i].type == 'dropdown'){
+                input = $(`<select name="${i}" style='font-size: 14px; padding:0px'></select>`);
 
                 for (const option of settingOption[i].options) {
                   input.append(`<option value="${option.value}">${option.label}</option>`);
@@ -911,11 +957,27 @@ function observe_character_sheet_changes(documentToObserve) {
                   localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
                   const updatedOption = settingOption[i].options.find(o => o.value === newValue) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
                 });
+               }
+               else if(settingOption[i].type == 'input'){
+                input = $(`<input min='${settingOption[i].min}' max='${settingOption[i].max}' step='${settingOption[i].step}' type='${settingOption[i].inputType}' value='${window.CHARACTER_AVTT_SETTINGS[i]}'/>`)
+                input.change(function(event) {
+                  let newValue = event.target.value;
+                  window.CHARACTER_AVTT_SETTINGS[i] = newValue;
+                  localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
+                });
+               }
+                
                 wrapper.append(input);
 
-                $('.ct-primary-box__tab--actions .ct-actions h2').after(wrapper)
+                options.append(wrapper)
             }
-            $('.ct-primary-box__tab--actions .ct-actions h2').after(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings:</span>`)
+            let settings = $(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+            settings.off().on('click', function(){
+              options.css('display', 'block');
+              closeOptions.css('display', 'block');
+            })
+
+            $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
            
           }
           $(attackIcons).addClass("above-vtt-visited");
@@ -971,7 +1033,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 else{
                   diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
                 }
-                window.diceRoller.roll(diceRoll, true);
+                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2);
 
               }
             }   
