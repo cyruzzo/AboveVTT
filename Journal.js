@@ -143,11 +143,10 @@ class JournalManager{
 			refreshPositions: true,
 			update: function(event, ui) {
 				
-				if(!$(this).parent().hasClass('folder-item-list'))
-					return;
+
 				// Find the old index of the dragged element
 				const old_index = self.chapters.findIndex(function(chapter) {
-					return chapter.title == ui.item.find(".journal-chapter-title").text();
+					return chapter.id == ui.item.attr('data-id')
 				});
 				// Find the new index of the dragged element
 
