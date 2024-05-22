@@ -2087,9 +2087,12 @@ class Token {
 				tok.addClass("VTTToken");
 
 				this.update_health_aura(tok);
-
-
-					
+				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
+				if(this.options.scaleCreated != undefined && this.options.scaleCreated != currentSceneScale){
+					this.options.top = `${parseFloat(this.options.top)/this.options.scaleCreated*currentSceneScale}px`
+					this.options.left =  `${parseFloat(this.options.left)/this.options.scaleCreated*currentSceneScale}px`
+				}
+				this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;	
 				tok.css("position", "absolute");
 				tok.css("--z-index-diff", zindexdiff);
 				tok.css("top", this.options.top);
@@ -3024,6 +3027,7 @@ function place_token_at_map_point(tokenObject, x, y) {
 	
 	options.left = `${x - options.size/2}px`;
 	options.top = `${y - options.size/2}px`;
+	options.scaleCreated = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 	// set reasonable defaults for any global settings that aren't already set
 	const setReasonableDefault = function(optionName, reasonableDefault) {
 		if (options[optionName] === undefined) {

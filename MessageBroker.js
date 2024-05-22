@@ -1428,7 +1428,7 @@ class MessageBroker {
 			}
 			if (data.id in window.all_token_objects) {
 				for (var property in window.all_token_objects[data.id].options) {		
-					if(property == "left" || property == "top" || property == "hidden")
+					if(property == "left" || property == "top" || property == "hidden" || property == "scaleCreated")
 						continue;
 					if(msg.loading){
 						data[property] = window.all_token_objects[data.id].options[property];
@@ -1447,7 +1447,7 @@ class MessageBroker {
 		if (data.id in window.TOKEN_OBJECTS) {
 
 			for (var property in data) {
-				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden"))
+				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden" || property == "scaleCreated"))
 					continue;	
 				if(window.all_token_objects[data.id] == undefined){
 						window.all_token_objects[data.id] = window.TOKEN_OBJECTS[data.id]	
