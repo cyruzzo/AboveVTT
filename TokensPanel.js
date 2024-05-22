@@ -34,7 +34,7 @@ async function getOpen5e(results = [], search = ''){
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3&search=${search}`
+    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&search=${search}`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -51,7 +51,7 @@ async function getOpen5e(results = [], search = ''){
     return open5e_monsters;
 }
 async function getGroupOpen5e(slugin){
-    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=cc%2Cmenagerie%2Ctob%2Ctob2%2Ctob3`
+    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -3536,6 +3536,11 @@ function convert_open5e_monsterData(monsterData){
         if(monsterData.special_abilities?.length>0){
             monsterData.specialTraitsDescription = monsterData.special_abilities.map(action => {
                 let desc = ``
+                if(action.desc == undefined && action.description != undefined){
+                    action.desc = action.description;
+                }else if(action.desc == undefined){
+                    action.desc ='';
+                }
                 if(action.name == 'Spellcasting'){
                     actionDesc = action.desc.replace(/Cantrips|[0-9]+[A-Za-z][A-Za-z]-level|[0-9]+[A-Za-z][A-Za-z]\slevel/g, '</p><p>$&');
                     desc = `<p><em><strong>${action.name}.</strong></em> ${actionDesc}</p>`;
@@ -3552,6 +3557,11 @@ function convert_open5e_monsterData(monsterData){
                
         if(monsterData.actions?.length>0){
             monsterData.actionsDescription = monsterData.actions.map(action => {
+                if(action.desc == undefined && action.description != undefined){
+                    action.desc = action.description;
+                }else if(action.desc == undefined){
+                    action.desc ='';
+                }
                 let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
@@ -3562,6 +3572,11 @@ function convert_open5e_monsterData(monsterData){
     
         if(monsterData.bonus_actions?.length>0){
             monsterData.bonusActionsDescription = monsterData.bonus_actions.map(action => {
+                if(action.desc == undefined && action.description != undefined){
+                    action.desc = action.description;
+                }else if(action.desc == undefined){
+                    action.desc ='';
+                }
                 let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
@@ -3572,6 +3587,11 @@ function convert_open5e_monsterData(monsterData){
    
         if(monsterData.reactions?.length>0){
             monsterData.reactionsDescription = monsterData.reactions.map(action => {
+                if(action.desc == undefined && action.description != undefined){
+                    action.desc = action.description;
+                }else if(action.desc == undefined){
+                    action.desc ='';
+                }
                 let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rolltype='damage' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
@@ -3582,6 +3602,11 @@ function convert_open5e_monsterData(monsterData){
  
         if(monsterData.legendary_actions?.length>0){
             monsterData.legendaryActionsDescription = monsterData.legendary_actions.map(action => {
+                if(action.desc == undefined && action.description != undefined){
+                    action.desc = action.description;
+                }else if(action.desc == undefined){
+                    action.desc ='';
+                }
                 let desc = `<p><em><strong>${action.name}.</strong></em> ${action.desc}</p>`
                 desc = desc.replace(/\d\dd\d\d\s[+-]\s\d|\d\dd\d\s[+-]\s\d|\dd\d\d\s[+-]\s\d|\dd\d\s[+-]\s\d|\d\dd\d\d|\d\dd\d|\dd\d\d|\dd\d/g, `<span data-dicenotation='$&' data-rollaction='damage'>$&</span>`);
                 desc = desc.replace(/\s[+-]\d\d\s|\s[+-]\d\s/g, `<span data-dicenotation='1d20$&' data-rollaction='attack'>$&</span> `);
