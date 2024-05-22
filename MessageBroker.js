@@ -1801,7 +1801,6 @@ class MessageBroker {
 						if(!window.DM)
 							do_check_token_visibility()
 						console.groupEnd()
-						delete window.newLoad;
 					});
 					
 					remove_loading_overlay();
