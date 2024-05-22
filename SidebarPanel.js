@@ -588,7 +588,7 @@ class SidebarListItem {
    */
   static open5eMonster(monsterData) {
     console.debug("SidebarListItem.Monster", monsterData);
-    if(monsterData.img_main == null){
+    if(monsterData.img_main == null || monsterData.img_main == "http://api.open5e.com/"){
       monsterData.img_main = 'https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg'
     }
     let item = new SidebarListItem(monsterData.slug, monsterData.name, monsterData.img_main, ItemType.Open5e, RootFolder.Open5e.path, RootFolder.Open5e.id);
