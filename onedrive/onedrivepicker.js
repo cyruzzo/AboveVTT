@@ -92,6 +92,9 @@
             entry: {
                 oneDrive: {
                     files: {},
+                },
+                sortBy: {
+                  fieldName: 'name',
                 }
             },
             authentication: {},
