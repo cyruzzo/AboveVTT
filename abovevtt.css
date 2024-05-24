@@ -1499,7 +1499,20 @@ div#scene_properties form > div {
     content:"\e76e"; 
     font-family: "Material Icons", sans-serif !important;
 }
-
+.material-symbols-outlined.group_remove:before,
+.material-symbols-outlined.group_remove:hover:before{
+    content:"\e7ad"; 
+}
+.material-symbols-outlined.group_add:before,
+.material-symbols-outlined.group_add:hover:before{
+    content:"\e7f0"; 
+}
+.add-to-ct .material-symbols-outlined:before,
+.remove-from-ct .material-symbols-outlined:before{
+    left: 10px;
+    position:absolute;
+    font-size: 20px;
+}
 .condition-lock.locked.material-symbols-outlined:before,
 .condition-lock.material-symbols-outlined:hover:before {
     content:"\e897"; 

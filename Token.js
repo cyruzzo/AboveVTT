@@ -478,7 +478,21 @@ class Token {
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
+		if(this.options.combatGroupToken){
+			for(let i in window.TOKEN_OBJECTS){
+				if(i == this.options.combatGroupToken)
+					continue;
 
+				
+				if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroupToken){
+					delete window.TOKEN_OBJECTS[i].options.combatGroup;
+					delete window.TOKEN_OBJECTS[i].options.ct_show;
+
+					ct_remove_token(window.TOKEN_OBJECTS[i]);
+					window.TOKEN_OBJECTS[i].update_and_sync();
+				}
+			}
+		}
 		if(this.options.combatGroup && !this.options.combatGroupToken){
 			let count = 0;
 			for(let i in window.TOKEN_OBJECTS){
@@ -1480,8 +1494,8 @@ class Token {
 	place(animationDuration) {
 		try{
 			if(this.options.combatGroupToken){
-				this.options.left = 0;
-				this.options.top = 0;
+				this.options.left = '0px';
+				this.options.top = '0px';
 			}
 			if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 				animationDuration = 1000;

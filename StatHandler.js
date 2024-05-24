@@ -44,7 +44,62 @@ class StatHandler {
 	}
 
 	rollInit(monsterid, callback, open5eSlug = undefined, tokenId = undefined) {
-		if(monsterid =='open5e')
+
+		if(window.TOKEN_OBJECTS[tokenId].options.combatGroupToken){
+			let modArray = [];
+			let statArray = [];
+			let promises = [];
+			for(let i in window.TOKEN_OBJECTS){
+				if(i == tokenId)
+					continue;
+				if(window.TOKEN_OBJECTS[i].options.combatGroup == tokenId){
+					if(window.TOKEN_OBJECTS[i].options.monster =='open5e'){
+						promises.push(new Promise((resolve, reject) => {
+							this.getStat(window.TOKEN_OBJECTS[i].options.monster, function(data) {
+								modArray.push(Math.floor((data.stats[1].value - 10) / 2.0));
+								statArray.push(data.stats[1].value);	
+								resolve();
+							}, window.TOKEN_OBJECTS[i].options.itemId);
+						}));
+					}
+					else if(window.TOKEN_OBJECTS[i].options.monster =='customStat'){
+						let modifier = (window.TOKEN_OBJECTS[i]?.options?.customInit != undefined) ? parseInt(window.TOKEN_OBJECTS[i].options.customInit) : (window.TOKEN_OBJECTS[i]?.options?.customStat != undefined && window.TOKEN_OBJECTS[i]?.options?.customStat[1]?.mod != undefined) ? parseInt(window.TOKEN_OBJECTS[i].options.customStat[1].mod) : 0;
+						modArray.push(modifier);
+						statArray.push((window.TOKEN_OBJECTS[i]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[i]?.options?.customStat != undefined && window.TOKEN_OBJECTS[i]?.options?.customStat[1]?.mod != undefined)) ? ((modifier*2)+10) : 0);
+					}
+					else {
+						promises.push(new Promise((resolve, reject) => {
+							this.getStat(window.TOKEN_OBJECTS[i].options.monster, function(stat) {
+								modArray.push(Math.floor((stat.data.stats[1].value - 10) / 2.0));
+								statArray.push(stat.data.stats[1].value);	
+								resolve();
+							}, window.TOKEN_OBJECTS[i].options.itemId);
+						}));
+					}
+				}
+			}
+
+			Promise.all(promises).then(() =>{
+				const sumMod = modArray.reduce((a, b) => a + b, 0);
+				const modifier = (sumMod / modArray.length) || 0;
+
+				const sumStat = statArray.reduce((a, b) => a + b, 0);
+				const stat = (sumStat / statArray.length) || 0;
+
+				let expression = "1d20+" + modifier;
+				let roll = new rpgDiceRoller.DiceRoll(expression);
+				console.log(expression + "->" + roll.total);
+				let total = parseFloat(Math.floor(roll.total) + stat/100).toFixed(2);
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['tie_breaker'] !='1'){
+					total = parseInt(total);
+				}
+				callback(total);
+			});
+			
+			
+		}
+		else if(monsterid =='open5e')
 		{
 			this.getStat(monsterid, function(data) {
 				let modifier = Math.floor((data.stats[1].value - 10) / 2.0);

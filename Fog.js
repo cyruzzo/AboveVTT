@@ -572,7 +572,7 @@ function is_door_under_light_aura(door, lightContext=undefined){
 
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
-	if (window.DM || $("#fog_overlay").is(":hidden"))
+	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
 		return;
 	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');
@@ -665,6 +665,8 @@ function do_check_token_visibility() {
 	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
 
 	for (let id in window.TOKEN_OBJECTS) {
+		if(window.TOKEN_OBJECTS[id].options.combatGroupToken)
+			continue;
 		promises.push(new Promise(function() {
 			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
