@@ -2803,9 +2803,10 @@ function drawing_mouseup(e) {
 		// FIND TOKENS INSIDE THE AREA
 		let c = 0;
 		for (let id in window.TOKEN_OBJECTS) {
-			if(window.TOKEN_OBJECTS[id].options.type == 'door'){
+			if(window.TOKEN_OBJECTS[id].options.type == 'door' || window.TOKEN_OBJECTS[id].options.combatGroupToken){
 				continue;
 			}
+
 			let curr = window.TOKEN_OBJECTS[id];
 
 

@@ -1821,7 +1821,7 @@ class MessageBroker {
 			ct_persist(); // force refresh of combat tracker for late users
 			if (window.CURRENT_SOUNDPAD) {
 				let audioPlaying;
-				for(const i in $("audio")){
+				for(let i = 0; i<$("audio").length; i++){
 			    if($("audio")[i].paused == false){
 			    		audioPlaying = true;
 			        break;
@@ -1857,7 +1857,7 @@ class MessageBroker {
 
 	handleAudioPlayingSync(msg){
 		if(window.DM){
-			for(const i in $("audio")){
+			for(let i = 0; i<$("audio").length; i++){
 		    if($("audio")[i].paused == false){
 		    	var data={
 						channel: i,

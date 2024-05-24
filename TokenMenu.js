@@ -643,8 +643,16 @@ function token_context_menu_expanded(tokenIds, e) {
 	if (window.DM && !allTokensAreAoe) {
 		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
 		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
+
+		let addGroupButtonInternals = `Add Group to Combat<span class="material-icons icon-person-add"></span>`;
+		let removeGroupButtonInternals = `Remove Group from Combat<span class="material-icons icon-person-remove"></span>`;
+
 		let combatButton = $(`<button></button>`);
+		let groupCombatButton =$(`<button></button>`)
+
 		let inCombatStatuses = [...new Set(tokens.map(t => t.isInCombatTracker()))];
+		let inCombatGroupStatuses = [...new Set(tokens.map(t => t.options.combatGroup != undefined))];
+
 		if (inCombatStatuses.length === 1 && inCombatStatuses[0] === true) {
 			// they are all in the combat tracker. Make it a remove button
 			combatButton.addClass("remove-from-ct");
@@ -653,6 +661,16 @@ function token_context_menu_expanded(tokenIds, e) {
 			// if any are not in the combat tracker, make it an add button.
 			combatButton.addClass("add-to-ct");
 			combatButton.html(addButtonInternals);
+		}
+
+		if (inCombatGroupStatuses.length === 1 && inCombatGroupStatuses[0] === true) {
+			// they are all in the combat tracker. Make it a remove button
+			groupCombatButton.addClass("remove-from-ct");
+			groupCombatButton.html(removeGroupButtonInternals);
+		} else {
+			// if any are not in the combat tracker, make it an add button.
+			groupCombatButton.addClass("add-to-ct");
+			groupCombatButton.html(addGroupButtonInternals);
 		}
 		combatButton.on("click", function(clickEvent) {
 			let clickedButton = $(clickEvent.currentTarget);
@@ -675,8 +693,55 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			debounceCombatReorder();
 		});
+		groupCombatButton.on("click", function(clickEvent) {
+			let clickedButton = $(clickEvent.currentTarget);
+			if (clickedButton.hasClass("remove-from-ct")) {
+				clickedButton.removeClass("remove-from-ct").addClass("add-to-ct");
+				clickedButton.html(addGroupButtonInternals);
+				tokens.forEach(t =>{
+					if(t.options.combatGroup && window.TOKEN_OBJECTS[t.options.combatGroup]){
+						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
+					}
+					t.options.combatGroup = undefined;
+					t.options.ct_show = undefined;
+					ct_remove_token(t, false);
+					t.update_and_sync();
+				});
+			} else {
+				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
+				clickedButton.html(removeGroupButtonInternals);
+				let group = uuid();
+				tokens.forEach(t => {
+					if(t.options.combatGroup && window.TOKEN_OBJECTS[t.options.combatGroup]){
+						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
+					}
+					t.options.combatGroup = group;
+					t.update_and_sync();
+				});		
+				let t = new Token({
+					...tokens[0].options,
+					id: group,
+					combatGroupToken: group,
+					ct_show: true,
+					name: `${tokens[0].options.name} Group`
+				});
+				window.TOKEN_OBJECTS[group] = t;
+				if(window.all_token_objects[group] == undefined){
+					window.all_token_objects[group] = t;
+				}
+				t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+					window.MB.sendMessage('custom/myVTT/token', t.options);
+				}, 10);
+				t.place();
+				ct_add_token(window.TOKEN_OBJECTS[group], false)
+			}
+		debounceCombatReorder();
+		});
 		
 		body.append(combatButton);
+		if(tokens.length >1){
+			body.append(groupCombatButton);
+		}
 	}
 	if(window.DM){
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"

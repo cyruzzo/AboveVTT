@@ -478,6 +478,18 @@ class Token {
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
+
+		if(this.options.combatGroup && !this.options.combatGroupToken){
+			let count = 0;
+			for(let i in window.TOKEN_OBJECTS){
+				if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroup){
+					count++;
+				}
+			}
+			if(count == 1){
+				window.TOKEN_OBJECTS[this.options.combatGroup].delete();
+			}
+		}
 		debounceLightChecks();
 		update_pc_token_rows();
 	}
@@ -1467,6 +1479,10 @@ class Token {
 
 	place(animationDuration) {
 		try{
+			if(this.options.combatGroupToken){
+				this.options.left = 0;
+				this.options.top = 0;
+			}
 			if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 				animationDuration = 1000;
 			}
@@ -1690,10 +1706,11 @@ class Token {
 					else{
 						oldImage.css("border-width","");
 					}
-
-					setTokenAuras(old, this.options);
-					setTokenLight(old, this.options);
-					setTokenBase(old, this.options);
+					if(!this.options.combatGroupToken){
+						setTokenAuras(old, this.options);
+						setTokenLight(old, this.options);
+						setTokenBase(old, this.options);
+					}
 					setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
 					if(this.options.audioChannel){
 						setAudioAura(old, this.options)
@@ -2101,6 +2118,9 @@ class Token {
 				tok.css("display", "flex");
 				tok.css("justify-content", "center");
 				tok.css("align-items", "center");
+				if(this.options.combatGroupToken){
+					tok.toggleClass('groupToken', true)
+				}
 
 				const zConstant = this.options.underDarkness || this.options.tokenStyleSelect == 'definitelyNotAToken'  ? 5000 : 10000;
 				tok.css("z-index", `calc(${zConstant} + var(--z-index-diff))`);
@@ -2164,7 +2184,7 @@ class Token {
 			    }
 
 				setTokenAuras(tok, this.options);
-				if(!this.options.id.includes('exampleToken')){
+				if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
 					setTokenLight(tok, this.options);
 				}
 
