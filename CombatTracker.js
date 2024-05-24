@@ -187,11 +187,12 @@ function init_combat_tracker(){
 			$(this).removeAttr('data-current');
 		});
 
-		$("#combat_area tr[data-monster]").each(function(idx){
+		$("#combat_area tr[data-monster]:not([skipturn])").each(function(idx){
 			let element=$(this);
 
 			window.StatHandler.rollInit($(this).attr('data-monster'),function(value){
 				element.find(".init").val(value);
+					element.find(".init").trigger('change');
 				if(element.attr("data-target") in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[element.attr("data-target")].options.init = value;
 				}
@@ -696,7 +697,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 
 		
 		// auto roll initiative for monsters
-		
 		if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
@@ -882,20 +882,6 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			}
 			ct_remove_token(token);
 			if(token.options.combatGroupToken){
-				
-				for(let i in window.TOKEN_OBJECTS){
-					if(i == token.options.combatGroupToken)
-						continue;
-
-					
-					if(window.TOKEN_OBJECTS[i].options.combatGroup == token.options.combatGroupToken){
-						delete window.TOKEN_OBJECTS[i].options.combatGroup;
-						delete window.TOKEN_OBJECTS[i].options.ct_show;
-
-						ct_remove_token(window.TOKEN_OBJECTS[i]);
-						window.TOKEN_OBJECTS[i].update_and_sync();
-					}
-				}
 				token.delete();
 			}
 			
