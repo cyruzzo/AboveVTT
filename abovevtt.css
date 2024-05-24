@@ -3966,6 +3966,12 @@ div#importer_area>div>div:first-of-type {
     width: 100%;
     height: 100%;
 }
+.token.groupToken{
+    display:none !important;
+}
+#combat_area tr[skipturn]{
+    scale: 0.95;
+}
 
 .custom-token-image-item [data-img]:hover {
     border: lightgrey solid 2px;

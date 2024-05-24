@@ -240,7 +240,7 @@ function init_combat_tracker(){
 		let currentTarget = current.attr('data-target');
 		if(current.length==0){
 			console.log('nessuno selezionato');
-			$("#combat_area tr").first().attr('data-current','1');
+			$($("#combat_area tr:not([skipTurn])").nextAll()[0]).attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
 
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -256,11 +256,11 @@ function init_combat_tracker(){
 		else{
 			current.removeAttr('data-current');
 			current.css('background','');
-			next=current.next();
+			next=$(current.nextAll('tr:not([skipTurn])')[0]);
 			if(next.length==0){
 				window.ROUND_NUMBER++;
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
-				next=$("#combat_area tr").first()
+				next=$("#combat_area tr:not([skipTurn])").first()
 			}
 			next.attr('data-current','1');
 			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible' && !$('[data-current]').attr('data-target').startsWith('/profile')) {
@@ -302,11 +302,11 @@ function init_combat_tracker(){
 		if(current.length!=0){
 			current.removeAttr('data-current');
 			current.css('background','');
-			prev=current.prev();
+			prev=$(current.prevAll('tr:not([skipTurn])')[0]);
 			if(prev.length==0){
 				window.ROUND_NUMBER--;
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
-				prev=$("#combat_area tr").last()
+				prev=$("#combat_area tr:not([skipTurn])").last()
 			}
 			prev.attr('data-current','1');
 			if($("#resizeDragMon:not(.hideMon)").length>0) {
@@ -414,7 +414,7 @@ function getCombatTrackersettings(){
 	return combatSettingData;
 }
 function openCombatTrackerSettings(){
-	let combatSettingData = getCombatTrackersettings();
+	let combatSettingData = getCombatTrackersettings();		
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
@@ -528,14 +528,24 @@ function openCombatTrackerSettings(){
 	}, 1000);
 }
 function ct_reorder(persist=true) {
-	var items = $("#combat_area").children().sort(
+
+	let items = $("#combat_area").children().sort(
 		function(a, b) {
-			var vA = (isNaN(parseFloat($(".init", a).val()))) ? -1 : parseFloat($(".init", a).val());
-			var vB =  (isNaN(parseFloat($(".init", b).val()))) ? -1 : parseFloat($(".init", b).val());
+			let vA = (isNaN(parseFloat($(".init", a).val()))) ? -1 : parseFloat($(".init", a).val());
+			let vB =  (isNaN(parseFloat($(".init", b).val()))) ? -1 : parseFloat($(".init", b).val());
 			return (vA > vB) ? -1 : (vA < vB) ? 1 : 0;
 		});
 
 	$("#combat_area").append(items);
+
+	let groupLines = $("#combat_area>tr[skipTurn]");
+	for(let i = 0; i<groupLines.length; i++){
+		let targetToken = window.all_token_objects[$(groupLines[i]).attr('data-target')];
+		if(window.all_token_objects[$(groupLines[i]).attr('data-target')])
+			$(groupLines[i]).insertAfter($(`#combat_area>tr[data-target='${targetToken.options.combatGroup}']`));
+	}
+
+	$("#combat_area>tr[skipTurn]").css('display', '');		
 	ct_update_popout();
 	if(persist)
 		debounceCombatPersist();
@@ -557,6 +567,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.css("height","30px");
 	entry.attr("data-target",token.options.id);	
 	entry.attr("ishidden", token.options.hidden);
+	if(token.options.combatGroup && !token.options.combatGroupToken){
+		entry.attr("skipTurn", token.options.combatGroup);
+		entry.css('display', 'none');
+	}
 	entry.addClass("CTToken");
 	
 	if (typeof(token.options.ct_show) == 'undefined'){
@@ -591,6 +605,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	if(token.options.stat)
 		entry.attr('data-stat', token.options.stat)
 
+	if(token.options.combatGroupToken)
+		entry.attr('data-group', token.options.combatGroupToken)
 
 	let video = false;
 
@@ -619,56 +635,70 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	`);
 	let imageRow = $("<td/>");
 	imageRow.append(img)
-	if(window.DM){
+	if(window.DM && !token.options.combatGroupToken){
 		imageRow.append(ac)
 	}
 	entry.append(imageRow);
 	let init=$("<input class='init' maxlength=5'>");
 	init.css('-webkit-appearance','none');
-	if(window.DM && typeof(token.options.init) == 'undefined'){
-
-
-		if (typeof window.all_token_objects[token.options.id].options.init != 'undefined'){
-	 		token.options.init = window.all_token_objects[token.options.id].options.init;
-	 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-			init.val(token.options.init);
-		}	
-		else{
-			init.val(0);
+	if(token.options.combatGroup && !token.options.combatGroupToken){
+		if( window.all_token_objects[token.options.combatGroup]){
+			token.options.init = window.all_token_objects[token.options.combatGroup].options.init;
+			init.val(window.all_token_objects[token.options.combatGroup].options.init);
 		}
-	}
-	else if(window.DM){
-		init.val(token.options.init);
+		init.attr('disabled', 'disabled');
 	}
 	else{
-		init.val(token.options.init);
-		init.attr("disabled","disabled");
-	}
-	init.click(function(e) {
-		$(e.target).select();
-	});
-	if(window.DM){
-		init.change(function(){	
-				window.all_token_objects[token.options.id].options.init = init.val()
-				window.all_token_objects[token.options.id].sync = mydebounce(function(e) {				
-					window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
-				}, 10);
-			
-				token.options.init = init.val();
-				if(!!window.TOKEN_OBJECTS[token.options.id]){
-					window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
-					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
-				}
-				ct_reorder(window.DM);
+		if(window.DM && typeof(token.options.init) == 'undefined'){
+
+
+			if (typeof window.all_token_objects[token.options.id].options.init != 'undefined'){
+		 		token.options.init = window.all_token_objects[token.options.id].options.init;
+		 		window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
+				init.val(token.options.init);
+			}	
+			else{
+				init.val(0);
 			}
-		);
-	}
-	entry.append($("<td/>").append(init));
-	
-	// auto roll initiative for monsters
-	
-	if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
-		window.StatHandler.rollInit(token.options.monster,function(value){
+		}
+		else if(window.DM){
+			init.val(token.options.init);
+		}
+		else{
+			init.val(token.options.init);
+			init.attr("disabled","disabled");
+		}
+		init.click(function(e) {
+			$(e.target).select();
+		});
+		if(window.DM){
+			init.change(function(){	
+
+					window.all_token_objects[token.options.id].options.init = init.val()
+					window.all_token_objects[token.options.id].sync = mydebounce(function(e) {				
+						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
+					}, 10);
+				
+					token.options.init = init.val();
+					if(!!window.TOKEN_OBJECTS[token.options.id]){
+						window.TOKEN_OBJECTS[token.options.id].options.init = init.val();
+						window.TOKEN_OBJECTS[token.options.id].update_and_sync();
+					}
+					if(token.options.combatGroupToken){
+						let noTurnTokens = $(`#combat_area>tr[skipturn='${token.options.combatGroupToken}']`);
+						noTurnTokens.find('.init').val(init.val());
+					}
+					ct_reorder(window.DM);
+				}
+			);
+		}
+
+
+		
+		// auto roll initiative for monsters
+		
+		if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
+			window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
@@ -676,10 +706,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 				}
 				debounceCombatReorder();
 			}, token.options.itemId, token.options.id);
+		}
 	}
-	
-	
-	
+
+	entry.append($("<td/>").append(init));
 		
 	hp=$("<div class='hp'/>");
 	var hp_input = $("<input class='hp'>");
@@ -714,10 +744,17 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		hp.css('visibility', 'hidden');
 		max_hp.css('visibility', 'hidden');
 	}
+	 if(!token.options.combatGroupToken){
+	 		entry.append($("<td/>").append(hp));
+			entry.append($("<td/>").append(divider));
+			entry.append($("<td/>").append(max_hp));
+	 }
+	 else{
+	 	entry.append($(`<td/>`))
+	 	entry.append($(`<td/>`))
+	 	entry.append($(`<td/>`))
+	 }
 
-	entry.append($("<td/>").append(hp));
-	entry.append($("<td/>").append(divider));
-	entry.append($("<td/>").append(max_hp));
 
 	// bind update functions to hp inputs, same as Token.js
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
@@ -771,54 +808,103 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	
 	var buttons=$("<td/>");
 	
-	
-	if(token.options.id in window.TOKEN_OBJECTS || !window.DM){
-		find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
-	}
-	else {
-		find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG addCTSVG" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>');
-	}
-	find.click(function(){
-		var target=$(this).parent().parent().attr('data-target');
-		if(target in window.TOKEN_OBJECTS){
-			window.TOKEN_OBJECTS[target].highlight();	     
-		}
-		else if(target in window.all_token_objects){
-			place_token_in_center_of_view(window.all_token_objects[target].options);
-		  	$(`#combat_area tr[data-target='${target}'] .findSVG`).remove();
-           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
-            $(`#combat_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
-            ct_update_popout();
-		}
-	});
+	if(!token.options.combatGroupToken){
 
-	
-	
-	buttons.append(find);
-	
+
+		if(token.options.id in window.TOKEN_OBJECTS || !window.DM){
+			find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+		}
+		else {
+			find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG addCTSVG" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>');
+		}
+		find.click(function(){
+			var target=$(this).parent().parent().attr('data-target');
+			if(target in window.TOKEN_OBJECTS){
+				window.TOKEN_OBJECTS[target].highlight();	     
+			}
+			else if(target in window.all_token_objects){
+				place_token_in_center_of_view(window.all_token_objects[target].options);
+			  	$(`#combat_area tr[data-target='${target}'] .findSVG`).remove();
+	           	let findSVG=$('<svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');	
+	            $(`#combat_area tr[data-target='${target}'] .findTokenCombatButton`).append(findSVG);
+	            ct_update_popout();
+			}
+		});
+
+		
+
+		buttons.append(find);
+	}
+	else{
+
+			find=$('<button class="findTokenCombatButton collapsed" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-120 300-300l58-58 122 122 122-122 58 58-180 180ZM358-598l-58-58 180-180 180 180-58 58-122-122-122 122Z"/></svg></button>');
+			find.click(function(){
+				if($(this).hasClass('collapsed')){
+					$(this).toggleClass('collapsed', false);
+					for(let i in window.all_token_objects){
+						if(window.all_token_objects[i].options.combatGroup == token.options.combatGroupToken && i != token.options.id){
+							ct_add_token(window.all_token_objects[i]);
+						}
+					}
+				}
+				else{
+					$(this).toggleClass('collapsed', true);
+					for(let i in window.all_token_objects){
+						if(window.all_token_objects[i].options.combatGroup == token.options.combatGroupToken && i != token.options.id){
+							ct_remove_token(window.all_token_objects[i]);
+						}
+					}
+				}
+				
+			});
+			buttons.append(find);
+	}
+
+
+
 	del=$('<button class="removeTokenCombatButton" style="font-size:10px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
 	del.click(
 		function(){
-			if(window.TOKEN_OBJECTS[token.options.id] != undefined){
-				window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;	
-				if(window.TOKEN_OBJECTS[token.options.id].options.round != undefined){
-					delete window.TOKEN_OBJECTS[token.options.id].options.round;	
+			if(!token.options.combatGroupToken){
+				if(window.TOKEN_OBJECTS[token.options.id] != undefined){
+					window.TOKEN_OBJECTS[token.options.id].options.ct_show = undefined;	
+					if(window.TOKEN_OBJECTS[token.options.id].options.round != undefined){
+						delete window.TOKEN_OBJECTS[token.options.id].options.round;	
+					}
+					if(window.TOKEN_OBJECTS[token.options.id].options.current != undefined){
+						delete window.TOKEN_OBJECTS[token.options.id].options.current;	
+					}
+					window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 				}
-				if(window.TOKEN_OBJECTS[token.options.id].options.current != undefined){
-					delete window.TOKEN_OBJECTS[token.options.id].options.current;	
+				if(window.all_token_objects[token.options.id] != undefined){
+					window.all_token_objects[token.options.id].options.ct_show = undefined;
 				}
-				window.TOKEN_OBJECTS[token.options.id].update_and_sync();
 			}
-			if(window.all_token_objects[token.options.id] != undefined){
-				window.all_token_objects[token.options.id].options.ct_show = undefined;
-			}
-
 			ct_remove_token(token);
+			if(token.options.combatGroupToken){
+				
+				for(let i in window.TOKEN_OBJECTS){
+					if(i == token.options.combatGroupToken)
+						continue;
+
+					
+					if(window.TOKEN_OBJECTS[i].options.combatGroup == token.options.combatGroupToken){
+						delete window.TOKEN_OBJECTS[i].options.combatGroup;
+						delete window.TOKEN_OBJECTS[i].options.ct_show;
+
+						ct_remove_token(window.TOKEN_OBJECTS[i]);
+						window.TOKEN_OBJECTS[i].update_and_sync();
+					}
+				}
+				token.delete();
+			}
+			
 		}
 	);
 
-	if(window.DM)
+	if(window.DM && !(token.options.combatGroup && !token.options.combatGroupToken)){
 		buttons.append(del);
+	}
 	
 	if(!token.isPlayer()){
 		stat=$('<button class="openSheetCombatButton" style="font-size:10px;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
@@ -1045,8 +1131,10 @@ function ct_load(data=null){
 	}
 	else{
 		for(let tokenID in window.all_token_objects){
-			if(window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
-			{
+			if(window.all_token_objects[tokenID].options.combatGroup && !window.all_token_objects[tokenID].options.combatGroupToken)
+					continue;
+			if( window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
+			{		
 				ct_add_token(window.all_token_objects[tokenID],false,true);
 			}		
 		}
