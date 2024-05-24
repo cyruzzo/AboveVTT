@@ -4041,7 +4041,9 @@ div#importer_area>div>div:first-of-type {
 }
 .sidebar-token-options-flyout-container {
     width: 400px;
+    max-height: 90vH;
     padding: 5px;
+    overflow: scroll;
     background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
@@ -6641,7 +6643,8 @@ button span.onedrive-btn-status{
 .sidebar *,
 .sidebar-flyout,
 .note,
-.sources-import-main-container *{
+.sources-import-main-container *,
+.sidebar-modal{
     overscroll-behavior: contain;
 }
 .VTTToken:not(.freeform) .hpvisualbar:before{

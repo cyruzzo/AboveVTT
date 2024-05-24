@@ -232,6 +232,17 @@ function token_setting_options() {
 			defaultValue: "average"
 		},
 		{
+			name: "placeType",
+			label: "Token Name Adjustment",
+			type: 'dropdown',
+			options: [
+				{ value: "count", label: "Count", description: "Tokens's name have a number appended to them." },
+				{ value: "personality", label: "Personality Trait", description: "Tokens's name have a personaility trait prepended." },
+				{ value: "none", label: "None", description: "Tokens's name will not be modified." }
+			],
+			defaultValue: "count"
+		},
+		{
 			name: "auraislight",
 			label: "Enable Token Vision/Light",
 			type: 'toggle',
