@@ -831,7 +831,7 @@ class JournalManager{
 		}
 
 		const rollImage = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
-		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.name : window.PLAYER_NAME
+		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
 
 		const clickHandler = function(clickEvent) {
 			roll_button_clicked(clickEvent, rollName, rollImage)
