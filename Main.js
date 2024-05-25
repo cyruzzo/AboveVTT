@@ -1735,8 +1735,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    // External Dependencies
 		    { src: "jquery-3.6.0.min.js" },
 		    // AboveVTT Files
-		    { src: "DiceContextMenu/DiceContextMenu.js" },
-		   
+		    { src: "DiceContextMenu/DiceContextMenu.js" },	   
+		    { src: "MonsterDice.js" },	
 		    { src: "DiceRoller.js" },
 		    { src: "DDBApi.js" },
 		    { src: "rpg-dice-roller.bundle.min.js" },

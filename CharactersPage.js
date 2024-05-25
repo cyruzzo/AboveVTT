@@ -1045,7 +1045,20 @@ function observe_character_sheet_changes(documentToObserve) {
                   menu[class*='styles_tabs']{
                       margin-bottom: 6px;
                   }
-
+                  button.avtt-roll-button {
+                      /* lifted from DDB encounter stat blocks  */
+                      color: #b43c35;
+                      border: 1px solid #b43c35;
+                      border-radius: 4px;
+                      background-color: #fff;
+                      white-space: nowrap;
+                      font-size: 14px;
+                      font-weight: 600;
+                      font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+                      line-height: 18px;
+                      letter-spacing: 1px;
+                      padding: 1px 4px 0;
+                  }
                   [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
                   .ct-primary-box__tab--actions .ddbc-tab-options__content{
                     max-height: 551px;
@@ -1121,7 +1134,7 @@ function observe_character_sheet_changes(documentToObserve) {
            $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-button.ajs-ok').click();
            $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
         }
-        if ($(mutation.addedNodes[0]).hasClass('ct-creature-pane') && mutationTarget.find('.ct-creature-pane').length>0) {
+        if (($(mutationTarget).hasClass('ct-sidebar__inner') || $(mutation.addedNodes[0]).hasClass('ct-creature-pane')) && mutationTarget.find('.ct-creature-pane').length>0) {
           scan_player_creature_pane(mutationTarget);
         }
 
