@@ -3729,7 +3729,7 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
 
 	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
-	let height = `${$.position?.scrollbarWidth() ? 520 - $.position.scrollbarWidth() : 520}px`
+	let height = `${$.position?.scrollbarWidth() ? 512 - $.position.scrollbarWidth() : 512}px`
 	let searchableHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
   let containerHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
   $('.ct-primary-box').css({

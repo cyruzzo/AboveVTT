@@ -899,10 +899,8 @@ function observe_character_sheet_changes(documentToObserve) {
               style= 'z-index: 100000;
                   width: 20%;
                   height: 20%;
-                  max-width: 300px;
-                  max-height: 300px;
-                  min-width: 100px;
-                  min-height: 200px;
+                  width: 300px;
+                  height: 300px;
                   position: fixed;
                   display: none;
                   left: 50%;
@@ -1041,38 +1039,67 @@ function observe_character_sheet_changes(documentToObserve) {
           if($(`style#advantageHover`).length == 0){
               $('body').append(`
                 <style id='advantageHover'>
-                .ddbc-combat-attack__icon.above-vtt-visited,
-                .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will,
-                .ddb-note-roll{
-                  border: 1px solid var(--theme-color, #ddd);
-                  border-radius: 5px;
-                  padding: 3px;
-                  margin: 0px 2px 0px 0px;
-                }
-                #site .advantageHover svg [fill="#b0b7bd"], 
-                #site .advantageHover svg [fill="#242528"],
-                #site .advantageHover svg .prefix__st0,
-                #site .advantageHover svg .prefix__st2,
-                #site .advantageHover svg .prefix__st4,
-                #site .advantageHover svg [fill="#b0b7bd"] *, 
-                #site .advantageHover svg [fill="#242528"] *{
-                  fill: #4fcf4f !important;
-                }
-                #site .advantageHover  span{
-                  color: #4fcf4f !important;
-                }
-                #site .disadvantageHover svg [fill="#b0b7bd"], 
-                #site .disadvantageHover svg [fill="#242528"],
-                #site .disadvantageHover svg .prefix__st0,
-                #site .disadvantageHover svg .prefix__st2,
-                #site .disadvantageHover svg .prefix__st4,
-                #site .disadvantageHover svg [fill="#b0b7bd"] *, 
-                #site .disadvantageHover svg [fill="#242528"] *{
-                    fill: #bb4242 !important;
-                }
-                #site .disadvantageHover span{
-                  color: #bb4242 !important;
-                }
+                  menu[class*='styles_tabs']>li>button[class*='styles_tabButton']{
+                      max-height: 26px;
+                  }
+                  menu[class*='styles_tabs']{
+                      margin-bottom: 6px;
+                  }
+
+                  [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
+                  .ct-primary-box__tab--actions .ddbc-tab-options__content{
+                    max-height: 551px;
+                  }
+                  
+                  .ct-description .ddbc-tab-options__content,
+                  .ct-notes .ddbc-tab-options__content,
+                  .ct-features .ddbc-tab-options__content{
+                    height: 569px;
+                  }
+                  
+                  .ct-primary-box .ct-creatures, 
+                  .ct-primary-box .ct-equipment, 
+                  .ct-primary-box .ct-extras, 
+                  .ct-primary-box .ct-spells,
+                  .ct-primary-box .ct-description,
+                  .ct-primary-box .ct-features,
+                  .ct-primary-box .ct-notes{
+                    height: 612px;
+                  }
+
+
+                  .ddbc-combat-attack__icon.above-vtt-visited,
+                  .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will,
+                  .ddb-note-roll{
+                    border: 1px solid var(--theme-color, #ddd);
+                    border-radius: 5px;
+                    padding: 3px;
+                    margin: 0px 2px 0px 0px;
+                  }
+                  #site .advantageHover svg [fill="#b0b7bd"], 
+                  #site .advantageHover svg [fill="#242528"],
+                  #site .advantageHover svg .prefix__st0,
+                  #site .advantageHover svg .prefix__st2,
+                  #site .advantageHover svg .prefix__st4,
+                  #site .advantageHover svg [fill="#b0b7bd"] *, 
+                  #site .advantageHover svg [fill="#242528"] *{
+                    fill: #4fcf4f !important;
+                  }
+                  #site .advantageHover  span{
+                    color: #4fcf4f !important;
+                  }
+                  #site .disadvantageHover svg [fill="#b0b7bd"], 
+                  #site .disadvantageHover svg [fill="#242528"],
+                  #site .disadvantageHover svg .prefix__st0,
+                  #site .disadvantageHover svg .prefix__st2,
+                  #site .disadvantageHover svg .prefix__st4,
+                  #site .disadvantageHover svg [fill="#b0b7bd"] *, 
+                  #site .disadvantageHover svg [fill="#242528"] *{
+                      fill: #bb4242 !important;
+                  }
+                  #site .disadvantageHover span{
+                    color: #bb4242 !important;
+                  }
               </style>`);
           }
         
@@ -1131,7 +1158,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
           if(mutationTarget.hasClass("ddbc-tab-list__content")){
             if (!is_player_sheet_full_width()) {
-              let height = `${$.position?.scrollbarWidth() ? 520 - $.position.scrollbarWidth() : 520}px`
+              let height = `${$.position?.scrollbarWidth() ? 512 - $.position.scrollbarWidth() : 512}px`
               let searchableHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
               let containerHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
               $('.ct-primary-box').css({
