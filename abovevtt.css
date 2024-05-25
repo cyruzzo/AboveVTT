@@ -5845,6 +5845,12 @@ input.max_hp[disabled]{
 .findTokenCombatButton:after{
     content:'Find Token';
 }
+.expandgroup:after{
+    content:'Collapse Group';
+}
+.expandgroup.collapsed:after{
+    content:'Expand Group';
+}
 .removeTokenCombatButton:after{
     content:'Remove from Combat';
 }
