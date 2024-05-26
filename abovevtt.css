@@ -4827,7 +4827,10 @@ div.sidebar__pane-content div.tooltip::after {
 .elev{
     pointer-events: none;
 }
-
+.set-conditions-button .tooltip-hover,
+.remove-conditions-button .tooltip-hover{
+    pointer-events:none;
+}
 button.avtt-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
