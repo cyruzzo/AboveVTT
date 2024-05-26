@@ -529,7 +529,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 	    url = url.replace('embed?', 'download?');
 		}
 		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.5' onloadstart="this.volume=${videoVolume}" id="scene_map" src="${url}" />`);
-		newmap.off("canplaythrough").on("canplaythrough", callback);
+		newmap.off("loadeddata").one("loadeddata", callback);
 		newmap.off("error").on("error", map_load_error_cb);
 
 		if (width == null) {
