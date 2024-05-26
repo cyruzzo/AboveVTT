@@ -50,6 +50,10 @@ $(function() {
         }
         window.diceRoller = new DiceRoller();  
         localStorage.removeItem("ScenesHandler" + gameId);
+        let scenesKeys = Object.entries(localStorage).filter(key => key[0].includes('ScenesHandler'));
+        for(let i in scenesKeys){
+          localStorage.removeItem(scenesKeys[i][0]);
+        }
       })
       .then(init_splash)              // show the splash screen; it reads from settings. That's why we show it here instead of earlier
       .then(harvest_campaign_secret)  // find our join link
