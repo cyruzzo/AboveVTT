@@ -97,6 +97,9 @@
                   fieldName: 'name',
                 }
             },
+            search: {
+                enabled: true,
+            },
             authentication: {},
             messaging: {
                 origin: "https://www.dndbeyond.com",
