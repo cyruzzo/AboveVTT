@@ -105,14 +105,21 @@
             typesAndSources: {
                 mode: "files",
                 filters: selectionType,
+                locations: {
+                    oneDrive: {},
+                },
                 pivots: {
                     oneDrive: true,
-                    recent: true,
+                    recent: false,
+                    shared: false,  
+                    sharedLibraries: false,
+                    myOrganization: false,
+                    site: false,
                 },
-            },
+            },  
             selection: {
               mode: selectionMode
-            }
+            },
         };
 
         win = window.open("", "Picker", "width=800,height=600")
