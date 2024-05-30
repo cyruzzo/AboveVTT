@@ -298,7 +298,7 @@ function build_aoe_token_image(token, scale, rotation){
     let tokenImageContainer = $(`<div class=token-image style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))'>`);
     let aoeClassName = token.options.imgsrc.replace("class=","").trim();
     console.debug("build_aoe_token_image aoeClassName", aoeClassName);
-    let tokenImage = $(`<div data-img="true" style='transform:scale(1) rotate(0)' class='${aoeClassName}'></div>`);
+    let tokenImage = $(`<div data-img="true" class='${aoeClassName}'></div>`);
 
     if (token.options.imgsrc.includes("cone")){
         tokenImageContainer.append(`<div class='aoe-border aoe-border-cone'></div>`)

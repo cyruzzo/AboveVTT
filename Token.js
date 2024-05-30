@@ -226,7 +226,7 @@ class Token {
 
 	isLineAoe() {
 		// 1 being a single square which is usually 5ft
-		return this.options.size === "" && this.options.gridWidth === 1 && this.options.gridHeight > 0
+		return (this.options.size === "" || this.options.size === 0) && this.options.gridWidth === 1 && this.options.gridHeight > 0
 	}
 
 	isAoe() {
@@ -2057,6 +2057,8 @@ class Token {
 
 				} else {
 					tokenImage = build_aoe_token_image(this, imageScale, rotation)
+					tok.css("--token-scale", imageScale);
+					tok.css("--token-rotation", `${rotation}deg`);
 					tok.toggleClass("isAoe", true);
 				}
 				tok.css("--token-rotation", rotation + "deg");
@@ -2826,21 +2828,31 @@ class Token {
 	 */
 	prepareWalkableArea() {
 		// sizeOnGrid needs to be at least one grid size to work for smaller tokens
-		const sizeOnGrid = {
-			y: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.vpps),
-			x: Math.max(this.sizeWidth(), window.CURRENT_SCENE_DATA.hpps)
+		const greaterSize = this.sizeWidth() > this.sizeHeight() ? this.sizeWidth() : this.sizeHeight()
+		const scale = this.options.imageSize ? parseFloat(this.options.imageSize) : 1;
+		let sizeOnGrid = {
+			y: Math.max(greaterSize, window.CURRENT_SCENE_DATA.vpps),
+			x: Math.max(greaterSize, window.CURRENT_SCENE_DATA.hpps)
 		};
 
 		// Shorten letiable to improve readability
-		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER; 
-
+		const multi = this.SCENE_MOVE_GRID_PADDING_MULTIPLIER + (this.SCENE_MOVE_GRID_PADDING_MULTIPLIER*(scale-1)/2); 
+		const lineMulti = this.isLineAoe() ? 1 : 0;
+		if(this.isLineAoe()){
+			sizeOnGrid.x = (sizeOnGrid.x * 0.5);
+		}
 
 		this.walkableArea = {
 			top:  0 - (sizeOnGrid.y * multi),
 			left: 0 - (sizeOnGrid.x * multi),
-			right:  parseInt(window.CURRENT_SCENE_DATA.width) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor)  + (sizeOnGrid.x * (multi -1)), // We need to remove 1 token size because tokens are anchored in the top left
-			bottom: parseInt(window.CURRENT_SCENE_DATA.height) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor) + (sizeOnGrid.y * (multi -1)), // ... same as above
+			right:  parseInt(window.CURRENT_SCENE_DATA.width) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor) + (sizeOnGrid.x * (multi+lineMulti-1)),  // We need to remove 1 token size because tokens are anchored in the top left
+			bottom: parseInt(window.CURRENT_SCENE_DATA.height) * parseFloat(window.CURRENT_SCENE_DATA.scale_factor) + (sizeOnGrid.y * (multi-1)), // ... same as above
 		};	
+		if(this.isLineAoe()){
+			this.walkableArea.left -= window.CURRENT_SCENE_DATA.hpps/2;
+			this.walkableArea.right -= window.CURRENT_SCENE_DATA.hpps/2;
+		}
+
 	}
 	
 }
