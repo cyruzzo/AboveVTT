@@ -553,10 +553,20 @@ class MessageBroker {
 			}
 
 			if (msg.eventType === "custom/myVTT/fetchscene") {
+
+				if(msg.data.sceneid.players){
+					if(msg.data.sceneid[window.PLAYER_ID] !== undefined)
+						msg.data.sceneid = msg.data.sceneid[window.PLAYER_ID];
+					else
+						msg.data.sceneid = msg.data.sceneid.players
+				}
+
 				if (window.startupSceneId === msg.data.sceneid) {
 					// we fetch this on startup because it's faster. Don't reload what we've already loaded
 					console.log("received custom/myVTT/fetchscene, but we've already loaded", msg.data.sceneid)
-				} else if (msg.data?.sceneid) {
+				} 
+
+				else if (msg.data?.sceneid) {
 					AboveApi.getScene(msg.data.sceneid).then((response) => {
 						self.handleScene(response);
 					}).catch((error) => {

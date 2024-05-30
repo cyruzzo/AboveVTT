@@ -1614,7 +1614,31 @@ function register_token_row_context_menu() {
                     }
                 };
             }
+            if(rowItem.isTypePC()){
+                menuItems["pullToScene"] = {
+                    name: "Pull to Current Scene",
+                    callback: async function(itemKey, opt, originalEvent){
+                        let itemToEdit = await find_sidebar_list_item(opt.$trigger);
+                        let currentScene = await AboveApi.getCurrentScene();
+                        let sceneIds = {}
+                        let playerId = itemToEdit.id.split('/')[4];
+                        if(currentScene.playerscene && currentScene.playerscene.players){
+                            sceneIds = {
+                                ...currentScene.playerscene,         
+                            };
+                            sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
+                        }
+                        else if(typeof currentScene.playerscene == 'string'){
+                            sceneIds = {
+                                players: currentScene.playerscene,
+                            };
+                            sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
+                        }
 
+                        window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+                    }
+                }
+            }
             if (rowItem.canEdit() ) {
                 menuItems["edit"] = {
                     name: "Edit",
