@@ -748,6 +748,9 @@ class MessageBroker {
 						`);			
 						$("body").append(pausedIndicator);
 					}
+					if(!window.DM){
+						deselect_all_tokens();
+					}
 				}
 				else{
 					$(".paused-indicator").remove();
