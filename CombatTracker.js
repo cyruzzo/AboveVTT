@@ -214,7 +214,12 @@ function init_combat_tracker(){
 			if(window.all_token_objects[id].options.ct_show == undefined)
 				continue;
 			ct_remove_token(window.all_token_objects[id], false);
+			
 			if(window.TOKEN_OBJECTS[id] != undefined){
+				if(window.TOKEN_OBJECTS[id].options.combatGroupToken){
+					window.TOKEN_OBJECTS[id].delete();
+					continue;
+				}
 				window.TOKEN_OBJECTS[id].options.ct_show = undefined;
 				if(window.TOKEN_OBJECTS[id].options.round != undefined){
 					delete window.TOKEN_OBJECTS[id].options.round;	
@@ -241,7 +246,7 @@ function init_combat_tracker(){
 		let currentTarget = current.attr('data-target');
 		if(current.length==0){
 			console.log('nessuno selezionato');
-			$($("#combat_area tr:not([skipTurn])").nextAll()[0]).attr('data-current','1');
+			$($("#combat_area tr:not([skipTurn])")[0]).attr('data-current','1');
 			currentTarget = $("#combat_area tr[data-current=1]").attr('data-target');
 
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
