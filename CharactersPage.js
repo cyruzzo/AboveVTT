@@ -971,12 +971,15 @@ function observe_character_sheet_changes(documentToObserve) {
             }
   
           }
-          let settings = $(`<span style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
-          settings.off().on('click', function(){
-            $('#close-icon-roll-options').css('display', 'block');
-            $('#icon-roll-options').css('display', 'block');
-          }) 
-          $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
+          if($('#avtt-icon-roll-span').length == 0){
+            let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+            settings.off().on('click', function(){
+              $('#close-icon-roll-options').css('display', 'block');
+              $('#icon-roll-options').css('display', 'block');
+            }) 
+            $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
+          }
+
           $(attackIcons).addClass("above-vtt-visited");
           $(attackIcons).css({
             '-webkit-user-select': 'none',
