@@ -237,7 +237,11 @@ function getMediaDevice(){
         deviceId: {
             exact: $('select#audioSource').val()
         },
-        volume: micVolume   
+        volume: micVolume,
+        sampleSize: 16,
+        channelCount: 2,
+        echoCancellation: false,
+        noiseSuppression: false  
     }
     navigator.mediaDevices.getUserMedia(
         { 
@@ -276,7 +280,11 @@ function startScreenShare() {
     let micVolume = $("#peerVideo_mute_mic").hasClass('muted') ? 0.0 : 1.0
     let audioConditions = audioDeviceNotAvailable ? false : {
         deviceId: $('select#audioSource').val(),
-        volume: micVolume 
+        volume: micVolume,
+        sampleSize: 16,
+        channelCount: 2,
+        echoCancellation: false,
+        noiseSuppression: false  
     }
     navigator.mediaDevices.getDisplayMedia({ video: true, audio: true}).then((stream) => {
         screenStream = stream;
