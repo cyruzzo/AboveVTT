@@ -1726,14 +1726,8 @@ class MessageBroker {
 						}
 
 						
-						set_default_vttwrapper_size();
-
-
-						
-						
 		        reset_canvas();
-		        
-		        apply_zoom_from_storage();
+		        set_default_vttwrapper_size();
 						
 						// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 						if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
@@ -1793,12 +1787,6 @@ class MessageBroker {
 						});
 
 
-
-						if(!window.DM) {
-						 	window.MB.sendMessage('custom/myVTT/syncmeup');
-							do_check_token_visibility();
-						}
-
 						$('.import-loading-indicator .percentageLoaded').css('width', '95%');	
 						if (window.EncounterHandler !== undefined) {
 							fetch_and_cache_scene_monster_items();
@@ -1809,11 +1797,14 @@ class MessageBroker {
 						}
 						update_pc_token_rows();
 						$('.import-loading-indicator').remove();
-						$('#loadingStyles').remove();
 						delete window.LOADING;
-						if(!window.DM)
-							do_check_token_visibility()
+						if(!window.DM) {
+						 	window.MB.sendMessage('custom/myVTT/syncmeup');
+							do_check_token_visibility();
+						}
+						$('#loadingStyles').remove();
 						console.groupEnd()
+
 					});
 					
 					remove_loading_overlay();

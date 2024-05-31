@@ -1501,8 +1501,11 @@ function redraw_light_walls(clear=true){
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
 		}
-		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
-		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+		let currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+		let currentSceneConversion = window.CURRENT_SCENE_DATA.conversion ? parseFloat(window.CURRENT_SCENE_DATA.conversion) : 1;
+
+		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
+		let adjustedScale = scale/currentSceneScale;
 
 		if (displayWalls) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
@@ -1525,9 +1528,8 @@ function redraw_light_walls(clear=true){
 
 		if(doorButton.length==0 && doorColorsArray.includes(color)){
 			
-			
-			let midX = Math.floor((x+width)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
-			let midY = Math.floor((y+height)/2) / scale * window.CURRENT_SCENE_DATA.scale_factor;
+			let midX = Math.floor((x+width)/2) / scale * currentSceneScale;
+			let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
 
 
 			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : `door`;
