@@ -644,7 +644,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		let addButtonInternals = `Add to Combat Tracker<span class="material-icons icon-person-add"></span>`;
 		let removeButtonInternals = `Remove From Combat Tracker<span class="material-icons icon-person-remove"></span>`;
 
-		let addGroupButtonInternals = `Add Group to Combat<span class="material-symbols-outlined group_add"></span>`;
+		let addGroupButtonInternals = `Add to Combat as Group<span class="material-symbols-outlined group_add"></span>`;
 		let removeGroupButtonInternals = `Remove Group from Combat<span class="material-symbols-outlined group_remove"></span>`;
 
 		let combatButton = $(`<button></button>`);
