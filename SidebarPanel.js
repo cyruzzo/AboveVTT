@@ -1148,6 +1148,8 @@ function build_sidebar_list_row(listItem) {
   let subtitle = $(`<div class="sidebar-list-item-row-details-subtitle"></div>`);
   details.append(subtitle);
 
+
+
   if (!listItem.isTypeFolder() && !listItem.isTypeScene()) {
     let addButton = $(`
         <button class="token-row-button token-row-add" title="Add Token to Scene">
@@ -1167,6 +1169,45 @@ function build_sidebar_list_row(listItem) {
       console.log(`folder.collapsed: ${listItem.collapsed}`, listItem);
       if (listItem.collapsed === true) {
         row.addClass("collapsed");
+      }
+      if(listItem.id == "playersFolder"){
+
+
+        let popoutButton = $(`<div class="players-popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
+        row.append(popoutButton);
+        popoutButton.off('click.popout').on('click.popout', function(){      
+          popoutWindow('Players', row, '350px');
+          let playersWindow = $(childWindows['Players'].document)
+          playersWindow.find('#playersFolder > .sidebar-list-item-row-item, .players-popout-button').remove();
+          playersWindow.find('body').append($(`
+            <style id='playersPopoutCSS'>
+              .folder-item-list > .sidebar-list-item-row {
+                width: 320px;
+                display: inline-block;
+                margin-right:5px;
+                cursor: pointer;
+                flex-shrink: 0;
+              }
+              #playersFolder{
+                border: none;
+              }
+              #playersFolder > .folder-item-list{
+                  display: flex;
+                  width: 100%;
+                  flex-wrap: wrap;
+              }
+              .ability_score,
+              .ability_name{
+                margin-top: 3px;
+              }
+            </style>`))
+
+          playersWindow.find('.ui-draggable').draggable('disable')
+        
+        });
+
+        
+       
       }
       if (listItem.folderType === ItemType.MyToken) {
         // add buttons for creating subfolders and tokens
