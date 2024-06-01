@@ -786,6 +786,12 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
 function update_pc_token_rows() {
     window.tokenListItems?.filter(listItem => listItem.isTypePC()).forEach(listItem => {
         let row = find_html_row(listItem, tokensPanel.body);
+        if(childWindows['Players']){
+            let popoutPC = find_html_row(listItem, $(childWindows['Players'].document).find('body'));
+            if(popoutPC != false)
+                row = row.add(popoutPC);
+        }
+        
         if (listItem.sheet in window.TOKEN_OBJECTS) {
             row.addClass("on-scene");
             row.find("button.token-row-add").attr("title", `Locate Token on Scene`);
