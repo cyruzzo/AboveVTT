@@ -5041,7 +5041,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 		return;
 	
 	let visionColor = window.TOKEN_OBJECTS[auraId]?.options?.vision?.color ? window.TOKEN_OBJECTS[auraId].options.vision.color : `rgba(0,0,0,0)`;
-	let visionRange = window.TOKEN_OBJECTS[auraId]?.options?.vision?.feet ? window.TOKEN_OBJECTS[auraId].options.vision.color : 0;
+	let visionRange = window.TOKEN_OBJECTS[auraId]?.options?.vision?.feet ? window.TOKEN_OBJECTS[auraId].options.vision.feet : 0;
 
 	let light1Color = window.TOKEN_OBJECTS[auraId]?.options?.light1?.color ? window.TOKEN_OBJECTS[auraId].options.light1.color : `rgba(0,0,0,0)`;
 	let light2Color = window.TOKEN_OBJECTS[auraId]?.options?.light2?.color ? window.TOKEN_OBJECTS[auraId].options.light1.color : `rgba(0,0,0,0)`;
