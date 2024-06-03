@@ -70,7 +70,7 @@
         await $.ajax({
             url: `https://graph.microsoft.com/v1.0/me/drive/items/${fileid}/createLink`,
             type: 'post',
-            data: "{type: 'embed'}",
+            data: "{type: 'view'}",
             headers: {
                 'Authorization': `Bearer ${embedToken}`,   //If your header name has spaces or any other char not appropriate
                 "Content-Type": 'application/json',  //for object property name, use quoted notation shown in second,

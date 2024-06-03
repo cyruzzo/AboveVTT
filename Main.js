@@ -52,6 +52,10 @@ function parse_img(url) {
 			console.log("parse_img is converting", url, "to", parsed);
 			retval = parsed;
 		}
+		else if(retval.includes("https://1drv.ms/"))
+		{
+		  retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(retval) + "/root/content";
+		}
 		if(retval.includes("discordapp.com")){
 			retval = update_old_discord_link(retval)
 		}
@@ -527,6 +531,10 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		}
 		else if(url.includes('onedrive')){
 	    url = url.replace('embed?', 'download?');
+		}
+		else if(url.includes("https://1drv.ms/"))
+		{
+		  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 		}
 		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.5' onloadstart="this.volume=${videoVolume}" id="scene_map" src="${url}" />`);
 		newmap.off("loadeddata").one("loadeddata", callback);
