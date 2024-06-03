@@ -1789,6 +1789,9 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 doors[0][9]
 				 ];	
 	window.DRAWINGS.push(data);
+	window.wallUndo.push({
+		undo: [data]
+	});
 	redraw_light_walls();
 	redraw_light();
 	checkAudioVolume();
@@ -2422,7 +2425,7 @@ function drawing_mouseup(e) {
 		}
 		else{
 			window.DRAWINGS.push(data);
-			if(window.DRAWFUNCTION == 'wall'){
+			if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
 				undoArray.push(data);
 			}
 		}
@@ -2443,11 +2446,16 @@ function drawing_mouseup(e) {
 						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						hidden];
 					window.DRAWINGS.push(data);
-					undoArray.push(data);
+					window.wallUndo.push({
+						undo: [data]
+					});
 			}
-			window.wallUndo.push({
-				undo: undoArray,
-			})
+			if(undoArray.length > 0){
+				window.wallUndo.push({
+					undo: undoArray
+				});
+			}
+
 			window.StoredWalls = [];
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
@@ -2601,7 +2609,9 @@ function drawing_mouseup(e) {
 							doorButton.remove();
 						}		
 						if(window.DRAWFUNCTION === "door-door-convert"){
+							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][2] = window.DRAWCOLOR;
+							undoArray.push(window.DRAWINGS[j]);
 							break;
 						}	
 						wallColor = window.DRAWINGS[j][2];
@@ -2669,7 +2679,8 @@ function drawing_mouseup(e) {
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
-						window.DRAWINGS.push(data);				
+						window.DRAWINGS.push(data);	
+						undoArray.push(data);			
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
