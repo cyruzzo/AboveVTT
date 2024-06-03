@@ -375,6 +375,9 @@ function handle_undo(){
     else if(($("#text_button").hasClass(buttonSelectedClasses))){
         $("#text_undo").click()
     }
+    else if(($("#wall_button").hasClass(buttonSelectedClasses))){
+        $("#wall_undo").click()
+    }
 
 }
 

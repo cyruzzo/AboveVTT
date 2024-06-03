@@ -1577,6 +1577,7 @@ class MessageBroker {
 			}
 			else{
 				window.DRAWINGS = [];
+				window.wallUndo = [];
 				$('#exploredCanvas').remove();
 				window.sceneRequestTime = Date.now();
 		    let lastSceneRequestTime = window.sceneRequestTime;   
