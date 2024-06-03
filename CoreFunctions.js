@@ -936,6 +936,10 @@ function updateImgSrc(url, container, video){
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
   }
+  else if(url.includes("https://1drv.ms/"))
+  {
+    url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+  }
   else if(url?.includes('google')){
     throttleImgSrc(() => {
       container.attr('src', url);
@@ -948,6 +952,10 @@ function updateTokenSrc(url, container, video=false){
   url = parse_img(url)
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
+  }
+  else if(url.includes("https://1drv.ms/"))
+  {
+    url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
   }
   else{
     container.attr('src', url);

@@ -194,6 +194,10 @@ class Mixer extends EventTarget {
                 else if(url.startsWith("https://onedrive.live.com/embed?")){
                    url = url.replace('embed?', 'download?')
                 }
+                else if(url.includes("https://1drv.ms/"))
+                {
+                  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+                }
                 player = new Audio(url);
                 player.preload = "none";
                 this._players[id] = player;
