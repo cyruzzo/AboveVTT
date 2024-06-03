@@ -1506,7 +1506,7 @@ function redraw_light_walls(clear=true){
 
 		scale = (scale == undefined) ?  currentSceneScale/currentSceneConversion : scale/currentSceneConversion;
 		let adjustedScale = scale/currentSceneScale;
-
+		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
 		if (displayWalls) {
 			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
 		}
@@ -1573,7 +1573,10 @@ function redraw_light_walls(clear=true){
 									 doors[0][9]
 						];	
 						window.DRAWINGS.push(data);
-
+						window.wallUndo.push({
+							undo: [data],
+							redo: [doors[0]]
+						})
 						redraw_light_walls();
 						redraw_light();
 
@@ -2146,17 +2149,23 @@ function drawing_mousemove(e) {
 					sendRulerPositionToPeers();
 				}
 			}else{
+				let lineWidth = window.LINEWIDTH
+				if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window')
+					lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, window.LINEWIDTH/2));
+		
 				drawLine(window.temp_context,
 					window.BEGIN_MOUSEX,
 					window.BEGIN_MOUSEY,
 					mouseX,
 					mouseY,
 					window.DRAWCOLOR,
-					window.LINEWIDTH);
+					lineWidth);
 			}
 			if(window.DRAWFUNCTION == 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window'){
 				window.wallToStore = [window.BEGIN_MOUSEX,window.BEGIN_MOUSEY, mouseX, mouseY];
 				if(window.StoredWalls != undefined){
+					const lineWidth = Math.min(window.LINEWIDTH, Math.max(window.LINEWIDTH/window.ZOOM/window.CURRENT_SCENE_DATA.scale_factor, window.LINEWIDTH/2));
+		
 					for(let wall in window.StoredWalls){
 						drawLine(window.temp_context,
 							window.StoredWalls[wall][0],
@@ -2164,7 +2173,7 @@ function drawing_mousemove(e) {
 							window.StoredWalls[wall][2],
 							window.StoredWalls[wall][3],
 							window.DRAWCOLOR,
-							window.LINEWIDTH);
+							lineWidth);
 					}
 				}
 				
@@ -2357,6 +2366,7 @@ function drawing_mouseup(e) {
 		default:
 			break;
 		}
+		let undoArray =[];
 		if(window.DRAWFUNCTION == 'wall' && window.DRAWSHAPE == 'rect'){
 			let rectLine = {
 				rx: window.BEGIN_MOUSEX,
@@ -2405,16 +2415,22 @@ function drawing_mouseup(e) {
 				 window.LINEWIDTH,
 				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			window.DRAWINGS.push(line4);
+
+			window.wallUndo.push({
+				undo: [line1, line2, line3, line4]
+			});
 		}
 		else{
 			window.DRAWINGS.push(data);
+			if(window.DRAWFUNCTION == 'wall'){
+				undoArray.push(data);
+			}
 		}
 
 		if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door' ){
 			if ( e.button == 2) {
 				return;
 			}
-			
 			for(let walls in window.StoredWalls){
 					data = ['line',
 						"wall",
@@ -2427,7 +2443,11 @@ function drawing_mouseup(e) {
 						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						hidden];
 					window.DRAWINGS.push(data);
+					undoArray.push(data);
 			}
+			window.wallUndo.push({
+				undo: undoArray,
+			})
 			window.StoredWalls = [];
 			window.wallToStore = [];
 			window.MOUSEDOWN = false;
@@ -2491,7 +2511,8 @@ function drawing_mouseup(e) {
 		};
 		let intersectingWalls = [];
 		let wallLine = [];
-	
+		let undoArray = [];
+		let redoArray = [];
 		for(let i=0; i<walls.length; i++){
 			if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
 				continue;
@@ -2584,6 +2605,7 @@ function drawing_mouseup(e) {
 							break;
 						}	
 						wallColor = window.DRAWINGS[j][2];
+						redoArray.push(window.DRAWINGS[j]);
 						window.DRAWINGS.splice(j, 1);
 						break;
 					}
@@ -2623,6 +2645,7 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
+						undoArray.push(data);
 					}	
 					if(right != false){
 						if(wallLine[0].b.x > wallLine[0].a.x){
@@ -2670,6 +2693,7 @@ function drawing_mouseup(e) {
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
 						window.DRAWINGS.push(data);
+						undoArray.push(data);
 					
 					}
 					if(bottom != false){
@@ -2693,7 +2717,8 @@ function drawing_mouseup(e) {
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 						 ];	
-						window.DRAWINGS.push(data);					
+						window.DRAWINGS.push(data);	
+						undoArray.push(data);				
 					}
 				}
 					
@@ -2783,9 +2808,13 @@ function drawing_mouseup(e) {
 			 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 			 ];	
 			window.DRAWINGS.push(data);
+			undoArray.push(data);
 							
 		}
- 		
+ 		window.wallUndo.push({
+			undo: undoArray,
+			redo: redoArray
+		});
 
 		redraw_light_walls();
 		redraw_light();
@@ -3416,6 +3445,7 @@ function save3PointRect(e){
 	else if(window.DRAWFUNCTION === "wall"){
 
 		polygonPoints[3] = calculateFourthPoint(polygonPoints[0], polygonPoints[1], polygonPoints[2]);
+		let undoArray = []
 		for(let point = 0; point<polygonPoints.length; point++){
 			if(point<3){
 				data = ['line',
@@ -3440,7 +3470,14 @@ function save3PointRect(e){
 				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 			}
 			window.DRAWINGS.push(data);
+			undoArray.push(data);
 		}
+
+		window.wallUndo.push({
+			undo: undoArray
+		});
+			
+
 		window.MOUSEDOWN = false;
 		redraw_light_walls();
 		redraw_light();
@@ -3457,7 +3494,7 @@ function save3PointRect(e){
 			window.LINEWIDTH,
 			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
 		];
-		window.DRAWINGS.push(data);
+		window.DRAWINGS.push(data);	
 		redraw_drawn_light();
 		redraw_drawings();
 	}
@@ -4049,6 +4086,12 @@ function init_walls_menu(buttons){
 				Always Show
 			</button>
 		</div>`);
+	wall_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='wall_undo'>
+					UNDO
+				</button>
+			</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_walls'>
@@ -4071,7 +4114,25 @@ function init_walls_menu(buttons){
 			sync_drawings();
 		}
 	});
+	wall_menu.find("#wall_undo").click(function() {
 
+        let wallUndo = window.wallUndo.pop();
+
+        if(wallUndo.undo != undefined){
+			for(let i in wallUndo.undo){
+        		window.DRAWINGS = window.DRAWINGS.filter(d => d !== wallUndo.undo[i]);
+        	}
+        }
+        if(wallUndo.redo != undefined){
+        	for(let i in wallUndo.redo){
+        		window.DRAWINGS.push(wallUndo.redo[i])
+        	}
+        }
+        redraw_light_walls();
+        redraw_drawn_light();
+        redraw_light();
+		sync_drawings();
+	});
 
 	wall_menu.css("position", "fixed");
 	wall_menu.css("top", "50px");
