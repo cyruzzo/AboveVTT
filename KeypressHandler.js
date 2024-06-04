@@ -1,9 +1,9 @@
-var altHeld = false;
-var ctrlHeld = false;
-var shiftHeld = false;
-var toggleSnap = false;
-var cursor_x = -1;
-var cursor_y = -1;
+let altHeld = false;
+let ctrlHeld = false;
+let shiftHeld = false;
+let toggleSnap = false;
+let cursor_x = -1;
+let cursor_y = -1;
 
 function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
@@ -381,7 +381,7 @@ function handle_undo(){
 
 }
 
-var rotationKeyPresses = [];
+let rotationKeyPresses = [];
 window.addEventListener("keydown", async (event) => {
     const arrowKeys = [ 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown' ];
     if (event.shiftKey && arrowKeys.includes(event.key) ) {

@@ -788,7 +788,7 @@ function rebuild_ddb_npcs(redrawList = false) {
     // Unfortunately, window.ddbConfigJson.raceGroups do not match the portrait ids. Those must be for monsters?
     // Anyway, this is how I collected the race ids. Navigate to https://www.dndbeyond.com/races and enter the following into the console
     /*
-    var playableRaces = [];
+    let playableRaces = [];
     $("a.listing-card__link").each(function() {
         playableRaces.push( $(this).attr("href").match(/[^\/]+$/)[0] );
     })
@@ -815,7 +815,7 @@ function rebuild_ddb_npcs(redrawList = false) {
 
     // process the list of ids into objects that can be parsed and matched to window.ddbPortraits
     // { "Aarakocra": [4, 1026377], "Human": [1] } // legacy and non-legacy get merged into the same list of portraits. I manually merge orc and orc-of-exandria as well
-    var playableRaces = {};
+    let playableRaces = {};
     playableRaceIds.forEach(id => {
         let portraitId = parseInt(id);
         let name = uglyCapitalization(id.replace(`${portraitId}-`, ""));

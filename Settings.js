@@ -559,11 +559,11 @@ function b64DecodeUnicode(str) {
 
 
 function download(data, filename, type) {
-    var file = new Blob([data], {type: type});
+    let file = new Blob([data], {type: type});
     if (window.navigator.msSaveOrOpenBlob) // IE10+
         window.navigator.msSaveOrOpenBlob(file, filename);
     else { // Others
-        var a = document.createElement("a"),
+        let a = document.createElement("a"),
                 url = URL.createObjectURL(file);
         a.href = url;
         a.download = filename;
@@ -1451,10 +1451,10 @@ function import_openfile(){
 
 function import_readfile() {
 	build_import_loading_indicator();
-	var reader = new FileReader();
+	let reader = new FileReader();
 	reader.onload = function() {
 		// DECODE
-		var DataFile=null;
+		let DataFile=null;
 		try{
 			DataFile=$.parseJSON(b64DecodeUnicode(reader.result));
 		}

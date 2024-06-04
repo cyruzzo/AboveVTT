@@ -168,7 +168,7 @@ class WaypointManagerClass {
 			this.currentWaypointIndex++;
 
 			// Draw an indicator for cosmetic niceness
-			var snapCoords = this.getSnapPointCoords(mousex, mousey);
+			//let snapCoords = this.getSnapPointCoords(mousex, mousey);
 			//this.drawBobble(snapCoords.x, snapCoords.y, Math.max(15 * Math.max((1 - window.ZOOM), 0)/window.CURRENT_SCENE_DATA.scale_factor, 3));
 	}
 
@@ -201,11 +201,11 @@ class WaypointManagerClass {
 		x -= window.CURRENT_SCENE_DATA.offsetx;
 		y -= window.CURRENT_SCENE_DATA.offsety;
 
-		var gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
-		var currGridX = Math.floor(x / gridSize);
-		var currGridY = Math.floor(y / gridSize);
-		var snapPointXStart = (currGridX * gridSize) + (gridSize/2);
-		var snapPointYStart = (currGridY * gridSize);
+		let gridSize = window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
+		let currGridX = Math.floor(x / gridSize);
+		let currGridY = Math.floor(y / gridSize);
+		let snapPointXStart = (currGridX * gridSize) + (gridSize/2);
+		let snapPointYStart = (currGridY * gridSize);
 
 		// Add in scene offset
 		snapPointXStart += window.window.CURRENT_SCENE_DATA.offsetx/window.CURRENT_SCENE_DATA.scale_factor;
@@ -219,9 +219,9 @@ class WaypointManagerClass {
 	draw(midlineLabels, labelX, labelY, alpha = 1, playerId=window.PLAYER_ID) {
 		$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
 		
-		var cumulativeDistance = 0;
+		let cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
-		for (var i = 0; i < this.coords.length; i++) {
+		for (let i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
@@ -245,12 +245,12 @@ class WaypointManagerClass {
 
 		let snapPointXEnd = coord.endX;
 		let snapPointYEnd = coord.endY;
-
+		let unitSymbol;
 		// Pull the scene data for units, unless it doesn't exist (i.e. older maps)
 		if (typeof window.CURRENT_SCENE_DATA.upsq !== "undefined")
-			var unitSymbol = window.CURRENT_SCENE_DATA.upsq;
+			unitSymbol = window.CURRENT_SCENE_DATA.upsq;
 		else
-			var unitSymbol = 'ft'
+			unitSymbol = 'ft'
 
 		// Calculate the distance and set into the waypoint object
 		const xAdjustment = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
@@ -728,7 +728,7 @@ function do_check_token_visibility() {
 }
 
 function circle2(a, b) {
-	var R = a.r,
+	let R = a.r,
 		r = b.r,
 		dx = b.x - a.x,
 		dy = b.y - a.y,
@@ -744,8 +744,8 @@ function circle2(a, b) {
 }
 
 function circle_intersection(x0, y0, r0, x1, y1, r1) {
-	var a, dx, dy, d, h, rx, ry;
-	var x2, y2;
+	let a, dx, dy, d, h, rx, ry;
+	let x2, y2;
 
 	/* dx and dy are the vertical and horizontal distances between
 	 * the circle centers.
@@ -790,10 +790,10 @@ function circle_intersection(x0, y0, r0, x1, y1, r1) {
 	ry = dx * (h / d);
 
 	/* Determine the absolute intersection points. */
-	var xi = x2 + rx;
-	var xi_prime = x2 - rx;
-	var yi = y2 + ry;
-	var yi_prime = y2 - ry;
+	let xi = x2 + rx;
+	let xi_prime = x2 - rx;
+	let yi = y2 + ry;
+	let yi_prime = y2 - ry;
 
 	return [xi, xi_prime, yi, yi_prime];
 }
@@ -925,7 +925,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 	let skip = true;
 
 	gridContext.beginPath();	
-	for (var i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
+	for (let i = startX; i < $("#grid_overlay").width(); i = i + incrementX) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -941,7 +941,7 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 
 	
 	gridContext.beginPath();
-	for (var i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
+	for (let i = startY; i < $("#grid_overlay").height(); i = i + incrementY) {
 		if (isSubdivided && skip) {
 			skip = false;
 			continue;
@@ -961,8 +961,8 @@ function redraw_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=nul
 
 function draw_wizarding_box() {
 
-	var gridCanvas = document.getElementById("grid_overlay");
-	var gridContext = gridCanvas.getContext("2d");
+	let gridCanvas = document.getElementById("grid_overlay");
+	let gridContext = gridCanvas.getContext("2d");
 	gridCanvas.width = $("#scene_map").width();
 	gridCanvas.height = $("#scene_map").height();
 
@@ -1117,8 +1117,8 @@ function reset_canvas(apply_zoom=true) {
 	
 	
 
-	var canvas_grid = document.getElementById("grid_overlay");
-	var ctx_grid = canvas_grid.getContext("2d");
+	let canvas_grid = document.getElementById("grid_overlay");
+	let ctx_grid = canvas_grid.getContext("2d");
 
 	window.temp_canvas = document.getElementById("temp_overlay");;
 	window.temp_context = window.temp_canvas.getContext("2d");
@@ -1188,7 +1188,7 @@ function redraw_fog() {
 		return;
 	let canvas = document.getElementById("fog_overlay");
 	let fogContext = canvas.getContext("2d");
-
+	let fogStyle;
 	if (window.DM)
 		fogStyle = "rgba(0, 0, 0, 0.5)";
 	else
@@ -1327,7 +1327,7 @@ function redraw_drawings() {
 	offscreenDraw.width = canvas.width;
 	offscreenDraw.height = canvas.height;
 
-	for (var i = 0; i < drawings.length; i++) {
+	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = fill === 'filled';
@@ -1391,7 +1391,7 @@ function redraw_drawn_light(){
 	offscreenDraw.width = lightCanvas.width;
 	offscreenDraw.height = lightCanvas.height;
 
-	for (var i = 0; i < drawings.length; i++) {
+	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = true;
@@ -1801,7 +1801,7 @@ function open_close_door(x1, y1, x2, y2, type=0){
 function stop_drawing() {
 	$("#reveal").css("background-color", "");
 	window.MOUSEDOWN = false;
-	var target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
+	let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
 	target.css('cursor', '');
 	target.off('mousedown touchstart', drawing_mousedown);
 	target.off('mouseup touchend', drawing_mouseup);
@@ -2476,20 +2476,20 @@ function drawing_mouseup(e) {
 		}
 		else if (window.DRAWSHAPE === "text_erase"){
 			// text eraser lives on a different overlay and thus can't just be eraser
-			var c = 0;
+			let c = 0;
 			let svgTextArray = $('#text_div svg');
 			for (svgText in svgTextArray) {
-				var curr = svgTextArray[svgText].id;
+				let curr = svgTextArray[svgText].id;
 
 				if($("#text_div svg[id='" + curr+ "'] text")[0] == undefined)
 					continue;
 				let textImageRect = $("#text_div svg[id='" + curr+ "'] text")[0].getBoundingClientRect();	
 
 				
-				var texttop = (parseInt(textImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
-				var textleft = (parseInt(textImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-				var textright = (parseInt(textImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
-				var textbottom = (parseInt(textImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				let texttop = (parseInt(textImageRect.top) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
+				let textleft = (parseInt(textImageRect.left)  + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				let textright = (parseInt(textImageRect.right) + window.scrollX - window.VTTMargin) * (1.0 / window.ZOOM);
+				let textbottom = (parseInt(textImageRect.bottom) + window.scrollY - window.VTTMargin) * (1.0 / window.ZOOM);
 				let scaledRemainderTop = (textbottom-texttop-textImageRect.height)/2;
 				let scaledRemainderLeft = (textright-textleft-textImageRect.width)/2;
 
@@ -3126,7 +3126,7 @@ function handle_drawing_button_click() {
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined)
 			redraw_light_walls();
-		target =  $("#temp_overlay, #black_layer")
+		let target =  $("#temp_overlay, #black_layer")
 		data = {
 			clicked:$(clicked),
 			menu:$(menu)
@@ -3209,9 +3209,9 @@ function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidt
 
 function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth = 6)
 {
-	var L = Math.sqrt(Math.pow(endx - startx, 2) + Math.pow(endy - starty, 2));
-	var T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
-	var res = circle_intersection(startx, starty, T, endx, endy, L / 2);
+	let L = Math.sqrt(Math.pow(endx - startx, 2) + Math.pow(endy - starty, 2));
+	let T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
+	let res = circle_intersection(startx, starty, T, endx, endy, L / 2);
 	ctx.beginPath();
 	ctx.moveTo(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineTo(res[0]/window.CURRENT_SCENE_DATA.scale_factor, res[2]/window.CURRENT_SCENE_DATA.scale_factor);
@@ -3247,8 +3247,8 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
 
-	var p1 = points[0];
-	var p2 = points[1];
+	let p1 = points[0];
+	let p2 = points[1];
 
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
@@ -3258,10 +3258,10 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 
 	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
-	for (var i = 1, len = points.length; i < len; i++) {
+	for (let i = 1, len = points.length; i < len; i++) {
 	// we pick the point between pi+1 & pi+2 as the
 	// end point and p1 as our control point
-	var midPoint = midPointBtw(p1, p2);
+	let midPoint = midPointBtw(p1, p2);
 	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	p1 = points[i];
 	p2 = points[i+1];
@@ -3415,10 +3415,10 @@ function draw3PointRect(
 	}
 }
 function calculateFourthPoint(point1, point2, point3) {
-    var length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
-    var angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
-    var dx = Math.cos(angle) * length;
-    var dy = Math.sin(angle) * length;
+    let length = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+    let angle = Math.atan2(point2.y - point1.y, point2.x - point1.x);
+    let dx = Math.cos(angle) * length;
+    let dy = Math.sin(angle) * length;
     return { x: point3.x - dx, y: point3.y - dy };
 }
 function clear_temp_canvas(playerId=window.PLAYER_ID){
@@ -3642,7 +3642,7 @@ function drawClosingArea(ctx, pointX, pointY) {
 
 function init_ruler_menu(buttons){
 	const storedRulerSelection = localStorage.getItem('RulerSettings' + window.gameid);
-	ruler_menu = $("<div id='ruler_menu' class='top_menu'></div>");
+	let ruler_menu = $("<div id='ruler_menu' class='top_menu'></div>");
 	ruler_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='ruler_raw' class='ddbc-tab-options__header-heading drawbutton menu-option ruler-option ${(storedRulerSelection == 'raw' || storedRulerSelection == null) ? 'button-enabled ddbc-tab-options__header-heading--is-active' : ''}'
@@ -3673,7 +3673,7 @@ function init_ruler_menu(buttons){
 	$("body").append(ruler_menu);
 
 
-	ruler_button = $("<button style='display:inline;width:75px;' id='ruler_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>R</u>ULER</button>");
+	let ruler_button = $("<button style='display:inline;width:75px;' id='ruler_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>R</u>ULER</button>");
 
 
 	ruler_button.off('click.update').on('click.update', function(){
@@ -3695,7 +3695,7 @@ function init_fog_menu(buttons){
 
 
 
-	fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
+	let fog_menu = $("<div id='fog_menu' class='top_menu'></div>");
 	fog_menu.append("<div class='menu-subtitle' data-skip='true'>Reveal</div>");
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -3733,7 +3733,7 @@ function init_fog_menu(buttons){
 			</button>
 		</div>`);
 
-	var clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
+	let clear_button = $("<button class='ddbc-tab-options__header-heading menu-option' data-skip='true' >ALL</button>");
 	clear_button.click(function() {
 
 		r = confirm("This will delete all FOG zones and REVEAL ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
@@ -3785,7 +3785,7 @@ function init_fog_menu(buttons){
 
 
 
-	var hide_all_button = $("<button class='ddbc-tab-options__header-heading menu-option'>ALL</button>");
+	let hide_all_button = $("<button class='ddbc-tab-options__header-heading menu-option'>ALL</button>");
 	hide_all_button.click(function() {
 		r = confirm("This will delete all FOG zones and HIDE ALL THE MAP to the player. THIS CANNOT BE UNDONE. Are you sure?");
 		if (r == true) {
@@ -3816,7 +3816,7 @@ function init_fog_menu(buttons){
 		sync_fog();
 	});
 
-	fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
+	let fog_button = $("<button style='display:inline;width:75px;' id='fog_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>F</u>OG</button>");
 
 	buttons.append(fog_button);
 	fog_menu.css("left", fog_button.position().left);
@@ -3835,7 +3835,7 @@ function get_available_doors(){
 }
 
 function init_draw_menu(buttons){
-	draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
+	let draw_menu = $("<div id='draw_menu' class='top_menu'></div>");
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='draw_rect' class='drawbutton menu-option  ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
@@ -4003,13 +4003,13 @@ function init_draw_menu(buttons){
 
 	$("body").append(draw_menu);
 
-	draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
+	let draw_button = $("<button style='display:inline;width:75px' id='draw_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>D</u>RAW</button>");
 
 	buttons.append(draw_button);
 	draw_menu.css("left",draw_button.position().left);
 }
 function init_walls_menu(buttons){
-	wall_menu = $("<div id='wall_menu' class='top_menu'></div>");
+	let wall_menu = $("<div id='wall_menu' class='top_menu'></div>");
 
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -4152,7 +4152,7 @@ function init_walls_menu(buttons){
 
 	$("body").append(wall_menu);
 
-	wall_button = $("<button style='display:inline;width:75px' id='wall_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>W</u>alls</button>");
+	let wall_button = $("<button style='display:inline;width:75px' id='wall_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>W</u>alls</button>");
 	wall_button.on('click', function(){
 		redraw_light_walls();
 	});
@@ -4160,7 +4160,7 @@ function init_walls_menu(buttons){
 	wall_menu.css("left",wall_button.position().left);
 }
 function init_vision_menu(buttons){
-	vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
+	let vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
 
 	vision_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -4332,7 +4332,7 @@ function init_vision_menu(buttons){
 
 	$("body").append(vision_menu);
 
-	vision_button = $("<button style='display:inline;width:75px' id='vision_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>L</u>IGHT/VISION</button>");
+	let vision_button = $("<button style='display:inline;width:75px' id='vision_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>L</u>IGHT/VISION</button>");
 
 	buttons.append(vision_button);
 	vision_menu.css("left",vision_button.position().left);
@@ -4799,7 +4799,7 @@ function redraw_light(){
 			let currentLightAura = $(light_auras[i]);
 			let auraId = currentLightAura.attr('data-id');
 
-			found = selectedIds.some(r=> r == auraId);
+			let found = selectedIds.some(r=> r == auraId);
 
 			let tokenPos = {
 				x: (parseInt(currentLightAura.css('left'))+(parseInt(currentLightAura.css('width'))/2)),

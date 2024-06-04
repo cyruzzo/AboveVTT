@@ -743,7 +743,7 @@ class MonsterStatBlock {
             if (cur === "largeAvatarUrl") {
                 nextUrl = el.attr("data-large-avatar-url");
                 try {
-                    var parts = nextUrl.split("/");
+                    let parts = nextUrl.split("/");
                     parts[parts.length - 2] = "1000";
                     parts[parts.length - 3] = "1000";
                     nextUrl = parts.join("/");

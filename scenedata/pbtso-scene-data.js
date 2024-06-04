@@ -1,5 +1,5 @@
-DDB_EXTRAS ={
- 	...DDB_EXTRAS,
+function get_scene_data_pbtso() {
+	return {
 	"pbtso/a-dangerous-journey/Map101GoblinAmbush": {
 		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.01-Goblin-Ambush.png",
 		"reveals": [
@@ -125611,4 +125611,5 @@ DDB_EXTRAS ={
 			}
 		},
 	},
+	}
 }

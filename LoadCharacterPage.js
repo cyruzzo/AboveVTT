@@ -10,7 +10,7 @@ const isVttGamePage = window.location.search.includes("abovevtt=true");
 
 if (!isVttGamePage) {
 
-    var l = document.createElement('div');
+    let l = document.createElement('div');
     l.setAttribute("style", "display:none;");
     l.setAttribute("id", "extensionpath");
     l.setAttribute("data-path", chrome.runtime.getURL("/"));

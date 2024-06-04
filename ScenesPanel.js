@@ -435,18 +435,18 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, window.innerWidth-340, 340);
 
-	var container = scene_properties;
+	let container = scene_properties;
 
 	container.empty();
 
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 
-	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	let uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
-	grid_buttons = $("<div/>");
+	let grid_buttons = $("<div/>");
 
 	let gridType = $(`
 		<div id="gridType">
@@ -1221,14 +1221,14 @@ function edit_scene_dialog(scene_id) {
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 1000);
 
-	var container = scene_properties;
+	let container = scene_properties;
 
 	container.empty();
 
 	const form = $("<form id='edit_scene_form'/>");
 	form.on('submit', function(e) { e.preventDefault(); });
 
-	var uuid_hidden = $("<input name='uuid' type='hidden'/>");
+	let uuid_hidden = $("<input name='uuid' type='hidden'/>");
 	uuid_hidden.val(scene['uuid']);
 	form.append(uuid_hidden);
 
@@ -1430,7 +1430,7 @@ function edit_scene_dialog(scene_id) {
 	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button type='button'>Manual Grid Data</button>");
 
-	grid_buttons = $("<div/>");
+	let grid_buttons = $("<div/>");
 	grid_buttons.append(wizard);
 	grid_buttons.append(manual_button);
 
@@ -1558,7 +1558,7 @@ function edit_scene_dialog(scene_id) {
 	})
 
 
-	/*var export_grid=$("<button>Send Grid Data to the Community</button>")
+	/*let export_grid=$("<button>Send Grid Data to the Community</button>")
 	export_grid.click(function(){
 	});*/
 
@@ -1592,7 +1592,7 @@ function display_sources() {
 	$("#scene_select").empty();
 
 	for (property in window.ScenesHandler.sources) {
-		var source = window.ScenesHandler.sources[property];
+		let source = window.ScenesHandler.sources[property];
 		$("#source_select").append($("<option value='" + property + "'>" + source.title + "</option>"));
 	}
 }
@@ -1601,9 +1601,9 @@ function display_chapters(selectedChapter, notOwned = false) {
 	$("#chapter_select").empty();
 	$("#scene_select").empty();
 
-	var source_name = $("#source_select").val();
+	let source_name = $("#source_select").val();
 	for (property in window.ScenesHandler.sources[source_name].chapters) {
-		var chapter = window.ScenesHandler.sources[source_name].chapters[property];
+		let chapter = window.ScenesHandler.sources[source_name].chapters[property];
 		$("#chapter_select").append($("<option value='" + property + "'>" + chapter.title + "</option>"))
 	}
 
@@ -1633,8 +1633,8 @@ function display_scenes(notOwned = false) {
 
 
 
-	var source_name = $("#source_select").val();
-	var chapter_name = $("#chapter_select").val();
+	let source_name = $("#source_select").val();
+	let chapter_name = $("#chapter_select").val();
 	if(notOwned){
 		let area = $("#importer_area");
 		area.empty();
@@ -1648,10 +1648,10 @@ function display_scenes(notOwned = false) {
 	console.log("mostrati...");
 	/*$("#scene_select").empty();
 	
-	var source_name=$("#source_select").val();
-	var chapter_name=$("#chapter_select").val();
+	let source_name=$("#source_select").val();
+	let chapter_name=$("#chapter_select").val();
 	for(property in window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes){
-				var scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[property];
+				let scene=window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes[property];
 				$("#scene_select").append($("<option value='"+property+"'>"+scene.title+"</option>"));
 			}			
 			$("#scene_select").change();*/
@@ -1715,7 +1715,7 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 	target.append(panel);
 
 
-	var source_select = $("<select id='source_select'/>");
+	let source_select = $("<select id='source_select'/>");
 	source_select.css("display", "inline");
 	if (selectedSource) {
 		source_select.hide();
@@ -1734,7 +1734,7 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 		$("#chapter_select").empty();
 		$("#scenes_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
-		var source_name = $("#source_select").val()
+		let source_name = $("#source_select").val()
 		window.ScenesHandler.build_chapters(source_name, function () {
 			display_chapters(selectedChapter);
 		});
@@ -1742,13 +1742,13 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 
 
-	var chapter_select = $("<select id='chapter_select'/>");
+	let chapter_select = $("<select id='chapter_select'/>");
 	chapter_select.css("display", "inline");
 	chapter_select.change(function() {
 		$("#scene_select").empty();
 		$("#import_button").attr('disabled', 'disabled');
-		var source_name = $("#source_select").val();
-		var chapter_name = $("#chapter_select").val();
+		let source_name = $("#source_select").val();
+		let chapter_name = $("#chapter_select").val();
 
 		$("#importer_area").html("Loading........ please wait!");
 
@@ -1779,7 +1779,7 @@ function mega_importer(DDB = false, ddbSource, ddbChapter) {
 
 	if (!DDB) {
 		first = false;
-		for (var i in PRESET) {
+		for (let i in PRESET) {
 			b = $("<button class='importer_toggle'/>");
 			b.attr("data-key", i)
 			b.text(i);
@@ -2709,7 +2709,7 @@ function build_free_map_importer() {
 	const container = build_import_container();
 	add_scene_importer_back_button(container);
 
-	SCENE_IMPORT_DATA.forEach(async section => {
+	get_avtt_scene_import_data().forEach(async section => {
 		const logoUrl = await parse_img(section.logo);
 		const sectionHtml = build_import_collapsible_section(section.title, logoUrl);
 		container.find(".no-results").before(sectionHtml);
@@ -2736,7 +2736,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 	container.find(".no-results").before(sectionHtml);
 	sectionHtml.find(".ddb-collapsible__header").hide();
 	sectionHtml.css("border", "none");
-
+	let DDB_EXTRAS = get_ddb_extras();
 	sceneSet.forEach(async scene => {
 		if (scene.uuid in DDB_EXTRAS) {
 			scene = {...scene, ...DDB_EXTRAS[scene.uuid]}

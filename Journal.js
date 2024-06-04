@@ -224,7 +224,7 @@ class JournalManager{
 
 			    }
 			})
-			var sender;
+			let sender;
 			// Make the section_chapter sortable
 			section_chapter.sortable({
 				refreshPositions: true,
@@ -1844,13 +1844,13 @@ class JournalManager{
 function init_journal(gameid){
 	
 	["/content/1-0-1688-0/js/tinymce/tiny_mce/tinymce.min.js"].forEach(function(value) {
-		var s = document.createElement('script');
+		let s = document.createElement('script');
 		s.src = value;
 		(document.head || document.documentElement).appendChild(s);
 	});
 
 	["https://www.dndbeyond.com/content/1-0-1697-0/js/tinymce/custom_skin/skin.min.css"].forEach(function(value){
-		var l = document.createElement('link');
+		let l = document.createElement('link');
 		
 		l.href = value;
 		l.rel = "stylesheet";

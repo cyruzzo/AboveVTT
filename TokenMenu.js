@@ -6,8 +6,8 @@ tokendata={
 
 // deprecated, but still needed for migrate_to_my_tokens() to work
 function convert_path(path){
-	var pieces=path.split("/");
-	var current=tokendata;
+	let pieces=path.split("/");
+	let current=tokendata;
 
 	for(let i=0;i<pieces.length;i++){
 		if(!current || pieces[i]=="")
@@ -2820,7 +2820,7 @@ function build_options_flyout_menu(tokenIds) {
 		     return e.name != removename;
 		});
 	}
-	for (var i = 0; i < tokens.length; i++) {
+	for (let i = 0; i < tokens.length; i++) {
 	    if(tokens[i].isPlayer()){
 	    	player_selected = true;
 	    	break;
@@ -3146,7 +3146,7 @@ function open_quick_roll_menu(e){
 	$( function() {
 		$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
 		_renderItem: function( ul, item ) {
-			var li = $( `<li class='icon-avatar' >` )
+			let li = $( `<li class='icon-avatar' >` )
 			wrapper = $( "<div>", { text: item.label } );
 			$( "<li>", {
 			style: 'background-image: ' + item.element.attr( "data-style" ),
@@ -3170,8 +3170,8 @@ function open_quick_roll_menu(e){
 	damage_input.change(function(){
 		_dmg = $('#hp_adjustment_failed_save').val();
 		if (_dmg.includes('d')) {
-			var expression = _dmg
-			var roll = new rpgDiceRoller.DiceRoll(expression);
+			let expression = _dmg
+			let roll = new rpgDiceRoller.DiceRoll(expression);
 			console.log(expression + "->" + roll.total);
 			//reassign to the input 
 			_dmg = roll.total
@@ -3205,8 +3205,8 @@ function open_quick_roll_menu(e){
 				modifier = modifier.replace(/[^\d.-]/g, '');
 				dice = '2d20kl1 +';
 			}
-			var expression = dice + modifier;
-			var roll = new rpgDiceRoller.DiceRoll(expression);
+			let expression = dice + modifier;
+			let roll = new rpgDiceRoller.DiceRoll(expression);
 			console.log(expression + "->" + roll.total);
 			//reassign to the input 
 			result = $(this).parent().children('#qrm_roll_result')
@@ -3313,7 +3313,7 @@ function open_quick_roll_menu(e){
 	$( function() {
 			$.widget( "custom.iconselectmenu", $.ui.selectmenu, {
 			_renderItem: function( ul, item ) {
-				var li = $( `<li class='icon-avatar' >` )
+				let li = $( `<li class='icon-avatar' >` )
 				wrapper = $( "<div>", { text: item.label } );
 				$( "<li>", {
 				style: item.element.attr( "data-style" ),
@@ -3508,7 +3508,7 @@ function add_to_quick_roll_menu(token){
 	roll_bonus = qrm_fetch_stat(token);
 	roll_box.val(roll_bonus)
 
-	var hp_input = $("<input id='qrm_hp' class='menu_hp_input'>");
+	let hp_input = $("<input id='qrm_hp' class='menu_hp_input'>");
 	hp_input.css('text-align', 'right');
 	
 	if(token.isPlayer()){
@@ -3524,9 +3524,9 @@ function add_to_quick_roll_menu(token){
 		qrm_entry.toggleClass("ct_dead", false);
 	}
 
-	var divider = $("<div style='display:inline-block;'>/</>");
+	let divider = $("<div style='display:inline-block;'>/</>");
 		
-	var maxhp_input = $("<input id='qrm_maxhp' class='menu_hp_input'>");
+	let maxhp_input = $("<input id='qrm_maxhp' class='menu_hp_input'>");
 	maxhp_input.css('text-align', 'left');
 
 	if(token.isPlayer()){
@@ -3537,8 +3537,8 @@ function add_to_quick_roll_menu(token){
 
 	if (!token.isPlayer()) {
 		hp_input.change(function(e) {
-			var selector = "div[data-id='" + token.options.id + "']";
-			var old = $("#tokens").find(selector);
+			let selector = "div[data-id='" + token.options.id + "']";
+			let old = $("#tokens").find(selector);
 		
 			if (hp_input.val().trim().startsWith("+") || hp_input.val().trim().startsWith("-")) {
 				hp_input.val(Math.max(0, parseInt(token.hp) + parseInt(hp_input.val())));
@@ -3559,8 +3559,8 @@ function add_to_quick_roll_menu(token){
 			$(e.target).select();
 		});
 		maxhp_input.change(function(e) {
-			var selector = "div[data-id='" + token.options.id + "']";
-			var old = $("#tokens").find(selector);
+			let selector = "div[data-id='" + token.options.id + "']";
+			let old = $("#tokens").find(selector);
 
 			if (maxhp_input.val().trim().startsWith("+") || maxhp_input.val().trim().startsWith("-")) {
 				maxhp_input.val(Math.max(0, parseInt(token.hp) + parseInt(maxhp_input.val())));
@@ -3590,7 +3590,7 @@ function add_to_quick_roll_menu(token){
 	find=$('<button class="qrm_buttons_bar" title="Find Token" style="display:inline-block;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
 	//find.tooltip({show: { duration: 1000 }})
 	find.click(function(){
-		var target=$(this).parent().parent().parent().parent().attr('data-target');
+		let target=$(this).parent().parent().parent().parent().attr('data-target');
 		if(target in window.TOKEN_OBJECTS){
 			window.TOKEN_OBJECTS[target].highlight();	     
 		}
@@ -3608,7 +3608,7 @@ function add_to_quick_roll_menu(token){
 	remove_from_list.click(
 		function() {
 			console.log('Removing from list')
-			var target=$(this).parent().parent().parent().parent().attr('data-target');
+			let target=$(this).parent().parent().parent().parent().attr('data-target');
 			if(target in window.TOKEN_OBJECTS){
 				remove_from_quick_roll_menu(window.TOKEN_OBJECTS[target]);	     
 			}
@@ -3975,7 +3975,7 @@ function qrm_apply_hp_adjustment(healing=false){
 			else{
 				dmg_heal_text = token.options.name + " heals for " + damage +" (adjust manually)";
 			}
-				var msgdata = {
+				let msgdata = {
 				player: window.PLAYER_NAME,
 				img: window.PLAYER_IMG,
 				text: dmg_heal_text,

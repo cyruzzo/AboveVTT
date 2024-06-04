@@ -1,5 +1,5 @@
-DDB_EXTRAS ={
- 	...DDB_EXTRAS,
+function get_scene_data_tod() {
+	return {
  	"tod/dragon-hatchery/Map31DragonHatchery": {
 		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-3.01-dragon-hatchery.jpg",
 		"reveals": [
@@ -59092,5 +59092,6 @@ DDB_EXTRAS ={
 			}
 		},
 	},
- }
+ 	}
+}
 	
