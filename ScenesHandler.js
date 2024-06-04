@@ -1,6 +1,6 @@
 // Helper functions to check max map size - data from https://github.com/jhildenbiddle/canvas-size
 function get_canvas_max_length() {
-	var browser = get_browser();
+	let browser = get_browser();
 
 	if (browser.mozilla) {
 		// Firefox
@@ -26,8 +26,8 @@ function get_canvas_max_length() {
 }
 
 function get_canvas_max_area() {
-	var browser = get_browser();
-	var max_area = 0;
+	let browser = get_browser();
+	let max_area = 0;
 
 	if (browser.mozilla) {
 		// Firefox
@@ -463,8 +463,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}; // END OF ALIGN GRID WIZARD!
 
 		this.current_scene_id = sceneid;
-		var self = this;
-		var scene = this.scenes[sceneid];
+		let self = this;
+		let scene = this.scenes[sceneid];
 		this.scene = scene;
 		if(!scene.id){
 			scene.id=uuid();
@@ -487,7 +487,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		$(".VTTToken").remove();
 		$('#raycastingCanvas').css('opacity', '0');
 		$('#scene_map_container').css('background', '#fff');
-		for (var i in window.TOKEN_OBJECTS) {
+		for (let i in window.TOKEN_OBJECTS) {
 			delete window.TOKEN_OBJECTS[i];
 		}
 		window.lineOfSightPolygons = {};
@@ -507,15 +507,15 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			scene.fpsq = 5;
 			scene.upsq = 'ft'
 
-			for (var id in scene.tokens) { // RESCALE ALL THE TOKENS
-				var tok_options = scene.tokens[id];
+			for (let id in scene.tokens) { // RESCALE ALL THE TOKENS
+				let tok_options = scene.tokens[id];
 				tok_options.size = (tok_options.size / 60) * scene.hpps;
 				tok_options.top = Math.round(parseInt(tok_options.top) / (scene.scale / 100.0)) + "px";
 				tok_options.left = Math.round(parseInt(tok_options.left) / (scene.scale / 100.0)) + "px";
 			}
 
 			// RESCALE THE REVEALS
-			for (var i = 0; i < scene.reveals.length; i++) {
+			for (let i = 0; i < scene.reveals.length; i++) {
 				scene.reveals[i][0] = Math.round((scene.reveals[i][0] / 60.0) * scene.hpps);
 				scene.reveals[i][1] = Math.round((scene.reveals[i][1] / 60.0) * scene.hpps);
 				scene.reveals[i][2] = Math.round((scene.reveals[i][2] / 60.0) * scene.hpps);
@@ -568,8 +568,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			window.DRAWINGS = [];
 		}
 		
-		var map_url = "";
-		var map_is_video = false;
+		let map_url = "";
+		let map_is_video = false;
 		if ((scene.dm_map != "") && (scene.dm_map_usable == "1") && (window.DM)) {
 			map_url = scene.dm_map;
 			map_is_video = (scene.dm_map_is_video === "1");
@@ -592,18 +592,18 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			let mapWidth = $("#scene_map").width();
 
 
-			var owidth = mapHeight;
-			var oheight = mapWidth;
-			var max_length = get_canvas_max_length();
-			var max_area = get_canvas_max_area();
+			let owidth = mapHeight;
+			let oheight = mapWidth;
+			let max_length = get_canvas_max_length();
+			let max_area = get_canvas_max_area();
 			console.log("Map size is " + owidth + "x" + oheight + " (with scale factor of " + scene.scale_factor + ") and browser supports max length of " + max_length + "px and max area of " + max_area + "px");
 
 			// Check if the map size is too large
 			if (owidth > max_length || oheight > max_length || (owidth * oheight) > max_area) {
 				alert("Your map is too large! Your browser supports max width and height of " + max_length + " and a max area (width*height) of " + max_area);
 			} else if (scene.scale_factor > 1) {
-				var scaled_owidth = (owidth * scene.scale_factor);
-				var scaled_oheight = (oheight * scene.scale_factor);
+				let scaled_owidth = (owidth * scene.scale_factor);
+				let scaled_oheight = (oheight * scene.scale_factor);
 				if (scaled_owidth > max_length || scaled_oheight > max_length || (scaled_owidth * scaled_oheight) > max_area) {
 					alert("Your grid size is too large! We try to keep grid squares at least 50px for nice looking token.\nWe had to scale the map size, making it unsupported on your browser.\nTry to re-grid your map and reduce the number of grid squares.");
 				}
@@ -644,33 +644,33 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	display_scene_properties(scene_id) {
 		console.log('inizio....');
-		var self = this;
-		var scene = this.scenes[scene_id];
-		var container = $("#scene_properties");
+		let self = this;
+		let scene = this.scenes[scene_id];
+		let container = $("#scene_properties");
 	}
 
 	build_adventures(callback) {
-		var self = this;
+		let self = this;
 		if(Object.keys(self.sources).length!=0){
 			setTimeout(callback,4000);
 			return;
 		}
 		
-		var f = $("<iframe src='/sources'></iframe");
+		let f = $("<iframe src='/sources'></iframe");
 		f.hide();
 		$("#site").append(f);
 		
 		
-		var scraped_sources={};
+		let scraped_sources={};
 
 		f.on("load", function(event) {
 			console.log('iframe pronto..');
-			var iframe = $(event.target);
+			let iframe = $(event.target);
 			iframe.contents().find(".sources-listing--item--title").each(function(idx) {
-				var ddbtype=$(this).closest(".sources-listing").attr('id'); // get Sourcebooks of Adventures
-				var title = $(this).html();
-				var url = $(this).parent().attr("href");
-				var keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
+				let ddbtype=$(this).closest(".sources-listing").attr('id'); // get Sourcebooks of Adventures
+				let title = $(this).html();
+				let url = $(this).parent().attr("href");
+				let keyword = url.replace('https://www.dndbeyond.com', '').replace('sources/', '');
 
 				if (keyword in self.sources){ // OBJECT ALREADY EXISTS... evito di riscrivere per non perdere i dati
 					scraped_sources[keyword]=self.sources.keyword;
@@ -708,11 +708,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	build_chapters(keyword, callback) {
-		var self = this;
+		let self = this;
 		console.log('scansiono ' + keyword);
-		//var target_list = $("#" + $(event.target).attr('data-target'));
-		//var adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
-		var adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
+		//let target_list = $("#" + $(event.target).attr('data-target'));
+		//let adventure_url = 'https://www.dndbeyond.com/sources/' + keyword;
+		let adventure_url="https://www.dndbeyond.com/"+self.sources[keyword].url;
 
 		if (self.sources[keyword].type != 'dnb') {
 			callback();
@@ -727,7 +727,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		//if($(event.target).attr('data-status')==0){
-		var f = $("<iframe name='scraper' src='" + adventure_url + "'></iframe>");
+		let f = $("<iframe name='scraper' src='" + adventure_url + "'></iframe>");
 		f.hide();
 		$("#site").append(f);
 		f.on("load", function(event) {
@@ -736,9 +736,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 			if (window.frames['scraper'].location.href != adventure_url) {
 				console.log('rilevato cambio url');
-				var title = "Single Chapter";
-				var url = window.frames['scraper'].location.href;
-				var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+				let title = "Single Chapter";
+				let url = window.frames['scraper'].location.href;
+				let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
 				self.sources[keyword].chapters[ch_keyword] = {
 					type: 'dnb',
 					title: title,
@@ -749,9 +749,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			else {
 				//chapter, subchapter (eg icewind), chapter, handouts and maps (eg. Curse of Strahd)
 				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Appendices') ~ ul a").each(function(idx) {
-					var title = $(this).html();
-					var url = $(this).attr('href');
-					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					let title = $(this).html();
+					let url = $(this).attr('href');
+					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
 					self.sources[keyword].chapters[ch_keyword] = {
 						type: 'dnb',
 						title: title,
@@ -763,9 +763,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				iframe.contents().find("h3.adventure-chapter-header:contains('Map') ~ ul a").each(function(idx) {
 					if(!(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test($(this).attr('href'))))
 						return;
-					var title = $(this).html();
-					var url = $(this).attr('href');
-					var ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					let title = $(this).html();
+					let url = $(this).attr('href');
+					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
 					self.sources[keyword].chapters[ch_keyword] = {
 						type: 'dnb',
 						title: title,
@@ -780,10 +780,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	build_scenes(source_keyword, chapter_keyword, callback) {
-		var self = this;
+		let self = this;
 		console.log("cerco scene source: " + source_keyword + " | chapter: " + chapter_keyword);
-		//var chapter_url='https://www.dndbeyond.com/sources/'+source_keyword+'/'+chapter_keyword;
-		var chapter_url = self.sources[source_keyword].chapters[chapter_keyword].url;
+		//let chapter_url='https://www.dndbeyond.com/sources/'+source_keyword+'/'+chapter_keyword;
+		let chapter_url = self.sources[source_keyword].chapters[chapter_keyword].url;
 		console.log("checking for scenes in " + chapter_url);
 
 		if (self.sources[source_keyword].chapters[chapter_keyword].type != 'dnb') {
@@ -797,12 +797,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}	
 		if(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(chapter_url)){
 			//'Maps' chapter maps at the end of books - individual images
-			var dm_map = '';
-			var player_map = chapter_url;
-			var header = self.sources[source_keyword].chapters[chapter_keyword].title;
-			var thumb = chapter_url;
-			var id = self.sources[source_keyword].chapters[chapter_keyword].title;
-			var title = self.sources[source_keyword].chapters[chapter_keyword].title;
+			let dm_map = '';
+			let player_map = chapter_url;
+			let header = self.sources[source_keyword].chapters[chapter_keyword].title;
+			let thumb = chapter_url;
+			let id = self.sources[source_keyword].chapters[chapter_keyword].title;
+			let title = self.sources[source_keyword].chapters[chapter_keyword].title;
 
 			self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
 				id: id,
@@ -837,21 +837,21 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 
 			iframe.contents().find("figure").each(function(idx) { // FIGURE + FIGCAPTION. 
-				var id = $(this).attr('id');
+				let id = $(this).attr('id');
 				if (typeof id == typeof undefined)
 					return;
-				var img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right").attr("href");
-				var links = $(this).find("figcaption a");
-				var player_map = '';
-				var dm_map = '';
-				var figure_caption = $(this).find('figcaption');
-				var title = figure_caption.clone()    //clone the element
+				let img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right").attr("href");
+				let links = $(this).find("figcaption a");
+				let player_map = '';
+				let dm_map = '';
+				let figure_caption = $(this).find('figcaption');
+				let title = figure_caption.clone()    //clone the element
 					.children() //select all the children
 					.remove()   //remove all the children
 					.end()  //again go back to selected element
 					.text();
 
-				var thumb = $(this).find("img").attr('src');
+				let thumb = $(this).find("img").attr('src');
 
 				dm_map = img1;
 				if (links.length > 0) {
@@ -883,15 +883,15 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				compendiumWithSubtitle.each(function(idx) {
 					if ($(this).parent().is('figure') || $(this).is('figure'))
 						return;
-					var id = $(this).attr('id');
+					let id = $(this).attr('id');
 					if (typeof id == typeof undefined) {
 						id = $(this).attr('data-content-chunk-id');
 					}
-					var thumb = $(this).find("img").attr('src');
-					var img1 = $(this).find(".compendium-image-center,.compendium-image-right,.compendium-image-left").attr("href");
-					var title = $(this).find(".compendium-image-subtitle").text();
-					var player_map;
-					var dm_map;
+					let thumb = $(this).find("img").attr('src');
+					let img1 = $(this).find(".compendium-image-center,.compendium-image-right,.compendium-image-left").attr("href");
+					let title = $(this).find(".compendium-image-subtitle").text();
+					let player_map;
+					let dm_map;
 
 					dm_map = img1;
 					if ($(this).next().hasClass("compendium-image-view-player")) {
@@ -937,12 +937,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					}
 
 
-					var dm_map = $(this).attr('href');
-					var player_map = playerMapContainer.attr("href");
-					var header = $(this).parent().prevAll("[id]:first");
-					var thumb = $(this).find("img").attr('src');
-					var id = header.attr("id");
-					var title = header.text();
+					let dm_map = $(this).attr('href');
+					let player_map = playerMapContainer.attr("href");
+					let header = $(this).parent().prevAll("[id]:first");
+					let thumb = $(this).find("img").attr('src');
+					let id = header.attr("id");
+					let title = header.text();
 
 					self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
 						id: id,

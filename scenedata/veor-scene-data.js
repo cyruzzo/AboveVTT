@@ -1,5 +1,5 @@
-DDB_EXTRAS ={
- 	...DDB_EXTRAS,
+function get_scene_data_veor() {
+	return {
  	"veor/return-from-neverdeath-graveyard/Map11NeverdeathCatacombs": {
  		"itemType": "scene",
  		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.01-neverdeath.jpg",
@@ -37828,5 +37828,6 @@ DDB_EXTRAS ={
 		"width": 1031,
 		"height": 1318,
 		"notes": {}
+	}
 	}
 }

@@ -17,10 +17,10 @@ function combatmydebounce(func, timeout = 800){ // we need to figure out where t
 function init_combat_tracker(){
 	window.ROUND_NUMBER =1;
 	
-	ct=$("<div id='combat_tracker'/>");
+	let ct=$("<div id='combat_tracker'/>");
 	ct.css("height","20px"); // IMPORTANT
 	
-	toggle=$("<button id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</button>");
+	let toggle=$("<button id='combat_button' class='hideable ddbc-tab-options__header-heading' style='display:inline-block'><u>C</u>OMBAT</button>");
 	toggle.click(function(){
 		if($("#combat_tracker_inside #combat_tracker_title_bar.minimized").length>0) {
 			$("#combat_tracker_title_bar").dblclick();
@@ -40,14 +40,14 @@ function init_combat_tracker(){
 	let pill = $(`<div class="ddbc-tab-options--layout-pill" />`);
 	pill.append(toggle);
 	ct.append(pill);
-	ct_inside=$("<div id='combat_tracker_inside'/>");
+	let ct_inside=$("<div id='combat_tracker_inside'/>");
 	ct_inside.hide();
 	$('#site').append(ct_inside);
 	const ct_title_bar=$("<div id='combat_tracker_title_bar' class='restored'></div>")
 	const ct_title_bar_settings = $(`<div id='combat_tracker_title_bar_settings'><span class="material-symbols-outlined">settings</span></div>`)
 	const ct_title_bar_popout=$('<div class="popout-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>');
 	const ct_title_bar_exit=$('<div id="combat_tracker_title_bar_exit"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>')
-	ct_area=$("<table id='combat_area'/>");
+	let ct_area=$("<table id='combat_area'/>");
 	const ct_list_wrapper = $(`<div class="tracker-list"></div>`);
 	ct_list_wrapper.mouseover(function(){
 		$(this).css('--scrollY', $(this).scrollTop());
@@ -133,8 +133,8 @@ function init_combat_tracker(){
 		}
 	});
 	
-	rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 42px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
-	reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
+	let rn = $(`<div id='round_number_label'><strong>ROUND:</strong><input class="roundNum" style="font-size: 11px; width: 42px; appearance: none;" type='number' id='round_number' value=${window.ROUND_NUMBER}></div>`)
+	let reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
 		$(e.target).select();
@@ -181,7 +181,7 @@ function init_combat_tracker(){
 	
 	buttons=$("<div id='combat_footer'/>");
 	
-	reroll=$("<button>REROLL</button>");
+	let reroll=$("<button>REROLL</button>");
 	reroll.click(function(){
 		$("#combat_area tr[data-target]").each(function(){
 			$(this).removeAttr('data-current');
@@ -207,7 +207,7 @@ function init_combat_tracker(){
 		ct_update_popout();
 	});
 	
-	clear=$("<button>CLEAR</button>");
+	let clear=$("<button>CLEAR</button>");
 	clear.click(function(){
 		for(let id in window.all_token_objects)
 		{	
@@ -297,7 +297,7 @@ function init_combat_tracker(){
 		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	});
 	
-	prev=$("<button id='combat_prev_button'>PREV</button>");
+	let prev=$("<button id='combat_prev_button'>PREV</button>");
 	prev.click(function(){
 		if($("#combat_area tr").length==0 || (document.getElementById('round_number').value <= 1 && $("#combat_area tr").first().attr('data-current') == 1))
 			return;
@@ -308,7 +308,7 @@ function init_combat_tracker(){
 		if(current.length!=0){
 			current.removeAttr('data-current');
 			current.css('background','');
-			prev=$(current.prevAll('tr:not([skipTurn])')[0]);
+			let prev=$(current.prevAll('tr:not([skipTurn])')[0]);
 			if(prev.length==0){
 				window.ROUND_NUMBER--;
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
@@ -342,7 +342,7 @@ function init_combat_tracker(){
 		$("#site tr[data-current=1]")[0].scrollIntoView({ behavior: 'instant', block: 'center', start: 'inline' });	
 	});
 
-	endplayerturn=$('<button id="endplayerturn">End Turn</button>');
+	let endplayerturn=$('<button id="endplayerturn">End Turn</button>');
 	endplayerturn.click(function(){
 		let data = {
 			from: window.PLAYER_ID,
@@ -717,7 +717,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	entry.append($("<td/>").append(init));
 		
 	hp=$("<div class='hp'/>");
-	var hp_input = $("<input class='hp'>");
+	let hp_input = $("<input class='hp'>");
 	if(token.isPlayer()){
 		hp_input.prop("disabled", true);
 	}
@@ -732,10 +732,10 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	hp.css('font-size','11px');
 	//hp.css('width','20px');	
 		
-	var divider = $("<div style='display:inline-block;float:left'>/</>");
+	let divider = $("<div style='display:inline-block;float:left'>/</>");
 		
 	let max_hp=$("<div class='max_hp'/>");
-	var maxhp_input = $("<input class='max_hp'>");
+	let maxhp_input = $("<input class='max_hp'>");
 	if(token.isPlayer()){
 		maxhp_input.prop("disabled", true);
 	}
@@ -1001,7 +1001,7 @@ function ct_current_turn() {
 }
 
 function ct_persist(){
-	var data= [];
+	let data= [];
 	$('#combat_area tr').each( function () {			
 	  	data.push( {
 			'data-target': $(this).attr("data-target"),
@@ -1167,7 +1167,7 @@ function ct_load(data=null){
 	}
 
 //load in local data on first load after 0.80
-	var itemkey="CombatTracker"+find_game_id();
+	let itemkey="CombatTracker"+find_game_id();
 	data=$.parseJSON(localStorage.getItem(itemkey));
 	if(data !== undefined && data !== null){
 		if(!(data[0]['already-loaded'])){

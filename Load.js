@@ -15,13 +15,13 @@ if (window.location.search.includes("abovevtt=true")) {
 	}
 }
 
-var l = document.createElement('div');
+let l = document.createElement('div');
 l.setAttribute("style", "display:none;");
 l.setAttribute("id", "extensionpath");
 l.setAttribute("data-path", chrome.runtime.getURL("/"));
 (document.body || document.documentElement).appendChild(l);
 
-var avttVersion = document.createElement('div');
+let avttVersion = document.createElement('div');
 avttVersion.setAttribute("style", "display:none;");
 avttVersion.setAttribute("id", "avttversion");
 avttVersion.setAttribute("data-version", chrome.runtime.getManifest().version);

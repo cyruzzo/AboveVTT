@@ -1,5 +1,5 @@
-DDB_EXTRAS = {
- 	...DDB_EXTRAS,
+function get_scene_data_lmop() {
+	return {
 	"lmop/goblin-arrows/Map11CragmawHideout": {
 		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
 		"reveals": [
@@ -39214,4 +39214,5 @@ DDB_EXTRAS = {
 		"grid_color": "rgba(2, 2, 2, 0.444)",
 		"snap": "1"
 	},	
+	}
 }

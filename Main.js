@@ -87,7 +87,7 @@ function update_old_discord_link(link){
  * @param {Function} callback
  */
 function whenAvailable(name, callback) {
-    var interval = 10; // ms
+    let interval = 10; // ms
     window.setTimeout(function() {
         if (window[name]) {
             callback(window[name]);
@@ -102,9 +102,9 @@ function whenAvailable(name, callback) {
  * @returns String
  */
 function getRandomColorOLD() {
-	var letters = '0123456789ABCDEF';
-	var color = '#';
-	for (var i = 0; i < 6; i++) {
+	let letters = '0123456789ABCDEF';
+	let color = '#';
+	for (let i = 0; i < 6; i++) {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
@@ -116,7 +116,7 @@ function getRandomColorOLD() {
  */
 function uuid() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-		var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+		let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
 		return v.toString(16);
 	});
 }
@@ -151,8 +151,8 @@ function clamp (number, min, max) {
  * @returns String | false
  */
 function youtube_parser(url) {
-	var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-	var match = url.match(regExp);
+	let regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+	let match = url.match(regExp);
 	return (match && match[7].length == 11) ? match[7] : false;
 }
 
@@ -708,7 +708,7 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
  * Posts a message to the chat when a player connected to the server.
  */
 function report_connection() {
-	var msgdata = {
+	let msgdata = {
 			player: window.PLAYER_NAME,
 			img: window.PLAYER_IMG,
 			text: PLAYER_NAME + " has connected to the server!",
@@ -1148,7 +1148,7 @@ function init_controls() {
 	let sidebarControls = $("<div class='avtt-sidebar-controls' style='width:100%;height:100%;display:flex;'></div>");
 	sidebarControlsParent.append(sidebarControls);
 
-	hider = $("<div id='hide_rightpanel' class='ddbc-tab-options--layout-pill point-right hasTooltip button-icon hideable' data-name='Show/hide sidebar (q)' data-visible=1><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>chevron_right</span></div></div>");
+	let hider = $("<div id='hide_rightpanel' class='ddbc-tab-options--layout-pill point-right hasTooltip button-icon hideable' data-name='Show/hide sidebar (q)' data-visible=1><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>chevron_right</span></div></div>");
 	hider.click(toggle_sidebar_visibility);
 	sidebarControls.append(hider);
 	if (is_encounters_page() || is_campaign_page()) {
@@ -1324,13 +1324,13 @@ function init_splash() {
 	}
 	localStorage.setItem("AboveVttLastUsedVersion", window.AVTT_VERSION);
 
-	cont = $("<div id='splash'></div>");
+	let cont = $("<div id='splash'></div>");
 	cont.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 	cont.append(`<h1 style='margin-top:0px; padding-bottom:2px;margin-bottom:2px; text-align:center'><img width='250px' src='${window.EXTENSION_PATH}assets/logo.png'><div style='margin-left:20px; display:inline;vertical-align:bottom;'>${window.AVTT_VERSION}${AVTT_ENVIRONMENT.versionSuffix}</div></h1>`);
 	cont.append("<div style='font-style: italic;padding-left:80px;font-size:20px;margin-bottom:2px;margin-top:2px; margin-left:50px;'>Fine.. We'll do it ourselves..</div>");
 
-	s = $("<div/>");
+	let s = $("<div/>");
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
 	s.append("");
 	s.append(`
@@ -1368,7 +1368,7 @@ function init_splash() {
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
-	patreons = $("<div id='patreons'/>");
+	let patreons = $("<div id='patreons'/>");
 
 
 	let shortener =  (p) => p.length>17 ? p.replaceAll(" ","").replaceAll("-","") : p;
@@ -1399,8 +1399,8 @@ function init_splash() {
 	$(window.document.body).append(cont);
 }
 
-var MYCOBALT_TOKEN = false;
-var MYCOBALT_TOKEN_EXPIRATION = 0;
+let MYCOBALT_TOKEN = false;
+let MYCOBALT_TOKEN_EXPIRATION = 0;
 /**
  * UNIFIED TOKEN HANDLING
  * Triggers callback with a valid DDB cobalt token
@@ -1431,8 +1431,8 @@ function get_cobalt_token(callback) {
 }
 
 
-var DDB_WS_OBJ = null;
-var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+let DDB_WS_OBJ = null;
+let DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
 /**
  * Attempts to force DDBs WebSocket to re-connect.
  * @returns Bool false - wasn't able to force / no need
@@ -1583,14 +1583,14 @@ function  init_sheet() {
 		$("#sheet_resize_button").remove();
 
 		// when playing on the characters page, we need to do a little bit of UI manipulation so we do that here
-		var sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
+		let  sheet_button = $("<div id='sheet_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Show/hide character sheet (SPACE)'><div class='ddbc-tab-options__header-heading'>SHEET</div></div>");
 		sheet_button.css({ "position": "absolute", "top": "2px", "left": "-80px", "z-index": "999" });
 		sheet_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_button);
 		sheet_button.click(function(e) {
 			toggle_player_sheet();
 		});
-		var sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
+		let  sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
 		sheet_resize_button.css({ "position": "absolute", "top": "2px", "left": "-314px", "z-index": "999" });
 		sheet_resize_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_resize_button);
@@ -1608,8 +1608,8 @@ function  init_sheet() {
 		let iframe = $("<iframe src=''></iframe>")
 		container.append(iframe);
 	
-		var buttonleft = 0;
-		var buttonprev = 0;
+		let  buttonleft = 0;
+		let  buttonprev = 0;
 	
 		const player_close_title_button=$('<div id="player_close_title_button"><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>');
 		container.append(player_close_title_button);
@@ -1617,7 +1617,7 @@ function  init_sheet() {
 			close_player_sheet();
 		});
 	
-		var reload_button = $('<div id="reload_player_frame_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>)');
+		let  reload_button = $('<div id="reload_player_frame_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg></div>)');
 	
 	
 		reload_button.click(function() {
@@ -1695,7 +1695,7 @@ function init_player_sheet(pc_sheet, loadWait = 0) {
 
 	if((!window.DM) || (window.KEEP_PLAYER_SHEET_LOADED)) {
 		console.error('here');
-		var loadSheet = function (sheetFrame, sheet_url) {
+		let  loadSheet = function (sheetFrame, sheet_url) {
 			sheetFrame.attr('src', sheet_url);
 		};
 		// TODO: these parameters are not correct: iframe, pc_sheet
@@ -1926,8 +1926,8 @@ function notify_player_join() {
  * @returns Number - latest version seen
  */
 function check_versions_match() {
-	var latestVersionSeen = 0.0;
-	var oldestVersionSeen = 1000.0;
+	let  latestVersionSeen = 0.0;
+	let  oldestVersionSeen = 1000.0;
 
 	$.each(window.CONNECTED_PLAYERS, function(key, value) {
 		latestVersionSeen = Math.max(latestVersionSeen, value);
@@ -1935,7 +1935,7 @@ function check_versions_match() {
 	});
 
 	if (latestVersionSeen != oldestVersionSeen) {
-		var alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';
+		let  alertMsg = 'Not all players connected to your session have the same AboveVTT version (highest seen v' + latestVersionSeen + ', lowest seen v' + oldestVersionSeen + ').\nFor best experience, it is recommended all connected players and the DM run the latest AboveVTT version.\n\n';
 		for (const [key, value] of Object.entries(window.CONNECTED_PLAYERS)) {
 			alertMsg += (key == 0 ? "The DM" : "Player DDB character ID " + key) + " is running AboveVTT v" + value + "\n";
 		}
@@ -2235,8 +2235,8 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			// There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
 			// the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
 			let dieSize = $(this).attr("alt");
-			var element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
-			var e = element.ownerDocument.createEvent('MouseEvents');
+			let  element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
+			let  e = element.ownerDocument.createEvent('MouseEvents');
 			e.initMouseEvent('contextmenu', true, true,
 					element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
 					false, false, false, 2, null);
@@ -2467,8 +2467,8 @@ function init_ui() {
 			return;
 		e.preventDefault();
 
-		var mousex = Math.round((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM));
-		var mousey = Math.round((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM));
+		let  mousex = Math.round((e.pageX - window.VTTMargin) * (1.0 / window.ZOOM));
+		let  mousey = Math.round((e.pageY - window.VTTMargin) * (1.0 / window.ZOOM));
 
 		console.log("mousex " + mousex + " mousey " + mousey);
 
@@ -2509,7 +2509,7 @@ function init_ui() {
 	//VTT.css("padding-right","400px");
 	//VTT.css("padding-bottom","400px");
 
-	tokens = $("<div id='tokens'></div>");
+	let tokens = $("<div id='tokens'></div>");
 	tokens.css("position", "absolute");
 	tokens.css("top", 0);
 	tokens.css("left", 0);
@@ -2598,7 +2598,7 @@ function init_ui() {
 
 
 	// EXPERRIMENTAL DRAG TO MOVE
-	var curDown = false,
+	let  curDown = false,
 		curYPos = 0,
 		curXPos = 0;
 
@@ -2720,7 +2720,7 @@ function init_buttons() {
 	if ($("#fog_menu").length > 0) {
 		return; // only need to do this once
 	}
-	buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
+	let buttons = $(`<div class="ddbc-tab-options--layout-pill"></div>`);
 	$("body").append(buttons);
 
 	buttons.append($("<button style='display:inline; width:75px;' id='select-button' class='drawbutton hideable ddbc-tab-options__header-heading' data-shape='rect' data-function='select'><u>S</u>ELECT</button>"));
@@ -2738,7 +2738,7 @@ function init_buttons() {
 		init_text_button(buttons)
 	}
 
-	setup_aoe_button();
+	setup_aoe_button(buttons);
 	handle_drawing_button_click();
 
 	buttons.append("<button style='display:inline;width:75px' id='help_button' class='hideable ddbc-tab-options__header-heading'>HELP</button>");
@@ -2769,7 +2769,7 @@ function init_zoom_buttons() {
 	}
 
 	// ZOOM BUTTON
-	zoom_section = $("<div id='zoom_buttons' />");
+	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
 	youtube_controls_button.click(function (event) {
 		console.log("youtube_controls_button", event);
@@ -2945,7 +2945,7 @@ function init_zoom_buttons() {
 	
 		zoom_section.append(select_locked);
 
-		pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
+		let pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
 		<div class="ddbc-tab-options__header-heading">
 				<svg id='player-pause-svg' xmlns="http://www.w3.org/2000/svg" height="20" width="20"><path d="M11.583 15.833V4.167H15v11.666Zm-6.583 0V4.167h3.417v11.666Z"/></svg>
 				<svg id='player-play-svg' xmlns="http://www.w3.org/2000/svg" height="20" width="20"><path d="M7 15.5v-11l8.5 5.5Zm1.521-5.521ZM8.5 12.75 12.75 10 8.5 7.25Z"/></svg>
@@ -3024,20 +3024,20 @@ function init_zoom_buttons() {
 	zoom_section.append(selected_token_vision);
 
 
-	zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
+	let zoom_center = $("<div id='zoom_fit' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='fit screen (0)'><div class='ddbc-tab-options__header-heading'><span class='material-icons button-icon'>fit_screen</span></div></div>");
 	zoom_center.click(reset_zoom);
 	zoom_section.append(zoom_center);
 
-	zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
+	let zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
 
 	zoom_minus.click(decrease_zoom)
 	zoom_section.append(zoom_minus);
 
-	zoom_plus = $("<div id='zoom_plus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></div></div>");
+	let zoom_plus = $("<div id='zoom_plus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></div></div>");
 	zoom_plus.click(increase_zoom);
 	zoom_section.append(zoom_plus);
 
-	hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);
+	let hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);
 	hide_interface.click(unhide_interface);
 	hide_interface.css("display", "none");
 	hide_interface.css("position", "absolute");
@@ -3363,7 +3363,7 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
 		let roll = new rpgDiceRoller.DiceRoll(expression);
 
 		// rpgDiceRoller doesn't give us the notation of each roll so we're going to do our best to find and match them as we go
-		var choppedExpression = expression;
+		let choppedExpression = expression;
 		let notationList = [];
 		for (let i = 0; i < roll.rolls.length; i++) {
 			let currentRoll = roll.rolls[i];
@@ -3508,7 +3508,7 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
  * @returns Object
  */
 function get_browser() {
-	var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+	let ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
 	if(/trident/i.test(M[1])){
 			tem=/\brv[ :]+(\d+)/g.exec(ua) || [];
 			return {name:'IE',version:(tem[1]||'')};
@@ -3854,7 +3854,7 @@ function show_sidebar() {
 	addGamelogPopoutButton()
 }
 
-var childWindows = {};
+let childWindows = {};
 
 function addGamelogPopoutButton(){
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();

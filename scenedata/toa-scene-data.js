@@ -1,5 +1,5 @@
-DDB_EXTRAS ={
- 	...DDB_EXTRAS,
+function get_scene_data_toa() {
+	return {
  	"toa/port-nyanzaru/Map12MerchantPrincesVilla":	{
 		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/852/850/587/0210.jpg",
 		"reveals": [
@@ -88055,4 +88055,5 @@ DDB_EXTRAS ={
 		"grid_subdivided": "0",
 		"scale_factor": 2
 	},
+	}
 }

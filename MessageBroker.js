@@ -9,9 +9,9 @@ function mydebounce(func, timeout = 800){   // This had to be in both core and h
 }
 
 function throttle(func, timeFrame = 800) {
-	var lastTime = 0;
+	let lastTime = 0;
 	return function (...args) {
-		var now = new Date();
+		let now = new Date();
 		if (now - lastTime >= timeFrame) {
 			func(...args);
 			lastTime = now;
@@ -49,7 +49,7 @@ function addVideo(stream,streamerid) {
 	video.play();
 	
 	
-	var dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
+	let dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
 	dicecanvas.attr("id","streamer-canvas-"+streamerid);
 	//dicecanvas.css("opacity",0.5);
 	dicecanvas.css("position","fixed");
@@ -130,7 +130,7 @@ function resizeCanvasChromeBug(){
 class MessageBroker {
 
 	loadAboveWS(callback=null){
-		var self=this;
+		let self=this;
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
@@ -173,11 +173,11 @@ class MessageBroker {
 
 		this.abovews.onopen = function() {
 			self.loadingAboveWS = false;
-			var recovered = false;
+			let recovered = false;
 			if (self.callbackAboveQueue.length > 1) {
 				recovered = true;
 			}
-			var cb;
+			let cb;
 			console.log('Empting callback queue list');
 			while (cb = self.callbackAboveQueue.shift()) {
 				cb();
@@ -201,10 +201,10 @@ class MessageBroker {
 		}
 		this.loadingWS = true;
 
-		var self = this;
-		var url = this.url;
-		var userid = this.userid;
-		var gameid = this.gameid;
+		let self = this;
+		let url = this.url;
+		let userid = this.userid;
+		let gameid = this.gameid;
 
 		console.log("STARTING MB WITH TOKEN");
 
@@ -219,7 +219,7 @@ class MessageBroker {
 
 		this.ws.onopen = function() {
 			self.loadingWS = false;
-			var cb;
+			let cb;
 			console.log('Empting callback queue list');
 			while (cb = self.callbackQueue.shift()) {
 				cb();
@@ -399,7 +399,7 @@ class MessageBroker {
 	}
 
 	constructor() {
-		var self = this;
+		let self = this;
 		
 		this.mysenderid=uuid();
 		this.stats={
@@ -435,7 +435,7 @@ class MessageBroker {
 			if (event.data == "ping")
 				return;
 
-			var msg = {};
+			let msg = {};
 			try {
 				msg = JSON.parse(event.data);
 			} catch (parsingError) {
@@ -649,7 +649,7 @@ class MessageBroker {
 					return;
 				if (getPlayerIDFromSheet(msg.data.player_sheet) == window.PLAYER_ID) {
 					//alert('locked');
-					var lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
+					let lock_display = $("<div id='lock_display'>The DM is looking at your character sheet</p></div>");
 					lock_display.css("font-size", "18px");
 					lock_display.css("text-align","center");
 					lock_display.css('font-weight', "bold");
@@ -860,7 +860,7 @@ class MessageBroker {
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
 				setTimeout( () => {
-				var peer= window.STREAMPEERS[msg.data.from];
+				let peer= window.STREAMPEERS[msg.data.from];
 				if(peer.remoteDescription!= null)
 					peer.addIceCandidate(msg.data.ice);
 				},500); // ritardalo un po'
@@ -937,10 +937,10 @@ class MessageBroker {
 				const configuration = {
     				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
   				};
-				var peer= new RTCPeerConnection(configuration);
+				let peer= new RTCPeerConnection(configuration);
 
 				if(window.MYMEDIASTREAM){
-					var stream = window.MYMEDIASTREAM;
+					let stream = window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
 
@@ -1011,10 +1011,10 @@ class MessageBroker {
 				const configuration = {
     				iceServers:  [{urls: "stun:stun.l.google.com:19302"}]
   				};
-				var peer= new RTCPeerConnection(configuration);
+				let peer= new RTCPeerConnection(configuration);
 
 				if(window.MYMEDIASTREAM){
-					var stream=  window.MYMEDIASTREAM;
+					let stream=  window.MYMEDIASTREAM;
 					stream.getTracks().forEach(track => peer.addTrack(track, stream));
 				}
 
@@ -1109,7 +1109,7 @@ class MessageBroker {
 				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
 					return;
 
-				var peer=window.STREAMPEERS[msg.data.from];
+				let peer=window.STREAMPEERS[msg.data.from];
 				peer.setRemoteDescription(msg.data.answer);
 				console.log("fatto setRemoteDescription");
 			}
@@ -1440,7 +1440,7 @@ class MessageBroker {
 				data.size = window.CURRENT_SCENE_DATA.hpps;
 			}
 			if (data.id in window.all_token_objects) {
-				for (var property in window.all_token_objects[data.id].options) {		
+				for (let property in window.all_token_objects[data.id].options) {		
 					if(property == "left" || property == "top" || property == "hidden" || property == "scaleCreated")
 						continue;
 					if(msg.loading){
@@ -1459,7 +1459,7 @@ class MessageBroker {
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 
-			for (var property in data) {
+			for (let property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden" || property == "scaleCreated"))
 					continue;	
 				if(window.all_token_objects[data.id] == undefined){
@@ -1832,7 +1832,7 @@ class MessageBroker {
 			        break;
 			    }
 				}
-				var data = {
+				let data = {
 					soundpad: window.CURRENT_SOUNDPAD,
 					playing: audioPlaying
 				}
@@ -1864,7 +1864,7 @@ class MessageBroker {
 		if(window.DM){
 			for(let i = 0; i<$("audio").length; i++){
 		    if($("audio")[i].paused == false){
-		    	var data={
+		    	let data={
 						channel: i,
 						time: $("audio")[i].currentTime,
 						volume: $("audio")[i].volume,
@@ -1876,8 +1876,8 @@ class MessageBroker {
 	}
 
 	inject_chat(injected_data) {
-		var msgid = this.chat_id + this.chat_counter++;
-		var data = {
+		let msgid = this.chat_id + this.chat_counter++;
+		let data = {
 			player_name: window.PLAYER_NAME,
 			injected_data: injected_data,
 			"action": "ABOVETT",
@@ -1902,8 +1902,8 @@ class MessageBroker {
 			"setId": "01201",
 			"rollId": uuid(),
 		};
-		var eventType = "dice/roll/pending";
-		var message = {
+		let eventType = "dice/roll/pending";
+		let message = {
 			id: uuid(),
 			source: "web",
 			gameId: this.gameid,
@@ -1927,7 +1927,7 @@ class MessageBroker {
 
 
 	sendMessage(eventType, data,skipSceneId=false) {
-		var self = this;
+		let self = this;
 
 		//this.sendDDBMB(eventType,data); 
 
@@ -1940,8 +1940,8 @@ class MessageBroker {
 	}
 
 	sendAboveMB(eventType,data,skipSceneId=false){
-		var self=this;
-		var message = {
+		let self=this;
+		let message = {
 			action: "sendmessage",
 			campaignId:window.CAMPAIGN_SECRET,
 			eventType: eventType,
@@ -1976,8 +1976,8 @@ class MessageBroker {
 	}
 
 	sendDDBMB(eventType,data){
-		var self=this;
-		var message = {
+		let self=this;
+		let message = {
 			id: uuid(),
 			//datetime: Date.now(),
 			source: "web",

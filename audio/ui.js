@@ -68,7 +68,7 @@ function init_mixer() {
                 $('video#scene_map')[0].volume = $("#youtube_volume").val()/100 * $("#master-volume input").val();  
 
             if(window.YTPLAYER || $('video#scene_map').length>0){
-                data={
+                let data={
                     volume: $("#youtube_volume").val()
                 };
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
