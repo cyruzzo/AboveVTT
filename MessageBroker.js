@@ -1731,7 +1731,7 @@ class MessageBroker {
 		        set_default_vttwrapper_size();
 						
 						// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
-						if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1){
+						if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1 && !data.is_video){
 							$("#scene_map").stop();
 							$("#scene_map").css("opacity","0");
 							console.log("switching back to player map");

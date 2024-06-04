@@ -3854,7 +3854,7 @@ function show_sidebar() {
 	addGamelogPopoutButton()
 }
 
-let childWindows = {};
+window.childWindows = {};
 
 function addGamelogPopoutButton(){
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title'] .popout-button`).remove();
