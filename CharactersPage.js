@@ -344,7 +344,6 @@ function init_characters_pages(container = $(document)) {
   if(!is_abovevtt_page()){
     tabCommunicationChannel.addEventListener ('message', (event) => {
       if(event.data.msgType == 'setupObserver'){
-         observe_character_sheet_changes($(document));
         if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
           $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
           $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
@@ -1284,7 +1283,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }
-              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p")) {
+              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || mutation.target.parentElement.classList.value.includes("ddb-character-app")) {
                 window.PLAYER_NAME = mutation.target.data;
                 character_sheet_changed({name: mutation.target.data});
               }
@@ -1329,7 +1328,7 @@ function set_window_name_and_image(callback) {
 
   console.debug("set_window_name_and_image");
 
-  window.PLAYER_NAME = $(".ddb-character-app-sn0l9p").text();
+  window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app]").text();
   try {
     // This should be just fine, but catch any parsing errors just in case
     window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || defaultAvatarUrl;
