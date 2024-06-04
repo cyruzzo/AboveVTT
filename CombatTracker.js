@@ -144,13 +144,21 @@ function init_combat_tracker(){
 		$("#combat_area tr[data-current]").removeAttr('data-current');
 		$("#combat_area tr[data-current]").css('background','');
 		$("#combat_area tr").first().attr('data-current','1');	
-		if(window.TOKEN_OBJECTS[tokenID].options.round != undefined){
-			delete window.TOKEN_OBJECTS[tokenID].options.round;			
+		if(window.TOKEN_OBJECTS[tokenID] != undefined){
+				if(window.TOKEN_OBJECTS[tokenID]?.options?.round != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.round;			
+				}
+				if(window.TOKEN_OBJECTS[tokenID]?.options?.current != undefined){
+					delete window.TOKEN_OBJECTS[tokenID].options.current;
+				}
+				window.TOKEN_OBJECTS[tokenID].update_and_sync();
 		}
-		if(window.TOKEN_OBJECTS[tokenID].options.current != undefined){
-			delete window.TOKEN_OBJECTS[tokenID].options.current;
+		if(window.all_token_objects[tokenID]?.options?.round != undefined){
+			delete window.all_token_objects[tokenID].options.round;			
 		}
-		window.TOKEN_OBJECTS[tokenID].update_and_sync();
+		if(window.all_token_objects[tokenID]?.options?.current != undefined){
+			delete window.all_token_objects[tokenID].options.current;
+		}
 		debounceCombatPersist();
 		ct_update_popout();
 	});
@@ -765,8 +773,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	// token update logic for hp pulls hp from token hpbar, so update hp bar manually
 	if (!token.isPlayer()) {
 		hp_input.change(function(e) {
-			var selector = "div[data-id='" + token.options.id + "']";
-			var old = $("#tokens").find(selector);
+			let selector = "div[data-id='" + token.options.id + "']";
+			let old = $("#tokens").find(selector);
 		
 			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
 				$(this).val(Math.max(0, parseInt(token.hp) + parseInt($(this).val())));
@@ -786,8 +794,8 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			$(e.target).select();
 		});
 		maxhp_input.change(function(e) {
-			var selector = "div[data-id='" + token.options.id + "']";
-			var old = $("#tokens").find(selector);
+			let selector = "div[data-id='" + token.options.id + "']";
+			let old = $("#tokens").find(selector);
 
 			if ($(this).val().trim().startsWith("+") || $(this).val().trim().startsWith("-")) {
 				$(this).val(Math.max(0, token.maxHp + parseInt($(this).val())));
@@ -811,7 +819,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
 	}
 	
-	var buttons=$("<td/>");
+	let buttons=$("<td/>");
 	
 	if(!token.options.combatGroupToken){
 
@@ -823,7 +831,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			find=$('<button class="findTokenCombatButton" style="font-size:10px;"><svg class="findSVG addCTSVG" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg></button>');
 		}
 		find.click(function(){
-			var target=$(this).parent().parent().attr('data-target');
+			let target=$(this).parent().parent().attr('data-target');
 			if(target in window.TOKEN_OBJECTS){
 				window.TOKEN_OBJECTS[target].highlight();	     
 			}
