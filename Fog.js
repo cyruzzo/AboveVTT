@@ -1449,7 +1449,7 @@ function redraw_drawn_light(){
 function redraw_light_walls(clear=true){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
-
+	$(`[id*='wallHeight']`).remove();
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
 	let displayWalls = showWallsToggle == true || $('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')
@@ -1496,7 +1496,7 @@ function redraw_light_walls(clear=true){
 	
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale, hidden] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, hidden, wallBottom, wallTop] = drawing_clone;
 
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
@@ -1508,9 +1508,34 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/currentSceneScale;
 		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
 		if (displayWalls) {
-			drawLine(ctx, x, y, width, height, color, lineWidth, scale);		
+			drawLine(ctx, x, y, width, height, color, lineWidth, scale);	
+			if((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))
+			draw_text(
+			    ctx,
+			    undefined,
+				((x+width)/2-(10 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor))),
+				((y+height)/2),
+			    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
+			    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
+			    `${wallBottom && wallBottom != '' ? `B: ${wallBottom}` : ``} \n ${wallTop && wallTop != '' ? `T: ${wallTop}`: ``}`,
+			    {
+				    "font": "Arial",
+				    "size": 10 * window.CURRENT_SCENE_DATA.scale_factor,
+				    "weight": "400",
+				    "style": "normal",
+				    "underline": false,
+				    "align": "left",
+				    "color": "rgb(255, 255, 255)",
+				    "shadow": "none"
+				},
+			    {size: 1, color: 'rgb(0, 0, 0)'},
+			    undefined,
+			    `wallHeight${parseInt(x)}${parseInt(y)}`,
+			    undefined,
+			  	true
+			);
 		}
-	
+		
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
@@ -1623,6 +1648,8 @@ function redraw_light_walls(clear=true){
 
 		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
 		drawnWall.scaleAdjustment = adjustedScale;
+		drawnWall.wallBottom = wallBottom;
+		drawnWall.wallTop = wallTop;
 		window.walls.push(drawnWall);
 	}
 	if(window.DM){
@@ -1868,6 +1895,8 @@ function drawing_mousedown(e) {
 	window.DRAWCOLOR = data.background_color
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
+	window.wallTop = data.wall_top_height;
+	window.wallBottom = data.wall_base_height;
 
 	window.DRAWDAYLIGHT = (data.from == 'vision_menu' && $('#daylight').hasClass('button-enabled'));
 
@@ -2360,13 +2389,19 @@ function drawing_mouseup(e) {
 		switch(window.DRAWFUNCTION){
 		case 'wall':
 			data[1] = "wall"
+			data[10] = window.wallBottom
+			data[11] = window.wallTop
 			break;
 		case 'wall-door':
 			data[1] = "wall"
 			data[9] = hidden
+			data[10] = window.wallBottom
+			data[11] = window.wallTop
 			break;
 		case 'wall-window':
 			data[1] = "wall"
+			data[10] = window.wallBottom
+			data[11] = window.wallTop
 		default:
 			break;
 		}
@@ -2386,7 +2421,10 @@ function drawing_mouseup(e) {
 				rectLine.rx,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				0,
+				window.wallBottom,
+				window.wallTop];
 			window.DRAWINGS.push(line1);
 
 			let line2 = ['line',
@@ -2397,7 +2435,10 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				0,
+				window.wallBottom,
+				window.wallTop];
 			window.DRAWINGS.push(line2);
 			let line3 = ['line',
 				"wall",
@@ -2407,7 +2448,10 @@ function drawing_mouseup(e) {
 				rectLine.rx + rectLine.rw,
 				rectLine.ry + rectLine.rh,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				0,
+				window.wallBottom,
+				window.wallTop];
 			window.DRAWINGS.push(line3);
 			let line4 = ['line',
 				"wall",
@@ -2417,7 +2461,10 @@ function drawing_mouseup(e) {
 				 rectLine.rx + rectLine.rw,
 				 rectLine.ry + rectLine.rh,
 				 window.LINEWIDTH,
-				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				 0,
+				 window.wallBottom,
+				 window.wallTop];
 			window.DRAWINGS.push(line4);
 
 			window.wallUndo.push({
@@ -2445,7 +2492,9 @@ function drawing_mouseup(e) {
 						window.StoredWalls[walls][3],
 						window.LINEWIDTH,
 						window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						hidden];
+						hidden,
+						window.wallBottom,
+				 		window.wallTop];
 					window.DRAWINGS.push(data);
 					window.wallUndo.push({
 						undo: [data]
@@ -2510,7 +2559,7 @@ function drawing_mouseup(e) {
 		sync_drawings();
 
 	}		
-	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
+	else if (window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
 		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
 		let rectLine = {
 			rx: window.BEGIN_MOUSEX,
@@ -2592,10 +2641,12 @@ function drawing_mouseup(e) {
 
 
 			if(left != false || right != false || top != false || bottom != false || fullyInside){
-				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
+				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert" || window.DRAWFUNCTION == 'wall-height-convert'){
 					fullyInside = true;
 				}
 				let wallColor;
+				let wallBottom;
+				let wallTop;
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						
@@ -2614,8 +2665,17 @@ function drawing_mouseup(e) {
 							window.DRAWINGS[j][2] = window.DRAWCOLOR;
 							undoArray.push(window.DRAWINGS[j]);
 							break;
-						}	
+						}
+						else if(window.DRAWFUNCTION == 'wall-height-convert'){
+							redoArray.push([...window.DRAWINGS[j]]);
+							window.DRAWINGS[j][10] = window.wallBottom;
+							window.DRAWINGS[j][11] = window.wallTop;
+							undoArray.push(window.DRAWINGS[j]);
+							break;
+						}
 						wallColor = window.DRAWINGS[j][2];
+						wallBottom = window.DRAWINGS[j][10];
+						wallTop = window.DRAWINGS[j][11];
 						redoArray.push(window.DRAWINGS[j]);
 						window.DRAWINGS.splice(j, 1);
 						break;
@@ -2654,7 +2714,9 @@ function drawing_mouseup(e) {
 						 y2,
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						 ];	
+						 0, 
+						 wallBottom, 
+						 wallTop];	
 						window.DRAWINGS.push(data);
 						undoArray.push(data);
 					}	
@@ -2679,6 +2741,9 @@ function drawing_mouseup(e) {
 						 y2,
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+						 0, 
+						 wallBottom, 
+						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
 						undoArray.push(data);			
@@ -2703,6 +2768,9 @@ function drawing_mouseup(e) {
 						 y2,
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+						 0, 
+						 wallBottom, 
+						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);
 						undoArray.push(data);
@@ -2728,6 +2796,9 @@ function drawing_mouseup(e) {
 						 y2,
 						 6,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+						 0, 
+						 wallBottom, 
+						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
 						undoArray.push(data);				
@@ -2769,58 +2840,63 @@ function drawing_mouseup(e) {
 				left = (intersectingWalls[i].left != false) ? intersectingWalls[i].left : left;
 				right = (intersectingWalls[i].right != false) ? intersectingWalls[i].right : right;
 
+				if(bottom != false){
+					x1 = bottom.x;
+					y1 = bottom.y;
+				}
+				if(left != false){
+					if(x1 == undefined){
+						x1 = left.x;
+						y1 = left.y;
+					}
+					else{
+						x2 = left.x;
+						y2 = left.y;
+					}
+				}
+				if(right != false){
+					if(x1 == undefined){
+						x1 = right.x;
+						y1 = right.y;
+					}
+					else{
+						x2 = right.x;
+						y2 = right.y;
+					}
+				}
+				if(top != false){	
+					if(x1 == undefined){
+						x1 = top.x;
+						y1 = top.y;
+						x2 = top.x;
+						y2 = top.y;
+					}
+					else{
+						x2 = top.x;
+						y2 = top.y;	
+					}						
+											
+				}
+				
+				let data = ['line',
+				 'wall',
+				 window.DRAWCOLOR,
+				 x1,
+				 y1,
+				 x2,
+				 y2,
+				 12,
+				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				 0, 
+				 window.wallBottom, 
+				 window.wallTop
+				 ];	
+				window.DRAWINGS.push(data);
+				undoArray.push(data);
+
 			}
 
-			if(bottom != false){
-				x1 = bottom.x;
-				y1 = bottom.y;
-			}
-			if(left != false){
-				if(x1 == undefined){
-					x1 = left.x;
-					y1 = left.y;
-				}
-				else{
-					x2 = left.x;
-					y2 = left.y;
-				}
-			}
-			if(right != false){
-				if(x1 == undefined){
-					x1 = right.x;
-					y1 = right.y;
-				}
-				else{
-					x2 = right.x;
-					y2 = right.y;
-				}
-			}
-			if(top != false){	
-				if(x1 == undefined){
-					x1 = top.x;
-					y1 = top.y;
-					x2 = top.x;
-					y2 = top.y;
-				}
-				else{
-					x2 = top.x;
-					y2 = top.y;	
-				}						
-										
-			}
 			
-			let data = ['line',
-			 'wall',
-			 window.DRAWCOLOR,
-			 x1,
-			 y1,
-			 x2,
-			 y2,
-			 12,
-			 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
-			 ];	
-			window.DRAWINGS.push(data);
-			undoArray.push(data);
 							
 		}
  		window.wallUndo.push({
@@ -3468,7 +3544,10 @@ function save3PointRect(e){
 				polygonPoints[point+1].x,
 				polygonPoints[point+1].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				0,
+				window.wallBottom,
+				window.wallTop];
 			}
 			else{
 			data = ['line',
@@ -3479,7 +3558,10 @@ function save3PointRect(e){
 				polygonPoints[0].x,
 				polygonPoints[0].y,
 				window.LINEWIDTH,
-				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				0,
+				window.wallBottom,
+				window.wallTop];
 			}
 			window.DRAWINGS.push(data);
 			undoArray.push(data);
@@ -4033,10 +4115,25 @@ function init_walls_menu(buttons){
 				3p Rect
 		</button>
 	</div>`);
-
-
-
-
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_height_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-height-convert" data-unique-with="draw">
+				 	Height Convert
+			</button>
+		</div>`);
+	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Base</div>");
+	wall_menu.append(
+		`<div>
+			<input id='wall_base_height' type='number' step='5' data-required="wall_base_height" style='width:90%'
+			value='' >
+		</div>`);
+	wall_menu.append("<div class='wall-input menu-subtitle'>Wall Top</div>");
+	wall_menu.append(
+		`<div>
+			<input id='wall_top_height' type='number' step='5' data-required="wall_top_height" style='width:90%'
+			value=''>
+		</div>`);
     wall_menu.append("<div class='menu-subtitle'>Door/Windows</div>");
     wall_menu.append(
         `<div class='ddbc-tab-options--layout-pill'>
@@ -4487,7 +4584,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	}
-
+	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;;
 	let prevClosestWall = null;
     let prevClosestPoint = null;
    	let prevClosestBarrier = null;
@@ -4516,7 +4613,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let recordMove = Infinity;
 
 	    for (let j = 0; j < walls.length; j++) {
-	    
+	      let wallTop = walls[j].wallTop && walls[j].wallTop != '' ? parseInt(walls[j].wallTop) : Infinity;
+	      let wallBottom = walls[j].wallBottom && walls[j].wallBottom != '' ? parseInt(walls[j].wallBottom) : -Infinity;
+	      if(tokenElev <= wallBottom || tokenElev >= wallTop)
+	      	continue;
 	      pt = window.PARTICLE.rays[i].cast(walls[j]);
 	      
 	      if (pt) {
@@ -4824,18 +4924,15 @@ function redraw_light(){
 			}
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length && 
+				window.lineOfSightPolygons[auraId].elev == window.TOKEN_OBJECTS[auraId].options.elev){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
+				
 			}
 			else{
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId)  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
-
-
-
-
-
 
 				let path = "";
 				for( let i = 0; i < lightPolygon.length; i++ ){
@@ -4847,7 +4944,8 @@ function redraw_light(){
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
-					clippath: path
+					clippath: path,
+					elev: window.TOKEN_OBJECTS[auraId].options.elev
 				}
 				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 			}
