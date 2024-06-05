@@ -2358,7 +2358,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .avtt-sidebar-controls .tab-btn.notification,
 .sidebar__controls .tab-btn.notification {
-    background-color: var(--player-border-color, #e40712);;
+    background-color: var(--player-border-color, #e40712);
 }
 .avtt-sidebar-controls .tab-btn.notification svg,
 .sidebar__controls .tab-btn.notification svg {
@@ -3261,7 +3261,7 @@ div#selectedTokensBorder {
   }
 .above-vtt-container-roll-output{
     position: absolute;
-    top: 11px;
+    top: 9px;
     left: 0px;
     width: 220px;
     text-wrap: nowrap;
@@ -3270,7 +3270,7 @@ div#selectedTokensBorder {
     color: #716f6f;
     font-size: 10px;
     font-weight: bold;
-    line-height: 14px;
+    line-height: 10px;
 }
 .abovevtt-roll-container{
     position:relative;
@@ -3310,7 +3310,7 @@ div#selectedTokensBorder {
 
 .abovevtt-roll-container .above-vtt-roll-whisper {
     position: absolute;
-    top: 26px;
+    top: 28px;
     left: 0px;
     width: 220px;
     text-wrap: nowrap;

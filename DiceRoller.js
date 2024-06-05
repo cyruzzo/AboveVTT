@@ -89,15 +89,17 @@ class DiceRoll {
         }
 
         let advantageMatch = this.diceExpressions[0].match(/kh\d+/g);
-        if (advantageMatch?.length > 1 || (advantageMatch?.length === 1 && !this.diceExpressions[0].endsWith("kh1"))) {
+        if (this.diceExpressions[0].split('d')[0] > 2 && advantageMatch?.length == 1 || advantageMatch?.length > 1 || (advantageMatch?.length === 1 && !this.diceExpressions[0].endsWith("kh1"))) {
             // anything other than kh1 is complex. Such as kh10 or kh2
             return true;
         }
         let disAdvantageMatch = this.diceExpressions[0].match(/kl\d+/g);
-        if (disAdvantageMatch?.length > 1 || (disAdvantageMatch?.length === 1 && !this.diceExpressions[0].endsWith("kl1"))) {
+        if (this.diceExpressions[0].split('d')[0] > 2 && disAdvantageMatch?.length == 1 || disAdvantageMatch?.length > 1 || (disAdvantageMatch?.length === 1 && !this.diceExpressions[0].endsWith("kl1"))) {
             // anything other than kl1 is complex. Such as kl10 or kl2
             return true;
         }
+
+
 
         // not sure what else to look for yet, but this appears to be something like "1d20", "1d20-1", "2d20kh1+3". all of which are correctly parsed by DDB
         return false;
@@ -772,7 +774,7 @@ class DiceRoller {
 
 function replace_gamelog_message_expressions(listItem) {
 
-    let expressionSpan = listItem.find(".tss-1wcf5kt-Line-Notation span");
+    let expressionSpan = listItem.find("[class*='-Line-Notation'] span");
     if (expressionSpan.length > 0) {
         let avttExpression = listItem.attr("data-avtt-expression");
         if (avttExpression !== undefined && avttExpression.length > 0) {
@@ -782,7 +784,7 @@ function replace_gamelog_message_expressions(listItem) {
         }
     }
 
-    let expressionResultSpan = listItem.find(".tss-16k6xf2-Line-Breakdown span");
+    let expressionResultSpan = listItem.find("[class*='-Line-Breakdown'] span");
     if (expressionResultSpan.length > 0) {
         let avttExpressionResult = listItem.attr("data-avtt-expression-result");
         if (avttExpressionResult !== undefined && avttExpressionResult.length > 0) {

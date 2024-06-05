@@ -1,7 +1,7 @@
 
 function gamelog_send_to_text() {
     // TODO: track characters page in window.sendTo so we know what they have set even if the gamelog is not on the screen
-    let expectedButtonText = $(".glc-game-log .tss-l9t796-SendToLabel").parent().find("button").text();
+    let expectedButtonText = $(".glc-game-log [class*='-SendToLabel']").parent().find("button").text();
     if (expectedButtonText !== undefined && expectedButtonText.length > 0) {
         return expectedButtonText.replace(/\s+/g, '');
     }

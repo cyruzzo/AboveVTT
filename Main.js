@@ -2205,12 +2205,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 	    for (let i = 0; i < mutation.addedNodes.length; i++) {
 	      // do things to your newly added nodes here
 	      let node = mutation.addedNodes[i]
-	      if(node.className == 'tss-l9t796-SendToLabel' || $('.glc-game-log .tss-l9t796-SendToLabel ~ button').length>0){
-	      	const sendto_mutation_target = $(".glc-game-log .tss-l9t796-SendToLabel ~ button")[0];
-			const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-			window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
-			gamelogObserver.disconnect();
-			return false;
+	      if($(node).attr('class').includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length>0){
+	      	const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
+					const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+					window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
+					gamelogObserver.disconnect();
+					return false;
 	      }
 	    }
 	    return true // must return true if doesn't break
@@ -3110,6 +3110,7 @@ function init_help_menu() {
 						<li><a href="#tab9">Map Manipulation</a></li>
 						<li><a href="#tab10">Quick Start</a></li>
 						<li><a href="#tab11">In-person tools</a></li>
+						<li><a href="#tab12">Performance Suggestions</a></li>
 						<!-- some unused numbers here for more tabs -->
 						<li><a href="#tab20">Video Tutorial Playlist</a></li>
 						<li><a href="#tab21">Get Help</a></li>		
@@ -3173,11 +3174,11 @@ function init_help_menu() {
 							<dd>Next creature (if combat tracker is open)</dd>
 						<dl>
 						<dl>
-							<dt>-</dt>
+							<dt>- / CTRL+Mouse Wheel Down</dt>
 							<dd>Zoom out</dd>
 						<dl>
 						<dl>
-							<dt>=</dt>
+							<dt>= / CTRL+Mouse Wheel Up</dt>
 							<dd>Zoom in</dd>
 						<dl>
 						<dl>
@@ -3220,6 +3221,10 @@ function init_help_menu() {
 							<dt>UP/DOWN arrows</dt>
 							<dd>Will cycle through fog & draw options if menu open</dd>
 						<dl>
+						<dl>
+							<dt>SHIFT/CTRL Click on Character Sheet Icon Rolls</dt>
+							<dd>Will roll with ADV/DIS respectively</dd>
+						<dl>
 					</div>
 
 					<div id="tab2" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true">
@@ -3234,6 +3239,7 @@ function init_help_menu() {
 					<div id="tab9" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.l17lakiwxlm6"></div>
 					<div id="tab10" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.it30rzhxilz3"></div>
 					<div id="tab11" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.6jh5zmtqvn3f"></div>
+					<div id="tab12" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.mob2z6z5azn2"></div>
 
 					<div id="tab20">
 						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
