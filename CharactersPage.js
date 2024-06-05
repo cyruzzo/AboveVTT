@@ -796,7 +796,15 @@ function observe_character_sheet_changes(documentToObserve) {
               let diceRoll;
               if(data.expression != undefined){
                     if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                       if(e.shiftKey){
+                      if(e.altKey){
+                        if(e.shiftKey){
+                          diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                        }
+                         else if(e.ctrlKey || e.metaKey){
+                          diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                        }
+                       }
+                       else if(e.shiftKey){
                         diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                        }
                        else if(e.ctrlKey || e.metaKey){
@@ -968,6 +976,13 @@ function observe_character_sheet_changes(documentToObserve) {
 
                 options.append(wrapper)
             }
+            let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
+             <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
+             <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
+             <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
+             <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
+              </div>`)
+            options.append(optionsInfo);
   
           }
           if($('#avtt-icon-roll-span').length == 0){
@@ -1020,7 +1035,15 @@ function observe_character_sheet_changes(documentToObserve) {
               let diceRoll;
               if(data.expression != undefined){
                 if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                   if(e.shiftKey){
+                   if(e.altKey){
+                      if(e.shiftKey){
+                        diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                       }
+                       else if(e.ctrlKey || e.metaKey){
+                        diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                       }
+                   }
+                   else if(e.shiftKey){
                     diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                    }
                    else if(e.ctrlKey || e.metaKey){
@@ -1132,7 +1155,7 @@ function observe_character_sheet_changes(documentToObserve) {
             $(target).toggleClass('disadvantageHover', false)
           }
         });
-        if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type').length>0 && !$('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text().includes('Beyond 20 Settings')){
+        if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type').length>0 && !['Beyond 20 Settings', 'Beyond 20 Quick Settings', 'Beyond20 Hotkey'].includes($('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text())){
            $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-button.ajs-ok').click();
            $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
         }
@@ -1283,7 +1306,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }
-              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || mutation.target.parentElement.classList.value.includes("ddb-character-app")) {
+              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || (mutationParent.attr('class').includes('ddb-character-app') && mutationParent.parent().hasClass('ddbc-character-tidbits__heading'))) {
                 window.PLAYER_NAME = mutation.target.data;
                 character_sheet_changed({name: mutation.target.data});
               }
@@ -1552,7 +1575,7 @@ function read_pc_object_from_character_sheet(playerId, container = $(document)) 
     // TODO: immunities?
     // TODO: initiativeBonus?
     pc.inspiration = read_inspiration(container);
-    pc.name = container.find(".ddb-character-app-sn0l9p").text();
+    pc.name = container.find(".ct-character-header-info__content [class*='ddb-character-app']").text();
     const pb = parseInt(container.find(".ct-proficiency-bonus-box__value").text());
     if (pb) {
       pc.proficiencyBonus = pb;

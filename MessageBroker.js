@@ -313,7 +313,7 @@ class MessageBroker {
 					console.log(`injection_data = ${injection_data}`);
 					
 					let found=false;
-					$(document.getElementsByClassName(self.diceMessageSelector)).each(function(){
+					$(self.diceMessageSelector).each(function(){
 						if($(this).text()==injection_id){
 							found=true;
 							let li = $(this).closest("li");
@@ -420,9 +420,9 @@ class MessageBroker {
 		this.userid = $("#message-broker-client").attr("data-userId");
 		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
-		this.diceMessageSelector = "DiceMessage_RollType__wlBsW";
+		this.diceMessageSelector = "[class*='DiceMessage_RollType']";
 		if (is_encounters_page() || is_characters_page()) {
-			this.diceMessageSelector = "tss-r93asv-RollType";
+			this.diceMessageSelector = "[class*='-RollType']";
 		} 
 
 		this.origRequestAnimFrame = null;
@@ -1117,7 +1117,7 @@ class MessageBroker {
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
 				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
-					let gamelogItem = $("ol.tss-jmihpx-GameLogEntries li").first();
+					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
@@ -1200,7 +1200,7 @@ class MessageBroker {
 
 							for(let i = 0; i<msg.data.rolls.length; i++){
 								let row = i
-								if(!target.hasClass('tss-8-Collapsed-ref')){
+								if(!target.attr('class').includes('-Collapsed-ref')){
 									row = row*2+1
 								}else{
 									row++;
@@ -1258,7 +1258,7 @@ class MessageBroker {
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
-					let gamelogItem = $("ol.tss-jmihpx-GameLogEntries li").first();
+					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
 					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
 						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
 						sendToEveryone.click(function (clickEvent) {
