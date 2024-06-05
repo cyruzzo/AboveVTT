@@ -176,7 +176,10 @@ function token_context_menu_expanded(tokenIds, e) {
 							 doors[0][9]
 				];	
 				window.DRAWINGS.push(data);
-
+				window.wallUndo.push({
+					undo: [data],
+					redo: [doors[0]]
+				})
 
 
 				redraw_light_walls();
@@ -254,7 +257,10 @@ function token_context_menu_expanded(tokenIds, e) {
 							 doors[0][9]
 				];	
 				window.DRAWINGS.push(data);
-
+				window.wallUndo.push({
+					undo: [data],
+					redo: [doors[0]]
+				})
 				redraw_light_walls();
 				redraw_light();
 
@@ -294,7 +300,10 @@ function token_context_menu_expanded(tokenIds, e) {
 							 doors[0][9]
 				];	
 				window.DRAWINGS.push(data);
-
+				window.wallUndo.push({
+					undo: [data],
+					redo: [doors[0]]
+				})
 				redraw_light_walls();
 				redraw_light();
 
@@ -328,7 +337,10 @@ function token_context_menu_expanded(tokenIds, e) {
 							 !hidden
 				];	
 				window.DRAWINGS.push(data);
-
+				window.wallUndo.push({
+					undo: [data],
+					redo: [doors[0]]
+				})
 				redraw_light_walls();
 				redraw_light();
 

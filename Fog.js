@@ -1790,8 +1790,9 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 ];	
 	window.DRAWINGS.push(data);
 	window.wallUndo.push({
-		undo: [data]
-	});
+		undo: [data],
+		redo: [doors[0]]
+	})
 	redraw_light_walls();
 	redraw_light();
 	checkAudioVolume();
@@ -4128,21 +4129,22 @@ function init_walls_menu(buttons){
 	wall_menu.find("#wall_undo").click(function() {
 
         let wallUndo = window.wallUndo.pop();
-
-        if(wallUndo.undo != undefined){
-			for(let i in wallUndo.undo){
-        		window.DRAWINGS = window.DRAWINGS.filter(d => d !== wallUndo.undo[i]);
-        	}
-        }
-        if(wallUndo.redo != undefined){
-        	for(let i in wallUndo.redo){
-        		window.DRAWINGS.push(wallUndo.redo[i])
-        	}
-        }
-        redraw_light_walls();
-        redraw_drawn_light();
-        redraw_light();
-		sync_drawings();
+        if(wallUndo){
+        	if(wallUndo.undo != undefined){
+				for(let i in wallUndo.undo){
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => d !== wallUndo.undo[i]);
+	        	}
+	        }
+	        if(wallUndo.redo != undefined){
+	        	for(let i in wallUndo.redo){
+	        		window.DRAWINGS.push(wallUndo.redo[i])
+	        	}
+	        }
+          	redraw_light_walls();
+	        redraw_drawn_light();
+	        redraw_light();
+			sync_drawings();
+        }   
 	});
 
 	wall_menu.css("position", "fixed");
