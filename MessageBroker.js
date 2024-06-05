@@ -1727,9 +1727,7 @@ class MessageBroker {
 						}
 
 						
-		        reset_canvas();
-		        set_default_vttwrapper_size();
-						
+
 						// WE USED THE DM MAP TO GET RIGH WIDTH/HEIGHT. NOW WE REVERT TO THE PLAYER MAP
 						if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1 && !data.is_video){
 							$("#scene_map").stop();
@@ -1745,6 +1743,9 @@ class MessageBroker {
 							$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
 							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 						}
+						reset_canvas();
+		        set_default_vttwrapper_size();
+						
 						console.log("LOADING TOKENS!");
 						let tokensLength = Object.keys(data.tokens).length;
 						let count = 0;

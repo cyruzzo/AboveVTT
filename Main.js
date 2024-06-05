@@ -556,6 +556,8 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 
 	}
 
+	$('#scene_map ~ #scene_map').remove()
+	
 }
 
 /**
