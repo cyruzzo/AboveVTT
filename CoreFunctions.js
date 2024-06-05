@@ -352,7 +352,9 @@ function showErrorMessage(error, ...extraInfo) {
       return ei?.toString();
     }
   }).join('<br />');
-
+  if(typeof error.message == 'object'){
+    error.message = JSON.strigify(error.message);
+  }
   let container = $("#above-vtt-error-message");
   if (container.length === 0) {
     const container = $(`
