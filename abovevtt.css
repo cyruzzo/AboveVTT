@@ -290,7 +290,9 @@ button .ddbc-tab-options__header-heading .menu-option{
     font-family: Roboto Condensed,Roboto,Helvetica,sans-serif;
     padding: 5px 0;
 }
-
+.wall-input{
+    padding:0px;
+}
 .top_menu {
     margin: 0 8px;
     top: 30px !important;
