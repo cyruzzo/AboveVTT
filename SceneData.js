@@ -66891,7 +66891,6 @@ function get_avtt_scene_import_data() {
 							"revealInFog": false
 						}
 					},
-					"id": "666",
 					"darkness_filter": "0",
 					"grid_line_width": "0.5",
 					"order": 1666357432982,
