@@ -414,7 +414,6 @@ async function start_above_vtt_for_dm() {
   await migrate_scene_folders();
 
   if (activeScene) {
-    window.MB.handleScene(activeScene);
     if(activeScene.data.playlist != undefined && activeScene.data.playlist != 0 && window.MIXER.state().playlists[activeScene.data.playlist] != undefined){
       window.MIXER.setPlaylist(activeScene.data.playlist)
     }
@@ -516,7 +515,7 @@ async function migrate_to_cloud_if_necessary() {
   // TODO: replace this with the new tutorial map
   await AboveApi.migrateScenes(window.gameId, [
     {
-      id: "666",
+      ...default_scene_data(),
       title: "The Tavern",
       dm_map: "",
       player_map: "https://i.pinimg.com/originals/a2/04/d4/a204d4a2faceb7f4ae93e8bd9d146469.jpg",
@@ -534,7 +533,6 @@ async function migrate_to_cloud_if_necessary() {
       upsq: "ft",
       offsetx: 29,
       offsety: 54,
-      reveals: []
     }
   ]);
   // now fetch the scenes from the server
@@ -566,9 +564,8 @@ async function fetch_sceneList_and_scenes() {
   } else if (window.ScenesHandler.scenes.length > 0) {
     activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
     console.log("attempting to handle scene", activeScene);
-    window.MB.handleScene(activeScene);
   }
-
+  window.MB.handleScene(activeScene);
   console.log("fetch_sceneList_and_scenes done");
   return activeScene;
 }
