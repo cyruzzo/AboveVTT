@@ -4840,7 +4840,8 @@ div.sidebar__pane-content div.tooltip::after {
 .remove-conditions-button .tooltip-hover{
     pointer-events:none;
 }
-button.avtt-roll-button {
+button.avtt-roll-button,
+.avtt-ability-roll-button {
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
     border: 1px solid #b43c35;

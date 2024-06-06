@@ -457,6 +457,11 @@ function getRollData(rollButton){
     else if($(rollButton).find('[class*="styles_numberDisplay"]').length > 0){
       expression = `1d20${$(rollButton).text().replace(/\s/g, '')}`;
     }
+    else if($(rollButton).hasClass('avtt-roll-button')){
+      expression = `${$(rollButton).attr('data-exp')}${$(rollButton).attr('data-mod')}`
+      rollTitle = $(rollButton).attr('data-actiontype');
+      rollType = $(rollButton).attr('data-rolltype');;
+    }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
       expression = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command')).expression;
       let title = $(rollButton).attr('title').split(':');

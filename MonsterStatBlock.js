@@ -89,20 +89,59 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         imgContainer.find("img, video").addClass("magnify");
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
-    container.find("p>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+
+   
+    container.find("p>em>strong, p>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
+      if(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)
+        return;
       let outerP = event.target.closest('p').outerHTML;
       const regExFeature = new RegExp(`<p(.+)?>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
       let matched = `<p>${outerP.matchAll(regExFeature).next().value[2]}</p>`;
       send_html_to_gamelog(matched);
     })
-     container.find("p>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+
+    container.find("p>em>strong, p>strong>em").off("click.roll").on("click.roll", function (e) {
       e.preventDefault();
-      let outerP = event.target.closest('p').outerHTML;
-      const regExFeature = new RegExp(`<p(.+)?>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
-      let matched = `<p>${outerP.matchAll(regExFeature).next().value[2]}</p>`;
-      send_html_to_gamelog(matched);
+      let rollButtons = $(event.target.closest('p')).find('.avtt-roll-button');
+      const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
+      const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock.data.avatarUrl;
+
+      for(let i = 0; i<rollButtons.length; i++){      
+        let data = getRollData(rollButtons[i]);
+        let diceRoll;
+
+        if(data.expression != undefined){
+          if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+             if(e.altKey){
+                if(e.shiftKey){
+                  diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                 }
+                 else if(e.ctrlKey || e.metaKey){
+                  diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+                 }
+             }
+             else if(e.shiftKey){
+              diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+             }
+             else if(e.ctrlKey || e.metaKey){
+              diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+             }else{
+              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+             }
+          }
+          else{
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+          }
+        
+
+ 
+          window.diceRoller.roll(diceRoll, true);
+
+        }
+      }
     })
+
 
     if(!customStatBlock)
       container.find("div.image").append(statBlock.imageHtml(token));
@@ -113,6 +152,13 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       add_ability_tracker_inputs(container, tokenId)
     // scan_creature_pane(container, statBlock.name, statBlock.image);
     add_stat_block_hover(container);
+
+    let abilities = container.find("p>em>strong, p>strong>em");
+    for(let i = 0; i<abilities.length; i++){
+      if($(abilities[i]).closest('p').find('.avtt-roll-button').length>0 && !$(abilities[i]).closest('p').text().includes('Recharge')){
+        $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
+      }
+    }
     $("span.hideme").parent().parent().hide();
 }
 
