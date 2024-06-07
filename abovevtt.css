@@ -4835,6 +4835,7 @@ div.sidebar__pane-content div.tooltip::after {
 
 .elev{
     pointer-events: none;
+    z-index: 1;
 }
 .set-conditions-button .tooltip-hover,
 .remove-conditions-button .tooltip-hover{
