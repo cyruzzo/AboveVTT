@@ -103,6 +103,8 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
 
     container.find("p>em>strong, p>strong>em").off("click.roll").on("click.roll", function (e) {
       e.preventDefault();
+      if($(event.target).text().includes('Recharge'))
+        return;
       let rollButtons = $(event.target.closest('p')).find('.avtt-roll-button');
       const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
       const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock.data.avatarUrl;
