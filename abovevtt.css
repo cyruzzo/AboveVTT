@@ -4837,6 +4837,9 @@ div.sidebar__pane-content div.tooltip::after {
     pointer-events: none;
     z-index: 1;
 }
+.token img, .token [data-img], .token .token-image{
+    pointer-events:none !important;
+}
 .set-conditions-button .tooltip-hover,
 .remove-conditions-button .tooltip-hover{
     pointer-events:none;
