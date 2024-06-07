@@ -901,23 +901,23 @@ function token_context_menu_expanded(tokenIds, e) {
 	});
 
 
-	if (tokens.length === 1) {
-		body.append(build_menu_stat_inputs(tokenIds));
-		$(".hpMenuInput").on('focus', function(event){
+	
+	body.append(build_menu_stat_inputs(tokenIds));
+	$(".hpMenuInput").on('focus', function(event){
+		event.target.select();
+	});
+	$(".maxHpMenuInput").on('focus', function(event){
+		event.target.select();
+	});
+	$(".acMenuInput").on('focus', function(event){
 			event.target.select();
-		});
-		$(".maxHpMenuInput").on('focus', function(event){
+	});
+	$(".elevMenuInput").on('focus', function(event){
 			event.target.select();
-		});
-		$(".acMenuInput").on('focus', function(event){
-				event.target.select();
-		});
-		$(".elevMenuInput").on('focus', function(event){
-				event.target.select();
-		});
-	}
+	});
+	
 
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer()))){ 
+	if((window.DM && tokens.length != 1) || (tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer())))){ 
 		$(".maxHpMenuInput").prop('disabled', false);
 		$(".acMenuInput").prop('disabled', false);
 		$(".hpMenuInput").prop('disabled', false);
@@ -2249,6 +2249,12 @@ function build_menu_stat_inputs(tokenIds) {
 		ac = tokens[0].ac;
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
 	}
+	else if(window.DM && tokens.length>1){
+		hp = '';
+		max_hp = '';
+		ac = '';
+		elev = '';
+	}
 	else{
 		hp = "????";
 		max_hp = "????";
@@ -2270,92 +2276,145 @@ function build_menu_stat_inputs(tokenIds) {
 
 	hpMenuInput.on('keyup', function(event) {
 		let newValue = event.target.value;
-		let newHP = newValue;
-
+		if(newValue == '')
+			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
+				if(token.isPlayer())
+					return;
+				let newHP = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newHP = token.hp + parseInt(newValue);
 				}
 				token.hp = newHP - token.tempHp;
 				token.place_sync_persist();
-				$(".hpMenuInput").val(newHP);
+				if(tokens.length == 1){
+					$(".hpMenuInput").val(newHP);
+				}
+				else{
+					$(".hpMenuInput").val('');
+				}
 			});
 		}
 	});
 	hpMenuInput.on('focusout', function(event) {
 		let newValue = event.target.value;
-		let newHP = newValue;
-
+		if(newValue == '')
+			return;	
 		tokens.forEach(token => {
+			if(token.isPlayer())
+				return;
+			let newHP = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newHP = token.hp + parseInt(newValue);
 			}
 			token.hp = newHP - token.tempHp;
 			token.place_sync_persist();
-			$(".hpMenuInput").val(newHP);
+			if(tokens.length == 1){
+				$(".hpMenuInput").val(newHP);
+			}
+			else{
+				$(".hpMenuInput").val('');
+			}
+			
 		});
 	});
 
 	maxHpMenuInput.on('keyup', function(event) {
 		let newValue = event.target.value;
-		let newMaxHP = newValue;
-
+		if(newValue == '')
+			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
+				if(token.isPlayer())
+					return;
+				let newMaxHP = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newMaxHP = token.maxHp + parseInt(newValue);
 				}
 				token.maxHp = newMaxHP;
 				token.place_sync_persist();
-				$(".maxHpMenuInput").val(newMaxHP);
+				if(tokens.length == 1){
+					$(".maxHpMenuInput").val(newMaxHP);
+				}
+				else{
+					$(".maxHpMenuInput").val('');
+				}
+				
 			});
 		}
 	});
 	maxHpMenuInput.on('focusout', function(event) {
 		let newValue = event.target.value;
-		let newMaxHP = newValue;
-
+		if(newValue == '')
+			return;
 		tokens.forEach(token => {
+			if(token.isPlayer())
+				return;
+			let newMaxHP = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newMaxHP = token.maxHp + parseInt(newValue);
 			}
 			token.maxHp = newMaxHP;
 			token.place_sync_persist();
-			$(".maxHpMenuInput").val(newMaxHP);
+			if(tokens.length == 1){
+				$(".maxHpMenuInput").val(newMaxHP);
+			}
+			else{
+				$(".maxHpMenuInput").val('');
+			}
 		});
 	});
 
 	acMenuInput.on('keyup', function(event) {
 		let newValue = event.target.value;
-		let newAC = newValue;
-
+		if(newValue == '')
+			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
+				if(token.isPlayer())
+					return;
+				let newAC = newValue;
 				if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 					newAC = parseInt(token.options.ac) + parseInt(newValue);
 				}
 				token.ac = newAC;
 				token.place_sync_persist();
-				$(".acMenuInput").val(newAC);
+				if(tokens.length == 1){
+					$(".acMenuInput").val(newAC);
+				}
+				else{
+					$(".acMenuInput").val('');
+				}
+				
 			});
 		}
 	});
 	acMenuInput.on('focusout', function(event) {
 		let newValue = event.target.value;
-		let newAC = newValue;
-
+		if(newValue == '')
+			return;
 		tokens.forEach(token => {
+			if(token.isPlayer())
+				return;
+			let newAC = newValue;
 			if(newValue.indexOf("+") == 0 || newValue.indexOf("-") == 0){
 				newAC = parseInt(token.options.ac) + parseInt(newValue);
 			}
 			token.ac = newAC;
 			token.place_sync_persist();
-			$(".acMenuInput").val(newAC);
+			if(tokens.length == 1){
+				$(".acMenuInput").val(newAC);
+			}
+			else{
+				$(".acMenuInput").val('');
+			}
 		});
 	});
 
 	elevMenuInput.on('keyup', function(event) {
+		if(event.target.value == '')
+			return;
 		if (event.key == "Enter") {
 			tokens.forEach(token => {
 				token.options.elev = event.target.value;
@@ -2364,6 +2423,8 @@ function build_menu_stat_inputs(tokenIds) {
 		}
 	});
 	elevMenuInput.on('focusout', function(event) {
+		if(event.target.value == '')
+			return;
 		tokens.forEach(token => {
 			token.options.elev = event.target.value;
 			token.place_sync_persist();
