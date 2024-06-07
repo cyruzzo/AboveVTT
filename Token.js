@@ -1799,8 +1799,8 @@ class Token {
 						color: 'rgba(142, 142, 142, 1)'
 					}
 				}
-				if((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked){
-					if(window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')){
+				if((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || this.options.locked){
+					if(!window.DM || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
 						old.draggable("disable");
 						old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 					}
@@ -2222,7 +2222,6 @@ class Token {
 				let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 				tok.draggable({
-					handle: "img, [data-img], .token-image",
 					stop:
 						function (event) {
 							//remove cover for smooth drag
@@ -2698,7 +2697,7 @@ class Token {
 					tok.removeClass("ui-state-disabled");
 				}
 
-				tok.find(".token-image").on('dblclick.highlightToken', function(e) {
+				tok.on('dblclick.highlightToken', function(e) {
 					self.highlight(true); // dont scroll
 					let data = {
 						id: self.options.id
@@ -2706,8 +2705,8 @@ class Token {
 					window.MB.sendMessage('custom/myVTT/highlight', data);
 				})
 
-				tok.find(".token-image").on('click.selectToken', function() {
-					let parentToken = $(this).parent(".VTTToken");
+				tok.on('click.selectToken', function() {
+					let parentToken = $(this);
 					if (parentToken.hasClass("pause_click")) {
 						return;
 					}
@@ -3192,8 +3191,7 @@ function token_menu() {
 			initialY = event.touches[0].clientY;
 		    LongPressTimer = setTimeout(function() {
 			    console.log("context_menu_flyout contextmenu event", event);
-				if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
-					return;
+				
 				if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 					token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 				} else {
@@ -3216,8 +3214,7 @@ function token_menu() {
 			console.log("context_menu_flyout contextmenu event", event);
 			event.preventDefault();
 			event.stopPropagation();
-			if($(event.currentTarget).children('.token-image').css('pointer-events') == 'none' && !window.DM)
-				return;
+		
 			if ($(event.currentTarget).hasClass("tokenselected") && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
 				token_context_menu_expanded(window.CURRENTLY_SELECTED_TOKENS, event);
 			} else {
