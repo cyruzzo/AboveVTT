@@ -45,7 +45,7 @@ function get_available_styles(){
 
 function setup_aoe_button(buttons) {
     
-    const aoeButton = $("<div style='display:inline;width:75px' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
+    const aoeButton = $("<div style='display:inline-block;width:fit-content;' id='aoe_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>A</u>OE</div>");
     const aoeMenu = $("<div id='aoe_menu' class='top_menu'></div>");
 
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");
