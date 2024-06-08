@@ -54,7 +54,12 @@ function parse_img(url) {
 		}
 		else if(retval.includes("https://1drv.ms/"))
 		{
-		  retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(retval) + "/root/content";
+			if(retval.split('/')[4].length == 1){
+	      retval = retval;
+	    }
+	    else{
+	      retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+	    }
 		}
 		if(retval.includes("discordapp.com")){
 			retval = update_old_discord_link(retval)
