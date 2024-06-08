@@ -4859,6 +4859,22 @@ button.avtt-roll-button,
     letter-spacing: 1px;
     padding: 1px 4px 0;
 }
+.ct-sidebar__portal{
+    overflow: unset !important;
+}
+.ct-sidebar__portal>[role='presentation'] .MuiPopover-paper{
+    width: fit-content;
+    padding:0px;
+}
+
+.ct-sidebar__portal>[role='presentation'] .MuiPopover-paper ul{
+    padding:10px;
+}
+body>[role='presentation'] .MuiPopover-paper{
+    width: fit-content;
+    padding:0px;
+}
+
 button.avtt-roll-formula-button {
     font-size: 14px;
     cursor: default;
