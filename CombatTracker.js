@@ -752,7 +752,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 	max_hp.css('font-size','11px');
 	//max_hp.css('width','20px');
 
-	if((token.options.hidestat == true && !window.DM && token.options.name != window.PLAYER_NAME) || (!(token.options.id.startsWith("/profile")) && !window.DM && !token.options.player_owned)) {
+	if((token.options.hidestat == true && !window.DM && !token.isCurrentPlayer()) || (!(token.options.id.startsWith("/profile")) && !window.DM && !token.options.player_owned)) {
 		divider.css('visibility', 'hidden');
 		hp.css('visibility', 'hidden');
 		max_hp.css('visibility', 'hidden');
@@ -1109,7 +1109,7 @@ function ct_load(data=null){
 							window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
 						}
 					}
-					if(window.all_token_objects[data[i]['data-target']].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"') || window.all_token_objects[data[i]['data-target']].options.player_owned){
+					if(window.all_token_objects[data[i]['data-target']].isCurrentPlayer() || window.all_token_objects[data[i]['data-target']].options.player_owned){
 						$("#endplayerturn").toggleClass('enabled', true);
 						$("#endplayerturn").prop('disabled', false);
 					}
@@ -1150,7 +1150,7 @@ function ct_load(data=null){
 				window.TOKEN_OBJECTS[data.current].update_and_sync();
 			}
 			if(window.all_token_objects[data.current] != undefined){
-				if(window.all_token_objects[data.current].options.name == window.PLAYER_NAME.replace(/\"/g,'\\"') || window.all_token_objects[data.current].options.player_owned){
+				if(window.all_token_objects[data.current].isCurrentPlayer() || window.all_token_objects[data.current].options.player_owned){
 					$("#endplayerturn").toggleClass('enabled', true);
 					$("#endplayerturn").prop('disabled', false);
 				}
