@@ -508,7 +508,7 @@ class Token {
 		update_pc_token_rows();
 	}
 	rotate(newRotation) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && this.options.name != window.PLAYER_NAME) return; // don't allow rotating if the token is locked
+		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
 		this.update_from_page();
 		this.options.rotation = newRotation;
@@ -561,7 +561,7 @@ class Token {
 	 * @returns void
 	 */
 	move(top, left) {
-		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && this.options.name != window.PLAYER_NAME) return; // don't allow rotating if the token is locked
+		if (!window.DM && (this.options.restrictPlayerMove || this.options.locked) && !this.isCurrentPlayer()) return; // don't allow rotating if the token is locked
 		if (window.DM && this.options.locked && !$('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) return; // don't allow rotating if the token is locked
 		
 		// Save handle params
@@ -594,7 +594,7 @@ class Token {
 	}
 
 	snap_to_closest_square() {
-		if ((!window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || this.options.locked) return; // don't allow moving if the token is locked
+		if ((!window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || this.options.locked) return; // don't allow moving if the token is locked
 		if (window.DM && this.options.locked) return; // don't allow moving if the token is locked
 		// shamelessly copied from the draggable code later in this file
 		// this should be a XOR... (A AND !B) OR (!A AND B)
@@ -935,7 +935,7 @@ class Token {
 		$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").val(this.maxHp);
 
 
-		if((!window.DM && this.options.hidestat == true && this.options.name != window.PLAYER_NAME) || (!this.isPlayer() && !window.DM && !this.options.player_owned)) {
+		if((!window.DM && this.options.hidestat == true && !this.isCurrentPlayer()) || (!this.isPlayer() && !window.DM && !this.options.player_owned)) {
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "'] .max_hp").css('visibility', 'hidden');
 			$("#combat_tracker_inside tr[data-target='" + this.options.id + "']>td:nth-of-type(4)>div").css('visibility', 'hidden');
@@ -1148,7 +1148,7 @@ class Token {
 		else if(window.DM){ // in all the other cases.. the DM should always see HP/AC
 			showthem=true;
 		}
-		else if(this.options.player_owned || this.options.name == window.PLAYER_NAME){ // if it's player_owned.. always showthem
+		else if(this.options.player_owned || this.isCurrentPlayer()){ // if it's player_owned.. always showthem
 			showthem=true;
 		}
 		else if(this.isPlayer() && (!this.options.hidestat)){
@@ -1805,10 +1805,10 @@ class Token {
 						old.removeClass("ui-state-disabled"); // removing this manually.. otherwise it stops right click menu
 					}
 				}
-				else if((window.DM && this.options.restrictPlayerMove && this.options.name != window.PLAYER_NAME) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
+				else if((window.DM && this.options.restrictPlayerMove && !this.isCurrentPlayer()) || !this.options.locked || (window.DM && !$('#select_locked>div.ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active'))){
 					old.draggable("enable");
 				}	
-				else if(!window.DM && ((!this.options.restrictPlayerMove  && this.options.name != window.PLAYER_NAME)) || !this.options.locked){
+				else if(!window.DM && ((!this.options.restrictPlayerMove  && !this.isCurrentPlayer())) || !this.options.locked){
 					old.draggable("enable");
 				}
 				if(!this.options.id.includes('exampleToken')){
