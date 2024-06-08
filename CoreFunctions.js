@@ -940,7 +940,13 @@ function updateImgSrc(url, container, video){
   }
   else if(url.includes("https://1drv.ms/"))
   {
-    url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+    if(url.split('/')[4].length == 1){
+      url = url;
+    }
+    else{
+      url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+    }
+
   }
   else if(url?.includes('google')){
     throttleImgSrc(() => {
@@ -957,7 +963,12 @@ function updateTokenSrc(url, container, video=false){
   }
   else if(url.includes("https://1drv.ms/"))
   {
-    url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+    if(url.split('/')[4].length == 1){
+      url = url;
+    }
+    else{
+      url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+    }
   }
   else{
     container.attr('src', url);
