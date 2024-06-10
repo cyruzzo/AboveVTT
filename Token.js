@@ -1721,7 +1721,7 @@ class Token {
 					else{
 						oldImage.css("border-width","");
 					}
-					if(!this.options.combatGroupToken){
+					if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
 						setTokenAuras(old, this.options);
 						setTokenLight(old, this.options);
 						setTokenBase(old, this.options);
@@ -2200,8 +2200,9 @@ class Token {
 					this.update_opacity(tok, true);
 			    }
 
-				setTokenAuras(tok, this.options);
+				
 				if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
+					setTokenAuras(tok, this.options);
 					setTokenLight(tok, this.options);
 				}
 
@@ -3414,7 +3415,7 @@ function setAudioAura (token, options){
 
 
 function setTokenAuras (token, options) {
-	if (!options.aura1) return;
+	if (!options.aura1 || options.id.includes('exampleToken')) return;
 
 	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
@@ -3495,7 +3496,7 @@ function setTokenAuras (token, options) {
 }
 
 function setTokenLight (token, options) {
-	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true) return;
+	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')) return;
 	const innerlightSize = options.light1.feet != undefined? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
