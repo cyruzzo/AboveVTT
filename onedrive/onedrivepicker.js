@@ -65,12 +65,13 @@
     let win = null;
     let port = null;
     async function getEmbedLink(fileid, embedToken){
-        let embedData = null
-
+        let embedData = null;
+  
         await $.ajax({
             url: `https://graph.microsoft.com/v1.0/me/drive/items/${fileid}/createLink`,
             type: 'post',
             data: "{type: 'view'}",
+            scope: 'anonymous',
             headers: {
                 'Authorization': `Bearer ${embedToken}`,   //If your header name has spaces or any other char not appropriate
                 "Content-Type": 'application/json',  //for object property name, use quoted notation shown in second,
@@ -80,6 +81,23 @@
                 embedData = data;
             }
         });
+        if(embedData.link.webUrl.split('/')[4].length == 1){
+            await $.ajax({
+                url: `https://graph.microsoft.com/v1.0/me/drive/items/${fileid}/createLink`,
+                type: 'post',
+                data: "{type: 'embed'}",
+                scope: 'anonymous',
+                headers: {
+                    'Authorization': `Bearer ${embedToken}`,   //If your header name has spaces or any other char not appropriate
+                    "Content-Type": 'application/json',  //for object property name, use quoted notation shown in second,
+                },
+                success: function (data) {
+                    console.info(data);
+                    embedData = data;
+                }
+            });
+        }
+        
         return embedData.link.webUrl
     }    
     async function launchPicker(e, callback=function(){}, selectionMode, selectionType) {

@@ -154,10 +154,10 @@ async function getUvttData(url){
 		else if(url.includes("https://1drv.ms/"))
 		{
 	  	  if(url.split('/')[4].length == 1){
-	        url = url;
+	        alert('Your onedrive files are stored on sharepoint servers which prevents UVTT files from working')
 	      }
 	      else{
-	        url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+	        api_url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 	      }
 		}
 
