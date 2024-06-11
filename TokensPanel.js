@@ -1202,24 +1202,28 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
         }
         if(hitDiceData == ''){
-            const hpRollRegex = /Hit Points[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi
+            const hpRollRegex = /Hit Points[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|Hit Points[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)\)/gi
             let match = statText.matchAll(hpRollRegex).next()
             if(match.value != undefined){
-                hitDiceData = match.value[1] 
+                if(match.value[1] != undefined)
+                    hitDiceData = match.value[1] 
+                else if(match.value[4] != undefined)
+                    hitDiceData = match.value[4] 
             }
             else{
-                match = statText.matchAll(/hp[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)/gi).next()
+                match = statText.matchAll(/hp[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|hp[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)/gi).next()
                 if(match.value != undefined){
-                    hitDiceData = match.value[1] 
+                    if(match.value[1] != undefined)
+                        hitDiceData = match.value[1] 
+                    else if(match.value[4] != undefined)
+                        hitDiceData = match.value[4] 
                 }
             }
         }
          switch (options['defaultmaxhptype']) {
             case 'max':
                 if(hitDiceData != ''){
-                    const regex = /([0-9]+)d([0-9]+)\s?([+-])\s?([0-9]+)/gi
-                    const regexMatch = hitDiceData.matchAll(regex).next();
-                    hpVal = regexMatch.value[1] * regexMatch.value[2] + parseInt(`${regexMatch.value[3]}${regexMatch.value[4]}`); 
+                    hpVal = new rpgDiceRoller.DiceRoll(hitDiceData).maxTotal;
                 }else if(averageHP && averageHP != ''){
                     hpVal = averageHP;          
                 }
