@@ -3480,7 +3480,7 @@ function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SC
 		}
 	];
 	ctx.setLineDash([])
-	drawPolygon(ctx, arrowPoints, style, false, Math.max(lineWidth, 1), scale);
+	drawPolygon(ctx, arrowPoints, style, false, Math.max(lineWidth, 1), undefined, undefined, scale);
 }
 
 function drawPolygon (
