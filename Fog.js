@@ -3473,29 +3473,27 @@ function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SC
 	let angle = Math.atan2(toy - fromy, tox - fromx);
 
 
-	// bring the line end back some to account for arrow head.
-	tox = tox - Math.cos(angle)*4;
-	toy = toy - Math.sin(angle)*2;
+
 
 	// calculate the points.
 	let arrowPoints = [
 	    {
-	        x: tox + (1 / 2) * Math.cos(angle), 
-	        y: toy + (1 / 2) * Math.sin(angle)
-	    }, {
-	        x: tox - Math.cos(angle - Math.PI / 2)/2,
-	        y: toy - Math.sin(angle - Math.PI / 2)/2
-	    },{
-	        x: tox + Math.cos(angle),  // tip
-	        y: toy + Math.sin(angle)
-	    }, {
-	        x: tox - Math.cos(angle + Math.PI / 2)/2,
-	        y: toy - Math.sin(angle + Math.PI / 2)/2
-	    },
-
+	        x: tox, 
+	        y: toy
+		}, 
+	   	{
+		    x: tox - (2) * Math.cos(angle) - 3*Math.cos(angle - Math.PI/2),
+		    y: toy - (2) * Math.sin(angle) - 3*Math.sin(angle - Math.PI/2)
+		},{
+		    x: tox + 6*Math.cos(angle),  // tip
+		    y: toy + 6*Math.sin(angle)
+		}, {
+		    x: tox - (2) * Math.cos(angle) - 3*Math.cos(angle + Math.PI/2),
+		    y: toy - (2) * Math.sin(angle) - 3*Math.sin(angle + Math.PI/2)
+		}
 	];
 	ctx.setLineDash([])
-	drawPolygon(ctx, arrowPoints, style, false, lineWidth, scale);
+	drawPolygon(ctx, arrowPoints, style, false, Math.max(lineWidth, 1), scale);
 }
 
 function drawPolygon (
