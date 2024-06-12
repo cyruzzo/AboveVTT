@@ -1551,15 +1551,10 @@ function import_readfile() {
 
 		persist_all_token_customizations(customizations, function () {
 			if(DataFile.notes){
-				for(let id in DataFile.notes){			
-					if(DataFile.notes[id].statBlock == true){
-						if(window.JOURNAL.statBlocks == undefined)
-							window.JOURNAL.statBlocks = {};
-						window.JOURNAL.statBlocks[id] = DataFile.notes[id];
-					}else{
-						window.JOURNAL.notes[id] = DataFile.notes[id];
-					}
+				for(let id in DataFile.notes){				
+					window.JOURNAL.notes[id] = DataFile.notes[id];
 				}
+				window.JOURNAL.statBlocks = undefined;
 				for(let i=0; i < DataFile.journalchapters.length; i++){
 					let chapterIndex = window.JOURNAL.chapters.findIndex(d => d.id == DataFile.journalchapters[i].id)
 					if(chapterIndex != -1){
