@@ -1332,7 +1332,19 @@ function redraw_drawings() {
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
+
+
 		let targetCtx = offscreenContext;
+
+		if(fill == 'dot'){
+			targetCtx.setLineDash([lineWidth, 3*lineWidth])
+		}
+		else if(fill == 'dash'){
+			targetCtx.setLineDash([5*lineWidth, 5*lineWidth])
+		}
+		else{
+			targetCtx.setLineDash([])
+		}
 
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
@@ -1367,6 +1379,9 @@ function redraw_drawings() {
 		}
 		if (shape == "brush") {
 			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
+		}
+		if(shape == 'brush-arrow'){
+			drawBrushArrow(targetCtx, x, color, lineWidth, scale, fill);
 		}
 		if(shape == "paint-bucket"){
 			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
@@ -1883,12 +1898,14 @@ function drawing_mousedown(e) {
 	// always draw unbaked drawings to the temp overlay
 	let canvas = document.getElementById("temp_overlay");
 	let context = canvas.getContext("2d");
-	// select modifies this line but never resets it, so reset it here
-	// otherwise all drawings are dashed
-	context.setLineDash([])
+
 	// get teh data from the menu's/buttons
 	const data = get_draw_data(e.data.clicked,  e.data.menu)
+	// select modifies this line but never resets it, so reset it here
+	// otherwise all drawings are dashed
 
+
+	
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
@@ -1897,6 +1914,17 @@ function drawing_mousedown(e) {
 	window.DRAWFUNCTION = data.function;
 	window.wallTop = data.wall_top_height;
 	window.wallBottom = data.wall_base_height;
+
+	if(window.DRAWTYPE == 'dot'){
+		context.setLineDash([data.draw_line_width, 3*data.draw_line_width])
+	}
+	else if(window.DRAWTYPE == 'dash'){
+		context.setLineDash([5*data.draw_line_width, 5*data.draw_line_width])
+	}
+	else{
+		context.setLineDash([])
+	}
+	
 
 	window.DRAWDAYLIGHT = (data.from == 'vision_menu' && $('#daylight').hasClass('button-enabled'));
 
@@ -1976,6 +2004,18 @@ function drawing_mousedown(e) {
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
 		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
+	}
+	else if(window.DRAWSHAPE === 'brush-arrow'){
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
+		window.MOUSEDOWN = true;
+		window.BRUSHWAIT = false;
+		window.BRUSHPOINTS = [];
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
+		// draw a dot
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+		drawBrushArrow(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH, undefined, window.DRAWTYPE);
 	}
 	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -2230,6 +2270,24 @@ function drawing_mousemove(e) {
 				}
 			}
 		}
+		else if(window.DRAWSHAPE == "brush-arrow"){
+			// Only add a new point every 75ms to keep the drawing size low
+			// Subtract mouseMoveFps from 75ms to avoid waiting too much
+			if(!window.BRUSHWAIT)
+			{
+
+				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
+
+				drawBrushArrow(window.temp_context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH, undefined, window.DRAWTYPE);
+
+				window.BRUSHWAIT = true;
+				if (mouseMoveFps < 75) {
+					setTimeout(function() {
+						window.BRUSHWAIT = false;
+					}, (75 - mouseMoveFps));
+				}
+			}
+		}
 	}
 	else if (window.DRAWSHAPE === "polygon" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -2376,6 +2434,13 @@ function drawing_mouseup(e) {
 				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
 				window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
 				data[0] = "brush"
+				data[3] = window.BRUSHPOINTS
+				data[4] = null
+				data[5] = null
+				data[6] = null
+				break;
+			case "brush-arrow":
+				data[0] = "brush-arrow"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
 				data[5] = null
@@ -3348,6 +3413,78 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.stroke();
 }
 
+function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor, fill = [])
+{
+	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
+    // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
+
+	let p1 = points[0];
+	let p2 = points[1];
+
+
+	ctx.strokeStyle = style;
+	ctx.lineWidth = lineWidth;
+	ctx.beginPath();
+	if(fill == 'dot'){
+		ctx.setLineDash([lineWidth, 3*lineWidth])
+	}
+	else if(fill == 'dash'){
+		ctx.setLineDash([5*lineWidth, 5*lineWidth])
+	}
+		
+
+	let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
+
+	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+
+	for (let i = 1, len = points.length; i < len; i++) {
+	// we pick the point between pi+1 & pi+2 as the
+	// end point and p1 as our control point
+	let midPoint = midPointBtw(p1, p2);
+	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+	p1 = points[i];
+	p2 = points[i+1];
+	}
+
+
+	ctx.stroke();
+
+	
+	if(points.length <= 4)
+		return;
+	let toy = points[points.length-1].y;
+	let tox = points[points.length-1].x;
+	let fromy = points[points.length-4].y;
+	let fromx = points[points.length-4].x;
+
+	let angle = Math.atan2(toy - fromy, tox - fromx);
+
+
+	// bring the line end back some to account for arrow head.
+	tox = tox - Math.cos(angle)*4;
+	toy = toy - Math.sin(angle)*2;
+
+	// calculate the points.
+	let arrowPoints = [
+	    {
+	        x: tox + (1 / 2) * Math.cos(angle), 
+	        y: toy + (1 / 2) * Math.sin(angle)
+	    }, {
+	        x: tox - Math.cos(angle - Math.PI / 2)/2,
+	        y: toy - Math.sin(angle - Math.PI / 2)/2
+	    },{
+	        x: tox + Math.cos(angle),  // tip
+	        y: toy + Math.sin(angle)
+	    }, {
+	        x: tox - Math.cos(angle + Math.PI / 2)/2,
+	        y: toy - Math.sin(angle + Math.PI / 2)/2
+	    },
+
+	];
+	ctx.setLineDash([])
+	drawPolygon(ctx, arrowPoints, style, false, lineWidth, scale);
+}
+
 function drawPolygon (
 	ctx,
 	points,
@@ -3963,6 +4100,13 @@ function init_draw_menu(buttons){
 		</div>`);
 	draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush_arrow' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush-arrow' data-function="draw" data-unique-with="draw">
+					Arrow
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='draw_polygon' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='polygon' data-function="draw" data-unique-with="draw">
 				 	Polygon
@@ -4018,6 +4162,20 @@ function init_draw_menu(buttons){
 			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
 				data-key="fill" data-value='filled' data-toggle='true' data-unique-with="fill">
 				FILLED
+			</button>
+		</div>`);
+		draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="fill" data-value='dot' data-toggle='true' data-unique-with="fill">
+				DOTTED
+			</button>
+		</div>`);
+			draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="fill" data-value='dash' data-toggle='true' data-unique-with="fill">
+				DASHED
 			</button>
 		</div>`);
 
