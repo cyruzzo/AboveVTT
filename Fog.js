@@ -3469,14 +3469,14 @@ function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SC
 	        y: toy
 		}, 
 	   	{
-		    x: tox - (2) * Math.cos(angle) - 3*Math.cos(angle - Math.PI/2),
-		    y: toy - (2) * Math.sin(angle) - 3*Math.sin(angle - Math.PI/2)
+		    x: tox - (2)*window.CURRENT_SCENE_DATA.scale_factor*adjustScale * Math.cos(angle) - 3*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.cos(angle - Math.PI/2),
+		    y: toy - (2)*window.CURRENT_SCENE_DATA.scale_factor*adjustScale * Math.sin(angle) - 3*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.sin(angle - Math.PI/2)
 		},{
-		    x: tox + 6*Math.cos(angle),  // tip
-		    y: toy + 6*Math.sin(angle)
+		    x: tox + 6*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.cos(angle),  // tip
+		    y: toy + 6*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.sin(angle)
 		}, {
-		    x: tox - (2) * Math.cos(angle) - 3*Math.cos(angle + Math.PI/2),
-		    y: toy - (2) * Math.sin(angle) - 3*Math.sin(angle + Math.PI/2)
+		    x: tox - (2)*window.CURRENT_SCENE_DATA.scale_factor*adjustScale * Math.cos(angle) - 3*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.cos(angle + Math.PI/2),
+		    y: toy - (2)*window.CURRENT_SCENE_DATA.scale_factor*adjustScale * Math.sin(angle) - 3*window.CURRENT_SCENE_DATA.scale_factor*adjustScale*Math.sin(angle + Math.PI/2)
 		}
 	];
 	ctx.setLineDash([])
