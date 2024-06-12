@@ -1523,32 +1523,36 @@ function redraw_light_walls(clear=true){
 		let adjustedScale = scale/currentSceneScale;
 		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
 		if (displayWalls) {
-			drawLine(ctx, x, y, width, height, color, lineWidth, scale);	
-			if((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))
-			draw_text(
-			    ctx,
-			    undefined,
-				((x+width)/2-(10 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor))),
-				((y+height)/2),
-			    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
-			    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
-			    `${wallBottom && wallBottom != '' ? `B: ${wallBottom}` : ``} \n ${wallTop && wallTop != '' ? `T: ${wallTop}`: ``}`,
-			    {
-				    "font": "Arial",
-				    "size": 10 * window.CURRENT_SCENE_DATA.scale_factor,
-				    "weight": "400",
-				    "style": "normal",
-				    "underline": false,
-				    "align": "left",
-				    "color": "rgb(255, 255, 255)",
-				    "shadow": "none"
-				},
-			    {size: 1, color: 'rgb(0, 0, 0)'},
-			    undefined,
-			    `wallHeight${parseInt(x)}${parseInt(y)}`,
-			    undefined,
-			  	true
-			);
+				
+			if((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != '')){
+				draw_text(
+				    ctx,
+				    undefined,
+					((x+width)/2-(10 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor))),
+					((y+height)/2),
+				    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
+				    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
+				    `${wallBottom && wallBottom != '' ? `B: ${wallBottom}` : ``} \n ${wallTop && wallTop != '' ? `T: ${wallTop}`: ``}`,
+				    {
+					    "font": "Arial",
+					    "size": 10 * window.CURRENT_SCENE_DATA.scale_factor,
+					    "weight": "400",
+					    "style": "normal",
+					    "underline": false,
+					    "align": "left",
+					    "color": "rgb(255, 255, 255)",
+					    "shadow": "none"
+					},
+				    {size: 2, color: 'rgb(0, 0, 0)'},
+				    undefined,
+				    `wallHeight${parseInt(x)}${parseInt(y)}`
+				);
+				drawLine(ctx, x, y, width, height, color, lineWidth, scale, true);
+			}
+			else{
+				drawLine(ctx, x, y, width, height, color, lineWidth, scale);
+			}
+			
 		}
 		
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
@@ -3371,7 +3375,7 @@ function drawCone(ctx, startx, starty, endx, endy, style, fill=true, lineWidth =
 
 }
 
-function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=window.CURRENT_SCENE_DATA.scale_factor)
+function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=window.CURRENT_SCENE_DATA.scale_factor, addStroke = false)
 {
 	ctx.beginPath();
 	ctx.strokeStyle = style;
@@ -3382,6 +3386,15 @@ function drawLine(ctx, startx, starty, endx, endy, style, lineWidth = 6, scale=w
 	ctx.moveTo(startx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, starty/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.lineTo(endx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, endy/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
+
+	if(addStroke == true){
+		ctx.setLineDash([2*lineWidth, 2*lineWidth])
+		ctx.strokeStyle = `rgba(0,0,0,0.4)`;
+		ctx.moveTo(startx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, starty/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineTo(endx/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, endy/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.stroke();
+		ctx.setLineDash([]);
+	}
 }
 
 function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor)
