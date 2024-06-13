@@ -779,7 +779,9 @@ select#doorTypeSelectUVTT{
 #fog_overlay{
   pointer-events:none;
 }
-
+#elev_overlay{
+    opacity: 0.5;
+}
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw {
