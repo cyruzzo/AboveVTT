@@ -349,9 +349,15 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
+    if($('input:focus').length ==0){
+        e.preventDefault();
+    }
     handle_undo();
 });
 Mousetrap.bind('command+z', function(e) {
+    if($('input:focus').length ==0){
+        e.preventDefault();
+    }
     handle_undo();
 });
 Mousetrap.bind(']', function(e) {
