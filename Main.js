@@ -2737,6 +2737,7 @@ function init_buttons() {
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_walls_menu(buttons)
+		init_elev_menu(buttons)
 		init_vision_menu(buttons)
 	}
 	init_draw_menu(buttons)

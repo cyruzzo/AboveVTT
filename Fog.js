@@ -2407,7 +2407,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
-		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
+		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -2471,6 +2471,8 @@ function drawing_mouseup(e) {
 			data[1] = "wall"
 			data[10] = window.wallBottom
 			data[11] = window.wallTop
+		case 'elev':
+			data[1] = "elev"
 		default:
 			break;
 		}
@@ -3149,7 +3151,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
-	topButtonIDs = ["select-button", "ruler_button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
+	topButtonIDs = ["select-button", "ruler_button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button", "elev_button"]
 	$(".top_menu").removeClass("visible")
 	topButtonIDs.forEach(function(id) {
 		$(`#${id}`).removeClass(buttonSelectedClasses)
@@ -3724,6 +3726,22 @@ function save3PointRect(e){
 		redraw_light_walls();
 		redraw_light();
 	}
+	else if(window.DRAWFUNCTION === "elev"){
+		data = [
+			'3pointRect',
+			'elev',
+			window.DRAWCOLOR,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+		];
+		window.DRAWINGS.push(data);	
+		redraw_drawn_light();
+		redraw_drawings();
+	}
 	else{
 		data = [
 			'3pointRect',
@@ -3765,6 +3783,22 @@ function savePolygon(e) {
 		];
 		window.REVEALED.push(data);
 		redraw_fog();
+	}
+	else if(window.DRAWFUNCTION === "elev"){
+		data = [
+			'polygon',
+			'elev',
+			(window.DRAWDAYLIGHT) ? window.DRAWDAYLIGHT : window.DRAWCOLOR,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+		];
+		window.DRAWINGS.push(data);
+		redraw_drawn_light();
+		redraw_drawings();
 	}
 	else{
 		data = [
@@ -4427,6 +4461,101 @@ function init_walls_menu(buttons){
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
+function init_elev_menu(buttons){
+	let elev_menu = $("<div id='elev_menu' class='top_menu'></div>");
+
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='polygon' data-function="elev" data-unique-with="draw">
+					Elev Poly
+			</button>
+		</div>`);
+	elev_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='rect' data-function="elev" data-unique-with="draw">
+				Elev Rect
+		</button>
+	</div>`);
+	elev_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='3pointRect' data-function="elev" data-unique-with="draw">
+				3p Rect
+		</button>
+	</div>`);
+	elev_menu.append("<div class='elev-input menu-subtitle'>Elevation</div>");
+	elev_menu.append(
+		`<div>
+			<input id='elev_height' type='number' step='5' data-required="elev_height" style='width:90%'
+			value='' >
+		</div>`);
+	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-eraser" data-unique-with="draw">
+				 	Erase Area
+			</button>
+		</div>`);
+	elev_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='elev_undo'>
+					UNDO
+				</button>
+			</div>`);
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_walls'>
+				CLEAR
+			</button>
+		</div>`);
+ 
+	elev_menu.find("#delete_elev").click(function() {
+		r = confirm("DELETE ALL MAP ELEVATION (cannot be undone!)");
+		if (r === true) {
+			// keep only non wall
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
+
+			redraw_light_walls();
+			redraw_light();
+			sync_drawings();
+		}
+	});
+	elev_menu.find("#elev_undo").click(function() {
+
+        		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (window.DRAWINGS[currentElement][1] == 'elev'){
+                window.DRAWINGS.splice(currentElement, 1)
+                redraw_drawings();
+                redraw_light_walls();
+                redraw_drawn_light();
+				redraw_light();
+				sync_drawings()
+                break
+            }
+        }     
+	});
+
+	elev_menu.css("position", "fixed");
+	elev_menu.css("top", "50px");
+	elev_menu.css("width", "110px");
+	elev_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+
+	$("body").append(elev_menu);
+
+	let elev_button = $("<button style='display:inline;width:75px' id='elev_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>E</u>levation</button>");
+	elev_button.on('click', function(){
+		redraw_map_elev();
+	});
+	buttons.append(elev_button);
+	elev_menu.css("left",elev_button.position().left);
+}
+function redraw_map_elev(){return;}
 function init_vision_menu(buttons){
 	let vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
 

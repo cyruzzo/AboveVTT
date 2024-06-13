@@ -349,9 +349,15 @@ Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
 Mousetrap.bind('ctrl+z', function(e) {
+    if($('input:focus').length ==0){
+        e.preventDefault();
+    }
     handle_undo();
 });
 Mousetrap.bind('command+z', function(e) {
+    if($('input:focus').length ==0){
+        e.preventDefault();
+    }
     handle_undo();
 });
 Mousetrap.bind(']', function(e) {
@@ -363,6 +369,7 @@ Mousetrap.bind('[', function(e) {
 
 function handle_undo(){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+
     if ($("#select-button").hasClass(buttonSelectedClasses)){
         undo_delete_tokens();
     }
@@ -377,6 +384,9 @@ function handle_undo(){
     }
     else if(($("#wall_button").hasClass(buttonSelectedClasses))){
         $("#wall_undo").click()
+    }
+    else if(($("#elev_button").hasClass(buttonSelectedClasses))){
+        $("#elev_undo").click()
     }
 
 }
