@@ -893,10 +893,41 @@ function token_context_menu_expanded(tokenIds, e) {
 	});
 
 	sendToGamelogButton.off().on("click", function(tokenIds){
-		tokens.forEach(token => {											    	           
-            const tokenImage = (`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${token.options.imgsrc}' src='${token.options.imgsrc}'/>  </div>`);
-           
-            send_html_to_gamelog(tokenImage);
+		tokens.forEach(async token => {				
+			
+			function setImageAttr(tokenImage, token){
+				let largeAvatar = cached_monster_items[token.options.monster].monsterData.largeAvatarUrl;
+			    let avatar = cached_monster_items[token.options.monster].monsterData.avatarUrl;
+			    let basicAvatar = cached_monster_items[token.options.monster].monsterData.basicAvatarUrl;
+			    tokenImage.find('img').attr('src', largeAvatar);
+			    tokenImage.find('img').attr('data-large-avatar-url', largeAvatar);
+			    tokenImage.find('img').attr('data-avatar-url', largeAvatar);
+			    tokenImage.find('img').attr('data-basic-avatar-url', largeAvatar);
+			    tokenImage.find('img').attr('data-current-avatar-url', "largeAvatarUrl");
+			}
+			let tokenImage = $(`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${token.options.imgsrc}' src='${token.options.imgsrc}'/>  </div>`);
+			
+			if(typeof token.options.monster == 'number' && token.options.itemType == 'monster' && token.options.alternativeImages == undefined){
+
+				if(cached_monster_items[token.options.monster] != undefined){
+					setImageAttr(tokenImage, token);
+					send_html_to_gamelog(tokenImage[0].outerHTML);
+				}
+				else{
+					fetch_and_cache_monsters([token.options.monster], function(){
+						setImageAttr(tokenImage, token);
+						send_html_to_gamelog(tokenImage[0].outerHTML);
+					})
+				}
+			}
+			else{
+				send_html_to_gamelog(tokenImage[0].outerHTML);
+			}
+
+			
+
+           	
+            
 		});
 	});
 
