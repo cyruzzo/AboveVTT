@@ -1390,7 +1390,7 @@ class Token {
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
 		
 				let hoverNoteTimer;
-				symbolImage.on({
+				conditionContainer.on({
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
