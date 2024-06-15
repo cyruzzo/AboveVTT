@@ -1709,7 +1709,7 @@ padding-bottom: 5px;
 #tokens .underDarkness.labelToken.hasTooltip:hover:after{
     content:'';
 }
-.definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
+#token_map_items .definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
     display:none;
 }
 .dead {
