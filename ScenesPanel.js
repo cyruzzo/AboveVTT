@@ -2583,7 +2583,7 @@ async function create_scene_root_container(fullPath, parentId) {
 		"description": "Build a scene using a Onedrive image or video file.",
 		"category": "Scenes",
 		"player_map": "",
-	}, `${window.EXTENSION_PATH}images/Onedrive_Icon.svg`, false);
+	}, `${window.EXTENSION_PATH}images/Onedrive_icon.svg`, false);
 
 
 	onedriveImport.css("width", "25%");
