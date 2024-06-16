@@ -602,6 +602,8 @@ class JournalManager{
 			window.ScenesHandler.build_adventures(function(){
 				for(let source in window.ScenesHandler.sources){
 					let sourcetitle = window.ScenesHandler.sources[source].title;
+					sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
+					window.ScenesHandler.sources[source].title = sourcetitle;
 					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
 				}
 			});
@@ -1875,6 +1877,14 @@ function render_source_chapter_in_iframe(url) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
 	}
+	if(rulesChapter == true){
+		if(url.includes('?')){
+			url = `${url}&filter-partnered-content=t`
+		}
+		else{
+			url = `${url}?filter-partnered-content=t`
+		}
+	}
 	const chapterHash = url.split("#")?.[1];
 	const iframeId = 'sourceChapterIframe';
 	const containerId = `${iframeId}_resizeDrag`;
@@ -1954,6 +1964,17 @@ function render_source_chapter_in_iframe(url) {
 			iframeContents.find("article .p-article-header").hide();
 			iframeContents.find("body").css('background', '#f9f9f9 url(../images/background_texture.png) repeat');
 		}
+
+		iframeContents.find("body").append($(`<style id='ddbSourceStyles'>
+
+		body, html body.responsive-enabled{
+			background: var(--theme-page-bg-image-1024, url('')) no-repeat center 0px, var(--theme-page-bg-color,#f9f9f9) !important;
+			background-position: center 0px !important;
+		}
+		#site-main header.main[role="banner"]{
+			display:none;
+		}
+		</style>`))
 
 		$(this).siblings('.sidebar-panel-loading-indicator').remove();
 	});
