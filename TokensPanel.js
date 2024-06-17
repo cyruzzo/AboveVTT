@@ -946,8 +946,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     }
     let options = {...window.TOKEN_SETTINGS}
     // set up whatever you need to. We'll override a few things after
-   
-    options = {...options, ...find_token_options_for_list_item(listItem)}; // we may need to put this in specific places within the switch statement below
+    let foundOptions = find_token_options_for_list_item(listItem);
+    options = {...options, ...foundOptions}; // we may need to put this in specific places within the switch statement below
     
     
     options.name = listItem.name;
@@ -1028,7 +1028,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
             options.armorClass = pc.armorClass;
-            options = {...options, ...find_token_options_for_list_item(listItem)}
+            options = {...options, ...foundOptions}
             break;
         case ItemType.Monster:
             switch (options['defaultmaxhptype']) {
@@ -1342,7 +1342,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         options.armorClass = (newAC) ? newAC : options.armorClass;
         options.monster = 'customStat'
     }
-
+    if(foundOptions.color != undefined){
+        options.color = foundOptions.color;
+    }
     options.itemType = listItem.type;
     options.itemId = listItem.id;
     options.listItemPath = listItem.fullPath();
