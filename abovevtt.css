@@ -6260,7 +6260,7 @@ button span.onedrive-btn-status{
     mask-position: 0px 2px;
     background: #000;
 }
-button.dropboxChooser, #sounds-panel button.launchPicker {
+#sounds-panel button.dropboxChooser, #sounds-panel button.launchPicker {
     width: 23px;
     padding: 0px !important;
     height: 21px;
