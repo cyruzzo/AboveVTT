@@ -573,7 +573,7 @@ function is_door_under_light_aura(door, lightContext=undefined){
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
-		return;
+		return;	
 	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
@@ -4398,14 +4398,14 @@ function init_walls_menu(buttons){
         if(wallUndo){
         	if(wallUndo.undo != undefined){
 				for(let i in wallUndo.undo){
-
 					let x = wallUndo.undo[i][3],
 					y = wallUndo.undo[i][4],
 					width = wallUndo.undo[i][5],
 					height = wallUndo.undo[i][6];
-					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];
-					
+
+					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];		
 					let doorInRedo = wallUndo.redo != undefined ? wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height && d[7] == wallUndo.undo[i][7]) : [];
+
 					if(doorInRedo.length == 0 && tokenObject != undefined && tokenObject.options.type == 'door'){
 						tokenObject.delete();
 					}
