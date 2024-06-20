@@ -4402,9 +4402,10 @@ function init_walls_menu(buttons){
 					y = wallUndo.undo[i][4],
 					width = wallUndo.undo[i][5],
 					height = wallUndo.undo[i][6];
-					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];
 
-					let doorInRedo = wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height && d[7] == wallUndo.undo[i][7])
+					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];		
+					let doorInRedo = wallUndo.redo != undefined ? wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height && d[7] == wallUndo.undo[i][7]) : [];
+
 					if(doorInRedo.length == 0 && tokenObject != undefined && tokenObject.options.type == 'door'){
 						tokenObject.delete();
 					}
