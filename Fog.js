@@ -1618,8 +1618,8 @@ function redraw_light_walls(clear=true){
 						];	
 						window.DRAWINGS.push(data);
 						window.wallUndo.push({
-							undo: [data],
-							redo: [doors[0]]
+							undo: [[...data]],
+							redo: [[...doors[0]]]
 						})
 						redraw_light_walls();
 						redraw_light();
@@ -1836,8 +1836,8 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 ];	
 	window.DRAWINGS.push(data);
 	window.wallUndo.push({
-		undo: [data],
-		redo: [doors[0]]
+		undo: [[...data]],
+		redo: [[...doors[0]]]
 	})
 	redraw_light_walls();
 	redraw_light();
@@ -2537,13 +2537,13 @@ function drawing_mouseup(e) {
 			window.DRAWINGS.push(line4);
 
 			window.wallUndo.push({
-				undo: [line1, line2, line3, line4]
+				undo: [[...line1], [...line2], [...line3], [...line4]]
 			});
 		}
 		else{
 			window.DRAWINGS.push(data);
 			if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
-				undoArray.push(data);
+				undoArray.push([...data]);
 			}
 		}
 
@@ -2566,12 +2566,12 @@ function drawing_mouseup(e) {
 				 		window.wallTop];
 					window.DRAWINGS.push(data);
 					window.wallUndo.push({
-						undo: [data]
+						undo: [[...data]]
 					});
 			}
 			if(undoArray.length > 0){
 				window.wallUndo.push({
-					undo: undoArray
+					undo: [...undoArray]
 				});
 			}
 
@@ -2732,20 +2732,20 @@ function drawing_mouseup(e) {
 						if(window.DRAWFUNCTION === "door-door-convert"){
 							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][2] = window.DRAWCOLOR;
-							undoArray.push(window.DRAWINGS[j]);
+							undoArray.push([...window.DRAWINGS[j]]);
 							break;
 						}
 						else if(window.DRAWFUNCTION == 'wall-height-convert'){
 							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][10] = window.wallBottom;
 							window.DRAWINGS[j][11] = window.wallTop;
-							undoArray.push(window.DRAWINGS[j]);
+							undoArray.push([...window.DRAWINGS[j]]);
 							break;
 						}
 						wallColor = window.DRAWINGS[j][2];
 						wallBottom = window.DRAWINGS[j][10];
 						wallTop = window.DRAWINGS[j][11];
-						redoArray.push(window.DRAWINGS[j]);
+						redoArray.push([...window.DRAWINGS[j]]);
 						window.DRAWINGS.splice(j, 1);
 						break;
 					}
@@ -2787,7 +2787,7 @@ function drawing_mouseup(e) {
 						 wallBottom, 
 						 wallTop];	
 						window.DRAWINGS.push(data);
-						undoArray.push(data);
+						undoArray.push([...data]);
 					}	
 					if(right != false){
 						if(wallLine[0].b.x > wallLine[0].a.x){
@@ -2815,7 +2815,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
-						undoArray.push(data);			
+						undoArray.push([...data]);			
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -2842,7 +2842,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);
-						undoArray.push(data);
+						undoArray.push([...data]);
 					
 					}
 					if(bottom != false){
@@ -2870,7 +2870,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
-						undoArray.push(data);				
+						undoArray.push([...data]);				
 					}
 				}
 					
@@ -2961,7 +2961,7 @@ function drawing_mouseup(e) {
 				 window.wallTop
 				 ];	
 				window.DRAWINGS.push(data);
-				undoArray.push(data);
+				undoArray.push([...data]);
 
 			}
 
@@ -2969,8 +2969,8 @@ function drawing_mouseup(e) {
 							
 		}
  		window.wallUndo.push({
-			undo: undoArray,
-			redo: redoArray
+			undo: [...undoArray],
+			redo: [...redoArray]
 		});
 
 		redraw_light_walls();
@@ -3712,11 +3712,11 @@ function save3PointRect(e){
 				window.wallTop];
 			}
 			window.DRAWINGS.push(data);
-			undoArray.push(data);
+			undoArray.push([...data]);
 		}
 
 		window.wallUndo.push({
-			undo: undoArray
+			undo: [...undoArray]
 		});
 			
 
@@ -4404,12 +4404,12 @@ function init_walls_menu(buttons){
 					height = wallUndo.undo[i][6];
 
 					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];		
-					let doorInRedo = wallUndo.redo != undefined ? wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height && d[7] == wallUndo.undo[i][7]) : [];
+					let doorInRedo = wallUndo.redo != undefined ? wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height) : [];
 
 					if(doorInRedo.length == 0 && tokenObject != undefined && tokenObject.options.type == 'door'){
 						tokenObject.delete();
 					}
-	        		window.DRAWINGS = window.DRAWINGS.filter(d => d !== wallUndo.undo[i]);
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => !wallUndo.undo[i].every((value, index) => value === d[index]));
 	        	}
 	        }
 	        if(wallUndo.redo != undefined){
