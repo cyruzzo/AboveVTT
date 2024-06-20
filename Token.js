@@ -1493,6 +1493,11 @@ class Token {
 
 	place(animationDuration) {
 		try{
+			if(isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top))){// prevent errors with NaN positioned tokens - delete them as catch all. 
+				this.options.deleteableByPlayers = true;
+				this.delete();
+				return;
+			}
 			if(this.options.combatGroupToken){
 				this.options.left = '0px';
 				this.options.top = '0px';

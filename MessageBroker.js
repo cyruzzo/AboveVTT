@@ -1527,6 +1527,11 @@ class MessageBroker {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
 			}
 			let t = new Token(data);
+			if(isNaN(parseFloat(t.options.left)) || isNaN(parseInt(t.options.top))){ // prevent errors with NaN positioned tokens - delete them as catch all. 
+				t.options.deleteableByPlayers = true;
+				t.delete();
+				return;
+			}
 			window.TOKEN_OBJECTS[data.id] = t;
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
