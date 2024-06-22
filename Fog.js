@@ -5248,6 +5248,7 @@ function redraw_light(){
 			exploredCanvas.height = canvasHeight;
 
 			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.globalCompositeOperation='source-over';
 			exploredCanvasContext.fillStyle = "black";
 			exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
 			$(exploredCanvas).attr('id', 'exploredCanvas');
@@ -5258,8 +5259,10 @@ function redraw_light(){
 			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
 			 	if(event?.target?.result?.exploredData){
 				  	let img = new Image;
+
 					img.onload = function(){
 					  exploredCanvasContext.drawImage(img,0,0); 
+					  exploredCanvasContext.globalCompositeOperation='lighten';
 					  exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 					};
 					img.src = event.target.result.exploredData;
@@ -5268,6 +5271,7 @@ function redraw_light(){
 		}
 		else{
 			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.globalCompositeOperation='lighten';
 			exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 
 

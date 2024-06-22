@@ -168,6 +168,7 @@ function deleteCurrentExploredScene(){
   let d = confirm("DELETE CURRENT SCENE EXPLORE DATA (CANNOT BE UNDONE)");
   if (d === true) {
     deleteExploredScene(window.CURRENT_SCENE_DATA.id)
+
   }
 }
 
@@ -181,6 +182,7 @@ function deleteExploredScene(sceneId){
         let exploredCanvas = $('#exploredCanvas')
         if(exploredCanvas.length > 0){
           let exploredCanvasContext = exploredCanvas[0].getContext('2d');
+          exploredCanvasContext.globalCompositeOperation ='source-over';
           exploredCanvasContext.fillStyle = "black";
           exploredCanvasContext.fillRect(0,0,exploredCanvas[0].width,exploredCanvas[0].height); 
         }
