@@ -2793,7 +2793,9 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .body-rpgcharacter-sheet #raycastingCanvas{
     opacity: 1;
 }
-
+.beyond20-quick-roll-tooltip{
+    z-index: 120 !important; /*for beyond20 flyouts to be above character sheet*/
+}
 #outer_light_container{
     mix-blend-mode:lighten;
     opacity:1;
