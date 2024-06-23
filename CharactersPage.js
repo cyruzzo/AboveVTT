@@ -513,6 +513,9 @@ function getRollData(rollButton){
       else if($(rollButton).parents(`.ddbc-combat-attack--item`).length > 0){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
       }
+      else if($(rollButton).parents(`.ddbc-combat-action-attack-general`).length > 0){
+        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name').text();
+      }
     }
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
 
