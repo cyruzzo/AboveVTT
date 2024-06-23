@@ -948,6 +948,7 @@ function updateImgSrc(url, container, video){
     else{
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
+    container.attr('src', url);
 
   }
   else if(url?.includes('google')){
@@ -971,6 +972,7 @@ function updateTokenSrc(url, container, video=false){
     else{
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
+    container.attr('src', url);
   }
   else{
     container.attr('src', url);
