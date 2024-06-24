@@ -1485,6 +1485,25 @@ function redraw_elev() {
 	}
 
 	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+	if($('#elev_legend_window').length>0){
+		open_elev_legend()
+	}
+}
+function open_elev_legend(){
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content');
+	elevationWindow.find('.elevationLegendDiv').remove();
+
+
+	let legend = $(`<div class='elevationLegendDiv'></div>`)
+	let legendHeights = Object.entries(window.elevHeights)
+								.sort(([,a],[,b]) => a-b)
+							    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+	for(let i in legendHeights){
+		let row = $(`<div class='row'><div class='row-color' style='background: ${i};'></div><div>${window.elevHeights[i]}</div></div>`)
+		legend.append(row);
+	}
+
+	elevationWindow.append(legend);
 }
 function check_all_token_map_elev(elevContext=undefined){
 	if(elevContext == undefined){
@@ -4660,6 +4679,11 @@ function init_elev_menu(buttons){
 			<input id='elev_height' type='number' step='5' data-required="elev_height" style='width:90%'
 			value='' >
 		</div>`);
+	elev_menu.append(`<div class='ddbc-tab-options--layout-pill'>
+			<button id='elev_legend' class='legend menu-option ddbc-tab-options__header-heading'
+				data-shape='Legend' data-function="Legend" data-unique-with="Legend">
+					Legend </button>
+		</div>`)
 	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
 	elev_menu.append(`
 			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
@@ -4700,6 +4724,10 @@ function init_elev_menu(buttons){
                 break
             }
         }     
+	});
+
+	elev_menu.find("#elev_legend").click(function() {
+        open_elev_legend();   
 	});
 
 	elev_menu.css("position", "fixed");

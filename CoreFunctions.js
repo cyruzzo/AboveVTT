@@ -1258,7 +1258,7 @@ function areArraysEqualSets(a1, a2) {
 }
 
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%') {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -1272,8 +1272,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     "max-width": "100%",
     "max-height": "100%",
     "position": "fixed",
-    "height": "80%",
-    "width": "80%",
+    "height": height,
+    "width": width,
     "z-index": "10000",
     "display": "none"
   });
