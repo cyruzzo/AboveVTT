@@ -1497,7 +1497,7 @@ function open_elev_legend(){
 
 	let legend = $(`<div class='elevationLegendDiv'></div>`)
 	let legendHeights = Object.entries(window.elevHeights)
-								.sort(([,a],[,b]) => a-b)
+								.sort(([,a],[,b]) => b-a)
 							    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 	for(let i in legendHeights){
 		let row = $(`<div class='row'><div class='row-color' style='background: ${i};'></div><div>${window.elevHeights[i]}</div></div>`)
