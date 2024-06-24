@@ -1335,8 +1335,13 @@ function redraw_drawings() {
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
-		if(drawings[i][1] =='elev')
-		  color = numToColor(color, 0.8, 100);
+		if(drawings[i][1] =='elev'){
+		  let arr = window.elevHeights != undefined && window.elevHeights != {} ? Object.values(window.elevHeights) : [0];
+		  let max = Math.max(...arr) ;
+		  let min = Math.min(...arr);
+		  max = Math.max(Math.abs(min), max);
+		  color = numToColor(color, 0.8, max);
+		}
 
 		let targetCtx = offscreenContext;
 
@@ -1398,7 +1403,7 @@ function redraw_drawings() {
 	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 function redraw_elev() {
-
+	window.elevHeights = {};
 	let canvas = document.getElementById("elev_overlay");
 	let ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1419,6 +1424,11 @@ function redraw_elev() {
 
 	offscreenDraw.width = canvas.width;
 	offscreenDraw.height = canvas.height;
+	let elevColorArr = drawings.length > 0 ? window.DRAWINGS.filter(d => d[1] == 'elev').map(d=> d[2]) : [0]
+	let maxHeight = Math.max(...elevColorArr);
+	let minHeight = Math.min(...elevColorArr);
+	maxHeight = Math.max(Math.abs(minHeight), maxHeight);
+
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
@@ -1427,11 +1437,9 @@ function redraw_elev() {
 		let isFilled = true;
 		
 		let mapElev = color;
-		color = numToColor(color, 1, 100);
 
-		if(window.elevHeights == undefined){
-			window.elevHeights = {};
-		}
+		color = numToColor(color, 1, maxHeight);
+		
 		window.elevHeights[color] = mapElev;
 
 		let targetCtx = offscreenContext;
@@ -1993,17 +2001,16 @@ function get_event_cursor_position(event){
 	return [pointX, pointY]
 }
 function numToColor(num, alpha, max) {
-	num >>>=0;
     let valueAsPercentageOfMax = num / max;
 	// actual max is 16777215 but represnts white so we will take a max that is
 	// below this to avoid white
-	let MAX_RGB_INT = 16600000;
+	let MAX_RGB_INT = 256;
 	let valueFromMaxRgbInt = Math.floor(MAX_RGB_INT * valueAsPercentageOfMax);
 	  
 	  
-	let blue = Math.floor(valueFromMaxRgbInt % 256);
-	let green = Math.floor(valueFromMaxRgbInt / 256 % 256);
-	let red = Math.floor(valueFromMaxRgbInt / 256 / 256 % 256);
+	let blue = num < 0 ? Math.floor(MAX_RGB_INT * -1 * valueAsPercentageOfMax) : 0;
+	let green = num < 0 ? Math.floor(MAX_RGB_INT * (1 + valueAsPercentageOfMax)) : Math.floor(MAX_RGB_INT * (1 - valueAsPercentageOfMax));
+	let red =  num < 0 ? 0 : Math.floor(MAX_RGB_INT * valueAsPercentageOfMax);
 
   	return "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
 }
@@ -2102,7 +2109,11 @@ function drawing_mousedown(e) {
 		}		
 	}
 	else if(window.DRAWFUNCTION === 'elev'){
-		window.DRAWCOLOR = numToColor(window.mapElev, 0.8, 100);
+		let elevColorArr = window.elevHeights != undefined && window.elevHeights != {} ? Object.values(window.elevHeights) : [0];
+		let maxHeight = Math.max(...elevColorArr);
+		let minHeight = Math.min(...elevColorArr);
+		maxHeight = Math.max(Math.abs(minHeight), maxHeight);
+		window.DRAWCOLOR = numToColor(window.mapElev, 0.8, maxHeight);
 	}
 	// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -5396,8 +5407,7 @@ function redraw_light(){
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
-					clippath: path,
-					elev: window.TOKEN_OBJECTS[auraId].options.elev
+					clippath: path
 				}
 				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 			}
