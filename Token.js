@@ -18,7 +18,7 @@ const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Flying", "Flamed", "Rage"
 // const TOKEN_COLORS = ["8DB6C7","","D1C6BF","CA9F92","","E3D9BO","B1C27A","B2E289","51COBF","59ADDO","","9FA3E3","099304","DB8DB2","F1C3DO"];
 
 
-const TOKEN_COLORS = ["1A6AFF", "FF7433", "1E50DC", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
+const TOKEN_COLORS = ["1A6AFF", "FF7433", "FFD433", "884DFF", "5F0404", "EC8AFF", "00E5FF",
 					"000000", "F032E6", "911EB4", //END OF NEW COLORS
 					"800000", "008000", "000080", "808000", "800080", "008080", "808080", "C00000", "00C000", "0000C0",
 					"C0C000", "C000C0", "00C0C0", "C0C0C0", "400000", "004000", "000040",
@@ -1390,7 +1390,7 @@ class Token {
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
 		
 				let hoverNoteTimer;
-				symbolImage.on({
+				conditionContainer.on({
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
 			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
@@ -1493,6 +1493,11 @@ class Token {
 
 	place(animationDuration) {
 		try{
+			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
+				this.options.deleteableByPlayers = true;
+				this.delete();
+				return;
+			}
 			if(this.options.combatGroupToken){
 				this.options.left = '0px';
 				this.options.top = '0px';
@@ -1864,6 +1869,7 @@ class Token {
 					        tokenClone.toggleClass('lockedToken', this.options.locked==true)
 							tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 							tokenClone.attr('data-name', old.attr('data-name'));
+							tokenClone.toggleClass('hasTooltip', $(old).hasClass('hasTooltip'));
 					        $('#token_map_items').append(tokenClone);
 						}
 						else{
@@ -1889,6 +1895,7 @@ class Token {
 							copyToken.toggleClass('lockedToken', this.options.locked==true)
 							copyToken.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
 							copyToken.attr('data-name', old.attr('data-name'));
+							copyToken.toggleClass('hasTooltip', $(old).hasClass('hasTooltip'));
 						}
 
 						let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')

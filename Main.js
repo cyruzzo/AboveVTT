@@ -171,7 +171,7 @@ function validateUrl(value) {
 }
 
 const MAX_ZOOM = 5
-const MIN_ZOOM = 0.1
+const MIN_ZOOM = 0.001
 
 /**
  * Changes the zoom level.

@@ -573,7 +573,7 @@ function is_door_under_light_aura(door, lightContext=undefined){
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
-		return;
+		return;	
 	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
@@ -1733,8 +1733,8 @@ function redraw_light_walls(clear=true){
 						];	
 						window.DRAWINGS.push(data);
 						window.wallUndo.push({
-							undo: [data],
-							redo: [doors[0]]
+							undo: [[...data]],
+							redo: [[...doors[0]]]
 						})
 						redraw_light_walls();
 						redraw_light();
@@ -1951,8 +1951,8 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 ];	
 	window.DRAWINGS.push(data);
 	window.wallUndo.push({
-		undo: [data],
-		redo: [doors[0]]
+		undo: [[...data]],
+		redo: [[...doors[0]]]
 	})
 	redraw_light_walls();
 	redraw_light();
@@ -2675,13 +2675,13 @@ function drawing_mouseup(e) {
 			window.DRAWINGS.push(line4);
 
 			window.wallUndo.push({
-				undo: [line1, line2, line3, line4]
+				undo: [[...line1], [...line2], [...line3], [...line4]]
 			});
 		}
 		else{
 			window.DRAWINGS.push(data);
 			if(window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == 'wall-door'){
-				undoArray.push(data);
+				undoArray.push([...data]);
 			}
 		}
 
@@ -2704,12 +2704,12 @@ function drawing_mouseup(e) {
 				 		window.wallTop];
 					window.DRAWINGS.push(data);
 					window.wallUndo.push({
-						undo: [data]
+						undo: [[...data]]
 					});
 			}
 			if(undoArray.length > 0){
 				window.wallUndo.push({
-					undo: undoArray
+					undo: [...undoArray]
 				});
 			}
 
@@ -2870,20 +2870,20 @@ function drawing_mouseup(e) {
 						if(window.DRAWFUNCTION === "door-door-convert"){
 							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][2] = window.DRAWCOLOR;
-							undoArray.push(window.DRAWINGS[j]);
+							undoArray.push([...window.DRAWINGS[j]]);
 							break;
 						}
 						else if(window.DRAWFUNCTION == 'wall-height-convert'){
 							redoArray.push([...window.DRAWINGS[j]]);
 							window.DRAWINGS[j][10] = window.wallBottom;
 							window.DRAWINGS[j][11] = window.wallTop;
-							undoArray.push(window.DRAWINGS[j]);
+							undoArray.push([...window.DRAWINGS[j]]);
 							break;
 						}
 						wallColor = window.DRAWINGS[j][2];
 						wallBottom = window.DRAWINGS[j][10];
 						wallTop = window.DRAWINGS[j][11];
-						redoArray.push(window.DRAWINGS[j]);
+						redoArray.push([...window.DRAWINGS[j]]);
 						window.DRAWINGS.splice(j, 1);
 						break;
 					}
@@ -2925,7 +2925,7 @@ function drawing_mouseup(e) {
 						 wallBottom, 
 						 wallTop];	
 						window.DRAWINGS.push(data);
-						undoArray.push(data);
+						undoArray.push([...data]);
 					}	
 					if(right != false){
 						if(wallLine[0].b.x > wallLine[0].a.x){
@@ -2953,7 +2953,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
-						undoArray.push(data);			
+						undoArray.push([...data]);			
 					}
 					if(top != false){
 						if(wallLine[0].a.y > wallLine[0].b.y){
@@ -2980,7 +2980,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);
-						undoArray.push(data);
+						undoArray.push([...data]);
 					
 					}
 					if(bottom != false){
@@ -3008,7 +3008,7 @@ function drawing_mouseup(e) {
 						 wallTop
 						 ];	
 						window.DRAWINGS.push(data);	
-						undoArray.push(data);				
+						undoArray.push([...data]);				
 					}
 				}
 					
@@ -3099,7 +3099,7 @@ function drawing_mouseup(e) {
 				 window.wallTop
 				 ];	
 				window.DRAWINGS.push(data);
-				undoArray.push(data);
+				undoArray.push([...data]);
 
 			}
 
@@ -3107,8 +3107,8 @@ function drawing_mouseup(e) {
 							
 		}
  		window.wallUndo.push({
-			undo: undoArray,
-			redo: redoArray
+			undo: [...undoArray],
+			redo: [...redoArray]
 		});
 
 		redraw_light_walls();
@@ -3852,11 +3852,11 @@ function save3PointRect(e){
 				window.wallTop];
 			}
 			window.DRAWINGS.push(data);
-			undoArray.push(data);
+			undoArray.push([...data]);
 		}
 
 		window.wallUndo.push({
-			undo: undoArray
+			undo: [...undoArray]
 		});
 			
 
@@ -4572,7 +4572,18 @@ function init_walls_menu(buttons){
         if(wallUndo){
         	if(wallUndo.undo != undefined){
 				for(let i in wallUndo.undo){
-	        		window.DRAWINGS = window.DRAWINGS.filter(d => d !== wallUndo.undo[i]);
+					let x = wallUndo.undo[i][3],
+					y = wallUndo.undo[i][4],
+					width = wallUndo.undo[i][5],
+					height = wallUndo.undo[i][6];
+
+					let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')];		
+					let doorInRedo = wallUndo.redo != undefined ? wallUndo.redo.filter(d=> d[3] == x && d[4] == y && d[5] == width && d[6] == height) : [];
+
+					if(doorInRedo.length == 0 && tokenObject != undefined && tokenObject.options.type == 'door'){
+						tokenObject.delete();
+					}
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => !wallUndo.undo[i].every((value, index) => value === d[index]));
 	        	}
 	        }
 	        if(wallUndo.redo != undefined){
@@ -5509,6 +5520,7 @@ function redraw_light(){
 			exploredCanvas.height = canvasHeight;
 
 			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.globalCompositeOperation='source-over';
 			exploredCanvasContext.fillStyle = "black";
 			exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
 			$(exploredCanvas).attr('id', 'exploredCanvas');
@@ -5519,8 +5531,10 @@ function redraw_light(){
 			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
 			 	if(event?.target?.result?.exploredData){
 				  	let img = new Image;
+
 					img.onload = function(){
 					  exploredCanvasContext.drawImage(img,0,0); 
+					  exploredCanvasContext.globalCompositeOperation='lighten';
 					  exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 					};
 					img.src = event.target.result.exploredData;
@@ -5529,6 +5543,7 @@ function redraw_light(){
 		}
 		else{
 			let exploredCanvasContext = exploredCanvas.getContext('2d');
+			exploredCanvasContext.globalCompositeOperation='lighten';
 			exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 
 
@@ -5689,11 +5704,11 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	lightCanvas.height =  $("#raycastingCanvas").height();
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
-	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(50, 50, 50, 1)', true);
+	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
 
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(50, 50, 50, 1)', true, 0)
+	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
 	
 
 	window.lightAuraClipPolygon[auraId] = {

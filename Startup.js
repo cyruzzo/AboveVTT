@@ -229,8 +229,8 @@ function sendBeyond20Event(name, ...args) {
 function addExtensionPathStyles(){ // some above server images moved out of extension package
   let styles = `<style id='aboveExtensionPathStyles'>
     body{
-      --onedrive-svg: url('${window.EXTENSION_PATH}images/Onedrive_Icon.svg');
-      --onedrive-mask: url('${window.EXTENSION_PATH}images/Onedrive_Icon.png');
+      --onedrive-svg: url('${window.EXTENSION_PATH}images/Onedrive_icon.svg');
+      --onedrive-mask: url('${window.EXTENSION_PATH}images/Onedrive_icon.png');
     }
     .aoe-style-fire{
       background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fire_background.png);

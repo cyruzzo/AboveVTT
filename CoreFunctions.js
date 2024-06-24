@@ -168,6 +168,7 @@ function deleteCurrentExploredScene(){
   let d = confirm("DELETE CURRENT SCENE EXPLORE DATA (CANNOT BE UNDONE)");
   if (d === true) {
     deleteExploredScene(window.CURRENT_SCENE_DATA.id)
+
   }
 }
 
@@ -181,6 +182,7 @@ function deleteExploredScene(sceneId){
         let exploredCanvas = $('#exploredCanvas')
         if(exploredCanvas.length > 0){
           let exploredCanvasContext = exploredCanvas[0].getContext('2d');
+          exploredCanvasContext.globalCompositeOperation ='source-over';
           exploredCanvasContext.fillStyle = "black";
           exploredCanvasContext.fillRect(0,0,exploredCanvas[0].width,exploredCanvas[0].height); 
         }
@@ -946,6 +948,7 @@ function updateImgSrc(url, container, video){
     else{
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
+    container.attr('src', url);
 
   }
   else if(url?.includes('google')){
@@ -969,6 +972,7 @@ function updateTokenSrc(url, container, video=false){
     else{
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
+    container.attr('src', url);
   }
   else{
     container.attr('src', url);

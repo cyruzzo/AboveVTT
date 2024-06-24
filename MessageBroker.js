@@ -349,7 +349,40 @@ class MessageBroker {
 												});
 												li.find('.chat-link').css('display', 'none');
 											}
-										}		
+										}
+										$(img[i]).off('error').on("error", function (e) {
+					            let el = $(e.target)
+					            let cur = el.attr("data-current-avatar-url");
+					            if(cur != undefined){
+					            	let nextUrl;
+						            if (cur === "largeAvatarUrl") {
+						                nextUrl = el.attr("data-large-avatar-url");
+						                try {
+						                    let parts = nextUrl.split("/");
+						                    parts[parts.length - 2] = "1000";
+						                    parts[parts.length - 3] = "1000";
+						                    nextUrl = parts.join("/");
+						                    el.attr("data-current-avatar-url", "hacky");
+						                } catch (error) {
+						                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
+						                    nextUrl = el.attr("data-avatar-url");
+						                    el.attr("data-current-avatar-url", "avatarUrl");
+						                }
+						            } else if (cur === "hacky") {
+						                nextUrl = el.attr("data-avatar-url");
+						                el.attr("data-current-avatar-url", "avatarUrl");
+						            } else if (cur === "avatarUrl") {
+						                nextUrl = el.attr("data-basic-avatar-url");
+						                el.attr("data-current-avatar-url", "basicAvatarUrl");
+						            } else {
+						                console.warn("imageHtml failed to load image", el, e);
+						                return;
+						            }
+						            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+						            el.attr("src", nextUrl);
+						            el.attr("href", nextUrl);
+						          }            
+					        	});		
 									}
 									else if($(img[i]).is('video')){
 										$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
@@ -1494,6 +1527,11 @@ class MessageBroker {
 				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
 			}
 			let t = new Token(data);
+			if(isNaN(parseFloat(t.options.left)) || isNaN(parseInt(t.options.top))){ // prevent errors with NaN positioned tokens - delete them as catch all. 
+				t.options.deleteableByPlayers = true;
+				t.delete();
+				return;
+			}
 			window.TOKEN_OBJECTS[data.id] = t;
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;

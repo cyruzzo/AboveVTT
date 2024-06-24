@@ -1711,7 +1711,7 @@ padding-bottom: 5px;
 #tokens .underDarkness.labelToken.hasTooltip:hover:after{
     content:'';
 }
-.definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
+#token_map_items .definitelyNotAToken.hasTooltip.VTTToken:not(.labelToken)::after{
     display:none;
 }
 .dead {
@@ -2789,13 +2789,15 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     mix-blend-mode: lighten;
     opacity: 0.3; 
     z-index: 23;
-    filter: brightness(3) blur(calc(5px* var(--scene-scale)));
+    filter: brightness(3) blur(calc(3px / var(--scene-scale)));
 }
 
 .body-rpgcharacter-sheet #raycastingCanvas{
     opacity: 1;
 }
-
+.beyond20-quick-roll-tooltip{
+    z-index: 120 !important; /*for beyond20 flyouts to be above character sheet*/
+}
 #outer_light_container{
     mix-blend-mode:lighten;
     opacity:1;
@@ -4839,9 +4841,10 @@ div.sidebar__pane-content div.tooltip::after {
     pointer-events: none;
     z-index: 1;
 }
-.token img, .token [data-img], .token .token-image{
+.token img:not(.note-condition), .token [data-img], .token .token-image{
     pointer-events:none !important;
 }
+
 .set-conditions-button .tooltip-hover,
 .remove-conditions-button .tooltip-hover{
     pointer-events:none;
@@ -6265,10 +6268,13 @@ button span.onedrive-btn-status{
     width: 23px;
     padding: 0px !important;
     height: 21px;
-    top: -4px;
 }
 #sounds-panel button.dropboxChooser span, #sounds-panel button.launchPicker span{
     top: 2px;
+}
+
+#sounds-panel .sidebar-panel-body>button{
+    vertical-align:top;
 }
 
 .addTokenMenu {
