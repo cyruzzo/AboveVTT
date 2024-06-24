@@ -1490,7 +1490,7 @@ function redraw_elev() {
 	}
 }
 function open_elev_legend(){
-	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content');
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px');
 	elevationWindow.find('.elevationLegendDiv').remove();
 
 
@@ -4677,7 +4677,7 @@ function init_elev_menu(buttons){
 	elev_menu.append(
 		`<div>
 			<input id='elev_height' type='number' step='5' data-required="elev_height" style='width:90%'
-			value='' >
+			value='0' >
 		</div>`);
 	elev_menu.append(`<div class='ddbc-tab-options--layout-pill'>
 			<button id='elev_legend' class='legend menu-option ddbc-tab-options__header-heading'

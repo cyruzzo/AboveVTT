@@ -964,13 +964,14 @@ div#scene_selector,
 }
 .elevationLegendDiv{
     top: -5px;
-    left: 0px;
+    left: -1px;
     position: relative;
     color: #000;
     border: 1px solid #ddd;
     border-radius: 5px;
     border-top: none;
     padding: 8px;
+    width: calc(100% + 2px);
 }
 .elevationLegendDiv .row{
     display: flex;
