@@ -1336,10 +1336,11 @@ function redraw_drawings() {
 		let isFilled = fill === 'filled';
 		
 		if(drawings[i][1] =='elev'){
-		  let arr = window.elevHeights != undefined && window.elevHeights != {} ? Object.values(window.elevHeights) : [0];
+		  let arr = window.elevHeights != undefined && Object.keys(window.elevHeights).length != 0 ? Object.values(window.elevHeights) : [50];
 		  let max = Math.max(...arr) ;
 		  let min = Math.min(...arr);
 		  max = Math.max(Math.abs(min), max);
+
 		  color = numToColor(color, 0.8, max);
 		}
 
@@ -1424,10 +1425,10 @@ function redraw_elev() {
 
 	offscreenDraw.width = canvas.width;
 	offscreenDraw.height = canvas.height;
-	let elevColorArr = drawings.length > 0 ? window.DRAWINGS.filter(d => d[1] == 'elev').map(d=> d[2]) : [0]
+	let elevColorArr = drawings.length > 0 ? drawings.map(d=> d[2]) : [50]
 	let maxHeight = Math.max(...elevColorArr);
 	let minHeight = Math.min(...elevColorArr);
-	maxHeight = Math.max(Math.abs(minHeight), maxHeight);
+	maxHeight = maxHeight == 0 && minHeight == 0 ? 50 : Math.max(Math.abs(minHeight), maxHeight);
 
 
 	for (let i = 0; i < drawings.length; i++) {
@@ -2128,7 +2129,7 @@ function drawing_mousedown(e) {
 		}		
 	}
 	else if(window.DRAWFUNCTION === 'elev'){
-		let elevColorArr = window.elevHeights != undefined && window.elevHeights != {} ? Object.values(window.elevHeights) : [0];
+		let elevColorArr = window.elevHeights != undefined && Object.keys(window.elevHeights).length != 0 ? Object.values(window.elevHeights) : [50];
 		let maxHeight = Math.max(...elevColorArr);
 		let minHeight = Math.min(...elevColorArr);
 		maxHeight = Math.max(Math.abs(minHeight), maxHeight);
