@@ -74,7 +74,7 @@ class AboveApi {
       else
         response.playerscene = response.playerscene.players;
     }
-
+    window.splitPlayerScenes = response.playerscene
     return response;
   }
 
