@@ -1108,7 +1108,7 @@ function reset_canvas(apply_zoom=true) {
 	redraw_drawn_light();
 	redraw_light();
 	redraw_fog();
-
+	redraw_elev();
 
 
  	delete window.lightAuraClipPolygon;
@@ -3930,7 +3930,7 @@ function save3PointRect(e){
 	}
 	clear_temp_canvas()
 
-	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall") {
+	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall" || window.DRAWFUNCTION === 'elev') {
 		sync_drawings();
 	} else {
 		sync_fog();
@@ -3989,7 +3989,7 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	if (window.DRAWFUNCTION === "draw") {
+	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'elev') {
 		sync_drawings();
 	} else {
 		sync_fog();
