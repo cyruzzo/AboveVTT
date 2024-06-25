@@ -195,6 +195,11 @@ class DDBApi {
     return await DDBApi.fetchCharacterDetails(characterIds);
   }
 
+  static async fetchCampaignUserDetails(campaignId = window.gameId){
+    let request = await DDBApi.fetchJsonWithToken(`https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${campaignId}`);
+    return request.data;
+  }
+
   static async fetchCharacterDetails(characterIds) {
     if (!Array.isArray(characterIds) || characterIds.length === 0) {
       console.warn("DDBApi.fetchCharacterDetails expected an array of ids, but received: ", characterIds);

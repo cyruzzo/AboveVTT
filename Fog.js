@@ -5048,7 +5048,7 @@ function redraw_light(){
 		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
 
-			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
+			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 		  		selectedIds.push(tokenId)
 		}	  	
 	}
@@ -5159,11 +5159,11 @@ function redraw_light(){
 			
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
 				
-				let hideVisionWhenNoPlayerToken = (playerTokenId == undefined && window.TOKEN_OBJECTS[auraId].options.share_vision != true && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
+				let hideVisionWhenNoPlayerToken = (playerTokenId == undefined && !window.TOKEN_OBJECTS[auraId].options.share_vision && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
 				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
 					return resolve();//we don't want to draw this tokens vision no need for further checks - go next token.
 				
-				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && playerTokenId != undefined)
+				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && !window.DM && window.TOKEN_OBJECTS[auraId].options.share_vision != true && window.TOKEN_OBJECTS[auraId].options.share_vision != window.myUser && playerTokenId != undefined)
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
@@ -5412,7 +5412,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	
 	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0 || $(`.tokenselected`).length == 0)
 
-	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || window.TOKEN_OBJECTS[auraId].options.share_vision || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || window.TOKEN_OBJECTS[auraId].options.share_vision == true || window.TOKEN_OBJECTS[auraId].options.share_vision == window.myUser || auraId.includes(window.PLAYER_ID) || ((window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' || window.TOKEN_OBJECTS[auraId].options.share_vision != false) && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] != undefined){
