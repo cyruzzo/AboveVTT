@@ -3048,6 +3048,8 @@ function drawing_contextmenu(e) {
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
 	if (window.DRAWSHAPE === "polygon") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
 		if(window.BEGIN_MOUSEX.length > 0){
 			let canvas = document.getElementById("temp_overlay");
 			let ctx = canvas.getContext("2d");
