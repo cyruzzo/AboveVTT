@@ -1528,8 +1528,8 @@ function redraw_light_walls(clear=true){
 				draw_text(
 				    ctx,
 				    undefined,
-					((x+width)/2-(10 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor))),
-					((y+height)/2),
+					((x+width)/2-(10 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor))) / adjustedScale,
+					((y+height)/2) / adjustedScale,
 				    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
 				    30 * parseFloat(window.CURRENT_SCENE_DATA.scale_factor),
 				    `${wallBottom && wallBottom != '' ? `B: ${wallBottom}` : ``} \n ${wallTop && wallTop != '' ? `T: ${wallTop}`: ``}`,
