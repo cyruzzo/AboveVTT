@@ -2536,7 +2536,8 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION == "reveal" ||
 		window.DRAWFUNCTION == "hide" ||
 		window.DRAWFUNCTION == "draw_text" ||
-		window.DRAWFUNCTION === "select") && e.which !== 1 && !e.touches)
+		window.DRAWFUNCTION === "select" || 
+		window.DRAWFUNCTION == "elev") && e.which !== 1 && !e.touches)
 	{
 		return;
 	}
@@ -3264,7 +3265,7 @@ function drawing_contextmenu(e) {
 			clear_temp_canvas();
 		}
 	}
-	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "elev") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
