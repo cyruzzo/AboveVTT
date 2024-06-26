@@ -2024,7 +2024,7 @@ function numToColor(num, alpha, max) {
     let valueAsPercentageOfMax = num / max;
 	// actual max is 16777215 but represnts white so we will take a max that is
 	// below this to avoid white
-	let MAX_RGB_INT = 256;
+	let MAX_RGB_INT = 255;
 	let valueFromMaxRgbInt = Math.floor(MAX_RGB_INT * valueAsPercentageOfMax);
 	  
 	  
