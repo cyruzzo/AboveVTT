@@ -1403,7 +1403,7 @@ function redraw_drawings() {
 
 	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
-function redraw_elev() {
+function redraw_elev(openLegened = false) {
 	window.elevHeights = {};
 	let canvas = document.getElementById("elev_overlay");
 	let ctx = canvas.getContext("2d");
@@ -1416,6 +1416,7 @@ function redraw_elev() {
 	else{
 		$('#elev_overlay').css('display', 'none');
 	}
+
 	const drawings = window.DRAWINGS.filter(d => d[1] == 'elev')
 		
 	 
@@ -1486,12 +1487,12 @@ function redraw_elev() {
 	}
 
 	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
-	if($('#elev_legend_window').length>0){
+	if($('#elev_legend_window').length>0 || openLegened == true){
 		open_elev_legend()
 	}
 }
 function open_elev_legend(){
-	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px');
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px', false);
 	elevationWindow.find('.elevationLegendDiv').remove();
 
 
@@ -1501,10 +1502,17 @@ function open_elev_legend(){
 							    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 	for(let i in legendHeights){
 		let row = $(`<div class='row'><div class='row-color' style='background: ${i};'></div><div>${window.elevHeights[i]}</div></div>`)
+		row.off('click.legendRow').on('click.legendRow', `.row-color`, function(){
+			$('input#elev_height').val(`${window.elevHeights[i]}`)
+		});
 		legend.append(row);
 	}
 
 	elevationWindow.append(legend);
+}
+
+function close_elev_legend(){
+	close_and_cleanup_generic_draggable_window('elev_legend_window')
 }
 
 function check_token_elev(tokenid, elevContext=undefined){
@@ -3426,8 +3434,28 @@ function handle_drawing_button_click() {
 
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
-			redraw_light_walls();
-			redraw_elev();
+			if($(clicked).is("#wall_button")){
+				redraw_light_walls();
+			}
+			else{
+				$(`[id*='wallHeight']`).remove();
+				let showWallsToggle = $('#show_walls').hasClass('button-enabled');
+				let displayWalls = showWallsToggle == true || $('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')
+				if(displayWalls){
+					$('#walls_layer').css('display', '');
+				}
+				else{
+					$('#walls_layer').css('display', 'none');
+				}
+			}
+			if($(clicked).is("#elev_button")){
+				redraw_elev(true);
+			}	
+			else{
+				$('#elev_overlay').css('display', 'none');
+				close_elev_legend();
+			}
+			
 		}
 		let target =  $("#temp_overlay, #black_layer")
 		data = {
@@ -4669,7 +4697,8 @@ function init_elev_menu(buttons){
 	elev_menu.append(`<div class='ddbc-tab-options--layout-pill'>
 			<button id='elev_legend' class='legend menu-option ddbc-tab-options__header-heading'
 				data-shape='Legend' data-function="Legend" data-unique-with="Legend">
-					Legend </button>
+					Legend
+			</button>
 		</div>`)
 	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
 	elev_menu.append(`
