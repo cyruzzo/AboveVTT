@@ -1506,29 +1506,14 @@ function open_elev_legend(){
 
 	elevationWindow.append(legend);
 }
-function check_all_token_map_elev(elevContext=undefined){
+
+function check_token_elev(tokenid, elevContext=undefined){
 	if(elevContext == undefined){
 		elevContext = $('#elev_overlay')[0].getContext('2d');
 	}
-	for(let id in window.TOKEN_OBJECTS){
-		let token = window.TOKEN_OBJECTS[id];
-
-		let left = (parseInt(token.options.left.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-		let top = (parseInt(token.options.top.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-		let pixeldata = elevContext.getImageData(left, top, 1, 1).data;
-		let mapElev =`rgba(${pixeldata[0]},${pixeldata[1]},${pixeldata[2]},1)`;
-
-		if(window.elevHeights != undefined && mapElev != undefined){
-			token.options.mapElev = window.elevHeights[mapElev] != undefined && window.elevHeights[mapElev] != '' ? window.elevHeights[mapElev] : 0;
-		}
-	}
-}
-function is_token_elevated(tokenid, elevContext=undefined){
-	if(elevContext == undefined){
-		elevContext = $('#elev_overlay')[0].getContext('2d');
-	}
-	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
-	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let token = window.TOKEN_OBJECTS[tokenid];
+	let left = (parseInt(token.options.left.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let top = (parseInt(token.options.top.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = elevContext.getImageData(left, top, 1, 1).data;
 	let mapElev =`rgba(${pixeldata[0]},${pixeldata[1]},${pixeldata[2]},1)`;
 
@@ -5073,7 +5058,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	}
-	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;;
+	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
 	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
 
 	let prevClosestWall = null;
@@ -5246,7 +5231,7 @@ function detectInLos(x, y) {
 function redraw_light(){
 	let startTime = Date.now();
 
-	check_all_token_map_elev();
+	
 
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
@@ -5388,7 +5373,8 @@ function redraw_light(){
 
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
-	
+	let elevContext = $('#elev_overlay')[0].getContext('2d');
+
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
 			let currentLightAura = $(light_auras[i]);
@@ -5417,13 +5403,13 @@ function redraw_light(){
 			}
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length && 
-				window.lineOfSightPolygons[auraId].elev == window.TOKEN_OBJECTS[auraId].options.elev){
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				
 			}
 			else{
+				check_token_elev(auraId);
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId)  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
