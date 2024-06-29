@@ -1264,7 +1264,7 @@ function areArraysEqualSets(a1, a2) {
 }
 
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='') {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -1368,7 +1368,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     },
     stop: function(event, ui) {
       $('.iframeResizeCover').remove();
-    }
+    },
+    cancel: cancelClasses
   });
 
   titleBar.on('dblclick', function(event) {

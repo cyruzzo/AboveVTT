@@ -1492,7 +1492,7 @@ function redraw_elev(openLegened = false) {
 	}
 }
 function open_elev_legend(){
-	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px', false);
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px', false, '.row-color');
 	elevationWindow.find('.elevationLegendDiv').remove();
 
 
@@ -1502,7 +1502,8 @@ function open_elev_legend(){
 							    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 	for(let i in legendHeights){
 		let row = $(`<div class='row'><div class='row-color' style='background: ${i};'></div><div>${window.elevHeights[i]}</div></div>`)
-		row.off('click.legendRow').on('click.legendRow', `.row-color`, function(){
+		row.off('click.legendRow').on('click.legendRow', `.row-color`, function(e){
+			e.stopPropagation();
 			$('input#elev_height').val(`${window.elevHeights[i]}`)
 		});
 		legend.append(row);
