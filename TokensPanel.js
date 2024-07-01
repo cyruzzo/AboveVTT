@@ -1646,8 +1646,9 @@ function register_token_row_context_menu() {
                             };
                             sceneIds[playerId] = window.CURRENT_SCENE_DATA.id
                         }
-
+                        window.splitPlayerScenes = sceneIds;
                         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+                        did_update_scenes();
                     }
                 }
             }

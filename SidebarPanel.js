@@ -1481,6 +1481,8 @@ function build_sidebar_list_row(listItem) {
         if(playerScene.playlist != undefined  && playerScene.playlist != 0 && window.MIXER.state().playlists[playerScene.playlist] != undefined){
           window.MIXER.setPlaylist(playerScene.playlist)
         }
+        window.splitPlayerScenes = {};
+        $('#scenes-panel .sidebar-list-item-row-details~img').remove();
         add_zoom_to_storage()
       });
       rowItem.append(switch_dm);
