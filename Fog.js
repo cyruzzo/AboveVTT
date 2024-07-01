@@ -1475,12 +1475,12 @@ function redraw_elev(openLegened = false) {
 			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
 		}
 		if (shape == "polygon") {
-			clearPolygon(targetCtx, x, scale);
+			clearPolygon(targetCtx, x, scale,true);
 			drawPolygon(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);
 			// ctx.stroke();
 		}
 		if(shape == "3pointRect"){
-			clear3PointRect(targetCtx, x, scale);	
+			clear3PointRect(targetCtx, x, scale,true);	
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
 					
@@ -3435,7 +3435,7 @@ function handle_drawing_button_click() {
 
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
-			if($(clicked).is("#wall_button")){
+			if($(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')){
 				redraw_light_walls();
 			}
 			else{
@@ -3449,7 +3449,7 @@ function handle_drawing_button_click() {
 					$('#walls_layer').css('display', 'none');
 				}
 			}
-			if($(clicked).is("#elev_button")){
+			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active')){
 				redraw_elev(true);
 			}	
 			else{
