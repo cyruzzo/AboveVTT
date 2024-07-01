@@ -1746,17 +1746,29 @@ function build_token_light_inputs(tokenIds, door=false) {
 
 	const revealvisionOption = {
 		name: "share_vision",
-		label: "Share vision with all players",
-		type: "toggle",
+		label: "Share vision",
+		type: "dropdown",
 		options: [
 			{ value: false, label: "Disabled", description: "Token vision is not shared." },
-			{ value: true, label: "Enabled", description: "Token vision is shared with all players." },
+			{ value: true, label: "All Players", description: "Token vision is shared with all players." },
 		],
 		defaultValue: false
 	};
-	let revealVisionInput = build_toggle_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
+
+	for(let i in window.playerUsers){
+		if(!revealvisionOption.options.some(d => d.value == window.playerUsers[i].userId)){
+			let option = {value: window.playerUsers[i].userId, label: window.playerUsers[i].userName, desciption: `Token vision is shared with ${window.playerUsers[i].userName}`}
+			revealvisionOption.options.push(option)
+		}
+
+	}
+	let revealVisionInput = build_dropdown_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
 		console.log(`${name} setting is now ${newValue}`);
 		tokens.forEach(token => {
+			if(newValue == 'true')
+                newValue = true;
+            else if(newValue == 'false')
+                newValue = false;
 			token.options[name] = newValue;
 			token.place_sync_persist();
 		});
