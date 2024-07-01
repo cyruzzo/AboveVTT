@@ -2436,6 +2436,12 @@ function init_ui() {
 	walls.css("left", "0");
 	walls.css("z-index", "19");
 
+	const elev = $("<canvas id='elev_overlay'></canvas>");
+	elev.css("position", "absolute");
+	elev.css("top", "0");
+	elev.css("left", "0");
+	elev.css("z-index", "19");
+
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2531,6 +2537,7 @@ function init_ui() {
 	VTT.append(textDiv);
 	VTT.append(tempOverlay);
 	VTT.append(walls);
+	VTT.append(elev);
 	mapItems.append(tokenMapItems);
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
@@ -2737,6 +2744,7 @@ function init_buttons() {
 	if (window.DM) {
 		init_fog_menu(buttons)
 		init_walls_menu(buttons)
+		init_elev_menu(buttons)
 		init_vision_menu(buttons)
 	}
 	init_draw_menu(buttons)

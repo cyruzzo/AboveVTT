@@ -643,6 +643,7 @@ class MessageBroker {
 				redraw_light_walls();		
 				redraw_drawn_light();
 				redraw_drawings();
+				redraw_elev();
 				redraw_text();
 				await redraw_light();
 				check_token_visibility();
@@ -653,6 +654,7 @@ class MessageBroker {
 				redraw_light_walls();
 				setTimeout(async function(){
 					redraw_drawn_light();
+					redraw_elev();
 					redraw_drawings();
 					redraw_text();
 					await redraw_light();

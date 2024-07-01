@@ -369,6 +369,7 @@ Mousetrap.bind('[', function(e) {
 
 function handle_undo(){
     const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
+
     if ($("#select-button").hasClass(buttonSelectedClasses)){
         undo_delete_tokens();
     }
@@ -383,6 +384,9 @@ function handle_undo(){
     }
     else if(($("#wall_button").hasClass(buttonSelectedClasses))){
         $("#wall_undo").click()
+    }
+    else if(($("#elev_button").hasClass(buttonSelectedClasses))){
+        $("#elev_undo").click()
     }
 
 }

@@ -670,6 +670,12 @@ async function rebuild_window_pcs() {
   });
 }
 
+async function rebuild_window_users() {
+  window.playerUsers = await DDBApi.fetchCampaignUserDetails(window.gameId);
+  let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
+  window.myUser = playerUser ? playerUser : 'THE_DM'; 
+}
+
 function update_pc_with_data(playerId, data) {
   if (data.constructor !== Object) {
     console.warn("update_pc_with_data was given invalid data", playerId, data);
@@ -1258,7 +1264,7 @@ function areArraysEqualSets(a1, a2) {
 }
 
 
-function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``) {
+function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='') {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);
   const existing = id.startsWith("#") ? $(id) : $(`#${id}`);
   if (existing.length > 0) {
@@ -1267,13 +1273,13 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
 
   const container = $(`<div class="resize_drag_window" id="${id}"></div>`);
   container.css({
-    "left": "10%",
-    "top": "10%",
+    "left": left,
+    "top": top,
     "max-width": "100%",
     "max-height": "100%",
     "position": "fixed",
-    "height": "80%",
-    "width": "80%",
+    "height": height,
+    "width": width,
     "z-index": "10000",
     "display": "none"
   });
@@ -1288,8 +1294,12 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
       "height": "calc(100% - 25px)"
     });
   }
-
-  container.show("slow")
+  if(showSlow){
+    container.show("slow");
+  }
+  else{
+    container.show();
+  }
   container.resize(function(e) {
     e.stopPropagation();
   });
@@ -1358,7 +1368,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     },
     stop: function(event, ui) {
       $('.iframeResizeCover').remove();
-    }
+    },
+    cancel: cancelClasses
   });
 
   titleBar.on('dblclick', function(event) {
