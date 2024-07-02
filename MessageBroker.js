@@ -1155,6 +1155,7 @@ class MessageBroker {
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
 				}
+
 				if(msg.data.rolls != undefined){
 					let critSuccess = {};
 					let critFail = {};
@@ -1239,7 +1240,16 @@ class MessageBroker {
 									row++;
 								}
 								target.find(`[class*='DiceResultContainer']:nth-of-type(${row})`).toggleClass(`${critSuccess[i] && critFail[i] ? 'crit-mixed' : critSuccess[i] ? 'crit-success' : critFail[i] ? 'crit-fail' : ''}`, true)
-								
+								if(msg.avttSpellSave !== undefined){
+							
+									let totalContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
+							    if (totalContainer.length > 0) {
+							        let spellSave = msg.avttSpellSave;
+							        if (spellSave !== undefined && spellSave.length > 0) {
+							            totalContainer.append(`${spellSave != undefined ? `<div class='custom-spell-save-text'><span class='data-spellSave' data-avtt-spellSave='${spellSave}'>${spellSave}</span></div>` : ''}`);
+							        }
+							    }
+								}
 							}
 						}
 						

@@ -3273,7 +3273,7 @@ div#selectedTokensBorder {
   }
 .above-vtt-container-roll-output{
     position: absolute;
-    top: 9px;
+    top: 33%;
     left: 0px;
     width: 220px;
     text-wrap: nowrap;
@@ -6853,7 +6853,13 @@ button span.onedrive-btn-status{
     color:#4768ff !important;
 }
 
-
+[class*="glc-game-log"] div[class*="TotalContainer-Flex"] .custom-spell-save-text span{
+    color: #716f6f !important;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 10px;
+    text-wrap: nowrap;
+}
 .glc-game-log>div>div[class*="-Title"] {
     margin-bottom: 7px;
 }
