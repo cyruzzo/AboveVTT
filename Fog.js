@@ -3438,19 +3438,13 @@ function handle_drawing_button_click() {
 
 		stop_drawing();
 		if(window.CURRENT_SCENE_DATA != undefined){
-			if($(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')){
+			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
 				redraw_light_walls();
 			}
 			else{
 				$(`[id*='wallHeight']`).remove();
-				let showWallsToggle = $('#show_walls').hasClass('button-enabled');
-				let displayWalls = showWallsToggle == true || $('#wall_button').hasClass('button-enabled') || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')
-				if(displayWalls){
-					$('#walls_layer').css('display', '');
-				}
-				else{
-					$('#walls_layer').css('display', 'none');
-				}
+				$('#walls_layer').css('display', 'none');
+				
 			}
 			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active')){
 				redraw_elev(true);
@@ -3848,7 +3842,6 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
-	redraw_light_walls();
 }
 
 function save3PointRect(e){
@@ -4261,9 +4254,6 @@ function init_fog_menu(buttons){
 	fog_menu.css("width", "90px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
-	fog_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
@@ -4355,10 +4345,6 @@ function init_draw_menu(buttons){
 			</button>
 		</div>`);
 	}
-
-	draw_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
             id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#e66465'}'/>
@@ -4699,9 +4685,6 @@ function init_elev_menu(buttons){
 				 	Bucket Fill
 			</button>
 		</div>`);
-	elev_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	elev_menu.append("<div class='elev-input menu-subtitle'>Elevation</div>");
 	elev_menu.append(
 		`<div>
@@ -4842,9 +4825,6 @@ function init_vision_menu(buttons){
 				 	Bucket Fill
 			</button>
 		</div>`);
-	vision_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	vision_menu.append(`<div class='menu-subtitle'>Color Choice</div>`);
 	vision_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
