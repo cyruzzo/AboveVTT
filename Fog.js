@@ -1459,7 +1459,7 @@ function redraw_elev(openLegened = false) {
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if(shape =="rect" || shape == "arc"){
+		if(shape == "rect" || shape == "arc" || shape == "paint-bucket"){
 			x = x / adjustedScale;
 			y = y / adjustedScale;
 			height = height / adjustedScale;
@@ -1482,6 +1482,9 @@ function redraw_elev(openLegened = false) {
 		if(shape == "3pointRect"){
 			clear3PointRect(targetCtx, x, scale,true);	
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
+		if(shape == "paint-bucket"){
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false);
 		}
 					
 	}
@@ -4689,6 +4692,16 @@ function init_elev_menu(buttons){
 					Circle
 			</button>
 		</div>`);
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='paint-bucket' data-function="elev" data-unique-with="draw">
+				 	Bucket Fill
+			</button>
+		</div>`);
+	elev_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
+		redraw_light_walls();
+	});
 	elev_menu.append("<div class='elev-input menu-subtitle'>Elevation</div>");
 	elev_menu.append(
 		`<div>
@@ -5121,7 +5134,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    for (let j = 0; j < walls.length; j++) {
 	      let wallTop = walls[j].wallTop && walls[j].wallTop != '' ? parseInt(walls[j].wallTop) : Infinity;
 	      let wallBottom = walls[j].wallBottom && walls[j].wallBottom != '' ? parseInt(walls[j].wallBottom) : -Infinity;
-	      if(tokenElev < wallBottom || tokenElev >= wallTop)
+	      if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 	      	continue;
 	      pt = window.PARTICLE.rays[i].cast(walls[j]);
 	      
