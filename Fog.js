@@ -3661,7 +3661,6 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
-	redraw_light_walls();
 }
 
 function save3PointRect(e){
