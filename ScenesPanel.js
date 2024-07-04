@@ -2106,6 +2106,23 @@ async function redraw_scene_list(searchTerm) {
 		.forEach(item => { promises.push(new Promise(async (resolve, reject) => {
 				let row = await build_sidebar_list_row(item);
 				let folder = $(`#${item.parentId} > .folder-item-list`);
+				if(window.splitPlayerScenes != undefined && Object.values(window.splitPlayerScenes).length>1){
+					for(let i in window.splitPlayerScenes){
+						if(i != 'players' && window.splitPlayerScenes[i] == item.id){
+							let listItem = list_item_from_player_id(i);
+							let tokenOptions = find_token_options_for_list_item(listItem);
+							playerImage = tokenOptions.alternativeImages != undefined ? tokenOptions.alternativeImages[0] : listItem.image;
+							let tokenImg = $(`<img src='${playerImage}'></img>`)
+							tokenImg.css({
+								width: '15px',
+								height: '15px',
+								position: 'relative',
+							})
+							row.find('.sidebar-list-item-row-details').after(tokenImg);
+						}
+					}
+					
+				}
 				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 				if (folder.length > 0) {
 					console.debug("appending scene item", item, folder);
