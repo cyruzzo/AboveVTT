@@ -3629,9 +3629,13 @@ function setTokenLight (token, options) {
 			options.hidden ? token.parent().parent().find("#vision_" + tokenId).hide()
 						: token.parent().parent().find("#vision_" + tokenId).show()
 		}
-		token.parent().parent().find("#light_" + tokenId).show()
+		if(totalSize > 0){
+			token.parent().parent().find("#light_" + tokenId).show()		
+		}
+		else{
+			token.parent().parent().find("#light_" + tokenId).hide()
+		}
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
-		
 	} else {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 	}

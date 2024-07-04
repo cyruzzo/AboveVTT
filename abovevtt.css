@@ -787,7 +787,9 @@ select#doorTypeSelectUVTT{
 #fog_overlay{
   pointer-events:none;
 }
-
+#elev_overlay{
+    opacity: 0.5;
+}
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw {
@@ -964,10 +966,30 @@ div#scene_selector,
 #mega_importer,
 #prewiz,
 #wizard_popup,
-.top_menu {
+.top_menu,
+.elevationLegendDiv {
     background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
 }
-
+.elevationLegendDiv{
+    top: -5px;
+    left: -1px;
+    position: relative;
+    color: #000;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    border-top: none;
+    padding: 8px;
+    width: calc(100% + 2px);
+}
+.elevationLegendDiv .row{
+    display: flex;
+    flex-direction: row;
+}
+.elevationLegendDiv .row .row-color{
+    height: 20px;
+    width: 20px;
+    margin-right:5px;
+}
 #edit_dialog {
     top: 5px;
     right: 0;

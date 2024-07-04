@@ -1083,6 +1083,7 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
 	ctxScale('walls_layer');
+	ctxScale('elev_overlay');
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -1107,7 +1108,7 @@ function reset_canvas(apply_zoom=true) {
 	redraw_drawn_light();
 	redraw_light();
 	redraw_fog();
-
+	redraw_elev();
 
 
  	delete window.lightAuraClipPolygon;
@@ -1319,8 +1320,10 @@ function redraw_drawings() {
 	let ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall" && d[1] !== 'light')
-	
+	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall" && d[1] !== 'light' && d[1] !== 'elev')
+		
+	 
+
 	let offscreenDraw = document.createElement('canvas');
 	let offscreenContext = offscreenDraw.getContext('2d');
 
@@ -1332,7 +1335,14 @@ function redraw_drawings() {
 		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
+		if(drawings[i][1] =='elev'){
+		  let arr = window.elevHeights != undefined && Object.keys(window.elevHeights).length != 0 ? Object.values(window.elevHeights) : [50];
+		  let max = Math.max(...arr) ;
+		  let min = Math.min(...arr);
+		  max = Math.max(Math.abs(min), max);
 
+		  color = numToColor(color, 0.8, max);
+		}
 
 		let targetCtx = offscreenContext;
 
@@ -1392,6 +1402,136 @@ function redraw_drawings() {
 	}
 
 	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+}
+function redraw_elev(openLegened = false) {
+	window.elevHeights = {};
+	let canvas = document.getElementById("elev_overlay");
+	let ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.setLineDash([]);
+	let displayElev = $('#elev_button').hasClass('button-enabled')
+	if(displayElev){
+		$('#elev_overlay').css('display', '');
+	}
+	else{
+		$('#elev_overlay').css('display', 'none');
+	}
+
+	const drawings = window.DRAWINGS.filter(d => d[1] == 'elev')
+		
+	 
+
+	let offscreenDraw = document.createElement('canvas');
+	let offscreenContext = offscreenDraw.getContext('2d');
+
+	offscreenDraw.width = canvas.width;
+	offscreenDraw.height = canvas.height;
+	let elevColorArr = drawings.length > 0 ? drawings.map(d=> d[2]) : [50]
+	let maxHeight = Math.max(...elevColorArr);
+	let minHeight = Math.min(...elevColorArr);
+	maxHeight = maxHeight == 0 && minHeight == 0 ? 50 : Math.max(Math.abs(minHeight), maxHeight);
+
+
+	for (let i = 0; i < drawings.length; i++) {
+		let drawing_clone = $.extend(true, [], drawings[i]);
+		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		fill = 'filled';
+		let isFilled = true;
+		
+		let mapElev = color;
+
+		color = numToColor(color, 1, maxHeight);
+		
+		window.elevHeights[color] = mapElev;
+
+		let targetCtx = offscreenContext;
+
+		if(fill == 'dot'){
+			targetCtx.setLineDash([lineWidth, 3*lineWidth])
+		}
+		else if(fill == 'dash'){
+			targetCtx.setLineDash([5*lineWidth, 5*lineWidth])
+		}
+		else{
+			targetCtx.setLineDash([])
+		}
+
+		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
+		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(shape == "rect" || shape == "arc" || shape == "paint-bucket"){
+			x = x / adjustedScale;
+			y = y / adjustedScale;
+			height = height / adjustedScale;
+			width = width / adjustedScale;
+		}
+		if (shape == "rect") {
+			targetCtx.clearRect(x, y, width, height);
+			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
+		}
+		if (shape == "arc") {
+			const radius = width
+			clearCircle(targetCtx, x, y, radius);
+			drawCircle(targetCtx,x, y, radius, color, isFilled, lineWidth);
+		}
+		if (shape == "polygon") {
+			clearPolygon(targetCtx, x, scale,true);
+			drawPolygon(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);
+			// ctx.stroke();
+		}
+		if(shape == "3pointRect"){
+			clear3PointRect(targetCtx, x, scale,true);	
+		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
+		if(shape == "paint-bucket"){
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, false);
+		}
+					
+	}
+
+	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+	if($('#elev_legend_window').length>0 || openLegened == true){
+		open_elev_legend()
+	}
+}
+function open_elev_legend(){
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px', false, '.row-color');
+	elevationWindow.find('.elevationLegendDiv').remove();
+
+
+	let legend = $(`<div class='elevationLegendDiv'></div>`)
+	let legendHeights = Object.entries(window.elevHeights)
+								.sort(([,a],[,b]) => b-a)
+							    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+	for(let i in legendHeights){
+		let row = $(`<div class='row'><div class='row-color' style='background: ${i};'></div><div>${window.elevHeights[i]}</div></div>`)
+		row.off('click.legendRow').on('click.legendRow', `.row-color`, function(e){
+			e.stopPropagation();
+			$('input#elev_height').val(`${window.elevHeights[i]}`)
+		});
+		legend.append(row);
+	}
+
+	elevationWindow.append(legend);
+}
+
+function close_elev_legend(){
+	close_and_cleanup_generic_draggable_window('elev_legend_window')
+}
+
+function check_token_elev(tokenid, elevContext=undefined){
+	if(elevContext == undefined){
+		elevContext = $('#elev_overlay')[0].getContext('2d');
+	}
+	let token = window.TOKEN_OBJECTS[tokenid];
+	let left = (parseInt(token.options.left.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let top = (parseInt(token.options.top.replace('px', '')) + (token.options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
+	let pixeldata = elevContext.getImageData(left, top, 1, 1).data;
+	let mapElev =`rgba(${pixeldata[0]},${pixeldata[1]},${pixeldata[2]},1)`;
+
+	if(window.elevHeights != undefined && mapElev != undefined){
+		token.options.mapElev = window.elevHeights[mapElev] != undefined && window.elevHeights[mapElev] != '' ? window.elevHeights[mapElev] : 0;
+	}
 }
 
 function redraw_drawn_light(){
@@ -1877,7 +2017,20 @@ function get_event_cursor_position(event){
 
 	return [pointX, pointY]
 }
+function numToColor(num, alpha, max) {
+    let valueAsPercentageOfMax = num / max;
+	// actual max is 16777215 but represnts white so we will take a max that is
+	// below this to avoid white
+	let MAX_RGB_INT = 255;
+	let valueFromMaxRgbInt = Math.floor(MAX_RGB_INT * valueAsPercentageOfMax);
+	  
+	  
+	let blue = num < 0 ? Math.floor(MAX_RGB_INT * -1 * valueAsPercentageOfMax) : 0;
+	let green = num < 0 ? Math.floor(MAX_RGB_INT * (1 + valueAsPercentageOfMax)) : Math.floor(MAX_RGB_INT * (1 - valueAsPercentageOfMax));
+	let red =  num < 0 ? 0 : Math.floor(MAX_RGB_INT * valueAsPercentageOfMax);
 
+  	return "rgba(" + red + "," + green + "," + blue + "," + alpha + ")";
+}
 /**
  * Pulls information from menu's or buttons without menu's to set values used by
  * drawing mousemove, mousedown, mousecontext events
@@ -1916,8 +2069,11 @@ function drawing_mousedown(e) {
 	window.DRAWCOLOR = data.background_color
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
+
+	//these are used with walls or elevation tool
 	window.wallTop = data.wall_top_height;
 	window.wallBottom = data.wall_base_height;
+	window.mapElev = data.elev_height
 
 	if(window.DRAWTYPE == 'dot'){
 		context.setLineDash([data.draw_line_width, 3*data.draw_line_width])
@@ -1968,6 +2124,13 @@ function drawing_mousedown(e) {
 			$("#temp_overlay").css('cursor', 'crosshair');
 			$("#temp_overlay").css('z-index', '50');
 		}		
+	}
+	else if(window.DRAWFUNCTION === 'elev'){
+		let elevColorArr = window.elevHeights != undefined && Object.keys(window.elevHeights).length != 0 ? Object.values(window.elevHeights) : [50];
+		let maxHeight = Math.max(...elevColorArr);
+		let minHeight = Math.min(...elevColorArr);
+		maxHeight = Math.max(Math.abs(minHeight), maxHeight);
+		window.DRAWCOLOR = numToColor(window.mapElev, 0.8, maxHeight);
 	}
 	// figure out what these 3 returns are supposed to be for.
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
@@ -2370,7 +2533,8 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION == "reveal" ||
 		window.DRAWFUNCTION == "hide" ||
 		window.DRAWFUNCTION == "draw_text" ||
-		window.DRAWFUNCTION === "select") && e.which !== 1 && !e.touches)
+		window.DRAWFUNCTION === "select" || 
+		window.DRAWFUNCTION == "elev") && e.which !== 1 && !e.touches)
 	{
 		return;
 	}
@@ -2407,7 +2571,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
-		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
+		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
 		switch (window.DRAWSHAPE) {
 			case "line":
 				data[0] = "line"
@@ -2471,6 +2635,9 @@ function drawing_mouseup(e) {
 			data[1] = "wall"
 			data[10] = window.wallBottom
 			data[11] = window.wallTop
+		case 'elev':
+			data[1] = "elev"
+			data[2] = window.mapElev
 		default:
 			break;
 		}
@@ -2581,7 +2748,7 @@ function drawing_mouseup(e) {
 			redraw_light_walls();
 			redraw_light();
 		}
-
+		redraw_elev();
 		redraw_drawn_light();
 		redraw_drawings();
 		sync_drawings();
@@ -3097,7 +3264,7 @@ function drawing_contextmenu(e) {
 			clear_temp_canvas();
 		}
 	}
-	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
+	else if((window.DRAWFUNCTION == "draw") || (window.DRAWFUNCTION == "elev") || (window.DRAWFUNCTION == "reveal") || (window.DRAWFUNCTION == "hide"))
 	{
 		// cancel shape
 		window.MOUSEDOWN = false;
@@ -3151,7 +3318,7 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
  * Hides all open menus from the top buttons and deselects all the buttons
  */
 function deselect_all_top_buttons(buttonSelectedClasses) {
-	topButtonIDs = ["select-button", "ruler_button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button"]
+	topButtonIDs = ["select-button", "ruler_button", "fog_button", "draw_button", "aoe_button", "text_button", "wall_button", "vision_button", "elev_button"]
 	$(".top_menu").removeClass("visible")
 	topButtonIDs.forEach(function(id) {
 		$(`#${id}`).removeClass(buttonSelectedClasses)
@@ -3272,8 +3439,24 @@ function handle_drawing_button_click() {
 		}
 
 		stop_drawing();
-		if(window.CURRENT_SCENE_DATA != undefined)
-			redraw_light_walls();
+		if(window.CURRENT_SCENE_DATA != undefined){
+			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
+				redraw_light_walls();
+			}
+			else{
+				$(`[id*='wallHeight']`).remove();
+				$('#walls_layer').css('display', 'none');
+				
+			}
+			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active')){
+				redraw_elev(true);
+			}	
+			else{
+				$('#elev_overlay').css('display', 'none');
+				close_elev_legend();
+			}
+			
+		}
 		let target =  $("#temp_overlay, #black_layer")
 		data = {
 			clicked:$(clicked),
@@ -3538,7 +3721,7 @@ function drawPolygon (
 		ctx.fill();
 		if(!islight){
 			if(replacefog && window.DM)
-			{
+			{	
 				ctx.strokeStyle = 'rgba(0,0,0,0.1)';
 				ctx.stroke();
 			}
@@ -3725,6 +3908,23 @@ function save3PointRect(e){
 		redraw_light_walls();
 		redraw_light();
 	}
+	else if(window.DRAWFUNCTION === "elev"){
+		data = [
+			'3pointRect',
+			'elev',
+			window.mapElev,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+		];
+		window.DRAWINGS.push(data);	
+		redraw_elev();
+		redraw_drawn_light();
+		redraw_drawings();
+	}
 	else{
 		data = [
 			'3pointRect',
@@ -3743,7 +3943,7 @@ function save3PointRect(e){
 	}
 	clear_temp_canvas()
 
-	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall") {
+	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "wall" || window.DRAWFUNCTION === 'elev') {
 		sync_drawings();
 	} else {
 		sync_fog();
@@ -3767,6 +3967,23 @@ function savePolygon(e) {
 		window.REVEALED.push(data);
 		redraw_fog();
 	}
+	else if(window.DRAWFUNCTION === "elev"){
+		data = [
+			'polygon',
+			'elev',
+			window.mapElev,
+			polygonPoints,
+			null,
+			null,
+			null,
+			window.LINEWIDTH,
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+		];
+		window.DRAWINGS.push(data);
+		redraw_elev();
+		redraw_drawn_light();
+		redraw_drawings();
+	}
 	else{
 		data = [
 			'polygon',
@@ -3785,7 +4002,7 @@ function savePolygon(e) {
 	}
 	clear_temp_canvas()
 
-	if (window.DRAWFUNCTION === "draw") {
+	if (window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === 'elev') {
 		sync_drawings();
 	} else {
 		sync_fog();
@@ -4039,9 +4256,6 @@ function init_fog_menu(buttons){
 	fog_menu.css("width", "90px");
 	fog_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
 	$("body").append(fog_menu);
-	fog_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	fog_menu.find("#fog_undo").click(function(){
 		window.REVEALED.pop();
 		redraw_fog();
@@ -4133,10 +4347,6 @@ function init_draw_menu(buttons){
 			</button>
 		</div>`);
 	}
-
-	draw_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	draw_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
             id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#e66465'}'/>
@@ -4439,6 +4649,117 @@ function init_walls_menu(buttons){
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
+function init_elev_menu(buttons){
+	let elev_menu = $("<div id='elev_menu' class='top_menu'></div>");
+
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='polygon' data-function="elev" data-unique-with="draw">
+					Elev Poly
+			</button>
+		</div>`);
+	elev_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='rect' data-function="elev" data-unique-with="draw">
+				Elev Rect
+		</button>
+	</div>`);
+	elev_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='3pointRect' data-function="elev" data-unique-with="draw">
+				3p Rect
+		</button>
+	</div>`);
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_circle' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='arc' data-function="elev" data-unique-with="draw">
+					Circle
+			</button>
+		</div>`);
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='paint-bucket' data-function="elev" data-unique-with="draw">
+				 	Bucket Fill
+			</button>
+		</div>`);
+	elev_menu.append("<div class='elev-input menu-subtitle'>Elevation</div>");
+	elev_menu.append(
+		`<div>
+			<input id='elev_height' type='number' step='5' data-required="elev_height" style='width:90%'
+			value='0' >
+		</div>`);
+	elev_menu.append(`<div class='ddbc-tab-options--layout-pill'>
+			<button id='elev_legend' class='legend menu-option ddbc-tab-options__header-heading'
+				data-shape='Legend' data-function="Legend" data-unique-with="Legend">
+					Legend
+			</button>
+		</div>`)
+	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
+	elev_menu.append(`
+			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+				<button class='ddbc-tab-options__header-heading  menu-option' id='elev_undo'>
+					UNDO
+				</button>
+			</div>`);
+	elev_menu.append(
+		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+			<button class='ddbc-tab-options__header-heading  menu-option' id='delete_elev'>
+				CLEAR
+			</button>
+		</div>`);
+ 
+	elev_menu.find("#delete_elev").click(function() {
+		r = confirm("DELETE ALL MAP ELEVATION (cannot be undone!)");
+		if (r === true) {
+			// keep only non elev
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
+			redraw_elev();
+			redraw_light_walls();
+			redraw_light();
+			sync_drawings();
+		}
+	});
+	elev_menu.find("#elev_undo").click(function() {
+
+        		// start at the end
+        let currentElement = window.DRAWINGS.length
+        // loop from the last element and remove if it's not text
+        while (currentElement--) {
+            if (window.DRAWINGS[currentElement][1] == 'elev'){
+                window.DRAWINGS.splice(currentElement, 1)
+                redraw_elev();
+                redraw_light_walls();
+				redraw_light();
+				sync_drawings()
+                break
+            }
+        }     
+	});
+
+	elev_menu.find("#elev_legend").click(function() {
+        open_elev_legend();   
+	});
+
+	elev_menu.css("position", "fixed");
+	elev_menu.css("top", "50px");
+	elev_menu.css("width", "110px");
+	elev_menu.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')")
+
+	$("body").append(elev_menu);
+
+	let elev_button = $("<button style='display:inline;width:75px' id='elev_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>E</u>levation</button>");
+	elev_button.on('click', function(){
+		redraw_elev();
+	});
+	buttons.append(elev_button);
+	elev_menu.css("left",elev_button.position().left);
+}
+
 function init_vision_menu(buttons){
 	let vision_menu = $("<div id='vision_menu' class='top_menu'></div>");
 
@@ -4506,9 +4827,6 @@ function init_vision_menu(buttons){
 				 	Bucket Fill
 			</button>
 		</div>`);
-	vision_menu.find(`[data-shape='paint-bucket']`).on('click', function(){
-		redraw_light_walls();
-	});
 	vision_menu.append(`<div class='menu-subtitle'>Color Choice</div>`);
 	vision_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
@@ -4765,7 +5083,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
 	}
-	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;;
+	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
+	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
+
 	let prevClosestWall = null;
     let prevClosestPoint = null;
    	let prevClosestBarrier = null;
@@ -4936,6 +5256,8 @@ function detectInLos(x, y) {
 function redraw_light(){
 	let startTime = Date.now();
 
+	
+
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
 	let canvasHeight = canvas.height;
@@ -5076,7 +5398,8 @@ function redraw_light(){
 
 	let lightInLosContext = window.lightInLos.getContext('2d');
 
-	
+	let elevContext = $('#elev_overlay')[0].getContext('2d');
+
 	for(let i = 0; i < light_auras.length; i++){
 		promises.push(new Promise((resolve) => {
 			let currentLightAura = $(light_auras[i]);
@@ -5105,13 +5428,13 @@ function redraw_light(){
 			}
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length && 
-				window.lineOfSightPolygons[auraId].elev == window.TOKEN_OBJECTS[auraId].options.elev){
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				
 			}
 			else{
+				check_token_elev(auraId);
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId)  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
@@ -5125,8 +5448,7 @@ function redraw_light(){
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
-					clippath: path,
-					elev: window.TOKEN_OBJECTS[auraId].options.elev
+					clippath: path
 				}
 				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
 			}
