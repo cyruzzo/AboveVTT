@@ -798,7 +798,12 @@ function observe_character_sheet_changes(documentToObserve) {
             e.stopPropagation();
             $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
 
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited')`);          
+            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);  
+            let spellSave = $(this).parent().find(`.ct-spells-spell__save`);   
+            let spellSaveText;
+            if(spellSave.length>0){
+              spellSaveText = `${spellSave.find('.ct-spells-spell__save-label').text().toUpperCase()} DC${spellSave.find('.ct-spells-spell__save-value').text()}`;
+            }     
             for(let i = 0; i<rollButtons.length; i++){  
               let data = getRollData(rollButtons[i]);           
               let diceRoll;
@@ -818,14 +823,36 @@ function observe_character_sheet_changes(documentToObserve) {
                        else if(e.ctrlKey || e.metaKey){
                         diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
                        }else{
-                        diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                        diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
                        }
                     }
                     else{
                       diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
                     }
-                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2);
+                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText);
+                spellSaveText = undefined;
               }
+            }
+            if(rollButtons.length == 0 && spellSaveText != undefined){
+              let msgdata = {
+                player: window.PLAYER_NAME,
+                  img: window.PLAYER_IMG,
+                  text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$(this).parent().find('[class*="styles_spellName"]').text()}: </span><span>${spellSaveText}</span></div>`,
+                  playerId: window.PLAYER_ID,
+                  sendTo: window.sendToTab 
+              }
+              if(is_abovevtt_page()){
+                window.MB.inject_chat(msgdata)
+              }
+              else if(window.sendToTab != undefined){
+                tabCommunicationChannel.postMessage({
+                  msgType: 'SendToGamelog',
+                  player: msgdata.player,
+                  img: msgdata.img,
+                  text: msgdata.text,
+                  sendTo: msgdata.sendTo
+                });
+              } 
             }     
           });
           if($(`style#advantageHover`).length == 0){
@@ -1028,7 +1055,12 @@ function observe_character_sheet_changes(documentToObserve) {
             e.stopPropagation();
             let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                          
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'), .integrated-dice__container.abovevtt-icon-roll`);
+            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
+            let spellSave = $(this).parent().find(`[class*='__save']`);   
+            let spellSaveText;
+            if(spellSave.length>0){
+              spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
+            }    
             for(let i = 0; i<rollButtons.length; i++){  
               let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
               if(isVersatileDamage && versatileRoll =='1'){
@@ -1063,12 +1095,31 @@ function observe_character_sheet_changes(documentToObserve) {
                 else{
                   diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
                 }
-                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2);
-
+                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText);
               }
             }   
-
-          });
+            if(rollButtons.length == 0 && spellSaveText != undefined){
+              let msgdata = {
+                player:  window.PLAYER_NAME,
+                  img: window.PLAYER_IMG,
+                  text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$($(this).parent().find('[class*="__name"]>[class*="__label"]')[0]).text()}: </span><span>${spellSaveText}</span></div>`,
+                  playerId: window.PLAYER_ID,
+                  sendTo: window.sendToTab 
+              }
+              if(is_abovevtt_page()){
+                window.MB.inject_chat(msgdata)
+              }
+              else if(window.sendToTab != undefined){
+                tabCommunicationChannel.postMessage({
+                  msgType: 'SendToGamelog',
+                  player: msgdata.player,
+                  img: msgdata.img,
+                  text: msgdata.text,
+                  sendTo: msgdata.sendTo
+                });
+              }    
+            }
+          })
           if($(`style#advantageHover`).length == 0){
               $('body').append(`
                 <style id='advantageHover'>

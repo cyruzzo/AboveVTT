@@ -252,6 +252,7 @@ class DiceRoller {
     #critAttackAction = undefined;
     #pendingCritRange = undefined;
     #pendingCritType = undefined;
+    #pendingSpellSave = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -284,7 +285,7 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the dice expression to parse and roll. EG: 1d20+4
      * @returns {boolean} whether or not dice were rolled
      */
-    roll(diceRoll, multiroll = false, critRange = 20, critType = 2) {
+    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined) {
         try {
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
@@ -348,7 +349,24 @@ class DiceRoller {
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
-                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${diceRoll.expression}<br>${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollTitle}: <span class='abovevtt-roll-${rollType}'>${rollType}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
+                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${diceRoll.expression}<br>${roll.output.replace(regExpression, '')}'>
+                            <div class="tss-kucurx-Result">
+                                <div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other">
+                                    <span class='aboveDiceOutput'>${rollTitle}: 
+                                        <span class='abovevtt-roll-${rollType}'>${rollType}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg>
+                            <div class="tss-1jo3bnd-TotalContainer-Flex">
+                                <div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex">
+                                    <span class='aboveDiceTotal'>${roll.total}</span>
+                                </div>
+                                ${spellSave != undefined ? `<div class='custom-spell-save-text'><span>${spellSave}</span></div>` : ''}
+                            </div>
+
+                        </div>
+                        `,
                   whisper: (diceRoll.sendToOverride == "DungeonMaster") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
@@ -374,7 +392,8 @@ class DiceRoller {
                     rollType: rollType,
                     rollTitle: rollTitle,
                     modifier: modifier,
-                    regExpression: regExpression
+                    regExpression: regExpression,
+                    spellSave: spellSave
                 }
                       
                 msgdata = {
@@ -428,6 +447,7 @@ class DiceRoller {
             this.#pendingDiceRoll = new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId);
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
+            this.#pendingSpellSave = spellSave;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -746,6 +766,7 @@ class DiceRoller {
             ddbMessage.avttExpressionResult = this.#pendingDiceRoll.expressionResult;
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
+        ddbMessage.avttSpellSave = this.#pendingSpellSave;
 
         if (["character", "monster"].includes(this.#pendingDiceRoll.entityType)) {
             ddbMessage.entityType = this.#pendingDiceRoll.entityType;
