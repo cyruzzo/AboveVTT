@@ -4064,7 +4064,7 @@ function getPersonailityTrait(){
         159: "Providential",
         160: "Prudent",
         161: "Punctual",
-        162: "Pruposeful",
+        162: "Purposeful",
         163: "Rational",
         164: "Realistic",
         165: "Reflective",

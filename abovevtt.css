@@ -107,11 +107,19 @@ button.daylight span.material-symbols-outlined {
 .joindm {
     position: relative;
 }
-#VTT{
-    -webkit-user-select: none; 
-    user-select: none; 
-}
 
+body > div {
+  -webkit-user-select: none; 
+  -ms-user-select: none; 
+  user-select: none; 
+}
+#monster-stat-block,
+.note,
+.note-flyout{
+  -webkit-user-select: text; 
+  -ms-user-select: text; 
+  user-select: text; 
+}
 .above_delete {
     width: 400px;
 }
