@@ -670,6 +670,12 @@ async function rebuild_window_pcs() {
   });
 }
 
+async function rebuild_window_users() {
+  window.playerUsers = await DDBApi.fetchCampaignUserDetails(window.gameId);
+  let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
+  window.myUser = playerUser ? playerUser : 'THE_DM'; 
+}
+
 function update_pc_with_data(playerId, data) {
   if (data.constructor !== Object) {
     console.warn("update_pc_with_data was given invalid data", playerId, data);

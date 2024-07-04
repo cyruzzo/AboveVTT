@@ -37,7 +37,7 @@ const debounce_add_extras = mydebounce(() => {
         sizeId: monsterData.sizeId,
         name: monsterData.name,
         player_owned: true,
-        share_vision: true,
+        share_vision: window.myUser ? window.myUser : true,
         hidden: false,
         locked: false,
         deleteableByPlayers: true,

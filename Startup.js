@@ -358,6 +358,7 @@ async function start_above_vtt_common() {
 
   startup_step("Gathering player character data");
   await rebuild_window_pcs();
+  await rebuild_window_users();
   window.color = color_for_player_id(my_player_id()); // shortcut that we should figure out how to not rely on
   localStorage.removeItem(`CampaignCharacters${window.gameId}`); // clean up old pc data
 
