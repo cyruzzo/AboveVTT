@@ -4796,7 +4796,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    for (let j = 0; j < walls.length; j++) {
 	      let wallTop = walls[j].wallTop && walls[j].wallTop != '' ? parseInt(walls[j].wallTop) : Infinity;
 	      let wallBottom = walls[j].wallBottom && walls[j].wallBottom != '' ? parseInt(walls[j].wallBottom) : -Infinity;
-	      if(tokenElev < wallBottom || tokenElev >= wallTop)
+	      if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 	      	continue;
 	      pt = window.PARTICLE.rays[i].cast(walls[j]);
 	      
