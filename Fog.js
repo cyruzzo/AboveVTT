@@ -3048,6 +3048,8 @@ function drawing_contextmenu(e) {
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
 	if (window.DRAWSHAPE === "polygon") {
+		window.BEGIN_MOUSEX.pop();
+		window.BEGIN_MOUSEY.pop();
 		if(window.BEGIN_MOUSEX.length > 0){
 			let canvas = document.getElementById("temp_overlay");
 			let ctx = canvas.getContext("2d");
@@ -3659,7 +3661,6 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
-	redraw_light_walls();
 }
 
 function save3PointRect(e){
@@ -4795,7 +4796,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    for (let j = 0; j < walls.length; j++) {
 	      let wallTop = walls[j].wallTop && walls[j].wallTop != '' ? parseInt(walls[j].wallTop) : Infinity;
 	      let wallBottom = walls[j].wallBottom && walls[j].wallBottom != '' ? parseInt(walls[j].wallBottom) : -Infinity;
-	      if(tokenElev < wallBottom || tokenElev >= wallTop)
+	      if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 	      	continue;
 	      pt = window.PARTICLE.rays[i].cast(walls[j]);
 	      
