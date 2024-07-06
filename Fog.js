@@ -3736,12 +3736,7 @@ function drawPolygon (
 				ctx.strokeStyle = 'rgba(0,0,0,1)';
 				ctx.stroke();
 			}
-		}
-		else{
-			ctx.strokeStyle = style;
-			ctx.stroke();
-		}
-		
+		}	
 	}
 	else{
 		ctx.strokeStyle = style;
