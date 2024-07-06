@@ -1984,6 +1984,7 @@ function open_close_door(x1, y1, x2, y2, type=0){
 	})
 	redraw_light_walls();
 	redraw_light();
+	redraw_drawn_light();
 	checkAudioVolume();
 	sync_drawings();						
 }
