@@ -1548,7 +1548,7 @@ function redraw_drawn_light(){
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, bucketRaidus] = drawing_clone;
 		let isFilled = true;
 		
 		let targetCtx = offscreenContext;
@@ -1564,6 +1564,9 @@ function redraw_drawn_light(){
 			y = y / adjustedScale;
 			height = height / adjustedScale;
 			width = width / adjustedScale;
+		}
+		if(shape == "paint-bucket"){
+			bucketRaidus =  bucketRaidus != undefined ? bucketRaidus/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 		}
 
 
@@ -1591,7 +1594,7 @@ function redraw_drawn_light(){
 			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, bucketRaidus);
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -2616,6 +2619,7 @@ function drawing_mouseup(e) {
 				break;
 			case "paint-bucket":
 				data[0] = "paint-bucket"
+				data[7] = 0
 			default:
 				break;
 		}
@@ -2640,6 +2644,9 @@ function drawing_mouseup(e) {
 			data[2] = window.mapElev
 		default:
 			break;
+		}
+		if(window.DRAWTYPE == 'light' && window.DRAWSHAPE == 'paint-bucket'){
+			data[9] = $('#bucket_line_width').val() != '' ? parseFloat($('#bucket_line_width').val()) : 10000;
 		}
 		let undoArray =[];
 		if(window.DRAWFUNCTION == 'wall' && window.DRAWSHAPE == 'rect'){
@@ -3836,12 +3843,11 @@ function clear_temp_canvas(playerId=window.PLAYER_ID){
 	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance=10000){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 	let fog = true;
-	let distance = 10000;
   	particleUpdate(mouseX, mouseY); // moves particle
 	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
 }
@@ -4827,6 +4833,13 @@ function init_vision_menu(buttons){
 				 	Bucket Fill
 			</button>
 		</div>`);
+	vision_menu.append(`<div class='menu-subtitle'>Bucket Radius ${window.CURRENT_SCENE_DATA.upsq}</div>`);
+	vision_menu.append(`
+		<div>
+			<input id='bucket_line_width' data-required="draw_line_width" type='number' style='width:90%' step='5'
+			value='' class='drawWidthSlider'>
+		</div>`
+	);
 	vision_menu.append(`<div class='menu-subtitle'>Color Choice</div>`);
 	vision_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
@@ -5136,7 +5149,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 			        if(dist != lightRadius){    	
 			          	closestWall = walls[j];
-			        }	         
+			        }         
   		       }
 	        }
 	        if(dist < recordMove){
@@ -5148,16 +5161,16 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			          }
 	       		}
 	       		closestMove = pt;
-	       		 if(dist != lightRadius){
+	       		if(dist != lightRadius){
 		          	closestBarrier = walls[j];
 		        }	
 	        }
 	      }
+
 	    }	    
 	    if (closestLight && closestWall != prevClosestWall) {
 	    	if(prevClosestWall != null && prevClosestPoint != null){	    		
-	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    		
+	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
 	    	}
 	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
@@ -5167,6 +5180,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    	}
 	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
+	    if(recordLight == lightRadius){
+	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    }
+	    if(recordMove == lightRadius){
+	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    }
 
 	    prevClosestPoint = closestLight;
 	    prevClosestWall = closestWall;
