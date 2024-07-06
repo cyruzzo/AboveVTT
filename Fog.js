@@ -4892,7 +4892,7 @@ function init_vision_menu(buttons){
 
 	vision_menu.append(`
 	<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-		<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='light_undo'>
 			UNDO
 		</button>
 	</div>`);
@@ -4921,12 +4921,12 @@ function init_vision_menu(buttons){
 		}
 	});
 
-	vision_menu.find("#draw_undo").click(function() {
+	vision_menu.find("#light_undo").click(function() {
 		// start at the end
         let currentElement = window.DRAWINGS.length
         // loop from the last element and remove if it's not text
         while (currentElement--) {
-            if (!window.DRAWINGS[currentElement][0].includes("text")){
+            if (window.DRAWINGS[currentElement][1].includes("light")){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_drawn_light();
                 redraw_drawings()
