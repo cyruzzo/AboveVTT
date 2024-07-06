@@ -376,8 +376,11 @@ function handle_undo(){
     else if(($("#fog_button").hasClass(buttonSelectedClasses))){
         $("#fog_undo").click()
     }
-    else if(($("#draw_button").hasClass(buttonSelectedClasses) || $("#vision_button").hasClass(buttonSelectedClasses))){
+    else if($("#draw_button").hasClass(buttonSelectedClasses)){
         $("#draw_undo").click()
+    }
+    else if($("#vision_button").hasClass(buttonSelectedClasses)){
+        $("#light_undo").click()
     }
     else if(($("#text_button").hasClass(buttonSelectedClasses))){
         $("#text_undo").click()
