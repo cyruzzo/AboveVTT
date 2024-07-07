@@ -591,13 +591,13 @@ function check_single_token_visibility(id){
 	
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
-
+	const hideInvisible = window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
 	}
-	if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight))) {
+	if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight) || (hideInvisible && !inTruesight))) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
@@ -685,12 +685,15 @@ function do_check_token_visibility() {
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
+			const hideInvisible = window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+
+
 			let inTruesight = false;
 			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
-			if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected))) {
+			if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected) || (hideInvisible && !inTruesight))) {
 				$(tokenSelector + "," + auraSelector).hide();
 			}
 			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
