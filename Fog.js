@@ -1562,14 +1562,17 @@ function redraw_drawn_light(){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
+	if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
 			x = x / adjustedScale;
 			y = y / adjustedScale;
-			height = height / adjustedScale;
-			width = width / adjustedScale;
-		}
-		if(shape == "paint-bucket"){
-			bucketRaidus =  bucketRaidus != undefined ? bucketRaidus/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+			if(shape != "paint-bucket"){
+				height = height / adjustedScale;
+				width = width / adjustedScale;
+			}
+			else{
+				width = (width != undefined) ? width/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+				height = (height != undefined && parseInt(height) != 0) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+			}
 		}
 
 
@@ -1597,7 +1600,7 @@ function redraw_drawn_light(){
 			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, bucketRaidus);
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height);
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -2650,7 +2653,8 @@ function drawing_mouseup(e) {
 			break;
 		}
 		if(window.DRAWTYPE == 'light' && window.DRAWSHAPE == 'paint-bucket'){
-			data[9] = $('#bucket_line_width').val() != '' ? parseFloat($('#bucket_line_width').val()) : 10000;
+			data[5] = $('#bucket_radius1').val() != '' ? parseFloat($('#bucket_radius1').val()) : 10000;
+			data[6] = $('#bucket_radius2').val() != '' ? parseFloat($('#bucket_radius2').val()) : 0;
 		}
 		let undoArray =[];
 		if(window.DRAWFUNCTION == 'wall' && window.DRAWSHAPE == 'rect'){
@@ -3842,13 +3846,24 @@ function clear_temp_canvas(playerId=window.PLAYER_ID){
 	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance=10000){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
 	let fog = true;
   	particleUpdate(mouseX, mouseY); // moves particle
-	particleLook(ctx, window.walls, distance, fog, fogStyle, fogType, true, islight); 
+  	if(distance1 != 0){
+  		particleLook(ctx, window.walls, distance1, fog, fogStyle, fogType, true, islight); 
+  	}
+
+	if(distance2 != undefined){
+		distance2+=distance1;
+		let fogStyleArray = fogStyle.split(',');
+		fogStyleArray[3] = `${parseFloat(fogStyleArray[3])/2})`;
+		fogStyle = fogStyleArray.join(',');
+		particleLook(ctx, window.walls, distance2, fog, fogStyle, fogType, true, islight); 
+	}
+
 }
 
 function save3PointRect(e){
@@ -4832,17 +4847,27 @@ function init_vision_menu(buttons){
 				 	Bucket Fill
 			</button>
 		</div>`);
-	vision_menu.append(`<div class='menu-subtitle'>Bucket Radius ${window.CURRENT_SCENE_DATA.upsq}</div>`);
-	vision_menu.append(`
+
+	let bucket_menu = $(`<div id='bucket_menu'></div>`);
+	bucket_menu.append(`<div class='menu-subtitle'>Inner Radius (${window.CURRENT_SCENE_DATA.upsq})</div>`);
+	bucket_menu.append(`
 		<div>
-			<input id='bucket_line_width' data-required="draw_line_width" type='number' style='width:90%' step='5'
+			<input id='bucket_radius1' data-required="draw_line_width" type='number' style='width:90%' min='0' step='5'
 			value='' class='drawWidthSlider'>
 		</div>`
 	);
+	bucket_menu.append(`<div class='menu-subtitle'>Outer Radius (${window.CURRENT_SCENE_DATA.upsq})</div>`);
+	bucket_menu.append(`
+		<div>
+			<input id='bucket_radius2' data-required="draw_line_width" type='number' style='width:90%' min='0' step='5'
+			value='' class='drawWidthSlider'>
+		</div>`
+	);
+	vision_menu.find('#paint-bucket').parent().append(bucket_menu);
 	vision_menu.append(`<div class='menu-subtitle'>Color Choice</div>`);
 	vision_menu.append(`
         <input title='Background color' data-required="background_color" class='spectrum'
-            id='background_color' name='background color' value='${(!window.DM) ? $('.ddbc-svg--themed path').css('fill') : '#FFF'}'/>
+            id='background_color' name='background color' value='#fff'/>
         `)
 	vision_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
@@ -4860,11 +4885,14 @@ function init_vision_menu(buttons){
 		clickoutFiresChange: true
 	});
 
+
     const colorPickerChange = function(e, tinycolor) {
 		let color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
         $(e.target).val(color)
-
 	};
+	let colorData = vision_menu.find('#background_color').spectrum('get');
+	vision_menu.find('#background_color').val(`rgba(${colorData._r}, ${colorData._g}, ${colorData._b}, ${colorData._a})`);
+
 	vision_menu.find(".sp-replacer").attr("data-skip",'true')
 	colorPickers.on('move.spectrum', colorPickerChange);   // update the token as the player messes around with colors
 	colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
@@ -4907,8 +4935,6 @@ function init_vision_menu(buttons){
 		edit_scene_vision_settings(scene_index);
 	})
 
-
-
 	vision_menu.find("#delete_light").click(function() {
 		r = confirm("DELETE ALL DRAWN LIGHT (cannot be undone!)");
 		if (r === true) {
@@ -4946,6 +4972,10 @@ function init_vision_menu(buttons){
 
 	buttons.append(vision_button);
 	vision_menu.css("left",vision_button.position().left);
+	bucket_menu.css({
+		left: `${parseInt(vision_button.position().left)+100}px`,
+		top: `${parseInt(vision_menu.find('#paint-bucket').position().top)+20}px`
+	})
 }
 
 

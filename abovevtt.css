@@ -7103,6 +7103,28 @@ body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
     scale: 1.3;
     margin-left: 2px;
 }
+#vision_menu #bucket_menu {
+    display: none;
+    position: fixed;
+    width: 155px;
+    padding: 2px;
+    border-radius: 5px;
+    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
+}
+#vision_menu #paint-bucket.button-enabled ~ #bucket_menu{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+#vision_menu #bucket_menu>div{
+    display: inline-block;
+    width: 35%;
+}
+#vision_menu #bucket_menu>div.menu-subtitle{
+    display:inline-block;
+    width: 65%;
+}
 
 #clearExplored Data{
     width:100%;
