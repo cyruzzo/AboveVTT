@@ -2144,8 +2144,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				$(".roll-mod-container").addClass("show");
-				$(".roll-mod-container").find('input').val(0);
+				if(!$(".roll-mod-container").hasClass('show')){
+					$(".roll-mod-container").addClass("show");
+					$(".roll-mod-container").find('input').val(0);
+				}
 			} else {
 				$(".roll-mod-container").removeClass("show");
 			}
@@ -2175,8 +2177,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			// make sure our roll button is shown/hidden after all animations have completed
 			setTimeout(function() {
 				if ($(".dice-toolbar").hasClass("rollable")) {
-					$(".roll-mod-container").addClass("show");
-					$(".roll-mod-container").find('input').val(0);
+					if(!$(".roll-mod-container").hasClass('show')){
+						$(".roll-mod-container").addClass("show");
+						$(".roll-mod-container").find('input').val(0);
+					}
 				} else {
 					$(".roll-mod-container").removeClass("show");
 				}
@@ -2263,8 +2267,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				}
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				$(".roll-mod-container").addClass("show");
-				$(".roll-mod-container").find('input').val(0);
+				if(!$(".roll-mod-container").hasClass('show')){
+					$(".roll-mod-container").addClass("show");
+					$(".roll-mod-container").find('input').val(0);
+				}
 			} else {
 				$(".roll-mod-container").removeClass("show");
 			}
