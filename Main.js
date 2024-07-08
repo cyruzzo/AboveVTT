@@ -2174,9 +2174,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			// make sure our roll button is shown/hidden after all animations have completed
 			setTimeout(function() {
 				if ($(".dice-toolbar").hasClass("rollable")) {
-					$(".roll-button").addClass("show");
+					$(".roll-mod-container").addClass("show");
+					$(".roll-mod-container").find('input').val(0);
 				} else {
-					$(".roll-button").removeClass("show");
+					$(".roll-mod-container").removeClass("show");
 				}
 			}, 0);
 		}
@@ -2270,10 +2271,30 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 
 	if ($(".roll-button").length == 0) {
 		const rollButton = $(`<button class="roll-button">Roll</button>`);
-		$("body").append(rollButton);
-		rollButton.on("click", function (e) {
+		const modInput = $(`<div class='roll-mod-container'>
+				<button class="roll-button-mod minus">-</button>
+				<input class="roll-input-mod" type='number' value='0' step='1'></input>
+				<button class="roll-button-mod plus">+</button>
+			</div>`)
+		modInput.append(rollButton);
 
-			if ($(".dice-toolbar").hasClass("rollable") && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
+		
+		$("body").append(modInput);
+
+		modInput.off('click.button').on('click.button', 'button.roll-button-mod', function(e){
+			e.preventDefault();
+			const clickedButton = $(this)
+			const input = modInput.find('input');
+			if(clickedButton.hasClass('minus')){
+				input.val(parseInt(input.val())-1);
+			}
+			else if(clickedButton.hasClass('plus')){
+				input.val(parseInt(input.val())+1);
+			}
+		});
+		rollButton.on("click", function (e) {
+			let modValue = parseInt($('.roll-input-mod').val())
+			if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 				let theirRollButton = $(".dice-toolbar__target").children().first();
 				if (theirRollButton.length > 0) {
 					// we found a DDB dice roll button. Click it and move on
@@ -2286,9 +2307,9 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			$(".dice-roller > div img[data-count]").each(function() {
 				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
 			});
-
+			let expression = `${rollExpression.join("+")}+${modValue}`
 			let sendToDM = window.DM || false;
-			let sentAsDDB = send_rpg_dice_to_ddb(rollExpression.join("+"), sendToDM);
+			let sentAsDDB = send_rpg_dice_to_ddb(expression, sendToDM);
 			if (!sentAsDDB) {
 				const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
 				

@@ -2495,22 +2495,65 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 }
 
 .roll-button {
-    position: fixed;
-    right: 343px;
-    bottom: 13px;
-    z-index: 0;
-    opacity: 0;
-    transition: all 0.3s ease-in-out;
+    position: absolute;
+    bottom: 21px;
     border-radius: 50%;
     width: 40px;
+    transform: translate(-50%);
+    left: 50%;
     height: 40px;
+    border: none;
 }
 
-.roll-button.show {
-    z-index: 999999999;
+input.roll-input-mod::-webkit-inner-spin-button,
+input.roll-input-mod::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+input.roll-input-mod {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+    text-align:center;
+    width: 50%;
+    border:none;
+    background:#e6e6e6;
+    outline: none;
+    border: solid #999;
+    border-width: 0px 1px 0px 1px;
+}
+.roll-mod-container{
+    display:none;
+    opacity:0;
+    transition: all 0.3s ease-in-out;
+}
+.roll-mod-container.show{
+    z-index: 99999999;
+    display: flex;
+    position: fixed;
+    right: 343px;
+    bottom: 5px;
     opacity: 1;
+    transition: all 0.3s ease-in-out;
+    width: 60px;
+    border-radius: 5px;
+    flex-direction: row;
 }
-
+button.roll-button-mod {
+    text-align: center;
+    width: 25%;
+    border:none;
+    height: 17px;
+    outline:none;
+    transform: translate(0px, 0px);
+    background: #e6e6e6;
+    padding: 0px 3px;
+}
+button.roll-button-mod.plus {
+    border-radius: 0px 5px 5px 0px
+}
+button.roll-button-mod.minus {
+    border-radius: 5px 0px 0px 5px
+}
 .d-block {
     display: block;
 }
