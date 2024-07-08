@@ -1570,7 +1570,7 @@ function redraw_drawn_light(){
 				width = width / adjustedScale;
 			}
 			else{
-				width = (width != undefined) ? width/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+				width = (width != undefined && parseInt(width) != 0) ? width/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 				height = (height != undefined && parseInt(height) != 0) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 			}
 		}
