@@ -2144,9 +2144,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				$(".roll-button").addClass("show");
+				$(".roll-mod-container").addClass("show");
+				$(".roll-mod-container").find('input').val(0);
 			} else {
-				$(".roll-button").removeClass("show");
+				$(".roll-mod-container").removeClass("show");
 			}
 		}
 	});
@@ -2262,9 +2263,10 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				}
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				$(".roll-button").addClass("show");
+				$(".roll-mod-container").addClass("show");
+				$(".roll-mod-container").find('input').val(0);
 			} else {
-				$(".roll-button").removeClass("show");
+				$(".roll-mod-container").removeClass("show");
 			}
 		}
 	});
@@ -2307,7 +2309,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			$(".dice-roller > div img[data-count]").each(function() {
 				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
 			});
-			let expression = `${rollExpression.join("+")}+${modValue}`
+			let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
 			let sendToDM = window.DM || false;
 			let sentAsDDB = send_rpg_dice_to_ddb(expression, sendToDM);
 			if (!sentAsDDB) {
@@ -2334,7 +2336,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 						
 			}
 
-			$(".roll-button").removeClass("show");
+			$(".roll-mod-container").removeClass("show");
 			$(".dice-roller > div img[data-count]").removeAttr("data-count");
 			$(".dice-roller > div span").remove();
 		});
