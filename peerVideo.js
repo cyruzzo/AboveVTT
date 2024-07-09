@@ -26,6 +26,8 @@ function init_peerVideo_box() {
                         <span class="material-symbols-outlined button-icon">
                         </span>
                     </button>
+                    <button id="peerVideo_echo_cancel" class="hasTooltip button-icon" data-name="echoCancellation">Echo Cancellation</button>
+                    <button id="peerVideo_noise_sup" class="hasTooltip button-icon" data-name="noiseSuppression">Noise Suppression</button>
                     <select id="videoSource" style='width:100px'></select>
                     <select id="audioSource" style='width:100px'></select>
                 </div>
@@ -50,10 +52,19 @@ function init_peerVideo_box() {
     joinRoom();
    
 
-    $("#peerVideo_mute_mic").off('click.videoClose').on('click.videoClose', function(){
+    $("#peerVideo_mute_mic").off('click.mute').on('click.mute', function(){
         $(this).toggleClass('muted');
         window.myLocalVideostream.getAudioTracks()[0].enabled = !$(this).hasClass('muted');
     });
+    $("#peerVideo_echo_cancel").off('click.echo').on('click.echo', function(){
+        $(this).toggleClass('enabled');
+        getMediaDevice();  
+    });
+    $("#peerVideo_noise_sup").off('click.noise').on('click.noise', function(){
+        $(this).toggleClass('enabled');
+        getMediaDevice();  
+    });
+
     $("#peerVideo_close, #peerVideo_mute_mic").css("float", 'right')
 
     $("#peerVideo_close").off('click.videoClose').on('click.videoClose', 
@@ -205,10 +216,10 @@ function joinRoom(room = window.gameId) {
 
 
     $('select#videoSource').off('change.videoSource').on('change.videoSource', function(){
-         getMediaDevice();
+        getMediaDevice();
     })
     $('select#audioSource').off('change.videoSource').on('change.videoSource', function(){
-         getMediaDevice();     
+        getMediaDevice();     
     })
 
 
@@ -217,7 +228,10 @@ function joinRoom(room = window.gameId) {
 function getMediaDevice(){
     let audioDeviceNotAvailable = $('select#audioSource').val() == '' || $('select#audioSource').val() == null;
     let videoDeviceNotAvailable = $('select#videoSource').val() == '' || $('select#videoSource').val() == null || $('select#videoSource').val() == 'disable';
-    let micVolume = $("#peerVideo_mute_mic").hasClass('muted') ? 0.0 : 1.0
+    let micVolume = $("#peerVideo_mute_mic").hasClass('muted') ? 0.0 : 1.0;
+    let echoCancel = $("#peerVideo_echo_cancel").hasClass('enabled') ? true : false
+    let noiseSuppression = $("#peerVideo_noise_sup").hasClass('enabled') ? true : false
+
     let videoConditions = videoDeviceNotAvailable ? false : {
         deviceId: {
             exact: $('select#videoSource').val()
@@ -240,8 +254,8 @@ function getMediaDevice(){
         volume: micVolume,
         sampleSize: 16,
         channelCount: 2,
-        echoCancellation: false,
-        noiseSuppression: false  
+        echoCancellation: echoCancel,
+        noiseSuppression: noiseSuppression  
     }
     navigator.mediaDevices.getUserMedia(
         { 
