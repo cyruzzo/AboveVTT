@@ -9013,6 +9013,28 @@ button.journal-view-button.journal-button {
 #peerVideo_mute_mic.muted{
     background:#d86565;
 }
+
+#peerVideo_echo_cancel,
+#peerVideo_noise_sup{
+float: right;
+    height: 27px;
+    background: #fff;
+    border: 0px;
+    border-radius: 5px;
+    font-family: Roboto, Helvetica, sans-serif;
+    font-size: 100%;
+    margin: 0px;
+    vertical-align: baseline;
+    color: #000;
+    padding: 1px 6px;
+    margin-left: 3px;
+    transition: none;
+}
+#peerVideo_echo_cancel.enabled,
+#peerVideo_noise_sup.enabled{
+    box-shadow: inset #009500 0px 0px 0px 2px;
+    color: #009500;
+}
 #peerVideo_mute_mic span:before{
     content:"\e029";
     font-family: "Material Symbols Outlined", sans-serif !important;
