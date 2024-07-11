@@ -1848,7 +1848,8 @@ function default_scene_data() {
 		darkness_filter: '0',
 		itemType: ItemType.Scene,
 		parentId: RootFolder.Scenes.id,
-		gridType: 1
+		gridType: 1,
+		scale_check: 1
 	};
 }
 
@@ -2767,7 +2768,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 	let DDB_EXTRAS = get_ddb_extras();
 	sceneSet.forEach(async scene => {
 		if (scene.uuid in DDB_EXTRAS) {
-			scene = {...scene, ...DDB_EXTRAS[scene.uuid]}
+			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid]}
 		}
 		const sceneHtml = await build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 		sectionHtml.find("ul").append(sceneHtml);
