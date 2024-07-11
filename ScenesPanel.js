@@ -1848,7 +1848,8 @@ function default_scene_data() {
 		darkness_filter: '0',
 		itemType: ItemType.Scene,
 		parentId: RootFolder.Scenes.id,
-		gridType: 1
+		gridType: 1,
+		scale_check: 1
 	};
 }
 
