@@ -4937,6 +4937,7 @@ button.avtt-roll-button,
 }
 .ct-sidebar__portal{
     overflow: unset !important;
+    z-index: 57000 !important;
 }
 .ct-sidebar__portal>[role='presentation'] .MuiPopover-paper{
     width: fit-content;
