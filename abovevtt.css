@@ -4912,7 +4912,7 @@ div.sidebar__pane-content div.tooltip::after {
     pointer-events: none;
     z-index: 1;
 }
-.token img:not(.note-condition), .token [data-img], .token .token-image{
+.token img:not(.note-condition):not(.condition-img), .token [data-img], .token .token-image{
     pointer-events:none !important;
 }
 
