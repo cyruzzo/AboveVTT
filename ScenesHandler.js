@@ -738,7 +738,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				console.log('rilevato cambio url');
 				let title = "Single Chapter";
 				let url = window.frames['scraper'].location.href;
-				let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+				let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 				self.sources[keyword].chapters[ch_keyword] = {
 					type: 'dnb',
 					title: title,
@@ -751,7 +751,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Appendices') ~ ul a").each(function(idx) {
 					let title = $(this).html();
 					let url = $(this).attr('href');
-					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 					self.sources[keyword].chapters[ch_keyword] = {
 						type: 'dnb',
 						title: title,
@@ -765,7 +765,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						return;
 					let title = $(this).html();
 					let url = $(this).attr('href');
-					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '');
+					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 					self.sources[keyword].chapters[ch_keyword] = {
 						type: 'dnb',
 						title: title,

@@ -1649,7 +1649,7 @@ function display_scenes(notOwned = false) {
 		area.empty();
 		area.css("opacity", "0");
 		area.animate({ opacity: "1" }, 300);
-		area.append($(`<div>Chapter not available. You may not own it or it is not fully released yet. You can check if you have access to the chapter here here: <a target="_blank" id='check_chapter_access' href='/sources/${source_name}/${chapter_name}'>https://www.dndbeyond.com/sources/${source_name}/${chapter_name}</a></div> `)) 
+		area.append($(`<div>Chapter not available. You may not own it or it is not fully released yet. You can check if you have access to the chapter here here: <a target="_blank" id='check_chapter_access' href='/sources/dnd/${source_name}/${chapter_name}'>https://www.dndbeyond.com/sources/dnd/${source_name}/${chapter_name}</a></div> `)) 
 		return;
 	}
 	fill_importer(window.ScenesHandler.sources[source_name].chapters[chapter_name].scenes, 0);
@@ -2436,7 +2436,7 @@ function load_sources_iframe_for_map_import(hidden = false) {
 		sourcesBody.find("a.sources-listing--item").click(function (event) {
 			event.stopPropagation();
 			event.preventDefault();
-			const sourceAbbreviation = event.currentTarget.href.split("/").pop();
+			const sourceAbbreviation = event.currentTarget.href.split("sources/").pop();
 			const image = $(event.currentTarget).find(".sources-listing--item--avatar").css("background-image").slice(4, -1).replace(/"/g, "");
 			const title = $(event.currentTarget).find(".sources-listing--item--title").text();
 			scene_importer_clicked_source(sourceAbbreviation, undefined, image, title);
@@ -2769,6 +2769,9 @@ function build_source_book_chapter_import_section(sceneSet) {
 	sceneSet.forEach(async scene => {
 		if (scene.uuid in DDB_EXTRAS) {
 			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid]}
+		}
+		else if(scene.uuid.replace('dnd/', '') in DDB_EXTRAS){
+			scene = {...scene, ...DDB_EXTRAS[scene.uuid.replace('dnd/', '')]}
 		}
 		const sceneHtml = await build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 		sectionHtml.find("ul").append(sceneHtml);
