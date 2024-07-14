@@ -4,7 +4,7 @@ let shiftHeld = false;
 let toggleSnap = false;
 let cursor_x = -1;
 let cursor_y = -1;
-
+let arrowKeysHeld = [0, 0, 0, 0];
 function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
         $('#hide_interface_button').hide().removeClass('unhidden');
@@ -188,68 +188,99 @@ function handle_menu_number_press(e) {
 Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
     handle_menu_number_press(e)
 });
+const moveLoop = async function(callback = function(){}){
+    for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+        let id = window.CURRENTLY_SELECTED_TOKENS[i];
+        let token = window.TOKEN_OBJECTS[id];
+        callback(token);
+    }
+    return true;
+}
+
+let debounceMoveRequest = mydebounce(
+    throttle(() => {
+       requestAnimationFrame(moveKeyWatch) 
+    }, 30), 25);
+
+
+
+function moveKeyWatch() {
+
+
+    if (arrowKeysHeld[0] && arrowKeysHeld[2]) {
+        moveLoop(function(token){token.moveUpLeft()});
+    } 
+    else if (arrowKeysHeld[0] && arrowKeysHeld[3]) {
+        moveLoop(function(token){token.moveUpRight()});
+    } 
+    else if (arrowKeysHeld[1] && arrowKeysHeld[2]) {
+        moveLoop(function(token){token.moveDownLeft()});
+    } 
+    else if (arrowKeysHeld[1] && arrowKeysHeld[3]) {
+        moveLoop(function(token){token.moveDownRight()});
+    } 
+    else if (arrowKeysHeld[0]) {
+        moveLoop(function(token){token.moveUp()});
+    } 
+    else if (arrowKeysHeld[1]) {
+        moveLoop(function(token){token.moveDown()});
+    }
+    else if (arrowKeysHeld[2]) {
+        moveLoop(function(token){token.moveLeft()});
+    }
+    else if (arrowKeysHeld[3]) {
+        moveLoop(function(token){token.moveRight()});
+    }    
+}
+
 
 Mousetrap.bind('up', async function (e) {
+    arrowKeysHeld[0] = 1;
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().prevAll().not("[data-skip='true']").first().children().first().click()
     }
-
-    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
-        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-            let id = window.CURRENTLY_SELECTED_TOKENS[i];
-            let token = window.TOKEN_OBJECTS[id];
-            await token.moveUp();
-        }
-        return false;
-    }
-});
-
+    debounceMoveRequest();
+}, 'keydown');
 Mousetrap.bind('down', async function (e) {
+    arrowKeysHeld[1] = 1;
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().nextAll().not("[data-skip='true']").first().children().first().click()
-
     }
-
-    if ($("#select-button").hasClass("button-enabled") || !window.DM) {
-        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-            let id = window.CURRENTLY_SELECTED_TOKENS[i];
-            let token = window.TOKEN_OBJECTS[id];
-            await token.moveDown();
-        }
-        return false;
-    }
-});
-
-
+    debounceMoveRequest();
+}, 'keydown');
 Mousetrap.bind('left', async function (e) {
+    arrowKeysHeld[2] = 1;
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         e.preventDefault();
-        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-            let id = window.CURRENTLY_SELECTED_TOKENS[i];
-            let token = window.TOKEN_OBJECTS[id];
-            await token.moveLeft();
-        }
-        return false;
     }
-});
-
+    debounceMoveRequest();
+}, 'keydown');
 Mousetrap.bind('right', async function (e) {
+    arrowKeysHeld[3] = 1;
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
-        e.preventDefault();
-        for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
-            let id = window.CURRENTLY_SELECTED_TOKENS[i];
-            let token = window.TOKEN_OBJECTS[id];
-            await token.moveRight();
-        }
-        return false;
+        e.preventDefault();    
     }
-});
+    debounceMoveRequest();
+}, 'keydown');
+
+Mousetrap.bind('up', async function (e) {
+    arrowKeysHeld[0] = 0;
+}, 'keyup');
+Mousetrap.bind('down', async function (e) {
+    arrowKeysHeld[1] = 0;
+}, 'keyup');
+Mousetrap.bind('left', async function (e) {
+    arrowKeysHeld[2] = 0;
+}, 'keyup');
+Mousetrap.bind('right', async function (e) {
+    arrowKeysHeld[3] = 0;
+}, 'keyup');
 
 Mousetrap.bind('alt', function () {
     if (altHeld) {
