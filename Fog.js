@@ -589,9 +589,11 @@ function check_single_token_visibility(id){
 	
 	const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id)) || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id) )); // this token is not in light, the player is using vision/light and darkness > 0
 	
+	const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected');
+
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
-	const hideInvisible = window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+	const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
@@ -685,7 +687,7 @@ function do_check_token_visibility() {
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
-			const hideInvisible = window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+			const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 
 
 			let inTruesight = false;
