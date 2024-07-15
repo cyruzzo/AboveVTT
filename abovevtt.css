@@ -7287,7 +7287,9 @@ div.ddbc-tab-options--layout-pill>button{
 .body-rpgcharacterbuilder #VTTWRAPPER ~ .ddbc-tab-options--layout-pill{
     display: none !important;
 }
-
+.site-bar{
+    display:none !important;
+}
 
 [id^="streamer-"].hidden {
     display: none;
