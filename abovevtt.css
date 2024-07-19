@@ -7093,7 +7093,8 @@ button span.onedrive-btn-status{
     transition-delay: 0;
 }
 
-.sidebar-panel-body .sp-container {
+.sidebar-panel-body .sp-container,
+.sidebar-panel-footer .sp-container {
     position: fixed !important;
 }
 .sp-palette-container {
