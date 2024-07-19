@@ -215,18 +215,6 @@ class DDBApi {
     return response.foundCharacters;
   }
 
-  static async fetchCharacterDetailsV5(characterId) {
-    if (!Array.isArray(characterIds) || characterIds.length === 0) {
-      console.warn("DDBApi.fetchCharacterDetails expected an array of ids, but received: ", characterIds);
-      return [];
-    }
-    const ids = characterIds.map(ci => parseInt(ci)); // do not use strings
-    const url = `https://character-service.dndbeyond.com/character/v5/character/${characterId}`;
-
-    const response = await DDBApi.fetchJsonWithToken(url, config);
-    return response.foundCharacters;
-  }
-
   static async fetchConfigJson() {
     const url = "https://www.dndbeyond.com/api/config/json";
     return await DDBApi.fetchJsonWithToken(url);
