@@ -7094,7 +7094,8 @@ button span.onedrive-btn-status{
 }
 
 .sidebar-panel-body .sp-container,
-.sidebar-panel-footer .sp-container {
+.sidebar-panel-footer .sp-container,
+.sidebar-flyout .sp-container {
     position: fixed !important;
 }
 .sp-palette-container {
