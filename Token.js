@@ -1607,7 +1607,7 @@ class Token {
 				
 				let selector = "tr[data-target='"+this.options.id+"']";
 				let entry = $("#combat_area").find(selector);
-				if((!(this.options.name) || (!(this.options.revealname)) && !window.DM)) {
+				if((!(this.options.name) || (!(this.options.revealname)) && !this.isPlayer() && !window.DM)) {
 					old.toggleClass('hasTooltip', false);
 					entry.toggleClass('hasTooltip', false);
 					entry.removeAttr("data-name");
