@@ -1253,6 +1253,11 @@ function redraw_fog() {
 				//HIDE 3 POINT RECT
 				clear3PointRect(ctx, d[0], d[6]/window.CURRENT_SCENE_DATA.conversion);		
 			}
+			if(d[4] == 6){
+				ctx.globalCompositeOperation = 'destination-out';
+				drawBrushstroke(ctx, d[0], "#000", d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);
+				ctx.globalCompositeOperation = 'source-over';
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -1286,6 +1291,12 @@ function redraw_fog() {
 			if (d[4] == 5) {
 				//HIDE 3 POINT RECT	
 				draw3PointRect(ctx, d[0], fogStyle, undefined, undefined, undefined, undefined, d[6]/window.CURRENT_SCENE_DATA.conversion, true, false, true);		
+			}
+			if(d[4] == 6){
+				ctx.globalCompositeOperation = 'destination-out';
+				drawBrushstroke(ctx, d[0], "#000", d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);				
+				ctx.globalCompositeOperation = 'source-over';
+				drawBrushstroke(ctx, d[0], fogStyle, d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);
 			}
 		}
 	}
@@ -3327,6 +3338,23 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 		sync_fog();
 		redraw_fog();
 	}
+	else if(window.DRAWSHAPE == 'brush'){
+			window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
+			window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
+			window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
+			data = [
+				window.BRUSHPOINTS,
+				window.LINEWIDTH,
+				null,
+				null,
+				6,
+				fog_type_to_int(), 
+				window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+			];
+			window.REVEALED.push(data);
+			sync_fog();
+			redraw_fog();
+	}
 }
 
 
@@ -4191,6 +4219,13 @@ function init_fog_menu(buttons){
 			</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush' data-function="reveal" data-unique-with="fog">
+					Brush
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="reveal" data-unique-with="fog">
 					Polygon
@@ -4241,6 +4276,13 @@ function init_fog_menu(buttons){
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='brush' data-function="hide" data-unique-with="fog">
+					Brush
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_polygon_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="hide" data-unique-with="fog">
 					Polygon
@@ -4267,6 +4309,15 @@ function init_fog_menu(buttons){
 	});
 
 	fog_menu.append($("<div class='ddbc-tab-options--layout-pill' data-skip='true'/>").append(hide_all_button));
+	fog_menu.append("<div class='menu-subtitle'>Line Width</div>");
+	fog_menu.append(`
+		<div>
+			<input id='draw_line_width' data-required="draw_line_width" type='number' style='width:90%' min='1'
+			value='${window.CURRENT_SCENE_DATA.hpps}' class='drawWidthSlider'>
+		</div>`
+	);
+	fog_menu.append("<div class='menu-subtitle'>Controls</div>");
+
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 			<button class='ddbc-tab-options__header-heading menu-option' id='fog_undo'>
