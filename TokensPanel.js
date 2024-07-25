@@ -870,6 +870,17 @@ function update_pc_token_rows() {
                 row.find(".inspiration").hide();
             }
 
+            row.find('.moreInfo').remove();
+            let moreInfo = $(`<div class='moreInfo' style='font-size:12px;'>
+                 ${pc.castingInfo.saveDcs.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Spell Save DCs</strong>${pc.castingInfo.saveDcs.map(a => `<div style='margin-left:15px'>${a.sources[0]}: ${a.value}</div>`).join('')}` : ``}
+                 ${pc.resistances.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Resistances</strong><div style='margin-left:15px'>${pc.resistances.map(a => `${a.name}`).join(', ')}</div></div>` : ``}
+                 ${pc.immunities.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Immunities</strong><div style='margin-left:15px'>${pc.immunities.map(a => `${a.name}`).join(', ')}</div></div>` : ``}
+                 ${pc.vulnerabilities.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Vulnerabilities</strong><div style='margin-left:15px'>${pc.vulnerabilities.map(a => `${a.name}`).join(', ')}</div></div>` : ``}
+                 ${pc.senses.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Senses</strong><div style='margin-left:15px'>${pc.senses.map(a => `${a.name} ${a.distance}`).join(', ')}</div></div>` : ``}
+                 ${pc.proficiencyGroups.length>0 ? `<div style='margin-top:5px'><strong style='margin-left:5px;'>Proficiencies</strong> ${pc.proficiencyGroups.map(a => `<div style='margin-left:15px'><strong>${a.group}:</strong> ${a.values == "" ? `None` : a.values}</div>`).join('')}</div>` : ``}  
+               </div>`)
+            row.append(moreInfo);
+
             update_player_online_indicator(playerId, pc.p2pConnected, color);
             row.css("--player-border-color",  color);
         }
