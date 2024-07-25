@@ -557,9 +557,11 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	});
 	form.append(gridType, verticalMinorAdjustment, horizontalMinorAdjustment)
 
+
 	let manual = $("<div id='manual_grid_data'/>");
 
 	manual.append($(`
+			<div id='linkAligners' title='Locks the draggable grid aligners to 1:1 aspect ratio' class='hideHex'><div style='display:inline-block; width:40%'>Link Aligners 1:1</div><input style='display: none;' type='number' min='0' max='1' step='1' name='alignersLinked'></div></div>
 			<div title='The size the ruler will measure a side of a square.'><div style='display:inline-block; width:40%'>Measurement:</div><div style='display:inline-block; width:60'%'><input type='number' name='fpsq' placeholder='5' value='${window.CURRENT_SCENE_DATA.fpsq}'> <input name='upsq' placeholder='ft' value='${window.CURRENT_SCENE_DATA.upsq}'></div></div>
 			<div id='gridSubdividedRow' class='hideHex' style='display: ${(window.CURRENT_SCENE_DATA.fpsq == 10 || window.CURRENT_SCENE_DATA.fpsq == 15 || window.CURRENT_SCENE_DATA.fpsq == 20) ? 'block' : 'none'}' title='Split grid into 5ft sections'><div style='display:inline-block; width:40%'>Split into 5ft squares</div><div style='display:inline-block; width:60'%'><input style='display: none;' type='number' min='0' max='1' step='1' name='grid_subdivided'></div></div>
 			<div id='additionalGridInfo' class='closed'>Additional Grid Info / Manual Settings</div>
@@ -572,7 +574,16 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 			</div>
 			`));
 
+	manual.find('#linkAligners').append(form_toggle("linkAlignersToggle",null, false,  function(event) {
+		handle_basic_form_toggle_click(event);
+		if ($(event.currentTarget).hasClass("rc-switch-checked")) {
+			manual.find("#linkAligners input").val('1');
 
+			
+		} else {
+			manual.find("#linkAligners input").val('0');
+		}
+	}));
 	manual.find('#gridSubdividedRow').append(form_toggle("gridSubdividedToggle",null, false,  function(event) {
 		handle_basic_form_toggle_click(event);
 		if ($(event.currentTarget).hasClass("rc-switch-checked")) {

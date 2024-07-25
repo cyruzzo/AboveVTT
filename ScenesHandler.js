@@ -398,6 +398,27 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 							};
 						draw_wizarding_box()
 					}
+					else if($('#linkAligners input').val() == 1){
+							let left;
+							let top;
+							if(ui.position.top - parseInt($("#aligner1").css('top')) > ui.position.left - parseInt($("#aligner1").css('left'))){
+								left = parseInt($("#aligner1").css('left')) + parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))
+								left = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : left
+								top = (parseInt($(event.target).css("top")) - parseInt($("#aligner1").css('top'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : Math.round((event.clientY - click2.y + original.top) / zoom);
+							}
+							else {
+								top = parseInt($("#aligner1").css('top')) + parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))
+								top = (parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('top')) + 25 : top
+								left = (parseInt($(event.target).css("left")) - parseInt($("#aligner1").css('left'))) < 25 ? parseInt($("#aligner1").css('left')) + 25 : Math.round((event.clientX - click2.x + original.left) / zoom);						
+							}
+
+
+							ui.position = {
+								left: left,
+								top: top
+							};
+						draw_wizarding_box()
+					}
 					else {			
 						draw_wizarding_box()
 					}
@@ -433,7 +454,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					};
 
 					
-					if ($('#gridType input:checked').val() != 1) { // restrict on 45
+					if ($('#gridType input:checked').val() != 1 || $('#linkAligners input').val() == 1) { // restrict on 45
 						let originalDiff = {
 							x:parseInt($("#aligner2").attr('original-left')) - parseInt($("#aligner1").attr('original-left')),
 							y:parseInt($("#aligner2").attr('original-top')) - parseInt($("#aligner1").attr('original-top'))
