@@ -4403,7 +4403,8 @@ div#importer_area>div>div:first-of-type {
     font-weight: 700;
 }
 .sidebar-list-item-row.player-row.expanded {
-    height: 186px;
+    height: fit-content;
+    padding-bottom:20px;
     transition: height 250ms linear;
 }
 .sidebar-list-item-row.player-row .player-card-footer {
