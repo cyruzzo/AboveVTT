@@ -204,38 +204,39 @@ let debounceMoveRequest = mydebounce(
 
 
 
-function moveKeyWatch() {
+async function moveKeyWatch() {
 
 
     if (arrowKeysHeld[0] && arrowKeysHeld[2]) {
-        moveLoop(function(token){token.moveUpLeft()});
+        await moveLoop(function(token){token.moveUpLeft()});
     } 
     else if (arrowKeysHeld[0] && arrowKeysHeld[3]) {
-        moveLoop(function(token){token.moveUpRight()});
+       await moveLoop(function(token){token.moveUpRight()});
     } 
     else if (arrowKeysHeld[1] && arrowKeysHeld[2]) {
-        moveLoop(function(token){token.moveDownLeft()});
+       await moveLoop(function(token){token.moveDownLeft()});
     } 
     else if (arrowKeysHeld[1] && arrowKeysHeld[3]) {
-        moveLoop(function(token){token.moveDownRight()});
+       await moveLoop(function(token){token.moveDownRight()});
     } 
     else if (arrowKeysHeld[0]) {
-        moveLoop(function(token){token.moveUp()});
+       await moveLoop(function(token){token.moveUp()});
     } 
     else if (arrowKeysHeld[1]) {
-        moveLoop(function(token){token.moveDown()});
+       await moveLoop(function(token){token.moveDown()});
     }
     else if (arrowKeysHeld[2]) {
-        moveLoop(function(token){token.moveLeft()});
+       await moveLoop(function(token){token.moveLeft()});
     }
     else if (arrowKeysHeld[3]) {
-        moveLoop(function(token){token.moveRight()});
+       await moveLoop(function(token){token.moveRight()});
     }    
 }
 
 
 Mousetrap.bind('up', async function (e) {
     arrowKeysHeld[0] = 1;
+    setCheckVision()
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
@@ -246,6 +247,7 @@ Mousetrap.bind('up', async function (e) {
 }, 'keydown');
 Mousetrap.bind('down', async function (e) {
     arrowKeysHeld[1] = 1;
+    setCheckVision()
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
     if (visibleMenuId){
         // prevent scrolling the window
@@ -256,6 +258,7 @@ Mousetrap.bind('down', async function (e) {
 }, 'keydown');
 Mousetrap.bind('left', async function (e) {
     arrowKeysHeld[2] = 1;
+    setCheckVision()
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         e.preventDefault();
     }
@@ -263,6 +266,7 @@ Mousetrap.bind('left', async function (e) {
 }, 'keydown');
 Mousetrap.bind('right', async function (e) {
     arrowKeysHeld[3] = 1;
+    setCheckVision()
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         e.preventDefault();    
     }
@@ -271,16 +275,27 @@ Mousetrap.bind('right', async function (e) {
 
 Mousetrap.bind('up', async function (e) {
     arrowKeysHeld[0] = 0;
+    setCheckVision() 
 }, 'keyup');
 Mousetrap.bind('down', async function (e) {
     arrowKeysHeld[1] = 0;
+    setCheckVision()
 }, 'keyup');
 Mousetrap.bind('left', async function (e) {
     arrowKeysHeld[2] = 0;
+    setCheckVision()
 }, 'keyup');
 Mousetrap.bind('right', async function (e) {
     arrowKeysHeld[3] = 0;
+    setCheckVision()
 }, 'keyup');
+
+function setCheckVision(){
+    if(arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
+        visionNeedsChecking = 0;
+    else
+        visionNeedsChecking = 1;
+}
 
 Mousetrap.bind('alt', function () {
     if (altHeld) {

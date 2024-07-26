@@ -5726,10 +5726,10 @@ function redraw_light(){
 	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
 		debounceAudioChecks();
 	}
-	
-	if(Math.abs(startTime-Date.now()) > 250){
+
+	if(Math.abs(startTime-Date.now()) > 100){
 		debounceLightChecks = mydebounce(() => {	
-				if(window.DRAGGING)
+				if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
 					return;	
 				if(window.walls?.length < 5){
 					redraw_light_walls();	
@@ -5737,11 +5737,11 @@ function redraw_light(){
 				//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 				redraw_light();
 				
-		}, 250);
+		}, 300);
 	}
 	else{
 		debounceLightChecks = mydebounce(() => {	
-			if(window.DRAGGING)
+			if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
 					return;	
 			if(window.walls?.length < 5){
 				redraw_light_walls();	
