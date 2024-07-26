@@ -2700,6 +2700,10 @@ class Token {
 
 					}
 				});
+
+				if(this.isLineAoe()){
+					tok.draggable( "option", "handle", "[data-img]" );
+				}
 				
 				if(this.options.lockRestrictDrop == undefined){
 					if(this.options.restrictPlayerMove){
