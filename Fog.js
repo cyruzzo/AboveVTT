@@ -5737,7 +5737,7 @@ function redraw_light(){
 				//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
 				redraw_light();
 				
-		}, 300);
+		}, 250);
 	}
 	else{
 		debounceLightChecks = mydebounce(() => {	
