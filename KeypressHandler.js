@@ -276,18 +276,22 @@ Mousetrap.bind('right', async function (e) {
 Mousetrap.bind('up', async function (e) {
     arrowKeysHeld[0] = 0;
     setCheckVision() 
+    debounceLightChecks();
 }, 'keyup');
 Mousetrap.bind('down', async function (e) {
     arrowKeysHeld[1] = 0;
-    setCheckVision()
+    setCheckVision();
+    debounceLightChecks();
 }, 'keyup');
 Mousetrap.bind('left', async function (e) {
     arrowKeysHeld[2] = 0;
-    setCheckVision()
+    setCheckVision();
+    debounceLightChecks();
 }, 'keyup');
 Mousetrap.bind('right', async function (e) {
     arrowKeysHeld[3] = 0;
-    setCheckVision()
+    setCheckVision();
+    debounceLightChecks();
 }, 'keyup');
 
 function setCheckVision(){
