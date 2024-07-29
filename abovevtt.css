@@ -1886,16 +1886,18 @@ div#combat_button{
 }
 
 #patreons {
-	padding-top:10px;
-    font-size: 8px;
-
-   -webkit-column-count: 10;
-      -moz-column-count: 10;
-           column-count: 10;
-
-   -webkit-column-gap: 20px;
-      -moz-column-gap: 20px;
-           column-gap: 20px;
+padding-top:10px;
+    font-size: 12px;
+    width: 100%;
+    height: calc(100% - 320px);
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .patreons-title{
@@ -1905,13 +1907,13 @@ div#combat_button{
 
 .patron-l0{
     font-weight:bold;
-    font-size: 11px;
+    font-size: 14px;
     color:red;
 }
 
 .patron-l1{
     font-weight:bold;
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .patron-l2{
@@ -2811,15 +2813,32 @@ button.roll-button-mod.minus {
 #splash {
     position: fixed;
     top: 30px;
-    right: 340px;
+    transform: translateX(-50%);
+    left: 50%;
     margin: auto;
-    height: 700px;
+    overflow:auto;
+    height: calc(100% - 40px);
     text-align:center;
     z-index: 70001;
     border: 3px solid black;
     border-radius: 8px;
     padding: 10px;
+    width:80%;
 }
+#patreons ul li {
+    width: 136px;
+}
+
+#patreons ul {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: space-between;
+}
+
 
 .splashLinkRow div{
 	display:inline;

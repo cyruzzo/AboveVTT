@@ -1341,7 +1341,7 @@ function init_splash() {
 	//s.append("<div style='display:inline-block;width:300px'>this stuff here<br>and here<br>and here</div>");
 	s.append("");
 	s.append(`
-	<div style='display:inline-block; vertical-align:top;width:600px;'>
+	<div style='display:inline-block; vertical-align:top;width:100%;'>
 	<div style='padding-top:10px;padding-bottom:10px;'>
 		This is a <b>FREE</b> opensource project, kept alive by developers contributing their time, Patrons chipping in with their cash, and users keeping alive the community. If you need help or want to report a bug reach out the <a style='text-decoration: underline;' target='_blank' href='https://discord.gg/cMkYKqGzRh'> the AboveVTT community on discord</a>
 	</div>
