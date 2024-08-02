@@ -1266,6 +1266,7 @@ class JournalManager{
 			      { title: 'Read Aloud Text', block: 'div', wrapper: true, classes: 'read-aloud-text' },
 			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
 			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
+			      { title: 'For DM Eyes Online', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			    ] },
 			    { title: 'Custom Statblock Stats', items: [
@@ -1340,7 +1341,29 @@ class JournalManager{
 				    margin: 0px;
 				    background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat
 				}
-				
+				.dm-eyes-only{
+				    border: 1px solid #000;
+				    border-radius: 5px;
+				    background: #f5f5f5;
+				    padding: 0px 5px;
+				    margin: 9px 10px;
+					display: ${window.DM ? 'block' : 'none'};
+					position: relative;
+				}
+				.dm-eyes-only:before {
+				    display:block;
+				    position:absolute;
+				    content:'DM Eyes Only';
+				    top: -10px;
+				    right: 2px;
+				    float:right;
+				    border:1px #000 solid;
+				    border-radius:5px;
+				    background: #f5f5f5;
+				    font-weight: bold;
+				    font-size:10px;
+				    padding:0px 4px;
+				}
 				.Basic-Text-Frame {
 				    clear: both;
 				    border: 1px solid #d4d0ce;
