@@ -2700,9 +2700,10 @@ class Token {
 
 					}
 				});
-
+				let classToClick = null;
 				if(this.isLineAoe()){
 					tok.draggable( "option", "handle", "[data-img]" );
+					classToClick = "[data-img]"
 				}
 				
 				if(this.options.lockRestrictDrop == undefined){
@@ -2741,7 +2742,7 @@ class Token {
 					tok.removeClass("ui-state-disabled");
 				}
 
-				tok.on('dblclick.highlightToken', function(e) {
+				tok.on('dblclick.highlightToken', classToClick, function(e) {
 					self.highlight(true); // dont scroll
 					let data = {
 						id: self.options.id
@@ -2749,7 +2750,7 @@ class Token {
 					window.MB.sendMessage('custom/myVTT/highlight', data);
 				})
 
-				tok.on('click.selectToken', function() {
+				tok.on('click.selectToken', classToClick, function() {
 					let parentToken = $(this);
 					if (parentToken.hasClass("pause_click")) {
 						return;
