@@ -4922,7 +4922,31 @@ span.exhaustion-pip.last{
 div.sidebar__pane-content div.tooltip::after {
     background: none !important;
 }
-
+.dm-eyes-only{
+    border: 1px solid #000;
+    border-radius: 5px;
+    background: #f5f5f5;
+    padding: 0px 5px;
+    margin: 9px 10px;
+    position: relative;
+}
+.dm-eyes-only:before {
+    display:block;
+    position:absolute;
+    content:'DM Eyes Only';
+    top: -10px;
+    right: 2px;
+    float:right;
+    border:1px #000 solid;
+    border-radius:5px;
+    background: #f5f5f5;
+    font-weight: bold;
+    font-size:10px;
+    padding:0px 4px;
+}
+.body-rpgcharacter-sheet .dm-eyes-only{
+    display:none;
+}
 .elev svg{
     left: -7px;
     position: absolute;
