@@ -471,6 +471,26 @@ function token_context_menu_expanded(tokenIds, e) {
 				token.place_sync_persist();
 			});
 		});
+		let lockSettings = token_setting_options().filter((d) => d.name == 'lockRestrictDrop')[0];
+
+		let selectedTokenSettings = tokens.map(t => t.options.lockRestrictDrop);
+		let uniqueSettings = [...new Set(selectedTokenSettings)];
+		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
+		if (uniqueSettings.length === 1) {
+			currentValue = uniqueSettings[0];
+		}
+		let lockDropdown = build_dropdown_input(lockSettings, currentValue, function(name, newValue) {
+			tokens.forEach(token => {
+				token.options[name] = newValue;
+				token.place_sync_persist();
+			});
+		});
+		let lockTitle = lockDropdown.find('.token-image-modal-footer-title')
+		lockTitle.empty();
+		lockTitle.toggleClass('material-icons door-lock', true);
+		lockTitle.toggleClass('token-image-modal-footer-title', false);
+		body.append(lockDropdown);
+		
 		let hideText = tokenIds.length > 1 ? "Hide Tokens" : "Hide Token"
 		let hiddenMenuButton = $(`<button class="${determine_hidden_classname(tokenIds)} context-menu-icon-hidden icon-invisible material-icons">${hideText}</button>`)
 		hiddenMenuButton.off().on("click", function(clickEvent){
@@ -488,7 +508,8 @@ function token_context_menu_expanded(tokenIds, e) {
 			clickedItem.addClass(determine_hidden_classname(tokenIds));
 		});
 		body.append(hiddenMenuButton);
-		
+
+
 		let attenuateButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden spatial-audio-off material-icons">Distance based volume</button>`)
 			attenuateButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);

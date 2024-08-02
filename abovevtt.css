@@ -9747,6 +9747,12 @@ li.audio-row:hover .channel-progress-bar-total
 .token-image[src*='assets/icons/speaker.svg']{
     filter: invert(1) drop-shadow(1px 1px 0px #000) !important;
 }
+
+#tokens .audio-token.token:not(.underDarkness),
+#map_items .audio-token.token{
+    background: #060b04;
+    border: #ea2524 2px solid;
+}
 #sounds-panel .channel-progress-bar-total{
     width: 35%;
 }
