@@ -2093,12 +2093,16 @@ class Token {
 					tokenImage.css("max-width", this.options.size);
 			
 					tok.toggleClass("isAoe", false);
+					tok.toggleClass('lineAoe', false);
 
 				} else {
 					tokenImage = build_aoe_token_image(this, imageScale, rotation)
 					tok.css("--token-scale", imageScale);
 					tok.css("--token-rotation", `${rotation}deg`);
 					tok.toggleClass("isAoe", true);
+					if(this.isLineAoe()){
+						tok.toggleClass('lineAoe', true)
+					}
 				}
 				tok.css("--token-rotation", rotation + "deg");
 
