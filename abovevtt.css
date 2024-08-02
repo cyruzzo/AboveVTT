@@ -3330,6 +3330,12 @@ div#selectedTokensBorder {
 .token.isAoe div#note {
     visibility: visible;
 }
+.lineAoe{
+    pointer-events:none;
+}
+.lineAoe *{
+    pointer-events:auto;
+}
 .aoe-token-tileable {
     height: 100%;
     width: 100%;
