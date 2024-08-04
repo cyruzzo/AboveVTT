@@ -4082,6 +4082,7 @@ div#importer_area>div>div:first-of-type {
     width: 100%;
     height: 100%;
 }
+
 button.applyDamageButton {
     padding: 2px;
     margin: 0px 2px;
@@ -4093,11 +4094,43 @@ button.applyDamageButton {
     outline:none;
 }
 
+.block-send-to-game-log {
+    position:absolute;
+    float:right;
+    background: none;
+    backdrop-filter: brightness(3);
+    right: 14px;
+    top: -4px;
+    font-size:10px !important;
+    padding: 2px;
+    display: flex;
+    border-radius: 5px;
+    border: none;
+    outline: none !important;
+    align-items: center;
+}
+
+.text--quote-box ~ .block-send-to-game-log{
+    right:25px;
+    top:-8px
+}
+.rules-text ~ .block-send-to-game-log{
+    right:5px;
+    top: 15px
+}
+button.block-send-to-game-log span {
+    font-size: 13px;
+    padding: 0px;
+    margin: 0px;
+}
+
+
 .damageButtonsContainer {
     top:-15px;
     position:relative;
     display:flex;
 }
+
 
 .token.groupToken{
     display:none !important;
@@ -8187,7 +8220,7 @@ button.journal-view-button.journal-button {
 .note-text .epigraph,
 .note-text .epigraph--with-author {
     overflow: auto;
-    background: var(--theme-quote-bg-color,#fff);
+    background: none;
     color: var(--theme-quote-fg-color,#242527);
     margin: 40px 0;
     line-height: 1.6;
