@@ -3818,7 +3818,7 @@ body {
 
 .sidebar-modal {
     position: fixed;
-    z-index: 9999;
+    z-index: 58000;
     align-items: center;
     justify-content: center;
     padding: 10px;
@@ -4093,6 +4093,7 @@ button.applyDamageButton {
     align-items: center;
     outline:none;
 }
+
 .block-send-to-game-log {
     position:absolute;
     float:right;
@@ -4123,6 +4124,7 @@ button.block-send-to-game-log span {
     margin: 0px;
 }
 
+
 .damageButtonsContainer {
     top:-15px;
     position:relative;
@@ -4136,7 +4138,12 @@ button.block-send-to-game-log span {
 #combat_area tr[skipturn]{
     scale: 0.95;
 }
-
+#combat_area tr[skipturn]{
+    display:none;
+}
+#combat_area tr[skipturn].showGroupTokens{
+    display:table-row;
+}
 .custom-token-image-item [data-img]:hover {
     border: lightgrey solid 2px;
 }

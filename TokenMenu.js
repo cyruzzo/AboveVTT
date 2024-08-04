@@ -749,18 +749,23 @@ function token_context_menu_expanded(tokenIds, e) {
 				combatButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				combatButton.html(removeButtonInternals);
 				let group = uuid();
+				let allHidden = true;
 				tokens.forEach(t => {
 					if(t.options.combatGroup && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
+					if(t.options.hidden !== true){
+						allHidden = false
+					}
 					t.options.combatGroup = group;
+					ct_add_token(t, false);
 					t.update_and_sync();
 				});		
 				let t = new Token({
 					...tokens[0].options,
 					id: group,
 					combatGroupToken: group,
-					ct_show: true,
+					ct_show: !allHidden,
 					name: `${tokens[0].options.name} Group`
 				});
 				window.TOKEN_OBJECTS[group] = t;
