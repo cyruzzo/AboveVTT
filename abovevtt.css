@@ -4088,7 +4088,12 @@ div#importer_area>div>div:first-of-type {
 #combat_area tr[skipturn]{
     scale: 0.95;
 }
-
+#combat_area tr[skipturn]{
+    display:none;
+}
+#combat_area tr[skipturn].showGroupTokens{
+    display:table-row;
+}
 .custom-token-image-item [data-img]:hover {
     border: lightgrey solid 2px;
 }

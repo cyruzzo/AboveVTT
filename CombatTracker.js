@@ -854,21 +854,12 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			find.click(function(){
 				if($(this).hasClass('collapsed')){
 					$(this).toggleClass('collapsed', false);
-					for(let i in window.all_token_objects){
-						if(window.all_token_objects[i].options.combatGroup == token.options.combatGroupToken && i != token.options.id){
-							ct_add_token(window.all_token_objects[i]);
-						}
-					}
+					$(`[skipturn="${token.options.combatGroupToken}"]`).toggleClass('showGroupTokens', true);
 				}
 				else{
 					$(this).toggleClass('collapsed', true);
-					for(let i in window.all_token_objects){
-						if(window.all_token_objects[i].options.combatGroup == token.options.combatGroupToken && i != token.options.id){
-							ct_remove_token(window.all_token_objects[i]);
-						}
-					}
-				}
-				
+					$(`[skipturn="${token.options.combatGroupToken}"]`).toggleClass('showGroupTokens', false);
+				}				
 			});
 			buttons.append(find);
 	}
@@ -1130,8 +1121,6 @@ function ct_load(data=null){
 	}
 	else{
 		for(let tokenID in window.all_token_objects){
-			if(window.all_token_objects[tokenID].options.combatGroup && !window.all_token_objects[tokenID].options.combatGroupToken)
-					continue;
 			if( window.all_token_objects[tokenID].options.ct_show == true || (window.DM && window.all_token_objects[tokenID].options.ct_show !== undefined)) 
 			{		
 				ct_add_token(window.all_token_objects[tokenID],false,true);

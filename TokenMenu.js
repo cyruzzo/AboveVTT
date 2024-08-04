@@ -758,6 +758,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						allHidden = false
 					}
 					t.options.combatGroup = group;
+					ct_add_token(t, false);
 					t.update_and_sync();
 				});		
 				let t = new Token({
