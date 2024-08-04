@@ -398,7 +398,44 @@ class MessageBroker {
 									}
 								}
 								
+								if(data.data.injected_data?.rollType == "damage" && window.DM){
+									let damageButtonContainer = $(`<div class='damageButtonsContainer'></div>`);
+									let damageSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-combat-attack__icon-img--weapon-melee ddbc-attack-type-icon ddbc-attack-type-icon--1-1"><path class="prefix__st0" d="M237.9 515.1s-.1-.1 0 0c2-2.7 4.3-5.8 5.3-8.4 0 0-3.8 2.4-7.8 6.1.5.6 1.8 1.7 2.5 2.3zM231.4 517.8c-.2-.2-1.5-1.6-1.5-1.6l-1.6 1 2.4 2.6-3.7 4.6 1 1 3.7-4.3 1.1.9c.4-.5.8-.9 1.2-1.4l.2-.2c-1-.8-1.9-1.7-2.8-2.6zM0 0s6.1 5.8 12.2 11.5l1.4-2.2 1.8 1.3-2.9 2.5 3.7 4.6-1 1-3.7-4.3-2.8 2.5-1.3-1 2-1.6C9.4 14.2 2.2 5.6 0 0z"></path></svg>`
+									let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
+									let halfDamage = $(`<button class='applyDamageButton resist'>1/2 ${damageSVG}</button>`);
+									let doubleDamage = $(`<button class='applyDamageButton vulnerable'>2x${damageSVG}</button>`);
 
+
+									damageButtonContainer.off('click.damage').on('click.damage', 'button', function(e){
+										const clicked = $(e.currentTarget);
+
+										let damage = data.data.injected_data.result;
+										if(clicked.hasClass('resist')){
+											damage = Math.floor(damage/2);
+										}
+										else if(clicked.hasClass('vulnerable')){
+											damage = damage*2;
+										}
+										for(let i in window.CURRENTLY_SELECTED_TOKENS){
+
+											let id = window.CURRENTLY_SELECTED_TOKENS[i];
+											let token = window.TOKEN_OBJECTS[id];
+											if(token.isPlayer() || token.isAoe())
+												continue;
+											let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
+
+											if(window.all_token_objects[id] != undefined){
+												window.all_token_objects[id].hp = newHp;
+											}			
+											if(token != undefined){		
+												token.hp = newHp;
+												token.place_sync_persist()
+											}		
+										}
+									})
+									damageButtonContainer.append(damageButton, halfDamage, doubleDamage);
+									li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+								}
 								
 
 								if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
@@ -1233,7 +1270,7 @@ class MessageBroker {
 							}		
 						}
 						if(target != undefined){
-
+							let allRollsTotal = 0;
 							for(let i = 0; i<msg.data.rolls.length; i++){
 								let row = i
 								if(!target.attr('class').includes('-Collapsed-ref')){
@@ -1252,6 +1289,45 @@ class MessageBroker {
 							        }
 							    }
 								}
+								allRollsTotal += msg.data.rolls[i].result.total;
+							}
+							if(msg.data.rolls[0].rollType.toLowerCase() == "damage" && window.DM){
+								let damageButtonContainer = $(`<div class='damageButtonsContainer'></div>`);
+								let damageSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-combat-attack__icon-img--weapon-melee ddbc-attack-type-icon ddbc-attack-type-icon--1-1"><path class="prefix__st0" d="M237.9 515.1s-.1-.1 0 0c2-2.7 4.3-5.8 5.3-8.4 0 0-3.8 2.4-7.8 6.1.5.6 1.8 1.7 2.5 2.3zM231.4 517.8c-.2-.2-1.5-1.6-1.5-1.6l-1.6 1 2.4 2.6-3.7 4.6 1 1 3.7-4.3 1.1.9c.4-.5.8-.9 1.2-1.4l.2-.2c-1-.8-1.9-1.7-2.8-2.6zM0 0s6.1 5.8 12.2 11.5l1.4-2.2 1.8 1.3-2.9 2.5 3.7 4.6-1 1-3.7-4.3-2.8 2.5-1.3-1 2-1.6C9.4 14.2 2.2 5.6 0 0z"></path></svg>`
+								let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
+								let halfDamage = $(`<button class='applyDamageButton resist'>1/2 ${damageSVG}</button>`);
+								let doubleDamage = $(`<button class='applyDamageButton vulnerable'>2x${damageSVG}</button>`);
+
+
+								damageButtonContainer.off('click.damage').on('click.damage', 'button', function(e){
+									const clicked = $(e.currentTarget);
+
+									let damage = allRollsTotal;
+									if(clicked.hasClass('resist')){
+										damage = Math.floor(allRollsTotal/2);
+									}
+									else if(clicked.hasClass('vulnerable')){
+										damage = allRollsTotal*2;
+									}
+									for(let i in window.CURRENTLY_SELECTED_TOKENS){
+
+										let id = window.CURRENTLY_SELECTED_TOKENS[i];
+										let token = window.TOKEN_OBJECTS[id];
+										if(token.isPlayer() || token.isAoe())
+											continue;
+										let newHp = Math.max(0, parseInt(token.hp) - parseInt(damage));
+
+										if(window.all_token_objects[id] != undefined){
+											window.all_token_objects[id].hp = newHp;
+										}			
+										if(token != undefined){		
+											token.hp = newHp;
+											token.place_sync_persist()
+										}		
+									}
+								})
+								damageButtonContainer.append(damageButton, halfDamage, doubleDamage);
+								target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
 							}
 						}
 						
