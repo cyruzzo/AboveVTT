@@ -713,7 +713,7 @@ class JournalManager{
 		this.translateHtmlAndBlocks(note_text);	
 		this.add_journal_roll_buttons(note_text);
 		this.add_journal_tooltip_targets(note_text);
-
+		this.block_send_to_buttons(note_text);
 		add_stat_block_hover(note_text);
 		
 		note.append(note_text);
@@ -822,6 +822,31 @@ class JournalManager{
 	        }
 	    }
 	}
+	block_send_to_buttons(target){
+		let blocks = target.find('img, .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
+
+		let sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
+		let container = $(`<div class='note-text' style='position:relative; width:'></div>`)
+		sendToGamelogButton.off('click').on("click", function(e) {
+	        e.stopPropagation();
+	        e.preventDefault();
+	        let targetBlock = $(e.currentTarget).parent().clone();
+	        targetBlock.find('button').remove();
+	        targetBlock.find('img').removeAttr('width height style');
+	        send_html_to_gamelog(targetBlock[0].outerHTML);
+	    });
+		blocks.wrap(function(){
+			if(this instanceof HTMLImageElement){
+				container.css('width', 'fit-content');
+				$(this).attr('href', $(this).attr('src'));
+			}
+			return container;
+		});
+		blocks.after(sendToGamelogButton); 
+	}
+				   
+
+
 	add_journal_roll_buttons(target, tokenId=undefined){
 		console.group("add_journal_roll_buttons")
 		

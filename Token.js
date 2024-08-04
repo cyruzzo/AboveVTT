@@ -1439,12 +1439,7 @@ class Token {
 					            sendToGamelogButton.on("click", function(ce) {
 					                ce.stopPropagation();
 					                ce.preventDefault();
-					                const tooltipWithoutButton = $(noteHover);
-					                tooltipWithoutButton.css({
-					                    "width": "100%",
-					                    "max-width": "100%",
-					                    "min-width": "100%"
-					                });
+									
 					                send_html_to_gamelog(noteHover);
 					            });
 					            let flyoutLeft = e.clientX+20
@@ -1463,6 +1458,7 @@ class Token {
 					                position: "relative",
 					                background: "#fff"
 					            });
+					            window.JOURNAL.block_send_to_buttons(flyout);
 					            flyout.append(buttonFooter);
 					            buttonFooter.append(sendToGamelogButton);
 					            flyout.find("a").attr("target","_blank");
