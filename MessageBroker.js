@@ -295,7 +295,7 @@ class MessageBroker {
 					window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 				}
 			});
-			debounceCombatReorder();
+			debounceCombatReorder(true);
 		}
 
 		// start the task
@@ -1406,7 +1406,7 @@ class MessageBroker {
 							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
 						}
 					});
-					debounceCombatReorder();
+					debounceCombatReorder(true);
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {

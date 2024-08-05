@@ -1,8 +1,12 @@
 
 const debounceCombatReorder = combatmydebounce((resetCurrent = false) => {
 	ct_reorder(window.DM)
-	if(resetCurrent)
+	if(resetCurrent){
+		$("#combat_area tr[data-target]").each(function(){
+			$(this).removeAttr('data-current');
+		});
 		$("#combat_area tr").first().attr('data-current','1');
+	}
 }, 250); //250ms so this still feels reactive
 const debounceCombatPersist = combatmydebounce(() => {ct_persist()}, 500); //500 ms since doesn't have visible effect on the screen the change takes place.
 
@@ -189,12 +193,8 @@ function init_combat_tracker(){
 	
 	buttons=$("<div id='combat_footer'/>");
 	
-	let reroll=$("<button>REROLL</button>");
+	let reroll=$("<button class='roll-init-button'>REROLL</button>");
 	reroll.click(function(){
-		$("#combat_area tr[data-target]").each(function(){
-			$(this).removeAttr('data-current');
-		});
-
 		$("#combat_area tr[data-monster]:not([skipturn])").each(function(idx){
 			let element=$(this);
 
@@ -272,6 +272,10 @@ function init_combat_tracker(){
 			current.css('background','');
 			next=$(current.nextAll('tr:not([skipTurn])')[0]);
 			if(next.length==0){
+				const autoInit = getCombatTrackersettings().auto_init;
+				if(autoInit == '1'){
+					$('.roll-init-button').click();
+				}
 				window.ROUND_NUMBER++;
 				document.getElementById('round_number').value = window.ROUND_NUMBER;
 				next=$("#combat_area tr:not([skipTurn])").first()
@@ -359,7 +363,10 @@ function init_combat_tracker(){
 		$("#endplayerturn").toggleClass('enabled', false);
 		$("#endplayerturn").prop('disabled', true);
 	});
-	
+	let rollplayerinit=$('<button id="rollplayerinit" class="roll-init-button">Roll Initiative</button>');
+	rollplayerinit.click(function(){
+		$(`.ct-combat__summary-group--initiative button.integrated-dice__container`).click();
+	});
 	
 	
 	if(window.DM){
@@ -370,7 +377,7 @@ function init_combat_tracker(){
 		buttons.css('font-size','10px');	
 	}
 	else{
-		buttons.append(endplayerturn);
+		buttons.append(rollplayerinit, endplayerturn);
 	}
 	ct_inside.append(buttons);
 	
@@ -496,14 +503,23 @@ function openCombatTrackerSettings(){
 		handle_basic_form_toggle_click(e)
 	});
 	let tieBreakerRow = form_row(`tie_breaker`, `Add Tie Breaker to Initiative Rolls`, tieBreakerToggle)
+	
 	if(window.DM){
 		form.append(tieBreakerRow);
 	}
+
 	let scrollToNextToggle = form_toggle('scroll_to_next', 'Scroll to Token on Next/Prev', combatSettingData['scroll_to_next'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
 	let scrollToNextRow = form_row(`scroll_to_next`, `Auto Center Token on Next/Prev`, scrollToNextToggle)
 	form.append(scrollToNextRow);
+
+	let autoRollInitAtTopToggle = form_toggle('auto_init', `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, combatSettingData['auto_init'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let autoRollInitAtTopRow = form_row(`auto_init`, `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, autoRollInitAtTopToggle)
+	form.append(autoRollInitAtTopRow);
+
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
 		$("#sources-import-main-container").remove();
@@ -1069,8 +1085,15 @@ function ct_load(data=null){
 		$("#combat_area tr[data-current]").removeAttr("data-current");
 		for(let i=0;i<data.length;i++){
 			if (data[i]['data-target'] === 'round'){
-				window.ROUND_NUMBER = data[i]['round_number'];
-				document.getElementById('round_number').value = window.ROUND_NUMBER;
+				if(window.ROUND_NUMBER != data[i]['round_number']){
+					window.ROUND_NUMBER = data[i]['round_number'];
+					document.getElementById('round_number').value = window.ROUND_NUMBER;
+					const autoInit = getCombatTrackersettings().auto_init;
+					const tokenInCombat = $(`#combat_area tr[data-target='${window.pcs.find(d => d.sheet.includes(window.PLAYER_SHEET)).sheet}']`).length > 0;
+					if(autoInit == '1' && !window.DM && tokenInCombat == true){
+						$('.roll-init-button').click();
+					}
+				}
 			} 
 			else if(data[i]['data-target'] !== undefined){
 				if (window.all_token_objects[data[i]['data-target']] == undefined) {
