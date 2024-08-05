@@ -2511,7 +2511,7 @@ input.roll-input-mod::-webkit-inner-spin-button,
 input.roll-input-mod::-webkit-outer-spin-button {
   -webkit-appearance: none;
 }
-input.roll-input-mod {
+body .roll-mod-container input.roll-input-mod[type="number"] {
     -webkit-appearance: textfield;
     -moz-appearance: textfield;
     appearance: textfield;
@@ -2522,6 +2522,10 @@ input.roll-input-mod {
     outline: none;
     border: solid #999;
     border-width: 0px 1px 0px 1px;
+    border-radius: 0px;
+    box-shadow: none;
+    padding: 0px;
+    transition: none;
 }
 .roll-mod-container{
     display:none;
