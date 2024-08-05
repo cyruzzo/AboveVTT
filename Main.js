@@ -3391,7 +3391,7 @@ function send_rpg_dice_to_ddb(expression, displayName, imgUrl, rollType="roll", 
 	let diceRoll = new DiceRoll(expression);
 	diceRoll.action = actionType;
 	diceRoll.rollType = rollType;
-	diceRoll.name = displayName;
+	diceRoll.name = displayName == true ? 'THE DM' : displayName;
 	diceRoll.avatarUrl = imgUrl;
 	// diceRoll.entityId = monster.id;
 	// diceRoll.entityType = monsterData.id;
