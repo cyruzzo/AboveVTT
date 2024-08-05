@@ -397,8 +397,9 @@ class MessageBroker {
 										}, false);
 									}
 								}
-								
-								if(data.data.injected_data?.rollType == "damage" && window.DM){
+
+								let rollType = data.data.injected_data?.rollType.toLowerCase()
+								if(rollType != undefined && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
 									let damageButtonContainer = $(`<div class='damageButtonsContainer'></div>`);
 									let damageSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-combat-attack__icon-img--weapon-melee ddbc-attack-type-icon ddbc-attack-type-icon--1-1"><path class="prefix__st0" d="M237.9 515.1s-.1-.1 0 0c2-2.7 4.3-5.8 5.3-8.4 0 0-3.8 2.4-7.8 6.1.5.6 1.8 1.7 2.5 2.3zM231.4 517.8c-.2-.2-1.5-1.6-1.5-1.6l-1.6 1 2.4 2.6-3.7 4.6 1 1 3.7-4.3 1.1.9c.4-.5.8-.9 1.2-1.4l.2-.2c-1-.8-1.9-1.7-2.8-2.6zM0 0s6.1 5.8 12.2 11.5l1.4-2.2 1.8 1.3-2.9 2.5 3.7 4.6-1 1-3.7-4.3-2.8 2.5-1.3-1 2-1.6C9.4 14.2 2.2 5.6 0 0z"></path></svg>`
 									let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
@@ -1258,7 +1259,7 @@ class MessageBroker {
 							for(let j = 0; j < msg.data.rolls.length; j++){
 								if(target != undefined)
 										break;
-								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']`);
+								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex'] [class*='Total-Other']`);
 								if(totals.length == msg.data.rolls.length){
 									for(let k = 0; k<totals.length; k++){
 											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
@@ -1291,7 +1292,10 @@ class MessageBroker {
 								}
 								allRollsTotal += msg.data.rolls[i].result.total;
 							}
-							if(msg.data.rolls[0].rollType.toLowerCase() == "damage" && window.DM){
+
+					
+							let rollType = msg.data.rolls[0].rollType.toLowerCase()
+							if(rollType != undefined && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
 								let damageButtonContainer = $(`<div class='damageButtonsContainer'></div>`);
 								let damageSVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="ddbc-svg ddbc-combat-attack__icon-img--weapon-melee ddbc-attack-type-icon ddbc-attack-type-icon--1-1"><path class="prefix__st0" d="M237.9 515.1s-.1-.1 0 0c2-2.7 4.3-5.8 5.3-8.4 0 0-3.8 2.4-7.8 6.1.5.6 1.8 1.7 2.5 2.3zM231.4 517.8c-.2-.2-1.5-1.6-1.5-1.6l-1.6 1 2.4 2.6-3.7 4.6 1 1 3.7-4.3 1.1.9c.4-.5.8-.9 1.2-1.4l.2-.2c-1-.8-1.9-1.7-2.8-2.6zM0 0s6.1 5.8 12.2 11.5l1.4-2.2 1.8 1.3-2.9 2.5 3.7 4.6-1 1-3.7-4.3-2.8 2.5-1.3-1 2-1.6C9.4 14.2 2.2 5.6 0 0z"></path></svg>`
 								let damageButton = $(`<button class='applyDamageButton flat'>${damageSVG}</button>`);
