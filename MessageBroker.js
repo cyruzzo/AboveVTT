@@ -1273,7 +1273,7 @@ class MessageBroker {
 							for(let j = 0; j < msg.data.rolls.length; j++){
 								if(target != undefined)
 										break;
-								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex'] [class*='Total-Other']`);
+								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
 								if(totals.length == msg.data.rolls.length){
 									for(let k = 0; k<totals.length; k++){
 											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
