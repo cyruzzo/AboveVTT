@@ -4093,6 +4093,14 @@ button.applyDamageButton {
     align-items: center;
     outline:none;
 }
+button.applyDamageButton svg {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 2px 0px 0px 2px;
+    margin:0px;
+}
 
 .block-send-to-game-log {
     position:absolute;
