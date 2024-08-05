@@ -334,6 +334,9 @@ function showErrorMessage(error, ...extraInfo) {
 
   console.log("showErrorMessage", ...extraInfo, error.stack);
   if (!(error instanceof Error)) {
+    if (typeof error === "object") {
+      error = JSON.stringify(error);
+    } 
     error = new Error(error?.toString());
   }
   const stack = error.stack || new Error().stack;
@@ -441,9 +444,12 @@ function showGoogleDriveWarning(){
  * @param {string|*[]} extraInfo other relevant information */
 function showError(error, ...extraInfo) {
   if (!(error instanceof Error)) {
-    error = new Error(error);
+    if (typeof error === "object") {
+      error = JSON.stringify(error);
+    } 
+    error = new Error(error?.toString());
   }
-  $('#loadingStyles').remove();
+  $('#loadingStyles').remove(); 
   showErrorMessage(error, ...extraInfo);
 
   $("#above-vtt-error-message .error-message-buttons").append(`<div style="float: right;top:-22px;position:relative;">Use this button to share logs with developers!<span class="material-symbols-outlined" style="color:red;font-size: 40px;top: 14px;position: relative;">line_end_arrow_notch</span></div>`);
