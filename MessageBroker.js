@@ -1531,7 +1531,7 @@ class MessageBroker {
 					</p>
 					<div class="tss-1e6zv06-MessageContainer-Flex">
 						<div class="tss-dr2its-Line-Flex">
-							<span class="tss-1tj70tb-Sender">${data.player != true ? data.player : `The DM`}</span>
+							<span class="tss-1tj70tb-Sender">${data.player}</span>
 						</div>
 						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
 						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="tss-1yxh2yy-TimeAgo-TimeAgo">${timestamp}</time>
