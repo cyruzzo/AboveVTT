@@ -19,7 +19,7 @@ function get_scene_data_lmop() {
 		"darkness_filter_number": "100",
 		"title": "Cragmaw Hideout ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -5059,7 +5059,7 @@ function get_scene_data_lmop() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 70.96666666666667,
 		"disableSceneVision": "0",
@@ -5089,7 +5089,7 @@ function get_scene_data_lmop() {
 		"darkness_filter_number": "100",
 		"title": "Redbrand Hideout ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -10756,7 +10756,7 @@ function get_scene_data_lmop() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 70.33333333333333,
 		"disableSceneVision": "0",
@@ -10786,7 +10786,7 @@ function get_scene_data_lmop() {
 		"darkness_filter_number": "0",
 		"title": "Ruins of Thundertree ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -15676,7 +15676,7 @@ function get_scene_data_lmop() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 35,
 		"disableSceneVision": "0",
@@ -15706,7 +15706,7 @@ function get_scene_data_lmop() {
 		"darkness_filter_number": "100",
 		"title": "Cragmaw Castle ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -20739,7 +20739,7 @@ function get_scene_data_lmop() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 67,
 		"disableSceneVision": "0",
@@ -20770,7 +20770,7 @@ function get_scene_data_lmop() {
 		"darkness_filter_number": "0",
 		"title": "Wave Echo Cave",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/lmop/M14LHJMMQhUuZ46S/map-4.1-Wave-Echo-Cave-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 0.45454545454545453,
 		"scaleY": 0.45112781954887216,
@@ -39206,7 +39206,7 @@ function get_scene_data_lmop() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/lmop/M14LHJMMQhUuZ46S/map-4.1-Wave-Echo-Cave.jpg",
+		
 		"player_map_is_video": "0",
 		"width": 1452,
 		"hpps": 66.36666666666667,

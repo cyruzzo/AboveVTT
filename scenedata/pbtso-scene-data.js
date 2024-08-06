@@ -19,7 +19,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 1.1: Goblin Ambush ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.01-Goblin-Ambush-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -306,7 +306,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.01-Goblin-Ambush.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 49.86666666666667,
 		"disableSceneVision": "0",
@@ -336,7 +336,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 1.2: Cragmaw Hideout ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -5629,7 +5629,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 70.96666666666667,
 		"disableSceneVision": "0",
@@ -5671,7 +5671,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.2: Redbrand Hideout ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -11388,7 +11388,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 70.33333333333333,
 		"disableSceneVision": "0",
@@ -11418,7 +11418,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 3.1: Old Owl Well",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-003.Map301-Old-Owl-Well.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -12493,7 +12493,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 3.2: Ruins of Thundertree ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -18045,7 +18045,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 35,
 		"disableSceneVision": "0",
@@ -18075,7 +18075,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 3.3: Wyvern Tor",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-008.Map303-Wyvern-Tor.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -20170,7 +20170,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 3.4: Cragmaw Castle ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -25307,7 +25307,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 67,
 		"disableSceneVision": "0",
@@ -25367,7 +25367,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 4.1: Wave Echo Cave ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-4.01-Wave-Echo-Cave-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -37669,7 +37669,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-4.01-Wave-Echo-Cave.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 29.433333333333334,
 		"disableSceneVision": "0",
@@ -37699,7 +37699,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 5.1: Well Cavern ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.01-Well-Cavern-player.png",
+		
 		"upsq": "ft",
 		"folderPath": "/Phandelver and Below",
 		"scaleX": 1,
@@ -39205,7 +39205,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.01-Well-Cavern.png",
+		
 		"player_map_is_video": "0",
 		"hpps": "63.666666666666664",
 		"disableSceneVision": "0",
@@ -39256,7 +39256,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 5.2: Goblin Camp",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/05-006.Map502-Goblin-Camp.png",
+		
 		"upsq": "ft",
 		"folderPath": "/Phandelver and Below",
 		"scaleX": 1,
@@ -39708,7 +39708,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/05-006.Map502-Goblin-Camp.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 49.666666666666664,
 		"disableSceneVision": "0",
@@ -39757,7 +39757,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 5.3: Phandalin Alleys ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.03-Phandalin-Alleys-player.png",
+		
 		"upsq": "ft",
 		"folderPath": "/Phandelver and Below",
 		"scaleX": 1,
@@ -40168,7 +40168,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.03-Phandalin-Alleys.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 62.333333333333336,
 		"disableSceneVision": "0",
@@ -40231,7 +40231,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 5.4: Rooftop Stash ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.04-Rooftop-Stash-player.png",
+		
 		"upsq": "ft",
 		"folderPath": "/Phandelver and Below",
 		"scaleX": 1,
@@ -40609,7 +40609,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.04-Rooftop-Stash.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 54,
 		"disableSceneVision": "0",
@@ -40659,7 +40659,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 5.5: Zorzula’s Rest ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.05-Zorzulas-Rest-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 0.967741935483871,
 		"scaleY": 0.9375,
@@ -53574,7 +53574,7 @@ function get_scene_data_pbtso() {
 		"daylight": "rgba(255, 255, 255, 1)",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.05-Zorzulas-Rest.png",
+		
 		"player_map_is_video": "0",
 		"width": 1518.941872607031,
 		"hpps": 62.666666666666664,
@@ -53841,7 +53841,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 5.6: Indigo Sanctum ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.06-Indigo-Sanctum-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -56544,7 +56544,7 @@ function get_scene_data_pbtso() {
 		"daylight": "rgba(255, 255, 255, 1)",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.06-Indigo-Sanctum.png",
+		
 		"player_map_is_video": "0",
 		"width": 1010,
 		"hpps": "47.333333333333336",
@@ -56629,7 +56629,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.1: Marthungrim’s Home ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.01-Marthungrims-Home-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -57145,7 +57145,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.01-Marthungrims-Home.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 107.33333333333333,
 		"disableSceneVision": "0",
@@ -57171,7 +57171,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.2: Hardyhammer Mine",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/06-004.Map602-Hardyhammer-Mine.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -58953,7 +58953,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.3: Talhundereth ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.03-Talhundereth-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -66521,7 +66521,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.03-Talhundereth.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 113.13333333333334,
 		"disableSceneVision": "0",
@@ -66547,7 +66547,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.4: Crypt of the Talhund ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.04-Crypt-of-the-Talhund-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -72258,7 +72258,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.04-Crypt-of-the-Talhund.png",
+		
 		"player_map_is_video": "0",
 		"hpps": "41.666666666666664",
 		"disableSceneVision": "0",
@@ -72284,7 +72284,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.5: Gibbet Crossing ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.05-Gibbet-Crossing-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -87549,7 +87549,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.05-Gibbet-Crossing.png",
+		
 		"player_map_is_video": "0",
 		"hpps": "30.133333333333336",
 		"disableSceneVision": "0",
@@ -87575,7 +87575,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.1: Tunnels of the Deep ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.01-Tunnels-of-the-Deep-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -94296,7 +94296,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.01-Tunnels-of-the-Deep.png",
+		
 		"player_map_is_video": "0",
 		"hpps": "40.46666666666666",
 		"disableSceneVision": "0",
@@ -94331,7 +94331,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.2: Illithinoch ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.02-Illithinoch-player.png",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -101161,7 +101161,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.02-Illithinoch.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 64,
 		"disableSceneVision": "0",
@@ -101187,7 +101187,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.3: Feeder Trenches ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.03-Feeder-Trenches-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -103438,7 +103438,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.03-Feeder-Trenches.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 66.33333333333333,
 		"disableSceneVision": "0",
@@ -103464,7 +103464,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.4: Spawn Hollow ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.04-Spawn-Hollow-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -106619,7 +106619,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.04-Spawn-Hollow.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 60.1,
 		"disableSceneVision": "0",
@@ -106645,7 +106645,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.5: Labyrinth of Eyes ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.05-Labyrinth-of-Eyes-player.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -108634,7 +108634,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.05-Labyrinth-of-Eyes.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 33.46666666666666,
 		"disableSceneVision": "0",
@@ -116990,7 +116990,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.01-Briny-Maze.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 31.233333333333327,
 		"disableSceneVision": "0",
@@ -117032,7 +117032,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "100",
 		"title": "Map 8.2: Crystal Dome",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-009.Map802-Crystal-Dome.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -118021,7 +118021,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.3: Empty Bridge",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-010.Map803-Empty-Bridge.png",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -120784,7 +120784,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.04-Mire-of-Doubt.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 28.66666666666667,
 		"disableSceneVision": "0",
@@ -121979,7 +121979,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.05-The-Nematode.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 28.73333333333333,
 		"disableSceneVision": "0",
@@ -122005,7 +122005,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.6: Occluding Miasma",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-011.Map806-Occluding-Miasma.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -122373,7 +122373,7 @@ function get_scene_data_pbtso() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.7: Toppled Statue",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-012.Map807-Toppled-Statue.png",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -123553,7 +123553,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.08-Wailing-Battlefield.png",
+		
 		"player_map_is_video": "0",
 		"hpps": "27.333333333333332",
 		"disableSceneVision": "0",
@@ -125581,7 +125581,7 @@ function get_scene_data_pbtso() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.09-Ilvaashs-Anima.png",
+		
 		"player_map_is_video": "0",
 		"hpps": 41.333333333333336,
 		"disableSceneVision": "0",

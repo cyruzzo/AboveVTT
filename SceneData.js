@@ -52069,7 +52069,7 @@ function get_ddb_extras() {
 			"darkness_filter_number": "84",
 			"title": "Map: Lightning Keep ",
 			"fog_of_war": "1",
-			"player_map": "https://media.dndbeyond.com/compendium-images/lke/ncXrUGoYNKP5cbak/map-0.01-lightning-keep-player.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -58908,7 +58908,7 @@ function get_ddb_extras() {
 			"daylight": "rgba(255, 255, 255, 1)",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://media.dndbeyond.com/compendium-images/lke/ncXrUGoYNKP5cbak/map-0.01-lightning-keep.jpg",
+			
 			"player_map_is_video": "0",
 			"width": 1440,
 			"hpps": 97.66666666666667,
@@ -59121,7 +59121,7 @@ function get_ddb_extras() {
 			"vpps": "94.66666666666667",
 			"darkness_filter_number": "100",
 			"title": "Map: Nest of the Eldritch Eye",
-			"player_map": "https://media.dndbeyond.com/compendium-images/vnee/FRZhNxsynhjoMpeh/map-0.01-catacombs-player.jpg",
+			
 			"upsq": "ft",
 			"drawings": [
 				[
@@ -65936,7 +65936,7 @@ function get_ddb_extras() {
 			"dm_map_is_video": "0",
 			"grid": "1",
 			"scale_check": true,
-			"dm_map": "https://media.dndbeyond.com/compendium-images/vnee/FRZhNxsynhjoMpeh/map-0.01-catacombs.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": "94.8",
 			"disableSceneVision": "0",

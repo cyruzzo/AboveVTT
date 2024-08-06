@@ -20,7 +20,7 @@ function get_scene_data_veor() {
  		"darkness_filter_number": "100",
  		"title": "Map 1.1: Neverdeath Catacombs ",
  		"fog_of_war": "1",
- 		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.01-neverdeath-player.jpg",
+ 		
  		"upsq": "ft",
  		"undefined": "white",
  		"scaleX": 1,
@@ -3027,7 +3027,7 @@ function get_scene_data_veor() {
  		"daylight": "rgba(255, 255, 255, 1)",
  		"grid": "0",
  		"scale_check": true,
- 		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.01-neverdeath.jpg",
+ 		
  		"player_map_is_video": "0",
  		"hpps": 81.43333333333332,
  		"disableSceneVision": "0",
@@ -3060,7 +3060,7 @@ function get_scene_data_veor() {
  		"darkness_filter_number": "0",
  		"title": "Map 1.2: Dolindar Tomb ",
  		"fog_of_war": "1",
- 		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.02-dolindar-tomb-player.jpg",
+ 		
  		"upsq": "ft",
  		"scaleX": 1,
  		"scaleY": 1,
@@ -4177,7 +4177,7 @@ function get_scene_data_veor() {
  		"dm_map_is_video": "0",
  		"grid": "0",
  		"scale_check": true,
- 		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.02-dolindar-tomb.jpg",
+ 		
  		"player_map_is_video": "0",
  		"hpps": 124.13333333333333,
  		"disableSceneVision": "0",
@@ -4211,7 +4211,7 @@ function get_scene_data_veor() {
  		"darkness_filter_number": "0",
  		"title": "Map 10.2: Hurricane Tower ",
  		"fog_of_war": "1",
- 		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.02-hurricane-tower-player.jpg",
+ 		
  		"upsq": "ft",
  		"scaleX": 1,
  		"scaleY": 1,
@@ -5059,7 +5059,7 @@ function get_scene_data_veor() {
  		"dm_map_is_video": "0",
  		"grid": "0",
  		"scale_check": true,
- 		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.02-hurricane-tower.jpg",
+ 		
  		"player_map_is_video": "0",
  		"hpps": 43.06666666666666,
  		"disableSceneVision": "0",
@@ -5093,7 +5093,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 10.3: Ruinous Citadel ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.03-ruinous-citadel-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -5583,7 +5583,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.03-ruinous-citadel.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 39.5,
 		"disableSceneVision": "0",
@@ -5617,7 +5617,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 10.4: Cliffside Redoubt ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.04-cliffside-redoubt-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -6332,7 +6332,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.04-cliffside-redoubt.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 31.433333333333334,
 		"disableSceneVision": "0",
@@ -6365,7 +6365,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 11.1: Vecna’s Grasp ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.01-vecnas-grasp-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -6992,7 +6992,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.01-vecnas-grasp.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 52.56666666666667,
 		"disableSceneVision": "0",
@@ -7026,7 +7026,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 11.2: Torment of Kas ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.02-torment-of-kas-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -7704,7 +7704,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.02-torment-of-kas.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 54.7,
 		"disableSceneVision": "0",
@@ -7738,7 +7738,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 11.3: Neverwinter Square",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.03-neverwinter-square.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -7970,7 +7970,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.03-neverwinter-square.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 52.333333333333336,
 		"disableSceneVision": "0",
@@ -8003,7 +8003,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 11.4: Arekanz’s Donjon ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.04-arekanzs-donjon-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -8329,7 +8329,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.04-arekanzs-donjon.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 55.96666666666666,
 		"disableSceneVision": "0",
@@ -8363,7 +8363,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.1: The Sanctum",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-2.01-the-sanctum.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -9184,7 +9184,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-2.01-the-sanctum.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 121.33333333333331,
 		"disableSceneVision": "0",
@@ -9218,7 +9218,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.2: Web’s Edge ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/2.02-webs-edge-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -12273,7 +12273,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/2.02-webs-edge.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 57.13333333333333,
 		"disableSceneVision": "0",
@@ -12308,7 +12308,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 3.1: Lambent Zenith ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-3.01-lambent-zenith-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -13883,7 +13883,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-lambent-zenith.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 90.33333333333333,
 		"disableSceneVision": "0",
@@ -13917,7 +13917,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 3.2: Heart of Havock ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/3.02-heart-of-havock-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -14547,7 +14547,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/3.02-heart-of-havock.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 56.1,
 		"disableSceneVision": "0",
@@ -14581,7 +14581,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 4.2: Ialos ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.02-ialos-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -15026,7 +15026,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.02-ialos.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 42.46666666666666,
 		"disableSceneVision": "0",
@@ -15060,7 +15060,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 4.3: Landro ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.03-landro-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -21639,7 +21639,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.03-landro.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 36.333333333333336,
 		"disableSceneVision": "0",
@@ -21673,7 +21673,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 5.1: Death House ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/5.01-death-house-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -27732,7 +27732,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/5.01-death-house.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 66.86666666666667,
 		"disableSceneVision": "0",
@@ -27766,7 +27766,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.1: Peylon Tree ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.01-peylon-tree-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -30390,7 +30390,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.01-peylon-tree.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 30.76666666666667,
 		"disableSceneVision": "0",
@@ -30424,7 +30424,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.2: Bittergrass Fen ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.02-bittergrass-fen-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -30443,7 +30443,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.02-bittergrass-fen.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 20.46666666666667,
 		"disableSceneVision": "0",
@@ -30477,7 +30477,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.3: Three Moons Vault ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.03-three-moons-vault-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -33242,7 +33242,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.03-three-moons-vault.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 31.100000000000005,
 		"disableSceneVision": "0",
@@ -33277,7 +33277,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 6.4: Three Moons Vault - Upper Level ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.04-three-moons-vault-upper-level-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -33296,7 +33296,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.04-three-moons-vault-upper-level.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 26.46666666666667,
 		"disableSceneVision": "0",
@@ -33330,7 +33330,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 7.1: Isle of Serpents Lagoon ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.01-isle-of-serpents-lagoon-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -33349,7 +33349,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.01-isle-of-serpents-lagoon.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 64.66666666666667,
 		"disableSceneVision": "0",
@@ -33383,7 +33383,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 7.3: Tomb of Wayward Souls ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.03-tomb-of-wayward-souls-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -36555,7 +36555,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.03-tomb-of-wayward-souls.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 48.766666666666666,
 		"disableSceneVision": "0",
@@ -36589,7 +36589,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.2: Alabaster Racetrack Stables ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.02-alabaster-racetrack-stables-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -36923,7 +36923,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.02-alabaster-racetrack-stables.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 55.1,
 		"disableSceneVision": "0",
@@ -36957,7 +36957,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.3: Scarlet Coliseum ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.03-scarlet-coliseum-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -36976,7 +36976,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.03-scarlet-coliseum.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 58.36666666666667,
 		"disableSceneVision": "0",
@@ -37010,7 +37010,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.4: Dragon’s Pride ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.04-dragons-pride-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -37762,7 +37762,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.04-dragons-pride.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 38.53333333333334,
 		"disableSceneVision": "0",
@@ -37796,7 +37796,7 @@ function get_scene_data_veor() {
 		"darkness_filter_number": "0",
 		"title": "Map 9.1: Pandesmos Outlook ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/9.01-pandesmos-outlook-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -37815,7 +37815,7 @@ function get_scene_data_veor() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/9.01-pandesmos-outlook.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 68.3,
 		"disableSceneVision": "0",
