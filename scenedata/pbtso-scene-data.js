@@ -1,7 +1,7 @@
 function get_scene_data_pbtso() {
 	return {
 	"pbtso/a-dangerous-journey/Map101GoblinAmbush": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.01-Goblin-Ambush.png",
+		
 		"reveals": [
 			[
 				0,
@@ -318,7 +318,7 @@ function get_scene_data_pbtso() {
 		"height": 1369
 	},
 	"pbtso/a-dangerous-journey/Map102CragmawHideout": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
+		
 		"reveals": [
 			[
 				0,
@@ -5653,7 +5653,7 @@ function get_scene_data_pbtso() {
 		"scale_factor": "2"
 	},
 	"pbtso/trouble-in-phandalin/Map202RedbrandHideout": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout.png",
+		
 		"reveals": [
 			[
 				0,
@@ -11400,7 +11400,7 @@ function get_scene_data_pbtso() {
 		"height": 1466
 	},
 	"pbtso/the-spiders-web/Map301OldOwlWell": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-003.Map301-Old-Owl-Well.png",
+		
 		"reveals": [
 			[
 				0,
@@ -12475,7 +12475,7 @@ function get_scene_data_pbtso() {
 		"height": 1369
 	},
 	"pbtso/the-spiders-web/Map302RuinsofThundertree": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree.png",
+		
 		"reveals": [
 			[
 				0,
@@ -18057,7 +18057,7 @@ function get_scene_data_pbtso() {
 		"height": 1452
 	},
 	"pbtso/the-spiders-web/Map303WyvernTor": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-008.Map303-Wyvern-Tor.png",
+		
 		"reveals": [
 			[
 				0,
@@ -20152,7 +20152,7 @@ function get_scene_data_pbtso() {
 		"height": 1372
 	},
 	"pbtso/the-spiders-web/Map304CragmawCastle": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle.png",
+		
 		"reveals": [
 			[
 				0,
@@ -25349,7 +25349,7 @@ function get_scene_data_pbtso() {
 		}
 	},
 	"pbtso/wave-echo-cave/Map401WaveEchoCave": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-4.01-Wave-Echo-Cave.png",
+		
 		"reveals": [
 			[
 				0,
@@ -37681,7 +37681,7 @@ function get_scene_data_pbtso() {
 		"height": 1980.0000000000002
 	},
 	"pbtso/paths-of-peril/Map501WellCavern": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.01-Well-Cavern.png",
+		
 		"reveals": [
 			[
 				0,
@@ -39229,7 +39229,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/paths-of-peril/Map502GoblinCamp": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/05-006.Map502-Goblin-Camp.png",
+		
 		"reveals": [
 			[
 				453,
@@ -39739,7 +39739,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/paths-of-peril/Map503PhandalinAlleys": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.03-Phandalin-Alleys.png",
+		
 		"reveals": [
 			[
 				0,
@@ -40213,7 +40213,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/paths-of-peril/Map504RooftopStash": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.04-Rooftop-Stash.png",
+		
 		"reveals": [
 			[
 				0,
@@ -40633,7 +40633,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/paths-of-peril/Map505ZorzulasRest": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.05-Zorzulas-Rest.png",
+		
 		"reveals": [
 			[
 				0,
@@ -53823,7 +53823,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/paths-of-peril/Map506IndigoSanctum": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-5.06-Indigo-Sanctum.png",
+		
 		"reveals": [
 			[
 				0,
@@ -56611,7 +56611,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/the-shattered-obelisk/Map601MarthungrimsHome": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.01-Marthungrims-Home.png",
+		
 		"reveals": [
 			[
 				0,
@@ -57153,7 +57153,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/the-shattered-obelisk/Map602HardyhammerMine": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/06-004.Map602-Hardyhammer-Mine.png",
+		
 		"reveals": [
 			[
 				0,
@@ -58935,7 +58935,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/the-shattered-obelisk/Map603Talhundereth": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.03-Talhundereth.png",
+		
 		"reveals": [
 			[
 				0,
@@ -66529,7 +66529,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/the-shattered-obelisk/Map604CryptoftheTalhund": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.04-Crypt-of-the-Talhund.png",
+		
 		"reveals": [
 			[
 				0,
@@ -72266,7 +72266,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/the-shattered-obelisk/Map605GibbetCrossing": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-6.05-Gibbet-Crossing.png",
+		
 		"reveals": [
 			[
 				0,
@@ -87557,7 +87557,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/rifts-in-reality/Map701TunnelsoftheDeep": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.01-Tunnels-of-the-Deep.png",
+		
 		"reveals": [
 			[
 				0,
@@ -94313,7 +94313,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/rifts-in-reality/Map702Illithinoch": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.02-Illithinoch.png",
+		
 		"reveals": [
 			[
 				0,
@@ -101169,7 +101169,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/rifts-in-reality/Map703FeederTrenches": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.03-Feeder-Trenches.png",
+		
 		"reveals": [
 			[
 				0,
@@ -103446,7 +103446,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/rifts-in-reality/Map704SpawnHollow": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.04-Spawn-Hollow.png",
+		
 		"reveals": [
 			[
 				0,
@@ -106627,7 +106627,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/rifts-in-reality/Map705LabyrinthofEyes": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-7.05-Labyrinth-of-Eyes.png",
+		
 		"reveals": [
 			[
 				0,
@@ -108642,7 +108642,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map801BrinyMaze": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.01-Briny-Maze.png",
+		
 		"reveals": [
 			[
 				0,
@@ -117014,7 +117014,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/beyond-a-lightless-star/Map802CrystalDome": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-009.Map802-Crystal-Dome.png",
+		
 		"reveals": [
 			[
 				0,
@@ -118003,7 +118003,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/beyond-a-lightless-star/Map803EmptyBridge": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-010.Map803-Empty-Bridge.png",
+		
 		"reveals": [
 			[
 				0,
@@ -118183,7 +118183,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map804MireofDoubt": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.04-Mire-of-Doubt.png",
+		
 		"reveals": [
 			[
 				0,
@@ -120808,7 +120808,7 @@ function get_scene_data_pbtso() {
 		},
 	},
 	"pbtso/beyond-a-lightless-star/Map805TheNematode": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.05-The-Nematode.png",
+		
 		"reveals": [
 			[
 				0,
@@ -121987,7 +121987,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map806OccludingMiasma": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-011.Map806-Occluding-Miasma.png",
+		
 		"reveals": [
 			[
 				0,
@@ -122355,7 +122355,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map807ToppledStatue": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/08-012.Map807-Toppled-Statue.png",
+		
 		"reveals": [
 			[
 				0,
@@ -122671,7 +122671,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map808WailingBattlefield": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.08-Wailing-Battlefield.png",
+		
 		"reveals": [
 			[
 				0,
@@ -123561,7 +123561,7 @@ function get_scene_data_pbtso() {
 		"snap": "1"
 	},
 	"pbtso/beyond-a-lightless-star/Map809IlvaashsAnima": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-8.09-Ilvaashs-Anima.png",
+		
 		"reveals": [
 			[
 				0,

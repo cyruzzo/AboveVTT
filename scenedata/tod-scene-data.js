@@ -1,7 +1,7 @@
 function get_scene_data_tod() {
 	return {
  	"tod/dragon-hatchery/Map31DragonHatchery": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-3.01-dragon-hatchery.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -13082,7 +13082,7 @@ function get_scene_data_tod() {
 		},
 	},
 	"tod/construction-ahead/Map51CarnathRoadhouse": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-5.01-carnath-roadhouse.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -14238,7 +14238,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map61CastleNaerytarGroundLevel": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.01-castle-naerytar-ground.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -25518,7 +25518,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map62CastleNaerytarLevel2": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.02-castle-naerytar-2nd-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -28622,7 +28622,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map63CastleNaerytarLevel3": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.03-castle-naerytar-level-3.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -30883,7 +30883,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map64CastleNaerytarDungeon": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.04-castle-naerytar-dungeon.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -37984,7 +37984,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/hunting-lodge/Map71HuntingLodgeGroundFloor": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.01-hunting-lodge-ground-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -42309,7 +42309,7 @@ function get_scene_data_tod() {
 		"snap": "0"
 	},
 	"tod/hunting-lodge/Map72HuntingLodgeUpperFloor": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.02-hunting-lodge-upper-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44272,7 +44272,7 @@ function get_scene_data_tod() {
 		"snap": "0"
 	},
 	"tod/castle-in-the-clouds/Map81Parnast": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.01-parnast.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44917,7 +44917,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-in-the-clouds/Map82SkyreachCastle": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.02-skyreach-castle.jpg",
+		
 		"reveals": [
 			[
 				0,

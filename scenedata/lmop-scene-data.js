@@ -1,7 +1,7 @@
 function get_scene_data_lmop() {
 	return {
 	"lmop/goblin-arrows/Map11CragmawHideout": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
+		
 		"reveals": [
 			[
 				0,
@@ -5071,7 +5071,7 @@ function get_scene_data_lmop() {
 		"height": 1452
 	},
 	"lmop/phandalin/MapRedbrandHideout": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout.png",
+		
 		"reveals": [
 			[
 				0,
@@ -10768,7 +10768,7 @@ function get_scene_data_lmop() {
 		"height": 1466
 	},
 	"lmop/the-spiders-web/MapRuinsofThundertree": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree.png",
+		
 		"reveals": [
 			[
 				0,
@@ -15688,7 +15688,7 @@ function get_scene_data_lmop() {
 		"height": 1452
 	},
 	"lmop/the-spiders-web/MapCragmawCastle": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle.png",
+		
 		"reveals": [
 			[
 				0,
@@ -20751,7 +20751,7 @@ function get_scene_data_lmop() {
 		"height": 1452,
 	},
 	"lmop/wave-echo-cave/MapWaveEchoCave":{
-		"thumb": "https://media.dndbeyond.com/compendium-images/lmop/M14LHJMMQhUuZ46S/map-4.1-Wave-Echo-Cave.jpg",
+		
 		"gridSubdividedToggle": "0",
 		"reveals": [
 			[

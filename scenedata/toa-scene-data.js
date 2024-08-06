@@ -5048,7 +5048,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map23CampRighteous": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/861/850/587/0305.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -6170,7 +6170,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map22AtaazMuhahah": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/859/850/587/0303.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -6418,7 +6418,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map24CampVengeance": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/863/850/587/0306.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -10495,7 +10495,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map25Dungrunglung": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/865/850/587/0307.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -16151,7 +16151,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map26Firefinger": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/867/850/587/0308.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -22076,7 +22076,7 @@ function get_scene_data_toa() {
 		"snap": "0"
 	},
 	"toa/the-land-of-chult/Map27FortBeluarian": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/868/850/587/0309.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -22342,7 +22342,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map28HeartofUbtao": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/872/850/587/0312.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -24771,7 +24771,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map29Hrakhamar": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/874/850/587/0313.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -36409,7 +36409,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map210JahakaAnchorage": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/877/850/587/0315.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -40703,7 +40703,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map212Nangalore": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/883/600/814/0319.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -43387,7 +43387,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},	
 	"toa/the-land-of-chult/Map213WreckoftheStarGoddess": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/885/850/587/0320.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44636,7 +44636,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map214WyrmheartMine": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/886/850/587/0321.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -57829,7 +57829,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},	
 	"toa/the-land-of-chult/Map215Yellyark": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/889/850/587/0323.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -61112,7 +61112,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/dwellers-of-the-forbidden-city/Map32NineShrinesofOmu": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/898/600/814/305.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -71064,7 +71064,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/fane-of-the-night-serpent/Map41FaneoftheNightSerpent": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/903/600/814/402.jpg",
+		
 		"reveals": [
 			[
 				0,

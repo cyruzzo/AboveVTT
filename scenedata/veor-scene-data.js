@@ -2,7 +2,7 @@ function get_scene_data_veor() {
 	return {
  	"veor/return-from-neverdeath-graveyard/Map11NeverdeathCatacombs": {
  		"itemType": "scene",
- 		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.01-neverdeath.jpg",
+ 		
  		"reveals": [
  			[
  				0,
@@ -3042,7 +3042,7 @@ function get_scene_data_veor() {
  	},
  	"veor/return-from-neverdeath-graveyard/Map12DolindarTomb": {
  		"itemType": "scene",
- 		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/1.02-dolindar-tomb.jpg",
+ 		
  		"reveals": [
  			[
  				0,
@@ -4193,7 +4193,7 @@ function get_scene_data_veor() {
  	},
  	"veor/the-war-of-pandesmos/Map102HurricaneTower": {
  		"itemType": "scene",
- 		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.02-hurricane-tower.jpg",
+ 		
  		"reveals": [
  			[
  				0,
@@ -5075,7 +5075,7 @@ function get_scene_data_veor() {
  	},
  	"veor/the-war-of-pandesmos/Map103RuinousCitadel": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.03-ruinous-citadel.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -5599,7 +5599,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-war-of-pandesmos/Map104CliffsideRedoubt": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/10.04-cliffside-redoubt.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -6347,7 +6347,7 @@ function get_scene_data_veor() {
 	},
 	"veor/eve-of-ruin/Map111VecnasGrasp": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.01-vecnas-grasp.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -7008,7 +7008,7 @@ function get_scene_data_veor() {
 	},
 	"veor/eve-of-ruin/Map112TormentofKas": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.02-torment-of-kas.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -7720,7 +7720,7 @@ function get_scene_data_veor() {
 	},
 	"veor/eve-of-ruin/Map113NeverwinterSquare": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.03-neverwinter-square.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -7985,7 +7985,7 @@ function get_scene_data_veor() {
 	},
 	"veor/eve-of-ruin/Map114ArekanzsDonjon": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/11.04-arekanzs-donjon.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -8345,7 +8345,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-wizards-three/Map21TheSanctum": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-2.01-the-sanctum.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -9200,7 +9200,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-wizards-three/Map22WebsEdge": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/2.02-webs-edge.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -12290,7 +12290,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-lambent-zeniths-last-voyage/Map31LambentZenith": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/map-lambent-zenith.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -13899,7 +13899,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-lambent-zeniths-last-voyage/Map32HeartofHavock": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/3.02-heart-of-havock.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -14563,7 +14563,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-ruined-colossus/Map42Ialos": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.02-ialos.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -15042,7 +15042,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-ruined-colossus/Map43Landro": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/4.03-landro.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -21655,7 +21655,7 @@ function get_scene_data_veor() {
 	},
 	"veor/death-house/Map51DeathHouse": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/5.01-death-house.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -27748,7 +27748,7 @@ function get_scene_data_veor() {
 	},
 	"veor/night-of-blue-fire/Map61PeylonTree": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.01-peylon-tree.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -30406,7 +30406,7 @@ function get_scene_data_veor() {
 	},
 	"veor/night-of-blue-fire/Map62BittergrassFen": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.02-bittergrass-fen.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -30459,7 +30459,7 @@ function get_scene_data_veor() {
 	},
 	"veor/night-of-blue-fire/Map63ThreeMoonsVault": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.03-three-moons-vault.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -33259,7 +33259,7 @@ function get_scene_data_veor() {
 	},
 	"veor/night-of-blue-fire/Map64ThreeMoonsVaultUpperLevel": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/6.04-three-moons-vault-upper-level.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -33312,7 +33312,7 @@ function get_scene_data_veor() {
 	},
 	"veor/tomb-of-wayward-souls/Map71IsleofSerpentsLagoon": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.01-isle-of-serpents-lagoon.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -33365,7 +33365,7 @@ function get_scene_data_veor() {
 	},
 	"veor/tomb-of-wayward-souls/Map73TombofWaywardSouls": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/7.03-tomb-of-wayward-souls.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -36571,7 +36571,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-dragon-queens-pride/Map82AlabasterRacetrackStables": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.02-alabaster-racetrack-stables.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -36939,7 +36939,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-dragon-queens-pride/Map83ScarletColiseum": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.03-scarlet-coliseum.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -36992,7 +36992,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-dragon-queens-pride/Map84DragonsPride": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/8.04-dragons-pride.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -37778,7 +37778,7 @@ function get_scene_data_veor() {
 	},
 	"veor/the-betrayer-revealed/Map91PandesmosOutlook": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/veor/YzlEjWeqRbhK0ANf/9.01-pandesmos-outlook.jpg",
+		
 		"reveals": [
 			[
 				0,

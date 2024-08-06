@@ -1,7 +1,7 @@
 function get_scene_data_doip() {
 	return{
 		"doip/axeholm/MapAxeholm": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/749/850/540/map-axeholm-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -11238,7 +11238,7 @@ function get_scene_data_doip() {
 			},
 		},	
 		"doip/butterskull-ranch/MapButterskullRanch": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/751/850/540/map-br-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -15929,7 +15929,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/circle-of-thunder/MapCircleOfThunder": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/753/850/540/map-cot-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -24021,7 +24021,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/dragon-barrow/MapDragonBarrow": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/755/850/540/map-db-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -45995,7 +45995,7 @@ function get_scene_data_doip() {
 		    }
 		},
 		"doip/falcons-hunting-lodge/MapFalconsHuntingLodge": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/759/850/540/map-fhl-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -50830,7 +50830,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/gnomengarde/MapGnomengarde": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/761/850/540/map-gnomegarde-dm.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 		        [
@@ -57173,7 +57173,7 @@ function get_scene_data_doip() {
 			"scale_factor": 2
 		},	
 		"doip/shrine-of-savras/MapShrineOfSavras": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/769/850/540/map-sos-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -62892,7 +62892,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/tower-of-storms/MapTowerOfStorms": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/771/850/540/map-tos-dm.jpg",
+			
 			"reveals": [
 				[
 					0,

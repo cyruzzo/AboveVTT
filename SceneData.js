@@ -1653,7 +1653,7 @@ function get_ddb_extras() {
 			"scale_factor": 2
 		},
 		"gos/the-sinister-secret-of-saltmarsh/map21hauntedhouse": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/7/789/650/882/map-2-1.jpg",
+			
 			"gridSubdividedToggle": "0",
 			"reveals": [
 				[
@@ -4215,7 +4215,7 @@ function get_ddb_extras() {
 			"hasTokens": true
 		},
 		"gos/the-sinister-secret-of-saltmarsh/map22hauntedhousecellarandcaverns": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/384/650/882/04-dm.png",
+			
 			"gridSubdividedToggle": "0",
 			"reveals": [
 				[
@@ -7149,7 +7149,7 @@ function get_ddb_extras() {
 			},   
 		},
 		"gos/the-sinister-secret-of-saltmarsh/map23seaghost": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/386/650/882/03-dm.png",
+			
 			"gridSubdividedToggle": "0",
 			"reveals": [
 				[
@@ -9786,7 +9786,7 @@ function get_ddb_extras() {
 			"scale_factor": 2
 		},
 		"gos/salvage-operation/map41emperorofthewaves": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/517/850/587/27-dm.png",
+			
 			"gridSubdividedToggle": "0",
 			"reveals": [
 				[
@@ -13347,7 +13347,7 @@ function get_ddb_extras() {
 			"scale_factor": 1
 		},
 		"slw/aid-from-phandalin/Map4BacklotinTown": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/6/243/450/571/x847s-map-aid-from-phandalin_dm.jpg",
+		    
 		    "reveals": [],
 		    "scale": "100",
 		    "vpps": 135.66666666666666,
@@ -14914,7 +14914,7 @@ function get_ddb_extras() {
 		    "height": 3600
 		},
 		"slw/foul-weather-at-wayside/Map5WaysideInn": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/6/242/850/538/ivsrz-map-wayside-inn-final_dm.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 		        [
@@ -17433,7 +17433,7 @@ function get_ddb_extras() {
 		    "height": 2280
 		},
 		"slw/house-of-thalivar/Map6RuinedTowerLeilon": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/6/245/850/538/kmdtd-map-house-of-thalivar_dm.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [],
 		    "gridStrokeNumberInput": "0.5",
@@ -26144,7 +26144,7 @@ function get_ddb_extras() {
 			"scale_factor": 1
 		},
 		"dc/ebondeaths-mausoleum/Map4EbondeathsMausoleum": 	{
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/6/258/850/538/nokov-map-ebondeaths-mausoleum_dm.jpg",
+			
 			"gridSubdividedToggle": "0",
 			"reveals": [
 				[
@@ -35036,7 +35036,7 @@ function get_ddb_extras() {
 			"scale_factor": "4"
 		},
 		"skt/a-great-upheaval/Map11Nightstone": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/1/949/700/962/skt01-02-1.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 		        [
@@ -41649,7 +41649,7 @@ function get_ddb_extras() {
 		    "height": 3300
 		},
 		"skt/a-great-upheaval/Map12DrippingCaves": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/1/947/850/637/drippingcaves.png",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 			    [
@@ -50488,7 +50488,7 @@ function get_ddb_extras() {
 		    "height": 1502
 		},
 		"skt/a-great-upheaval/Map13TowerOfZephyros": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/1/946/300/825/towerofzephyros.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 		        [
@@ -52052,7 +52052,7 @@ function get_ddb_extras() {
 			"scale_factor": 2
 		},
 		"lke/lightning-keep/MapLightningKeep": {
-			"thumb": "https://media.dndbeyond.com/compendium-images/lke/ncXrUGoYNKP5cbak/map-0.01-lightning-keep.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -59115,7 +59115,7 @@ function get_ddb_extras() {
 			},
 		},
 		"vnee/vecna-nest-of-the-eldritch-eye/MapNestoftheEldritchEye": {
-			"thumb": "https://media.dndbeyond.com/compendium-images/vnee/FRZhNxsynhjoMpeh/map-0.01-catacombs.jpg",
+			
 			"gridStrokeNumberInput": "0.5",
 			"scale": 100,
 			"vpps": "94.66666666666667",

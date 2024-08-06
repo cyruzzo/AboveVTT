@@ -2,7 +2,7 @@ function get_scene_data_loe() {
 	return {
 	"loe/boulderwood-path/Map601boulderwoodpath": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-6.01-boulderwood-path.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -3840,7 +3840,7 @@ function get_scene_data_loe() {
 	},
 	"loe/gloomrock-caverns/Map501gloomrockcaverns": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-5.01-gloomrock-caverns.jpg",
+		
 		"reveals": [
 			[
 				0,
