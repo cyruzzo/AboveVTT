@@ -1,7 +1,7 @@
 function get_scene_data_doip() {
 	return{
 		"doip/axeholm/MapAxeholm": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/749/850/540/map-axeholm-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -18,7 +18,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "100",
 			"title": "Map: Axeholm ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/750/map-axeholm-pc.jpg",
+			
 			"upsq": "ft",
 			"undefined": "#fff2cc",
 			"folderPath": "",
@@ -11010,7 +11010,7 @@ function get_scene_data_doip() {
 			"daylight": "rgba(255, 242.00150250000002, 204.02550000000002, 1)",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/749/map-axeholm-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"width": 1980,
 			"hpps": "43.46666666666666",
@@ -11238,7 +11238,7 @@ function get_scene_data_doip() {
 			},
 		},	
 		"doip/butterskull-ranch/MapButterskullRanch": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/751/850/540/map-br-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -11256,7 +11256,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "100",
 			"title": "Map: Butterskull Ranch ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/752/map-br-pc.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -15803,7 +15803,7 @@ function get_scene_data_doip() {
 			"dm_map_is_video": "0",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/751/map-br-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": 43.333333333333336,
 			"disableSceneVision": "0",
@@ -15929,7 +15929,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/circle-of-thunder/MapCircleOfThunder": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/753/850/540/map-cot-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -15947,7 +15947,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "100",
 			"title": "Map: Circle of Thunder ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/754/map-cot-pc.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -23839,7 +23839,7 @@ function get_scene_data_doip() {
 			"dm_map_is_video": "0",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/753/map-cot-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": 44,
 			"disableSceneVision": "0",
@@ -24021,7 +24021,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/dragon-barrow/MapDragonBarrow": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/755/850/540/map-db-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -24039,7 +24039,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "100",
 			"title": "Map: Dragon Barrow ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/756/map-db-pc.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -37248,7 +37248,7 @@ function get_scene_data_doip() {
 			"dm_map_is_video": "0",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/755/map-db-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": 43.333333333333336,
 			"disableSceneVision": "0",
@@ -37711,7 +37711,7 @@ function get_scene_data_doip() {
 		    "darkness_filter_number": "68",
 		    "title": "Map: Dwarven Excavation ",
 		    "fog_of_war": "1",
-		    "player_map": "https://www.dndbeyond.com/attachments/5/758/map-de-pc.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 1,
 		    "scaleY": 1,
@@ -45887,7 +45887,7 @@ function get_scene_data_doip() {
 		    "offsety": 5.333333333333428,
 		    "dm_map_is_video": "0",
 		    "grid": "1",
-		    "dm_map": "https://www.dndbeyond.com/attachments/5/757/map-de-dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 87.53333333333333,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -45995,7 +45995,7 @@ function get_scene_data_doip() {
 		    }
 		},
 		"doip/falcons-hunting-lodge/MapFalconsHuntingLodge": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/759/850/540/map-fhl-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -46013,7 +46013,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "0",
 			"title": "Falcon’s Hunting Lodge ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/786/map-fhl-pc.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -50700,7 +50700,7 @@ function get_scene_data_doip() {
 			"daylight": "rgba(255, 255, 255, 1)",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/759/map-fhl-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"width": 1980,
 			"hpps": 43.666666666666664,
@@ -50830,7 +50830,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/gnomengarde/MapGnomengarde": {
-		    "thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/761/850/540/map-gnomegarde-dm.jpg",
+		    
 		    "gridSubdividedToggle": "0",
 		    "reveals": [
 		        [
@@ -50976,7 +50976,7 @@ function get_scene_data_doip() {
 		    "title": "Map: Gnomengarde ",
 		    "fog_of_war": "1",
 		    "uuid": "doip/gnomengarde/MapGnomengarde",
-		    "player_map": "https://www.dndbeyond.com/attachments/5/762/map-gnomegarde-pc.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 1,
 		    "scaleY": 1,
@@ -57032,7 +57032,7 @@ function get_scene_data_doip() {
 		    "offsety": 5.333333333333414,
 		    "dm_map_is_video": "0",
 		    "grid": "1",
-		    "dm_map": "https://www.dndbeyond.com/attachments/5/761/map-gnomegarde-dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 87.6,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -57173,7 +57173,7 @@ function get_scene_data_doip() {
 			"scale_factor": 2
 		},	
 		"doip/shrine-of-savras/MapShrineOfSavras": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/769/850/540/map-sos-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -57189,7 +57189,7 @@ function get_scene_data_doip() {
 			"vpps": 60,
 			"title": "Map: Shrine of Savras ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/788/map-sos-pc.jpg",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"gridType": 1,
@@ -62806,7 +62806,7 @@ function get_scene_data_doip() {
 			"daylight": "rgba(255, 255, 255, 1)",
 			"grid": 0,
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/769/map-sos-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"width": 1980,
 			"hpps": 60,
@@ -62892,7 +62892,7 @@ function get_scene_data_doip() {
 			},
 		},
 		"doip/tower-of-storms/MapTowerOfStorms": {
-			"thumb": "https://www.dndbeyond.com/attachments/thumbnails/5/771/850/540/map-tos-dm.jpg",
+			
 			"reveals": [
 				[
 					0,
@@ -62910,7 +62910,7 @@ function get_scene_data_doip() {
 			"darkness_filter_number": "0",
 			"title": "Map: Tower of Storms ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/789/map-tos-pc.jpg",
+			
 			"upsq": "ft",
 			"scaleX": 1,
 			"scaleY": 1,
@@ -65480,7 +65480,7 @@ function get_scene_data_doip() {
 			"daylight": "rgba(255, 255, 255, 1)",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/771/map-tos-dm.jpg",
+			
 			"player_map_is_video": "0",
 			"width": 1980,
 			"hpps": 43.699999999999996,
@@ -65594,7 +65594,7 @@ function get_scene_data_doip() {
 		    "title": "Map: Umbrage Hill ",
 		    "fog_of_war": "1",
 		    "uuid": "doip/umbrage-hill/MapUmbrageHill",
-		    "player_map": "https://www.dndbeyond.com/attachments/5/774/map-uh-pc.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 1,
 		    "scaleY": 1,
@@ -66639,7 +66639,7 @@ function get_scene_data_doip() {
 		    "offsety": 3.199999999999875,
 		    "dm_map_is_video": "0",
 		    "grid": "1",
-		    "dm_map": "https://www.dndbeyond.com/attachments/5/773/map-uh-dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 87.53333333333333,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",

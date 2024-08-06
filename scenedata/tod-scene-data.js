@@ -1,7 +1,7 @@
 function get_scene_data_tod() {
 	return {
  	"tod/dragon-hatchery/Map31DragonHatchery": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-3.01-dragon-hatchery.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -19,7 +19,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 3.1: Dragon Hatchery",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-3.01-dragon-hatchery-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -13030,7 +13030,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-3.01-dragon-hatchery.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "27.666666666666668",
 		"disableSceneVision": "0",
@@ -13082,7 +13082,7 @@ function get_scene_data_tod() {
 		},
 	},
 	"tod/construction-ahead/Map51CarnathRoadhouse": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-5.01-carnath-roadhouse.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -13100,7 +13100,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 5.1: Carnath Roadhouse",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-5.01-carnath-roadhouse-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -14230,7 +14230,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-5.01-carnath-roadhouse.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 92.53333333333333,
 		"disableSceneVision": "0",
@@ -14238,7 +14238,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map61CastleNaerytarGroundLevel": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.01-castle-naerytar-ground.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -14256,7 +14256,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.1: Castle Naerytar – Ground Level",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.01-castle-naerytar-ground-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1.1320754716981132,
 		"scaleY": 1.1320754716981132,
@@ -25510,7 +25510,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.01-castle-naerytar-ground.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 13.383333333333335,
 		"disableSceneVision": "0",
@@ -25518,7 +25518,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map62CastleNaerytarLevel2": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.02-castle-naerytar-2nd-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -25536,7 +25536,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.2: Castle Naerytar – Level 2",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.02-castle-naerytar-2nd-floor-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -28614,7 +28614,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.02-castle-naerytar-2nd-floor.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "26.08333333333333",
 		"disableSceneVision": "0",
@@ -28622,7 +28622,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map63CastleNaerytarLevel3": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.03-castle-naerytar-level-3.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -28640,7 +28640,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.3: Castle Naerytar – Level 3",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.03-castle-naerytar-level-3-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -30875,7 +30875,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.03-castle-naerytar-level-3.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 26.08333333333333,
 		"disableSceneVision": "0",
@@ -30883,7 +30883,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-naerytar/Map64CastleNaerytarDungeon": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.04-castle-naerytar-dungeon.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -30901,7 +30901,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 6.4: Castle Naerytar – Dungeon",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.04-castle-naerytar-dungeon-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -37976,7 +37976,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-6.04-castle-naerytar-dungeon.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 20,
 		"disableSceneVision": "0",
@@ -37984,7 +37984,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/hunting-lodge/Map71HuntingLodgeGroundFloor": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.01-hunting-lodge-ground-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -38002,7 +38002,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.1: Hunting Lodge Ground Floor",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.01-hunting-lodge-ground-floor-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -42301,7 +42301,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.01-hunting-lodge-ground-floor.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "49",
 		"disableSceneVision": "0",
@@ -42309,7 +42309,7 @@ function get_scene_data_tod() {
 		"snap": "0"
 	},
 	"tod/hunting-lodge/Map72HuntingLodgeUpperFloor": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.02-hunting-lodge-upper-floor.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -42327,7 +42327,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 7.2: Hunting Lodge Upper Floor",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.02-hunting-lodge-upper-floor-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -44264,7 +44264,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-7.02-hunting-lodge-upper-floor.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 57,
 		"disableSceneVision": "0",
@@ -44272,7 +44272,7 @@ function get_scene_data_tod() {
 		"snap": "0"
 	},
 	"tod/castle-in-the-clouds/Map81Parnast": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.01-parnast.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44290,7 +44290,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "0",
 		"title": "Map 8.1: Parnast",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.01-parnast-player.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 2.3076923076923075,
@@ -44909,7 +44909,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.01-parnast.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 13.5,
 		"disableSceneVision": "0",
@@ -44917,7 +44917,7 @@ function get_scene_data_tod() {
 		"snap": "1"
 	},
 	"tod/castle-in-the-clouds/Map82SkyreachCastle": {
-		"thumb": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.02-skyreach-castle.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44935,7 +44935,7 @@ function get_scene_data_tod() {
 		"darkness_filter_number": "100",
 		"title": "Map 8.2: Skyreach Castle",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.02-skyreach-castle-player.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -58957,7 +58957,7 @@ function get_scene_data_tod() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/tod/TRekns9YWsWQO3oD/map-8.02-skyreach-castle.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "12.666666666666666",
 		"disableSceneVision": "0",
