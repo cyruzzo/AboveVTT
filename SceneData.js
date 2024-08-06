@@ -1672,7 +1672,7 @@ function get_ddb_extras() {
 			"darkness_filter_number": "0",
 			"title": "Map 2.1: Haunted House ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/7/790/map-2-1-player.jpg",
+			
 			"upsq": "ft",
 			"scaleX": 1.2,
 			"scaleY": 1.2,
@@ -4203,7 +4203,7 @@ function get_ddb_extras() {
 			"offsety": 6.000000000000199,
 			"dm_map_is_video": "0",
 			"grid": "0",
-			"dm_map": "https://www.dndbeyond.com/attachments/7/789/map-2-1.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": 141.33333333333334,
 			"disableSceneVision": "0",
@@ -4234,7 +4234,7 @@ function get_ddb_extras() {
 			"darkness_filter_number": "0",
 			"title": "Map 2.2: Haunted House Cellar and Caverns ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/385/04-pc.png",
+			
 			"upsq": "ft",
 			"scaleX": 0.4,
 			"scaleY": 0.40268456375838924,
@@ -7075,7 +7075,7 @@ function get_ddb_extras() {
 			"offsety": 41,
 			"dm_map_is_video": "0",
 			"grid": "0",
-			"dm_map": "https://www.dndbeyond.com/attachments/5/384/04-dm.png",
+			
 			"player_map_is_video": "0",
 			"hpps": 150.33333333333334,
 			"disableSceneVision": "0",
@@ -7168,7 +7168,7 @@ function get_ddb_extras() {
 			"darkness_filter_number": "0",
 			"title": "Map 2.3: Sea Ghost ",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/5/387/03-pc.png",
+			
 			"upsq": "ft",
 			"folderPath": "",
 			"scaleX": 1,
@@ -9751,7 +9751,7 @@ function get_ddb_extras() {
 			"offsety": 56.66666666666674,
 			"dm_map_is_video": "0",
 			"grid": "0",
-			"dm_map": "https://www.dndbeyond.com/attachments/5/386/03-dm.png",
+			
 			"player_map_is_video": "0",
 			"hpps": 166,
 			"disableSceneVision": "0",
@@ -9806,7 +9806,7 @@ function get_ddb_extras() {
 			"title": "Map 4.1: Emperor of the Waves ",
 			"fog_of_war": "1",
 			"uuid": "gos/salvage-operation/map41emperorofthewaves",
-			"player_map": "https://www.dndbeyond.com/attachments/5/518/27-pc.png",
+			
 			"upsq": "ft",
 			"scaleX": 0.6593406593406593,
 			"scaleY": 0.6666666666666666,
@@ -13206,7 +13206,7 @@ function get_ddb_extras() {
 			"dm_map_is_video": "0",
 			"grid": "0",
 			"scale_check": true,
-			"dm_map": "https://www.dndbeyond.com/attachments/5/517/27-dm.png",
+			
 			"player_map_is_video": "0",
 			"width": 2063,
 			"hpps": 46,
@@ -13352,7 +13352,7 @@ function get_ddb_extras() {
 		    "scale": "100",
 		    "vpps": 135.66666666666666,
 		    "title": "Map 4: Backlot in Town",
-		    "player_map": "https://www.dndbeyond.com/attachments/6/243/x847s-map-aid-from-phandalin_dm.jpg",
+		    
 		    "upsq": "ft",
 		    "drawings": [
 		        [
@@ -14905,7 +14905,7 @@ function get_ddb_extras() {
 		    "offsety": 40.33333333333343,
 		    "dm_map_is_video": "0",
 		    "grid": 0,
-		    "dm_map": "https://www.dndbeyond.com/attachments/6/243/x847s-map-aid-from-phandalin_dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 135.66666666666666,
 		    "snap": "1",
@@ -14932,7 +14932,7 @@ function get_ddb_extras() {
 		    "vpps": 86,
 		    "darkness_filter_number": "0",
 		    "title": "Map 5: Wayside Inn",
-		    "player_map": "https://www.dndbeyond.com/attachments/6/283/unnbj-map-wayside-inn_player.jpg",
+		    
 		    "upsq": "ft",
 		    "drawings": [
 		        [
@@ -17423,7 +17423,7 @@ function get_ddb_extras() {
 		    "offsety": 25,
 		    "dm_map_is_video": "0",
 		    "grid": "0",
-		    "dm_map": "https://www.dndbeyond.com/attachments/6/242/ivsrz-map-wayside-inn-final_dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 86,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -17441,7 +17441,7 @@ function get_ddb_extras() {
 		    "vpps": 86,
 		    "darkness_filter_number": "0",
 		    "title": "Map 6: Ruined Tower (Leilon)",
-		    "player_map": "https://www.dndbeyond.com/attachments/6/281/idnt1-map-house-of-thalivar_player.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 0.7058823529411765,
 		    "scaleY": 0.6976744186046512,
@@ -19521,7 +19521,7 @@ function get_ddb_extras() {
 		    "offsety": 26,
 		    "dm_map_is_video": "0",
 		    "grid": "0",
-		    "dm_map": "https://www.dndbeyond.com/attachments/6/245/kmdtd-map-house-of-thalivar_dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 86,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -19559,7 +19559,7 @@ function get_ddb_extras() {
 		    "darkness_filter_number": "0",
 		    "title": "Map 8: Thunder Cliffs",
 		    "fog_of_war": "1",
-		    "player_map": "https://www.dndbeyond.com/attachments/6/284/vi6zl-map-thunder-cliffs_player.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 0.7058823529411765,
 		    "scaleY": 0.6976744186046512,
@@ -26079,7 +26079,7 @@ function get_ddb_extras() {
 		    "offsety": 25,
 		    "dm_map_is_video": "0",
 		    "grid": "0",
-		    "dm_map": "https://www.dndbeyond.com/attachments/6/240/1vb8n-map-thunder-cliffs_dm.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 86,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -26163,7 +26163,7 @@ function get_ddb_extras() {
 			"darkness_filter_number": "100",
 			"title": "Map 4: Ebondeath’s Mausoleum",
 			"fog_of_war": "1",
-			"player_map": "https://www.dndbeyond.com/attachments/6/264/xva5z-map-ebondeaths-mausoleum_player.jpg",
+			
 			"upsq": "ft",
 			"drawings": [
 				[
@@ -34656,7 +34656,7 @@ function get_ddb_extras() {
 			"offsety": 50,
 			"dm_map_is_video": "0",
 			"grid": "0",
-			"dm_map": "https://www.dndbeyond.com/attachments/6/258/nokov-map-ebondeaths-mausoleum_dm.jpg",
+			
 			"player_map_is_video": "0",
 			"hpps": 86,
 			"disableSceneVision": "0",
@@ -35054,7 +35054,7 @@ function get_ddb_extras() {
 		    "darkness_filter_number": "0",
 		    "title": "Map 1.1: Nightstone ",
 		    "fog_of_war": "1",
-		    "player_map": "https://www.dndbeyond.com/attachments/3/9/101.jpg",
+		    
 		    "upsq": "ft",
 		    "scaleX": 0.7692307692307693,
 		    "scaleY": 0.8333333333333334,
@@ -41639,7 +41639,7 @@ function get_ddb_extras() {
 		    "offsety": 127.99999999999963,
 		    "dm_map_is_video": "0",
 		    "grid": "0",
-		    "dm_map": "https://www.dndbeyond.com/attachments/1/949/skt01-02-1.jpg",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 80.66666666666667,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -41695,7 +41695,7 @@ function get_ddb_extras() {
 		    "darkness_filter_number": "100",
 		    "title": "Map 1.2: Dripping Caves ",
 		    "fog_of_war": "1",
-		    "player_map": "https://www.dndbeyond.com/attachments/3/10/102.png",
+		    
 		    "upsq": "ft",
 		    "drawings": [
 		        [
@@ -50478,7 +50478,7 @@ function get_ddb_extras() {
 		    "offsety": 0,
 		    "dm_map_is_video": "0",
 		    "grid": "0",
-		    "dm_map": "https://www.dndbeyond.com/attachments/1/947/drippingcaves.png",
+		    
 		    "player_map_is_video": "0",
 		    "hpps": 60,
 		    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -50507,7 +50507,7 @@ function get_ddb_extras() {
 		    "darkness_filter_number": "0",
 		    "title": "Map 1.3: Tower of Zephyros",
 		    "fog_of_war": "1",
-		    "player_map": "https://www.dndbeyond.com/attachments/1/946/towerofzephyros.jpg",
+		    
 		    "upsq": "ft",
 		    "drawings": [
 		        [

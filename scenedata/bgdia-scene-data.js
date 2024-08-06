@@ -19,7 +19,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 1.2: Elfsong Tavern",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/446/hc2oz-map-1-2-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.2777777777777778,
 	    "scaleY": 0.2777777777777778,
@@ -2578,7 +2578,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 160,
 	    "dm_map_is_video": "0",
 	    "grid": "1",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/311/awf96-map-1-2-dm.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 165.76666666666665,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -2605,7 +2605,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 1.3: Dungeon of the Dead Three",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/447/6opzj-map-1-3.jpg",
+	    
 	    "upsq": "ft",
 	    "drawings": [
 	        [
@@ -8330,7 +8330,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 91.33333333333324,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/315/scp8p-map-1-3-dm.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 92.66666666666667,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -8384,7 +8384,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 1.4: The Low Lantern",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/448/a4sl5-map-1-4.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.36585365853658536,
 	    "scaleY": 0.36585365853658536,
@@ -10987,7 +10987,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 107.50000000000003,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/317/ouor1-map-1-4-dm.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 164.23333333333335,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -11023,7 +11023,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 1.5: Vanthampur Villa",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/707/9v1gm-map-1-5-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.6060606060606061,
 	    "scaleY": 0.6060606060606061,
@@ -15353,7 +15353,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 49.10000000000011,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/318/47l11-map-1-5-dm.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 99.26666666666667,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -15389,7 +15389,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 1.6: Under the Villa",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/450/8iocy-map-1-6-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.6521739130434783,
 	    "scaleY": 0.6521739130434783,
@@ -18663,7 +18663,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 86.00000000000009,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/319/zb6kf-map-1-6-dm.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 92.63333333333333,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -18690,7 +18690,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 2.2: High Hall Cathedral",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/452/d0d5t-map-2-2-player.jpg",
+	    
 	    "upsq": "ft",
 	    "drawings": [
 	        [
@@ -25185,7 +25185,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 3.000000000000071,
 	    "dm_map_is_video": "0",
 	    "grid": "1",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/328/sibw6-map-2-2.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 63.833333333333336,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -25212,7 +25212,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 2.3: High Hall Cathedral, Choir Level",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/453/7vpmr-map-2-3-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.4411764705882353,
 	    "scaleY": 0.4411764705882353,
@@ -27165,7 +27165,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 78.19999999999993,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/329/rkhyf-map-2-3.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 136.46666666666667,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -27193,7 +27193,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 2.4: High Hall Catacombs",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/454/wcrji-map-2-4-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.46153846153846156,
 	    "scaleY": 0.4580152671755725,
@@ -33701,7 +33701,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 121.49999999999983,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/330/qdpq8-map-2-4.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 130.86666666666665,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -33728,7 +33728,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 2.5: Grand Cemetery Chapel",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/455/oalyz-map-2-5-player.jpg",
+	    
 	    "upsq": "ft",
 	    "scaleX": 0.4580152671755725,
 	    "scaleY": 0.4580152671755725,
@@ -35440,7 +35440,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 131.33333333333314,
 	    "dm_map_is_video": "0",
 	    "grid": "0",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/332/422qk-map-2-5.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 131.16666666666666,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
@@ -35477,7 +35477,7 @@ function get_scene_data_bgdia() {
 	    "darkness_filter_number": "0",
 	    "title": "Map 2.6: Grand Cemetery, Ossuary level",
 	    "fog_of_war": "1",
-	    "player_map": "https://www.dndbeyond.com/attachments/6/457/cbi17-map-2-6-player.jpg",
+	    
 	    "upsq": "ft",
 	    "drawings": [
 	        [
@@ -44656,7 +44656,7 @@ function get_scene_data_bgdia() {
 	    "offsety": 68,
 	    "dm_map_is_video": "0",
 	    "grid": "1",
-	    "dm_map": "https://www.dndbeyond.com/attachments/6/333/z24lv-map-2-6.jpg",
+	    
 	    "player_map_is_video": "0",
 	    "hpps": 115.66666666666667,
 	    "grid_color": "rgba(0, 0, 0, 0.5)",
