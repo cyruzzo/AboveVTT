@@ -1,7 +1,6 @@
 function get_scene_data_toa() {
 	return {
  	"toa/port-nyanzaru/Map12MerchantPrincesVilla":	{
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/852/850/587/0210.jpg",
 		"reveals": [
 			[
 				0,
@@ -19,7 +18,6 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 1.2: Merchant Prince’s Villa ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/855/0210a.jpg",
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -5020,7 +5018,6 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/852/0210.jpg",
 		"player_map_is_video": "0",
 		"hpps": "38.43333333333334",
 		"disableSceneVision": "0",
@@ -5051,7 +5048,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map23CampRighteous": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/861/850/587/0305.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -5069,7 +5066,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": " Map 2.3: Camp Righteous ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/862/0305a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -6156,7 +6153,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/861/0305.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 57.766666666666666,
 		"disableSceneVision": "0",
@@ -6173,7 +6170,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map22AtaazMuhahah": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/859/850/587/0303.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -6191,7 +6188,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.2: Ataaz Muhahah",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/859/0303.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -6421,7 +6418,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map24CampVengeance": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/863/850/587/0306.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -6439,7 +6436,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.4: Camp Vengeance ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/864/0306a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "/Hoard of the Dragon Queen",
 		"scaleX": 1,
@@ -10453,7 +10450,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/863/0306.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 57.833333333333336,
 		"disableSceneVision": "0",
@@ -10498,7 +10495,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map25Dungrunglung": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/865/850/587/0307.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -10516,7 +10513,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.5: Dungrunglung ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/891/0307a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -16137,7 +16134,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/865/0307.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 21.76666666666667,
 		"disableSceneVision": "0",
@@ -16154,7 +16151,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/the-land-of-chult/Map26Firefinger": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/867/850/587/0308.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -16172,7 +16169,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.6: Firefinger",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/867/0308.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -22079,7 +22076,7 @@ function get_scene_data_toa() {
 		"snap": "0"
 	},
 	"toa/the-land-of-chult/Map27FortBeluarian": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/868/850/587/0309.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -22097,7 +22094,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.7: Fort Beluarian ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/869/0309a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -22337,7 +22334,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/868/0309.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 43.666666666666664,
 		"disableSceneVision": "0",
@@ -22345,7 +22342,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map28HeartofUbtao": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/872/850/587/0312.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -22363,7 +22360,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.8: Heart of Ubtao ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/873/0312a.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -24766,7 +24763,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/872/0312.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "43.233333333333334",
 		"disableSceneVision": "0",
@@ -24774,7 +24771,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map29Hrakhamar": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/874/850/587/0313.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -24882,7 +24879,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.9: Hrakhamar ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/875/0313a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -36404,7 +36401,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/874/0313.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 47.2,
 		"disableSceneVision": "0",
@@ -36412,7 +36409,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map210JahakaAnchorage": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/877/850/587/0315.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -36430,7 +36427,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.10: Jahaka Anchorage",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/878/0315a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -39071,7 +39068,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "1",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/877/0315.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "27.5",
 		"disableSceneVision": "0",
@@ -39096,7 +39093,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.11: Kir Sabal",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/881/0317a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -40698,7 +40695,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/881/0317a.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "54",
 		"disableSceneVision": "0",
@@ -40706,7 +40703,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map212Nangalore": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/883/600/814/0319.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -40724,7 +40721,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.12: Nangalore ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/884/0319a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -43382,7 +43379,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/883/0319.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "52.13333333333333",
 		"disableSceneVision": "0",
@@ -43390,7 +43387,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},	
 	"toa/the-land-of-chult/Map213WreckoftheStarGoddess": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/885/850/587/0320.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -43408,7 +43405,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.13: Wreck of the Star Goddess",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/885/0320.jpg",
+		
 		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
@@ -44639,7 +44636,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/the-land-of-chult/Map214WyrmheartMine": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/886/850/587/0321.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -44657,7 +44654,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 2.14: Wyrmheart Mine ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/887/0321a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -57824,7 +57821,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/886/0321.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 45.333333333333336,
 		"disableSceneVision": "0",
@@ -57832,7 +57829,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},	
 	"toa/the-land-of-chult/Map215Yellyark": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/889/850/587/0323.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -57850,7 +57847,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "0",
 		"title": "Map 2.15: Yellyark ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/890/0323a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -61107,7 +61104,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/889/0323.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 59.333333333333336,
 		"disableSceneVision": "0",
@@ -61115,7 +61112,7 @@ function get_scene_data_toa() {
 		"snap": "1"
 	},
 	"toa/dwellers-of-the-forbidden-city/Map32NineShrinesofOmu": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/898/600/814/305.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -61133,7 +61130,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 3.2: Nine Shrines of Omu ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/899/305a.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "",
 		"scaleX": 1,
@@ -71050,7 +71047,7 @@ function get_scene_data_toa() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/898/305.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 50.06666666666666,
 		"disableSceneVision": "0",
@@ -71067,7 +71064,7 @@ function get_scene_data_toa() {
 		},
 	},
 	"toa/fane-of-the-night-serpent/Map41FaneoftheNightSerpent": {
-		"thumb": "https://www.dndbeyond.com/attachments/thumbnails/2/903/600/814/402.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -71085,7 +71082,7 @@ function get_scene_data_toa() {
 		"darkness_filter_number": "100",
 		"title": "Map 4.1: Fane of the Night Serpent ",
 		"fog_of_war": "1",
-		"player_map": "https://www.dndbeyond.com/attachments/2/904/402a.jpg",
+		
 		"upsq": "ft",
 		"undefined": "white",
 		"folderPath": "",
@@ -87770,7 +87767,7 @@ function get_scene_data_toa() {
 		"daylight": "rgba(255, 255, 255, 1)",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://www.dndbeyond.com/attachments/2/903/402.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": 52,
 		"disableSceneVision": "0",

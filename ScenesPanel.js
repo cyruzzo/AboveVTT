@@ -2532,7 +2532,7 @@ async function create_scene_root_container(fullPath, parentId) {
 		"title": "D&D Beyond",
 		"description": "Import Scenes from books you own",
 		"category": "Source Books",
-		"player_map": "https://www.dndbeyond.com/avatars/thumbnails/30581/717/1000/1000/638053634473091554.jpeg",
+		
 	}, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png", false);
 	ddb.css("width", "25%");
 	sectionHtml.find("ul").append(ddb);

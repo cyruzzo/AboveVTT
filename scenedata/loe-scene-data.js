@@ -2,7 +2,7 @@ function get_scene_data_loe() {
 	return {
 	"loe/boulderwood-path/Map601boulderwoodpath": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-6.01-boulderwood-path.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -521,7 +521,7 @@ function get_scene_data_loe() {
 		"darkness_filter_number": "100",
 		"title": "Map: Boulderwood Path ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-6.01-boulderwood-path-player.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "/Boulderwood Path",
 		"scaleX": 1,
@@ -3766,7 +3766,7 @@ function get_scene_data_loe() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-6.01-boulderwood-path.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "100.33333333333333",
 		"disableSceneVision": "0",
@@ -3840,7 +3840,7 @@ function get_scene_data_loe() {
 	},
 	"loe/gloomrock-caverns/Map501gloomrockcaverns": {
 		"itemType": "scene",
-		"thumb": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-5.01-gloomrock-caverns.jpg",
+		
 		"reveals": [
 			[
 				0,
@@ -3858,7 +3858,7 @@ function get_scene_data_loe() {
 		"darkness_filter_number": "100",
 		"title": "Map: Gloomrock Caverns ",
 		"fog_of_war": "1",
-		"player_map": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-5.01-gloomrock-caverns-player.jpg",
+		
 		"upsq": "ft",
 		"folderPath": "/Gloomrock Caverns",
 		"scaleX": 1,
@@ -7616,7 +7616,7 @@ function get_scene_data_loe() {
 		"dm_map_is_video": "0",
 		"grid": "0",
 		"scale_check": true,
-		"dm_map": "https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/map-5.01-gloomrock-caverns.jpg",
+		
 		"player_map_is_video": "0",
 		"hpps": "99.66666666666667",
 		"disableSceneVision": "0",
