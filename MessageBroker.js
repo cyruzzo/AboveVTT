@@ -413,7 +413,7 @@ class MessageBroker {
 									damageButtonContainer.off('click.damage').on('click.damage', 'button', function(e){
 										const clicked = $(e.currentTarget);
 
-										let damage = data.data.injected_data.result;
+										let damage = current.data.injected_data.result;
 										if(clicked.hasClass('resist')){
 											damage = Math.floor(damage/2);
 										}
