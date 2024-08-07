@@ -1828,7 +1828,9 @@ input.menu-input.hpMenuInput[readonly] {
 
 input.menu-input.acMenuInput[readonly]::selection,
 input.menu-input.maxHpMenuInput[readonly]::selection, 
-input.menu-input.hpMenuInput[readonly]::selection,
+input.menu-input.hpMenuInput[readonly]::selection {
+    background: none;
+}
 input.menu-input.acMenuInput[readonly]::-moz-selection,
 input.menu-input.maxHpMenuInput[readonly]::-moz-selection, 
 input.menu-input.hpMenuInput[readonly]::-moz-selection {
