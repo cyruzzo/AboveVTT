@@ -1092,6 +1092,9 @@ class Token {
 			});
 		}
 		else {
+			hpbar.off('click.message').on('click.message', 'input' ,function(){
+				showTempMessage('Player HP must be adjusted on the character sheet.')
+			})
 			hp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
 			maxhp_input.keydown(function(e) { if (e.keyCode == '13') self.update_from_page(); e.preventDefault(); });
 		}
