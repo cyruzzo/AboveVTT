@@ -525,7 +525,15 @@ function add_issues_to_error_message(issues, errorMessage) {
   }
 }
 
+function showTempMessage(messageString){
+  $('.abovevttTempMessage').remove();
+  let messageBox = $(`<div class='abovevttTempMessage'>${messageString}</div>`);
+  $('body').append(messageBox);
+  setTimeout(function(){
+    messageBox.fadeOut(1000, function() { $(this).remove(); });
+  }, 1000);
 
+}
 /** The string "THE DM" has been used in a lot of places.
  * This prevents typos or case sensitivity in strings.
  * @return {String} "THE DM" */

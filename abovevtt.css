@@ -49,6 +49,29 @@ button#startScreenShare{
     border: 0px;
     border-radius: 5px;
 }
+.abovevttTempMessage{
+    display:block;
+    position:fixed;
+    width:400px;
+    bottom:10%;
+    left:50%;
+    font-size:20px;
+    transform: translateX(-50%);
+    pointer-events:none;
+    color:#fff;
+    text-shadow: 1px 1px 0px #000, 
+        -1px -1px 0px #000, 
+        -1px 1px 0px #000, 
+        1px -1px 0px #000, 
+        0px -1px 0px #000, 
+        1px 0px 0px #000, 
+        0px 1px 0px #000, 
+        -1px 0px 0px #000;
+    z-index:10000000000;
+    text-align:center;
+    text-transform: uppercase;
+    font-weight:bold;
+}
 .percentageLoaded{
     height: 10px;
     position: absolute;
