@@ -5705,6 +5705,11 @@ div#selectedTokensBorderRotationGrabberConnector,
     font-weight: 700;
     color: rgb(92, 112, 128);
 }
+
+[class*='Line-Title'] .aboveDiceOutput .skill-tooltip{
+    color: rgb(92, 112, 128) !important;
+}
+
 .abovevtt-roll-check,
 .abovevtt-roll-skill{
     color: rgb(181, 93, 255);
