@@ -423,6 +423,10 @@ class MessageBroker {
 										else if(clicked.hasClass('heal')){
 											damage = -1*damage;
 										}
+										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
+											showTempMessage('No non-player tokens selected');
+										}
+
 										for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
