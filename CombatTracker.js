@@ -831,6 +831,9 @@ function ct_add_token(token,persist=true,disablerolling=false){
 		});
 	}
 	else {
+		hp.off('click.message').on('click.message', function(){
+			showTempMessage('Player HP must be adjusted on the character sheet.')
+		})
 		hp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); }); // DISABLE WITHOUT MAKING IT LOOK UGLY
 		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
 	}

@@ -976,14 +976,17 @@ function token_context_menu_expanded(tokenIds, e) {
 	
 
 	if((window.DM && tokens.length != 1) || (tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer())))){ 
-		$(".maxHpMenuInput").prop('disabled', false);
-		$(".acMenuInput").prop('disabled', false);
-		$(".hpMenuInput").prop('disabled', false);
+		$(".maxHpMenuInput").prop('readonly', false);
+		$(".acMenuInput").prop('readonly', false);
+		$(".hpMenuInput").prop('readonly', false);
 	}
 	else { 
-		$(".maxHpMenuInput").prop('disabled', true);
-		$(".acMenuInput").prop('disabled', true);
-		$(".hpMenuInput").prop('disabled', true);
+		$(".maxHpMenuInput, .acMenuInput, .hpMenuInput").off('click.message').on('click.message', function(){
+			showTempMessage('Player HP/AC must be adjusted on the character sheet.')
+		})
+		$(".maxHpMenuInput").prop('readonly', true);
+		$(".acMenuInput").prop('readonly', true);
+		$(".hpMenuInput").prop('readonly', true);
 	}	
 	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);	
 	conditionsRow.hover(function (hoverEvent) {

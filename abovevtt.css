@@ -50,6 +50,7 @@ button#startScreenShare{
     border-radius: 5px;
 }
 
+
 canvas.dice-rolling-panel__container{
     max-width: calc(100% - 340px) !important;
 }
@@ -1816,6 +1817,29 @@ padding-bottom: 5px;
 .ct_dead td:nth-of-type(4){
     color: #bc0f0f;
 }
+
+
+input.menu-input.acMenuInput[readonly],
+input.menu-input.maxHpMenuInput[readonly], 
+input.menu-input.hpMenuInput[readonly] {
+    filter:brightness(0.7);
+    opacity:0.4;   
+}
+
+input.menu-input.acMenuInput[readonly]::selection,
+input.menu-input.maxHpMenuInput[readonly]::selection, 
+input.menu-input.hpMenuInput[readonly]::selection,
+input.menu-input.acMenuInput[readonly]::-moz-selection,
+input.menu-input.maxHpMenuInput[readonly]::-moz-selection, 
+input.menu-input.hpMenuInput[readonly]::-moz-selection {
+    background: none;
+}
+
+input.menu-input.acMenuInput[readonly]:focus,
+input.menu-input.maxHpMenuInput[readonly]:focus, 
+input.menu-input.hpMenuInput[readonly]:focus,  {
+    outline:none;
+}
 #combat_area .ct_dead[data-current][data-target*="characters"]{
     background: none;
 }
@@ -1823,6 +1847,7 @@ padding-bottom: 5px;
     text-decoration: none;
     background: none;
     border-width: 0;
+    pointer-events:none;
 }
 #combat_area tr:not([data-target*="characters"]) input.hp{
     text-decoration: underline solid 0.5px #1b9af033;
