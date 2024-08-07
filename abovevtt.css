@@ -49,6 +49,11 @@ button#startScreenShare{
     border: 0px;
     border-radius: 5px;
 }
+
+canvas.dice-rolling-panel__container{
+    max-width: calc(100% - 340px) !important;
+}
+
 .abovevttTempMessage{
     display:block;
     position:fixed;
