@@ -1826,20 +1826,24 @@ input.menu-input.hpMenuInput[readonly] {
     opacity:0.4;   
 }
 
-input.menu-input.acMenuInput[readonly]::selection,
-input.menu-input.maxHpMenuInput[readonly]::selection, 
-input.menu-input.hpMenuInput[readonly]::selection {
-    background: none;
-}
 input.menu-input.acMenuInput[readonly]::-moz-selection,
 input.menu-input.maxHpMenuInput[readonly]::-moz-selection, 
 input.menu-input.hpMenuInput[readonly]::-moz-selection {
-    background: none;
+    background: none !important;
+    color:#000;
 }
+
+input.menu-input.acMenuInput[readonly]::selection,
+input.menu-input.maxHpMenuInput[readonly]::selection, 
+input.menu-input.hpMenuInput[readonly]::selection {
+    background: #0000 !important;
+    color:#000;
+}
+
 
 input.menu-input.acMenuInput[readonly]:focus,
 input.menu-input.maxHpMenuInput[readonly]:focus, 
-input.menu-input.hpMenuInput[readonly]:focus,  {
+input.menu-input.hpMenuInput[readonly]:focus  {
     outline:none;
 }
 #combat_area .ct_dead[data-current][data-target*="characters"]{
