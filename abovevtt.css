@@ -7406,7 +7406,7 @@ div.ddbc-tab-options--layout-pill>button{
 .body-rpgcharacterbuilder #VTTWRAPPER ~ .ddbc-tab-options--layout-pill{
     display: none !important;
 }
-.site-bar{
+body:not(.body-rpgcampaign) .site-bar{
     display:none !important;
 }
 
