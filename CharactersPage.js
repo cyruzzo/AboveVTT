@@ -488,7 +488,7 @@ function getRollData(rollButton){
       rollType = 'check'
       rollTitle = $(rollButton).closest(`.ddbc-ability-summary`).find('.ddbc-ability-summary__abbr').text();
     } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
-      rollType = 'skill';
+      rollType = 'check';
       rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
     } else if($(rollButton).parents(`[class*='initiative-box']`).length > 0 || $(rollButton).parents(`.ct-combat__summary-group--initiative`).length > 0){
       rollTitle = 'Initiative';
