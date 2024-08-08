@@ -832,7 +832,7 @@ class JournalManager{
 	        e.preventDefault();
 	        let targetBlock = $(e.currentTarget).parent().clone();
 	        targetBlock.find('button').remove();
-	        targetBlock.find('img').removeAttr('width height style');
+	        targetBlock.find('img').removeAttr('width height style').toggleClass('magnify', true);
 	        send_html_to_gamelog(targetBlock[0].outerHTML);
 	    });
 		blocks.wrap(function(){
