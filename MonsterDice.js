@@ -229,16 +229,18 @@ $(target).find(outerSelector).each(function() {
 		const label = $(currentElement).find(labelSelector).html()
 		if (label === "Saving Throws" || label === "Skills"){
 			// get the tidbits in the form of ["DEX +3", "CON +4"] or ["Athletics +6", "Perception +3"]
-			const tidbitData = $(currentElement).find(dataSelector).text().trim().split(",")
+			const tidbitData = $(currentElement).find(dataSelector).html().trim().split(",")
 			const allTidBits = []
 			tidbitData.forEach((tidbit) => {
 				// can only be saving throw or skills here, which is either save/check respectively
 				const rollType = label === "Saving Throws" ? "save" : "check"
 				// will be DEX/CON/ATHLETICS/PERCEPTION
-				const actionType = tidbit.trim().split(" ")[0]
-				// matches "+1"
-				allTidBits.push(tidbit.replace(/([+\-] ?[0-9][0-9]?)/, `<button data-exp='1d20' data-mod='$1' data-rolltype=${rollType} data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} ${rollType}">$1</button>`))
-			})
+				const actionType = $(tidbit).text().trim().split(" ")[0]
+				// matches " +1 " or " + 1 "
+				const rollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])/gi
+				
+				allTidBits.push(tidbit.replaceAll(rollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='${rollType}' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`))
+			})		
 			$(this).find(dataSelector).html(allTidBits);				
 		}
 	}
