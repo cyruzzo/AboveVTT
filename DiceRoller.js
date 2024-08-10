@@ -391,6 +391,10 @@ class DiceRoller {
                
             }                         
             else{
+                if(spellSave == undefined && this.#pendingSpellSave != undefined){
+                    spellSave = this.#pendingSpellSave;
+                    this.#pendingSpellSave = undefined;
+                }
                 let rollData = {
                     roll: roll,
                     expression: diceRoll.expression,
