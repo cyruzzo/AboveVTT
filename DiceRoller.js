@@ -276,7 +276,9 @@ class DiceRoller {
             console.warn("DiceRoller failed to get ddbMB");
         }
     }
-
+    setPendingSpellSave(spellSaveText){
+        this.#pendingSpellSave = spellSaveText;
+    }
     /// PUBLIC FUNCTIONS
 
     /**
@@ -345,7 +347,10 @@ class DiceRoller {
 
 
             if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
-
+                if(spellSave == undefined && this.#pendingSpellSave != undefined){
+                    spellSave = this.#pendingSpellSave;
+                    this.#pendingSpellSave = undefined;
+                }
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
@@ -604,8 +609,15 @@ class DiceRoller {
             }
             else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId) && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
-            }         
-            this.ddbDispatch(ddbMessage);
+            } 
+            if(this.#pendingSpellSave != undefined && message.eventType === "dice/roll/fulfilled"){
+                ddbMessage.avttSpellSave = this.#pendingSpellSave;
+                this.ddbDispatch(ddbMessage);
+                this.#pendingSpellSave = undefined;
+            }       
+            else{
+                this.ddbDispatch(ddbMessage);
+            }
         } else if (message.eventType === "dice/roll/pending") {
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };

@@ -894,6 +894,20 @@ function observe_character_sheet_changes(documentToObserve) {
           }
         }
 
+        const spellDamageButtons = $(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
+
+        if(spellDamageButtons.length > 0){
+          $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
+          spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
+            let spellSave = $(this).closest('.ddbc-combat-attack, .ct-spells-spell').find(`[class*='__save']`);   
+            let spellSaveText;
+            if(spellSave.length>0){
+              spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
+            } 
+            window.diceRoller.setPendingSpellSave(spellSaveText);
+          })
+        } 
+
         const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
         if (attackIcons.length > 0){
           if(!window.CHARACTER_AVTT_SETTINGS){
