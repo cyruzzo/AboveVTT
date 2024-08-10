@@ -36,7 +36,7 @@ function init_mixer() {
     }          
     let playlists = window.MIXER.playlists();
     let playlistInput = $(`<select id='mixerPlaylists'></select>`);
-
+    let playlistType = $(``)
     /** @param {Object.<string, Channel>} */
     const drawChannelList = (channels) => {
         playlistInput.find('option').remove();
@@ -122,6 +122,7 @@ function init_mixer() {
                         window.TOKEN_OBJECTS[channel.token].highlight();        
                     }
                 })
+                $(item).toggleClass('tokenTrack', true);
             }
            
             // repeat button
@@ -158,8 +159,13 @@ function init_mixer() {
             channel_play_pause.append(pause_svg);
 
             channel_play_pause.on('click', function(){
+
+                
                 const channel = window.MIXER.state().channels[id]
                 if(channel.paused) {
+                    if($('.sequential-button').hasClass('pressed')){
+                        $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
+                    }
                     play_svg.css('display', 'none');
                     pause_svg.css('display', 'none');
                     validIcon.css('display', 'block');
@@ -276,6 +282,23 @@ function init_mixer() {
     clear.append(clear_svg);
     clear.on('click', function(){window.MIXER.clear()});
 
+    let sequentialPlay = $('<button class="sequential-button"></button>');
+    let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
+    sequentialPlay.append(sequential_svg);
+    sequentialPlay.on('click', function(){
+        if(sequentialPlay.hasClass('pressed')){
+            sequentialPlay.toggleClass('pressed', false)
+        }
+        else{
+
+            sequentialPlay.toggleClass('pressed', true)
+            let currentlyPlaying = $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing:not(:first)`)
+            if(currentlyPlaying.length>0){
+                currentlyPlaying.click();
+            }
+        }     
+    });
+
     // play/pause button
     let playPause = $('<button class="mixer-play-pause-button" style="font-size:10px;"></button>');
     let mixer_playlist_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M2.5 8V6H14.5V8ZM2.5 12V10H14.5V12ZM2.5 16V14H10.5V16ZM15.5 21V13L21.5 17Z"/></svg>');
@@ -300,6 +323,9 @@ function init_mixer() {
 
     playPause.on('click', function(){
         window.MIXER.togglePaused();
+        if(sequentialPlay.hasClass('pressed') && $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).length>1){
+            $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
+        }
         if(window.MIXER.paused) {
             mixer_playlist_svg.css('display', 'block');
             pause_svg.css('display', 'none');
@@ -318,7 +344,7 @@ function init_mixer() {
     });
 
     $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
-    $('#master-volume').append(clear, playPause);
+    $('#master-volume').append(clear, sequentialPlay, playPause);
 }
 
 function init_trackLibrary() {
@@ -419,6 +445,9 @@ function init_trackLibrary() {
 
 
             track_play_button.on('click', function(){
+                if($('.sequential-button').hasClass('pressed')){
+                    $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
+                }
                 const channel = new Channel(track.name, track.src);
                 channel.paused = false;
                 channel.loop = false;

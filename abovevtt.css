@@ -10037,7 +10037,8 @@ button.channel-loop-button{
 .add-track-cancel-button,
 .channel-remove-button,
 .track-add-to-mixer,
-.track-add-token-mixer {
+.track-add-token-mixer,
+.sequential-button {
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -10063,7 +10064,8 @@ button.channel-loop-button{
 .add-track-cancel-button:focus,
 .channel-remove-button:focus,
 .track-add-to-mixer:focus,
-.track-add-token-mixer:focus {
+.track-add-token-mixer:focus,
+.sequential-button:focus {
     outline: none;
 }
 
@@ -10077,7 +10079,8 @@ button.channel-loop-button{
 .add-track-cancel-button:hover,
 .channel-remove-button:hover,
 .track-add-to-mixer:hover,
-.track-add-token-mixer:hover  {
+.track-add-token-mixer:hover,
+.sequential-button:hover  {
     cursor: pointer;
     background: rgb(245, 248, 250);
     border: 1px solid rgb(206, 217, 224);
@@ -10093,7 +10096,8 @@ button.channel-loop-button{
 .add-track-cancel-button:active,
 .channel-remove-button:active,
 .track-add-to-mixer:active,
-.track-add-token-mixer:active {
+.track-add-token-mixer:active,
+.sequential-button:active {
     background-color: rgb(245, 248, 250);
     box-shadow: inset #000 1px 1px 3px 1px;
     transform: translate(1px, 2px) scale(0.8);
@@ -10170,7 +10174,10 @@ div#playlistFields {
     position: absolute;
     left: 126px;
 }
-
+.sequential-button{
+    position: absolute;
+    left: 150px;
+}
 .mixer-play-pause-button{
     position: absolute;
     left: 174px;

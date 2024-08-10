@@ -207,6 +207,7 @@ class Mixer extends EventTarget {
                 player.preload = "none";
                 this._players[id] = player;
             }
+
             if(player.paused)
                 player.load();
             if (state.paused || channel.paused) {
@@ -229,9 +230,7 @@ class Mixer extends EventTarget {
                    
                 const currentState = window.MIXER.state();    
                 if(this._players[id] && !(currentState.paused || currentState.channels[id].paused))
-                    this.playaudio(id);
-            
-                
+                    this.playaudio(id);          
             }
         });
 
@@ -254,10 +253,13 @@ class Mixer extends EventTarget {
         $(`#mixer-channels .audio-row[data-id='${id}'] .url-validator`).css('display', 'none');
         $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('audio-error', false);
       } catch (err) {
+
         $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('playing pressed', false);
         $(`#mixer-channels .audio-row[data-id='${id}'] svg.play-svg`).css('display', 'block');
         $(`#mixer-channels .audio-row[data-id='${id}'] svg.pause-svg`).css('display', 'none');
         $(`#mixer-channels .audio-row[data-id='${id}'] .url-validator`).css('display', 'none');
+        if(err.name == 'AbortError')
+            return;
         $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('audio-error', true);
       }
     }
@@ -636,6 +638,15 @@ class Mixer extends EventTarget {
                 e.target.currentTime = 0;
                 $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
                 $(progress).css('width', '');
+
+                if($(`.sequential-button`).hasClass('pressed')){
+                    let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`)
+                    let nextTrack = $(currentTrack).nextAll('.audio-row[data-id]:not(.tokenTrack):first');
+                    if(nextTrack.length == 0){
+                        nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
+                    }
+                    nextTrack.find('.channel-play-pause-button').click();
+                }
             }
         }
 
