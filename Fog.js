@@ -3447,7 +3447,6 @@ function handle_drawing_button_click() {
 		if ($(clicked).hasClass("menu-button")){
 			menu = clicked.id.replace("button", "menu" )
 			menu = "#" + menu
-			$(`${menu} :input:enabled:visible:not([readonly]):first`).focus();
 		}
 		// button is in a menu
 		else if($(clicked).hasClass("menu-option")){
