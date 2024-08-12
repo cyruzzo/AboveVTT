@@ -50,7 +50,8 @@ function setup_aoe_button(buttons) {
 
     aoeMenu.append("<div class='menu-subtitle'>Size</div>");
     
-    aoeMenu.append(`<div><input min='5' tabindex='2' id='aoe_feet_in_menu' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
+    aoeMenu.append(`<div><input min='5' onclick='$(this).select()'
+        tabindex='2' id='aoe_feet_in_menu' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
 
     aoeMenu.append("<div class='menu-subtitle'>Style</div>");
     aoeMenu.append(
@@ -278,7 +279,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
 
     let options = get_aoe_default_options()
     options.name = name
-    options.imgsrc = build_aoe_img_name(style, shape, name);
+    
     options.size = shape !== "line" ? size : ""
     options.gridHeight = shape === "line" ? countGridSquares : ""
     options.gridWidth = shape === "line" ? 1 : ""
@@ -289,8 +290,12 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
             darkness: true
         }
     }
-
-
+    options = {
+        ...options,
+        ...find_or_create_token_customization('aoe', `_Area_of_Effects_${shape}_AoE`, 'monstersFolder', 'monstersFolder').tokenOptions 
+    }
+    
+    options.imgsrc = build_aoe_img_name(style, shape, name);
     return options
 }
 

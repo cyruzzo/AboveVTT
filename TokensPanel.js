@@ -1947,7 +1947,13 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             console.warn("display_token_configuration_modal was called with incorrect item type", listItem);
             return;
     }
-
+    let customization;
+    try {
+        customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id, RootFolder.Monsters.id);
+    } catch (error) {
+        showError(error, "display_token_configuration_modal failed to create a customization object for listItem:", listItem);
+        return;
+    }
     // close any that are already open just to be safe
     close_sidebar_modal();
     let sidebarPanel = new SidebarPanel("token-configuration-modal");
@@ -1977,6 +1983,16 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             $(e.target).blur();
         }
     });
+        // token options override
+    let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
+        customization.setTokenOption(name, value);
+    }, function () {
+        display_aoe_token_configuration_modal(listItem, placedToken);
+        persist_token_customization(customization);
+    });
+
+    sidebarPanel.inputWrapper.append(tokenOptionsButton);
+    sidebarPanel.inputWrapper.append(`<br />`);
     redraw_token_images_in_modal(sidebarPanel, listItem, placedToken);
 }
 
@@ -2657,15 +2673,19 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
     let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
     tokenOptionsButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-            const overrideOptions = token_setting_options().map(option => convert_option_to_override_dropdown(option));
+            const overrideOptions = listItem.isTypeAoe() ? token_setting_options().filter(option=> availableToAoe.includes(option.name))
+                .map(option => convert_option_to_override_dropdown(option)) : token_setting_options().map(option => convert_option_to_override_dropdown(option));
             let optionsContainer = build_sidebar_token_options_flyout(overrideOptions, options, function(name, value) {
                 updateValue(name, value);
             }, didChange);
             optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place this token on the scene, these settings will be used. Setting the value to "Default" will use the global settings which are found in the settings tab.</div>`);
             flyout.append(optionsContainer);
             position_flyout_left_of(sidebarPanel.container, flyout);
-            redraw_settings_panel_token_examples(options);
-            decorate_modal_images(sidebarPanel, listItem, placedToken);
+            if(!listItem.isTypeAoe()){
+                redraw_settings_panel_token_examples(options);
+                decorate_modal_images(sidebarPanel, listItem, placedToken);
+            }
+
         });
     });
     return tokenOptionsButton;
