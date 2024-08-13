@@ -1125,6 +1125,10 @@ function edit_scene_vision_settings(scene_id){
 
 
 
+		if(window.splitPlayerScenes?.players != undefined){
+		 window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
+		}                
+
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");
 		$("#scene_selector_toggle").click();
