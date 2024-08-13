@@ -391,7 +391,7 @@ function find_token_customization(type, id) {
 function find_or_create_token_customization(type, id, parentId, rootId) {
     return find_token_customization(type, id) || new TokenCustomization(id, type, parentId, rootId, {});
 }
-find_or_create_token_customization('Aoe', `_Area_of_Effects_${shape}_AoE`, 'monstersFolder', 'monstersFolder') 
+
 /**
  * @param playerSheet {string} the id of the DDB character
  * @returns {TokenCustomization|undefined} a token customization for the monster or undefined if not found

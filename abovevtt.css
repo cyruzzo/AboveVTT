@@ -7086,27 +7086,53 @@ button span.onedrive-btn-status{
 
 [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
-[class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+[class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+[class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
     color:#0a0 !important;
 }
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
-[class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+[class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+[class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
     color:#a00 !important;
 }
 [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
-[class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] .aboveDiceTotal{
+[class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+[class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
+[class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
     color:#4768ff !important;
 }
 
-[class*="glc-game-log"] div[class*="TotalContainer-Flex"] .custom-spell-save-text span{
+[class*="glc-game-log"] div[class*="TotalContainer-Flex"] .custom-spell-save-text span,
+[class*="glc-game-log"] div[class*='DiceMessage_TotalContainer'] .custom-spell-save-text span {
     color: #716f6f !important;
     font-size: 10px;
     font-weight: bold;
     line-height: 10px;
     text-wrap: nowrap;
 }
+
+[class*="glc-game-log"] div[class*='DiceMessage_TotalContainer'] .custom-spell-save-text {
+    line-height: 13px;
+}
+
+[class*="glc-game-log"] div[class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total'] {
+    position: relative;
+    align-self: stretch;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    justify-content: center;
+}
+
 .glc-game-log>div>div[class*="-Title"] {
     margin-bottom: 7px;
 }
