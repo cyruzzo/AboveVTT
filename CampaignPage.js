@@ -7,10 +7,12 @@ $(function() {
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
-      .then(() => {
+      .then(async () => {
         if (is_gamelog_popout()) {
           window.MB = new MessageBroker();
           inject_chat_buttons();
+          window.JOURNAL=new JournalManager(window.gameid);
+          window.ddbConfigJson = await DDBApi.fetchConfigJson();
         } else {
           inject_instructions();
           inject_dm_join_button();
