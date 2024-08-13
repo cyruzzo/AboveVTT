@@ -349,7 +349,6 @@ class DiceRoller {
             if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
-                    this.#pendingSpellSave = undefined;
                 }
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
@@ -600,6 +599,8 @@ class DiceRoller {
         this.#timeoutId = undefined;
         this.#pendingMessage = undefined;
         this.#pendingDiceRoll = undefined;
+        this.#pendingSpellSave = undefined;
+                
     }
 
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
@@ -617,7 +618,7 @@ class DiceRoller {
             if(this.#pendingSpellSave != undefined && message.eventType === "dice/roll/fulfilled"){
                 ddbMessage.avttSpellSave = this.#pendingSpellSave;
                 this.ddbDispatch(ddbMessage);
-                this.#pendingSpellSave = undefined;
+                this.#resetVariables();
             }       
             else{
                 this.ddbDispatch(ddbMessage);

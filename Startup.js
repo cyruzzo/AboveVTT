@@ -143,7 +143,26 @@ $(function() {
             })
             return;
           }
+          if(window.DM && event.data.msgType=='gamelogDamageButtons'){
+            for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
+              let id = window.CURRENTLY_SELECTED_TOKENS[i];
+              let token = window.TOKEN_OBJECTS[id];
+              if(token.isPlayer() || token.isAoe())
+                continue;
+              let newHp = Math.max(0, parseInt(token.hp) - parseInt(event.data.damage));
+
+              if(window.all_token_objects[id] != undefined){
+                window.all_token_objects[id].hp = newHp;
+              }     
+              if(token != undefined){   
+                token.hp = newHp;
+                token.place_sync_persist()
+              }   
+            }
+          }
+                           
+                  
           if(!window.DM){
             if(event.data.msgType == 'CharacterData'){
               window.MB.sendMessage("custom/myVTT/character-update", {

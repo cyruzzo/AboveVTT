@@ -532,7 +532,7 @@ class MessageBroker {
 				console.error("MB.onmessage failed to handle", event, parsingError);
 				return;
 			}
-			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending")
+			if (window.location.search.includes("popoutgamelog=true") && msg.eventType != "dice/roll/pending" && msg.eventType != "dice/roll/fulfilled")
 				return;
 			console.log(msg.eventType);
 			
@@ -1278,7 +1278,7 @@ class MessageBroker {
 							for(let j = 0; j < msg.data.rolls.length; j++){
 								if(target != undefined)
 										break;
-								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
+								let totals = is_gamelog_popout() ? $(listItems[i]).find(`[class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total']`) : $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
 								if(totals.length == msg.data.rolls.length){
 									for(let k = 0; k<totals.length; k++){
 											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
@@ -1301,7 +1301,7 @@ class MessageBroker {
 								target.find(`[class*='DiceResultContainer']:nth-of-type(${row})`).toggleClass(`${critSuccess[i] && critFail[i] ? 'crit-mixed' : critSuccess[i] ? 'crit-success' : critFail[i] ? 'crit-fail' : ''}`, true)
 								if(msg.avttSpellSave !== undefined){
 							
-									let totalContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
+									let totalContainer = is_gamelog_popout() ? $(listItems[i]).find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total']`) : target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
 							    if (totalContainer.length > 0) {
 							        let spellSave = msg.avttSpellSave;
 							        if (spellSave !== undefined && spellSave.length > 0) {
@@ -1338,6 +1338,14 @@ class MessageBroker {
 									else if(clicked.hasClass('heal')){
 										damage = -1*damage;
 									}
+
+									if(is_gamelog_popout()){
+										tabCommunicationChannel.postMessage({
+					           msgType: 'gamelogDamageButtons',
+					           damage: damage
+					          });
+					          return;
+									}
 									for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
 										let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -1364,7 +1372,13 @@ class MessageBroker {
 								else{
 									damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
 								}
-								target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+								if(is_gamelog_popout()){
+									target.find(`[class*='GameLogEntry_MessageContainer']`).append(damageButtonContainer);
+								} 
+								else{
+									target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+								}
+								
 							}
 						}
 						
