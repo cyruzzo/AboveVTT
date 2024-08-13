@@ -986,7 +986,7 @@ class JournalManager{
 		for(let i=0; i<pastedButtons.length; i++){
 			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
 		}
-    	data = $(target).clone().html();
+    	let data = $(target).clone().html();
 
         let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
         lines = lines.map((line, li) => {
