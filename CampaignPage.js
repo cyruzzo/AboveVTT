@@ -11,6 +11,13 @@ $(function() {
         if (is_gamelog_popout()) {
           window.MB = new MessageBroker();
           inject_chat_buttons();
+          window.JOURNAL=new JournalManager(window.gameid);
+          window.ddbConfigJson = await DDBApi.fetchConfigJson();
+          const queryString = window.location.search;
+          const urlParams = new URLSearchParams(queryString);
+          window.PLAYER_ID = urlParams.get('id');
+          window.DM = window.PLAYER_ID == 'false';
+
         } else {
           inject_instructions();
           inject_dm_join_button();
