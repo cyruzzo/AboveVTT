@@ -2218,7 +2218,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 	    for (let i = 0; i < mutation.addedNodes.length; i++) {
 	      // do things to your newly added nodes here
 	      let node = mutation.addedNodes[i]
-	      if($(node).attr('class').includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length>0){
+	      if($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length>0){
 	      	const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
 					const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
 					window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
