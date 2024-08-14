@@ -1121,13 +1121,7 @@ function edit_scene_vision_settings(scene_id){
 		scene['daylight'] = window.CURRENT_SCENE_DATA.daylight;
 		const isNew = false;
 
-		window.ScenesHandler.persist_scene(scene_id, isNew);
-
-
-
-		if(window.splitPlayerScenes?.players != undefined){
-		 window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
-		}                
+		window.ScenesHandler.persist_scene(scene_id, isNew);           
 
 		$("#sources-import-main-container").remove();
 		$("#scene_selector").removeAttr("disabled");

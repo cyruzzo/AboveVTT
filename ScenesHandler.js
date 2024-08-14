@@ -1038,6 +1038,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.scenes[scene_index] = sceneData;
 
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData);
+
+		if(window.DM && window.splitPlayerScenes?.players != undefined){
+		 	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
+		}     
 	}
 
 	persist_current_scene(dontswitch=false){
@@ -1065,6 +1069,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		if (reloadUI) {
 			did_update_scenes();
 		}
+		if(window.DM && window.splitPlayerScenes?.players != undefined){
+		 	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
+		}   
 	}
 
 	persist() {
