@@ -129,7 +129,7 @@ class AboveApi {
     // never upload data urls
     const sanitizedScenes = await normalize_scene_urls(scenes);
     console.log(`AboveApi.migrateScenes about to upload`, sanitizedScenes);
-    if(JSON.stringify(sanitizedScenes).length > 4000000) {
+    if(JSON.stringify(sanitizedScenes).length > 4000000 && sanitizedScenes.length>1) {
       let newScenes1 = sanitizedScenes.slice(0, parseInt(sanitizedScenes.length/2))
       let newScenes2 = sanitizedScenes.slice(parseInt(sanitizedScenes.length/2), sanitizedScenes.length)
       await AboveApi.migrateScenes(window.gameId, newScenes1);
