@@ -468,7 +468,7 @@ class JournalManager{
 					parentFolder.append(section_chapter)	
 				}
 
-			//journalPanel.body.append(chapter_list);
+			journalPanel.body.append(chapter_list);
 
 
 			for(let n=0; n<self.chapters[i].notes.length;n++){
