@@ -511,7 +511,7 @@ class MessageBroker {
 		this.gameid = find_game_id();
 		this.url = $("#message-broker-client").attr("data-connectUrl");
 		this.diceMessageSelector = "[class*='DiceMessage_RollType']";
-		if (is_encounters_page() || is_characters_page()) {
+		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
 			this.diceMessageSelector = "[class*='-RollType']";
 		} 
 
@@ -1278,7 +1278,7 @@ class MessageBroker {
 							for(let j = 0; j < msg.data.rolls.length; j++){
 								if(target != undefined)
 										break;
-								let totals = is_gamelog_popout() ? $(listItems[i]).find(`[class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total']`) : $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
+								let totals = $(listItems[i]).find(`[class*='TotalContainer-Flex']>div[class*='Total-']`);
 								if(totals.length == msg.data.rolls.length){
 									for(let k = 0; k<totals.length; k++){
 											if(parseInt($(totals[k]).find('span').text()) != msg.data.rolls[k].result.total)
@@ -1301,7 +1301,7 @@ class MessageBroker {
 								target.find(`[class*='DiceResultContainer']:nth-of-type(${row})`).toggleClass(`${critSuccess[i] && critFail[i] ? 'crit-mixed' : critSuccess[i] ? 'crit-success' : critFail[i] ? 'crit-fail' : ''}`, true)
 								if(msg.avttSpellSave !== undefined){
 							
-									let totalContainer = is_gamelog_popout() ? $(listItems[i]).find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='DiceMessage_TotalContainer']>div[class*='DiceMessage_Total']`) : target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
+									let totalContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='TotalContainer-Flex']`);
 							    if (totalContainer.length > 0) {
 							        let spellSave = msg.avttSpellSave;
 							        if (spellSave !== undefined && spellSave.length > 0) {
@@ -1372,12 +1372,9 @@ class MessageBroker {
 									else{
 										damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
 									}
-									if(is_gamelog_popout()){
-										target.find(`[class*='GameLogEntry_MessageContainer']`).append(damageButtonContainer);
-									} 
-									else{
-										target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
-									}
+								
+									target.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+									
 									
 								}
 							}
@@ -1543,7 +1540,7 @@ class MessageBroker {
 		let timestamp = d.toLocaleTimeString();
 		let datestamp = d.toLocaleDateString();
 		
-		if (is_encounters_page() || is_characters_page()) {
+		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
 			return $(`
 				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">
 					<p role="img" class="tss-wyeh8h-Avatar-Flex">
