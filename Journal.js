@@ -465,7 +465,22 @@ class JournalManager{
 						i -= 1; 
 						continue;
 					}	
-					parentFolder.append(section_chapter)	
+					let containsPlayerNotes = false;
+					for(let n=0; n<self.chapters[i].notes.length;n++){
+						let note_id=self.chapters[i].notes[n];
+						if(self.notes[note_id]?.player){
+							containsPlayerNotes = true;
+						} 
+					}
+
+					if(window.DM || containsPlayerNotes) {
+						parentFolder.append(section_chapter);
+						parentFolder.show();
+						parentFolder.parents().show();
+					} else {
+						parentFolder.append(section_chapter);
+						section_chapter.hide();
+					}
 				}
 
 			journalPanel.body.append(chapter_list);
