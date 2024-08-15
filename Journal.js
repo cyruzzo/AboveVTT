@@ -433,7 +433,23 @@ class JournalManager{
 					row_chapter_title.append(btn_edit_chapter);
 					row_chapter_title.append(btn_del_chapter);	
 				}	
-				section_chapter.append(row_chapter_title);
+
+				let containsPlayerNotes = false;
+				for(let n=0; n<self.chapters[i].notes.length;n++){
+					let note_id=self.chapters[i].notes[n];
+					if(self.notes[note_id]?.player){
+						containsPlayerNotes = true;
+					} 
+				}
+
+				if(window.DM || containsPlayerNotes) {
+					section_chapter.append(row_chapter_title);
+				} else {
+					section_chapter.append(row_chapter_title);
+					section_chapter.hide();
+				}
+
+				
 
 				if(!self.chapters[i].parentID){
 					chapter_list.append(section_chapter);
@@ -452,8 +468,8 @@ class JournalManager{
 					parentFolder.append(section_chapter)	
 				}
 
-				journalPanel.body.append(chapter_list);
-			
+			//journalPanel.body.append(chapter_list);
+
 
 			for(let n=0; n<self.chapters[i].notes.length;n++){
 				
