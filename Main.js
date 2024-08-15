@@ -3963,7 +3963,7 @@ function popoutGamelogCleanup(){
 		    height: 100% !important;
 		}
 	</style>`);
-	$(childWindows["Gamelog"].document).find(".gamelog-button").click();
+	$(childWindows["Gamelog"].document).find(".gamelog-button, button[class*='gamelog-button']").click();
 	removeFromPopoutWindow("Gamelog", ".dice-roller");
 	removeFromPopoutWindow("Gamelog", ".sidebar-panel-content:not('.glc-game-log')");
 	removeFromPopoutWindow("Gamelog", ".chat-text-wrapper");
