@@ -713,6 +713,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedButton.html(addButtonInternals);
 				tokens.forEach(t =>{
 					t.options.ct_show = undefined;
+					t.options.combatGroup = undefined;
 					ct_remove_token(t, false);
 					t.update_and_sync();
 				});
@@ -720,6 +721,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedButton.removeClass("add-to-ct").addClass("remove-from-ct");
 				clickedButton.html(removeButtonInternals);
 				tokens.forEach(t => {
+					t.options.combatGroup = undefined;
 					ct_add_token(t, false)
 					t.update_and_sync();
 				});
