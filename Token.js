@@ -487,7 +487,10 @@ class Token {
 				if(window.TOKEN_OBJECTS[i].options.combatGroup == this.options.combatGroupToken){
 					delete window.TOKEN_OBJECTS[i].options.combatGroup;
 					delete window.TOKEN_OBJECTS[i].options.ct_show;
-
+					if(window.all_token_objects[i] != undefined){
+						delete window.all_token_objects[i].options.combatGroup;
+						delete window.all_token_objects[i].options.ct_show;
+					}
 					ct_remove_token(window.TOKEN_OBJECTS[i]);
 					window.TOKEN_OBJECTS[i].update_and_sync();
 				}

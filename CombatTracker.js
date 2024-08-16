@@ -730,6 +730,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;
+				init.trigger('change');
 				if(window.TOKEN_OBJECTS[token.options.id] != undefined){			
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
