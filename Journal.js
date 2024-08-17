@@ -854,7 +854,7 @@ class JournalManager{
 	    }
 	}
 	block_send_to_buttons(target){
-		let blocks = target.find('img, .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
+		let blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
 
 		let sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
 		let container = $(`<div class='note-text' style='position:relative; width:'></div>`)
@@ -1332,11 +1332,10 @@ class JournalManager{
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
 			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
-			   	]},
-			   	{ title: 'Statblock Seperator', block: 'div', wrapper: false, classes:'abovevtt-mon-stat-block__separator'}
+			   	]}
 			],
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
-			toolbar1: 'undo styleselect | hr | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
+			toolbar1: 'undo styleselect | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -1350,6 +1349,28 @@ class JournalManager{
 			],
 			valid_children : '+body[style]',
 			setup: function (editor) { 
+				editor.addButton('horizontalrules', {
+					  type: 'splitbutton',
+				      text: '',
+				      icon: 'hr',
+				      tooltip: 'Horizontal Rules',
+				      menu: [
+				          {
+				            type: 'button',
+				            icon: '',
+				            text: 'Statblock Seperator',
+				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
+				      
+				          },
+				          {
+				            type: 'button',
+				            icon: 'hr',
+				            text: 'Horizontal Rule',
+				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<hr>`)},
+				          }
+				        ],
+				      onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
+				    });
 				editor.on('NodeChange', async function (e) {
 					// When an image is inserted into the editor
 				    if (e.element.tagName === "IMG") { 
