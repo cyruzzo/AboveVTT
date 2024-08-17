@@ -1355,15 +1355,13 @@ class JournalManager{
 				      icon: 'hr',
 				      tooltip: 'Horizontal Rules',
 				      menu: [
-				          {
-				            type: 'button',
-				            icon: '',
+				          {			     
+				            icon: 'hr',
 				            text: 'Statblock Seperator',
 				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
 				      
 				          },
 				          {
-				            type: 'button',
 				            icon: 'hr',
 				            text: 'Horizontal Rule',
 				            onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<hr>`)},
