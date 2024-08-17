@@ -329,7 +329,7 @@ class JournalManager{
 				btn_edit_chapter.css('z-index', '5');
 			});
 			
-			let chapter_title=$("<div class='journal-chapter-title'/>");
+			let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
 			chapter_title.text(self.chapters[i].title);
 
 			// If the user clicks the chapter title, expand/collapse the chapter notes
@@ -498,7 +498,7 @@ class JournalManager{
 				
 				let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
 				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
-				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title'></div>`);
+				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title' title='${self.notes[note_id].title}'></div>`);
 
 
 				entry_title.text(self.notes[note_id].title);

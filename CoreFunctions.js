@@ -1337,7 +1337,8 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
         name = titleBarText.replace(/(\r\n|\n|\r)/gm, "").trim();
         const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
       width=${container.width()},height=${container.height()},left=100,top=100`;
-        childWindows[name] = window.open(`https://dndbeyond.com${$(popoutSelector).attr('src')}`, '_blank', params);
+        let iframeSrc =  $(popoutSelector).attr('src').replace('https://www.dndbeyond.com', '');
+        childWindows[name] = window.open(`https://dndbeyond.com${iframeSrc}`, '_blank', params);
         close_title_button.click();
         childWindows[name].onbeforeunload = function(){
           closePopout(name);
