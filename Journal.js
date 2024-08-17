@@ -751,7 +751,7 @@ class JournalManager{
 		note.find("a").attr("target","_blank");
 		note.dialog({
 			draggable: true,
-			width: 800,
+			width: 860,
 			height: 600,
 			position:{
 			   my: "center",
@@ -1256,7 +1256,7 @@ class JournalManager{
 		$("#site-main").append(note);
 		note.dialog({
 			draggable: true,
-			width: 800,
+			width: 860,
 			height: 600,
 			position: {
 			   my: "center",
@@ -1334,8 +1334,70 @@ class JournalManager{
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}
 			],
-			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table',
-			toolbar1: 'undo styleselect | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
+			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template',
+			add_toolbar: "template",
+			templates: [
+			    {
+			      "title": "Monster Sheet",
+			      "description": "Add a monster sheet template",
+			      "content": `<div class="Basic-Text-Frame stat-block-background one-column-stat" style="font-family: 'Scala Sans Offc', Roboto, Helvetica, sans-serif;">
+								<div class="mon-stat-block__name"><span class="mon-stat-block__name-link"> Bandit Captain <br /></span></div>
+								<div class="mon-stat-block__meta">Medium Humanoid (Any Race), Any Non-Lawful Alignment</div>
+								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
+								<p><strong>Armor Class</strong>&nbsp;15&nbsp;(studded leather)<br /><strong>Hit Points</strong>&nbsp;65&nbsp;(10d8 + 20)<br />Speed&nbsp;30 ft</p>
+								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
+								<table style="height: 61px;" width="364" cellspacing="0" cellpadding="0">
+								<tbody>
+								<tr>
+								<td style="text-align: center;"><strong><span style="color: #000000;">STR</span></strong></td>
+								<td style="text-align: center;"><strong><span style="color: #000000;">DEX</span></strong></td>
+								<td style="text-align: center;"><strong><span style="color: #000000;">CON</span></strong></td>
+								<td style="text-align: center;"><strong><span style="color: #000000;">INT</span></strong></td>
+								<td style="text-align: center;"><strong><span style="color: #000000;">WIS</span></strong></td>
+								<td style="text-align: center;"><strong><span style="color: #000000;">CHA</span></strong></td>
+								</tr>
+								<tr>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">15&nbsp;</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">16&nbsp;</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">11</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
+								</tr>
+								<tr>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+3)</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+0)</span></td>
+								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
+								</tr>
+								</tbody>
+								</table>
+								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
+								<p><strong>Saving Throws</strong>&nbsp;STR +4, DEX +5, WIS +2<br /><strong>Skills&nbsp;</strong>Athletics&nbsp;+4,&nbsp;Deception&nbsp;+4<br /><strong>Senses&nbsp;</strong>Passive Perception 10<br /><strong>Languages&nbsp;</strong>Any two languages<br /><strong>Challenge&nbsp;</strong>2 (450 XP)&nbsp; &nbsp;<strong>Proficiency Bonus</strong>&nbsp;+2<br /><br /><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /><br />&nbsp;</p>
+								<div class="mon-stat-block__description-block-heading">Actions</div>
+								<p><br />Multiattack.&nbsp;The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers.</p>
+								<p>Scimitar.&nbsp;Melee Weapon Attack:&nbsp;DC 17 |&nbsp;+5&nbsp;to hit, reach 5 ft., one target.&nbsp;Hit:&nbsp;6&nbsp;(1d6 + 3)&nbsp;slashing damage.</p>
+								<p>Dagger.&nbsp;Melee or&nbsp;Ranged Weapon Attack:&nbsp;DC 17 |&nbsp;+5&nbsp;to hit, reach 5 ft. or range 20/60 ft., one target.&nbsp;Hit:&nbsp;5&nbsp;(1d4 + 3)&nbsp;piercing damage.</p>
+								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
+								<div class="mon-stat-block__description-block-heading">Reactions</div>
+								<p><br />Parry.&nbsp;The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon.</p>
+								</div>`
+			    },
+			    {
+			    	"title": "Caster Spell List",
+			    	"description": "Add a spell block for casters.",
+			    	"content": `<p>Spellcasting. The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:</p>
+<p>Cantrips (at will): fire bolt, light, mage hand, prestidigitation</p>
+<p>1st level (4 slots): detect magic, mage armor, magic missile, shield</p>
+<p>2nd level (3 slots): misty step, suggestion</p>
+<p>3rd level (3 slots): counterspell, fireball, fly</p>
+<p>4th level (3 slots): greater invisibility, ice storm</p>
+<p>5th level (1 slot): cone of cold</p>`
+			    },
+			],
+			toolbar1: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
@@ -1940,6 +2002,10 @@ class JournalManager{
 	}
 }
 
+
+function tinyWrapper(){
+
+}
 function init_journal(gameid){
 	
 	["/content/1-0-1688-0/js/tinymce/tiny_mce/tinymce.min.js"].forEach(function(value) {
