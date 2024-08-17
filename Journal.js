@@ -751,7 +751,7 @@ class JournalManager{
 		note.find("a").attr("target","_blank");
 		note.dialog({
 			draggable: true,
-			width: 800,
+			width: 860,
 			height: 600,
 			position:{
 			   my: "center",
@@ -1256,7 +1256,7 @@ class JournalManager{
 		$("#site-main").append(note);
 		note.dialog({
 			draggable: true,
-			width: 800,
+			width: 860,
 			height: 600,
 			position: {
 			   my: "center",
