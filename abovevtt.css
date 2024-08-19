@@ -3921,6 +3921,10 @@ div.ct-sidebar__pane-content > div.selected-tab,
     z-index: 21;
 }
 
+.ct-sidebar--visible{
+   height: calc(-15px + 100vh) !important;
+}
+
 /*this may be a DDB bug - as the `Send to (default)` button scrolls off screen and messess with our layout as at 4/25/2024*/
 .ct-sidebar__pane-content>div:first-of-type,
 .ct-sidebar__inner [class*='styles_content']>div:first-of-type{
