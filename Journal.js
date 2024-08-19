@@ -1349,28 +1349,28 @@ class JournalManager{
 								<table style="height: 61px;" width="364" cellspacing="0" cellpadding="0">
 								<tbody>
 								<tr>
-								<td style="text-align: center;"><strong><span style="color: #000000;">STR</span></strong></td>
-								<td style="text-align: center;"><strong><span style="color: #000000;">DEX</span></strong></td>
-								<td style="text-align: center;"><strong><span style="color: #000000;">CON</span></strong></td>
-								<td style="text-align: center;"><strong><span style="color: #000000;">INT</span></strong></td>
-								<td style="text-align: center;"><strong><span style="color: #000000;">WIS</span></strong></td>
-								<td style="text-align: center;"><strong><span style="color: #000000;">CHA</span></strong></td>
+								<td style="text-align: center;"><strong><span>STR</span></strong></td>
+								<td style="text-align: center;"><strong><span>DEX</span></strong></td>
+								<td style="text-align: center;"><strong><span>CON</span></strong></td>
+								<td style="text-align: center;"><strong><span>INT</span></strong></td>
+								<td style="text-align: center;"><strong><span>WIS</span></strong></td>
+								<td style="text-align: center;"><strong><span>CHA</span></strong></td>
 								</tr>
 								<tr>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">15&nbsp;</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">16&nbsp;</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">11</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">14&nbsp;</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">15&nbsp;</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">16&nbsp;</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">14&nbsp;</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">14&nbsp;</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">11</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">14&nbsp;</span></td>
 								</tr>
 								<tr>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+3)</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+0)</span></td>
-								<td style="text-align: center;"><span style="color: #000000; font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+3)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+2)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+0)</span></td>
+								<td style="text-align: center;"><span style="font-size: 10pt;">(+2)</span></td>
 								</tr>
 								</tbody>
 								</table>
