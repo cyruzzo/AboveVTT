@@ -472,6 +472,7 @@ async function start_above_vtt_for_players() {
       window.showPanel = is_sidebar_visible();
     }
     init_character_page_sidebar();
+    reposition_player_sheet();
     setTimeout(function(){
       if(!window.showPanel){
         hide_sidebar();
