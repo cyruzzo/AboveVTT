@@ -673,7 +673,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	build_adventures(callback) {
 		let self = this;
 		if(Object.keys(self.sources).length!=0){
-			setTimeout(callback,4000);
+			callback();
 			return;
 		}
 		
@@ -751,6 +751,9 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		let f = $("<iframe name='scraper' src='" + adventure_url + "'></iframe>");
 		f.hide();
 		$("#site").append(f);
+
+		$('#sources-import-content-container').append(build_combat_tracker_loading_indicator('One moment while we load sourcebook'));
+	
 		f.on("load", function(event) {
 			let iframe = $(event.target);
 			console.log('caricato ' + window.frames['scraper'].location.href);
