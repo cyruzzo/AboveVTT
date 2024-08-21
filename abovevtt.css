@@ -2838,7 +2838,6 @@ button.roll-button-mod.minus {
 
 .journal-chapter-title {
     flex: 1;
-    padding: 8px;
     font-size: 14px;
     font-weight: bold;
     font-family: Roboto;
@@ -2865,6 +2864,7 @@ button.roll-button-mod.minus {
 }
 #journal-panel .ui-sortable:not(.ui-sortable-disabled) .row-chapter{
     height:15px;
+    line-height: 14px;
 }
 #journal-panel .ui-sortable:not(.ui-sortable-disabled) button{
     display:none;
