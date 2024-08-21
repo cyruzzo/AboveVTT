@@ -1739,14 +1739,7 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 		source_select.hide();
 	}
 
-	window.ScenesHandler.build_adventures(function() {
-		display_sources();
-		if (selectedSource) {
-			$("#source_select").val(selectedSource).change();
-		} else {
-			$("#source_select").change();
-		}
-	});
+
 
 	source_select.change(function() {
 		$("#chapter_select").empty();
@@ -1755,6 +1748,7 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 		let source_name = $("#source_select").val()
 		window.ScenesHandler.build_chapters(source_name, function () {
 			display_chapters(selectedChapter);
+			$('#sources-import-content-container').find(".sidebar-panel-loading-indicator").remove();
 		});
 	});
 
@@ -1776,7 +1770,14 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 	panel.append(source_select);
 	panel.append(chapter_select);
-
+	window.ScenesHandler.build_adventures(function() {
+		display_sources();
+		if (selectedSource) {
+			$("#source_select").val(selectedSource).change();
+		} else {
+			$("#source_select").change();
+		}
+	});
 
 }
 
@@ -1794,7 +1795,12 @@ function fill_importer(scene_set, start, searchState = '') {
 function mega_importer(DDB = false, ddbSource, ddbChapter) {
 	container = $("<div id='mega_importer'/>");
 	toggles = $("<div id='importer_toggles'/>");
-
+	container.append(toggles);
+	area = $("<div id='importer_area'/>");
+	container.append(area);
+	bottom = $("<div id='importer_footer'/>").css({ height: "30px", width: "100%" });
+	container.append(bottom);
+	adjust_create_import_edit_container(container, false);
 	if (!DDB) {
 		first = false;
 		for (let i in PRESET) {
@@ -1818,12 +1824,7 @@ function mega_importer(DDB = false, ddbSource, ddbChapter) {
 		}
 		init_ddb_importer(toggles, ddbSource, ddbChapter);
 	}
-	container.append(toggles);
-	area = $("<div id='importer_area'/>");
-	container.append(area);
-	bottom = $("<div id='importer_footer'/>").css({ height: "30px", width: "100%" });
-	container.append(bottom);
-	adjust_create_import_edit_container(container, false);
+
 	if (!DDB){
 		first.click();
 	}
