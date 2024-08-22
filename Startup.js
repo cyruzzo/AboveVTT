@@ -144,6 +144,10 @@ $(function() {
             return;
           }
           if(window.DM && event.data.msgType=='gamelogDamageButtons'){
+            if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
+              showTempMessage('No non-player tokens selected');
+            }
+                
             for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
               let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -158,6 +162,7 @@ $(function() {
               if(token != undefined){   
                 token.hp = newHp;
                 token.place_sync_persist()
+                addFloatingCombatText(id, event.data.damage, event.data.damage<0);
               }   
             }
           }
