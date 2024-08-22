@@ -127,6 +127,16 @@ function resizeCanvasChromeBug(){
 	}
 }
 
+function addFloatingCombatText(id, damageValue, heal = false){
+	let combatText = $(`<div class='floating-combat-text ${heal ? 'heal' : 'dmg'}'>${heal ? '+' : '-'}${Math.abs(damageValue)}</div>`);
+	let token = $(`#tokens .token[data-id="${id}"]`);
+	token.append(combatText);
+
+	setTimeout(function(){
+		combatText.remove();
+	}, 2000)
+}
+
 class MessageBroker {
 
 	loadAboveWS(callback=null){
@@ -423,10 +433,18 @@ class MessageBroker {
 										else if(clicked.hasClass('heal')){
 											damage = -1*damage;
 										}
+										
+										if(is_gamelog_popout()){
+											tabCommunicationChannel.postMessage({
+						           msgType: 'gamelogDamageButtons',
+						           damage: damage
+						          });
+						          return;
+										}
 										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
 											showTempMessage('No non-player tokens selected');
 										}
-
+										
 										for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -442,6 +460,7 @@ class MessageBroker {
 												token.hp = newHp;
 												token.place_sync_persist()
 											}		
+											addFloatingCombatText(id, damage, damage<0);
 										}
 									})
 									if(rollType == 'damage'){
@@ -1346,6 +1365,9 @@ class MessageBroker {
 						          });
 						          return;
 										}
+										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
+											showTempMessage('No non-player tokens selected');
+										}
 										for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -1360,8 +1382,10 @@ class MessageBroker {
 											if(token != undefined){		
 												token.hp = newHp;
 												token.place_sync_persist()
+												addFloatingCombatText(id, damage, damage<0);
 											}		
 										}
+
 									})
 									if(rollType == 'damage'){
 										damageButtonContainer.append(damageButton, halfDamage, doubleDamage);

@@ -3298,6 +3298,51 @@ div#selectedTokensBorder {
     /* align-items: flex-end; */
 }
 
+.floating-combat-text{
+    animation: floating-combat-text 2s;
+    animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    animation-iteration-count: 1;
+    transform-origin: center;
+    position:absolute;
+    font-size: calc(100% / var(--window-zoom));
+    font-weight: bold;
+    --plus-shadow: calc(1px / var(--window-zoom));
+    --minus-shadow: calc(-1px / var(--window-zoom));
+    text-shadow: var(--plus-shadow) var(--plus-shadow) var(--plus-shadow) #000, 
+        var(--minus-shadow) var(--minus-shadow) var(--plus-shadow) #000, 
+        var(--minus-shadow) var(--plus-shadow) var(--plus-shadow) #000, 
+        var(--plus-shadow) var(--minus-shadow) var(--plus-shadow) #000, 
+        0px var(--minus-shadow) var(--plus-shadow) #000, 
+        var(--plus-shadow) 0px var(--plus-shadow) #000, 
+        var(--minus-shadow) 0px var(--plus-shadow) #000, 
+        0px var(--plus-shadow) var(--plus-shadow) #000;
+  }
+
+  @keyframes floating-combat-text {
+    0% {
+      transform: scale(0) translate(-10%, 0%);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+      transform: scale(1) translate(-10%, -50%);
+    }
+    100% {
+      transform: translate(-10%, -100%);
+      opacity: 0;
+    }
+  }
+
+
+.floating-combat-text.heal{
+    color: #5F5;
+}
+
+
+.floating-combat-text.dmg{
+    color: #F55;
+}
+
 /* AOE BORDERS */
 .aoe-border {
     width: 100%;
