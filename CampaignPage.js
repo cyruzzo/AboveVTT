@@ -17,6 +17,7 @@ $(function() {
           const urlParams = new URLSearchParams(queryString);
           window.PLAYER_ID = urlParams.get('id');
           window.DM = window.PLAYER_ID == 'false';
+          window.PLAYER_NAME = urlParams.get('player_name');
         } else {
           inject_instructions();
           inject_dm_join_button();
