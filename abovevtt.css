@@ -3300,7 +3300,7 @@ div#selectedTokensBorder {
 
 .floating-combat-text{
     animation: floating-combat-text 2s;
-    animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    animation-timing-function: cubic-bezier(0.55, 0.02, 0, 1.57);
     animation-iteration-count: 1;
     transform-origin: center;
     position:absolute;
