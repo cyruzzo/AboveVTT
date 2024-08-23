@@ -5833,7 +5833,8 @@ div#selectedTokensBorderRotationGrabberConnector,
 .abovevtt-roll-damage{
     color: rgb(223, 123, 123);
 }
-.abovevtt-roll-attack{
+.abovevtt-roll-attack,
+.abovevtt-roll-to-hit{
     color: rgb(27, 154, 240);
 }
 .abovevtt-roll-custom,

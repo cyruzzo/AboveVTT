@@ -357,7 +357,7 @@ class DiceRoller {
                             <div class="tss-kucurx-Result">
                                 <div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other">
                                     <span class='aboveDiceOutput'>${rollTitle}: 
-                                        <span class='abovevtt-roll-${rollType}'>${rollType}</span>
+                                        <span class='abovevtt-roll-${rollType.replace(' ', '-')}'>${rollType}</span>
                                     </span>
                                 </div>
                             </div>
