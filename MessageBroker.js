@@ -130,8 +130,9 @@ function resizeCanvasChromeBug(){
 function addFloatingCombatText(id, damageValue, heal = false){
 	if(get_avtt_setting_value('disableCombatText'))
 		return;
-	let combatText = $(`<div class='floating-combat-text ${heal ? 'heal' : 'dmg'}'>${heal ? '+' : '-'}${Math.abs(damageValue)}</div>`);
 	let token = $(`#tokens .token[data-id="${id}"]`);
+	let combatText = $(`<div style='--font-size: ${parseInt(token.width())}' class='floating-combat-text ${heal ? 'heal' : 'dmg'}'>${heal ? '+' : '-'}${Math.abs(damageValue)}</div>`);
+	
 	token.append(combatText);
 
 	setTimeout(function(){
