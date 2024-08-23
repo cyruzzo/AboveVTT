@@ -354,6 +354,16 @@ function avtt_settings() {
 					{ value: false, label: "Disable", description: `If you have another tab with the player view open it will not receive your scroll and zoom events.` }
 				],
 				defaultValue: false
+			},
+			{
+				name: "disableCombatText",
+				label: "Disable DM Damage Button Text",
+				type: "toggle",
+				options: [
+					{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
+					{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+				],
+				defaultValue: false
 			}
 		);
 	} else {
