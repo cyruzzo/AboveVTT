@@ -425,7 +425,7 @@ class MessageBroker {
 
 										let damage = current.data.injected_data.result;
 										if(clicked.hasClass('resist')){
-											damage = Math.floor(damage/2);
+											damage = Math.max(1, Math.floor(damage/2));
 										}
 										else if(clicked.hasClass('vulnerable')){
 											damage = damage*2;
@@ -1349,7 +1349,7 @@ class MessageBroker {
 
 										let damage = allRollsTotal;
 										if(clicked.hasClass('resist')){
-											damage = Math.floor(damage/2);
+											damage = Math.max(1, Math.floor(damage/2));
 										}
 										else if(clicked.hasClass('vulnerable')){
 											damage = damage*2;
