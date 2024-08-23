@@ -349,60 +349,16 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	const action = pressedButton.attr('data-actiontype');
 	modifier = modifier == 0 ? '+0' : modifier;
 
-	if(window.EXPERIMENTAL_SETTINGS['rpgRoller']){     
-	    let fullExpression = `${expression}${modifier}`.replace(/\s/g, '')
-	    let regExpression = new RegExp(`${fullExpression.replace(/[+-]/g, '\\$&')}:\\s`);
-	    let roll = new rpgDiceRoller.DiceRoll(fullExpression); 
-
-		let critSuccess = false;
-		let critFail = false;
-
-		let results = roll.output.split(/[\:=]/g)[1].split(/[+-]/g);
-		let diceNotations = roll.notation.split(/[+-]/g);
-
-		if(!diceNotations[diceNotations.length-1].includes('d')){
-		 diceNotations.splice(diceNotations.length-1, 1)
-		}
-
-
-
-		for(let i=0; i<diceNotations.length; i++){
-
-		  results[i] = results[i].replace(/[0-9]+d/g, '').replace(/[\]\[]/g, '')
-		  let resultsArray = results[i].split(',');
-		  for(let j=0; j<resultsArray.length; j++){
-		      if(parseInt(resultsArray[j]) == parseInt(diceNotations[i].split('d')[1])){
-		          critSuccess = true;
-		      }
-		      if(parseInt(resultsArray[j]) == 1){
-		          critFail = true;
-		      }
-		  }
-		}
-		let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
-
-	    if(rollType == 'undefined')
-	    	rollType = 'AboveVTT'
-	    let msgdata = {
-	        player: displayName,
-	        img: imgUrl,
-	        text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${roll.output.replace(regExpression, '')}'><div class="tss-kucurx-Result"><div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other"><span class='aboveDiceOutput'>${rollType}: <span class='abovevtt-roll-${action}'>${action}</span></span></div></div><svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg><div class="tss-1jo3bnd-TotalContainer-Flex"><div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex"><span class='aboveDiceTotal'>${roll.total}</span></div></div></div>`,
-	        whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
-            sendTo: window.sendToTab 
-	    };
-	    window.MB.inject_chat(msgdata);       
-	}
-	else{
-		window.diceRoller.roll(new DiceRoll(
-			`${expression}${modifier}`,
-			action,
-			rollType,
-			displayName,
-			imgUrl,
-			entityType,
-			entityId
-		));
-	}
+	window.diceRoller.roll(new DiceRoll(
+		`${expression}${modifier}`,
+		action,
+		rollType,
+		displayName,
+		imgUrl,
+		entityType,
+		entityId
+	));
+	
 	pressedButton = null
 }
 
