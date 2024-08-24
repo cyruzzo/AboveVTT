@@ -1087,7 +1087,7 @@ async function look_for_github_issue(...searchTerms) {
   // fetch issues that have been marked as bugs
   if (!window.githubBugs) {
     window.githubBugs = []; // don't fetch the same list every single time or we could get rate-limited when things go really bad
-    const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?labels=bug&state=all", { credentials: "omit" });
+    const request = await fetch("https://api.github.com/repos/cyruzzo/AboveVTT/issues?per_page=100&state=all", { credentials: "omit" });
     window.githubBugs = await request.json();
   }
 
