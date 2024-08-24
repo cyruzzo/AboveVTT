@@ -959,6 +959,8 @@ class JournalManager{
 
 		$(target).find('button[data-rolltype="damage"], button[data-rolltype="to hit"]').each(function(){
 			let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
+			rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
+			rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
 			rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
 			if(rollAction == ''){
 				$(this).attr('data-rolltype', 'roll');
@@ -966,6 +968,16 @@ class JournalManager{
 			}
 			else{
 				$(this).attr('data-actiontype', rollAction);
+				if(rollAction.replace(' ', '') == 'SavingThrows'){
+					$(this).attr('data-rollType', 'Save');	
+				}
+				if(rollAction.replace(' ', '') == 'Skills'){
+					$(this).attr('data-rollType', 'Check');	
+				}
+				if(rollAction.replace(' ', '') == 'Proficiency'){
+					$(this).attr('data-rollType', 'Roll');	
+				}
+
 			}
 			
 		})
