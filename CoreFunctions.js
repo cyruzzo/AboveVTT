@@ -509,7 +509,7 @@ function add_issues_to_error_message(issues, errorMessage) {
   // give them a button to create a new github issue.
   // If this gets spammed, we can change the logic to only include this if issues.length === 0
   if ($("#create-github-button").length === 0) {
-    $("#error-github-issue").append(`<div style="margin-top:20px;">Creating a Github Issue <i>(account required)</i> is very helpful. It gives the developers all the details they need to fix the bug. Alternatively, you can use the copy "Copy Error Message" button and then paste it on the AboveVTT <a style="font-weight:bold;text-decoration: underline;" target="_blank" href="https://discord.gg/cMkYKqGzRh">Discord Server</a> and a developer will eventually create a Github Issue for it.</div>`);
+    $("#error-github-issue").append(`<div style="margin-top:20px;">Creating a Github Issue <i>(account required)</i> is very helpful. It gives the developers all the details they need to fix the bug. Alternatively, you can use the copy "Copy Error Message" button and then paste it on the AboveVTT <a style="font-weight:bold;text-decoration: underline;" target="_blank" href="https://discord.gg/cMkYKqGzRh">Discord Server</a>. Watch threads in discord channel #bugs-n-screenshots for known issues, it may also be addressed in #support.</div>`);
     const githubButton = $(`<button id="create-github-button" style="float: left">Create Github Issue</button>`);
     githubButton.click(function() {
       const textToCopy = $("#error-message-stack").html().replaceAll("<br />", "\n").replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
