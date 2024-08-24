@@ -1325,9 +1325,9 @@ function observe_character_sheet_changes(documentToObserve) {
             ) {
               send_character_hp();
             }
-            else if(mutationTarget.hasClass('ct-inspiration__status')) {
+            else if(mutationTarget.hasClass('ct-inspiration__status') || mutationTarget.parents('.ct-quick-info__inspiration').length > 0) {
               character_sheet_changed({
-                inspiration: mutationTarget.hasClass('ct-inspiration__status--active')
+                inspiration: mutationTarget.hasClass('ct-inspiration__status--active') || mutationTarget.find('.ddbc-inspiration-token-svg').length>0
               });
             } else if (mutationTarget.hasClass("ct-sense-manage-pane__senses")) {
               send_senses();
