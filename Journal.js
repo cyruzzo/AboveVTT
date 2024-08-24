@@ -957,30 +957,50 @@ class JournalManager{
 
 		$(target).html($newHTML);
 
-		$(target).find('button[data-rolltype="damage"], button[data-rolltype="to hit"]').each(function(){
+
+
+		$(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
 			let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
 			rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
 			rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
 			rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
-			if(rollAction == ''){
-				$(this).attr('data-rolltype', 'roll');
-				$(this).attr('data-actiontype', 'AboveVTT');	
-			}
-			else{
-				$(this).attr('data-actiontype', rollAction);
-				if(rollAction.replace(' ', '') == 'SavingThrows'){
-					$(this).attr('data-rollType', 'Save');	
-				}
-				if(rollAction.replace(' ', '') == 'Skills'){
-					$(this).attr('data-rollType', 'Check');	
-				}
-				if(rollAction.replace(' ', '') == 'Proficiency'){
-					$(this).attr('data-rollType', 'Roll');	
-				}
+			let rollType = $(this).attr('data-rolltype')
 
+			if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
+				let statIndex = $(this).closest('table').find('tr button').index($(this));
+				let stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
+				rollAction = stats[statIndex];
+				rollType = 'Check'
+			}
+
+			if(rollAction == ''){
+				rollAction = 'Roll';
+			}	
+			else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){	
+				rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+				rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+				rollType = 'Save';	
+			}
+			else if(rollAction.replace(' ', '').toLowerCase() == 'skills'){
+				rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+				rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+				rollType = 'Check';	
+			}
+			else if(rollAction.replace(' ', '').toLowerCase() == 'proficiencybonus'){
+				rollAction = 'Proficiency Bonus';
+				rollType = 'Roll';	
+			}
+			else if(rollAction.replace(' ', '').toLowerCase() == 'hp' || rollAction.replace(' ', '').toLowerCase() == 'hitpoints'){
+				rollAction = 'Hit Points';
+				rollType = 'Roll';	
 			}
 			
+			$(this).attr('data-actiontype', rollAction);
+			$(this).attr('data-rolltype', rollType);
 		})
+
+	
+		
 		
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
@@ -1356,17 +1376,17 @@ class JournalManager{
 								<div class="mon-stat-block__name"><span class="mon-stat-block__name-link"> Bandit Captain <br /></span></div>
 								<div class="mon-stat-block__meta">Medium Humanoid (Any Race), Any Non-Lawful Alignment</div>
 								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
-								<p><strong>Armor Class</strong>&nbsp;15&nbsp;(studded leather)<br /><strong>Hit Points</strong>&nbsp;65&nbsp;(10d8 + 20)<br />Speed&nbsp;30 ft</p>
+								<p><strong>Armor Class</strong>&nbsp;15&nbsp;(studded leather)<br /><strong>Hit Points</strong>&nbsp;65&nbsp;(10d8 + 20)<br /><strong>Speed</strong>&nbsp;30 ft</p>
 								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
 								<table style="height: 61px;" width="364" cellspacing="0" cellpadding="0">
 								<tbody>
 								<tr>
-								<td style="text-align: center;"><strong><span>STR</span></strong></td>
-								<td style="text-align: center;"><strong><span>DEX</span></strong></td>
-								<td style="text-align: center;"><strong><span>CON</span></strong></td>
-								<td style="text-align: center;"><strong><span>INT</span></strong></td>
-								<td style="text-align: center;"><strong><span>WIS</span></strong></td>
-								<td style="text-align: center;"><strong><span>CHA</span></strong></td>
+								<td style="text-align: center;"><strong>STR</strong></td>
+								<td style="text-align: center;"><strong>DEX</strong></td>
+								<td style="text-align: center;"><strong>CON</strong></td>
+								<td style="text-align: center;"><strong>INT</strong></td>
+								<td style="text-align: center;"><strong>WIS</strong></td>
+								<td style="text-align: center;"><strong>CHA</strong></td>
 								</tr>
 								<tr>
 								<td style="text-align: center;"><span style="font-size: 10pt;">15&nbsp;</span></td>
@@ -1395,7 +1415,7 @@ class JournalManager{
 								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
 								<div class="mon-stat-block__description-block-heading">Reactions</div>
 								<p><br />Parry.&nbsp;The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon.</p>
-								</div>`
+					</div>`
 			    },
 			    {
 			    	"title": "Caster Spell List",
