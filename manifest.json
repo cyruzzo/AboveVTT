@@ -107,7 +107,8 @@
 			"PeerManager.js",
 			"PeerCommunication.js",
 			"peerVideo.js",
-			"onedrive/*"
+			"onedrive/*",
+			"GoDiceLibrary/*"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}

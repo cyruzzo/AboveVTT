@@ -2,3 +2,5 @@
 .vscode
 .history
 .idea
+.project
+.settings/*

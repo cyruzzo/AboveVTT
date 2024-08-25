@@ -407,6 +407,17 @@ function avtt_settings() {
 	})
 	settings.push(
 	{
+		name: "godiceRoller",
+		label: "Enable Manual Roll for GoDice",
+		type: "toggle",
+		options: [
+			{ value: true, label: "GoDice Dice", description: `Disables DDB dice and uses the GoDice popup` },
+			{ value: false, label: "DDB Dice", description: `Defaults to DDB dice` }
+		],
+		defaultValue: false
+	})
+	settings.push(
+	{
 		name: "disableSendToTab",
 		label: "Disable capture of pc tab rolls",
 		type: "toggle",

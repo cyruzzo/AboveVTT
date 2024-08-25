@@ -287,7 +287,7 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the dice expression to parse and roll. EG: 1d20+4
      * @returns {boolean} whether or not dice were rolled
      */
-    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined) {
+    async roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined) {
         try {
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
@@ -308,13 +308,18 @@ class DiceRoller {
                 self.#resetVariables();
             }, this.timeoutDuration);
             let msgdata = {}
-            let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+			let roll;
+			if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)
+				roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+			if(window.EXPERIMENTAL_SETTINGS['godiceRoller'] == true)
+				roll = await window.godice.rollResult.rollDice(diceRoll.expression);
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
             let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
             let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
             let modifier = (roll.rolls.length > 1 && diceRoll.expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
             
-
+			let customRoll = window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.EXPERIMENTAL_SETTINGS['godiceRoller'] == true;
+			
             let critSuccess = false;
             let critFail = false;
 
@@ -324,8 +329,6 @@ class DiceRoller {
             if(!diceNotations[diceNotations.length-1].includes('d')){
                diceNotations.splice(diceNotations.length-1, 1)
             }
-
-
 
             for(let i=0; i<diceNotations.length; i++){
 
@@ -346,7 +349,7 @@ class DiceRoller {
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
 
-            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if(customRoll){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
                 }
@@ -387,7 +390,7 @@ class DiceRoller {
                     }
                    
                 }
-               
+                console.debug(diceRoll);
             }                         
             else{
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
@@ -415,7 +418,7 @@ class DiceRoller {
             }
 
 
-            if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            if(is_abovevtt_page() && customRoll){
                 setTimeout(function(){
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
