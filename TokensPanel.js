@@ -3169,7 +3169,7 @@ function display_monster_filter_modal() {
             let filterButton = $(event.target).contents().find(".monster-listing__header button");
             if (filterButton.length > 0){
                 filter_observer.disconnect();
-                event.target.contents().find("head").append(
+                $(event.target).contents().find("head").append(
                 `<style>
                     .input-select .input-select__dropdown-wrapper {
                         transition: max-height 0.5s ease 0.1s;
