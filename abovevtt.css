@@ -2397,6 +2397,11 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 .ct-sidebar__inner [class*='styles_pane'] [class*='styles_border']{
     display: none;
 }
+
+.ct-sidebar__inner [class*='styles_gap']{
+    border:none;
+}
+
 .avtt-sidebar-controls .tab-btn,
 .sidebar__controls .tab-btn {
     background-color: #f2f2f2;
