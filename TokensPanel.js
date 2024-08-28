@@ -3160,53 +3160,66 @@ function display_monster_filter_modal() {
             // it was just created. no need to do anything until it actually loads something
             return;
         }
-        $(event.target).contents().find("head").append(
-            `<style>
-                .input-select .input-select__dropdown-wrapper {
-                    transition: max-height 0.5s ease 0.1s;
-                }
-            </style>`
-        );
-        $(event.target).contents().find("body").addClass("prevent-sidebar-modal-close");
-        $(event.target).contents().find(".monster-listing__header button").click();
-        $(event.target).contents().find(".popup-overlay").css("background", "rgb(235, 241, 245)");
-        $(event.target).contents().find(".popup-content").css({
-            "width": "100%",
-            "height": "100%",
-            "max-width": "100%",
-            "max-height": "100%",
-            "margin": 0
-        });
-        $(event.target).contents().find(".popup-overlay").on("click", function (e) {
-            if ($(e.target).hasClass("popup-overlay")) {
-                e.stopPropagation();
+
+        console.group("observe_filters")
+        let mutation_target = $(event.target).contents()[0];
+        let mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+
+        let filter_observer = new MutationObserver(function() {
+            let filterButton = $(event.target).contents().find(".monster-listing__header button");
+            if (filterButton.length > 0){
+                filter_observer.disconnect();
+                $(event.target).contents().find("head").append(
+                `<style>
+                    .input-select .input-select__dropdown-wrapper {
+                        transition: max-height 0.5s ease 0.1s;
+                    }
+                </style>`
+                );
+                $(event.target).contents().find("body").addClass("prevent-sidebar-modal-close");
+                $(event.target).contents().find(".monster-listing__header button").click();
+                $(event.target).contents().find(".popup-overlay").css("background", "rgb(235, 241, 245)");
+                $(event.target).contents().find(".popup-content").css({
+                    "width": "100%",
+                    "height": "100%",
+                    "max-width": "100%",
+                    "max-height": "100%",
+                    "margin": 0
+                });
+                $(event.target).contents().find(".popup-overlay").on("click", function (e) {
+                    if ($(e.target).hasClass("popup-overlay")) {
+                        e.stopPropagation();
+                    }
+                });
+              $(`<label class="input-checkbox input-checkbox-label qa-input-checkbox_label qa-monster-filters_accessible-content" title="Only show content I have access to">
+                <input class="input-checkbox__input qa-input-checkbox_input" tabindex="0" type="checkbox" ${(localStorage.getItem(`${gameId}-ownedMonsterFilter`) != 'undefined' && $.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`)) == true) ? 'checked="checked"' : ''}>
+                    <div class="input-checkbox__focus-indicator"></div>
+                    <svg class="input-checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" overflow="visible" focusable="false">
+                        <path class="svg-border" d="M5.63636382,2.00000055 C3.62805456,2.00000064 2,3.62805509 2,5.63636419 C2,5.63636419 2,9.87878843 2,18.3636369 C1.9999997,20.3719455 3.62805456,22 5.63636367,22 L18.3636365,22 C20.3719454,22.0000001 22,20.3719455 22,18.3636364 L22,5.63636364 C22,3.62805455 20.3719454,2 18.3636363,2 L5.63636382,2.00000055 Z M19,17.25 C19,18.2164987 18.2164979,19 17.25,19 L6.75000007,19 C5.78350125,19 5,18.2164979 5,17.25 C5,17.25 5,17.25 5,17.25 L5,6.74999977 L5,6.75000003 C4.99999985,5.78350126 5.78350125,5 6.74999999,5 L17.2499999,5 C18.2164986,4.99999996 18.9999998,5.78350126 18.9999998,6.75000003 L19,17.25 Z"></path>
+                        <path class="svg-center" d="M10.9545457,13.4909096 L8.00000021,11.2727278 C7.5983384,10.9714815 7.0285184,11.0528842 6.72727294,11.454546 C6.42602658,11.8562078 6.5074293,12.4260278 6.90909113,12.7272733 L11.227273,15.9636369 L17.2363639,8.95454602 C17.562714,8.57296782 17.5179421,7.99908236 17.136364,7.67272782 C16.7547858,7.34637782 16.1809003,7.39114963 15.8545458,7.77272782 L10.9545457,13.4909096 Z"></path>
+                    </svg>
+                    <span class="input-checkbox__text">Only show monsters I have access to</span>
+                </label>`).insertAfter($(event.target).contents().find(".qa-monster-filters_remember"));
+                    
+                let closeButton = build_close_button();
+                closeButton.css({
+                    "position": "fixed",
+                    "top": "10px",
+                    "right": "10px",
+                    "box-shadow": "rgb(51 51 51) 0px 0px 60px 0px"
+                });
+                closeButton.on("click", function (clickEvent) {
+                    clickEvent.stopPropagation();
+                    close_monster_filter_iframe();
+                });
+                $(event.target).contents().find(".popup-content").prepend(closeButton);
+
+                tokensPanel.remove_sidebar_loading_indicator();
+                iframe.css({ "z-index": 10 });
             }
         });
-      $(`<label class="input-checkbox input-checkbox-label qa-input-checkbox_label qa-monster-filters_accessible-content" title="Only show content I have access to">
-        <input class="input-checkbox__input qa-input-checkbox_input" tabindex="0" type="checkbox" ${(localStorage.getItem(`${gameId}-ownedMonsterFilter`) != 'undefined' && $.parseJSON(localStorage.getItem(`${gameId}-ownedMonsterFilter`)) == true) ? 'checked="checked"' : ''}>
-            <div class="input-checkbox__focus-indicator"></div>
-            <svg class="input-checkbox__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" overflow="visible" focusable="false">
-                <path class="svg-border" d="M5.63636382,2.00000055 C3.62805456,2.00000064 2,3.62805509 2,5.63636419 C2,5.63636419 2,9.87878843 2,18.3636369 C1.9999997,20.3719455 3.62805456,22 5.63636367,22 L18.3636365,22 C20.3719454,22.0000001 22,20.3719455 22,18.3636364 L22,5.63636364 C22,3.62805455 20.3719454,2 18.3636363,2 L5.63636382,2.00000055 Z M19,17.25 C19,18.2164987 18.2164979,19 17.25,19 L6.75000007,19 C5.78350125,19 5,18.2164979 5,17.25 C5,17.25 5,17.25 5,17.25 L5,6.74999977 L5,6.75000003 C4.99999985,5.78350126 5.78350125,5 6.74999999,5 L17.2499999,5 C18.2164986,4.99999996 18.9999998,5.78350126 18.9999998,6.75000003 L19,17.25 Z"></path>
-                <path class="svg-center" d="M10.9545457,13.4909096 L8.00000021,11.2727278 C7.5983384,10.9714815 7.0285184,11.0528842 6.72727294,11.454546 C6.42602658,11.8562078 6.5074293,12.4260278 6.90909113,12.7272733 L11.227273,15.9636369 L17.2363639,8.95454602 C17.562714,8.57296782 17.5179421,7.99908236 17.136364,7.67272782 C16.7547858,7.34637782 16.1809003,7.39114963 15.8545458,7.77272782 L10.9545457,13.4909096 Z"></path>
-            </svg>
-            <span class="input-checkbox__text">Only show monsters I have access to</span>
-        </label>`).insertAfter($(event.target).contents().find(".qa-monster-filters_remember"));
-            
-        let closeButton = build_close_button();
-        closeButton.css({
-            "position": "fixed",
-            "top": "10px",
-            "right": "10px",
-            "box-shadow": "rgb(51 51 51) 0px 0px 60px 0px"
-        });
-        closeButton.on("click", function (clickEvent) {
-            clickEvent.stopPropagation();
-            close_monster_filter_iframe();
-        });
-        $(event.target).contents().find(".popup-content").prepend(closeButton);
-
-        tokensPanel.remove_sidebar_loading_indicator();
-        iframe.css({ "z-index": 10 });
+        filter_observer.observe(mutation_target,mutation_config);
+        console.groupEnd()
     });
     iframe.attr("src", `https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}/edit`);
 
