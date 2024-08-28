@@ -3883,7 +3883,7 @@ function show_sidebar() {
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--not-visible").click();
 	} else {
-		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
+		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(0px)");
 	}
 
@@ -4014,7 +4014,7 @@ function hide_sidebar() {
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--visible").click();
 	} else {
-		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
+		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(340px)");
 	}
 
