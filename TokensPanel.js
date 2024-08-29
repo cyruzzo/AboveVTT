@@ -4286,7 +4286,7 @@ function getPersonailityTrait(){
         323: "Solemn",
         324: "Solitary",
         325: "Stern",
-        326: "Stoiid",
+        326: "Stolid",
         327: "Strict",
         328: "Stubborn",
         329: "Stylish",
