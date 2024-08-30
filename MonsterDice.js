@@ -325,7 +325,7 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 	const actionType = pressedButton.attr('data-actiontype');
 
 	if (rollType === "damage") {
-		damage_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
+		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
 		standard_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)

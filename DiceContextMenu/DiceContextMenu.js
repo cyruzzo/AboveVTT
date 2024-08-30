@@ -82,7 +82,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
                 diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1].split(/(?=[+-])|(?<=[+-])/g)[0]}${modifierString}`)
             } else if (rollAsIndex === 1) {
                 // flat roll
-                diceRoll = new DiceRoll(`${diceExpression}${modifierString}`);
+                diceRoll = new DiceRoll(`${diceExpression}`);
             } else { // not possible
                 console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
