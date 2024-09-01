@@ -3215,7 +3215,7 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
+				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
 				}
