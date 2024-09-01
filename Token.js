@@ -2757,10 +2757,11 @@ class Token {
 				})
 
 				tok.on('click.selectToken', classToClick, function() {
-					let parentToken = $(this);
+					let parentToken = $(this).closest('.token[data-id]');
 					if (parentToken.hasClass("pause_click")) {
 						return;
 					}
+
 					let tokID = parentToken.attr('data-id');
 					let groupID = parentToken.attr('data-group-id');
 					let thisSelected = !(parentToken.hasClass('tokenselected'));
