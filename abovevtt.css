@@ -10271,3 +10271,206 @@ div#playlistFields {
 
 
 
+/***** NEW STAT BLOCKS ****/
+
+
+.stat-block {
+    --compendium-p-bottom: 0;
+    border: 1px solid #a7a3a0;
+    background-color: #fefcef;
+    padding: 10px;
+    position: relative;
+    background-repeat: no-repeat;
+    box-shadow: 0 5px 8px 0 var(--stat-block-shadow,#aaa);
+    background-position: top;
+    background: var(--stat-block-bg-override,#f6f3ee);
+    font-size: 16px;
+    line-height: 19.6px;
+    border-radius: 8px;
+    outline: 1px solid #a7a3a0;
+    outline-offset: -4px;
+    font-family: var(--stat-block-font,Roboto,Helvetica,sans-serif);
+    columns: 384px 2
+}
+
+.stat-block :is(h2,h3,h4,h5) {
+    --header-font-override: 22px;
+    font-family: Roboto Condensed;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: 8px;
+    margin-block-end:0}
+
+.stat-block :is(h2,h3,h4,h5):after {
+    content: "";
+    display: block;
+    width: 100%;
+    margin: 2px auto 8px;
+    height: 1px;
+    background: var(--monster-header-underline,#7a3c2f);
+    column-span: all
+}
+
+.stat-block p {
+    break-inside: avoid;
+    font-size: 15px;
+    line-height: 1.4
+}
+
+.stat-block p+p {
+    --compendium-p-top: 10px
+}
+
+ .stat-block p:first-of-type {
+    margin-top: 0;
+    font-style: italic;
+    opacity: .8
+}
+
+.stat-block p:first-of-type+p {
+    --compendium-p-top: 16px
+}
+
+.stat-block :is(ol,ul,dl) {
+    margin-bottom: 0;
+    padding-top: 0
+}
+
+.stat-block .monster-header {
+    padding-top: 4px;
+    letter-spacing: .35px;
+    font-weight: 500;
+    color: var(--monster-header-color,#5b160c);
+    font-size: var(--monster-trait-header-size,18px);
+    font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
+    border-bottom: 2px solid var(--monster-header-underline,#7a3c2f)
+}
+
+.stat-block .monster-header+p {
+    break-before: avoid
+}
+
+.stat-block .stats {
+    display: flex;
+    gap: 10px
+}
+
+.stat-block .stats+p {
+    margin-top: 10px
+}
+
+.stat-block .stats table.abilities-saves {
+    --theme-table-row-color: transparent;
+    flex: 1 1 auto;
+    line-height: 24px;
+    background: revert;
+    border: none;
+    font-size: 16px;
+    break-inside: avoid
+}
+
+.stat-block .stats table.abilities-saves.physical {
+    --stats-score: #ede6d9;
+    --stats-mods: #ded4cc;
+    --stats-score-hover: rgba(153,127,109,0.49019607843137253);
+    --stats-mods-hover: rgba(153,109,114,0.49019607843137253)
+}
+
+.stat-block .stats table.abilities-saves.mental {
+    --stats-score: #d8dad1;
+    --stats-mods: #d0caca;
+    --stats-score-hover: rgba(109,141,153,0.49019607843137253);
+    --stats-mods-hover: rgba(117,109,153,0.49019607843137253)
+}
+
+.stat-block .stats table.abilities-saves thead {
+    border: none;
+    height: revert;
+    min-height: 45px
+}
+
+.stat-block .stats table.abilities-saves thead tr {
+    height: revert;
+    min-height: 45px
+}
+
+.stat-block .stats table.abilities-saves thead tr th {
+    padding: 5px 2px 0!important;
+    background: inherit;
+    color: inherit;
+    vertical-align: bottom;
+    border: none;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 14px
+}
+
+.stat-block .stats table.abilities-saves tbody {
+    border: none
+}
+
+.stat-block .stats table.abilities-saves tbody tr {
+    background-color: var(--theme-table-row-color,#fdfdfd);
+    color: var(--theme-table-header-fg-color,#222)
+}
+
+.stat-block .stats table.abilities-saves tbody tr:hover {
+    background-color: var(--stats-hover)
+}
+
+.stat-block .stats table.abilities-saves tbody tr:hover :nth-child(-n+3) {
+    background-color: var(--stats-score-hover)
+}
+
+.stat-block .stats table.abilities-saves tbody tr:hover :nth-child(n+3) {
+    background-color: var(--stats-mods-hover)
+}
+
+.stat-block .stats table.abilities-saves tbody tr :nth-child(-n+3) {
+    background-color: var(--stats-score)
+}
+
+.stat-block .stats table.abilities-saves tbody tr :nth-child(n+3) {
+    background-color: var(--stats-mods)
+}
+
+.stat-block .stats table.abilities-saves tbody th {
+    text-transform: uppercase;
+    font-weight: 700;
+    border: none;
+    padding-left: 6px;
+    font-size: 16px
+}
+
+.stat-block .stats table.abilities-saves tbody td {
+    min-width: revert;
+    padding: 5px 10px!important;
+    border: none;
+    font-size: 16px
+}
+
+.stat-block .stats table.abilities-saves tr :is(th,td) {
+    transition: .3s
+}
+
+.stat-block p:nth-of-type(2) strong+strong {
+    margin-left: 30px
+}
+.stat-block figure {
+    position: static;
+    margin: 0 auto
+}
+
+.stat-block figure .artist-credit {
+    text-align: end;
+    right: 0;
+    left: 0;
+    bottom: -6px;
+    top: unset
+}
+
+*+.stat-block {
+    margin-top: 24px
+}
+
+/***** END NEW STAT BLOCKS ****/

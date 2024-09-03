@@ -1078,17 +1078,17 @@ class JournalManager{
             input = input.replace(/(attack) action/gi, 
             	function(m, first_bracket_match){
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(first_bracket_match, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
                 });
             // Find cover rules
             input = input.replace(
-                /(?<!]|;|#|\w|\-|<[^>]+)(total cover|heavily obscured|lightly obscured|half cover|three-quarters cover|Instant Death|Death Saving Throws|Falling|Suffocating|Surprise|Underwater|Advantage|Disadvantage|Concentration)(?![^<]+>|\-|\w|\[)/gi,
+                /(?<!]|;|#|\w|\-|<[^>]+)(hit dice|temporary hit points|senses|inspiration|speed|senses|half cover|three-quarters cover|total cover|difficult terrain|falling|suffocating|lightly obscured|heavily obscured|climbing swimming crawling|surprise|flying|underwater|advantage|disadvantage|concentration)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
                 	
                 	let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/rules/${rulesId}-tooltip" data-tooltip-json-href="/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/rules/${rulesId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // Find conditions
@@ -1099,7 +1099,7 @@ class JournalManager{
                 		return m;
                 	
                 	let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].definition.id;
-               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/appendix-a-conditions#${m}" aria-haspopup="true" data-tooltip-href="/conditions/${conditionId}-tooltip" data-tooltip-json-href="/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/free-rules/rules-glossary${m}Condition" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/conditions/${conditionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
             // Find skills
@@ -1109,7 +1109,7 @@ class JournalManager{
 
                 	
                 	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="/skills/${skillId}-tooltip" data-tooltip-json-href="/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/skills/${skillId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
                 }
 
             );
@@ -1117,7 +1117,7 @@ class JournalManager{
             input = input.replace(
                 /(?<!]|;|#|\-|\w|<[^>]+)(opportunity attack)s(?![^<]+>|\[)|(?<!\]|;|#|<[^>]+)(opportunity attack)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#opportunity attack" aria-haspopup="true" data-tooltip-href="/actions/1001-tooltip" data-tooltip-json-href="/skills/1001/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/1001-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/1001/tooltip-json" target="_blank">${m}</a>`
                 }
             );
 
@@ -1127,18 +1127,18 @@ class JournalManager{
                  function(m){
                 	
                 	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/monsters#${m}" aria-haspopup="true" data-tooltip-href="/senses/${senseId}-tooltip" data-tooltip-json-href="/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/senses/${senseId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
 
             // Find actions
             input = input.replace(
-                /(?<!]|;|#|\w|\-|<[^>]+)(dash|disengage|help|hide|use an object|dodge|search|ready|cast a spell)(?![^<]+>|\-|\w|\[)/gim,
+                /(?<!]|;|#|\w|\-|<[^>]+)(attack|magic|dash|disengage|dodge|help|hide|ready|search|utilize|opportunity attack|grapple|shove|improvise|two-weapon fighting|interact with an object|study|influence)(?![^<]+>|\-|\w|\[)/gim,
                 function(m){
      
                 	
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="/actions/${actionId}-tooltip" data-tooltip-json-href="/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
+               		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
 
@@ -1370,7 +1370,7 @@ class JournalManager{
 			add_toolbar: "template",
 			templates: [
 			    {
-			      "title": "Monster Sheet",
+			      "title": "2014 Monster Sheet",
 			      "description": "Add a monster sheet template",
 			      "content": `<div class="Basic-Text-Frame stat-block-background one-column-stat" style="font-family: 'Scala Sans Offc', Roboto, Helvetica, sans-serif;">
 								<div class="mon-stat-block__name"><span class="mon-stat-block__name-link"> Bandit Captain <br /></span></div>
@@ -1416,6 +1416,92 @@ class JournalManager{
 								<div class="mon-stat-block__description-block-heading">Reactions</div>
 								<p><br />Parry.&nbsp;The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon.</p>
 					</div>`
+			    },
+			    {
+			    	"title": "2024 Monster Sheet",
+			    	"description": "Add a monster sheet template",
+			    	"content": `<div class="stat-block">
+						<div class="monster-header">Skeleton</div>
+						<p>Medium Undead, Lawful Evil</p>
+						<p><strong>AC</strong> 13 <strong>Initiative</strong> +3 (13)</p>
+						<p><strong>HP</strong> 13 (2d8 + 4)</p>
+						<p><strong>Speed</strong> 30 ft.</p>
+						<div class="stats">
+						<div class="table-overflow-wrapper">
+						<table class="physical abilities-saves">
+						<thead>
+						<tr>
+						<th>&nbsp;</th>
+						<th>&nbsp;</th>
+						<th>Mod</th>
+						<th>Save</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+						<th>STR</th>
+						<td>10</td>
+						<td>+0</td>
+						<td>+0</td>
+						</tr>
+						<tr>
+						<th>DEX</th>
+						<td>16</td>
+						<td>+3</td>
+						<td>+3</td>
+						</tr>
+						<tr>
+						<th>CON</th>
+						<td>15</td>
+						<td>+2</td>
+						<td>+2</td>
+						</tr>
+						</tbody>
+						</table>
+						</div>
+						<div class="table-overflow-wrapper">
+						<table class="mental abilities-saves">
+						<thead>
+						<tr>
+						<th>&nbsp;</th>
+						<th>&nbsp;</th>
+						<th>Mod</th>
+						<th>Save</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+						<th>INT</th>
+						<td>6</td>
+						<td>-2</td>
+						<td>-2</td>
+						</tr>
+						<tr>
+						<th>WIS</th>
+						<td>8</td>
+						<td>-1</td>
+						<td>-1</td>
+						</tr>
+						<tr>
+						<th>CHA</th>
+						<td>5</td>
+						<td>-3</td>
+						<td>-3</td>
+						</tr>
+						</tbody>
+						</table>
+						</div>
+						</div>
+						<p><strong>Vulnerabilities</strong> Bludgeoning</p>
+						<p><strong>Immunities</strong> Poison; Exhaustion, Poisoned</p>
+						<p><strong>Gear</strong> Shortbow, Shortsword</p>
+						<p><strong>Senses&nbsp;</strong>Darkvision 60 ft., Passive Perception 9</p>
+						<p><strong>Languages</strong> Understands the languages it knew in life but can&rsquo;t speak</p>
+						<p><strong>CR</strong> 1/4 (XP 50; PB +2)</p>
+						<p class="monster-header">Actions</p>
+						<p><strong><em>Shortsword.</em></strong> <em>Melee Attack Roll:</em> +5, reach 5 ft. <em>Hit:</em> 6 (1d6 + 3) Piercing damage.</p>
+						<p><strong><em>Shortbow.</em></strong> <em>Ranged Attack Roll:</em> +5, range 80/320 ft. <em>Hit:</em> 6 (1d6 + 3) Piercing damage.</p>
+						</div>`
 			    },
 			    {
 			    	"title": "Caster Spell List",
@@ -2009,6 +2095,209 @@ class JournalManager{
 			      .custom-ac.custom-stat{
 			      	color: #00F;
 			      }
+			      /***** NEW STAT BLOCKS ****/
+
+
+			      .stat-block {
+			          --compendium-p-bottom: 0;
+			          border: 1px solid #a7a3a0;
+			          background-color: #fefcef;
+			          padding: 10px;
+			          position: relative;
+			          background-repeat: no-repeat;
+			          box-shadow: 0 5px 8px 0 var(--stat-block-shadow,#aaa);
+			          background-position: top;
+			          background: var(--stat-block-bg-override,#f6f3ee);
+			          font-size: 16px;
+			          line-height: 19.6px;
+			          border-radius: 8px;
+			          outline: 1px solid #a7a3a0;
+			          outline-offset: -4px;
+			          font-family: var(--stat-block-font,Roboto,Helvetica,sans-serif);
+			          columns: 384px 2
+			      }
+
+			      .stat-block :is(h2,h3,h4,h5) {
+			          --header-font-override: 22px;
+			          font-family: Roboto Condensed;
+			          text-transform: uppercase;
+			          font-weight: 700;
+			          margin-right: 8px;
+			          margin-block-end:0}
+
+			      .stat-block :is(h2,h3,h4,h5):after {
+			          content: "";
+			          display: block;
+			          width: 100%;
+			          margin: 2px auto 8px;
+			          height: 1px;
+			          background: var(--monster-header-underline,#7a3c2f);
+			          column-span: all
+			      }
+
+			      .stat-block p {
+			          break-inside: avoid;
+			          font-size: 15px;
+			          line-height: 1.4
+			      }
+
+			      .stat-block p+p {
+			          --compendium-p-top: 10px
+			      }
+
+			       .stat-block p:first-of-type {
+			          margin-top: 0;
+			          font-style: italic;
+			          opacity: .8
+			      }
+
+			      .stat-block p:first-of-type+p {
+			          --compendium-p-top: 16px
+			      }
+
+			      .stat-block :is(ol,ul,dl) {
+			          margin-bottom: 0;
+			          padding-top: 0
+			      }
+
+			      .stat-block .monster-header {
+			          padding-top: 4px;
+			          letter-spacing: .35px;
+			          font-weight: 500;
+			          color: var(--monster-header-color,#5b160c);
+			          font-size: var(--monster-trait-header-size,18px);
+			          font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
+			          border-bottom: 2px solid var(--monster-header-underline,#7a3c2f)
+			      }
+
+			      .stat-block .monster-header+p {
+			          break-before: avoid
+			      }
+
+			      .stat-block .stats {
+			          display: flex;
+			          gap: 10px
+			      }
+
+			      .stat-block .stats+p {
+			          margin-top: 10px
+			      }
+
+			      .stat-block .stats table.abilities-saves {
+			          --theme-table-row-color: transparent;
+			          flex: 1 1 auto;
+			          line-height: 24px;
+			          background: revert;
+			          border: none;
+			          font-size: 16px;
+			          break-inside: avoid
+			      }
+
+			      .stat-block .stats table.abilities-saves.physical {
+			          --stats-score: #ede6d9;
+			          --stats-mods: #ded4cc;
+			          --stats-score-hover: rgba(153,127,109,0.49019607843137253);
+			          --stats-mods-hover: rgba(153,109,114,0.49019607843137253)
+			      }
+
+			      .stat-block .stats table.abilities-saves.mental {
+			          --stats-score: #d8dad1;
+			          --stats-mods: #d0caca;
+			          --stats-score-hover: rgba(109,141,153,0.49019607843137253);
+			          --stats-mods-hover: rgba(117,109,153,0.49019607843137253)
+			      }
+
+			      .stat-block .stats table.abilities-saves thead {
+			          border: none;
+			          height: revert;
+			          min-height: 45px
+			      }
+
+			      .stat-block .stats table.abilities-saves thead tr {
+			          height: revert;
+			          min-height: 45px
+			      }
+
+			      .stat-block .stats table.abilities-saves thead tr th {
+			          padding: 5px 2px 0!important;
+			          background: inherit;
+			          color: inherit;
+			          vertical-align: bottom;
+			          border: none;
+			          text-transform: uppercase;
+			          font-weight: 500;
+			          font-size: 14px
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody {
+			          border: none
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr {
+			          background-color: var(--theme-table-row-color,#fdfdfd);
+			          color: var(--theme-table-header-fg-color,#222)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr:hover {
+			          background-color: var(--stats-hover)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr:hover :nth-child(-n+3) {
+			          background-color: var(--stats-score-hover)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr:hover :nth-child(n+3) {
+			          background-color: var(--stats-mods-hover)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr :nth-child(-n+3) {
+			          background-color: var(--stats-score)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody tr :nth-child(n+3) {
+			          background-color: var(--stats-mods)
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody th {
+			          text-transform: uppercase;
+			          font-weight: 700;
+			          border: none;
+			          padding-left: 6px;
+			          font-size: 16px
+			      }
+
+			      .stat-block .stats table.abilities-saves tbody td {
+			          min-width: revert;
+			          padding: 5px 10px!important;
+			          border: none;
+			          font-size: 16px
+			      }
+
+			      .stat-block .stats table.abilities-saves tr :is(th,td) {
+			          transition: .3s
+			      }
+
+			      .stat-block p:nth-of-type(2) strong+strong {
+			          margin-left: 30px
+			      }
+			      .stat-block figure {
+			          position: static;
+			          margin: 0 auto
+			      }
+
+			      .stat-block figure .artist-credit {
+			          text-align: end;
+			          right: 0;
+			          left: 0;
+			          bottom: -6px;
+			          top: unset
+			      }
+
+			      *+.stat-block {
+			          margin-top: 24px
+			      }
+
+			      /***** END NEW STAT BLOCKS ****/
 				`,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
