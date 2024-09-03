@@ -1133,9 +1133,10 @@ class JournalManager{
 
             // Find actions
             input = input.replace(
-                /(?<!]|;|#|\w|\-|<[^>]+)(attack|magic|dash|disengage|dodge|help|hide|ready|search|utilize|opportunity attack|grapple|shove|improvise|two-weapon fighting|interact with an object|study|influence)(?![^<]+>|\-|\w|\[)/gim,
+                /(?<!]|;|#|\w|\-|<[^>]+)(attack action|magic action|dash|disengage|dodge|help|hide|ready|search|utilize|opportunity attack|grapple|shove|improvise|two-weapon fighting|interact with an object|study|influence)(?![^<]+>|\-|\w|\[)/gim,
                 function(m){
-     
+     				if(m.includes(' action'))
+     					m = m.replace(' action', '');
                 	
                 	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
