@@ -1074,12 +1074,7 @@ class JournalManager{
             // Emphasize hit or miss
             input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
   
-            // Find attack actions
-            input = input.replace(/(attack) action/gi, 
-            	function(m, first_bracket_match){
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(first_bracket_match, undefined, { sensitivity: 'base' }) == 0)[0].id;
-               		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/combat#$attack" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">attack</a> action`
-                });
+        
             // Find cover rules
             input = input.replace(
                 /(?<!]|;|#|\w|\-|<[^>]+)(hit dice|temporary hit points|senses|inspiration|speed|senses|half cover|three-quarters cover|total cover|difficult terrain|falling|suffocating|lightly obscured|heavily obscured|climbing swimming crawling|surprise|flying|underwater|advantage|disadvantage|concentration)(?![^<]+>|\-|\w|\[)/gi,
@@ -1135,10 +1130,11 @@ class JournalManager{
             input = input.replace(
                 /(?<!]|;|#|\w|\-|<[^>]+)(attack action|magic action|dash|disengage|dodge|help|hide|ready|search|utilize|opportunity attack|grapple|shove|improvise|two-weapon fighting|interact with an object|study|influence)(?![^<]+>|\-|\w|\[)/gim,
                 function(m){
-     				if(m.includes(' action'))
-     					m = m.replace(' action', '');
+                	let compare = m;
+     				if(m.toLowerCase().includes(' action'))
+     					compare = m.toLowerCase().replace(' action', '');
                 	
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(compare, undefined, { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
