@@ -1316,25 +1316,101 @@ class Token {
 				const conditionContainer = $("<div class='dnd-condition condition-container' />");
 				const symbolImage = $("<img class='condition-img' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + conditionSymbolName + ".svg'/>");
 				const conditionDescription = isExhaustion ? CONDITIONS.Exhaustion : CONDITIONS[conditionName];
-				symbolImage.attr('title', [conditionName, ...conditionDescription].join(`\n`));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
-				conditionContainer.on('dblclick', () => {
-					const data = {
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: window.MB.encode_message_text(`<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`)
-					};
-					window.MB.inject_chat(data);
-				});
 				if (conditionCount >= 3) {
 					moreCond.append(conditionContainer);
 				} else {
 					cond.append(conditionContainer);
 				}
+				let noteHover = `<div>
+						<div class="tooltip-header">
+				       	 	<div class="tooltip-header-icon">
+				            
+					        	</div>
+					        <div class="tooltip-header-text">
+					            ${conditionName}
+					        </div>
+					        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+					           Condition
+					        </div>
+			    		</div>
+				   		<div class="tooltip-body note-text">
+					        <div class="tooltip-body-description">
+					            <div class="tooltip-body-description-text note-text">
+					                ${conditionDescription}
+					            </div>
+					        </div>
+					    </div>
+					</div>`
+
+
+							
+				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
+		
+				let hoverConditionTimer;
+				conditionContainer.on({
+					'mouseover': function(e){
+						hoverConditionTimer = setTimeout(function () {
+			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+					            flyout.addClass('note-flyout');
+					            const tooltipHtml = $(noteHover);
+
+					            flyout.append(tooltipHtml);
+					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+					            sendToGamelogButton.css({ "float": "right" });
+					            sendToGamelogButton.on("click", function(ce) {
+					                ce.stopPropagation();
+					                ce.preventDefault();
+									
+					                send_html_to_gamelog(noteHover);
+					            });
+					            let flyoutLeft = e.clientX+20
+					            if(flyoutLeft + 400 > window.innerWidth){
+					            	flyoutLeft = window.innerWidth - 420
+					            }
+					            flyout.css({
+					            	left: flyoutLeft,
+					            	width: '400px'
+					            })
+
+					            const buttonFooter = $("<div></div>");
+					            buttonFooter.css({
+					                height: "40px",
+					                width: "100%",
+					                position: "relative",
+					                background: "#fff"
+					            });
+
+					            flyout.append(buttonFooter);
+					            buttonFooter.append(sendToGamelogButton);
+
+								
+
+					            flyout.hover(function (hoverEvent) {
+					                if (hoverEvent.type === "mouseenter") {
+					                    clearTimeout(removeToolTipTimer);
+					                    removeToolTipTimer = undefined;
+					                } else {
+					                    remove_tooltip(500);
+					                }
+					            });
+
+					            flyout.css("background-color", "#fff");
+					        });
+			        	}, 500);		
+					
+					},
+					'mouseout': function(e){
+						clearTimeout(hoverConditionTimer)
+						remove_tooltip(500);
+					}
+			
+			    });
 				conditionCount++;
 			}
 
