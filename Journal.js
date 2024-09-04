@@ -1077,7 +1077,7 @@ class JournalManager{
         
             // Find cover rules
             input = input.replace(
-                /(?<!]|;|#|\w|\-|<[^>]+)(hit dice|temporary hit points|senses|inspiration|speed|senses|half cover|three-quarters cover|total cover|difficult terrain|falling|suffocating|lightly obscured|heavily obscured|climbing swimming crawling|surprise|flying|underwater|advantage|disadvantage|concentration)(?![^<]+>|\-|\w|\[)/gi,
+                /(?<!]|;|#|\w|\-|<[^>]+)(hit dice|temporary hit points|inspiration|half cover|three-quarters cover|total cover|difficult terrain|falling|suffocating|lightly obscured|heavily obscured|climbing swimming crawling|surprise|flying|underwater|concentration)(?![^<]+>|\-|\w|\[)/gi,
                 function(m){
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
