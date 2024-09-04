@@ -1341,7 +1341,7 @@ class Token {
 				   		<div class="tooltip-body note-text">
 					        <div class="tooltip-body-description">
 					            <div class="tooltip-body-description-text note-text">
-					                ${conditionDescription}
+					                ${conditionDescription.replaceAll(/\[(\/)?condition\]/gi, '')}
 					            </div>
 					        </div>
 					    </div>
