@@ -1311,7 +1311,7 @@ class Token {
 		function badge_condition(condition, conditionContainer) {
 			if(!isNaN(parseInt(condition.duration))) {
 				let expired = (parseInt(condition.duration) <= 0) ? "-expired" : "";
-				let durationBadge = $(`<svg  viewBox="0 0 20 20">
+				let durationBadge = $(`<svg class=duration-badge viewBox="0 0 20 20">
                                        	   <text class='duration${expired}-text' x="50%" y="50%">${condition.duration}</text>
 					</svg>`);
 			conditionContainer.append(durationBadge);
@@ -1357,6 +1357,7 @@ class Token {
 				const conditionDescription = isExhaustion ? CONDITIONS.Exhaustion : CONDITIONS[conditionName];
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
@@ -1487,6 +1488,7 @@ class Token {
 				symbolImage.attr('title', (conditionText != '') ? conditionText : (conditionName.startsWith("#") ? '' : conditionName));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
@@ -1618,6 +1620,7 @@ class Token {
 
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");				
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
