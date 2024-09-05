@@ -29,14 +29,13 @@ function adjust_condition_duration(token, amt) {
 	function anycond(v, changed) {
 		for(let i in v) {
 			if(!isNaN(parseInt(v[i].duration))) {
-				console.log("YEP",v[i]);
 				v[i].duration += amt;
 				changed = true;
 			}
 		}
 		return changed;
 	}
-	return anycond(token.conditions, anycond(token.options.custom_conditions, false));
+	return anycond(token.options.conditions, anycond(token.options.custom_conditions, false));
 }
 
 function init_combat_tracker(){
