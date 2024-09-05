@@ -1173,6 +1173,25 @@ class Token {
 		return elev;
 	}
 
+	build_age() {
+		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
+		let age = $("<div class='age'/>");
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
+		age.css("position", "absolute");
+		age.css('right', bar_width * 4.35 + "px");
+		age.css('width', bar_height + "px");
+		age.css('height', bar_height + "px");
+		age.css('bottom', '22px');
+		age.css('color', 'white');
+		age.append(
+			$(`
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <line x1="12" y1="10.8" x2="12" y2="14" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="#ffffff" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
+			<text x='12px' y='19px' style="font-weight: bold;font-size: 10px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.age}</text>
+			
+			</svg>
+			`));
+		return age;
+	}
 	/**
 	 * hides or shows stats based on this.options
 	 * @param token jquery selected div with the class "token"
@@ -1209,6 +1228,11 @@ class Token {
 				token.find(".elev").hide();
 			} else {
 				token.find(".elev").show();
+			}
+			if (!this.options.age) { // even if we are supposed to show it, only show them if they have something to show.
+				token.find(".age").hide();
+			} else {
+				token.find(".age").show();
 			}
 		}
 		else{
@@ -1259,15 +1283,17 @@ class Token {
 	 */
 	build_stats(token){
 		console.group("build_stats")
-		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
+		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0 && !token.has(".age").length > 0){
 			token.append(this.build_hp());
 			token.append(this.build_ac());
 			token.append(this.build_elev());
+			token.append(this.build_age());			
 		}
 		else{
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
+			token.find(".age").replaceWith(this.build_age());			
 		}
 		if(window.DM){
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
