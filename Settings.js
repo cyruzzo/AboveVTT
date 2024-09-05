@@ -272,6 +272,17 @@ function token_setting_options() {
 				{ value: false, label: 'Disabled', description: "Token is ageless." }
 			],
 			defaultValue: false
+		},
+		{
+			name: "maxAge",
+			label: "Max Token Age",
+			type: 'dropdown',
+			options: [
+				{ value: "1", label: "1 round", description: "Duration of one round." },
+				{ value: "10", label: "1 minute", description: "Duration of 10 rounds." },
+				{ value: "", label: "None", description: "No Duration." }
+			],
+			defaultValue: ""
 		}
 		
 	];
