@@ -18,6 +18,27 @@ function combatmydebounce(func, timeout = 800){ // we need to figure out where t
   };
 }
 
+
+function adjust_age(token, amt) {
+	if(!token.options.agedToken) return false;
+	token.options.age = (parseInt(token.options.age) || 0) + 1;
+	return true;
+}
+
+function adjust_condition_duration(token, amt) {
+	function anycond(v, changed) {
+		for(let i in v) {
+			if(!isNaN(parseInt(v[i].duration))) {
+				console.log("YEP",v[i]);
+				v[i].duration += amt;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+	return anycond(token.conditions, anycond(token.options.custom_conditions, false));
+}
+
 function init_combat_tracker(){
 	window.ROUND_NUMBER =1;
 	
@@ -286,8 +307,8 @@ function init_combat_tracker(){
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
-				if(window.TOKEN_OBJECTS[currentTarget].options.agedToken) {
-					window.TOKEN_OBJECTS[currentTarget].options.age = (parseInt(window.TOKEN_OBJECTS[currentTarget].options.age) || 0) + 1;
+				if(adjust_condition_duration(window.TOKEN_OBJECTS[currentTarget], -1) +
+				   adjust_age(window.TOKEN_OBJECTS[currentTarget], 1)) {
 					window.TOKEN_OBJECTS[currentTarget].place();
 				}
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
@@ -341,9 +362,9 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
-				if(window.TOKEN_OBJECTS[currentTarget].options.agedToken) {
-					window.TOKEN_OBJECTS[currentTarget].options.age = (parseInt(window.TOKEN_OBJECTS[currentTarget].options.age) || 0) - 1
-					window.TOKEN_OBJECTS[currentTarget].place();
+				if(adjust_condition_duration(window.TOKEN_OBJECTS[newTarget], 1) +
+				   adjust_age(window.TOKEN_OBJECTS[newTarget], -1)) {
+					window.TOKEN_OBJECTS[newTarget].place();
 				}
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;

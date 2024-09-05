@@ -2740,6 +2740,11 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 
 	
+		//todo: some sort of menu add for cond duration here (for DM only?)
+		//let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
+		//For each - load it up with value....
+		//conditionItem.append(conditionDuration);
+		
 		return conditionItem;
 	};
 

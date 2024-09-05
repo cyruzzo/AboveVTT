@@ -1308,6 +1308,16 @@ class Token {
 
 
 	build_conditions(parent) {
+		function badge_condition(condition, conditionContainer) {
+			if(!isNaN(parseInt(condition.duration))) {
+				let expired = (parseInt(condition.duration) <= 0) ? "-expired" : "";
+				let durationBadge = $(`<svg  viewBox="0 0 20 20">
+                                       	   <text class='duration${expired}-text' x="50%" y="50%">${condition.duration}</text>
+					</svg>`);
+			conditionContainer.append(durationBadge);
+			}
+		}
+
 		console.group("build_conditions")
 		let self=this;
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
@@ -1350,6 +1360,7 @@ class Token {
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
+				badge_condition(condition, conditionContainer);
 				if (conditionCount >= 3) {
 					moreCond.append(conditionContainer);
 				} else {
@@ -1479,6 +1490,7 @@ class Token {
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
+				badge_condition(this.options.custom_conditions[i], conditionContainer);
 				if (conditionCount >= 3) {
 					if (conditionSymbolName === "concentration") {
 						moreCond.prepend(conditionContainer);
