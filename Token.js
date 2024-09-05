@@ -1186,7 +1186,7 @@ class Token {
 		if(this.options.agedToken) {
 			age.append(
 				$(`
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <line x1="12" y1="10.8" x2="12" y2="14" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></line> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="#ffffff" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="#ffffff" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
 			<text x='12px' y='19px' style="font-weight: bold;font-size: 10px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.age}</text>
 			
 			</svg>
