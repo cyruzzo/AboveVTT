@@ -7322,6 +7322,30 @@ button span.onedrive-btn-status{
 .custom-condition.text{
     pointer-events:auto;
 }
+.duration-text {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    fill: #fff;
+    stroke: #000;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    text-shadow: 1px 1px 2px #000;
+    pointer-events:none;
+}
+.duration-expired-text {
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    fill: #f00;
+    stroke: #f00;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    paint-order: stroke;
+    text-shadow: 1px 1px 2px #000;
+    pointer-events:none;
+}
 
 .button-loading::after {
     content: "";
