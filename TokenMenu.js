@@ -975,6 +975,9 @@ function token_context_menu_expanded(tokenIds, e) {
 	$(".elevMenuInput").on('focus', function(event){
 			event.target.select();
 	});
+	$(".ageMenuInput").on('focus', function(event){
+			event.target.select();
+	});
 	
 
 	if((window.DM && tokens.length != 1) || (tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer())))){ 
@@ -2317,31 +2320,41 @@ function build_menu_stat_inputs(tokenIds) {
 	let max_hp = '';
 	let ac = '';
 	let elev = '';
+	let age = '';
+	let hasAge = '';	
 
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
 		hp = tokens[0].hp;
 		max_hp = tokens[0].maxHp;
 		ac = tokens[0].ac;
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
+		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
+		hasAge = (typeof tokens[0].options.agedToken !== 'undefined') ? tokens[0].options.agedToken : '';
 	}
 	else if(window.DM && tokens.length>1){
 		hp = '';
 		max_hp = '';
 		ac = '';
 		elev = '';
+		age = '';
+		hasAge = '';
 	}
 	else{
 		hp = "????";
 		max_hp = "????";
 		ac = "????";
 		elev = (typeof tokens[0].options.elev !== 'undefined') ? tokens[0].options.elev : '';
+		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
+		hasAge = '';		
 	}
 
 	let hpMenuInput = $(`<label class='menu-input-label'>HP<input value='${hp}' class='menu-input hpMenuInput' type="text"></label>`);
 	let maxHpMenuInput = $(`<label class='menu-input-label'>Max HP<input value='${max_hp}' class='menu-input maxHpMenuInput' type="text"></label>`);
 	let acMenuInput = $(`<label class='menu-input-label'>AC<input value='${ac}' class='menu-input acMenuInput' type="text"></label>`);
 	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="number"></label>`);
+	let ageMenuInput = $(`<label class='menu-input-label'>Age<input value='${age}' class='menu-input ageMenuInput' type="number"></label>`);	
 	body.append(elevMenuInput);
+	if(hasAge) body.append(ageMenuInput);	
 	body.append(acMenuInput);
 	body.append(hpMenuInput);
 	body.append(maxHpMenuInput);
@@ -2502,6 +2515,25 @@ function build_menu_stat_inputs(tokenIds) {
 			return;
 		tokens.forEach(token => {
 			token.options.elev = event.target.value;
+			token.place_sync_persist();
+		});
+	});
+
+	ageMenuInput.on('keyup', function(event) {
+		if(event.target.value == '')
+			return;
+		if (event.key == "Enter") {
+			tokens.forEach(token => {
+				token.options.age = event.target.value;
+				token.place_sync_persist();
+			});
+		}
+	});
+	ageMenuInput.on('focusout', function(event) {
+		if(event.target.value == '')
+			return;
+		tokens.forEach(token => {
+			token.options.age = event.target.value;
 			token.place_sync_persist();
 		});
 	});
