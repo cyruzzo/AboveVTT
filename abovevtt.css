@@ -7322,6 +7322,14 @@ button span.onedrive-btn-status{
 .custom-condition.text{
     pointer-events:auto;
 }
+
+.duration-badge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
 .duration-text {
     text-align: center;
     font-weight: bold;
