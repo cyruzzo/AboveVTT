@@ -262,7 +262,18 @@ function token_setting_options() {
 				{ value: false, label: 'Disabled', description: "The Token is using an image file for it's image (png, jpg, gif, etc.)" }
 			],
 			defaultValue: false
+		},
+		{
+			name: "agedToken",
+			label: "Token Has Age",
+			type: 'toggle',
+			options: [
+				{ value: true, label: 'Enabled', description: "Token changes age from combat tracker." },
+				{ value: false, label: 'Disabled', description: "Token is ageless." }
+			],
+			defaultValue: false
 		}
+		
 	];
 }
 
