@@ -2015,7 +2015,7 @@ function init_character_page_sidebar() {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 			$('.ct-condition-manage-pane').css('visibility', 'hidden');
-			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
 			setTimeout(function(){
 				$(`#switch_gamelog`).click();
 			}, 10)
@@ -2024,7 +2024,7 @@ function init_character_page_sidebar() {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 			$('.ct-condition-manage-pane').css('visibility', 'hidden');
-			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
 			setTimeout(function(){
 				$(`#switch_gamelog`).click();
 			}, 10)
