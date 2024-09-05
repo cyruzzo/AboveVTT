@@ -965,8 +965,12 @@ class JournalManager{
 			rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
 			rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
 			let rollType = $(this).attr('data-rolltype')
-
-			if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
+			let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
+			if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){
+				rollAction =  $(this).closest('tr').find('th').text();
+				rollType = $(this).closest('td').index() == 2 ? 'Check' : 'Save'
+			}
+			else if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
 				let statIndex = $(this).closest('table').find('tr button').index($(this));
 				let stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
 				rollAction = stats[statIndex];

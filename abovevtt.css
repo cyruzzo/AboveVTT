@@ -2213,9 +2213,8 @@ padding-top:10px;
 .dnd-condition {
     cursor: pointer;
 }
-
-.ct-primary-box [class*='styles_tabButton']{
-    text-wrap: nowrap;
+body>[class*='styles_mobileNav']{
+    display:none;
 }
 .ct-primary-box [class*='styles_tabs']{
     gap: 0.9rem;
