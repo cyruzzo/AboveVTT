@@ -7323,6 +7323,11 @@ button span.onedrive-btn-status{
     pointer-events:auto;
 }
 
+.condition-duration-input {
+    width: 2ch;
+    float: right;
+}
+
 .duration-badge {
     position: absolute;
     top: 50%;
