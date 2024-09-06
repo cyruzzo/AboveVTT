@@ -2739,12 +2739,30 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		}
 
 
-	
-		//todo: some sort of menu add for cond duration here (for DM only?)
-		//let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
-		//For each - load it up with value....
-		//conditionItem.append(conditionDuration);
-		
+		let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
+		//todo: need CSS help badly - does not work for right column!
+		//todo: load up current value where it makes sense (for now -- I guess only if there is a single token?)
+		// I suppose you could join all the values and see if they are the same....
+		if(tokens.length === 1) {
+			let c = tokens[0].options.conditions?.find(a => a.name === conditionName);
+			if(!c) c = tokens[0].options.custom_conditions?.find(a => a.name === conditionName);
+			if(c && c.duration) conditionDuration.val(c.duration);
+		}
+		conditionDuration.on('focusout', function(event) {
+			function update_cond(cond, token, newDur) {
+				if(cond.name === conditionName) {
+					cond.duration = newDur;
+					token.place_sync_persist();
+				}}
+			let newDur = event.target.value === '' ? '' : parseInt(event.target.value);
+			if (!isNaN(newDur)) {
+				tokens.forEach(token => {
+					token.options.custom_conditions?.forEach(c=> update_cond(c, token, newDur));
+					token.options.conditions?.forEach(c=> update_cond(c, token, newDur));
+				});
+			}
+		});
+		conditionItem.append(conditionDuration);
 		return conditionItem;
 	};
 
