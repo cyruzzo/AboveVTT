@@ -321,6 +321,10 @@ class Token {
 	hasCondition(conditionName) {
 		return this.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
 	}
+	conditionDuration(conditionName) {
+		let c = this.options.conditions.find(c => c.name == conditionName) || this.options.custom_conditions.find(c => c.name == conditionName);
+		return c?.duration;
+	}
 	addCondition(conditionName, text='') {
 	    if (this.hasCondition(conditionName)) {
 	        // already did

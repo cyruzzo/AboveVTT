@@ -2740,13 +2740,10 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 
 
 		let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
-		//todo: need CSS help badly - does not work for right column!
-		//todo: load up current value where it makes sense (for now -- I guess only if there is a single token?)
-		// I suppose you could join all the values and see if they are the same....
-		if(tokens.length === 1) {
-			let c = tokens[0].options.conditions?.find(a => a.name === conditionName);
-			if(!c) c = tokens[0].options.custom_conditions?.find(a => a.name === conditionName);
-			if(c && c.duration) conditionDuration.val(c.duration);
+		//todo: need CSS help badly - does not work for right markers column!
+		let durVal = tokens[0].conditionDuration(conditionName);
+		if(tokens.every(t=> t.conditionDuration(conditionName) === durVal)) {
+			conditionDuration.val(durVal);
 		}
 		conditionDuration.on('focusout', function(event) {
 			function update_cond(cond, token, newDur) {
