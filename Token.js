@@ -1316,9 +1316,10 @@ class Token {
 			if(!isNaN(parseInt(condition.duration))) {
 				let expired = (parseInt(condition.duration) <= 0) ? "-expired" : "";
 				let durationBadge = $(`<svg class=duration-badge viewBox="0 0 20 20">
+                                           <circle cx="10" cy="10" r="9" stroke="black" stroke-width="1" fill="black" />
                                        	   <text class='duration${expired}-text' x="50%" y="50%">${condition.duration}</text>
 					</svg>`);
-			conditionContainer.append(durationBadge);
+				conditionContainer.append(durationBadge);
 			}
 		}
 

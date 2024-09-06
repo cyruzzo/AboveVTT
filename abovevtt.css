@@ -7332,7 +7332,7 @@ button span.onedrive-btn-status{
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(15%, -110%);
     pointer-events: none;
 }
 .duration-text {
