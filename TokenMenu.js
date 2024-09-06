@@ -2518,31 +2518,28 @@ function build_menu_stat_inputs(tokenIds) {
 }
 
 function build_menu_stat2_inputs(tokenIds) {
+
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div id='menuStat2Div'></div>");
 	let age = '';
-	let hasAge = '';
 	let maxAge = '';
 
 	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
 		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
-		hasAge = (typeof tokens[0].options.agedToken !== 'undefined') ? tokens[0].options.agedToken : '';
-		maxAge = (typeof tokens[0].options.agedToken !== 'undefined') ? tokens[0].options.maxAge : '';
+		maxAge = (typeof tokens[0].options.maxAge !== 'undefined') ? tokens[0].options.maxAge : false;
 	}
 	else if(window.DM && tokens.length>1){
 		age = '';
-		hasAge = '';
 		maxAge = '';
 	}
 	else{
 		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
-		hasAge = '';
 		maxAge = '';
 	}
 	
 	let ageMenuInput = $(`<label class='menu-input-label'>Age<input value='${age}' class='menu-input ageMenuInput' type="number"></label>`);
 	let maxAgeMenuInput = $(`<label class='menu-input-label'>Max Age<input value='${maxAge}' class='menu-input maxAgeMenuInput' type="number"></label>`);		
-	if(hasAge) {
+	if(maxAge != false) {
 		body.append(ageMenuInput);
 		body.append(maxAgeMenuInput);	
 	}
@@ -2738,14 +2735,17 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 			});
 		}
 
-
 		let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
-		//todo: need CSS help badly - does not work for right markers column!
+		let conditionDurationIcon = $(`<span class='condition-duration-icon'></span>`)
 		let durVal = tokens[0].conditionDuration(conditionName);
 		if(tokens.every(t=> t.conditionDuration(conditionName) === durVal)) {
 			conditionDuration.val(durVal);
 		}
-		conditionDuration.on('focusout', function(event) {
+		conditionDuration.off('click').on('click',function(event) {
+			event.stopPropagation();
+			conditionDurationIcon.addClass('hiddenIcon');
+		})
+		conditionDuration.off('focusout').on('focusout', function(event) {
 			function update_cond(cond, token, newDur) {
 				if(cond.name === conditionName) {
 					cond.duration = newDur;
@@ -2758,8 +2758,15 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 					token.options.conditions?.forEach(c=> update_cond(c, token, newDur));
 				});
 			}
+			if(newDur == ''){
+				conditionDurationIcon.removeClass('hiddenIcon');
+			}
 		});
+		if(durVal != undefined && durVal != ''){
+			conditionDurationIcon.addClass('hiddenIcon')
+		}
 		conditionItem.append(conditionDuration);
+		conditionItem.append(conditionDurationIcon);	
 		return conditionItem;
 	};
 
@@ -2771,7 +2778,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		}
 	});	
 	let conditionsList = $(`<ul></ul>`);
-	conditionsList.css("width", "180px");
+	conditionsList.css("width", "195px");
 	body.append(conditionsList);
 	STANDARD_CONDITIONS.forEach(conditionName => {
 		let conditionItem = buildConditionItem(conditionName);
@@ -2784,7 +2791,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 	}
 
 	let markersList = $(`<ul></ul>`);
-	markersList.css("width", "185px");
+	markersList.css("width", "195px");
 	body.append(markersList);
 	CUSTOM_CONDITIONS.forEach(conditionName => {
 		let conditionItem = buildConditionItem(conditionName);
@@ -3060,7 +3067,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly) {
+		} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly) {
 			continue;
 		}
 

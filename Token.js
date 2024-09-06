@@ -1178,6 +1178,8 @@ class Token {
 	}
 
 	build_age() {
+		if(this.options.maxAge == false)
+			return;
 		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		let age = $("<div class='age'/>");
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
@@ -1187,16 +1189,19 @@ class Token {
 		age.css('height', bar_height + "px");
 		age.css('bottom', '22px');
 		age.css('color', 'white');
-		if(this.options.agedToken) {
-			let fillColor = (!this.options.maxAge || parseInt(this.options.maxAge) > parseInt(this.options.age)) ? "#ffffff" : "#ff0000";
-			age.append(
-				$(`
-<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="${fillColor}" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
-			<text x='12px' y='19px' style="font-weight: bold;font-size: 10px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.age}</text>
-			
-			</svg>
-				`));
+		
+		if(this.options.age == undefined){
+			this.options.age = '0';
 		}
+		let fillColor = (parseInt(this.options.maxAge) > parseInt(this.options.age)) ? "#ffffff" : "#ff0000";
+		age.append(
+			$(`
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="${fillColor}" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
+		<text x='12px' y='19px' style="font-weight: bold;font-size: 10px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.age}</text>
+		
+		</svg>
+			`));
+		
 		return age;
 	}
 	/**
@@ -1314,11 +1319,8 @@ class Token {
 	build_conditions(parent) {
 		function badge_condition(condition, conditionContainer) {
 			if(!isNaN(parseInt(condition.duration))) {
-				let expired = (parseInt(condition.duration) <= 0) ? "-expired" : "";
-				let durationBadge = $(`<svg class=duration-badge viewBox="0 0 20 20">
-                                           <circle cx="10" cy="10" r="9" stroke="black" stroke-width="1" fill="black" />
-                                       	   <text class='duration${expired}-text' x="50%" y="50%">${condition.duration}</text>
-					</svg>`);
+				let expired = (parseInt(condition.duration) <= 0) ? "expired" : "";
+				let durationBadge = $(`<div class='duration-badge ${expired}'>${condition.duration}</div>`);
 				conditionContainer.append(durationBadge);
 			}
 		}

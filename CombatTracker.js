@@ -20,8 +20,8 @@ function combatmydebounce(func, timeout = 800){ // we need to figure out where t
 
 
 function adjust_age(token, amt) {
-	if(!token.options.agedToken) return false;
-	token.options.age = (parseInt(token.options.age) || 0) + 1;
+	if(!token.options.maxAge) return false;
+	token.options.age = (parseInt(token.options.age) || 0) + amt;
 	return true;
 }
 
