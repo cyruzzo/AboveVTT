@@ -265,7 +265,7 @@ function token_setting_options() {
 		},
 		{
 			name: "maxAge",
-			label: "Token has time limit",
+			label: "Token has time limit/age",
 			type: 'dropdown',
 			options: [
 				{ value: false, label: "None", description: "No timer added." },
@@ -797,7 +797,10 @@ function build_example_token(options) {
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
 	mergedOptions.armorClass = 10;
-	if(mergedOptions.maxAge != false){
+	if(mergedOptions.maxAge == undefined){
+		mergedOptions.maxAge = false;
+	}
+	if(mergedOptions.maxAge !== false){
 		mergedOptions.age = '1';
 	}
 

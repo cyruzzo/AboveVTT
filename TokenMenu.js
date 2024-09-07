@@ -970,15 +970,15 @@ function token_context_menu_expanded(tokenIds, e) {
 		event.target.select();
 	});
 	$(".acMenuInput").on('focus', function(event){
-			event.target.select();
+		event.target.select();
 	});
 	$(".elevMenuInput").on('focus', function(event){
-			event.target.select();
+		event.target.select();
 	});
 	
 	body.append(build_menu_stat2_inputs(tokenIds));	
 	$(".ageMenuInput").on('focus', function(event){
-			event.target.select();
+		event.target.select();
 	});
 	
 
@@ -2539,22 +2539,18 @@ function build_menu_stat2_inputs(tokenIds) {
 	
 	let ageMenuInput = $(`<label class='menu-input-label'>Age<input value='${age}' class='menu-input ageMenuInput' type="number"></label>`);
 	let maxAgeMenuInput = $(`<label class='menu-input-label'>Max Age<input value='${maxAge}' class='menu-input maxAgeMenuInput' type="number"></label>`);		
-	if(maxAge != false) {
+	if(maxAge !== false) {
 		body.append(ageMenuInput);
 		body.append(maxAgeMenuInput);	
 	}
 
 	ageMenuInput.on('focusout', function(event) {
-		if(event.target.value == '')
-			return;
 		tokens.forEach(token => {
 			token.options.age = event.target.value;
 			token.place_sync_persist();
 		});
 	});
 	maxAgeMenuInput.on('focusout', function(event) {
-		if(event.target.value == '')
-			return;
 		tokens.forEach(token => {
 			token.options.maxAge = event.target.value;
 			token.place_sync_persist();
