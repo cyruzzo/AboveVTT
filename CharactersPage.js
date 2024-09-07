@@ -1192,6 +1192,11 @@ function observe_character_sheet_changes(documentToObserve) {
                     align-items: center;
                     justify-content: center;
                   }
+
+                  .ddb-note-roll{
+                    display: inline-flex;
+                    flex-direction: row;
+                  }
                   #site .advantageHover svg [fill="#b0b7bd"], 
                   #site .advantageHover svg [fill="#242528"],
                   #site .advantageHover svg .prefix__st0,
