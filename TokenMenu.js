@@ -2743,6 +2743,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		}
 		conditionDuration.off('click').on('click',function(event) {
 			event.stopPropagation();
+			this.select();
 			conditionDurationIcon.addClass('hiddenIcon');
 		})
 		conditionDuration.off('focusout').on('focusout', function(event) {
@@ -2758,13 +2759,9 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 					token.options.conditions?.forEach(c=> update_cond(c, token, newDur));
 				});
 			}
-			if(newDur == ''){
-				conditionDurationIcon.removeClass('hiddenIcon');
-			}
+			conditionDurationIcon.toggleClass('hiddenIcon', newDur !== undefined && newDur !== '')
 		});
-		if(durVal != undefined && durVal != ''){
-			conditionDurationIcon.addClass('hiddenIcon')
-		}
+		conditionDurationIcon.toggleClass('hiddenIcon', durVal !== undefined && durVal !== '')
 		conditionItem.append(conditionDuration);
 		conditionItem.append(conditionDurationIcon);	
 		return conditionItem;
