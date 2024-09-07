@@ -1371,7 +1371,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC</b></div>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn)</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -2015,7 +2015,7 @@ function init_character_page_sidebar() {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 			$('.ct-condition-manage-pane').css('visibility', 'hidden');
-			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
 			setTimeout(function(){
 				$(`#switch_gamelog`).click();
 			}, 10)
@@ -2024,7 +2024,7 @@ function init_character_page_sidebar() {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
 			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 			$('.ct-condition-manage-pane').css('visibility', 'hidden');
-			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
 			setTimeout(function(){
 				$(`#switch_gamelog`).click();
 			}, 10)
@@ -3883,7 +3883,7 @@ function show_sidebar() {
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--not-visible").click();
 	} else {
-		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
+		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(0px)");
 	}
 
@@ -4014,7 +4014,7 @@ function hide_sidebar() {
 	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
 		$(".ct-quick-nav__edge-toggle--visible").click();
 	} else {
-		let sidebar = is_characters_page() ? $(".ct-sidebar--right") : $(".sidebar--right");
+		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(340px)");
 	}
 

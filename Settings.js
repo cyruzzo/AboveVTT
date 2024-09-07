@@ -262,7 +262,20 @@ function token_setting_options() {
 				{ value: false, label: 'Disabled', description: "The Token is using an image file for it's image (png, jpg, gif, etc.)" }
 			],
 			defaultValue: false
+		},
+		{
+			name: "maxAge",
+			label: "Token has time limit/age",
+			type: 'dropdown',
+			options: [
+				{ value: false, label: "None", description: "No timer added." },
+				{ value: "1", label: "1 round", description: "Duration of one round - timer will turn red after it's reached it's time limit." },
+				{ value: "10", label: "1 minute", description: "Duration of 10 rounds - timer will turn red after it's reached it's time limit." },
+				{ value: "Custom", label: "Custom Timer", description: "Timer will be added - timer will turn red after it's reached it's time limit." }	
+			],
+			defaultValue: false
 		}
+		
 	];
 }
 
@@ -795,6 +808,12 @@ function build_example_token(options) {
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
 	mergedOptions.armorClass = 10;
+	if(mergedOptions.maxAge == undefined){
+		mergedOptions.maxAge = false;
+	}
+	if(mergedOptions.maxAge !== false){
+		mergedOptions.age = '1';
+	}
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
 	let token = new Token(mergedOptions);

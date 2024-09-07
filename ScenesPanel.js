@@ -184,25 +184,31 @@ function getGoogleDriveAPILink(url){
 }
 
 async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId, doorType, doorHidden){
-	//to do
-	let sceneData = await getUvttData(url);
+	try{
+		let sceneData = await getUvttData(url);
+		let aboveSceneData = {
+			...create_full_scene_from_uvtt(sceneData, url, doorType, doorHidden),
+			title: title,
+			folderPath: folderPath,
+			parentId: parentId
+		} // this sets up scene data for import
+		
 
-	console.log(sceneData.resolution) // test code to make sure correct file is loaded
-	let aboveSceneData = {
-		...create_full_scene_from_uvtt(sceneData, url, doorType, doorHidden),
-		title: title,
-		folderPath: folderPath,
-		parentId: parentId
-	} // this sets up scene data for import
-	
+		await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
 
-	await AboveApi.migrateScenes(window.gameId, [aboveSceneData]);
+		window.ScenesHandler.scenes.push(aboveSceneData);
+		did_update_scenes();
+		$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
+		$("#sources-import-main-container").remove();
+		expand_all_folders_up_to_id(aboveSceneData.id);
+	}
+	catch{
+		$("#sources-import-main-container").remove();
+		showError('Unexpected file format. The file may be on a host that does not support UVTT files or is not a UVTT file.')
+		
+	}
 
-	window.ScenesHandler.scenes.push(aboveSceneData);
-	did_update_scenes();
-	$(`.scene-item[data-scene-id='${aboveSceneData.id}'] .dm_scenes_button`).click();
-	$("#sources-import-main-container").remove();
-	expand_all_folders_up_to_id(aboveSceneData.id);
+
 }
 
 

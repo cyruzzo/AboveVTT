@@ -970,10 +970,15 @@ function token_context_menu_expanded(tokenIds, e) {
 		event.target.select();
 	});
 	$(".acMenuInput").on('focus', function(event){
-			event.target.select();
+		event.target.select();
 	});
 	$(".elevMenuInput").on('focus', function(event){
-			event.target.select();
+		event.target.select();
+	});
+	
+	body.append(build_menu_stat2_inputs(tokenIds));	
+	$(".ageMenuInput").on('focus', function(event){
+		event.target.select();
 	});
 	
 
@@ -2341,6 +2346,7 @@ function build_menu_stat_inputs(tokenIds) {
 	let maxHpMenuInput = $(`<label class='menu-input-label'>Max HP<input value='${max_hp}' class='menu-input maxHpMenuInput' type="text"></label>`);
 	let acMenuInput = $(`<label class='menu-input-label'>AC<input value='${ac}' class='menu-input acMenuInput' type="text"></label>`);
 	let elevMenuInput = $(`<label class='menu-input-label'>Elevation<input value='${elev}' class='menu-input elevMenuInput' type="number"></label>`);
+
 	body.append(elevMenuInput);
 	body.append(acMenuInput);
 	body.append(hpMenuInput);
@@ -2348,7 +2354,7 @@ function build_menu_stat_inputs(tokenIds) {
 
 
 
-
+	
 	hpMenuInput.on('keyup', function(event) {
 		let newValue = event.target.value;
 		if(newValue == '')
@@ -2510,6 +2516,49 @@ function build_menu_stat_inputs(tokenIds) {
 
 
 }
+
+function build_menu_stat2_inputs(tokenIds) {
+
+	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
+	let body = $("<div id='menuStat2Div'></div>");
+	let age = '';
+	let maxAge = '';
+
+	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
+		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
+		maxAge = (typeof tokens[0].options.maxAge !== 'undefined') ? tokens[0].options.maxAge : false;
+	}
+	else if(window.DM && tokens.length>1){
+		age = '';
+		maxAge = '';
+	}
+	else{
+		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
+		maxAge = '';
+	}
+	
+	let ageMenuInput = $(`<label class='menu-input-label'>Age<input value='${age}' class='menu-input ageMenuInput' type="number"></label>`);
+	let maxAgeMenuInput = $(`<label class='menu-input-label'>Max Age<input value='${maxAge}' class='menu-input maxAgeMenuInput' type="number"></label>`);		
+	if(maxAge !== false) {
+		body.append(ageMenuInput);
+		body.append(maxAgeMenuInput);	
+	}
+
+	ageMenuInput.on('focusout', function(event) {
+		tokens.forEach(token => {
+			token.options.age = event.target.value;
+			token.place_sync_persist();
+		});
+	});
+	maxAgeMenuInput.on('focusout', function(event) {
+		tokens.forEach(token => {
+			token.options.maxAge = event.target.value;
+			token.place_sync_persist();
+		});
+	});
+	return body;
+}
+
 
 function build_notes_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
@@ -2682,8 +2731,35 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 			});
 		}
 
-
-	
+		let conditionDuration = $(`<input type='text' class='condition-duration-input' placeholder=''></input>`);
+		let conditionDurationIcon = $(`<span class='condition-duration-icon'></span>`)
+		let durVal = tokens[0].conditionDuration(conditionName);
+		if(tokens.every(t=> t.conditionDuration(conditionName) === durVal)) {
+			conditionDuration.val(durVal);
+		}
+		conditionDuration.off('click').on('click',function(event) {
+			event.stopPropagation();
+			this.select();
+			conditionDurationIcon.addClass('hiddenIcon');
+		})
+		conditionDuration.off('focusout').on('focusout', function(event) {
+			function update_cond(cond, token, newDur) {
+				if(cond.name === conditionName) {
+					cond.duration = newDur;
+					token.place_sync_persist();
+				}}
+			let newDur = event.target.value === '' ? '' : parseInt(event.target.value);
+			if (!isNaN(newDur)) {
+				tokens.forEach(token => {
+					token.options.custom_conditions?.forEach(c=> update_cond(c, token, newDur));
+					token.options.conditions?.forEach(c=> update_cond(c, token, newDur));
+				});
+			}
+			conditionDurationIcon.toggleClass('hiddenIcon', newDur !== undefined && newDur !== '')
+		});
+		conditionDurationIcon.toggleClass('hiddenIcon', durVal !== undefined && durVal !== '')
+		conditionItem.append(conditionDuration);
+		conditionItem.append(conditionDurationIcon);	
 		return conditionItem;
 	};
 
@@ -2695,7 +2771,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 		}
 	});	
 	let conditionsList = $(`<ul></ul>`);
-	conditionsList.css("width", "180px");
+	conditionsList.css("width", "195px");
 	body.append(conditionsList);
 	STANDARD_CONDITIONS.forEach(conditionName => {
 		let conditionItem = buildConditionItem(conditionName);
@@ -2708,7 +2784,7 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 	}
 
 	let markersList = $(`<ul></ul>`);
-	markersList.css("width", "185px");
+	markersList.css("width", "195px");
 	body.append(markersList);
 	CUSTOM_CONDITIONS.forEach(conditionName => {
 		let conditionItem = buildConditionItem(conditionName);
@@ -2984,7 +3060,7 @@ function build_options_flyout_menu(tokenIds) {
 		let setting = token_settings[i];
 		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
 			continue;
-		} else if(setting.hiddenSetting || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly) {
+		} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly) {
 			continue;
 		}
 

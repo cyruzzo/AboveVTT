@@ -321,6 +321,10 @@ class Token {
 	hasCondition(conditionName) {
 		return this.conditions.includes(conditionName) || this.options.custom_conditions.some(e => e.name === conditionName);
 	}
+	conditionDuration(conditionName) {
+		let c = this.options.conditions.find(c => c.name == conditionName) || this.options.custom_conditions.find(c => c.name == conditionName);
+		return c?.duration;
+	}
 	addCondition(conditionName, text='') {
 	    if (this.hasCondition(conditionName)) {
 	        // already did
@@ -331,7 +335,7 @@ class Token {
 				if(window.PLAYER_NAME == this.options.name){
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 					$('.ct-condition-manage-pane').css('visibility', 'hidden');
-					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-disabled`).click();
+					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
 					setTimeout(function(){
 						$(`#switch_gamelog`).click();
 					}, 10)
@@ -362,7 +366,7 @@ class Token {
 				if(window.PLAYER_NAME == this.options.name){
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 					$('.ct-condition-manage-pane').css('visibility', 'hidden');
-					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>.ddbc-toggle-field--is-enabled`).click();
+					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
 					setTimeout(function(){
 						$(`#switch_gamelog`).click();
 					}, 10)		
@@ -905,6 +909,42 @@ class Token {
 		console.groupEnd()
 	}
 
+	update_condition_timers(){
+		console.group("update_condition_timers")
+
+		function setDurationBadgeText(token, condition){
+			if(condition.duration == undefined)
+				return;
+			const conditionName = (typeof condition === "string" ? condition : condition?.name) || "";
+			const isExhaustion = conditionName.startsWith("Exhaustion");
+			const conditionSymbolName = isExhaustion ? 'exhaustion' : conditionName.toLowerCase();
+			const durationBadge = $(`.token[data-id='${token.options.id}']  .duration-badge[class*='${conditionSymbolName}']`);
+			durationBadge.toggleClass('expired', condition.duration<1)
+			durationBadge.find('span').text(condition.duration);
+		}
+
+		for(let i in this.options.conditions){
+			const condition = this.options.conditions[i]
+			setDurationBadgeText(this, condition);
+		}	
+		for(let i in this.options.custom_conditions){
+			const condition = this.options.custom_conditions[i];
+			setDurationBadgeText(this, condition);
+		}
+		console.groupEnd()
+	}
+
+
+	update_age(){
+		const age = $(`.token[data-id='${this.options.id}'] div.age`);
+		if(this.options.maxAge == undefined || this.options.maxAge === false){
+			age.remove();
+			return;
+		}
+		age.find('svg circle').attr('fill', this.options.maxAge === '' || parseInt(this.options.age) < parseInt(this.options.maxAge)   ? '#FFFFFF' : "#ff0000");
+		age.find('text').text(this.options.age);
+	}
+
 	/**
 	 * returns different scales of the token based on options such as aura disabled
 	 * @returns scale of token
@@ -948,6 +988,10 @@ class Token {
 			this.update_dead_cross(old)
 			this.update_health_aura(old)
 		}
+
+		this.update_condition_timers();
+		this.update_age(old);
+
 		toggle_player_selectable(this, old)
 		console.groupEnd()
 	}
@@ -1173,6 +1217,33 @@ class Token {
 		return elev;
 	}
 
+	build_age() {
+		if(this.options.maxAge === false)
+			return;
+		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
+		let age = $("<div class='age'/>");
+		let bar_width = Math.floor(this.sizeWidth() * 0.2);
+		age.css("position", "absolute");
+		age.css('right', bar_width * 4.35 + "px");
+		age.css('width', bar_height + "px");
+		age.css('height', bar_height + "px");
+		age.css('bottom', '22px');
+		age.css('color', 'white');
+		
+		if(this.options.age == undefined){
+			this.options.age = '0';
+		}
+		let fillColor = (this.options.maxAge === '' || parseInt(this.options.maxAge) > parseInt(this.options.age)) ? "#ffffff" : "#ff0000";
+		age.append(
+			$(`
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="${fillColor}" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
+		<text x='12px' y='19px' style="font-weight: bold;font-size: 10px;stroke: #000;stroke-width: 8%;paint-order: stroke;stroke-linejoin: round;fill: #fff;text-anchor: middle;">${this.options.age}</text>
+		
+		</svg>
+			`));
+		
+		return age;
+	}
 	/**
 	 * hides or shows stats based on this.options
 	 * @param token jquery selected div with the class "token"
@@ -1209,6 +1280,11 @@ class Token {
 				token.find(".elev").hide();
 			} else {
 				token.find(".elev").show();
+			}
+			if (!this.options.age) { // even if we are supposed to show it, only show them if they have something to show.
+				token.find(".age").hide();
+			} else {
+				token.find(".age").show();
 			}
 		}
 		else{
@@ -1259,15 +1335,17 @@ class Token {
 	 */
 	build_stats(token){
 		console.group("build_stats")
-		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
+		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0 && !token.has(".age").length > 0){
 			token.append(this.build_hp());
 			token.append(this.build_ac());
 			token.append(this.build_elev());
+			token.append(this.build_age());			
 		}
 		else{
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
+			token.find(".age").replaceWith(this.build_age());			
 		}
 		if(window.DM){
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
@@ -1279,6 +1357,14 @@ class Token {
 
 
 	build_conditions(parent) {
+		function badge_condition(condition, conditionContainer, conditionSymbolName) {
+			if(!isNaN(parseInt(condition.duration))) {
+				let expired = (parseInt(condition.duration) <= 0) ? "expired" : "";
+				let durationBadge = $(`<div class='duration-badge ${expired} ${conditionSymbolName}'><span>${condition.duration}</span></div>`);
+				conditionContainer.append(durationBadge);
+			}
+		}
+
 		console.group("build_conditions")
 		let self=this;
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
@@ -1316,25 +1402,103 @@ class Token {
 				const conditionContainer = $("<div class='dnd-condition condition-container' />");
 				const symbolImage = $("<img class='condition-img' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + conditionSymbolName + ".svg'/>");
 				const conditionDescription = isExhaustion ? CONDITIONS.Exhaustion : CONDITIONS[conditionName];
-				symbolImage.attr('title', [conditionName, ...conditionDescription].join(`\n`));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
-				conditionContainer.on('dblclick', () => {
-					const data = {
-						player: window.PLAYER_NAME,
-						img: window.PLAYER_IMG,
-						text: window.MB.encode_message_text(`<div>${[conditionName, ...conditionDescription].map(line => `<p>${line}</p>`).join(``)}</div>`)
-					};
-					window.MB.inject_chat(data);
-				});
+				badge_condition(condition, conditionContainer, conditionSymbolName);
 				if (conditionCount >= 3) {
 					moreCond.append(conditionContainer);
 				} else {
 					cond.append(conditionContainer);
 				}
+				let noteHover = `<div>
+						<div class="tooltip-header">
+				       	 	<div class="tooltip-header-icon">
+				            
+					        	</div>
+					        <div class="tooltip-header-text">
+					            ${conditionName}
+					        </div>
+					        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+					           Condition
+					        </div>
+			    		</div>
+				   		<div class="tooltip-body note-text">
+					        <div class="tooltip-body-description">
+					            <div class="tooltip-body-description-text note-text">
+					                ${conditionDescription.replaceAll(/\[(\/)?condition\]/gi, '')}
+					            </div>
+					        </div>
+					    </div>
+					</div>`
+
+
+							
+				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
+		
+				let hoverConditionTimer;
+				conditionContainer.on({
+					'mouseover': function(e){
+						hoverConditionTimer = setTimeout(function () {
+			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+					            flyout.addClass('note-flyout');
+					            const tooltipHtml = $(noteHover);
+
+					            flyout.append(tooltipHtml);
+					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+					            sendToGamelogButton.css({ "float": "right" });
+					            sendToGamelogButton.on("click", function(ce) {
+					                ce.stopPropagation();
+					                ce.preventDefault();
+									
+					                send_html_to_gamelog(noteHover);
+					            });
+					            let flyoutLeft = e.clientX+20
+					            if(flyoutLeft + 400 > window.innerWidth){
+					            	flyoutLeft = window.innerWidth - 420
+					            }
+					            flyout.css({
+					            	left: flyoutLeft,
+					            	width: '400px'
+					            })
+
+					            const buttonFooter = $("<div></div>");
+					            buttonFooter.css({
+					                height: "40px",
+					                width: "100%",
+					                position: "relative",
+					                background: "#fff"
+					            });
+
+					            flyout.append(buttonFooter);
+					            buttonFooter.append(sendToGamelogButton);
+
+								
+
+					            flyout.hover(function (hoverEvent) {
+					                if (hoverEvent.type === "mouseenter") {
+					                    clearTimeout(removeToolTipTimer);
+					                    removeToolTipTimer = undefined;
+					                } else {
+					                    remove_tooltip(500);
+					                }
+					            });
+
+					            flyout.css("background-color", "#fff");
+					        });
+			        	}, 500);		
+					
+					},
+					'mouseout': function(e){
+						clearTimeout(hoverConditionTimer)
+						remove_tooltip(500);
+					}
+			
+			    });
 				conditionCount++;
 			}
 
@@ -1371,9 +1535,11 @@ class Token {
 				symbolImage.attr('title', (conditionText != '') ? conditionText : (conditionName.startsWith("#") ? '' : conditionName));
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
+				badge_condition(this.options.custom_conditions[i], conditionContainer, conditionSymbolName);
 				if (conditionCount >= 3) {
 					if (conditionSymbolName === "concentration") {
 						moreCond.prepend(conditionContainer);
@@ -1501,6 +1667,7 @@ class Token {
 
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
+				conditionContainer.css("position", "relative");				
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
@@ -2757,10 +2924,11 @@ class Token {
 				})
 
 				tok.on('click.selectToken', classToClick, function() {
-					let parentToken = $(this);
+					let parentToken = $(this).closest('.token[data-id]');
 					if (parentToken.hasClass("pause_click")) {
 						return;
 					}
+
 					let tokID = parentToken.attr('data-id');
 					let groupID = parentToken.attr('data-group-id');
 					let thisSelected = !(parentToken.hasClass('tokenselected'));

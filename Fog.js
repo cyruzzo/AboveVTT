@@ -1720,7 +1720,7 @@ function redraw_light_walls(clear=true){
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
         let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
-        let hiddenDoor = hidden && !displayWalls ? ` hiddenDoor` : ``;
+        let hiddenDoor = hidden ? ` hiddenDoor` : ``;
         let dataHidden = hidden;
 
 
@@ -1833,6 +1833,9 @@ function redraw_light_walls(clear=true){
 		drawnWall.wallTop = wallTop;
 		window.walls.push(drawnWall);
 	}
+
+
+		
 	if(window.DM){
 		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
 		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
@@ -1849,7 +1852,12 @@ function redraw_light_walls(clear=true){
 	
 
 	$('.door-button[removeAfterDraw]').remove();
-
+	if(displayWalls){
+		$('.hiddenDoor').css('display', 'block');
+	}
+	else{
+		$('.hiddenDoor').css('display', '');
+	}
 	check_darkness_value();
  
 }
@@ -3215,7 +3223,7 @@ function drawing_mouseup(e) {
 			c++;
 			// TOKEN IS INSIDE THE SELECTION
 			if (window.DM || !curr.options.hidden) {
-				let tokenDiv = $("#tokens>div[data-id='" + curr.options.id + "']")
+				let tokenDiv = curr.isLineAoe() ? $(`#tokens>div[data-id='${curr.options.id}'] [data-img]`) : $(`#tokens>div[data-id='${curr.options.id}']`)
 				if(tokenDiv.css("pointer-events")!="none" && tokenDiv.css("display")!="none" && !tokenDiv.hasClass("ui-draggable-disabled")) {
 					curr.selected = true;
 				}
@@ -3486,11 +3494,12 @@ function handle_drawing_button_click() {
 		if(window.CURRENT_SCENE_DATA != undefined){
 			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
 				redraw_light_walls();
+				$('.hiddenDoor').css('display', 'block');	
 			}
 			else{
 				$(`[id*='wallHeight']`).remove();
-				$('#walls_layer').css('display', 'none');
-				
+				$('#walls_layer').css('display', 'none');		
+				$('.hiddenDoor').css('display', '');	
 			}
 			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active')){
 				redraw_elev(true);

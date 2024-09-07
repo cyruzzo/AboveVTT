@@ -389,6 +389,11 @@ async function start_above_vtt_common() {
   startup_step("Fetching config data from DDB");
   window.ddbConfigJson = await DDBApi.fetchConfigJson();
 
+  window.ddbConfigJson.conditions.forEach(condition => {
+    CONDITIONS[condition.definition.name] = condition.definition.description; 
+  })
+
+
   startup_step("Fetching token customizations");
   fetch_token_customizations();
 

@@ -889,12 +889,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					uuid: source_keyword + "/" + chapter_keyword + "/" + id,
 					title: title,
 					dm_map: dm_map,
-					player_map: player_map,
+					player_map: player_map ? player_map : thumb,
 					player_map_is_video: "0",
 					dm_map_is_video: "0",
 					thumb: thumb,
 					scale: "100",
-					dm_map_usable: "1",
+					dm_map_usable: dm_map ? "1" : '0',
 					tokens: {},
 				});
 			});
@@ -933,12 +933,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						uuid: source_keyword + "/" + chapter_keyword + "/" + id,
 						title: title,
 						dm_map: dm_map,
-						player_map: player_map,
+						player_map: player_map ? player_map : thumb,
 						player_map_is_video: "0",
 						dm_map_is_video: "0",
-						scale: "100",
-						dm_map_usable: "1",
 						thumb: thumb,
+						scale: "100",
+						dm_map_usable: dm_map ? "1" : '0',
 						tokens: {},
 					});
 				});
@@ -973,12 +973,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						uuid: source_keyword + "/" + chapter_keyword + "/" + id,
 						title: title,
 						dm_map: dm_map,
-						player_map: player_map,
+						player_map: player_map ? player_map : thumb,
 						player_map_is_video: "0",
 						dm_map_is_video: "0",
-						scale: "100",
-						dm_map_usable: "1",
 						thumb: thumb,
+						scale: "100",
+						dm_map_usable: dm_map ? "1" : '0',
 						tokens: {},
 					});
 

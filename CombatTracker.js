@@ -18,6 +18,26 @@ function combatmydebounce(func, timeout = 800){ // we need to figure out where t
   };
 }
 
+
+function adjust_age(token, amt) {
+	if(token.options.maxAge === false) return false;
+	token.options.age = (parseInt(token.options.age) || 0) + amt;
+	return true;
+}
+
+function adjust_condition_duration(token, amt) {
+	function anycond(v, changed) {
+		for(let i in v) {
+			if(!isNaN(parseInt(v[i].duration))) {
+				v[i].duration += amt;
+				changed = true;
+			}
+		}
+		return changed;
+	}
+	return anycond(token.options.conditions, anycond(token.options.custom_conditions, false));
+}
+
 function init_combat_tracker(){
 	window.ROUND_NUMBER =1;
 	
@@ -286,6 +306,9 @@ function init_combat_tracker(){
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
+				adjust_age(window.TOKEN_OBJECTS[currentTarget], 1)
+				adjust_condition_duration(window.TOKEN_OBJECTS[currentTarget], -1)
+
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
 				delete window.TOKEN_OBJECTS[currentTarget].options.round;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
@@ -337,6 +360,8 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
+				adjust_age(window.TOKEN_OBJECTS[newTarget], -1)
+				adjust_condition_duration(window.TOKEN_OBJECTS[newTarget], 1)
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();

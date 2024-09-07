@@ -348,7 +348,7 @@ class MessageBroker {
 								let neweight = li.height();
 								li.height(oldheight);
 								li.animate({ opacity: 1, height: neweight }, animationDuration, () => { li.height("") });
-								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: Self</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+								let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 								li.find('.abovevtt-roll-container').append(output);
 								let img = li.find(".magnify");
 								for(let i=0; i<img.length; i++){
@@ -1553,7 +1553,7 @@ class MessageBroker {
 		//Security logic to prevent content being sent which can execute JavaScript.
 		data.player = DOMPurify.sanitize( data.player,{ALLOWED_TAGS: []});
 		data.img = DOMPurify.sanitize( data.img,{ALLOWED_TAGS: []});
-		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
+		data.text = DOMPurify.sanitize( data.text,{ALLOWED_TAGS: ['video','img','div','p', 'b', 'button', 'span', 'style', 'path', 'svg', 'a', 'hr', 'ul', 'li', 'h3', 'h2', 'h4', 'h1'], ADD_ATTR: ['target']}); //This array needs to include all HTML elements the extension sends via chat.
 
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
@@ -1833,7 +1833,12 @@ class MessageBroker {
 				$('.import-loading-indicator').remove();
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
-					data.map = await get_map_from_uvtt_file(data.player_map);
+					try{
+						data.map = await get_map_from_uvtt_file(data.player_map);
+					}
+					catch{
+						data.UVTTFile = 0;
+					}
 				}
 				else{
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		

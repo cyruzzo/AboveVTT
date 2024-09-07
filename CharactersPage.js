@@ -1185,8 +1185,17 @@ function observe_character_sheet_changes(documentToObserve) {
                   .ddb-note-roll{
                     border: 1px solid var(--theme-color, #ddd);
                     border-radius: 5px;
-                    padding: 3px;
+                    display: flex;
+                    padding: 4px;
                     margin: 0px 2px 0px 0px;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                  }
+
+                  .ddb-note-roll{
+                    display: inline-flex;
+                    flex-direction: row;
                   }
                   #site .advantageHover svg [fill="#b0b7bd"], 
                   #site .advantageHover svg [fill="#242528"],

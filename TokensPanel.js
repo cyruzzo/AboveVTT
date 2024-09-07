@@ -1260,10 +1260,50 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
         }
+        let newStatBlockInit = statText.matchAll(/Initiative[\s\D]+?([+-][0-9]+)/gi).next()
+
+        if(newStatBlockInit.value != undefined){
+            if(newStatBlockInit.value[1] != undefined)
+                options.customInit = newStatBlockInit.value[1];
+        }        
+
         const newInit = $(statText).find('.custom-initiative.custom-stat').text();
         if(newInit){
             options.customInit = newInit
         }
+
+
+        if($(statText).find('table.abilities-saves').length>0){
+             let physicalStats = $(statText).find('table.abilities-saves.physical');
+             let mentalStats = $(statText).find('table.abilities-saves.mental');
+             options.customStat = {
+                '0': {
+                    mod: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(2)').text(),
+                    save: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(3)').text()
+                },
+                '1': {
+                    mod: physicalStats.find('tr:nth-of-type(2) td:nth-of-type(2)').text(),
+                    save: physicalStats.find('tr:nth-of-type(2) td:nth-of-type(3)').text()
+                },
+                '2': {
+                    mod: physicalStats.find('tr:nth-of-type(3) td:nth-of-type(2)').text(),
+                    save: physicalStats.find('tr:nth-of-type(3) td:nth-of-type(3)').text()
+                },
+                '3': {
+                    mod: mentalStats.find('tr:nth-of-type(1) td:nth-of-type(2)').text(),
+                    save: mentalStats.find('tr:nth-of-type(1) td:nth-of-type(3)').text(),
+                },
+                '4': {
+                    mod: mentalStats.find('tr:nth-of-type(2) td:nth-of-type(2)').text(),
+                    save: mentalStats.find('tr:nth-of-type(2) td:nth-of-type(3)').text()
+                },
+                '5': {
+                    mod: mentalStats.find('tr:nth-of-type(3) td:nth-of-type(2)').text(),
+                    save: mentalStats.find('tr:nth-of-type(3) td:nth-of-type(3)').text()
+                }
+            }
+        }
+
         if(options.customStat == undefined){
             let match = statText.matchAll(/STR[<\s][\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)/gi).next()
             if(match.value != undefined){
@@ -4286,7 +4326,7 @@ function getPersonailityTrait(){
         323: "Solemn",
         324: "Solitary",
         325: "Stern",
-        326: "Stoiid",
+        326: "Stolid",
         327: "Strict",
         328: "Stubborn",
         329: "Stylish",
