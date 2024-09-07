@@ -1218,7 +1218,7 @@ class Token {
 	}
 
 	build_age() {
-		if(this.options.maxAge === false)
+		if(this.options.maxAge === false || this.options.maxAge == undefined )
 			return;
 		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		let age = $("<div class='age'/>");
