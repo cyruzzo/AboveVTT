@@ -1833,7 +1833,12 @@ class MessageBroker {
 				$('.import-loading-indicator').remove();
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
-					data.map = await get_map_from_uvtt_file(data.player_map);
+					try{
+						data.map = await get_map_from_uvtt_file(data.player_map);
+					}
+					catch{
+						data.UVTTFile = 0;
+					}
 				}
 				else{
 					await build_import_loading_indicator(`Loading ${window.DM ? data.title : 'Scene'}`);		
