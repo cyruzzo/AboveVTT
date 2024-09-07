@@ -536,6 +536,11 @@ function set_avtt_setting_value(name, newValue) {
 		      iframeTab: window.PLAYER_ID,
 		      rpgRoller: newValue
 		    })
+			//Enable GoDice RollBar and Roller
+			if(window.godice.dicebar){
+				window.godice.dicebar.enable(newValue);
+				window.godice.dicebar.render();
+			}
 		  }
 		  break;
 		case "disableSendToTab":

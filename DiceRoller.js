@@ -308,18 +308,15 @@ class DiceRoller {
                 self.#resetVariables();
             }, this.timeoutDuration);
             let msgdata = {}
-			let roll;
-			if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)
-				roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
-			if(window.EXPERIMENTAL_SETTINGS['godiceRoller'] == true)
-				roll = await window.godice.rollResult.rollDice(diceRoll.expression);
+			//let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
+			//Show GoDice Popup
+			let roll = await window.godice.rollResult.rollDice(diceRoll.expression);
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
             let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
             let rollTitle = (diceRoll.action) ? diceRoll.action : 'AboveVTT';
             let modifier = (roll.rolls.length > 1 && diceRoll.expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
             
-			let customRoll = window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.EXPERIMENTAL_SETTINGS['godiceRoller'] == true;
-			
+
             let critSuccess = false;
             let critFail = false;
 
@@ -329,6 +326,8 @@ class DiceRoller {
             if(!diceNotations[diceNotations.length-1].includes('d')){
                diceNotations.splice(diceNotations.length-1, 1)
             }
+
+
 
             for(let i=0; i<diceNotations.length; i++){
 
@@ -349,7 +348,7 @@ class DiceRoller {
             let critClass = `${critSuccess && critFail ? 'crit-mixed' : critSuccess ? 'crit-success' : critFail ? 'crit-fail' : ''}`
 
 
-            if(customRoll){
+            if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
                 }
@@ -390,7 +389,7 @@ class DiceRoller {
                     }
                    
                 }
-                console.debug(diceRoll);
+               
             }                         
             else{
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
@@ -418,7 +417,7 @@ class DiceRoller {
             }
 
 
-            if(is_abovevtt_page() && customRoll){
+            if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
                 setTimeout(function(){
                     window.MB.inject_chat(msgdata);
                     self.#resetVariables();
