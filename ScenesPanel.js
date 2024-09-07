@@ -184,8 +184,13 @@ function getGoogleDriveAPILink(url){
 }
 
 async function import_uvtt_scene_to_new_scene(url, title='New Scene', folderPath, parentId, doorType, doorHidden){
-	//to do
-	let sceneData = await getUvttData(url);
+	try{
+		let sceneData = await getUvttData(url);
+	}
+	catch{
+		$("#sources-import-main-container").remove();
+		showError('Unexpected file format. The file may be on a host that does not support UVTT files or is not a UVTT file.')
+	}
 
 	console.log(sceneData.resolution) // test code to make sure correct file is loaded
 	let aboveSceneData = {
