@@ -7400,46 +7400,27 @@ button span.onedrive-btn-status{
 
 .duration-badge {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: max(8px, 50%);
+    height: max(8px, 50%);
     font-weight: bold;
-    font-size: 12px;
     border: 1px solid #959595;
-    top: -5px;
-    right: -5px;
+    top: -5%;
+    right: -5%;
     border-radius: 50%;
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #1c1c1c;
+    container-type: inline-size;
+    align-content: center;
+    flex-wrap: wrap;
 }
-.duration-badge.expired{
+.duration-badge.expired span{
     color: #F00;
 }
-.duration-text {
-    text-align: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    fill: #fff;
-    stroke: #000;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    paint-order: stroke;
-    text-shadow: 1px 1px 2px #000;
-    pointer-events:none;
-}
-.duration-expired-text {
-    text-align: center;
-    font-weight: bold;
-    text-transform: uppercase;
-    fill: #f00;
-    stroke: #f00;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    paint-order: stroke;
-    text-shadow: 1px 1px 2px #000;
-    pointer-events:none;
+.duration-badge span{
+    font-size: 70cqw;
 }
 
 .button-loading::after {
