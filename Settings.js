@@ -769,7 +769,7 @@ function redraw_settings_panel_token_examples(settings) {
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
-		mergedSettings.imgsrc = item.find("img.token-image").attr("src");
+		mergedSettings.imgsrc = item.find(".token-image").attr("src");
 		item.replaceWith(build_example_token(mergedSettings));
 	}
 }
@@ -802,8 +802,8 @@ function build_example_token(options) {
 	if(mergedOptions.maxAge == undefined){
 		mergedOptions.maxAge = false;
 	}
-	if(mergedOptions.maxAge !== false){
-		mergedOptions.age = '1';
+	if(mergedOptions.maxAge !== false && isNaN(parseInt(mergedOptions.age))){
+		mergedOptions.age = 1;
 	}
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
