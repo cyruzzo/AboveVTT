@@ -306,7 +306,7 @@ function init_combat_tracker(){
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
-				adjust_age(window.TOKEN_OBJECTS[currentTarget], 1)
+				adjust_age(window.TOKEN_OBJECTS[currentTarget], -1)
 				adjust_condition_duration(window.TOKEN_OBJECTS[currentTarget], -1)
 
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
@@ -360,7 +360,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
-				adjust_age(window.TOKEN_OBJECTS[newTarget], -1)
+				adjust_age(window.TOKEN_OBJECTS[newTarget], 1)
 				adjust_condition_duration(window.TOKEN_OBJECTS[newTarget], 1)
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;

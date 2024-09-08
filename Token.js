@@ -941,7 +941,7 @@ class Token {
 			age.remove();
 			return;
 		}
-		age.find('svg circle').attr('fill', this.options.maxAge === '' || parseInt(this.options.age) < parseInt(this.options.maxAge)   ? '#FFFFFF' : "#ff0000");
+		age.find('svg circle').attr('fill', parseInt(this.options.age) > 0   ? '#FFFFFF' : "#ff0000");
 		age.find('text').text(this.options.age);
 	}
 
@@ -990,7 +990,7 @@ class Token {
 		}
 
 		this.update_condition_timers();
-		this.update_age(old);
+		this.update_age();
 
 		toggle_player_selectable(this, old)
 		console.groupEnd()
@@ -1219,7 +1219,7 @@ class Token {
 
 	build_age() {
 		if(this.options.maxAge === false || this.options.maxAge == undefined )
-			return;
+			return '';
 		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		let age = $("<div class='age'/>");
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
@@ -1231,9 +1231,9 @@ class Token {
 		age.css('color', 'white');
 		
 		if(this.options.age == undefined){
-			this.options.age = '0';
+			this.options.age = this.options.maxAge != 'custom' ? this.options.maxAge : '0';
 		}
-		let fillColor = (this.options.maxAge === '' || parseInt(this.options.maxAge) > parseInt(this.options.age)) ? "#ffffff" : "#ff0000";
+		let fillColor = (parseInt(this.options.age) > 0) ? "#ffffff" : "#ff0000";
 		age.append(
 			$(`
 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="${fillColor}" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
@@ -1335,17 +1335,23 @@ class Token {
 	 */
 	build_stats(token){
 		console.group("build_stats")
-		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0 && !token.has(".age").length > 0){
+		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
 			token.append(this.build_hp());
 			token.append(this.build_ac());
 			token.append(this.build_elev());
-			token.append(this.build_age());			
+						
 		}
 		else{
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
-			token.find(".age").replaceWith(this.build_age());			
+					
+		}
+		if(!token.has(".age").length > 0){
+			token.append(this.build_age());
+		}
+		else{
+			token.find(".age").replaceWith(this.build_age());	
 		}
 		if(window.DM){
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
