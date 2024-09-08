@@ -875,10 +875,12 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	container.append(build_age_inputs([setValues['age']], [setValues['maxAge']],
 	function(age){
 		updateValue("age", age)
+		didChange();
 	
 	}, 
 	function(maxAge, updateToken){
 		updateValue("maxAge", maxAge)
+		didChange();
 	}));
 
 	if(showExtraOptions){
