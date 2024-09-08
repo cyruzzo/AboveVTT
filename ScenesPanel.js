@@ -348,7 +348,8 @@ function create_full_scene_from_uvtt(data, url, doorType, doorHidden){ //this se
 			top : `${(DataFile.lights[i].position.y - mapOriginY) * gridSize - gridSize/4}px`,
 			gridSquares: 0.5,
 			size: gridSize/2,
-			auraislight: true	
+			auraislight: true,
+			scaleCreated: 1	
 		};
 		
 		sceneTokens[options.id] = options;
