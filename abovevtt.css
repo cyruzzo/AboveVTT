@@ -6935,15 +6935,7 @@ button span.onedrive-btn-status{
     flex-direction: row;
     margin-bottom: 15px;
 }
-#tokenOptionsContainer .menu-input-label:first-child:nth-last-child(1) .menu-input{
-    width: 50px;
-    text-align: right;
-}
-#tokenOptionsContainer .menu-input-label:first-child:nth-last-child(1){
-    text-align: left;
-    width: 100%;
-    line-height: 30px;
-}
+
 
 #tokenOptionsContainer .material-icons{
     color: #738694;

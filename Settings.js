@@ -265,13 +265,13 @@ function token_setting_options() {
 		},
 		{
 			name: "maxAge",
-			label: "Token has time limit/age",
+			label: "Token has time limit",
 			type: 'dropdown',
 			options: [
 				{ value: false, label: "None", description: "No timer added." },
 				{ value: "1", label: "1 round", description: "Duration of one round - timer will turn red after it's reached it's time limit." },
 				{ value: "10", label: "1 minute", description: "Duration of 10 rounds - timer will turn red after it's reached it's time limit." },
-				{ value: "Custom", label: "Custom Timer", description: "Timer will be added - timer will turn red after it's reached it's time limit." }	
+				{ value: "custom", label: "Custom Timer", description: "Timer will be added - timer will turn red after it's reached it's time limit." }	
 			],
 			defaultValue: false
 		}

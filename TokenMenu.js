@@ -976,10 +976,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		event.target.select();
 	});
 	
-	body.append(build_menu_stat2_inputs(tokenIds));	
-	$(".ageMenuInput").on('focus', function(event){
-		event.target.select();
-	});
+
 	
 
 	if((window.DM && tokens.length != 1) || (tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat && !tokens[0].isPlayer()) || (window.DM && !tokens[0].isPlayer())))){ 
@@ -2517,47 +2514,6 @@ function build_menu_stat_inputs(tokenIds) {
 
 }
 
-function build_menu_stat2_inputs(tokenIds) {
-
-	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
-	let body = $("<div id='menuStat2Div'></div>");
-	let age = '';
-	let maxAge = '';
-
-	if(tokens.length == 1 && ((tokens[0].options.player_owned && !tokens[0].options.disablestat) || (!tokens[0].options.hidestat && tokens[0].isPlayer() && !tokens[0].options.disablestat) || tokens[0].options.id.includes(window.PLAYER_ID) || window.window.DM)){
-		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
-		maxAge = (typeof tokens[0].options.maxAge !== 'undefined') ? tokens[0].options.maxAge : false;
-	}
-	else if(window.DM && tokens.length>1){
-		age = '';
-		maxAge = '';
-	}
-	else{
-		age = (typeof tokens[0].options.age !== 'undefined') ? tokens[0].options.age : '';
-		maxAge = '';
-	}
-	
-	let ageMenuInput = $(`<label class='menu-input-label'>Age<input value='${age}' class='menu-input ageMenuInput' type="number"></label>`);
-	let maxAgeMenuInput = $(`<label class='menu-input-label'>Max Age<input value='${maxAge}' class='menu-input maxAgeMenuInput' type="number"></label>`);		
-	if(maxAge !== false) {
-		body.append(ageMenuInput);
-		body.append(maxAgeMenuInput);	
-	}
-
-	ageMenuInput.on('focusout', function(event) {
-		tokens.forEach(token => {
-			token.options.age = event.target.value;
-			token.place_sync_persist();
-		});
-	});
-	maxAgeMenuInput.on('focusout', function(event) {
-		tokens.forEach(token => {
-			token.options.maxAge = event.target.value;
-			token.place_sync_persist();
-		});
-	});
-	return body;
-}
 
 
 function build_notes_flyout_menu(tokenIds) {
@@ -2866,7 +2822,10 @@ function build_adjustments_flyout_menu(tokenIds) {
 	tokens.forEach(t => {
 		tokenSizes.push(t.numberOfGridSpacesWide());
 	});
+
+
 	let uniqueSizes = [...new Set(tokenSizes)];
+
 	console.log("uniqueSizes", uniqueSizes);
 	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
 		let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
@@ -2891,6 +2850,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 	if (allTokensAreAoe) {
 		sizeInputs.find("select").closest(".token-image-modal-footer-select-wrapper").hide(); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
 	}
+
 
 	if (!allTokensAreAoe) {
 
@@ -2951,6 +2911,84 @@ function build_adjustments_flyout_menu(tokenIds) {
 		});
 	}
 	return body;
+}
+
+function build_age_inputs(tokenAges, tokenMaxAges, ageChangeHandler, maxAgeChangeHandler) {
+
+	let maxAge = false;
+	// get the first value if there's only 1 value
+	if (tokenMaxAges.length === 1) {
+		maxAge = tokenMaxAges[0]
+	}
+	else{
+		maxAge = -1;
+	}
+
+
+	let age = '';
+	// get the first value if there's only 1 value
+	if (tokenAges.length === 1) {
+		age = tokenAges[0]
+		if (isNaN(age)) {
+			ages = '';
+		}
+	}
+
+	const isSizeCustom = (maxAge == 'custom');
+
+
+	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
+
+	let output = $(`
+ 		<div class="token-image-modal-footer-select-wrapper">
+ 			<div class="token-image-modal-footer-title">Token Time Limit</div>
+ 			<select name="data-token-size">
+			 	${maxAge === -1 ? '<option value="multiple" selected="selected" disabled="disabled">Multiple Values</option>' : ""}
+ 				<option value="false" ${maxAge === false ? "selected='selected'": ""}>None</option>
+ 				<option value="1" ${maxAge === 1 ? "selected='selected'": ""}>1 Round</option>
+ 				<option value="10" ${maxAge === 10 ? "selected='selected'": ""}>1 Minute</option>
+ 				<option value="custom" ${maxAge === 'custom' ? "selected='selected'": ""}>Custom</option>
+ 			</select>
+ 		</div>
+ 		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
+ 			<div class="token-image-modal-footer-title">Custom Time Limit</div>
+ 			<input type="number" min="0" step="1"
+			 name="data-token-size-custom" value=${age} style="width: 3rem;">
+ 		</div>
+ 	`);
+
+	let tokenMaxAgeInput = output.find("select");
+	let customAgeInput = output.find("input");
+
+	tokenMaxAgeInput.change(function(event) {
+		let val = event.target.value == 'false' ? false : event.target.value;
+		let customInputWrapper = $(event.target).parent().next();
+		if (val === "custom") {
+			customInputWrapper.show();
+		} 
+		else{
+			customInputWrapper.hide();
+		}
+		if(!isNaN(parseInt(val))){
+			maxAgeChangeHandler(parseInt(val), false);	
+			ageChangeHandler(parseInt(val));
+		}
+		else if(val == 'custom'){
+			maxAgeChangeHandler(val, false);	
+			customAgeInput.trigger('focusout');
+		}
+		else{
+			maxAgeChangeHandler(val, true);	
+		}
+		
+
+	});
+	customAgeInput.on('focusout', function(event) {
+		ageChangeHandler(parseInt(event.target.value));		
+	});
+
+
+	return output;
 }
 
 function build_token_image_scale_input(startingScale, tokens, didUpdate) {
@@ -3091,6 +3129,35 @@ function build_options_flyout_menu(tokenIds) {
 			console.warn("build_options_flyout_menu failed to handle token setting option with type", setting.type);
 		}
 	}
+	
+	let tokenMaxAges = [];
+	let tokenAges = [];
+	tokens.forEach(t => {
+		tokenMaxAges.push(t.options.maxAge);
+		tokenAges.push(t.options.age);
+	});
+	let uniqueMaxAges = [...new Set(tokenMaxAges)]
+	let uniqueAges = [...new Set(tokenAges)]
+	body.append(build_age_inputs(uniqueAges, uniqueMaxAges, 
+		function(age){
+			tokens.forEach(token => {
+				token.options.age = age;
+				token.place_sync_persist();
+			});
+		
+		}, 
+		function(maxAge, updateToken){
+
+			tokens.forEach(token => {
+				token.options.maxAge = maxAge;
+				if(updateToken)
+					token.place_sync_persist();
+			});
+		}));	
+	$(".ageMenuInput").on('focus', function(event){
+		event.target.select();
+	});
+
 
 	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
 	resetToDefaults.on("click", function (clickEvent) {
