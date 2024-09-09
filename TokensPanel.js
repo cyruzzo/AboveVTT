@@ -3396,7 +3396,7 @@ function register_custom_token_image_context_menu() {
                     window.MB.inject_chat(msgdata)
                 }
             };
-            if (!element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {
+            if (!$('.token-image-modal-url-label-add-wrapper .token-image-modal-footer-title').text().includes('Replace') && !element.hasClass("change-token-image-item") && foundElement?.type !== 'builtinToken' && foundElement?.type !== 'ddbToken') {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
