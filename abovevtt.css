@@ -3556,7 +3556,14 @@ div.token-image {
     width: 100%;
     height: 100%;
 }
+.ct-sidebar[class*='styles_sidebar'] {
+    min-width: 340px !important;
+}
 
+.ct-sidebar[class*='styles_sidebar'] [class*='styles_content'] {
+    min-width: 340px !important;
+    max-width: 340px !important;
+}
 
 .token:before{
     transform: rotate(var(--token-rotation));
