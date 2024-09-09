@@ -3662,6 +3662,10 @@ input.condition-duration-input {
 .context-menu-icon-concentration-reminder:before {
     background-image: url(assets/conditons/concentration\(reminder\).png);
 }
+.icon-reaction-used:before,
+.context-menu-icon-reaction-used:before {
+    background-image: url(assets/conditons/reaction_used.png);
+}
 .icon-disadvantage:before,
 .context-menu-icon-disadvantage:before {
     background-image: url(assets/conditons/disadvantage.png);
@@ -7342,6 +7346,7 @@ button span.onedrive-btn-status{
     display:none;
 }
 .icon-concentration-reminder:before,
+.icon-reaction-used:before,
 .icon-inspiration:before,
 .icon-flying:before,
 .icon-flamed:before,
