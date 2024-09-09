@@ -1331,6 +1331,16 @@ class MessageBroker {
 							        }
 							    }
 								}
+								if(msg.avttDamageType !== undefined){
+							
+									let damageContainer = target.find(`[class*='DiceResultContainer']:nth-of-type(${row}) [class*='Line-Title']>[class*='-RollType']`);
+							    if (damageContainer.length > 0) {
+							        let damageType = msg.avttDamageType;
+							        if (damageType !== undefined && damageType.length > 0) {
+							            damageContainer.text(`${damageType} ${damageContainer.text()}`)
+							        }
+							    }
+								}
 								allRollsTotal += msg.data.rolls[i].result.total;
 							}
 

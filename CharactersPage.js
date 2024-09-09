@@ -689,6 +689,574 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     }
 
+
+    const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
+    if (icons.length > 0) {
+      icons.wrap(function() {
+        $(this).addClass("above-vtt-visited");
+        const button = $("<button class='above-aoe integrated-dice__container'></button>");
+
+        const spellContainer = $(this).closest('.ct-spells-spell')
+        const name = spellContainer.find(".ddbc-spell-name").first().text()
+        let color = "default"
+        const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
+        const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
+        if (dmgIcon.length == 1){
+          color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
+        }
+        let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+        shape = window.top.sanitize_aoe_shape(shape)
+        button.attr("title", "Place area of effect token")
+        button.attr("data-shape", shape);
+        button.attr("data-style", color);
+        button.attr("data-size", Math.round(feet / window.top.CURRENT_SCENE_DATA.fpsq));
+        button.attr("data-name", name);
+
+        // Players need the token side panel for this to work for them.
+        // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
+        // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
+        // enable_draggable_token_creation(button);
+        button.css("border-width","1px");
+        button.click(function(e) {
+          e.stopPropagation();
+          // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
+         
+          window.top.hide_player_sheet();
+          window.top.minimize_player_sheet();
+
+          let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+          if(name == 'Darkness' || name == 'Maddening Darkness' ){
+            options = {
+              ...options,
+              darkness: true
+            }
+          }
+          window.top.place_aoe_token_in_centre(options)
+          // place_token_in_center_of_view only works for the DM
+          // place_token_in_center_of_view(options)
+        });
+        return button;
+      });
+      console.log(`${icons.length} aoe spells discovered`);
+    }
+
+
+    const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
+    if (spells.length > 0){
+      $(spells).addClass("above-vtt-visited");
+      $(spells).css({
+        '-webkit-user-select': 'none',
+        '-ms-user-select': 'none',
+        'user-select': 'none',
+      })
+      spells.off().on('mouseover.color', function(e){
+        if(e.shiftKey){
+          $(this).toggleClass('advantageHover', true)
+        }
+        else if(e.ctrlKey || e.metaKey){
+          $(this).toggleClass('disadvantageHover', true)
+        }else{
+          $(this).toggleClass('advantageHover', false)
+          $(this).toggleClass('disadvantageHover', false)
+        }
+      })
+      spells.off('mouseleave.color').on('mouseleave.color', function(e){
+        $(this).toggleClass('advantageHover', false)
+        $(this).toggleClass('disadvantageHover', false)
+      })
+      spells.off('click.multiroll').on('click.multiroll', function(e) {
+        e.stopPropagation();
+        $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
+
+        let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);  
+        let spellSave = $(this).parent().find(`.ct-spells-spell__save`);   
+        let spellSaveText;
+        if(spellSave.length>0){
+          spellSaveText = `${spellSave.find('.ct-spells-spell__save-label').text().toUpperCase()} DC${spellSave.find('.ct-spells-spell__save-value').text()}`;
+        }     
+        for(let i = 0; i<rollButtons.length; i++){  
+          let data = getRollData(rollButtons[i]);           
+          let diceRoll;
+          let damageTypeIcon = $(rollButtons[i]).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
+          let damageTypeText;
+          if(damageTypeIcon.length > 0){
+            let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
+            damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
+          }
+          else{
+            let damageTypeTitle = $(rollButtons[i]).find('.ddbc-tooltip[data-original-title]');
+            if(damageTypeTitle.length > 0){
+              damageTypeText = damageTypeTitle.attr('data-original-title')
+            }
+          }
+          if(data.expression != undefined){
+                if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+                  if(e.altKey){
+                    if(e.shiftKey){
+                      diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                    }
+                     else if(e.ctrlKey || e.metaKey){
+                      diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                    }
+                   }
+                   else if(e.shiftKey){
+                    diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                   }
+                   else if(e.ctrlKey || e.metaKey){
+                    diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                   }else{
+                    diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
+                   }
+                }
+                else{
+                  diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+                }
+            window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText, damageTypeText);
+            spellSaveText = undefined;
+          }
+        }
+        if(rollButtons.length == 0 && spellSaveText != undefined){
+          let msgdata = {
+            player: window.PLAYER_NAME,
+              img: window.PLAYER_IMG,
+              text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$(this).parent().find('[class*="styles_spellName"]').text()}: </span><span>${spellSaveText}</span></div>`,
+              playerId: window.PLAYER_ID,
+              sendTo: window.sendToTab 
+          }
+          if(is_abovevtt_page()){
+            window.MB.inject_chat(msgdata)
+          }
+          else if(window.sendToTab != undefined){
+            tabCommunicationChannel.postMessage({
+              msgType: 'SendToGamelog',
+              player: msgdata.player,
+              img: msgdata.img,
+              text: msgdata.text,
+              sendTo: msgdata.sendTo
+            });
+          } 
+        }     
+      });
+      if($(`style#advantageHover`).length == 0){
+          $('body').append(`
+            <style id='advantageHover'>
+            .ddbc-combat-attack__icon.above-vtt-visited,
+            .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will{
+              border: 1px solid var(--theme-color, #ddd);
+              border-radius: 5px;
+              padding: 3px;
+              margin: 0px 2px 0px 0px;
+            }
+            #site .advantageHover svg [fill="#b0b7bd"], 
+            #site .advantageHover svg [fill="#242528"],
+            #site .advantageHover svg .prefix__st0,
+            #site .advantageHover svg .prefix__st2,
+            #site .advantageHover svg .prefix__st4,
+            #site .advantageHover svg [fill="#b0b7bd"] *, 
+            #site .advantageHover svg [fill="#242528"] *{
+              fill: #4fcf4f !important;
+            }
+            #site .advantageHover {
+              color: #4fcf4f !important;
+            }
+            #site .disadvantageHover svg [fill="#b0b7bd"], 
+            #site .disadvantageHover svg [fill="#242528"],
+            #site .disadvantageHover svg .prefix__st0,
+            #site .disadvantageHover svg .prefix__st2,
+            #site .disadvantageHover svg .prefix__st4,
+            #site .disadvantageHover svg [fill="#b0b7bd"] *, 
+            #site .disadvantageHover svg [fill="#242528"] *{
+                fill: #bb4242 !important;
+            }
+            #site .disadvantageHover {
+              color: #4fcf4f !important;
+            }
+          </style>`);
+      }
+    }
+
+
+    const spellDamageButtons = $(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
+    if(spellDamageButtons.length > 0){
+      $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
+      spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
+        let spellSave = $(this).closest('.ddbc-combat-attack, .ct-spells-spell').find(`[class*='__save']`);   
+        let spellSaveText;
+        if(spellSave.length>0){
+          spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
+        } 
+        window.diceRoller.setPendingSpellSave(spellSaveText);
+      })
+    } 
+
+
+    const damageButtons = $(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
+    if(damageButtons.length > 0){
+      $(damageButtons).addClass("above-vtt-visited-damage");
+      damageButtons.off('click.damageType').on('click.damageButtons', function(e){
+        let damageTypeIcon = $(this).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
+        let damageTypeText;
+        if(damageTypeIcon.length > 0){
+          let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
+          damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
+        }else{
+          let damageTypeTitle = $(this).find('.ddbc-tooltip[data-original-title]');
+          if(damageTypeTitle.length > 0){
+            damageTypeText = damageTypeTitle.attr('data-original-title')
+          }
+
+        }
+        if(damageTypeText != undefined)
+          window.diceRoller.setPendingDamageType(damageTypeText);
+      })
+    } 
+
+
+    const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
+    if (attackIcons.length > 0){
+      if(!window.CHARACTER_AVTT_SETTINGS){
+        window.CHARACTER_AVTT_SETTINGS = {}
+      }
+      if($('#icon-roll-optons').length == 0){
+        let urlSplit = window.location.href.split("/");
+        window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
+        window.CHARACTER_AVTT_SETTINGS = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
+        if(!(typeof window.CHARACTER_AVTT_SETTINGS === 'object') || window.CHARACTER_AVTT_SETTINGS === null){
+          window.CHARACTER_AVTT_SETTINGS = {};
+        }
+        
+        let settingOption = { 
+            "versatile":{
+              label: "Versatile rolls",
+              type: "dropdown",
+              options: [
+                { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
+                { value: "1", label: "1-Handed", description: "1-handed rolls will be rolled." },
+                { value: "2", label: "2-Handed", description: "2-handed rolls will be rolled." }
+              ],
+              defaultValue: "both"
+            },
+            "crit":{
+              label: "Crit Type",
+              type: "dropdown",
+              options:[
+                { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
+                { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
+                { value: "2", label: "Manual", description: "Rolls are not modified based on crit" },
+                ],
+              defaultValue: "0"
+            },
+            "critRange":{
+              label: "Crit Range",
+              type: "input",
+              inputType: 'number',
+              max: '20',
+              min: '1',
+              step: '1',
+              defaultValue: "20"
+            }
+        }
+        let options = $(`<div id='icon-roll-options' 
+          style= 'z-index: 100000;
+              width: 20%;
+              height: 20%;
+              width: 300px;
+              height: 300px;
+              position: fixed;
+              display: none;
+              left: 50%;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              background: var(--theme-background-solid);
+              box-shadow: 0px 0px 4px var(--theme-contrast);
+              padding-right: 5px;
+              border-radius: 15px;
+              border: 1px solid var(--theme-contrast);
+              color: var(--theme-contrast);
+            '>
+        </div>`)
+        let closeOptions = $(`<div id='close-icon-roll-options' 
+          style='z-index: 99999;
+            height: 100%;
+            width: 100%;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;'/>`)
+        closeOptions.off().on('click', function(){
+          options.css('display', 'none');
+          closeOptions.css('display', 'none');
+        })
+        options.append(closeOptions);
+        $('body').append(closeOptions, options);
+        for(let i in settingOption){
+            if(window.CHARACTER_AVTT_SETTINGS[i] == undefined){
+              window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
+            }
+           let wrapper = $(`
+             <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 10px 0px 10px 0px;align-items: center;' data-option-name="${i}">
+               <div style="margin-right: 3px; margin-left: 10px; flex-grow: 1;font-weight: 700;font-size: 14px;">${settingOption[i].label}:</div>
+             </div>
+           `);
+           let input;
+           if(settingOption[i].type == 'dropdown'){
+            input = $(`<select name="${i}" style='font-size: 14px; padding:0px'></select>`);
+
+            for (const option of settingOption[i].options) {
+              input.append(`<option value="${option.value}">${option.label}</option>`);
+            }
+            if (window.CHARACTER_AVTT_SETTINGS[i] !== undefined) {
+              input.find(`option[value='${window.CHARACTER_AVTT_SETTINGS[i]}']`).attr('selected','selected');
+            } 
+            const currentlySetOption = settingOption[i].options.find(o => o.value === window.CHARACTER_AVTT_SETTINGS[i]) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
+            input.change(function(event) {
+              let newValue = event.target.value;
+              window.CHARACTER_AVTT_SETTINGS[i] = newValue;
+              localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
+              const updatedOption = settingOption[i].options.find(o => o.value === newValue) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
+            });
+           }
+           else if(settingOption[i].type == 'input'){
+            input = $(`<input min='${settingOption[i].min}' max='${settingOption[i].max}' step='${settingOption[i].step}' type='${settingOption[i].inputType}' value='${window.CHARACTER_AVTT_SETTINGS[i]}'/>`)
+            input.change(function(event) {
+              let newValue = event.target.value;
+              window.CHARACTER_AVTT_SETTINGS[i] = newValue;
+              localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
+            });
+           }
+            
+            wrapper.append(input);
+
+            options.append(wrapper)
+        }
+        let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
+         <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
+         <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
+         <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
+         <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
+          </div>`)
+        options.append(optionsInfo);
+
+      }
+      if($('#avtt-icon-roll-span').length == 0){
+        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+        settings.off().on('click', function(){
+          $('#close-icon-roll-options').css('display', 'block');
+          $('#icon-roll-options').css('display', 'block');
+        }) 
+        $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
+      }
+
+      $(attackIcons).addClass("above-vtt-visited");
+      $(attackIcons).css({
+        '-webkit-user-select': 'none',
+        '-ms-user-select': 'none',
+        'user-select': 'none',
+      })
+      attackIcons.off().on('mouseover.color', function(e){
+        if(e.shiftKey){
+          $(this).toggleClass('advantageHover', true)
+        }
+        else if(e.ctrlKey || e.metaKey){
+          $(this).toggleClass('disadvantageHover', true)
+        }else{
+          $(this).toggleClass('advantageHover', false)
+          $(this).toggleClass('disadvantageHover', false)
+        }
+      })
+      attackIcons.off('mouseleave.color').on('mouseleave.color', function(e){
+        $(this).toggleClass('advantageHover', false)
+        $(this).toggleClass('disadvantageHover', false)
+      })
+      attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
+                     
+        let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
+        let spellSave = $(this).parent().find(`[class*='__save']`);   
+        let spellSaveText;
+        if(spellSave.length>0){
+          spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
+        }    
+
+        for(let i = 0; i<rollButtons.length; i++){  
+          let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
+          if(isVersatileDamage && versatileRoll =='1'){
+            if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] != rollButtons[i])
+              continue;
+          }
+          else if(isVersatileDamage && versatileRoll =='2'){
+            if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] == rollButtons[i])
+              continue;
+          }           
+          let data = getRollData(rollButtons[i]);
+          let damageTypeIcon = $(rollButtons[i]).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
+          let damageTypeText;
+          if(damageTypeIcon.length > 0){
+            let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
+            damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
+          }
+          else{
+            let damageTypeTitle = $(rollButtons[i]).find('.ddbc-tooltip[data-original-title]');
+            if(damageTypeTitle.length > 0){
+              damageTypeText = damageTypeTitle.attr('data-original-title')
+            }
+          }
+          let diceRoll;
+          if(data.expression != undefined){
+            if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+               if(e.altKey){
+                  if(e.shiftKey){
+                    diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+                   }
+                   else if(e.ctrlKey || e.metaKey){
+                    diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+                   }
+               }
+               else if(e.shiftKey){
+                diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
+               }
+               else if(e.ctrlKey || e.metaKey){
+                diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
+               }else{
+                diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+               }
+            }
+            else{
+              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
+            }
+            window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText, damageTypeText);
+          }
+        }   
+        if(rollButtons.length == 0 && spellSaveText != undefined){
+          let msgdata = {
+            player:  window.PLAYER_NAME,
+              img: window.PLAYER_IMG,
+              text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$($(this).parent().find('[class*="__name"]>[class*="__label"]')[0]).text()}: </span><span>${spellSaveText}</span></div>`,
+              playerId: window.PLAYER_ID,
+              sendTo: window.sendToTab 
+          }
+          if(is_abovevtt_page()){
+            window.MB.inject_chat(msgdata)
+          }
+          else if(window.sendToTab != undefined){
+            tabCommunicationChannel.postMessage({
+              msgType: 'SendToGamelog',
+              player: msgdata.player,
+              img: msgdata.img,
+              text: msgdata.text,
+              sendTo: msgdata.sendTo
+            });
+          }    
+        }
+      })
+      if($(`style#advantageHover`).length == 0){
+          $('body').append(`
+            <style id='advantageHover'>
+              menu[class*='styles_tabs']>li>button[class*='styles_tabButton']{
+                  max-height: 26px;
+              }
+              menu[class*='styles_tabs']{
+                  margin-bottom: 6px;
+              }
+              button.avtt-roll-button {
+                  /* lifted from DDB encounter stat blocks  */
+                  color: #b43c35;
+                  border: 1px solid #b43c35;
+                  border-radius: 4px;
+                  background-color: #fff;
+                  white-space: nowrap;
+                  font-size: 14px;
+                  font-weight: 600;
+                  font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+                  line-height: 18px;
+                  letter-spacing: 1px;
+                  padding: 1px 4px 0;
+              }
+              [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
+              .ct-primary-box__tab--actions .ddbc-tab-options__content{
+                max-height: 551px;
+              }
+              
+              .ct-description .ddbc-tab-options__content,
+              .ct-notes .ddbc-tab-options__content,
+              .ct-features .ddbc-tab-options__content{
+                height: 569px;
+              }
+              
+              .ct-primary-box .ct-creatures, 
+              .ct-primary-box .ct-equipment, 
+              .ct-primary-box .ct-extras, 
+              .ct-primary-box .ct-spells,
+              .ct-primary-box .ct-description,
+              .ct-primary-box .ct-features,
+              .ct-primary-box .ct-notes{
+                height: 612px;
+              }
+
+
+              .ddbc-combat-attack__icon.above-vtt-visited,
+              .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will,
+              .ddb-note-roll{
+                border: 1px solid var(--theme-color, #ddd);
+                border-radius: 5px;
+                display: flex;
+                padding: 4px;
+                margin: 0px 2px 0px 0px;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+              }
+
+              .ddb-note-roll{
+                display: inline-flex;
+                flex-direction: row;
+              }
+              #site .advantageHover svg [fill="#b0b7bd"], 
+              #site .advantageHover svg [fill="#242528"],
+              #site .advantageHover svg .prefix__st0,
+              #site .advantageHover svg .prefix__st2,
+              #site .advantageHover svg .prefix__st4,
+              #site .advantageHover svg [fill="#b0b7bd"] *, 
+              #site .advantageHover svg [fill="#242528"] *{
+                fill: #4fcf4f !important;
+              }
+              #site .advantageHover  span{
+                color: #4fcf4f !important;
+              }
+              #site .disadvantageHover svg [fill="#b0b7bd"], 
+              #site .disadvantageHover svg [fill="#242528"],
+              #site .disadvantageHover svg .prefix__st0,
+              #site .disadvantageHover svg .prefix__st2,
+              #site .disadvantageHover svg .prefix__st4,
+              #site .disadvantageHover svg [fill="#b0b7bd"] *, 
+              #site .disadvantageHover svg [fill="#242528"] *{
+                  fill: #bb4242 !important;
+              }
+              #site .disadvantageHover span{
+                color: #bb4242 !important;
+              }
+          </style>`);
+      }    
+    }
+
+
+    $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
+      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
+      if(e.shiftKey){
+        $(target).toggleClass('advantageHover', true)
+      }
+      else if(e.ctrlKey || e.metaKey){
+        $(target).toggleClass('disadvantageHover', true)
+      }else{
+        $(target).toggleClass('advantageHover', false)
+        $(target).toggleClass('disadvantageHover', false)
+      }
+    });
+
+    
     // handle updates to element changes that would strip our buttons
     mutationList.forEach(mutation => {
       try {
@@ -723,521 +1291,9 @@ function observe_character_sheet_changes(documentToObserve) {
             }, 0);
           }
         });
-        const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
-        if (icons.length > 0) {
-          icons.wrap(function() {
-            $(this).addClass("above-vtt-visited");
-            const button = $("<button class='above-aoe integrated-dice__container'></button>");
+       
 
-            const spellContainer = $(this).closest('.ct-spells-spell')
-            const name = spellContainer.find(".ddbc-spell-name").first().text()
-            let color = "default"
-            const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
-            const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
-            if (dmgIcon.length == 1){
-              color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
-            }
-            let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
-            shape = window.top.sanitize_aoe_shape(shape)
-            button.attr("title", "Place area of effect token")
-            button.attr("data-shape", shape);
-            button.attr("data-style", color);
-            button.attr("data-size", Math.round(feet / window.top.CURRENT_SCENE_DATA.fpsq));
-            button.attr("data-name", name);
-
-            // Players need the token side panel for this to work for them.
-            // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
-            // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
-            // enable_draggable_token_creation(button);
-            button.css("border-width","1px");
-            button.click(function(e) {
-              e.stopPropagation();
-              // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
-             
-              window.top.hide_player_sheet();
-              window.top.minimize_player_sheet();
-
-              let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
-              if(name == 'Darkness' || name == 'Maddening Darkness' ){
-                options = {
-                  ...options,
-                  darkness: true
-                }
-              }
-              window.top.place_aoe_token_in_centre(options)
-              // place_token_in_center_of_view only works for the DM
-              // place_token_in_center_of_view(options)
-            });
-            return button;
-          });
-          console.log(`${icons.length} aoe spells discovered`);
-        }
-        const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
-        if (spells.length > 0){
-          $(spells).addClass("above-vtt-visited");
-          $(spells).css({
-            '-webkit-user-select': 'none',
-            '-ms-user-select': 'none',
-            'user-select': 'none',
-          })
-          spells.off().on('mouseover.color', function(e){
-            if(e.shiftKey){
-              $(this).toggleClass('advantageHover', true)
-            }
-            else if(e.ctrlKey || e.metaKey){
-              $(this).toggleClass('disadvantageHover', true)
-            }else{
-              $(this).toggleClass('advantageHover', false)
-              $(this).toggleClass('disadvantageHover', false)
-            }
-          })
-          spells.off('mouseleave.color').on('mouseleave.color', function(e){
-            $(this).toggleClass('advantageHover', false)
-            $(this).toggleClass('disadvantageHover', false)
-          })
-          spells.off('click.multiroll').on('click.multiroll', function(e) {
-            e.stopPropagation();
-            $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
-
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);  
-            let spellSave = $(this).parent().find(`.ct-spells-spell__save`);   
-            let spellSaveText;
-            if(spellSave.length>0){
-              spellSaveText = `${spellSave.find('.ct-spells-spell__save-label').text().toUpperCase()} DC${spellSave.find('.ct-spells-spell__save-value').text()}`;
-            }     
-            for(let i = 0; i<rollButtons.length; i++){  
-              let data = getRollData(rollButtons[i]);           
-              let diceRoll;
-              if(data.expression != undefined){
-                    if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                      if(e.altKey){
-                        if(e.shiftKey){
-                          diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                        }
-                         else if(e.ctrlKey || e.metaKey){
-                          diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                        }
-                       }
-                       else if(e.shiftKey){
-                        diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                       }
-                       else if(e.ctrlKey || e.metaKey){
-                        diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                       }else{
-                        diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
-                       }
-                    }
-                    else{
-                      diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-                    }
-                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText);
-                spellSaveText = undefined;
-              }
-            }
-            if(rollButtons.length == 0 && spellSaveText != undefined){
-              let msgdata = {
-                player: window.PLAYER_NAME,
-                  img: window.PLAYER_IMG,
-                  text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$(this).parent().find('[class*="styles_spellName"]').text()}: </span><span>${spellSaveText}</span></div>`,
-                  playerId: window.PLAYER_ID,
-                  sendTo: window.sendToTab 
-              }
-              if(is_abovevtt_page()){
-                window.MB.inject_chat(msgdata)
-              }
-              else if(window.sendToTab != undefined){
-                tabCommunicationChannel.postMessage({
-                  msgType: 'SendToGamelog',
-                  player: msgdata.player,
-                  img: msgdata.img,
-                  text: msgdata.text,
-                  sendTo: msgdata.sendTo
-                });
-              } 
-            }     
-          });
-          if($(`style#advantageHover`).length == 0){
-              $('body').append(`
-                <style id='advantageHover'>
-                .ddbc-combat-attack__icon.above-vtt-visited,
-                .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will{
-                  border: 1px solid var(--theme-color, #ddd);
-                  border-radius: 5px;
-                  padding: 3px;
-                  margin: 0px 2px 0px 0px;
-                }
-                #site .advantageHover svg [fill="#b0b7bd"], 
-                #site .advantageHover svg [fill="#242528"],
-                #site .advantageHover svg .prefix__st0,
-                #site .advantageHover svg .prefix__st2,
-                #site .advantageHover svg .prefix__st4,
-                #site .advantageHover svg [fill="#b0b7bd"] *, 
-                #site .advantageHover svg [fill="#242528"] *{
-                  fill: #4fcf4f !important;
-                }
-                #site .advantageHover {
-                  color: #4fcf4f !important;
-                }
-                #site .disadvantageHover svg [fill="#b0b7bd"], 
-                #site .disadvantageHover svg [fill="#242528"],
-                #site .disadvantageHover svg .prefix__st0,
-                #site .disadvantageHover svg .prefix__st2,
-                #site .disadvantageHover svg .prefix__st4,
-                #site .disadvantageHover svg [fill="#b0b7bd"] *, 
-                #site .disadvantageHover svg [fill="#242528"] *{
-                    fill: #bb4242 !important;
-                }
-                #site .disadvantageHover {
-                  color: #4fcf4f !important;
-                }
-              </style>`);
-          }
-        }
-
-        const spellDamageButtons = $(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
-
-        if(spellDamageButtons.length > 0){
-          $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
-          spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
-            let spellSave = $(this).closest('.ddbc-combat-attack, .ct-spells-spell').find(`[class*='__save']`);   
-            let spellSaveText;
-            if(spellSave.length>0){
-              spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
-            } 
-            window.diceRoller.setPendingSpellSave(spellSaveText);
-          })
-        } 
-
-        const attackIcons = documentToObserve.find(".ddbc-combat-attack__icon:not('.above-vtt-visited')") 
-        if (attackIcons.length > 0){
-          if(!window.CHARACTER_AVTT_SETTINGS){
-            window.CHARACTER_AVTT_SETTINGS = {}
-          }
-          if($('#icon-roll-optons').length == 0){
-            let urlSplit = window.location.href.split("/");
-            window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
-            window.CHARACTER_AVTT_SETTINGS = $.parseJSON(localStorage.getItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID));
-            if(!(typeof window.CHARACTER_AVTT_SETTINGS === 'object') || window.CHARACTER_AVTT_SETTINGS === null){
-              window.CHARACTER_AVTT_SETTINGS = {};
-            }
-            
-            let settingOption = { 
-                "versatile":{
-                  label: "Versatile rolls",
-                  type: "dropdown",
-                  options: [
-                    { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
-                    { value: "1", label: "1-Handed", description: "1-handed rolls will be rolled." },
-                    { value: "2", label: "2-Handed", description: "2-handed rolls will be rolled." }
-                  ],
-                  defaultValue: "both"
-                },
-                "crit":{
-                  label: "Crit Type",
-                  type: "dropdown",
-                  options:[
-                    { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
-                    { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
-                    { value: "2", label: "Manual", description: "Rolls are not modified based on crit" },
-                    ],
-                  defaultValue: "0"
-                },
-                "critRange":{
-                  label: "Crit Range",
-                  type: "input",
-                  inputType: 'number',
-                  max: '20',
-                  min: '1',
-                  step: '1',
-                  defaultValue: "20"
-                }
-            }
-            let options = $(`<div id='icon-roll-options' 
-              style= 'z-index: 100000;
-                  width: 20%;
-                  height: 20%;
-                  width: 300px;
-                  height: 300px;
-                  position: fixed;
-                  display: none;
-                  left: 50%;
-                  top: 50%;
-                  transform: translate(-50%, -50%);
-                  background: var(--theme-background-solid);
-                  box-shadow: 0px 0px 4px var(--theme-contrast);
-                  padding-right: 5px;
-                  border-radius: 15px;
-                  border: 1px solid var(--theme-contrast);
-                  color: var(--theme-contrast);
-                '>
-            </div>`)
-            let closeOptions = $(`<div id='close-icon-roll-options' 
-              style='z-index: 99999;
-                height: 100%;
-                width: 100%;
-                position: fixed;
-                top: 0px;
-                left: 0px;
-                background: rgba(0, 0, 0, 0.4);
-                display: none;'/>`)
-            closeOptions.off().on('click', function(){
-              options.css('display', 'none');
-              closeOptions.css('display', 'none');
-            })
-            options.append(closeOptions);
-            $('body').append(closeOptions, options);
-            for(let i in settingOption){
-                if(window.CHARACTER_AVTT_SETTINGS[i] == undefined){
-                  window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
-                }
-               let wrapper = $(`
-                 <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 10px 0px 10px 0px;align-items: center;' data-option-name="${i}">
-                   <div style="margin-right: 3px; margin-left: 10px; flex-grow: 1;font-weight: 700;font-size: 14px;">${settingOption[i].label}:</div>
-                 </div>
-               `);
-               let input;
-               if(settingOption[i].type == 'dropdown'){
-                input = $(`<select name="${i}" style='font-size: 14px; padding:0px'></select>`);
-
-                for (const option of settingOption[i].options) {
-                  input.append(`<option value="${option.value}">${option.label}</option>`);
-                }
-                if (window.CHARACTER_AVTT_SETTINGS[i] !== undefined) {
-                  input.find(`option[value='${window.CHARACTER_AVTT_SETTINGS[i]}']`).attr('selected','selected');
-                } 
-                const currentlySetOption = settingOption[i].options.find(o => o.value === window.CHARACTER_AVTT_SETTINGS[i]) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
-                input.change(function(event) {
-                  let newValue = event.target.value;
-                  window.CHARACTER_AVTT_SETTINGS[i] = newValue;
-                  localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
-                  const updatedOption = settingOption[i].options.find(o => o.value === newValue) || settingOption[i].options.find(o => o.value === settingOption[i].defaultValue);
-                });
-               }
-               else if(settingOption[i].type == 'input'){
-                input = $(`<input min='${settingOption[i].min}' max='${settingOption[i].max}' step='${settingOption[i].step}' type='${settingOption[i].inputType}' value='${window.CHARACTER_AVTT_SETTINGS[i]}'/>`)
-                input.change(function(event) {
-                  let newValue = event.target.value;
-                  window.CHARACTER_AVTT_SETTINGS[i] = newValue;
-                  localStorage.setItem("CHARACTER_AVTT_SETTINGS" + window.PLAYER_ID, JSON.stringify(window.CHARACTER_AVTT_SETTINGS));
-                });
-               }
-                
-                wrapper.append(input);
-
-                options.append(wrapper)
-            }
-            let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
-             <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
-             <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
-             <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
-             <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
-              </div>`)
-            options.append(optionsInfo);
-  
-          }
-          if($('#avtt-icon-roll-span').length == 0){
-            let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
-            settings.off().on('click', function(){
-              $('#close-icon-roll-options').css('display', 'block');
-              $('#icon-roll-options').css('display', 'block');
-            }) 
-            $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
-          }
-
-          $(attackIcons).addClass("above-vtt-visited");
-          $(attackIcons).css({
-            '-webkit-user-select': 'none',
-            '-ms-user-select': 'none',
-            'user-select': 'none',
-          })
-          attackIcons.off().on('mouseover.color', function(e){
-            if(e.shiftKey){
-              $(this).toggleClass('advantageHover', true)
-            }
-            else if(e.ctrlKey || e.metaKey){
-              $(this).toggleClass('disadvantageHover', true)
-            }else{
-              $(this).toggleClass('advantageHover', false)
-              $(this).toggleClass('disadvantageHover', false)
-            }
-          })
-          attackIcons.off('mouseleave.color').on('mouseleave.color', function(e){
-            $(this).toggleClass('advantageHover', false)
-            $(this).toggleClass('disadvantageHover', false)
-          })
-          attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
-                         
-            let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
-            let spellSave = $(this).parent().find(`[class*='__save']`);   
-            let spellSaveText;
-            if(spellSave.length>0){
-              spellSaveText = `${spellSave.find('[class*="__save-label"]').text().toUpperCase()} DC${spellSave.find('[class*="__save-value"]').text()}`;
-            }    
-            for(let i = 0; i<rollButtons.length; i++){  
-              let isVersatileDamage = $(rollButtons[i]).parent().hasClass('ddb-combat-item-attack__damage--is-versatile')
-              if(isVersatileDamage && versatileRoll =='1'){
-                if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] != rollButtons[i])
-                  continue;
-              }
-              else if(isVersatileDamage && versatileRoll =='2'){
-                if($(rollButtons[i]).parent().find('.integrated-dice__container:first-of-type')[0] == rollButtons[i])
-                  continue;
-              }           
-              let data = getRollData(rollButtons[i]);
-              let diceRoll;
-              if(data.expression != undefined){
-                if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-                   if(e.altKey){
-                      if(e.shiftKey){
-                        diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                       }
-                       else if(e.ctrlKey || e.metaKey){
-                        diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                       }
-                   }
-                   else if(e.shiftKey){
-                    diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                   }
-                   else if(e.ctrlKey || e.metaKey){
-                    diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                   }else{
-                    diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-                   }
-                }
-                else{
-                  diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-                }
-                window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText);
-              }
-            }   
-            if(rollButtons.length == 0 && spellSaveText != undefined){
-              let msgdata = {
-                player:  window.PLAYER_NAME,
-                  img: window.PLAYER_IMG,
-                  text: `<div class='custom-spell-save-text' style='font-weight:600'><span>Casts ${$($(this).parent().find('[class*="__name"]>[class*="__label"]')[0]).text()}: </span><span>${spellSaveText}</span></div>`,
-                  playerId: window.PLAYER_ID,
-                  sendTo: window.sendToTab 
-              }
-              if(is_abovevtt_page()){
-                window.MB.inject_chat(msgdata)
-              }
-              else if(window.sendToTab != undefined){
-                tabCommunicationChannel.postMessage({
-                  msgType: 'SendToGamelog',
-                  player: msgdata.player,
-                  img: msgdata.img,
-                  text: msgdata.text,
-                  sendTo: msgdata.sendTo
-                });
-              }    
-            }
-          })
-          if($(`style#advantageHover`).length == 0){
-              $('body').append(`
-                <style id='advantageHover'>
-                  menu[class*='styles_tabs']>li>button[class*='styles_tabButton']{
-                      max-height: 26px;
-                  }
-                  menu[class*='styles_tabs']{
-                      margin-bottom: 6px;
-                  }
-                  button.avtt-roll-button {
-                      /* lifted from DDB encounter stat blocks  */
-                      color: #b43c35;
-                      border: 1px solid #b43c35;
-                      border-radius: 4px;
-                      background-color: #fff;
-                      white-space: nowrap;
-                      font-size: 14px;
-                      font-weight: 600;
-                      font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
-                      line-height: 18px;
-                      letter-spacing: 1px;
-                      padding: 1px 4px 0;
-                  }
-                  [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
-                  .ct-primary-box__tab--actions .ddbc-tab-options__content{
-                    max-height: 551px;
-                  }
-                  
-                  .ct-description .ddbc-tab-options__content,
-                  .ct-notes .ddbc-tab-options__content,
-                  .ct-features .ddbc-tab-options__content{
-                    height: 569px;
-                  }
-                  
-                  .ct-primary-box .ct-creatures, 
-                  .ct-primary-box .ct-equipment, 
-                  .ct-primary-box .ct-extras, 
-                  .ct-primary-box .ct-spells,
-                  .ct-primary-box .ct-description,
-                  .ct-primary-box .ct-features,
-                  .ct-primary-box .ct-notes{
-                    height: 612px;
-                  }
-
-
-                  .ddbc-combat-attack__icon.above-vtt-visited,
-                  .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will,
-                  .ddb-note-roll{
-                    border: 1px solid var(--theme-color, #ddd);
-                    border-radius: 5px;
-                    display: flex;
-                    padding: 4px;
-                    margin: 0px 2px 0px 0px;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                  }
-
-                  .ddb-note-roll{
-                    display: inline-flex;
-                    flex-direction: row;
-                  }
-                  #site .advantageHover svg [fill="#b0b7bd"], 
-                  #site .advantageHover svg [fill="#242528"],
-                  #site .advantageHover svg .prefix__st0,
-                  #site .advantageHover svg .prefix__st2,
-                  #site .advantageHover svg .prefix__st4,
-                  #site .advantageHover svg [fill="#b0b7bd"] *, 
-                  #site .advantageHover svg [fill="#242528"] *{
-                    fill: #4fcf4f !important;
-                  }
-                  #site .advantageHover  span{
-                    color: #4fcf4f !important;
-                  }
-                  #site .disadvantageHover svg [fill="#b0b7bd"], 
-                  #site .disadvantageHover svg [fill="#242528"],
-                  #site .disadvantageHover svg .prefix__st0,
-                  #site .disadvantageHover svg .prefix__st2,
-                  #site .disadvantageHover svg .prefix__st4,
-                  #site .disadvantageHover svg [fill="#b0b7bd"] *, 
-                  #site .disadvantageHover svg [fill="#242528"] *{
-                      fill: #bb4242 !important;
-                  }
-                  #site .disadvantageHover span{
-                    color: #bb4242 !important;
-                  }
-              </style>`);
-          }
-        
-        }
-
-        $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-          let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
-          if(e.shiftKey){
-            $(target).toggleClass('advantageHover', true)
-          }
-          else if(e.ctrlKey || e.metaKey){
-            $(target).toggleClass('disadvantageHover', true)
-          }else{
-            $(target).toggleClass('advantageHover', false)
-            $(target).toggleClass('disadvantageHover', false)
-          }
-        });
+   
         if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type').length>0 && !['Beyond 20 Settings', 'Beyond 20 Quick Settings', 'Beyond20 Hotkey'].includes($('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text())){
            $('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-button.ajs-ok').click();
            $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
