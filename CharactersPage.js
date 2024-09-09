@@ -626,6 +626,8 @@ function inject_dice_roll(element, clear=true) {
     }
     else{
       let rollData = getRollData(this);
+      
+
       window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
     }
    
@@ -777,18 +779,7 @@ function observe_character_sheet_changes(documentToObserve) {
         for(let i = 0; i<rollButtons.length; i++){  
           let data = getRollData(rollButtons[i]);           
           let diceRoll;
-          let damageTypeIcon = $(rollButtons[i]).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
-          let damageTypeText;
-          if(damageTypeIcon.length > 0){
-            let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
-            damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
-          }
-          else{
-            let damageTypeTitle = $(rollButtons[i]).find('.ddbc-tooltip[data-original-title]');
-            if(damageTypeTitle.length > 0){
-              damageTypeText = damageTypeTitle.attr('data-original-title')
-            }
-          }
+          let damageTypeText = window.diceRoller.getDamageType(rollButtons[i]);
           if(data.expression != undefined){
                 if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
                   if(e.altKey){
@@ -894,20 +885,7 @@ function observe_character_sheet_changes(documentToObserve) {
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
       damageButtons.off('click.damageType').on('click.damageButtons', function(e){
-        let damageTypeIcon = $(this).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
-        let damageTypeText;
-        if(damageTypeIcon.length > 0){
-          let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
-          damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
-        }else{
-          let damageTypeTitle = $(this).find('.ddbc-tooltip[data-original-title]');
-          if(damageTypeTitle.length > 0){
-            damageTypeText = damageTypeTitle.attr('data-original-title')
-          }
-
-        }
-        if(damageTypeText != undefined)
-          window.diceRoller.setPendingDamageType(damageTypeText);
+        window.diceRoller.getDamageType(this);
       })
     } 
 
@@ -1092,18 +1070,8 @@ function observe_character_sheet_changes(documentToObserve) {
               continue;
           }           
           let data = getRollData(rollButtons[i]);
-          let damageTypeIcon = $(rollButtons[i]).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
-          let damageTypeText;
-          if(damageTypeIcon.length > 0){
-            let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
-            damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
-          }
-          else{
-            let damageTypeTitle = $(rollButtons[i]).find('.ddbc-tooltip[data-original-title]');
-            if(damageTypeTitle.length > 0){
-              damageTypeText = damageTypeTitle.attr('data-original-title')
-            }
-          }
+          
+          let damageTypeText = window.diceRoller.getDamageType(rollButtons[i]);
           let diceRoll;
           if(data.expression != undefined){
             if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {

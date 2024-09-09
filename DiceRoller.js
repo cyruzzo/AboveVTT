@@ -284,7 +284,23 @@ class DiceRoller {
         this.#pendingDamageType = damageTypeText;
     }
     /// PUBLIC FUNCTIONS
+    getDamageType(button){
+      let damageTypeIcon = $(button).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
+      let damageTypeText;
+      if(damageTypeIcon.length > 0){
+        let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
+        damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
+      }else{
+        let damageTypeTitle = $(button).find('.ddbc-tooltip[data-original-title]');
+        if(damageTypeTitle.length > 0){
+          damageTypeText = damageTypeTitle.attr('data-original-title')
+        }
 
+      }
+      if(damageTypeText != undefined)
+        window.diceRoller.setPendingDamageType(damageTypeText);
+      return damageTypeText;
+    }
     /**
      * Attempts to parse the expression, and roll DDB dice.
      * If dice are rolled, the results will be processed to make sure the expression is properly calculated.
