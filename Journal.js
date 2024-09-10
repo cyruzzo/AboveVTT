@@ -731,7 +731,7 @@ class JournalManager{
 					
 					visibility_row.append(visibility_toggle)
 
-					visibility_toggle.prop("checked",(self.notes[id].player != true && self.notes[id].player != false && self.notes[id].player.includes(window.playerUsers[i].userId)));
+					visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
 					
 					visibility_toggle.change(function(){
 						let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
