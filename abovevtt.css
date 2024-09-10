@@ -4323,6 +4323,36 @@ button.applyDamageButton svg {
     align-items: center;
 }
 
+td button.block-send-to-game-log {
+    position: relative;
+    display: block;
+    top: auto;
+    right: auto;
+    
+}
+td button.block-send-to-game-log span{
+    font-size:9px !important;
+}
+
+.note-text table.table-compendium>thead>tr {
+    background-color: var(--theme-table-header-bg-color,#fdfdfd);
+    color: var(--theme-table-header-fg-color,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:nth-child(odd) {
+    background-color: var(--theme-table-row-bg-dark, #faf8f7);
+    color: var(--theme-table-row-fg-dark,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:nth-child(2n),.body-page .p-article-a .p-article-content table.table-compendium tbody tr:nth-child(2n) {
+    background-color: var(--theme-table-row-bg-light,#fdfdfd);
+    color: var(--theme-table-row-fg-light,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:hover {
+    background-color: var(--theme-table-row-bg-hover,#e3f4eb);
+    color: var(--theme-table-row-fg-hover,#222)
+}
 .text--quote-box ~ .block-send-to-game-log{
     right:25px;
     top:-8px
