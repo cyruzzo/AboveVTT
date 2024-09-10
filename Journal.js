@@ -717,10 +717,10 @@ class JournalManager{
 
 				window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
 				window.JOURNAL.build_journal();
-				if(visibility_toggle.is(":checked"))
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
-				else
-					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+				
+			
 			});
 
 
