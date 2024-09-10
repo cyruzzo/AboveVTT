@@ -3829,15 +3829,51 @@ audio::-webkit-media-controls-time-remaining-display{
     border: 1px solid #dddddd;
     background: #e9e9e9;
     padding: 5px;
-    width: 350px;
+    width: 370px;
     margin-right: auto;
 }
 .visibility-container button {
     margin: 5px;
 }
-.visibility-container input[type="checkbox"] {
-    margin-top: 10px;
+
+
+.visibility-container .visibility-toggle-container{
+    display:none;
 }
+.share-player-visibility:hover .visibility-toggle-container,
+.visibility-toggle-container:hover{
+    display:block;
+    height: fit-content;
+    width: 136px;
+    border-radius: 0px 0px 5px 5px;
+    border: 1px solid #a8a8a8;
+    position:absolute;
+    top: 31px;
+    left: 11px;
+    background: #e9e9e9;
+}
+.visibility_toggle_row{
+    margin:5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.share-player-visibility:after{
+    content:'';
+    display: inline-block;
+    position:relative;
+    width: 5px;
+    height: 5px;
+    margin-left: 5px;
+    top: 3px;
+    border: 4px solid #000;
+    border-color: #747272 #e9e9e9 #e9e9e9 #e9e9e9;
+}
+.share-player-visibility label {
+    width: 70%;
+    overflow-wrap: break-word;
+}
+
 .btn-del-chapter{
     right: 0;
     position: absolute;
@@ -4321,6 +4357,40 @@ button.applyDamageButton svg {
     border: none;
     outline: none !important;
     align-items: center;
+}
+
+
+td button.block-send-to-game-log {
+    position: relative;
+    display: block;
+    top: auto;
+    right: auto;
+    
+}
+td button.block-send-to-game-log span{
+    font-size:9px !important;
+}
+
+
+
+.note-text table.table-compendium>thead>tr {
+    background-color: var(--theme-table-header-bg-color,#fdfdfd);
+    color: var(--theme-table-header-fg-color,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:nth-child(odd) {
+    background-color: var(--theme-table-row-bg-dark, #faf8f7);
+    color: var(--theme-table-row-fg-dark,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:nth-child(2n),.body-page .p-article-a .p-article-content table.table-compendium tbody tr:nth-child(2n) {
+    background-color: var(--theme-table-row-bg-light,#fdfdfd);
+    color: var(--theme-table-row-fg-light,#222)
+}
+
+.note-text table.table-compendium>tbody>tr:hover {
+    background-color: var(--theme-table-row-bg-hover,#e3f4eb);
+    color: var(--theme-table-row-fg-hover,#222)
 }
 
 .text--quote-box ~ .block-send-to-game-log{
