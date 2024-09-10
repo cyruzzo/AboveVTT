@@ -916,6 +916,15 @@ class JournalManager{
 			return container;
 		});
 		blocks.after(sendToGamelogButton); 
+
+		let tables = target.find('table');
+		
+		const allDiceRegex = /(\d+)?d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+       
+		if(allDiceRegex.test($(tables).find('tr:first-of-type>:first-child').text())){
+			let result = $(tables).find(`tbody > tr td:last-of-type`);
+			result.append(sendToGamelogButton); 
+		}
 	}
 				   
 
