@@ -4370,7 +4370,11 @@ td button.block-send-to-game-log {
 td button.block-send-to-game-log span{
     font-size:9px !important;
 }
-
+h3#error-message{
+    max-height:100px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
 
 .note-text table.table-compendium>thead>tr {
     background-color: var(--theme-table-header-bg-color,#fdfdfd);
