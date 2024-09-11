@@ -253,6 +253,7 @@ class DiceRoller {
     #pendingCritRange = undefined;
     #pendingCritType = undefined;
     #pendingSpellSave = undefined;
+    #pendingDamageType = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -279,8 +280,27 @@ class DiceRoller {
     setPendingSpellSave(spellSaveText){
         this.#pendingSpellSave = spellSaveText;
     }
+    setPendingDamageType(damageTypeText){
+        this.#pendingDamageType = damageTypeText;
+    }
     /// PUBLIC FUNCTIONS
+    getDamageType(button){
+      let damageTypeIcon = $(button).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
+      let damageTypeText;
+      if(damageTypeIcon.length > 0){
+        let typeLowerCase = damageTypeIcon.attr('aria-label').replace(' damage', '');
+        damageTypeText = typeLowerCase.charAt(0).toUpperCase() + typeLowerCase.slice(1);;
+      }else{
+        let damageTypeTitle = $(button).find('.ddbc-tooltip[data-original-title]');
+        if(damageTypeTitle.length > 0){
+          damageTypeText = damageTypeTitle.attr('data-original-title')
+        }
 
+      }
+      if(damageTypeText != undefined)
+        window.diceRoller.setPendingDamageType(damageTypeText);
+      return damageTypeText;
+    }
     /**
      * Attempts to parse the expression, and roll DDB dice.
      * If dice are rolled, the results will be processed to make sure the expression is properly calculated.
@@ -299,6 +319,7 @@ class DiceRoller {
                 return false;
             }
             else if(this.#waitingForRoll && multiroll){
+                diceRoll.damageType = damageType;
                 this.#multiRollArray.push(diceRoll);
                 return;
             }
@@ -352,6 +373,9 @@ class DiceRoller {
                 if(spellSave == undefined && this.#pendingSpellSave != undefined){
                     spellSave = this.#pendingSpellSave;
                 }
+                if(damageType == undefined && this.#pendingDamageType != undefined){
+                    damageType = this.#pendingDamageType;
+                }
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
@@ -359,7 +383,7 @@ class DiceRoller {
                             <div class="tss-kucurx-Result">
                                 <div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other">
                                     <span class='aboveDiceOutput'>${rollTitle}: 
-                                        <span class='abovevtt-roll-${rollType.replace(' ', '-')}'>${rollType}</span>
+                                        <span class='abovevtt-roll-${rollType.replace(' ', '-')}'>${damageType != undefined ? `${damageType} ` : ''}${rollType}</span>
                                     </span>
                                 </div>
                             </div>
@@ -396,6 +420,10 @@ class DiceRoller {
                     spellSave = this.#pendingSpellSave;
                     this.#pendingSpellSave = undefined;
                 }
+                if(damageType == undefined && this.#pendingDamageType != undefined){
+                    damageType = this.#pendingDamageType;
+                    this.#pendingDamageType = undefined;
+                }
                 let rollData = {
                     roll: roll,
                     expression: diceRoll.expression,
@@ -403,7 +431,8 @@ class DiceRoller {
                     rollTitle: rollTitle,
                     modifier: modifier,
                     regExpression: regExpression,
-                    spellSave: spellSave
+                    spellSave: spellSave,
+                    damageType: damageType
                 }
                       
                 msgdata = {
@@ -458,6 +487,7 @@ class DiceRoller {
             this.#pendingCritRange = critRange;
             this.#pendingCritType = critType;
             this.#pendingSpellSave = spellSave;
+            this.#pendingDamageType = damageType;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -521,24 +551,25 @@ class DiceRoller {
         
         
         let diceRoll = this.#multiRollArray.shift();
+        let damageType = diceRoll.damageType;
         if(this.#critAttackAction != undefined && diceRoll.rollType == 'damage'){
             let diceType = diceRoll.expression.match(/d[0-9]+/i)[0];
             let critDice = diceRoll.diceToRoll[diceType] * 2;    
             let maxRoll = diceRoll.diceToRoll[diceType] * parseInt(diceType.replace('d', ''));
             if(critType == 0){
                 let newExpression = diceRoll.expression.replace(/^[0-9]+d/i, `${critDice}d`);
-                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
             else if(critType == 1){
                 let newExpression = `${diceRoll.expression}+${maxRoll}`;
-                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
+                this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
             else if(critType == 2){
-                this.roll(new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType);
+                this.roll(new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
         }
         else{
-            this.roll(diceRoll, true, critRange, critType);
+            this.roll(diceRoll, true, critRange, critType, undefined, damageType);
         }
 
     }
@@ -602,6 +633,7 @@ class DiceRoller {
         this.#pendingMessage = undefined;
         this.#pendingDiceRoll = undefined;
         this.#pendingSpellSave = undefined;
+        this.#pendingDamageType = undefined;
                 
     }
 
@@ -617,8 +649,11 @@ class DiceRoller {
             else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId) && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
             } 
-            if(this.#pendingSpellSave != undefined && message.eventType === "dice/roll/fulfilled"){
-                ddbMessage.avttSpellSave = this.#pendingSpellSave;
+            if((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled"){
+                if(this.#pendingSpellSave != undefined )
+                    ddbMessage.avttSpellSave = this.#pendingSpellSave;
+                if(this.#pendingDamageType != undefined )
+                    ddbMessage.avttDamageType = this.#pendingDamageType;
                 this.ddbDispatch(ddbMessage);
                 this.#resetVariables();
             }       
@@ -637,7 +672,7 @@ class DiceRoller {
             console.log("altered fulfilled message: ", alteredMessage);
             this.ddbDispatch(alteredMessage);
             this.#resetVariables();
-            this.nextRoll(message, this.#pendingCritRange, this.#pendingCritType);
+            this.nextRoll(message, this.#pendingCritRange, this.#pendingCritType, this.#pendingDamageType);
         }
         console.groupEnd();
     }
@@ -786,6 +821,7 @@ class DiceRoller {
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
         ddbMessage.avttSpellSave = this.#pendingSpellSave;
+        ddbMessage.avttDamageType = this.#pendingDamageType;
 
         if (["character", "monster"].includes(this.#pendingDiceRoll.entityType)) {
             ddbMessage.entityType = this.#pendingDiceRoll.entityType;

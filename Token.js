@@ -1,6 +1,6 @@
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Exhaustion", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious"];
 
-const CUSTOM_CONDITIONS = ["Concentration(Reminder)", "Flying", "Flamed", "Rage", "Blessed", "Baned",
+const CUSTOM_CONDITIONS = ["Concentration(Reminder)", 'Reaction Used',"Flying", "Flamed", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
@@ -941,7 +941,7 @@ class Token {
 			age.remove();
 			return;
 		}
-		age.find('svg circle').attr('fill', this.options.maxAge === '' || parseInt(this.options.age) < parseInt(this.options.maxAge)   ? '#FFFFFF' : "#ff0000");
+		age.find('svg circle').attr('fill', parseInt(this.options.age) > 0   ? '#FFFFFF' : "#ff0000");
 		age.find('text').text(this.options.age);
 	}
 
@@ -990,7 +990,7 @@ class Token {
 		}
 
 		this.update_condition_timers();
-		this.update_age(old);
+		this.update_age();
 
 		toggle_player_selectable(this, old)
 		console.groupEnd()
@@ -1218,8 +1218,8 @@ class Token {
 	}
 
 	build_age() {
-		if(this.options.maxAge === false)
-			return;
+		if(this.options.maxAge === false || this.options.maxAge == undefined )
+			return '';
 		let bar_height = Math.max(16, Math.floor(this.sizeHeight() * 0.2)); // no less than 16px
 		let age = $("<div class='age'/>");
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
@@ -1231,9 +1231,9 @@ class Token {
 		age.css('color', 'white');
 		
 		if(this.options.age == undefined){
-			this.options.age = '0';
+			this.options.age = this.options.maxAge != 'custom' ? this.options.maxAge : '0';
 		}
-		let fillColor = (this.options.maxAge === '' || parseInt(this.options.maxAge) > parseInt(this.options.age)) ? "#ffffff" : "#ff0000";
+		let fillColor = (parseInt(this.options.age) > 0) ? "#ffffff" : "#ff0000";
 		age.append(
 			$(`
 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>i</title> <g id="Complete"> <g id="stopwatch"> <g> <circle id="Circle-2" data-name="Circle" cx="12" cy="14.5" r="7.9" fill="${fillColor}" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"></circle> <polyline points="12 5.5 12 1.5 9 1.5 15 1.5" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline> </g> </g> </g> </g>
@@ -1335,17 +1335,23 @@ class Token {
 	 */
 	build_stats(token){
 		console.group("build_stats")
-		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0 && !token.has(".age").length > 0){
+		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
 			token.append(this.build_hp());
 			token.append(this.build_ac());
 			token.append(this.build_elev());
-			token.append(this.build_age());			
+						
 		}
 		else{
 			token.find(".hpbar").replaceWith(this.build_hp());
 			token.find(".ac").replaceWith(this.build_ac());
 			token.find(".elev").replaceWith(this.build_elev());
-			token.find(".age").replaceWith(this.build_age());			
+					
+		}
+		if(!token.has(".age").length > 0){
+			token.append(this.build_age());
+		}
+		else{
+			token.find(".age").replaceWith(this.build_age());	
 		}
 		if(window.DM){
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
@@ -2231,8 +2237,6 @@ class Token {
 					let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
 					let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
-					
-					let fileExtention = this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1];
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
 						tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
@@ -2335,8 +2339,9 @@ class Token {
 				this.update_health_aura(tok);
 				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
 				if(this.options.scaleCreated != undefined && this.options.scaleCreated != currentSceneScale){
-					this.options.top = `${parseFloat(this.options.top)/this.options.scaleCreated*currentSceneScale}px`
-					this.options.left =  `${parseFloat(this.options.left)/this.options.scaleCreated*currentSceneScale}px`
+					let difference = this.sizeWidth()/this.options.scaleCreated*currentSceneScale/2 - this.sizeWidth()/2;
+					this.options.top = `${parseFloat(this.options.top)/this.options.scaleCreated*currentSceneScale+difference}px`
+					this.options.left =  `${parseFloat(this.options.left)/this.options.scaleCreated*currentSceneScale+difference}px`
 				}
 				this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;	
 				tok.css("position", "absolute");

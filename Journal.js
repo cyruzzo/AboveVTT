@@ -437,7 +437,7 @@ class JournalManager{
 				let containsPlayerNotes = false;
 				for(let n=0; n<self.chapters[i].notes.length;n++){
 					let note_id=self.chapters[i].notes[n];
-					if(self.notes[note_id]?.player){
+					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
 						containsPlayerNotes = true;
 					} 
 				}
@@ -468,7 +468,7 @@ class JournalManager{
 					let containsPlayerNotes = false;
 					for(let n=0; n<self.chapters[i].notes.length;n++){
 						let note_id=self.chapters[i].notes[n];
-						if(self.notes[note_id]?.player){
+						if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
 							containsPlayerNotes = true;
 						} 
 					}
@@ -493,7 +493,7 @@ class JournalManager{
 				if(! (note_id in self.notes))
 					continue;
 					
-				if( (! window.DM) && (! self.notes[note_id].player) )
+				if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
 					continue;
 				
 				let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
@@ -704,16 +704,58 @@ class JournalManager{
 		note.attr('title',self.notes[id].title);
 		if(window.DM){
 			let visibility_container=$("<div class='visibility-container'/>");
-			let visibility_toggle=$("<input type='checkbox'>");
-			
-			visibility_toggle.prop("checked",self.notes[id].player);
-				
+
+		
+
+			let toggle_container = $(`<div class='visibility-toggle-container'></div`)
+
+			let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
+			let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
+			visibility_row.append(visibility_toggle)
+			toggle_container.append(visibility_row);
 			visibility_toggle.change(function(){
+
 				window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
 				window.JOURNAL.build_journal();
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+				
+			
 			});
-			visibility_container.append(visibility_toggle);
-			visibility_container.append(" visible to players");
+
+
+			for(let i in window.playerUsers){
+				if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+					let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+					let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+					
+					visibility_row.append(visibility_toggle)
+
+					visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
+					
+					visibility_toggle.change(function(){
+						let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
+						if(sharedUsers.length == 0)
+							sharedUsers = false;
+						window.JOURNAL.note_visibility(id,sharedUsers);
+						window.JOURNAL.build_journal();
+					});
+					
+					toggle_container.append(visibility_row);
+				}
+			}
+			
+			visibility_toggle.prop("checked",self.notes[id].player == true);
+				
+			if(visibility_toggle.is(":checked"))
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
+			else
+				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
+			
+			
+			let shareWithPlayer = $("<button class='share-player-visibility'>Share with players</button>");
+			shareWithPlayer.append(toggle_container);
+			visibility_container.append(shareWithPlayer);
 			
 			let popup_btn=$("<button>Force Open by Players</button>");
 			
@@ -874,6 +916,15 @@ class JournalManager{
 			return container;
 		});
 		blocks.after(sendToGamelogButton); 
+
+		let tables = target.find('table');
+		
+		const allDiceRegex = /(\d+)?d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+       
+		if(allDiceRegex.test($(tables).find('tr:first-of-type>:first-child').text())){
+			let result = $(tables).find(`tbody > tr td:last-of-type`);
+			result.append(sendToGamelogButton); 
+		}
 	}
 				   
 

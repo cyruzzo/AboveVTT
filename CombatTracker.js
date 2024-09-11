@@ -38,6 +38,11 @@ function adjust_condition_duration(token, amt) {
 	return anycond(token.options.conditions, anycond(token.options.custom_conditions, false));
 }
 
+function adjust_reaction_condition(token){
+	token.options.custom_conditions = token.options.custom_conditions.filter(d=> d.name !='Reaction Used');
+	$(`#tokens .token[data-id='${token.options.id}'] .conditions [id='Reaction Used']`).remove();
+}
+
 function init_combat_tracker(){
 	window.ROUND_NUMBER =1;
 	
@@ -306,7 +311,7 @@ function init_combat_tracker(){
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
-				adjust_age(window.TOKEN_OBJECTS[currentTarget], 1)
+				adjust_age(window.TOKEN_OBJECTS[currentTarget], -1)
 				adjust_condition_duration(window.TOKEN_OBJECTS[currentTarget], -1)
 
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
@@ -316,6 +321,7 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
+				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
 				let combatSettingData = getCombatTrackersettings();
 				if(combatSettingData['scroll_to_next'] == '1'){
@@ -360,7 +366,7 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
-				adjust_age(window.TOKEN_OBJECTS[newTarget], -1)
+				adjust_age(window.TOKEN_OBJECTS[newTarget], 1)
 				adjust_condition_duration(window.TOKEN_OBJECTS[newTarget], 1)
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;

@@ -352,16 +352,18 @@ function showErrorMessage(error, ...extraInfo) {
   
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
-      return JSON.stringify(ei);
+      return JSON.stringify(ei).substr(0, 300) + "...";
     } else {
-      return ei?.toString();
+      return ei?.toString().substr(0, 300) + "...";
     }
   }).join('<br />');
   if(typeof error.message == 'object'){
     error.message = JSON.strigify(error.message);
   }
   let container = $("#above-vtt-error-message");
+  error.message = error.message.substr(0, 300) + "...";
   if (container.length === 0) {
+
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>

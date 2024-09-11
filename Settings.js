@@ -265,15 +265,16 @@ function token_setting_options() {
 		},
 		{
 			name: "maxAge",
-			label: "Token has time limit/age",
+			label: "Token has time limit",
 			type: 'dropdown',
 			options: [
 				{ value: false, label: "None", description: "No timer added." },
 				{ value: "1", label: "1 round", description: "Duration of one round - timer will turn red after it's reached it's time limit." },
 				{ value: "10", label: "1 minute", description: "Duration of 10 rounds - timer will turn red after it's reached it's time limit." },
-				{ value: "Custom", label: "Custom Timer", description: "Timer will be added - timer will turn red after it's reached it's time limit." }	
+				{ value: "custom", label: "Custom Timer", description: "Timer will be added - timer will turn red after it's reached it's time limit." }	
 			],
-			defaultValue: false
+			defaultValue: false,
+			hiddenSetting: true
 		}
 		
 	];
@@ -572,7 +573,8 @@ function convert_option_to_override_dropdown(tokenOption) {
 		label: tokenOption.label,
 		type: 'dropdown',
 		options: tokenOption.options.map(option => { return {...option} }),
-		defaultValue: undefined
+		defaultValue: undefined,
+		hiddenSetting: tokenOption.hiddenSetting
 	};
 	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
 	return converted;
@@ -783,7 +785,7 @@ function redraw_settings_panel_token_examples(settings) {
 	let items = $(".example-tokens-wrapper .example-token");
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
-		mergedSettings.imgsrc = item.find("img.token-image").attr("src");
+		mergedSettings.imgsrc = item.find(".token-image").attr("src");
 		item.replaceWith(build_example_token(mergedSettings));
 	}
 }
@@ -816,8 +818,8 @@ function build_example_token(options) {
 	if(mergedOptions.maxAge == undefined){
 		mergedOptions.maxAge = false;
 	}
-	if(mergedOptions.maxAge !== false){
-		mergedOptions.age = '1';
+	if(mergedOptions.maxAge !== false && isNaN(parseInt(mergedOptions.age))){
+		mergedOptions.age = 1;
 	}
 
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
@@ -886,8 +888,19 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
+	container.append(build_age_inputs([setValues['age']], [setValues['maxAge']],
+	function(age){
+		updateValue("age", age)
+		didChange();
+	
+	}, 
+	function(maxAge, updateToken){
+		updateValue("maxAge", maxAge)
+		didChange();
+	}));
 
 	if(showExtraOptions){
+		
 	    window.TOKEN_SETTINGS.vision = (window.TOKEN_SETTINGS?.vision) ? window.TOKEN_SETTINGS.vision : {color: 'rgba(142, 142, 142, 1)'};
 	    window.TOKEN_SETTINGS.light1 = (window.TOKEN_SETTINGS?.light1) ? window.TOKEN_SETTINGS.light1 : {color: 'rgba(255, 255, 255, 1)'};
 	   	window.TOKEN_SETTINGS.light2 = (window.TOKEN_SETTINGS?.light2) ? window.TOKEN_SETTINGS.light2 : {color: 'rgba(142, 142, 142, 1)'};
@@ -931,6 +944,8 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	    colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
 	    colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
 	    colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
+
+
 	}
 
 	update_token_base_visibility(container);
