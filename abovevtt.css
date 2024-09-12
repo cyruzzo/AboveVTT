@@ -4377,8 +4377,7 @@ h3#error-message{
 }
 div#initialPosition_row input{
     width: 60px;
-    margin-right:10px;
-    margin-left:5px;
+    margin: 0px 4px;
 }
 
 div#initialPosition_row input::-webkit-outer-spin-button,
