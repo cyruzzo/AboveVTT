@@ -1451,6 +1451,17 @@ function edit_scene_dialog(scene_id) {
 	const playlistRow = form_row('playlistRow', 'Load Playlist', playlistSelect)
 	playlistRow.attr('title', `This playlist will load when the DM moves players to this scene. The playlist will not change if 'None' is selected.`)
 	form.append(playlistRow);
+	let initialPosition = form_row('initialPosition',
+			'Initial Position',
+			$(`<div>X:<input name='initial_x' step="any" type='number' value='${scene.initial_x || ''}'/> Y:<input type='number' step="any" name='initial_y' value='${scene.initial_y || ''}'/> Zoom:<input name='initial_zoom' step="any" type='number' value='${scene.initial_zoom || ''}'/><button id='initialPosition'>Set initial x,y and zoom to current view</button></div>`)
+		)
+	initialPosition.find('button#initialPosition').off('click.setPos').on('click.setPos', function(e){
+		initialPosition.find(`input[name='initial_zoom']`).val(parseFloat(window.ZOOM));
+		const sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+		initialPosition.find(`input[name='initial_x']`).val(parseFloat(window.scrollX)+window.innerWidth/2-sidebarSize/2);
+		initialPosition.find(`input[name='initial_y']`).val(parseFloat(window.scrollY)+window.innerHeight/2);
+	})
+	form.append(initialPosition);
 
 	wizard = $("<button type='button'><b>Super Mega Wizard</b></button>");
 	manual_button = $("<button type='button'>Manual Grid Data</button>");
