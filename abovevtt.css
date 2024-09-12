@@ -4375,7 +4375,22 @@ h3#error-message{
     overflow:hidden;
     text-overflow: ellipsis;
 }
+div#initialPosition_row input{
+    width: 60px;
+    margin-right:10px;
+    margin-left:5px;
+}
 
+div#initialPosition_row input::-webkit-outer-spin-button,
+div#initialPosition_row input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+div#initialPosition_row input[type=number] {
+  -moz-appearance: textfield;
+}
 .note-text table.table-compendium>thead>tr {
     background-color: var(--theme-table-header-bg-color,#fdfdfd);
     color: var(--theme-table-header-fg-color,#222)
