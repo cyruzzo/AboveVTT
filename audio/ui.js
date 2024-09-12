@@ -596,7 +596,7 @@ function init_trackLibrary() {
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, oneDriveButton, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, importCSV, addTrack, importTrackFields, trackList);
 }
 
 function init() {
