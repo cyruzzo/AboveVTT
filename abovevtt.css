@@ -3851,6 +3851,7 @@ audio::-webkit-media-controls-time-remaining-display{
     top: 31px;
     left: 11px;
     background: #e9e9e9;
+    z-index: 10;
 }
 .visibility_toggle_row{
     margin:5px;
