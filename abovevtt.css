@@ -3677,9 +3677,9 @@ input.condition-duration-input {
 .context-menu-icon-disadvantage:before {
     background-image: url(assets/conditons/disadvantage.png);
 }
-.icon-flamed:before,
-.context-menu-icon-flamed:before {
-    background-image: url(assets/conditons/flamed.png);
+.icon-burning:before,
+.context-menu-icon-burning:before {
+    background-image: url(assets/conditons/burning.png);
 }
 .icon-flying:before,
 .context-menu-icon-flying:before {
@@ -7444,7 +7444,7 @@ button span.onedrive-btn-status{
 .icon-reaction-used:before,
 .icon-inspiration:before,
 .icon-flying:before,
-.icon-flamed:before,
+.icon-burning:before,
 .icon-rage:before,
 .icon-blessed:before,
 .icon-baned:before,
@@ -7456,7 +7456,7 @@ button span.onedrive-btn-status{
 .context-menu-icon-concentration-reminder:before,
 .context-menu-icon-inspiration:before,
 .context-menu-icon-flying:before,
-.context-menu-icon-flamed:before,
+.context-menu-icon-burning:before,
 .context-menu-icon-rage:before,
 .context-menu-icon-blessed:before,
 .context-menu-icon-baned:before,
@@ -10133,8 +10133,8 @@ button#editAnimations {
 .dropdown-disadvantage {
     background-image: url(assets/conditons/disadvantage.png) !important;
 }
-.dropdown-flamed {
-    background-image: url(assets/conditons/flamed.png) !important;
+.dropdown-burning {
+    background-image: url(assets/conditons/burning.png) !important;
 }
 .dropdown-flying {
     background-image: url(assets/conditons/flying.png) !important;

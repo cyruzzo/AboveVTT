@@ -1,6 +1,6 @@
 const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Exhaustion", "Frightened", "Grappled", "Incapacitated", "Invisible", "Paralyzed", "Petrified", "Poisoned", "Prone", "Restrained", "Stunned", "Unconscious"];
 
-const CUSTOM_CONDITIONS = ["Concentration(Reminder)", 'Reaction Used',"Flying", "Flamed", "Rage", "Blessed", "Baned",
+const CUSTOM_CONDITIONS = ["Concentration(Reminder)", 'Reaction Used',"Flying", "Burning", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
 							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
 
@@ -1529,6 +1529,7 @@ class Token {
 				const conditionText = DOMPurify.sanitize( this.options.custom_conditions[i].text,{ALLOWED_TAGS: []});
 				const conditionSymbolName = DOMPurify.sanitize( conditionName.replaceAll(' ','_').toLowerCase(),{ALLOWED_TAGS: []});
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
+				const conditionDescription = CONDITIONS[conditionName];
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
 					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg  viewBox="0 0 ${symbolSize} ${symbolSize}">
@@ -1559,7 +1560,93 @@ class Token {
 						cond.append(conditionContainer);
 					}
 				}
+				if(conditionDescription != undefined){
+					let noteHover = `<div>
+									<div class="tooltip-header">
+							       	 	<div class="tooltip-header-icon">
+							            
+								        	</div>
+								        <div class="tooltip-header-text">
+								            ${conditionName}
+								        </div>
+								        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+								           Condition
+								        </div>
+						    		</div>
+							   		<div class="tooltip-body note-text">
+								        <div class="tooltip-body-description">
+								            <div class="tooltip-body-description-text note-text">
+								                ${conditionDescription.replaceAll(/\[(\/)?condition\]/gi, '')}
+								            </div>
+								        </div>
+								    </div>
+								</div>`
 				
+				
+											
+					let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
+			
+					let hoverConditionTimer;
+					conditionContainer.on({
+						'mouseover': function(e){
+							hoverConditionTimer = setTimeout(function () {
+				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+						            flyout.addClass('note-flyout');
+						            const tooltipHtml = $(noteHover);
+	
+						            flyout.append(tooltipHtml);
+						            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+						            sendToGamelogButton.css({ "float": "right" });
+						            sendToGamelogButton.on("click", function(ce) {
+						                ce.stopPropagation();
+						                ce.preventDefault();
+										
+						                send_html_to_gamelog(noteHover);
+						            });
+						            let flyoutLeft = e.clientX+20
+						            if(flyoutLeft + 400 > window.innerWidth){
+						            	flyoutLeft = window.innerWidth - 420
+						            }
+						            flyout.css({
+						            	left: flyoutLeft,
+						            	width: '400px'
+						            })
+	
+						            const buttonFooter = $("<div></div>");
+						            buttonFooter.css({
+						                height: "40px",
+						                width: "100%",
+						                position: "relative",
+						                background: "#fff"
+						            });
+	
+						            flyout.append(buttonFooter);
+						            buttonFooter.append(sendToGamelogButton);
+	
+									
+	
+						            flyout.hover(function (hoverEvent) {
+						                if (hoverEvent.type === "mouseenter") {
+						                    clearTimeout(removeToolTipTimer);
+						                    removeToolTipTimer = undefined;
+						                } else {
+						                    remove_tooltip(500);
+						                }
+						            });
+	
+						            flyout.css("background-color", "#fff");
+						        });
+				        	}, 500);		
+						
+						},
+						'mouseout': function(e){
+							clearTimeout(hoverConditionTimer)
+							remove_tooltip(500);
+						}
+				
+				    });
+				}
 				conditionCount++;
 			}
 			// CHECK IF ADDING NOTE CONDITION
