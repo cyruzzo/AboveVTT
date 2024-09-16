@@ -866,7 +866,8 @@ function token_context_menu_expanded(tokenIds, e) {
 		let quickRollMenu = $("<button class='material-icons open-menu'>Add/Remove from Quick Rolls</button>")
 		body.append(quickRollMenu);
 		quickRollMenu.on("click", function(clickEvent){
-			$("#qrm_dialog").show()
+			if(!childWindows['Quick Roll Menu'])
+				$("#qrm_dialog").show()
 			if ($('#quick_roll_area').length == 0){
 				close_token_context_menu()
 				open_quick_roll_menu(e)
