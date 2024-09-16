@@ -43,7 +43,10 @@ function scan_monster(target, stats, tokenId) {
 				const rollType = $(currentElement).attr("data-rolltype")?.replace(" ","-")
 				const actionType = $(currentElement).attr("data-rollaction")?.replace(" ","-") || "custom"
 				const text = $(currentElement)?.text()
-				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
+				const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
+
+
+				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' ${window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? `data-damagetype='${followingText}'` : ''} data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
 				// terminate the clones reference, overkill but rather be safe when it comes to memory
 				currentElement = null
 			})
@@ -323,9 +326,10 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
 	const modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
 	const rollType = pressedButton.attr('data-rolltype');
 	const actionType = pressedButton.attr('data-actiontype');
+	const damageType = pressedButton.attr('data-damagetype');
 
 	if (rollType === "damage") {
-		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
+		damage_dice_context_menu(`${expression}${modifier}`, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId, damageType)
 			.present(contextmenuEvent.clientY, contextmenuEvent.clientX) // TODO: convert from iframe to main window
 	} else {
 		standard_dice_context_menu(expression, modifier, actionType, rollType, displayName, imgUrl, entityType, entityId)
@@ -347,6 +351,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
 	let rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
+	const damageType = pressedButton.attr('data-damagetype');
 	modifier = modifier == 0 ? '+0' : modifier;
 
 	window.diceRoller.roll(new DiceRoll(
@@ -357,7 +362,7 @@ function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undef
 		imgUrl,
 		entityType,
 		entityId
-	));
+	), undefined, undefined, undefined, undefined, damageType);
 	
 	pressedButton = null
 }

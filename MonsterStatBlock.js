@@ -138,7 +138,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         
 
  
-          window.diceRoller.roll(diceRoll, true);
+          window.diceRoller.roll(diceRoll, true, undefined, undefined, undefined, data.damageType);
 
         }
       }
