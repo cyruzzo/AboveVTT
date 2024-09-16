@@ -1052,6 +1052,13 @@ class JournalManager{
 			
 			$(this).attr('data-actiontype', rollAction);
 			$(this).attr('data-rolltype', rollType);
+
+			const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
+			
+			const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined
+			if(damageType != undefined){
+				$(this).attr('data-damagetype', damageType);
+			}
 		})
 
 	
@@ -1061,7 +1068,7 @@ class JournalManager{
 		currentElement = null
 
 
-	
+		
 		$(target).find(".avtt-roll-button").click(clickHandler);
 		$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
@@ -1069,8 +1076,10 @@ class JournalManager{
 		clickEvent.stopPropagation();
 
 			const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
+			const followingText = $(clickEvent.currentTarget)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
+			const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined			
 			const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
-			window.diceRoller.roll(diceRoll);
+			window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
 		});
 		$(target).find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
 		  e.stopPropagation();

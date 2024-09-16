@@ -520,13 +520,18 @@ function getRollData(rollButton){
     }
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
 
+    const followingText = $(rollButton)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
+    const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined     
+
+  
     return {
       roll: roll,
       expression: expression,
       rollType: rollType,
       rollTitle: rollTitle,
       modifier: modifier,
-      regExpression: regExpression
+      regExpression: regExpression,
+      damageType: damageType
     }
 }
 

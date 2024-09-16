@@ -57,7 +57,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     return menu;
 }
 
-function damage_dice_context_menu(diceExpression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined) {
+function damage_dice_context_menu(diceExpression, modifierString = "", action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, damageType = undefined) {
     if (typeof modifierString !== "string") {
         modifierString = "";
     }
@@ -96,7 +96,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             diceRoll.entityType = entityType;
             diceRoll.entityId = entityId;
            
-            window.diceRoller.roll(diceRoll);
+            window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
             
         });
 
