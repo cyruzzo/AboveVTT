@@ -220,7 +220,7 @@ class TokenCustomization {
             this.tokenOptions.alternativeImages.splice(index, 1);
         }
         const parsed = await parse_img(imageUrl);
-        let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => i === parsed);
+        let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => parse_img(i) === parsed);
         if (typeof parsedIndex === "number" && parsedIndex >= 0) {
             this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
         }
