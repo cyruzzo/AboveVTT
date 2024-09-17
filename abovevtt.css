@@ -9237,6 +9237,7 @@ button.journal-view-button.journal-button {
     --light1-blur-size: calc(var(--radius1) * 0.8);
     --light2-blur-size: calc(var(--radius2) * 0.8);
     --transparency-blur-size: calc(var(--light2-blur-size) * 1.2);
+
 }
 
 [data-animation='rays-fx'] .islight:after,
@@ -9256,11 +9257,12 @@ button.journal-view-button.journal-button {
 }
 [data-animation='wild-fx'] .islight,
 .aura-element[data-animation='wild-fx'][id*='aura_'] {
-    animation: aurafx-wild 20s steps(200) infinite reverse;
+    transform: skew(var(--skew-1, 0deg), var(--skew-2, 0deg));
 }
 [data-animation='wild-fx'] .islight:after,
 .aura-element[data-animation='wild-fx'][id*='aura_']:after {
-    animation: aurafx-wild-hue 10s steps(100) infinite;
+    transform: skew(var(--skew-1, 0deg), var(--skew-2, 5deg));
+    filter: hue-rotate(var(--wild-hue, 0deg));
     content:'';
     width:100%;
     height:100%;
@@ -9285,7 +9287,6 @@ button.journal-view-button.journal-button {
 }
 [data-animation='force-fx'] .islight:before,
 .aura-element[data-animation='force-fx'][id*='aura_']:before {
-  animation: aurafx-force 1s steps(10) infinite alternate;
   content: "";
   position: absolute;
   background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 70%), radial-gradient(ellipse at 35% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 25%);
@@ -9301,13 +9302,12 @@ button.journal-view-button.journal-button {
 
 [data-animation='fairy-fx'] .islight,
 .aura-element[data-animation='fairy-fx'][id*='aura_'] {
-    animation: aurafx-fairy 150s steps(1500) infinite;
     -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='fairy-fx'] .islight:before,
 .aura-element[data-animation='fairy-fx'][id*='aura_']:before {
-    animation: aurafx-fairy2 50s steps(500) infinite;
+    transform: rotate(var(--fairy-animation-rotation, 0deg)) scale(var(--fairy-animation-scale, 1));
     content: '';
     position: absolute;
     width: 100%;
@@ -9359,6 +9359,7 @@ button.journal-view-button.journal-button {
 .aura-element[data-animation='hurricane-fx'][id*='aura_']:before
 {
     animation: lightning 5s steps(50) infinite;
+    scale: var(--hurricane-ani-scale, 3.5);
     content: '';
     position: absolute;
     width: 100%;
@@ -9382,7 +9383,8 @@ button.journal-view-button.journal-button {
 [data-animation='snow-fx'] .islight:after,
 .aura-element[data-animation='snow-fx'][id*='aura_']:after
 {
-    animation: snow 5s steps(50) infinite;
+    scale: var(--snow-scale, 1);
+    rotate: var(--snow-rotate, 0deg);
     content: '';
     position: absolute;
     width: 100%;
@@ -9397,15 +9399,18 @@ button.journal-view-button.journal-button {
     overflow:hidden;
     border-radius:50%;
     --starting-deg: 0deg;
+    opacity: var(--snow-opacity, 1);
 }
 
-[data-animation='snow-fx'] .islight:before,
-.aura-element[data-animation='snow-fx'][id*='aura_']:before
+[data-animation='snow-fx'] .islight:after,
+.aura-element[data-animation='snow-fx'][id*='aura_']:after
 {
-    animation: snow 5s steps(50) 2.5s infinite;
-    --starting-deg: 230deg;
-    --opacity:0;
+    scale: var(--snow-scale2, 1);
+    opacity: var(--snow-opacity2, 1);
+    rotate: var(--snow-rotate2, 0deg);
 }
+
+
 
 
 [data-animation='bubble-fx'] .islight,
@@ -9420,14 +9425,15 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:after,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:after
 {
-    animation: bubble 6s steps(50) infinite;
+    opacity: var(--bubble-opacity, 0);
+    scale: var(--bubble-scale, 1);
+    rotate: var(--bubble-rotate, 0deg);
     content: '';
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    --opacity: 0;
     --light1-blur-size: var(--radius1);
     --light2-blur-size: var(--radius2);
     --transparency-blur-size: var(--light2-blur-size);
@@ -9438,8 +9444,9 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:before,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:before
 {
-    animation: bubble 6s steps(50) 3s infinite;
-    rotate:200deg;
+    opacity: var(--bubble-opacity2, 1);
+    scale: var(--bubble-scale2, 1.2);
+    rotate: var(--bubble-rotate2, 0deg);
 }
 
 .video-meet-area{
@@ -9555,111 +9562,43 @@ float: right;
     bottom: 35px !important;
 }
 
-@keyframes bubble {
-     0%{
-        --opacity: 0;
-        transform: scale(1);
-    }
-    50%{
-         --opacity: 1;
-    }
-    100%{
-        transform: scale(1.4);
-        --opacity: 0;
-    }
-}
+
 
 
 
 @keyframes lightning {
     0%{
-        scale: 3.5;
         --opacity: 0;
     }
     20%{
-        scale: 3.5;
         --opacity: 0;
     }
     21%{
-       scale: 3.5;
        --opacity: 1;
     }
     25%{
         --opacity: 0;
-        scale: 3.5;
     }
     70%{
-        scale: 5.5;
         --opacity: 0;
     }
     71%{
-       scale: 5.5;
        --opacity: 1;
     }
     75%{
-        scale: 5.5;
         --opacity: 0;
     }
     100%{
-        scale: 5.5;
-        --opacity: 0;
-    }
-}
-
-@keyframes snow {
-    0%{
-        --opacity: 0;
-        transform: scale(1);
-        rotate: calc(var(--starting-deg) + 200deg);
-    }
-    25%{
-        rotate: calc(var(--starting-deg) + 200deg);
-        --opacity: 1;
-    }
-    50%{
-        rotate: calc(var(--starting-deg) + 200deg);
-        --opacity: 0;
-    }
-    51%{
-        rotate: var(--starting-deg);
-        --opacity: 0;
-    }
-    75%{
-        rotate: var(--starting-deg);
-        --opacity: 1;
-    }
-    100%{
-        rotate: var(--starting-deg);
-        transform: scale(0.5);
         --opacity: 0;
     }
 }
 
 
 
-@keyframes aurafx-fairy {
-    0% {
-        transform: scale(0.98);
-    }
-    50% {
-        transform: scale(1);
-    }
-    100% {
-        transform: scale(0.98);
-    }
-}
-@keyframes aurafx-fairy2 {
-    0% {
-        transform: rotate(360deg) scale(1.5);
-    }
 
-    50% {
-        transform: rotate(180deg) scale(1);
-    }
-    100% {
-        transform: rotate(0deg) scale(1.5);
-    }
-}
+
+
+
 @property --light1-blur-size-animated {
   syntax: '<number>'; /* <- defined as type number for the transition to work */
   initial-value: 1;
@@ -9798,24 +9737,9 @@ float: right;
         transform: skew(0deg, 5deg);
       }
 }
-@keyframes aurafx-wild-hue{
-    from {
-        transform: rotate(0deg) skew(5deg, 0deg);
-        filter: hue-rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg) skew(0deg, 5deg);
-        filter: hue-rotate(360deg);
-      }
-}
-@keyframes aurafx-force{
-    from {
-        transform: scale(0.99);
-      }
-      to {
-        transform: scale(1)
-      }
-}
+
+
+
 
 
 

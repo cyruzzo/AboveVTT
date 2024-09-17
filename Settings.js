@@ -541,6 +541,8 @@ function set_avtt_setting_value(name, newValue) {
 		 	break;
 		 case "reduceMovement":
 		 	$('body').toggleClass('reduceMovement', newValue)
+		 	if(newValue == false)
+		 		animationSetup()
 		 	break;
 	}
 }

@@ -1469,3 +1469,223 @@ function close_and_cleanup_generic_draggable_window(id) {
   container.find('.popout-button').off('click');
   container.remove();
 }
+
+function animationSetup(){
+  let stop, fps, fpsInterval, startTime, now, then, elapsed, deg, fairyAniScale, fairyAniRotate, skew1, skew2, hurricaneScale, reverseSkew, reverseSnow, snowScale, snowOpacity, snowRotation, reverseSnow2, snowScale2, snowOpacity2, snowRotation2, bubbleScale1, bubbleScale2, bubbleOpacity1, bubbleOpacity2, bubbleRotation1, bubbleRotation2, reverseBubble, reverseBubble2;
+  let rotatingPresets = ['rotate-fx','hurricane-fx', 'magic-circle-2-fx', 'magic-circle-fx', 'fairy-fx', 'wild-fx', 'rays-fx', 'spore-fx']
+  function startAnimating(fps) {
+    fpsInterval = 1000 / fps;
+    then = window.performance.now();
+    startTime = then;
+    deg = 0;
+    fairyAniScale = 1;
+    fairyAniRotate = 0;
+    skew1 = 0;
+    skew2 = 5;
+    hurricaneScale = 3.5;
+    snowScale = 1;
+    snowRotation = 0;
+    snowOpacity = 0;
+    snowOpacity2 = 1;
+    snowScale2 = 0.75;
+    snowRotation2 = 0;
+    bubbleScale = 1;
+    bubbleRotation = 0;
+    bubbleOpacity = 0;
+    bubbleOpacity2 = 1;
+    bubbleScale2 = 1.2;
+    bubbleRotation2 = 0;
+    console.log(startTime);
+    animate();
+  }
+
+
+  function animate(newtime) {
+    let animationTarget = $(`
+      [data-animation*='magic-circle'] .islight, 
+      [data-animation='rays-fx'] .islight, 
+      [data-animation='rotate-fx'] .islight, 
+      [data-animation='spore-fx'] .islight,
+      [data-animation='hurricane-fx'] .islight,
+      [data-animation='wild-fx'] .islight,
+      [data-animation='fairy-fx'] .islight,
+      [data-animation='snow-fx'] .islight,
+      [data-animation='bubble-fx'] .islight,
+      [data-animation*='magic-circle'][id*='aura_'], 
+      [data-animation='rays-fx'][id*='aura_'], 
+      [data-animation='rotate-fx'][id*='aura_'], 
+      [data-animation='spore-fx'][id*='aura_'],
+      [data-animation='hurricane-fx'][id*='aura_'],
+      [data-animation='wild-fx'][id*='aura_'],
+      [data-animation='fairy-fx'][id*='aura_'],
+      [data-animation='snow-fx'][id*='aura_'],
+      [data-animation='bubble-fx'][id*='aura_']
+    `);
+    
+
+
+
+    // stop
+    if (stop || $('body.reduceMovement').length > 0) {
+        return;
+    }
+
+    // request another frame  
+    
+    requestAnimationFrame(animate);
+
+
+    now = newtime;
+    elapsed = now - then;
+
+    deg = deg >= 360 ? 0 : deg + 0.08;
+    fairyAniRotate = fairyAniRotate <= -360 ? 0 : fairyAniRotate - 0.1;
+    fairyAniScale = fairyAniScale >= 1.5 ? 1 : fairyAniScale + 0.001;
+    hurricaneScale = hurricaneScale >= 5.5 ? 3.5 : hurricaneScale + 0.01
+    snowScale = snowScale <= 0.5 ? 1 : snowScale - 0.001;
+    snowScale2 = snowScale2 <= 0.5 ? 1 : snowScale2 - 0.001;
+    bubbleScale = bubbleScale >= 1.4 ? 1 : bubbleScale + 0.0002;
+    bubbleScale2 = bubbleScale2 >= 1.4 ? 1 : bubbleScale2 + 0.0002;
+
+
+    if($(`[data-animation*='snow-fx']`).length>0){
+      if(snowScale > 0.9){
+        snowOpacity = 0;
+      }
+      else{
+        if(reverseSnow == true){
+          if(snowOpacity >= 1)
+            reverseSnow = false;
+          snowOpacity = snowOpacity >= 1 ? 1 : snowOpacity + 0.01;
+        }
+        else{
+          if(snowScale < 0.6)
+            snowOpacity = snowOpacity <= 0 ? 0 : snowOpacity - 0.01;
+        }
+      }
+      if(snowOpacity <= 0 && snowScale > 0.9){
+        if(reverseSnow == false)
+          snowRotation = deg;
+        reverseSnow = true;
+      }
+
+      if(snowScale2 > 0.9){
+        snowOpacity2 = 0;
+      }
+      else{
+        if(reverseSnow2 == true){
+          if(snowOpacity2 >= 1)
+            reverseSnow2 = false;
+          snowOpacity2 = snowOpacity2 >= 1 ? 1 : snowOpacity2 + 0.01;
+        }
+        else{
+          if(snowScale2 < 0.6)
+            snowOpacity2 = snowOpacity2 <= 0 ? 0 : snowOpacity2 - 0.01;
+        }
+      }
+      if(snowOpacity2 <= 0 && snowScale2 > 0.9){
+        if(reverseSnow2 == false)
+          snowRotation2 = (180+deg)%360;
+        reverseSnow2 = true;
+      }
+    }
+
+    if($(`[data-animation*='bubble-fx']`).length>0){
+      if(bubbleScale < 1.1){
+        bubbleOpacity = 0;
+      }
+      else{
+        if(reverseBubble == true){
+          if(bubbleOpacity >= 1)
+            reverseBubble = false;
+          bubbleOpacity = bubbleOpacity >= 1 ? 1 : bubbleOpacity + 0.001;
+        }
+        else{
+          if(bubbleScale > 1.2)
+            bubbleOpacity = bubbleOpacity <= 0 ? 0 : bubbleOpacity - 0.005;
+        }
+      }
+      if(bubbleOpacity <= 0 && bubbleScale < 1.1){
+        if(reverseBubble == false)
+          bubbleRotation = deg;
+        reverseBubble = true;
+      }
+
+      if(bubbleScale2 < 1.1){
+        bubbleOpacity2 = 0;
+      }
+      else{
+        if(reverseBubble2 == true){
+          if(bubbleOpacity2 >= 1)
+            reverseBubble2 = false;
+          bubbleOpacity2 = bubbleOpacity2 >= 1 ? 1 : bubbleOpacity2 + 0.001;
+        }
+        else{
+          if(bubbleScale2 > 1.2)
+            bubbleOpacity2 = bubbleOpacity2 <= 0 ? 0 : bubbleOpacity2 - 0.005;
+        }
+      }
+      if(bubbleOpacity2 <= 0 && bubbleScale2 < 1.1){
+        if(reverseBubble2 == false)
+          bubbleRotation2 = (180+deg)%360;
+        reverseBubble2 = true;
+      }
+    }
+    
+
+    if(reverseSkew == true){
+      if(skew1>=5)
+        reverseSkew = false;
+      skew1 = skew1 >= 5 ? 5 : skew1 + 0.01;
+      skew2 = skew2 <= 0 ? 0 : skew2 - 0.01;
+
+    }
+    else{
+      if(skew2>=5)
+        reverseSkew = true;
+      skew2 = skew2 >= 5 ? 5 : skew2 + 0.01;
+      skew1 = skew1 <= 0 ? 0 : skew1 - 0.01;
+    }
+
+    // if enough time has elapsed, draw the next frame
+    if (elapsed > fpsInterval && $('body.reduceMovement').length == 0) {
+      
+        // Get ready for next frame by setting then=now, but...
+        // Also, adjust for fpsInterval not being multiple of 16.67
+        then = now - (elapsed % fpsInterval);
+
+
+
+        animationTarget.css({
+          '--fairy-animation-rotation': `${parseInt(fairyAniRotate)}deg`,
+          '--fairy-animation-scale': `${fairyAniScale}`,
+          '--skew-1': `${skew1}deg`,
+          '--skew-2': `${skew2}deg`,
+          '--wild-hue': `${parseInt(deg)}deg`,
+          '--hurricane-ani-scale': `${hurricaneScale}`,
+          '--snow-scale': `${snowScale}`,
+          '--snow-opacity': `${snowOpacity}`,
+          '--snow-opacity2': `${snowOpacity2}`,
+          '--snow-scale2': `${snowScale2}`,
+          '--snow-rotate': `${snowRotation}deg`,
+          '--snow-rotate2': `${snowRotation2}deg`,
+          '--bubble-scale': `${bubbleScale}`,
+          '--bubble-opacity': `${bubbleOpacity}`,
+          '--bubble-opacity2': `${bubbleOpacity2}`,
+          '--bubble-scale2': `${bubbleScale2}`,
+          '--bubble-rotate': `${bubbleRotation}deg`,
+          '--bubble-rotate2': `${bubbleRotation2}deg`
+        })
+
+        for(let i = 0; i<animationTarget.length; i++){
+          if(rotatingPresets.includes($(animationTarget[i]).closest('[data-animation]').attr('data-animation'))){
+            $(animationTarget[i]).css('rotate', `${parseInt(deg)}deg`)
+          }
+        }
+    }
+  }
+
+
+  stop = false;
+  startAnimating(24);
+}
