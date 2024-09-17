@@ -9222,10 +9222,7 @@ button.journal-view-button.journal-button {
  -webkit-mask-image: var(--custom-mask-image);
  -webkit-mask-size: contain;
 }
-[data-animation='aurafx-rotate'] .islight,
-.aura-element[data-animation='aurafx-rotate'][id*='aura_'] {
-    animation: aurafx-rotate 40s infinite linear;
-}
+
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
@@ -9244,7 +9241,6 @@ button.journal-view-button.journal-button {
 
 [data-animation='rays-fx'] .islight:after,
 .aura-element[data-animation='rays-fx'][id*='aura_']:after{
-    animation: aurafx-rotate 100s infinite linear;
     content:'';
     width:100%;
     height:100%;
@@ -9256,16 +9252,15 @@ button.journal-view-button.journal-button {
     background-image: repeating-conic-gradient(from 0deg, transparent 0deg 3deg, #000 5deg 7deg, transparent 9deg)
 }
 .aura-element[data-animation='rays-fx'][id*='aura_']{
-    animation: aurafx-rotate 100s infinite linear;
     -webkit-mask-image: repeating-conic-gradient(from 0deg, #fff 0deg 3deg, transparent 5deg 7deg, #fff 9deg);
 }
 [data-animation='wild-fx'] .islight,
 .aura-element[data-animation='wild-fx'][id*='aura_'] {
-    animation: aurafx-wild 20s infinite linear reverse;
+    animation: aurafx-wild 20s steps(200) infinite reverse;
 }
 [data-animation='wild-fx'] .islight:after,
 .aura-element[data-animation='wild-fx'][id*='aura_']:after {
-    animation: aurafx-wild-hue 10s infinite linear;
+    animation: aurafx-wild-hue 10s steps(100) infinite;
     content:'';
     width:100%;
     height:100%;
@@ -9290,7 +9285,7 @@ button.journal-view-button.journal-button {
 }
 [data-animation='force-fx'] .islight:before,
 .aura-element[data-animation='force-fx'][id*='aura_']:before {
-  animation: aurafx-force 1s infinite linear alternate;
+  animation: aurafx-force 1s steps(10) infinite alternate;
   content: "";
   position: absolute;
   background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 70%), radial-gradient(ellipse at 35% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 25%);
@@ -9306,13 +9301,13 @@ button.journal-view-button.journal-button {
 
 [data-animation='fairy-fx'] .islight,
 .aura-element[data-animation='fairy-fx'][id*='aura_'] {
-    animation: aurafx-fairy 150s infinite linear;
+    animation: aurafx-fairy 150s steps(1500) infinite;
     -webkit-mask-size: var(--animation-width);
 }
 
 [data-animation='fairy-fx'] .islight:before,
 .aura-element[data-animation='fairy-fx'][id*='aura_']:before {
-    animation: aurafx-fairy2 50s infinite linear;
+    animation: aurafx-fairy2 50s steps(500) infinite;
     content: '';
     position: absolute;
     width: 100%;
@@ -9327,19 +9322,16 @@ button.journal-view-button.journal-button {
 
 [data-animation='magic-circle-fx'] .islight,
 .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
-    animation: aurafx-rotate 80s infinite linear;
    -webkit-mask-size: contain;
 }
 
 [data-animation='magic-circle-2-fx'] .islight,
 .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
-    animation: aurafx-rotate 80s infinite linear;
     -webkit-mask-size: contain;
 }
 
 [data-animation='spore-fx'] .islight,
 .aura-element[data-animation='spore-fx'][id*='aura_'] {
-    animation: aurafx-rotate 180s infinite linear;
    -webkit-mask-size: contain;
    filter:blur(5px);
 }
@@ -9356,7 +9348,6 @@ button.journal-view-button.journal-button {
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
-    animation: aurafx-rotate 30s infinite linear;
     -webkit-mask-size: contain;
     --light1-blur-size: var(--radius1);
     --light2-blur-size: var(--radius2);
@@ -9367,7 +9358,7 @@ button.journal-view-button.journal-button {
 [data-animation='hurricane-fx'] .islight:before,
 .aura-element[data-animation='hurricane-fx'][id*='aura_']:before
 {
-    animation: lightning 5s infinite linear;
+    animation: lightning 5s steps(50) infinite;
     content: '';
     position: absolute;
     width: 100%;
@@ -9391,7 +9382,7 @@ button.journal-view-button.journal-button {
 [data-animation='snow-fx'] .islight:after,
 .aura-element[data-animation='snow-fx'][id*='aura_']:after
 {
-    animation: snow 5s infinite linear;
+    animation: snow 5s steps(50) infinite;
     content: '';
     position: absolute;
     width: 100%;
@@ -9411,7 +9402,7 @@ button.journal-view-button.journal-button {
 [data-animation='snow-fx'] .islight:before,
 .aura-element[data-animation='snow-fx'][id*='aura_']:before
 {
-    animation: snow 5s infinite 2.5s linear;
+    animation: snow 5s steps(50) 2.5s infinite;
     --starting-deg: 230deg;
     --opacity:0;
 }
@@ -9429,7 +9420,7 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:after,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:after
 {
-    animation: bubble 6s infinite linear;
+    animation: bubble 6s steps(50) infinite;
     content: '';
     position: absolute;
     width: 100%;
@@ -9447,7 +9438,7 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:before,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:before
 {
-    animation: bubble 6s infinite 3s linear;
+    animation: bubble 6s steps(50) 3s infinite;
     rotate:200deg;
 }
 
@@ -9648,13 +9639,13 @@ float: right;
 
 @keyframes aurafx-fairy {
     0% {
-        transform: scale(0.98) rotate(0deg);
+        transform: scale(0.98);
     }
     50% {
-        transform: scale(1) rotate(180deg);
+        transform: scale(1);
     }
     100% {
-        transform: scale(0.98) rotate(360deg);
+        transform: scale(0.98);
     }
 }
 @keyframes aurafx-fairy2 {
@@ -9801,10 +9792,10 @@ float: right;
 }
 @keyframes aurafx-wild{
     from {
-        transform: rotate(0deg) skew(5deg, 0deg);
+        transform: skew(5deg, 0deg);
       }
       to {
-        transform: rotate(360deg) skew(0deg, 5deg);
+        transform: skew(0deg, 5deg);
       }
 }
 @keyframes aurafx-wild-hue{
