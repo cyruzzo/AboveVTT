@@ -3781,75 +3781,11 @@ function setTokenAuras (token, options) {
 		}
 
 		if(options.animation?.aura && options.animation?.aura != 'none'){
-			let rotatingPresets = ['hurricane-fx', 'magic-circle-2-fx', 'magic-circle-fx', 'fairy-fx', 'wild-fx', 'rays-fx', 'spore-fx']
-			let invertBeforePresets = ['hurricane-fx', 'fairy-fx']
-			let auraToRotate = token.parent().parent().find("#aura_" + tokenId)
-			let stop;
-			if(options.animation.customAuraRotate == true || rotatingPresets.includes(options.animation?.aura)){
-				let frameCount = 0;
-				let fps, fpsInterval, startTime, now, then, elapsed, deg;
-				function startAnimating(fps) {
-				    fpsInterval = 1000 / fps;
-				    then = window.performance.now();
-				    startTime = then;
-				    deg = 0;
-				    console.log(startTime);
-				    auraToRotate.toggleClass('rotationAnimationStarted', true);
-				    animate();
-				}
-
-
-				function animate(newtime) {
-
-				    // stop
-				    if (stop) {
-				        return;
-				    }
-
-				    // request another frame
-				    if(auraToRotate.hasClass('rotationAnimationStarted')){	
-				    	requestAnimationFrame(animate);
-				    }
-
-				    // calc elapsed time since last loop
-
-				    now = newtime;
-				    elapsed = now - then;
-
-				    // if enough time has elapsed, draw the next frame
-
-				    if (elapsed > fpsInterval) {
-
-				    	deg += 0.8
-				        // Get ready for next frame by setting then=now, but...
-				        // Also, adjust for fpsInterval not being multiple of 16.67
-				        then = now - (elapsed % fpsInterval);
-
-				        // draw stuff here
-
-
-
-				        auraToRotate.css({
-				        	'rotate': `${parseInt(deg%360)}deg`
-				        })
-
-				    }
-				}
-
-
-				stop = false;
-				
-			
-				if(!auraToRotate.hasClass('rotationAnimationStarted')){
-					startAnimating(24);
-				}
-				
-
-				
+			if(options.animation.customAuraRotate == true){
+				token.parent().parent().find("#aura_" + tokenId).attr('data-animation', 'rotate-fx')
 			}
 			else{
-				stop = true;
-				auraToRotate.toggleClass('rotationAnimationStarted', false)
+				token.parent().parent().find("#aura_" + tokenId).attr('data-animation', '')
 			}
 			if(options.animation.customAuraMask != undefined){
 				token.parent().parent().find("#aura_" + tokenId).attr('data-custom-animation', 'true')
@@ -3970,69 +3906,13 @@ function setTokenLight (token, options) {
 		
 
 		if(options.animation?.light && options.animation?.light != 'none'){
-
-			let rotatingPresets = ['hurricane-fx', 'magic-circle-2-fx', 'magic-circle-fx', 'fairy-fx', 'wild-fx', 'rays-fx', 'spore-fx']
-			let invertRotate = []
-			let lightToRotate = token.parent().parent().find("#light_" + tokenId)
-			let stop;
-			if(options.animation.customLightRotate == true || rotatingPresets.includes(options.animation?.light)){
-					let frameCount = 0;
-					let fps, fpsInterval, startTime, now, then, elapsed, deg;
-					function startAnimating(fps) {
-					    fpsInterval = 1000 / fps;
-					    then = window.performance.now();
-					    startTime = then;
-					    deg = 0;
-					    console.log(startTime);
-					    lightToRotate.toggleClass('rotationAnimationStarted', true)
-					    animate();
-					}
-
-
-					function animate(newtime) {
-
-					    // stop
-					    if (stop) {
-					        return;
-					    }
-
-					    // request another frame	
-					    if(lightToRotate.hasClass('rotationAnimationStarted')){	
-						    requestAnimationFrame(animate);
-						}
-
-					    now = newtime;
-					    elapsed = now - then;
-
-					    // if enough time has elapsed, draw the next frame
-					    if (elapsed > fpsInterval) {
-					    	deg += 0.8;
-					        // Get ready for next frame by setting then=now, but...
-					        // Also, adjust for fpsInterval not being multiple of 16.67
-					        then = now - (elapsed % fpsInterval);
-
-
-
-					        lightToRotate.css({
-					        	'rotate': `${parseInt(deg%360)}deg`
-					        })
-
-					    }
-					}
-
-
-					stop = false;
-					if(!lightToRotate.hasClass('rotationAnimationStarted')){
-						startAnimating(24);
-					}
-					
-
-					
+			if(options.animation.customLightRotate == true){
+				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', 'rotate-fx')
 			}
 			else{
-				lightToRotate.toggleClass('rotationAnimationStarted', false)
-				stop = true;
-			}
+				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', '')
+			}		
+
 			if(options.animation.customLightMask != undefined){	
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
