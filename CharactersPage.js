@@ -331,7 +331,7 @@ function read_inspiration(container = $(document)) {
 }
 
 // Good canidate for service worker
-function init_characters_pages(container = $(document)) {
+async function init_characters_pages(container = $(document)) {
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
     window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
@@ -379,6 +379,7 @@ function init_characters_pages(container = $(document)) {
       msgType: 'isAboveOpen'
     })
     window.diceRoller = new DiceRoller(); 
+    window.ddbConfigJson = await DDBApi.fetchConfigJson();
   }
 }
 
@@ -889,7 +890,7 @@ function observe_character_sheet_changes(documentToObserve) {
     const damageButtons = $(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
-      damageButtons.off('click.damageType').on('click.damageButtons', function(e){
+      damageButtons.off('click.damageType').on('click.damageType', function(e){
         window.diceRoller.getDamageType(this);
       })
     } 

@@ -1428,36 +1428,7 @@ function init_splash() {
 	$(window.document.body).append(cont);
 }
 
-let MYCOBALT_TOKEN = false;
-let MYCOBALT_TOKEN_EXPIRATION = 0;
-/**
- * UNIFIED TOKEN HANDLING
- * Triggers callback with a valid DDB cobalt token
- * @param {Function} callback
- * @returns void
- */
-function get_cobalt_token(callback) {
-	if (Date.now() < MYCOBALT_TOKEN_EXPIRATION) {
-		console.log("TOKEN IS CACHED");
-		callback(MYCOBALT_TOKEN);
-		return;
-	}
-	console.log("GETTING NEW TOKEN");
-	$.ajax({
-		url: "https://auth-service.dndbeyond.com/v1/cobalt-token",
-		type: "post",
-		xhrFields: {
-			// To allow cross domain cookies
-			withCredentials: true
-		},
-		success: function(data) {
-			console.log("GOT NEW TOKEN");
-			MYCOBALT_TOKEN = data.token;
-			MYCOBALT_TOKEN_EXPIRATION = Date.now() + (data.ttl * 1000) - 10000;
-			callback(data.token);
-		}
-	});
-}
+
 
 
 let DDB_WS_OBJ = null;
