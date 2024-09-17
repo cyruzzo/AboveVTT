@@ -3400,7 +3400,7 @@ function register_custom_token_image_context_menu() {
                 items.border = "---";
                 items.remove = {
                     name: "Remove",
-                    callback: function (itemKey, opt, originalEvent) {
+                    callback: async function (itemKey, opt, originalEvent) {
                         let selectedItem = $(opt.$trigger[0]);
                         let imgSrc = selectedItem.find(".token-image").attr("src");
                         if(tokenChangeImage){
@@ -3431,11 +3431,13 @@ function register_custom_token_image_context_menu() {
                                 showError("register_custom_token_image_context_menu Remove failed to find a token customization object matching listItem: ", listItem);
                                 return;
                             }
-                            customization.removeAlternativeImage(imgSrc);
-                            persist_token_customization(customization);
-                            let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-                            $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
-                            redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
+                            await customization.removeAlternativeImage(imgSrc);
+                            persist_token_customization(customization, function(){
+                                let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
+                                $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
+                                redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
+                            });
+     
                         } else if (!tokenChangeImage) {
                             showError("register_custom_token_image_context_menu Remove attempted to remove a custom image with an invalid type. listItem:", listItem);
                             return;
