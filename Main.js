@@ -1430,7 +1430,6 @@ function init_splash() {
 
 
 
-
 let DDB_WS_OBJ = null;
 let DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
 /**
