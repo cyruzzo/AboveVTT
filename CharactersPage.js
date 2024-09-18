@@ -188,7 +188,7 @@ function send_senses() {
 function read_conditions(container = $(document)) {
   let conditionsSet = [];
   container.find(`.ct-condition-manage-pane__condition`).each(function () {
-    if ($(this).find(`.ddbc-toggle-field[aria-checked='true']`).length > 0) {
+    if ($(this).find(`.ddbc-toggle-field[aria-checked='true'], [class*='styles_toggle'][aria-pressed='true']`).length > 0) {
       conditionsSet.push({
         name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
         level: null
@@ -697,56 +697,58 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     }
 
+    if(is_abovevtt_page()){
+      const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
+      if (icons.length > 0) {
+        icons.wrap(function() {
+          $(this).addClass("above-vtt-visited");
+          const button = $("<button class='above-aoe integrated-dice__container'></button>");
 
-    const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
-    if (icons.length > 0) {
-      icons.wrap(function() {
-        $(this).addClass("above-vtt-visited");
-        const button = $("<button class='above-aoe integrated-dice__container'></button>");
-
-        const spellContainer = $(this).closest('.ct-spells-spell')
-        const name = spellContainer.find(".ddbc-spell-name").first().text()
-        let color = "default"
-        const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
-        const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
-        if (dmgIcon.length == 1){
-          color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
-        }
-        let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
-        shape = window.top.sanitize_aoe_shape(shape)
-        button.attr("title", "Place area of effect token")
-        button.attr("data-shape", shape);
-        button.attr("data-style", color);
-        button.attr("data-size", Math.round(feet / window.top.CURRENT_SCENE_DATA.fpsq));
-        button.attr("data-name", name);
-
-        // Players need the token side panel for this to work for them.
-        // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
-        // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
-        // enable_draggable_token_creation(button);
-        button.css("border-width","1px");
-        button.click(function(e) {
-          e.stopPropagation();
-          // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
-         
-          window.top.hide_player_sheet();
-          window.top.minimize_player_sheet();
-
-          let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
-          if(name == 'Darkness' || name == 'Maddening Darkness' ){
-            options = {
-              ...options,
-              darkness: true
-            }
+          const spellContainer = $(this).closest('.ct-spells-spell')
+          const name = spellContainer.find(".ddbc-spell-name").first().text()
+          let color = "default"
+          const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
+          const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');
+          if (dmgIcon.length == 1){
+            color = dmgIcon.attr('class').split(' ').filter(d => d.startsWith('ddbc-damage-type-icon--'))[0].split('--')[1];
           }
-          window.top.place_aoe_token_in_centre(options)
-          // place_token_in_center_of_view only works for the DM
-          // place_token_in_center_of_view(options)
+          let shape = $(this).find('svg').first().attr('class').split(' ').filter(c => c.startsWith('ddbc-aoe-type-icon--'))[0].split('--')[1];
+          shape = window.top.sanitize_aoe_shape(shape)
+          button.attr("title", "Place area of effect token")
+          button.attr("data-shape", shape);
+          button.attr("data-style", color);
+          button.attr("data-size", Math.round(feet / window.top.CURRENT_SCENE_DATA.fpsq));
+          button.attr("data-name", name);
+
+          // Players need the token side panel for this to work for them.
+          // adjustments will be needed in enable_Draggable_token_creation when they do to make sure it works correctly
+          // set_full_path(button, `${RootFolder.Aoe.path}/${shape} AoE`)
+          // enable_draggable_token_creation(button);
+          button.css("border-width","1px");
+          button.click(function(e) {
+            e.stopPropagation();
+            // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
+           
+            window.top.hide_player_sheet();
+            window.top.minimize_player_sheet();
+
+            let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+            if(name == 'Darkness' || name == 'Maddening Darkness' ){
+              options = {
+                ...options,
+                darkness: true
+              }
+            }
+            window.top.place_aoe_token_in_centre(options)
+            // place_token_in_center_of_view only works for the DM
+            // place_token_in_center_of_view(options)
+          });
+          return button;
         });
-        return button;
-      });
-      console.log(`${icons.length} aoe spells discovered`);
+        console.log(`${icons.length} aoe spells discovered`);
+      }
     }
+   
 
 
     const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
@@ -1330,7 +1332,7 @@ function observe_character_sheet_changes(documentToObserve) {
         switch (mutation.type) {
           case "attributes":
             if (
-              (mutationParent.hasClass('ct-condition-manage-pane__condition-toggle') && mutationTarget.hasClass('ddbc-toggle-field')) ||
+              (mutationTarget.hasClass('ct-condition-manage-pane__condition')) ||
               (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)
             ) { // conditions update from sidebar
               const conditionsSet = read_conditions(documentToObserve);
