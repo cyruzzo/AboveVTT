@@ -196,10 +196,10 @@ function read_conditions(container = $(document)) {
     }
   });
   container.find(`.ct-condition-manage-pane__condition--special`).each (function () {
-    if(container.find('.ddbc-number-bar__option--active').length > 0){
+    if(container.find(`.ddbc-number-bar__option--active, [class*='styles_bar'][class*='styles_active']`).length > 0){
       conditionsSet.push({
         name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-        level: $(this).find('.ddbc-number-bar__option--implied').length
+        level: $(this).find(`.ddbc-number-bar__option--implied, [class*='styles_bar'][class*='styles_implied']`).length
       });
     }
   })
