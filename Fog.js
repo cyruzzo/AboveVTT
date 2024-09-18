@@ -1256,6 +1256,7 @@ function redraw_fog() {
 			if(d[4] == 6){
 				ctx.globalCompositeOperation = 'destination-out';
 				drawBrushstroke(ctx, d[0], "#000", d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);
+
 				ctx.globalCompositeOperation = 'source-over';
 			}
 		}
@@ -1919,7 +1920,7 @@ function door_note_icon(id){
 							    </div>
 							</div>`
 				            const tooltipHtml = $(noteHover);
-							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+							window.JOURNAL. translateHtmlAndBlocks(tooltipHtml);	
 							window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
 							window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 				            flyout.append(tooltipHtml);
@@ -2457,8 +2458,11 @@ function drawing_mousemove(e) {
 			if(!window.BRUSHWAIT)
 			{
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
-
-				drawBrushstroke(window.temp_context, window.BRUSHPOINTS, window.DRAWCOLOR, window.LINEWIDTH);
+				let clonePoints = [...window.BRUSHPOINTS]
+				// cap with a dot
+				clonePoints.push({x:mouseX+1, y:mouseY+1});
+				clonePoints.push({x:mouseX-1, y:mouseY-1});
+				drawBrushstroke(window.temp_context, clonePoints, window.DRAWCOLOR, window.LINEWIDTH);
 
 				window.BRUSHWAIT = true;
 				if (mouseMoveFps < 75) {
@@ -3639,7 +3643,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
-
+	ctx.save();
 	let p1 = points[0];
 	let p2 = points[1];
 
@@ -3652,16 +3656,19 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (let i = 1, len = points.length; i < len; i++) {
-	// we pick the point between pi+1 & pi+2 as the
-	// end point and p1 as our control point
-	let midPoint = midPointBtw(p1, p2);
-	ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-	p1 = points[i];
-	p2 = points[i+1];
+		// we pick the point between pi+1 & pi+2 as the
+		// end point and p1 as our control point
+		let midPoint = midPointBtw(p1, p2);
+		ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		p1 = points[i];
+		p2 = points[i+1];
 	}
 	// Draw last line as a straight line
 	ctx.lineTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
+		
+	ctx.restore();
+
 }
 
 function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor, fill = [])
@@ -4085,6 +4092,7 @@ function clear3PointRect (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_f
 	 * globalCompositeOperation does not accept alpha transparency,
 	 * need to set it to opaque color.
 	 */
+	ctx.save();
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
@@ -4108,6 +4116,7 @@ function clearPolygon (ctx, points, scale = window.CURRENT_SCENE_DATA.scale_fact
 	 * globalCompositeOperation does not accept alpha transparency,
 	 * need to set it to opaque color.
 	 */
+	ctx.save();
 	ctx.fillStyle = "#000";
 	ctx.globalCompositeOperation = 'destination-out';
 	ctx.beginPath();
