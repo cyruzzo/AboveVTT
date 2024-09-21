@@ -9222,7 +9222,11 @@ button.journal-view-button.journal-button {
  -webkit-mask-image: var(--custom-mask-image);
  -webkit-mask-size: contain;
 }
-
+[data-animation='aurafx-rotate'] .islight,
+.aura-element[data-animation='aurafx-rotate'][id*='aura_'] {
+    animation: aurafx-rotate 40s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
+}
 
 [data-animation='flicker-fx'] .islight,
 .aura-element[data-animation='flicker-fx']{
@@ -9237,11 +9241,12 @@ button.journal-view-button.journal-button {
     --light1-blur-size: calc(var(--radius1) * 0.8);
     --light2-blur-size: calc(var(--radius2) * 0.8);
     --transparency-blur-size: calc(var(--light2-blur-size) * 1.2);
-
 }
 
 [data-animation='rays-fx'] .islight:after,
 .aura-element[data-animation='rays-fx'][id*='aura_']:after{
+    animation: aurafx-rotate 100s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content:'';
     width:100%;
     height:100%;
@@ -9253,16 +9258,20 @@ button.journal-view-button.journal-button {
     background-image: repeating-conic-gradient(from 0deg, transparent 0deg 3deg, #000 5deg 7deg, transparent 9deg)
 }
 .aura-element[data-animation='rays-fx'][id*='aura_']{
+    animation: aurafx-rotate 100s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-image: repeating-conic-gradient(from 0deg, #fff 0deg 3deg, transparent 5deg 7deg, #fff 9deg);
 }
 [data-animation='wild-fx'] .islight,
 .aura-element[data-animation='wild-fx'][id*='aura_'] {
-    transform: skew(var(--skew-1, 0deg), var(--skew-2, 0deg));
+    animation: aurafx-wild 20s infinite linear reverse;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0))) skew(calc(1deg * var(--animation-skew-x)), calc(1deg * var(--animation-skew-y)));
 }
 [data-animation='wild-fx'] .islight:after,
 .aura-element[data-animation='wild-fx'][id*='aura_']:after {
-    transform: skew(var(--skew-1, 0deg), var(--skew-2, 5deg));
-    filter: hue-rotate(var(--wild-hue, 0deg));
+    animation: aurafx-wild-hue 10s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0))) skew(calc(1deg * var(--animation-skew-x)), calc(1deg * var(--animation-skew-y)));
+    filter: hue-rotate(calc(1deg * var(--animation-rotation, 0)));
     content:'';
     width:100%;
     height:100%;
@@ -9287,6 +9296,8 @@ button.journal-view-button.journal-button {
 }
 [data-animation='force-fx'] .islight:before,
 .aura-element[data-animation='force-fx'][id*='aura_']:before {
+  animation: aurafx-force 1s infinite linear alternate;
+  transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
   content: "";
   position: absolute;
   background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 70%), radial-gradient(ellipse at 35% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8) 5%, rgba(255, 255, 255, 0) 25%);
@@ -9302,12 +9313,15 @@ button.journal-view-button.journal-button {
 
 [data-animation='fairy-fx'] .islight,
 .aura-element[data-animation='fairy-fx'][id*='aura_'] {
+    animation: aurafx-fairy 150s infinite linear;
     -webkit-mask-size: var(--animation-width);
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
 }
 
 [data-animation='fairy-fx'] .islight:before,
 .aura-element[data-animation='fairy-fx'][id*='aura_']:before {
-    transform: rotate(var(--fairy-animation-rotation, 0deg)) scale(var(--fairy-animation-scale, 1));
+    animation: aurafx-fairy2 50s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content: '';
     position: absolute;
     width: 100%;
@@ -9322,16 +9336,22 @@ button.journal-view-button.journal-button {
 
 [data-animation='magic-circle-fx'] .islight,
 .aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
+    animation: aurafx-rotate 80s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
    -webkit-mask-size: contain;
 }
 
 [data-animation='magic-circle-2-fx'] .islight,
 .aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
+    animation: aurafx-rotate 80s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-size: contain;
 }
 
 [data-animation='spore-fx'] .islight,
 .aura-element[data-animation='spore-fx'][id*='aura_'] {
+    animation: aurafx-rotate 180s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
    -webkit-mask-size: contain;
    filter:blur(5px);
 }
@@ -9348,6 +9368,8 @@ button.journal-view-button.journal-button {
 
 [data-animation='hurricane-fx'] .islight,
 .aura-element[data-animation='hurricane-fx'][id*='aura_'] {
+    animation: aurafx-rotate 30s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     -webkit-mask-size: contain;
     --light1-blur-size: var(--radius1);
     --light2-blur-size: var(--radius2);
@@ -9358,8 +9380,8 @@ button.journal-view-button.journal-button {
 [data-animation='hurricane-fx'] .islight:before,
 .aura-element[data-animation='hurricane-fx'][id*='aura_']:before
 {
-    animation: lightning 5s steps(50) infinite;
-    scale: var(--hurricane-ani-scale, 3.5);
+    animation: lightning 5s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content: '';
     position: absolute;
     width: 100%;
@@ -9383,8 +9405,8 @@ button.journal-view-button.journal-button {
 [data-animation='snow-fx'] .islight:after,
 .aura-element[data-animation='snow-fx'][id*='aura_']:after
 {
-    scale: var(--snow-scale, 1);
-    rotate: var(--snow-rotate, 0deg);
+    animation: snow 5s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content: '';
     position: absolute;
     width: 100%;
@@ -9398,19 +9420,17 @@ button.journal-view-button.journal-button {
     -webkit-mask-size: var(--animation-width);
     overflow:hidden;
     border-radius:50%;
-    --starting-deg: 0deg;
-    opacity: var(--snow-opacity, 1);
+    --starting-deg: 0;
 }
 
-[data-animation='snow-fx'] .islight:after,
-.aura-element[data-animation='snow-fx'][id*='aura_']:after
+[data-animation='snow-fx'] .islight:before,
+.aura-element[data-animation='snow-fx'][id*='aura_']:before
 {
-    scale: var(--snow-scale2, 1);
-    opacity: var(--snow-opacity2, 1);
-    rotate: var(--snow-rotate2, 0deg);
+    animation: snow 5s infinite 2.5s linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
+    --starting-deg: 230;
+    --opacity:0;
 }
-
-
 
 
 [data-animation='bubble-fx'] .islight,
@@ -9425,15 +9445,15 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:after,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:after
 {
-    opacity: var(--bubble-opacity, 0);
-    scale: var(--bubble-scale, 1);
-    rotate: var(--bubble-rotate, 0deg);
+    animation: bubble 6s infinite linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
     content: '';
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
+    --opacity: 0;
     --light1-blur-size: var(--radius1);
     --light2-blur-size: var(--radius2);
     --transparency-blur-size: var(--light2-blur-size);
@@ -9444,9 +9464,9 @@ button.journal-view-button.journal-button {
 [data-animation='bubble-fx'] .islight:before,
 .aura-element[data-animation='bubble-fx'][id*='aura_']:before
 {
-    opacity: var(--bubble-opacity2, 1);
-    scale: var(--bubble-scale2, 1.2);
-    rotate: var(--bubble-rotate2, 0deg);
+    animation: bubble 6s infinite 3s linear;
+    transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
+    rotate:200deg;
 }
 
 .video-meet-area{
@@ -9562,43 +9582,116 @@ float: right;
     bottom: 35px !important;
 }
 
-
-
-
-
-@keyframes lightning {
-    0%{
+@keyframes bubble {
+     0%{
         --opacity: 0;
+        --animation-scale: 1;
     }
-    20%{
-        --opacity: 0;
-    }
-    21%{
-       --opacity: 1;
-    }
-    25%{
-        --opacity: 0;
-    }
-    70%{
-        --opacity: 0;
-    }
-    71%{
-       --opacity: 1;
-    }
-    75%{
-        --opacity: 0;
+    50%{
+         --opacity: 1;
     }
     100%{
+        --animation-scale: 1.4;
         --opacity: 0;
     }
 }
 
 
 
+@keyframes lightning {
+    0%{
+        --animation-scale: 3.5;
+        --opacity: 0;
+    }
+    20%{
+        --animation-scale: 3.5;
+        --opacity: 0;
+    }
+    21%{
+       --animation-scale: 3.5;
+       --opacity: 1;
+    }
+    25%{
+        --opacity: 0;
+        --animation-scale: 3.5;
+    }
+    70%{
+        --animation-scale: 5.5;
+        --opacity: 0;
+    }
+    71%{
+       --animation-scale: 5.5;
+       --opacity: 1;
+    }
+    75%{
+        --animation-scale: 5.5;
+        --opacity: 0;
+    }
+    100%{
+        --animation-scale: 5.5;
+        --opacity: 0;
+    }
+}
+
+@keyframes snow {
+    0%{
+        --opacity: 0;
+        --animation-scale: 1;
+        --animation-rotation: calc(var(--starting-deg) + 200);
+    }
+    25%{
+        --animation-rotation: calc(var(--starting-deg) + 200);
+        --opacity: 1;
+    }
+    50%{
+        --animation-rotation: calc(var(--starting-deg) + 200);
+        --opacity: 0;
+    }
+    51%{
+        --animation-rotation: var(--starting-deg) + 200;
+        --opacity: 0;
+    }
+    75%{
+        --animation-rotation: var(--starting-deg) + 200;
+        --opacity: 1;
+    }
+    100%{
+        --animation-rotation: var(--starting-deg) + 200;
+        --animation-scale: 0.5;
+        --opacity: 0;
+    }
+}
 
 
 
-
+@keyframes aurafx-fairy {
+    0% {
+        --animation-scale: 0.98;
+        --animation-rotation: 0;
+    }
+    50% {
+         --animation-scale: 1;
+        --animation-rotation: 180;
+    }
+    100% {
+        --animation-scale: 0.98;
+        --animation-rotation: 360;
+    }
+}
+@keyframes aurafx-fairy2 {
+    0% {
+        --animation-scale: 1.5;
+        --animation-rotation: 360;
+    }
+    50% {
+        --animation-scale: 1;
+        --animation-rotation: 180;
+    }
+    100% {
+        --animation-scale: 1.5;
+        --animation-rotation: 0;
+    }
+}
 @property --light1-blur-size-animated {
   syntax: '<number>'; /* <- defined as type number for the transition to work */
   initial-value: 1;
@@ -9620,6 +9713,34 @@ float: right;
   initial-value: 1;
   inherits: false;
 }
+@property --animation-scale{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 1;
+  inherits: false;
+}
+@property --animation-rotation{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 1;
+  inherits: false;
+}
+@property --animation-skew-x{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 1;
+  inherits: false;
+}
+@property --animation-skew-y{
+  syntax: '<number>'; /* <- defined as type number for the transition to work */
+  initial-value: 1;
+  inherits: false;
+}
+
+
+
+
+
+
+
+
 @keyframes aurafx-flicker{
       0% { 
         --opacity: 0.7;
@@ -9636,11 +9757,11 @@ float: right;
 }
 @keyframes aurafx-rotate{
     from {
-        transform: rotate(0deg);
+        --animation-rotation: 0;
    
       }
       to {
-         transform: rotate(360deg);
+         --animation-rotation: 360;
       }
 }
 
@@ -9731,12 +9852,39 @@ float: right;
 }
 @keyframes aurafx-wild{
     from {
-        transform: skew(5deg, 0deg);
+        --animation-rotation: 0;
+        --animation-skew-x: 5;
+        --animation-skew-y: 0;
       }
       to {
-        transform: skew(0deg, 5deg);
+        --animation-rotation: 360;
+        --animation-skew-x: 0;
+        --animation-skew-y: 5;
       }
 }
+@keyframes aurafx-wild-hue{
+    from {
+        --animation-rotation: 0;
+        --animation-skew-x: 5;
+        --animation-skew-y: 0;
+      }
+      to {
+        --animation-rotation: 360;
+        --animation-skew-x: 0;
+        --animation-skew-y: 5;
+      }
+}
+@keyframes aurafx-force{
+    from {
+        --animation-scale: 0.99;
+      }
+      to {
+        --animation-scale: 1;
+      }
+}
+
+
+
 
 
 
