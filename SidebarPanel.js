@@ -1431,9 +1431,11 @@ function build_sidebar_list_row(listItem) {
       } else if (listItem.monsterData.isReleased === false) {
         subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="color:darkred">block</span>No Access</div>`);
       }
-
+      if (window.ddbConfigJson?.sources?.find(source => source.id == listItem.monsterData.sourceId)) {
+        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 15px;font-family: 'Material Symbols Outlined'; font-size:15px;">book_2</span><span>${window.ddbConfigJson?.sources?.find(source => source.id == listItem.monsterData.sourceId)?.name}</span></div>`);
+      }
       if (listItem.monsterData.isLegacy === true) {
-        subtitle.append(`<div class="legacy-monster"><span>Legacy</span></div>`);
+        subtitle.append(`<div class="subtitle-attibute legacy-attribute"><div class="legacy-monster"><span>Legacy</span></div></div>`);
       }
 
       if ((typeof listItem.monsterData.quantity == "number") && listItem.monsterData.quantity > 1 && title.find(".monster-quantity").length === 0) {
@@ -1450,7 +1452,7 @@ function build_sidebar_list_row(listItem) {
       row.attr("data-monster", listItem.monsterData.id);
       subtitle.append(`<div class="subtitle-attibute"><span class="plain-text">CR</span>${convert_challenge_rating_id(listItem.monsterData.challengeRatingId)}</div>`);
       if (listItem.monsterData.isHomebrew === true) {
-        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 18px;font-family: 'Material Symbols Outlined';">book_2</span>${listItem.monsterData.document__slug}</div>`);
+        subtitle.append(`<div class="subtitle-attibute"><span class="material-icons" style="width: 15px;font-family: 'Material Symbols Outlined'; font-size:15px;">book_2</span>${listItem.monsterData.document__slug}</div>`);
       } 
       break;
     case ItemType.BuiltinToken:

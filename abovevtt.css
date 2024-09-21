@@ -4641,7 +4641,6 @@ button.block-send-to-game-log span {
 .sidebar-list-item-row-details div {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     justify-content: center;
 }
 .sidebar-list-item-row-details-title {
@@ -4666,6 +4665,7 @@ button.block-send-to-game-log span {
     letter-spacing: 0px;
     padding: 0px 6px;
 }
+
 #door_types{
     padding: 2px;
     width: 105px;
@@ -4744,11 +4744,16 @@ button.block-send-to-game-log span {
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute {
     font-size: 12px;
-    min-width: 34px;
+    min-width: 50px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-end;
+}
+.sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute.legacy-attribute{
+    flex-grow: 1;
+    display:flex;
+    justify-content: flex-end;
 }
 .sidebar-list-item-row .sidebar-list-item-row-details-subtitle .subtitle-attibute img {
     width: 24px;
