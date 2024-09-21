@@ -218,7 +218,6 @@ $(function() {
           rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
         })
         sendBeyond20Event('register-generic-tab', {action:'register-generic-tab'});
-        animationSetup();
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);
