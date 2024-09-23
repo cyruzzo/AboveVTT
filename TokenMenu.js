@@ -2353,9 +2353,9 @@ function build_menu_stat_inputs(tokenIds) {
 
 
 	
-	hpMenuInput.on('keyup', function(event) {
+	hpMenuInput.find('input').on('keyup', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
@@ -2376,9 +2376,9 @@ function build_menu_stat_inputs(tokenIds) {
 			});
 		}
 	});
-	hpMenuInput.on('focusout', function(event) {
+	hpMenuInput.find('input').on('focusout', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;	
 		tokens.forEach(token => {
 			if(token.isPlayer())
@@ -2399,9 +2399,9 @@ function build_menu_stat_inputs(tokenIds) {
 		});
 	});
 
-	maxHpMenuInput.on('keyup', function(event) {
+	maxHpMenuInput.find('input').on('keyup', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
@@ -2423,9 +2423,9 @@ function build_menu_stat_inputs(tokenIds) {
 			});
 		}
 	});
-	maxHpMenuInput.on('focusout', function(event) {
+	maxHpMenuInput.find('input').on('focusout', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;
 		tokens.forEach(token => {
 			if(token.isPlayer())
@@ -2445,9 +2445,9 @@ function build_menu_stat_inputs(tokenIds) {
 		});
 	});
 
-	acMenuInput.on('keyup', function(event) {
+	acMenuInput.find('input').on('keyup', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;		
 		if (event.key == "Enter" && newValue !== undefined && newValue.length > 0) {
 			tokens.forEach(token => {
@@ -2469,9 +2469,9 @@ function build_menu_stat_inputs(tokenIds) {
 			});
 		}
 	});
-	acMenuInput.on('focusout', function(event) {
+	acMenuInput.find('input').on('focusout', function(event) {
 		let newValue = event.target.value;
-		if(newValue == '')
+		if($(event.target).prop('readonly') || newValue == '')
 			return;
 		tokens.forEach(token => {
 			if(token.isPlayer())
@@ -2491,7 +2491,7 @@ function build_menu_stat_inputs(tokenIds) {
 		});
 	});
 
-	elevMenuInput.on('keyup', function(event) {
+	elevMenuInput.find('input').on('keyup', function(event) {
 		if(event.target.value == '')
 			return;
 		if (event.key == "Enter") {
@@ -2501,7 +2501,7 @@ function build_menu_stat_inputs(tokenIds) {
 			});
 		}
 	});
-	elevMenuInput.on('focusout', function(event) {
+	elevMenuInput.find('input').on('focusout', function(event) {
 		if(event.target.value == '')
 			return;
 		tokens.forEach(token => {
