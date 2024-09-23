@@ -312,7 +312,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.01-Goblin-Ambush-player.png",
 		"conversion": 1,
 		"width": 1002,
 		"height": 1369
@@ -5635,7 +5634,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-1.02-Cragmaw-Hideout.png",
 		"conversion": 1,
 		"width": 2029,
 		"height": 1452
@@ -5653,29 +5651,12 @@ function get_scene_data_pbtso() {
 		"scale_factor": "2"
 	},
 	"pbtso/trouble-in-phandalin/Map202RedbrandHideout": {
-		
-		"reveals": [
-			[
-				0,
-				0,
-				0,
-				0,
-				2,
-				0,
-				1
-			]
-		],
 		"gridStrokeNumberInput": "0.5",
-		"scale": 100,
 		"vpps": 70.5,
 		"darkness_filter_number": "100",
 		"title": "Map 2.2: Redbrand Hideout ",
-		"fog_of_war": "1",
-		
-		"upsq": "ft",
 		"scaleX": 1,
 		"scaleY": 1,
-		"gridType": "1",
 		"drawings": [
 			[
 				"line",
@@ -5857,17 +5838,6 @@ function get_scene_data_pbtso() {
 				"line",
 				"wall",
 				"rgba(0, 255, 0, 1)",
-				1102,
-				198,
-				1178,
-				198,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
 				759,
 				201,
 				1040,
@@ -5956,17 +5926,6 @@ function get_scene_data_pbtso() {
 				"line",
 				"wall",
 				"rgba(0, 255, 0, 1)",
-				1036,
-				200,
-				1103,
-				200,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
 				1179,
 				200,
 				1328,
@@ -6078,9 +6037,9 @@ function get_scene_data_pbtso() {
 				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1391,
-				769,
+				845,
 				1391,
-				769,
+				818,
 				6,
 				1
 			],
@@ -6093,50 +6052,6 @@ function get_scene_data_pbtso() {
 				1391,
 				818,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				818,
-				1391,
-				769,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
-				769,
-				1391,
-				769,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
-				845,
-				1391,
-				818,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				818,
-				1391,
-				769,
-				12,
 				1
 			],
 			[
@@ -6166,54 +6081,10 @@ function get_scene_data_pbtso() {
 				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1391,
-				769,
-				1391,
-				768,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				768,
-				1391,
-				723,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
 				723,
 				1391,
 				723,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
-				769,
-				1391,
-				768,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				768,
-				1391,
-				723,
-				12,
 				1
 			],
 			[
@@ -6224,17 +6095,6 @@ function get_scene_data_pbtso() {
 				1338,
 				1742,
 				1338,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1393,
-				906,
-				1611,
-				906,
 				6,
 				1
 			],
@@ -6499,39 +6359,6 @@ function get_scene_data_pbtso() {
 				1258,
 				1109,
 				1193,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1391,
-				1335,
-				1036,
-				1340,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1036,
-				1340,
-				1029,
-				1339,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1029,
-				1339,
-				1031,
-				1196,
 				6,
 				1
 			],
@@ -7957,105 +7784,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 0.5)",
-				1951,
-				1112,
-				1951,
-				1061,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1393,
-				1341,
-				1393,
-				1331,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1393,
-				1331,
-				1393,
-				1261,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
-				975,
-				1391,
-				993,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1391,
-				1055,
-				1391,
-				1039,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				1039,
-				1391,
-				993,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1393,
-				906,
-				1393,
-				993,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1393,
-				1261,
-				1393,
-				1039,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1393,
-				1039,
-				1393,
-				993,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1326,
 				902,
@@ -8331,17 +8059,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				205,
-				1121.2341597796144,
-				254,
-				1121.3691460055097,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				115,
 				910,
@@ -8364,17 +8081,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				207,
-				910,
-				254,
-				910,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				115,
 				554,
@@ -8392,17 +8098,6 @@ function get_scene_data_pbtso() {
 				324,
 				554,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				275,
-				554,
-				324,
-				554,
-				12,
 				1
 			],
 			[
@@ -8425,17 +8120,6 @@ function get_scene_data_pbtso() {
 				326,
 				483,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				278,
-				483,
-				326,
-				483,
-				12,
 				1
 			],
 			[
@@ -8463,17 +8147,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				406,
-				336,
-				406,
-				284,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				407,
 				201,
@@ -8491,17 +8164,6 @@ function get_scene_data_pbtso() {
 				407,
 				336,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				407,
-				336,
-				407,
-				284,
-				12,
 				1
 			],
 			[
@@ -8529,17 +8191,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				689,
-				274,
-				689,
-				204,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				689,
 				200,
@@ -8562,17 +8213,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				689,
-				274,
-				689,
-				204,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				757,
 				200,
@@ -8590,17 +8230,6 @@ function get_scene_data_pbtso() {
 				757,
 				417,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				757,
-				417,
-				757,
-				346,
-				12,
 				1
 			],
 			[
@@ -8628,45 +8257,12 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				759,
-				417,
-				759,
-				346,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0 ,1)",
-				1102,
-				198,
-				1102,
-				202,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1102,
 				413,
 				1102,
 				274,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1102,
-				274,
-				1102,
-				202,
-				12,
 				1
 			],
 			[
@@ -8689,17 +8285,6 @@ function get_scene_data_pbtso() {
 				1178,
 				267,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1178,
-				267,
-				1178,
-				216,
-				12,
 				1
 			],
 			[
@@ -8727,17 +8312,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				1179,
-				267,
-				1179,
-				216,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1102,
 				413,
@@ -8760,17 +8334,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				1119,
-				413,
-				1168,
-				413,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1102,
 				413,
@@ -8788,17 +8351,6 @@ function get_scene_data_pbtso() {
 				1168,
 				413,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1119,
-				413,
-				1168,
-				413,
-				12,
 				1
 			],
 			[
@@ -8826,17 +8378,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				1392,
-				481,
-				1392,
-				428,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				1391,
 				413,
@@ -8854,39 +8395,6 @@ function get_scene_data_pbtso() {
 				1391,
 				481,
 				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1391,
-				481,
-				1391,
-				428,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1473,
-				342,
-				1524,
-				342,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 100, 255, 1)",
-				1473,
-				557,
-				1523,
-				557,
-				12,
 				1
 			],
 			[
@@ -9427,9 +8935,370 @@ function get_scene_data_pbtso() {
 				558,
 				12,
 				1
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1611,
+				906,
+				1397,
+				906,
+				6,
+				1,
+				0,
+				null,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1391,
+				1052,
+				1393,
+				1258,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1394,
+				918,
+				1394,
+				918,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1398,
+				904,
+				1392,
+				978,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1392,
+				977,
+				1392,
+				1053,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1038,
+				200,
+				1178,
+				200,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				1104,
+				201,
+				1103,
+				273,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(150, 50, 150, 1)",
+				1178,
+				214,
+				1179,
+				269,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 0.5)",
+				1119,
+				413,
+				1168,
+				413,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1119,
+				413,
+				1168,
+				413,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				278,
+				483,
+				326,
+				483,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				275,
+				554,
+				324,
+				554,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				207,
+				910,
+				254,
+				910,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				205,
+				1121.2341597796144,
+				254,
+				1121.3691460055097,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1030,
+				1195,
+				1031,
+				1343,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1379,
+				1337,
+				1379,
+				1336,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1396,
+				1341,
+				1030,
+				1341,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				1390,
+				1255,
+				1391,
+				1343,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1390,
+				768,
+				1391,
+				820,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1390,
+				721,
+				1390,
+				769,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1473,
+				342,
+				1524,
+				342,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1473,
+				557,
+				1523,
+				557,
+				12,
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1390,
+				427,
+				1391,
+				482,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				405,
+				282,
+				406,
+				337,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				686,
+				203,
+				686,
+				274,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				756,
+				346,
+				757,
+				417,
+				12,
+				1,
+				false
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1951,
+				1112,
+				1951,
+				1061,
+				12,
+				1,
+				null
+			],
+			[
+				"eraser",
+				"filled",
+				"#e66465",
+				132,
+				30,
+				-209,
+				-77,
+				"6",
+				1
+			],
+			[
+				"eraser",
+				"filled",
+				"#e66465",
+				124,
+				58,
+				-218,
+				-160,
+				"6",
+				1
 			]
 		],
-		"fpsq": "5",
 		"tokens": {
 			"021f7957-1a1a-42e2-8404-1c48ddad4983": {
 				"sizeId": 4,
@@ -9442,6 +9311,7 @@ function get_scene_data_pbtso() {
 				"hp": 27,
 				"legacyaspectratio": true,
 				"max_hp": 27,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Bugbear",
 				"top": "1193px",
@@ -9479,6 +9349,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16817,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16817,
 				"square": false,
 				"vision": {
@@ -9546,6 +9417,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805766,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805766,
 				"square": false,
 				"vision": {
@@ -9613,6 +9485,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16798,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -9679,6 +9552,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805766,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805766,
 				"square": false,
 				"vision": {
@@ -9746,6 +9620,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805766,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805766,
 				"square": false,
 				"vision": {
@@ -9765,6 +9640,126 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
+			"110420111032739966d9ec-298a-4658-bcf9-7640fa1b6bd6": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#0000C0",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 1,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "212px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1078px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "110420111032739966d9ec-298a-4658-bcf9-7640fa1b6bd6",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"117821411792699966d9ec-298a-4658-bcf9-7640fa1b6bd6": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#400000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 1,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "216px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1153px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "117821411792699966d9ec-298a-4658-bcf9-7640fa1b6bd6",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"13901255139113439966d9ec-298a-4658-bcf9-7640fa1b6bd6": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#A0A000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 1,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1274px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1365px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "13901255139113439966d9ec-298a-4658-bcf9-7640fa1b6bd6",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
 			"142097ad-3a4e-4f8a-82cd-4bd5944d5fb7": {
 				"sizeId": 3,
 				"itemType": "monster",
@@ -9776,6 +9771,7 @@ function get_scene_data_pbtso() {
 				"hp": 7,
 				"legacyaspectratio": true,
 				"max_hp": 7,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Goblin",
 				"top": "1193px",
@@ -9812,6 +9808,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16907,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16907,
 				"square": false,
 				"vision": {
@@ -9883,6 +9880,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16829,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -9913,6 +9911,7 @@ function get_scene_data_pbtso() {
 				"hp": 27,
 				"legacyaspectratio": true,
 				"max_hp": 27,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Bugbear",
 				"top": "1123px",
@@ -9950,6 +9949,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16817,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16817,
 				"square": false,
 				"vision": {
@@ -9970,22 +9970,11 @@ function get_scene_data_pbtso() {
 				"revealInFog": false
 			},
 			"235afd07-d32f-4b91-a60c-2258152d048d": {
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#800080",
 				"disablestat": false,
-				"hidestat": false,
-				"hidden": true,
 				"gridSquares": 0.9952606635071091,
 				"custom_conditions": [],
 				"hp": 13,
-				"legacyaspectratio": true,
-				"max_hp": 13,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Skeleton",
-				"top": "629px",
 				"armorClass": 13,
-				"hidehpbar": false,
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
@@ -10002,21 +9991,12 @@ function get_scene_data_pbtso() {
 					"color": "rgba(255, 255, 0, 0.1)",
 					"feet": "0"
 				},
-				"stat": 17015,
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"hitPointInfo": {
-					"maximum": 13,
-					"current": 13,
-					"temp": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
-				"lockRestrictDrop": "none",
-				"player_owned": false,
-				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
 				"itemId": 17015,
 				"square": false,
@@ -10028,13 +10008,35 @@ function get_scene_data_pbtso() {
 				"size": 70,
 				"left": "1321px",
 				"name": "Skeleton",
-				"zindexdiff": 17,
 				"defaultmaxhptype": "average",
 				"disableborder": false,
 				"auraislight": true,
-				"disableaura": false,
 				"conditions": [],
 				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidestat": false,
+				"hidden": true,
+				"legacyaspectratio": true,
+				"max_hp": 13,
+				"mapElev": 0,
+				"restrictPlayerMove": false,
+				"listItemPath": "/Monsters/Skeleton",
+				"top": "629px",
+				"hidehpbar": false,
+				"stat": 17015,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"player_owned": false,
+				"monster": 17015,
+				"scaleCreated": 1,
+				"zindexdiff": 17,
+				"disableaura": false,
 				"revealInFog": false
 			},
 			"32eceea0-53a6-4f0c-8096-170d84dc583a": {
@@ -10084,6 +10086,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805766,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805766,
 				"square": false,
 				"vision": {
@@ -10151,6 +10154,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16798,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -10171,22 +10175,11 @@ function get_scene_data_pbtso() {
 				"revealInFog": false
 			},
 			"4831e757-ef78-4827-b6dd-66dfac971a36": {
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#800080",
 				"disablestat": false,
-				"hidestat": false,
-				"hidden": true,
 				"gridSquares": 0.9952606635071091,
 				"custom_conditions": [],
 				"hp": 13,
-				"legacyaspectratio": true,
-				"max_hp": 13,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Skeleton",
-				"top": "418px",
 				"armorClass": 13,
-				"hidehpbar": false,
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
@@ -10203,21 +10196,12 @@ function get_scene_data_pbtso() {
 					"color": "rgba(255, 255, 0, 0.1)",
 					"feet": "0"
 				},
-				"stat": 17015,
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"hitPointInfo": {
-					"maximum": 13,
-					"current": 13,
-					"temp": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
-				"lockRestrictDrop": "none",
-				"player_owned": false,
-				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
 				"itemId": 17015,
 				"square": false,
@@ -10229,13 +10213,35 @@ function get_scene_data_pbtso() {
 				"size": 70,
 				"left": "1251px",
 				"name": "Skeleton",
-				"zindexdiff": 17,
 				"defaultmaxhptype": "average",
 				"disableborder": false,
 				"auraislight": true,
-				"disableaura": false,
 				"conditions": [],
 				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidestat": false,
+				"hidden": true,
+				"legacyaspectratio": true,
+				"max_hp": 13,
+				"mapElev": 0,
+				"restrictPlayerMove": false,
+				"listItemPath": "/Monsters/Skeleton",
+				"top": "418px",
+				"hidehpbar": false,
+				"stat": 17015,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"player_owned": false,
+				"monster": 17015,
+				"scaleCreated": 1,
+				"zindexdiff": 17,
+				"disableaura": false,
 				"revealInFog": false
 			},
 			"4f32ec98-988f-4218-b898-d3a76e95c535": {
@@ -10286,6 +10292,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805766,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805766,
 				"square": false,
 				"vision": {
@@ -10317,6 +10324,7 @@ function get_scene_data_pbtso() {
 				"hp": 0,
 				"legacyaspectratio": true,
 				"max_hp": 31,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Goblin Psi Brawler",
 				"top": "1123px",
@@ -10353,6 +10361,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805746,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805746,
 				"square": false,
 				"vision": {
@@ -10383,6 +10392,7 @@ function get_scene_data_pbtso() {
 				"hp": 27,
 				"legacyaspectratio": true,
 				"max_hp": 27,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Bugbear",
 				"top": "1193px",
@@ -10419,6 +10429,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16817,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16817,
 				"square": false,
 				"vision": {
@@ -10449,6 +10460,7 @@ function get_scene_data_pbtso() {
 				"hp": 45,
 				"legacyaspectratio": true,
 				"max_hp": 45,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Nothic",
 				"top": "911px",
@@ -10485,6 +10497,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 17092,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 17092,
 				"square": false,
 				"vision": {
@@ -10552,6 +10565,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16829,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -10583,6 +10597,7 @@ function get_scene_data_pbtso() {
 				"hp": 13,
 				"legacyaspectratio": true,
 				"max_hp": 13,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Skeleton",
 				"top": "770px",
@@ -10619,6 +10634,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 17015,
 				"square": false,
 				"vision": {
@@ -10638,23 +10654,52 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
+			"6862036862749966d9ec-298a-4658-bcf9-7640fa1b6bd6": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#202000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 1,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "213px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "661px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6862036862749966d9ec-298a-4658-bcf9-7640fa1b6bd6",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
 			"7523ddce-f711-42f2-b4cf-d2a40d3b57f3": {
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#800080",
 				"disablestat": false,
-				"hidestat": false,
-				"hidden": true,
 				"gridSquares": 0.9952606635071091,
 				"custom_conditions": [],
 				"hp": 13,
-				"legacyaspectratio": true,
-				"max_hp": 13,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Skeleton",
-				"top": "770px",
 				"armorClass": 13,
-				"hidehpbar": false,
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
@@ -10671,21 +10716,12 @@ function get_scene_data_pbtso() {
 					"color": "rgba(255, 255, 0, 0.1)",
 					"feet": "0"
 				},
-				"stat": 17015,
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"hitPointInfo": {
-					"maximum": 13,
-					"current": 13,
-					"temp": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
-				"lockRestrictDrop": "none",
-				"player_owned": false,
-				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
 				"itemId": 17015,
 				"square": false,
@@ -10697,32 +10733,83 @@ function get_scene_data_pbtso() {
 				"size": 70,
 				"left": "1180px",
 				"name": "Skeleton",
-				"zindexdiff": 17,
 				"defaultmaxhptype": "average",
 				"disableborder": false,
 				"auraislight": true,
-				"disableaura": false,
 				"conditions": [],
 				"enablepercenthpbar": false,
-				"revealInFog": false
-			},
-			"7d20d598-9981-4fe3-a6e1-59fe1123017f": {
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#800080",
-				"disablestat": false,
 				"hidestat": false,
 				"hidden": true,
-				"gridSquares": 0.9952606635071091,
-				"custom_conditions": [],
-				"hp": 13,
 				"legacyaspectratio": true,
 				"max_hp": 13,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Skeleton",
 				"top": "770px",
-				"armorClass": 13,
 				"hidehpbar": false,
+				"stat": 17015,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"player_owned": false,
+				"monster": 17015,
+				"scaleCreated": 1,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7563467574179966d9ec-298a-4658-bcf9-7640fa1b6bd6": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#404040",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 1,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "356px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "731px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "7563467574179966d9ec-298a-4658-bcf9-7640fa1b6bd6",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"7d20d598-9981-4fe3-a6e1-59fe1123017f": {
+				"disablestat": false,
+				"gridSquares": 0.9952606635071091,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 13,
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
@@ -10739,21 +10826,12 @@ function get_scene_data_pbtso() {
 					"color": "rgba(255, 255, 0, 0.1)",
 					"feet": "0"
 				},
-				"stat": 17015,
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"hitPointInfo": {
-					"maximum": 13,
-					"current": 13,
-					"temp": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
-				"lockRestrictDrop": "none",
-				"player_owned": false,
-				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
 				"itemId": 17015,
 				"square": false,
@@ -10765,13 +10843,35 @@ function get_scene_data_pbtso() {
 				"size": 70,
 				"left": "1251px",
 				"name": "Skeleton",
-				"zindexdiff": 17,
 				"defaultmaxhptype": "average",
 				"disableborder": false,
 				"auraislight": true,
-				"disableaura": false,
 				"conditions": [],
 				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidestat": false,
+				"hidden": true,
+				"legacyaspectratio": true,
+				"max_hp": 13,
+				"mapElev": 0,
+				"restrictPlayerMove": false,
+				"listItemPath": "/Monsters/Skeleton",
+				"top": "770px",
+				"hidehpbar": false,
+				"stat": 17015,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"player_owned": false,
+				"monster": 17015,
+				"scaleCreated": 1,
+				"zindexdiff": 17,
+				"disableaura": false,
 				"revealInFog": false
 			},
 			"84c0db09-2c8d-4fb2-906e-d903f9676d54": {
@@ -10821,6 +10921,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805750,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805750,
 				"square": false,
 				"vision": {
@@ -10888,6 +10989,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16798,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -10918,6 +11020,7 @@ function get_scene_data_pbtso() {
 				"hp": 27,
 				"legacyaspectratio": true,
 				"max_hp": 27,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Bugbear",
 				"top": "1264px",
@@ -10955,6 +11058,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16817,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16817,
 				"square": false,
 				"vision": {
@@ -10985,6 +11089,7 @@ function get_scene_data_pbtso() {
 				"hp": 7,
 				"legacyaspectratio": true,
 				"max_hp": 7,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Quasit",
 				"top": "242px",
@@ -11021,6 +11126,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16988,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 16988,
 				"square": false,
 				"vision": {
@@ -11089,6 +11195,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16798,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -11156,6 +11263,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16798,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -11223,6 +11331,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 16829,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"vision": {
 					"color": "rgba(255, 255, 255, 0.5)",
 					"feet": "0"
@@ -11254,6 +11363,7 @@ function get_scene_data_pbtso() {
 				"hp": 0,
 				"legacyaspectratio": true,
 				"max_hp": 31,
+				"mapElev": 0,
 				"restrictPlayerMove": false,
 				"listItemPath": "/Monsters/Goblin Psi Brawler",
 				"top": "1052px",
@@ -11290,6 +11400,7 @@ function get_scene_data_pbtso() {
 				"player_owned": false,
 				"monster": 3805746,
 				"tokenBaseStyleSelect": "default",
+				"scaleCreated": 1,
 				"itemId": 3805746,
 				"square": false,
 				"vision": {
@@ -11310,22 +11421,11 @@ function get_scene_data_pbtso() {
 				"revealInFog": false
 			},
 			"e5e0dc89-b1cd-4aca-a3a0-a8d638a9d304": {
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#800080",
 				"disablestat": false,
-				"hidestat": false,
-				"hidden": true,
 				"gridSquares": 0.9952606635071091,
 				"custom_conditions": [],
 				"hp": 13,
-				"legacyaspectratio": true,
-				"max_hp": 13,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Skeleton",
-				"top": "418px",
 				"armorClass": 13,
-				"hidehpbar": false,
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
@@ -11342,21 +11442,12 @@ function get_scene_data_pbtso() {
 					"color": "rgba(255, 255, 0, 0.1)",
 					"feet": "0"
 				},
-				"stat": 17015,
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"hitPointInfo": {
-					"maximum": 13,
-					"current": 13,
-					"temp": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
-				"lockRestrictDrop": "none",
-				"player_owned": false,
-				"monster": 17015,
 				"tokenBaseStyleSelect": "default",
 				"itemId": 17015,
 				"square": false,
@@ -11368,36 +11459,49 @@ function get_scene_data_pbtso() {
 				"size": 70,
 				"left": "1180px",
 				"name": "Skeleton",
-				"zindexdiff": 17,
 				"defaultmaxhptype": "average",
 				"disableborder": false,
 				"auraislight": true,
-				"disableaura": false,
 				"conditions": [],
 				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidestat": false,
+				"hidden": true,
+				"legacyaspectratio": true,
+				"max_hp": 13,
+				"mapElev": 0,
+				"restrictPlayerMove": false,
+				"listItemPath": "/Monsters/Skeleton",
+				"top": "418px",
+				"hidehpbar": false,
+				"stat": 17015,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"player_owned": false,
+				"monster": 17015,
+				"scaleCreated": 1,
+				"zindexdiff": 17,
+				"disableaura": false,
 				"revealInFog": false
 			}
 		},
 		"darkness_filter": "100",
 		"grid_line_width": "0.5",
+		"conversion": 1,
 		"grid_subdivided": "0",
 		"scale_factor": 1,
 		"offsetx": 54.66666666666674,
 		"dm_map_usable": "1",
 		"offsety": 65,
-		"dm_map_is_video": "0",
-		"grid": "0",
-		"scale_check": true,
-		
-		"player_map_is_video": "0",
+		"daylight": "rgba(255, 255, 255, 1)",
 		"hpps": 70.33333333333333,
-		"disableSceneVision": "0",
-		"grid_color": "rgba(0, 0, 0, 0.5)",
-		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-2.02-Redbrand-Hideout.png",
-		"conversion": 1,
-		"width": 2059,
-		"height": 1466
+		"grid_color": "rgba(0, 0, 0, 0.5)"
 	},
 	"pbtso/the-spiders-web/Map301OldOwlWell": {
 		
@@ -12469,7 +12573,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-003.Map301-Old-Owl-Well.png",
 		"conversion": 1,
 		"width": 1002,
 		"height": 1369
@@ -18051,7 +18154,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.02-Ruins-of-Thundertree.png",
 		"conversion": 1,
 		"width": 2040,
 		"height": 1452
@@ -20146,7 +20248,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/03-008.Map303-Wyvern-Tor.png",
 		"conversion": 1,
 		"width": 1010,
 		"height": 1372
@@ -25313,7 +25414,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-3.04-Cragmaw-Castle.png",
 		"conversion": 1,
 		"width": 2029,
 		"height": 1452,
@@ -37675,7 +37775,6 @@ function get_scene_data_pbtso() {
 		"disableSceneVision": "0",
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1",
-		"map": "https://media.dndbeyond.com/compendium-images/pbtso/3WCYZRRvYTovFYbD/map-4.01-Wave-Echo-Cave.png",
 		"conversion": 0.6891750783153499,
 		"width": 1518.941872607031,
 		"height": 1980.0000000000002
