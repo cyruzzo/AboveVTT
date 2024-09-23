@@ -1009,7 +1009,6 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		}
 
 		window.TOKEN_OBJECTS[id].place_sync_persist();
-		this.scene.hasTokens = true;
 	}
 
 
