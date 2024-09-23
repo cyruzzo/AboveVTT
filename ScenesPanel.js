@@ -40,6 +40,8 @@ async function get_edit_form_data(){
 	$("#edit_scene_form").find("input, button.rc-switch").each(function(index) {	
 		promises.push(new Promise(async (resolve, reject) => {
 			const inputName = $(this).attr('name');
+			if(inputName == undefined)
+				return resolve();
 			let inputValue = $(this).val();
 
 			if ( ((inputName === 'player_map') || (inputName==='dm_map')) ) {
@@ -1069,7 +1071,7 @@ function edit_scene_vision_settings(scene_id){
     let daylightInput = $(`<div class="lightRow">
                     <div class="lightRowLabel">Daylight Color - For light drawings and token light</div>
                     <div class="lightRowInput" style="padding-left: 2px">
-                        <input class="spectrum" name="daylightColor" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
+                        <input class="spectrum" name="daylight" value="${window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)'}" >
                     </div>
                 </div>
                 </div>`);
@@ -1085,7 +1087,7 @@ function edit_scene_vision_settings(scene_id){
     });
     window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : 'rgba(255, 255, 255, 1)';
     const originalColor = window.CURRENT_SCENE_DATA.daylight;
-	daylightInput.find("input[name='daylightColor']").spectrum("set", window.CURRENT_SCENE_DATA.daylight);
+	daylightInput.find("input[name='daylight']").spectrum("set", window.CURRENT_SCENE_DATA.daylight);
     const colorPickerChange = function(e, tinycolor) {
         window.CURRENT_SCENE_DATA.daylight = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
  		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
@@ -1125,7 +1127,7 @@ function edit_scene_vision_settings(scene_id){
 		for (key in formData) {
 			scene[key] = formData[key];
 		}
-		scene['daylight'] = window.CURRENT_SCENE_DATA.daylight;
+		
 		const isNew = false;
 
 		window.ScenesHandler.persist_scene(scene_id, isNew);           

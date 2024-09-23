@@ -1195,46 +1195,7 @@ function export_current_scene(){
 	$(".import-loading-indicator").remove();
 }
 
-//Used for adding to scene data files.
-function export_scene_import_data(){
-	let currentSceneData = {
-		...window.CURRENT_SCENE_DATA,
-		scale_factor: window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-		hpps: window.CURRENT_SCENE_DATA.hpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
-		vpps: window.CURRENT_SCENE_DATA.vpps/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
-		offsetx: window.CURRENT_SCENE_DATA.offsetx/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
-		offsety: window.CURRENT_SCENE_DATA.offsety/(window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion),
-		notes: {}
-	} 
-	let uuid = currentSceneData.uuid
-	let DataFile = {}
 
-	DataFile[uuid] = currentSceneData
-	
-
-	let deleteItems = ['order', "parentId", "id", "uuid", "folderPath", "playlist"]
-	for(let i in deleteItems){
-		delete DataFile[uuid][deleteItems[i]];
-	}
-
-	for(tokenID in window.TOKEN_OBJECTS){
-		let statBlockID = window.TOKEN_OBJECTS[tokenID].options.statBlock
-		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
-			DataFile[currentSceneData.uuid].notes[statBlockID] = window.JOURNAL.notes[statBlockID];
-		}
-		if(window.JOURNAL.notes[tokenID] != undefined){
-			DataFile[currentSceneData.uuid].notes[tokenID] = window.JOURNAL.notes[tokenID];
-		}
-	}
-
-	
-
-
-	let currentdate = new Date(); 
-	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
-	download(JSON.stringify(DataFile,null,"\t"),`${window.CURRENT_SCENE_DATA.title}-${datetime}.json`,"application/json");
-	$(".import-loading-indicator").remove();
-}
 async function export_scene_context(sceneId){
 	build_import_loading_indicator('Preparing Export File');
 	let scene = await AboveApi.getScene(sceneId);
