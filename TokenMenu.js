@@ -986,9 +986,11 @@ function token_context_menu_expanded(tokenIds, e) {
 		$(".hpMenuInput").prop('readonly', false);
 	}
 	else { 
-		$(".maxHpMenuInput, .acMenuInput, .hpMenuInput").off('click.message').on('click.message', function(){
-			showTempMessage('Player HP/AC must be adjusted on the character sheet.')
-		})
+		if(tokens[0].isPlayer()){
+			$(".maxHpMenuInput, .acMenuInput, .hpMenuInput").off('click.message').on('click.message', function(){
+				showTempMessage('Player HP/AC must be adjusted on the character sheet.')
+			})
+		}
 		$(".maxHpMenuInput").prop('readonly', true);
 		$(".acMenuInput").prop('readonly', true);
 		$(".hpMenuInput").prop('readonly', true);
