@@ -500,9 +500,9 @@ function getRollData(rollButton){
         rollType = 'heal'
       }
     } else if($(rollButton).parents(`[class*='__tohit']`).length > 0){
-      rollType = 'attack'
+      rollType = 'to hit'
     } 
-    if(rollType == 'damage' || rollType == 'attack' || rollType == 'heal'){
+    if(rollType == 'damage' || rollType == 'attack' || rollType == 'to hit' || rollType == 'heal'){
       if($(rollButton).parents(`.ddbc-combat-attack--spell`).length > 0){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('[class*="styles_spellName"]').text();
       }
