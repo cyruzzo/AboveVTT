@@ -402,7 +402,7 @@ class DiceRoller {
                   playerId: window.PLAYER_ID,
                   sendTo: window.sendToTab 
                 };
-                if(rollType == 'attack'){     
+                if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit'){     
                     if(critSuccess == true){
                         this.#critAttackAction = rollTitle;     
                     }
@@ -502,7 +502,7 @@ class DiceRoller {
             return;
         }
         if(msg != undefined){
-            if(msg.data.rolls[0].rollType == 'attack'){
+            if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
                 let critSuccess = {};
                 let critFail = {};
 
