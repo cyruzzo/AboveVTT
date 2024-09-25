@@ -1524,6 +1524,9 @@ class Token {
 					i -= 1;
 					continue;
 				}
+				if(this.options.custom_conditions[i].name == 'Flamed'){
+					this.options.custom_conditions[i].name = 'Burning'
+				}
 				//Security logic to prevent HTML/JS from being injected into condition names.
 				const conditionName = DOMPurify.sanitize( this.options.custom_conditions[i].name,{ALLOWED_TAGS: []});
 				const conditionText = DOMPurify.sanitize( this.options.custom_conditions[i].text,{ALLOWED_TAGS: []});
