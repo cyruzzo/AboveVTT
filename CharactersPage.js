@@ -187,21 +187,15 @@ function send_senses() {
 
 function read_conditions(container = $(document)) {
   let conditionsSet = [];
-  container.find(`.ct-condition-manage-pane__condition`).each(function () {
-    if ($(this).find(`.ddbc-toggle-field[aria-checked='true'], [class*='styles_toggle'][aria-pressed='true']`).length > 0) {
-      conditionsSet.push({
-        name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-        level: null
-      });
+  container.find('.ct-conditions-summary .ddbc-condition__name').each(function(){
+    let level = null;
+    if($(this).find('.ddbc-condition__level').length>0){
+      level = parseInt($(this).find('.ddbc-condition__level').text().replace(/\W|\D/gi, ''))
     }
-  });
-  container.find(`.ct-condition-manage-pane__condition--special`).each (function () {
-    if(container.find(`.ddbc-number-bar__option--active, [class*='styles_bar'][class*='styles_active']`).length > 0){
-      conditionsSet.push({
-        name: $(this).find('.ct-condition-manage-pane__condition-name').text(),
-        level: $(this).find(`.ddbc-number-bar__option--implied, [class*='styles_bar'][class*='styles_implied']`).length
-      });
-    }
+    conditionsSet.push({
+      name: $(this).contents().not($(this).children()).text(),
+      level: level
+    });
   })
   return conditionsSet;
 }
@@ -705,6 +699,9 @@ function observe_character_sheet_changes(documentToObserve) {
       const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
       if (icons.length > 0) {
         icons.wrap(function() {
+          if(!window.top?.CURRENT_SCENE_DATA?.fpsq)
+            return;
+
           $(this).addClass("above-vtt-visited");
           const button = $("<button class='above-aoe integrated-dice__container'></button>");
 
@@ -747,6 +744,7 @@ function observe_character_sheet_changes(documentToObserve) {
             // place_token_in_center_of_view only works for the DM
             // place_token_in_center_of_view(options)
           });
+          
           return button;
         });
         console.log(`${icons.length} aoe spells discovered`);
@@ -1335,13 +1333,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         switch (mutation.type) {
           case "attributes":
-            if (
-              (mutationTarget.hasClass('ct-condition-manage-pane__condition')) ||
-              (mutationTarget.hasClass('ddbc-number-bar__option--interactive') && mutationTarget.parents('.ct-condition-manage-pane__condition--special').length>0)
-            ) { // conditions update from sidebar
-              const conditionsSet = read_conditions(documentToObserve);
-              character_sheet_changed({conditions: conditionsSet});
-            } else if(
+            if(
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
               mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
@@ -1358,7 +1350,10 @@ function observe_character_sheet_changes(documentToObserve) {
             break;
           case "childList":
             const firstRemoved = $(mutation.removedNodes[0]);
-            if(firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+            if (mutationTarget.hasClass('ct-conditions-summary')) { // conditions update from sidebar
+              const conditionsSet = read_conditions(documentToObserve);
+              character_sheet_changed({conditions: conditionsSet});
+            } else if(firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
               let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number`).text());
               send_character_hp(maxhp);
             }else if (

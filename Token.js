@@ -332,13 +332,16 @@ class Token {
 	    }
 	    if (STANDARD_CONDITIONS.includes(conditionName)) {
 	        if (this.isPlayer()) {	        
-				if(window.PLAYER_NAME == this.options.name){
+				if(this.isCurrentPlayer()){
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 					$('.ct-condition-manage-pane').css('visibility', 'hidden');
 					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
+					this.options.conditions.push({ name: conditionName });
+
 					setTimeout(function(){
 						$(`#switch_gamelog`).click();
 					}, 10)
+
 				}
 				else{
 				   window.MB.inject_chat({
@@ -356,17 +359,24 @@ class Token {
 	    		'name': conditionName,
 	    		'text': text
 	    	}
-				this.options.custom_conditions.push(condition);
+			this.options.custom_conditions.push(condition);
 	    }
 	}
 	
 	removeCondition(conditionName) {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
-				if(window.PLAYER_NAME == this.options.name){
+				if(this.isCurrentPlayer()){
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 					$('.ct-condition-manage-pane').css('visibility', 'hidden');
 					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
+					this.options.conditions = this.options.conditions.filter(c => {
+						if (typeof c === "string") {
+							return c !== conditionName;
+						} else {
+							return c?.name !== conditionName;
+						}
+					});
 					setTimeout(function(){
 						$(`#switch_gamelog`).click();
 					}, 10)		

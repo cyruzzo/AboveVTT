@@ -776,7 +776,7 @@ const debounce_pc_token_update = mydebounce(() => {
     update_pc_token_rows();
     window.PC_TOKENS_NEEDING_UPDATES = [];
   }
-});
+},50);
 
 function update_pc_with_api_call(playerId) {
   if (!playerId) {
