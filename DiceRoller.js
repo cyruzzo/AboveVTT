@@ -650,7 +650,7 @@ class DiceRoller {
             if((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled"){
                 if(this.#pendingSpellSave != undefined )
                     ddbMessage.avttSpellSave = this.#pendingSpellSave;
-                if(this.#pendingDamageType != undefined )
+                if(this.#pendingDamageType != undefined && ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
                     ddbMessage.avttDamageType = this.#pendingDamageType;
                 this.ddbDispatch(ddbMessage);
                 this.#resetVariables();
@@ -819,7 +819,8 @@ class DiceRoller {
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
         ddbMessage.avttSpellSave = this.#pendingSpellSave;
-        ddbMessage.avttDamageType = this.#pendingDamageType;
+        if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
+            ddbMessage.avttDamageType = this.#pendingDamageType;
 
         if (["character", "monster"].includes(this.#pendingDiceRoll.entityType)) {
             ddbMessage.entityType = this.#pendingDiceRoll.entityType;
