@@ -336,7 +336,6 @@ async function init_characters_pages(container = $(document)) {
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
     window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
   }
-
   // it's ok to call both of these, because they will do any clean up they might need and then return early
   init_character_sheet_page();
   init_character_list_page_without_avtt();
@@ -364,6 +363,7 @@ async function init_characters_pages(container = $(document)) {
         $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
         delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
         window.sendToTabRPGRoller = undefined;
+        window.sendToTab = undefined;
         setTimeout(function(){
           tabCommunicationChannel.postMessage({
            msgType: 'isAboveOpen'
@@ -374,10 +374,14 @@ async function init_characters_pages(container = $(document)) {
       if(event.data.msgType =='disableSendToTab' && window.self == window.top){
         window.sendToTab = undefined;
       }
+
+
     })
-    tabCommunicationChannel.postMessage({
-      msgType: 'isAboveOpen'
-    })
+
+
+
+  
+
     window.diceRoller = new DiceRoller(); 
     window.ddbConfigJson = await DDBApi.fetchConfigJson();
   }
