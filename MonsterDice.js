@@ -271,11 +271,11 @@ function scan_player_creature_pane(target) {
 	const displayName = `${pc.name} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar)
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster");
 	};
 
 	const rightClickHandler = function(contextmenuEvent) {
-		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
 	}
 
 
@@ -391,11 +391,11 @@ function scan_creature_pane(target, displayName, creatureAvatar) {
 	});
 
 	target.find(".avtt-roll-button").on("click", function(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar)
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster")
 	});
 
 	target.find(".avtt-roll-button").on("contextmenu", function (contextmenuEvent) {
-		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar);
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
 	});
 
 	console.groupEnd()

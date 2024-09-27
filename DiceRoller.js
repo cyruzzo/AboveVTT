@@ -400,7 +400,9 @@ class DiceRoller {
                   rollTitle: rollTitle,
                   result: roll.total,
                   playerId: window.PLAYER_ID,
-                  sendTo: window.sendToTab 
+                  sendTo: window.sendToTab,
+                  entityType: diceRoll.entityType,
+                  entityId: diceRoll.entityId
                 };
                 if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit'){     
                     if(critSuccess == true){
@@ -439,7 +441,9 @@ class DiceRoller {
                   whisper: (diceRoll.sendToOverride == "DungeonMaster") ? "DungeonMaster" : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   playerId: window.PLAYER_ID,
                   rollData: rollData,
-                  sendTo: window.sendToTab 
+                  sendTo: window.sendToTab,
+                  entityType: diceRoll.entityType,
+                  entityId: diceRoll.entityId
                 };
             }
 

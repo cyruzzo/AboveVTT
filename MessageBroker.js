@@ -276,12 +276,34 @@ class MessageBroker {
 
 		if(window.DM && data.data.injected_data?.rollTitle == 'Initiative'){
 			let total = parseFloat(data.data.injected_data?.result);
-			let entityid = data.data.injected_data?.playerId;
+			let entityid = data.data.injected_data?.entityId ? data.data.injected_data?.entityId : data.data.injected_data?.playerId;
 
-			let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
-			if(dexScore){
-				total = parseFloat(total + dexScore/100).toFixed(2);
+
+			if(data.data.injected_data?.entityId){
+				let monsterid = window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.monster
+				if(monsterid =='open5e')
+				{
+					window.StatHandler.getStat(monsterid, function(data) {
+						total = parseFloat(total + data.stats[1].value/100).toFixed(2);
+					}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
+				}
+				else if(monsterid =='customStat'){
+					let decimalAdd = (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod*2)+10)/100 : 0
+					total = parseFloat(total + decimalAdd).toFixed(2);
+				}
+				else{
+					window.StatHandler.getStat(monsterid, function(stat) {
+							total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
+					}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
+				}
 			}
+			else{
+				let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
+				if(dexScore){
+					total = parseFloat(total + dexScore/100).toFixed(2);
+				}
+			}
+
 
 			let combatSettingData = getCombatTrackersettings();
 			if(combatSettingData['tie_breaker'] !='1'){
@@ -1430,9 +1452,31 @@ class MessageBroker {
 					console.log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
-					let dexScore = window.pcs.filter(d=> d.characterId == msg.data.context.entityId)[0].abilities[1].score;		
-					if(dexScore){
-						total = parseFloat(total + dexScore/100).toFixed(2);
+
+
+					if(msg.data.context?.entityType == 'monster'){
+						let monsterid = window.TOKEN_OBJECTS[entityid]?.options?.monster
+						if(monsterid =='open5e')
+						{
+							window.StatHandler.getStat(monsterid, function(data) {
+								total = parseFloat(total + data.stats[1].value/100).toFixed(2);
+							}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
+						}
+						else if(monsterid =='customStat'){
+							let decimalAdd = (window.TOKEN_OBJECTS[entityid]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[entityid]?.options?.customStat != undefined && window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod*2)+10)/100 : 0
+							total = parseFloat(total + decimalAdd).toFixed(2);
+						}
+						else{
+							window.StatHandler.getStat(monsterid, function(stat) {
+									total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
+							}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
+						}
+					}
+					else{
+						let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
+						if(dexScore){
+							total = parseFloat(total + dexScore/100).toFixed(2);
+						}
 					}
 		
 					let combatSettingData = getCombatTrackersettings();
@@ -2134,7 +2178,7 @@ class MessageBroker {
 			eventType: eventType,
 			data: data,
 			entityId: this.userid, //proviamo a non metterla
-			entityType: "user", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
+			entityType: injected_data.entityType ? injected_data.entityType : "user", // MOLTO INTERESSANTE. PENSO VENGA USATO PER CAPIRE CHE IMMAGINE METTERCI.
 		};
 
 		if (this.ws.readyState == this.ws.OPEN) {
