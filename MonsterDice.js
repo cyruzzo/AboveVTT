@@ -290,18 +290,90 @@ function scan_player_creature_pane(target) {
 			// to account for all the nuances of DNDB dice notation.
 			// numbers can be swapped for any number in the following comment
 			// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-			const damageRollRegex = /(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)/g
+			const damageRollRegexBracket = /(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
+			const damageRollRegex = /([:\s>])(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([:\s<,])/gi
 			// matches " +1 " or " + 1 "
-			const hitRollRegex = /\s([+-]\s?[0-9]+)\s/g
-			const actionType = currentElement.find("strong").html() || "custom"
+			const hitRollRegexBracket = /(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
+			const hitRollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])/gi
+			const dRollRegex = /\s(\s?d[0-9]+)\s/gi
+			const tableNoSpaceRollRegex = />(\s?d[0-9]+\s?)</gi
+			const rechargeRegEx = /(Recharge [0-6]?\s?[–-]?\s?[0-6])/gi
+			const actionType = "AboveVTT"
 			const updated = currentElement.html()
-				.replaceAll(damageRollRegex, `<button data-exp='$2' data-mod='$3' data-rolltype='damage' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} damage">$1</button>`)
-				.replaceAll(hitRollRegex, `<button data-exp='1d20' data-mod='$1' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title="${actionType} to hit">$1</button>`)
+				.replaceAll(damageRollRegexBracket, `<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1$2$5</button>`)
+				.replaceAll(damageRollRegex, `$1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$5`)
+				.replaceAll(hitRollRegexBracket, `<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1$2$3</button>`)
+				.replaceAll(hitRollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`)
+				.replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button> `)
+				.replaceAll(tableNoSpaceRollRegex, `><button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1</button><`)
+				.replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'> $1</button>`)
+				
+
+
+
+
 			$(this).html(updated);
 		}
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
 	});
+	$(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
+		let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
+		rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
+		rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
+		rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
+		rollAction = (rollAction == '') ? $(this).closest('strong').text().replace('.', '') : rollAction;
+
+		rollAction = rollAction.replace(/\s[\s(]+Recharge.*/gi, '') 
+		
+		let rollType = $(this).attr('data-rolltype')
+		let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
+		if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){
+			rollAction =  $(this).closest('tr').find('th').text();
+			rollType = $(this).closest('td').index() == 2 ? 'Check' : 'Save'
+		}
+		else if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
+			let statIndex = $(this).closest('table').find('tr button').index($(this));
+			let stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
+			rollAction = stats[statIndex];
+			rollType = 'Check'
+		}
+
+		if(rollAction == ''){
+			rollAction = 'Roll';
+		}	
+		else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){	
+			rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+			rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+			rollType = 'Save';	
+		}
+		else if(rollAction.replace(' ', '').toLowerCase() == 'skills'){
+			rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+			rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+			rollType = 'Check';	
+		}
+		else if(rollAction.replace(' ', '').toLowerCase() == 'proficiencybonus'){
+			rollAction = 'Proficiency Bonus';
+			rollType = 'Roll';	
+		}
+		else if(rollAction.replace(' ', '').toLowerCase() == 'hp' || rollAction.replace(' ', '').toLowerCase() == 'hitpoints'){
+			rollAction = 'Hit Points';
+			rollType = 'Roll';	
+		}
+		else if(rollAction.replace(' ', '').toLowerCase() == 'initiative'){
+			rollType = 'Roll';
+		}
+		
+		$(this).attr('data-actiontype', rollAction);
+		$(this).attr('data-rolltype', rollType);
+
+		const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
+		
+		const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined
+		if(damageType != undefined){
+			$(this).attr('data-damagetype', damageType);
+		}
+	})
 	$(target).find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
 	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 	console.groupEnd()
