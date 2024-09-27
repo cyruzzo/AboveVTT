@@ -950,14 +950,14 @@ class JournalManager{
 		}
 
 		const rollImage = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
-		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
+		const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true || window.TOKEN_OBJECTS[tokenId].options.player_owned ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
 
 		const clickHandler = function(clickEvent) {
-			roll_button_clicked(clickEvent, rollName, rollImage)
+			roll_button_clicked(clickEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId)
 		};
 
 		const rightClickHandler = function(contextmenuEvent) {
-			roll_button_contextmenu_handler(contextmenuEvent, rollName, rollImage);
+			roll_button_contextmenu_handler(contextmenuEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId);
 		}
 
 		// replace all "to hit" and "damage" rolls
@@ -1060,6 +1060,9 @@ class JournalManager{
 				rollAction = 'Hit Points';
 				rollType = 'Roll';	
 			}
+			else if(rollAction.replace(' ', '').toLowerCase() == 'initiative'){
+				rollType = 'Roll';
+			}
 			
 			$(this).attr('data-actiontype', rollAction);
 			$(this).attr('data-rolltype', rollType);
@@ -1072,9 +1075,10 @@ class JournalManager{
 			}
 		})
 
-	
-		
-		
+		const tokenName = window.TOKEN_OBJECTS[tokenId]?.options?.name ? window.TOKEN_OBJECTS[tokenId]?.options?.name  : window.PLAYER_NAME
+		const tokenImage = window.TOKEN_OBJECTS[tokenId]?.options?.imgsrc ? window.TOKEN_OBJECTS[tokenId]?.options?.imgsrc : window.PLAYER_IMG
+		const entityType = tokenId ? "monster" : "character";
+
 		// terminate the clones reference, overkill but rather be safe when it comes to memory
 		currentElement = null
 
@@ -1089,7 +1093,7 @@ class JournalManager{
 			const slashCommand = $(clickEvent.currentTarget).attr("data-slash-command");
 			const followingText = $(clickEvent.currentTarget)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
 			const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined			
-			const diceRoll = DiceRoll.fromSlashCommand(slashCommand, window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
+			const diceRoll = DiceRoll.fromSlashCommand(slashCommand, tokenName, tokenImage, entityType, tokenId, damageType); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
 			window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
 		});
 		$(target).find(`button.avtt-roll-formula-button`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
@@ -1106,10 +1110,10 @@ class JournalManager{
 		  
 		  
 		  if (rollData.rollType === "damage") {
-		    damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+		    damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId, damageType)
 		      .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
 		  } else {
-		    standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+		    standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, tokenName, tokenImage, entityType, tokenId)
 		      .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
 		  }
 		})
