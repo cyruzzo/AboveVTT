@@ -2218,9 +2218,12 @@ padding-top:10px;
 .dnd-condition {
     cursor: pointer;
 }
-body>[class*='styles_mobileNav']{
+
+body>[class*='styles_mobileNav']>button{
     display:none;
 }
+
+
 .ct-primary-box [class*='styles_tabs']{
     gap: 0.9rem;
 }
