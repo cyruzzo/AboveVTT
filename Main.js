@@ -3633,6 +3633,9 @@ function hide_player_sheet() {
 	}
 	$("#sheet_resize_button").hide();
 	$('#sheet_button').find(".ddbc-tab-options__header-heading").removeClass("ddbc-tab-options__header-heading--is-active");
+	if (window.innerWidth < 1024) {
+		show_sidebar();
+	}
 }
 function minimize_player_sheet(){
 	$('#sheet').dblclick()
@@ -3855,7 +3858,7 @@ function is_sidebar_visible() {
  * This will show/hide the sidebar regardless of which page we are playing on.
  */
 function toggle_sidebar_visibility() {
-		if (is_sidebar_visible()) {
+		if (is_sidebar_visible() || ($(`[class*='styles_mobileNav']`).length > 0 && $(`[class*='styles_mobileNav']>div`).length==0)) {
 			hide_sidebar();
 		} else {
 			show_sidebar();
@@ -3872,8 +3875,9 @@ function show_sidebar() {
 	toggleButton.addClass("point-right").removeClass("point-left");
 	toggleButton.attr('data-visible', 1);
 	window.showPanel = true;
-	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
-		$(".ct-quick-nav__edge-toggle--not-visible").click();
+	if (is_characters_page() && window.innerWidth < 1024) {
+		if($(`[class*='styles_mobileNav']>div`).length > 0)
+			$(`[class*='styles_mobileNav']>button`).click();
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(0px)");
@@ -3885,6 +3889,7 @@ function show_sidebar() {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
 
+	
 	addGamelogPopoutButton()
 }
 
@@ -4003,8 +4008,10 @@ function hide_sidebar() {
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
 	window.showPanel = false;
-	if (is_characters_page() && window.innerWidth < 1024 && $(".ct-quick-nav__edge-toggle").length > 0) {
-		$(".ct-quick-nav__edge-toggle--visible").click();
+	if (is_characters_page() && window.innerWidth < 1024) {
+		if($(`[class*='styles_mobileNav']>div`).length == 0)
+			$(`[class*='styles_mobileNav']>button`).click();
+		
 	} else {
 		let sidebar = is_characters_page() ? $(".ct-sidebar__portal") : $(".sidebar--right");
 		sidebar.css("transform", "translateX(340px)");
