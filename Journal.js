@@ -1422,7 +1422,15 @@ class JournalManager{
 			frame_z_index_when_click($(this));
 		});
 		
-		
+		const debounceNoteSave = mydebounce(function(e, editor){
+		    if(editor.isDirty()){
+		    	self.notes[id].text = editor.getContent();
+		    	self.notes[id].plain= editor.getContent({ format: 'text' });
+		    	self.notes[id].statBlock=statBlock;
+		    	self.statBlocks = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true))
+		    	self.persist();
+		    }
+		}, 800)
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
@@ -1657,6 +1665,11 @@ class JournalManager{
 				        return; 
 				    }
 				    return;
+				});
+				editor.on('change keyup', async function(e){
+				    if(editor.isDirty()){
+				    	debounceNoteSave(e, editor);
+				    }
 				});
 			},
 			relative_urls : false,
