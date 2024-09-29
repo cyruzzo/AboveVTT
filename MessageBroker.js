@@ -384,6 +384,7 @@ class MessageBroker {
 												});
 												li.find('.chat-link').css('display', 'none');
 											}
+											$(img[i]).attr('href', img[i].src);
 										}
 										$(img[i]).off('error').on("error", function (e) {
 					            let el = $(e.target)
