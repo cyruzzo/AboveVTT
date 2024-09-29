@@ -879,7 +879,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 				dm_map = img1;
 				if (links.length > 0) {
-					player_map = links.attr('href');
+					if(links.filter('[data-title*="Tokens"]').length>0){
+						dm_map = links.filter('[data-title*="Tokens"], [title*="Tokens"]').attr('href');
+						player_map = links.filter('[data-title*="Player"], [title*="Player"]').attr('href');
+					}
+					else{
+						player_map = links.attr('href');
+					}
+					
 				}
 				else {
 					player_map = img1;
