@@ -140,10 +140,18 @@ class DDBApi {
     const avttId = is_encounters_page() ? window.location.pathname.split("/").pop() : undefined;
     const avttEncounters = encounters.filter(e => e.id !== avttId && e.name === DEFAULT_AVTT_ENCOUNTER_DATA.name);
     console.debug(`DDBApi.deleteAboveVttEncounters avttId: ${avttId}, avttEncounters:`, avttEncounters);
+    const failedEncounters = localStorage.getItem('avttFailedDeleteEncounters');
+    let newFailed = (failedEncounters != null && failedEncounters != undefined) ? failedEncounters : [];
     for (const encounter of avttEncounters) {
+      if(newFailed.includes(encounter.id))
+        continue;
       console.log("DDBApi.deleteAboveVttEncounters attempting to delete encounter with id:", encounter.id);
       const response = await DDBApi.deleteWithToken(`https://encounter-service.dndbeyond.com/v1/encounters/${encounter.id}`);
       console.log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
+      if(response.status == 401){
+        newFailed.push(encounter.id)
+        localStorage.setItem('avttFailedDeleteEncounters', newFailed);
+      }    
     }
   }
 
