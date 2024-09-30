@@ -47,7 +47,14 @@ function sync_fog(){
 	window.MB.sendMessage("custom/myVTT/fogdata",window.REVEALED);
 }
 
-function sync_drawings(){
+function sync_drawings(newDraw = true){
+
+	if(!window.DM && newDraw == true){
+		if(window.playerDrawUndo == undefined)
+			window.playerDrawUndo = [];
+		window.playerDrawUndo.push(window.DRAWINGS[window.DRAWINGS.length-1]);
+	}
+
 	window.MB.sendMessage("custom/myVTT/drawdata",window.DRAWINGS);
 }
 
@@ -4508,13 +4515,14 @@ function init_draw_menu(buttons){
 				 	Erase
 			</button>
 		</div>`);
+	draw_menu.append(`
+	<div class='ddbc-tab-options--layout-pill' data-skip='true'>
+		<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
+			UNDO
+		</button>
+	</div>`);
 	if(window.DM){
-		draw_menu.append(`
-			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
-				<button class='ddbc-tab-options__header-heading  menu-option' id='draw_undo'>
-					UNDO
-				</button>
-			</div>`);
+
 		draw_menu.append(
 			`<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 				<button class='ddbc-tab-options__header-heading  menu-option' id='delete_drawing'>
@@ -4528,7 +4536,7 @@ function init_draw_menu(buttons){
 		r = confirm("DELETE ALL DRAWINGS (cannot be undone!)");
 		if (r === true) {
 			// keep only text, walls, light
-			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall') || d[1].includes('light') );
+			window.DRAWINGS = window.DRAWINGS.filter(d => d[0].includes("text") || d[1].includes('wall') || d[1].includes('light') || d[1].includes('elev'));
 			redraw_drawings()
 			sync_drawings()
 		}
@@ -4538,15 +4546,34 @@ function init_draw_menu(buttons){
 		// start at the end
         let currentElement = window.DRAWINGS.length
         // loop from the last element and remove if it's not text
-        while (currentElement--) {
-            if (!window.DRAWINGS[currentElement][0].includes("text")){
-                window.DRAWINGS.splice(currentElement, 1)
-                redraw_drawn_light();
-                redraw_drawings()
-				sync_drawings()
-                break
-            }
+        if(!window.DM){
+        	currentElement = window.playerDrawUndo.length;
+        	 while (currentElement--) {
+        	 	if(!window.DRAWINGS.some(d => JSON.stringify(d) == JSON.stringify(window.playerDrawUndo[currentElement]))){
+        	 		window.playerDrawUndo.splice(currentElement, 1)
+        	 	}
+        	 	else{
+        	 		break;
+        	 	}	
+        	 }
+        	window.DRAWINGS = window.DRAWINGS.filter(d => JSON.stringify(d) != JSON.stringify(window.playerDrawUndo[window.playerDrawUndo.length-1]))
+        	window.playerDrawUndo.splice(window.playerDrawUndo.length-1, 1)
+		    redraw_drawn_light();
+            redraw_drawings()
+			sync_drawings(false)
         }
+        else{
+	        while (currentElement--) {
+	            if (!window.DRAWINGS[currentElement][0].includes("text") && !['wall', 'light', 'elev'].includes(window.DRAWINGS[currentElement][1])){     
+	                window.DRAWINGS.splice(currentElement, 1)
+	                redraw_drawn_light();
+	                redraw_drawings()
+					sync_drawings()
+	                break
+	            }
+	        }
+        }
+
 	});
 
 	draw_menu.css("position", "fixed");
