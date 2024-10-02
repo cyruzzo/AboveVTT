@@ -66,7 +66,6 @@
 		207CB7C72CAA276200098463 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77E2CAA276200098463 /* docs */; };
 		207CB7C82CAA276200098463 /* MessageBroker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77F2CAA276200098463 /* MessageBroker.js */; };
 		207CB7C92CAA276200098463 /* scenedata in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7802CAA276200098463 /* scenedata */; };
-		207CB7CA2CAA276200098463 /* LoadCharacterPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7812CAA276200098463 /* LoadCharacterPage.js */; };
 		207CB7CB2CAA276200098463 /* Token.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7822CAA276200098463 /* Token.js */; };
 		207CB7CC2CAA276200098463 /* Journal.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7832CAA276200098463 /* Journal.js */; };
 		207CB7CD2CAA276200098463 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7842CAA276200098463 /* README.md */; };
@@ -139,7 +138,6 @@
 		207CB8102CAA276200098463 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77E2CAA276200098463 /* docs */; };
 		207CB8112CAA276200098463 /* MessageBroker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77F2CAA276200098463 /* MessageBroker.js */; };
 		207CB8122CAA276200098463 /* scenedata in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7802CAA276200098463 /* scenedata */; };
-		207CB8132CAA276200098463 /* LoadCharacterPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7812CAA276200098463 /* LoadCharacterPage.js */; };
 		207CB8142CAA276200098463 /* Token.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7822CAA276200098463 /* Token.js */; };
 		207CB8152CAA276200098463 /* Journal.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7832CAA276200098463 /* Journal.js */; };
 		207CB8162CAA276200098463 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7842CAA276200098463 /* README.md */; };
@@ -280,7 +278,6 @@
 		207CB77E2CAA276200098463 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = docs; path = ../../docs; sourceTree = "<group>"; };
 		207CB77F2CAA276200098463 /* MessageBroker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = MessageBroker.js; path = ../../MessageBroker.js; sourceTree = "<group>"; };
 		207CB7802CAA276200098463 /* scenedata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scenedata; path = ../../scenedata; sourceTree = "<group>"; };
-		207CB7812CAA276200098463 /* LoadCharacterPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = LoadCharacterPage.js; path = ../../LoadCharacterPage.js; sourceTree = "<group>"; };
 		207CB7822CAA276200098463 /* Token.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Token.js; path = ../../Token.js; sourceTree = "<group>"; };
 		207CB7832CAA276200098463 /* Journal.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Journal.js; path = ../../Journal.js; sourceTree = "<group>"; };
 		207CB7842CAA276200098463 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
@@ -484,7 +481,6 @@
 				207CB77E2CAA276200098463 /* docs */,
 				207CB77F2CAA276200098463 /* MessageBroker.js */,
 				207CB7802CAA276200098463 /* scenedata */,
-				207CB7812CAA276200098463 /* LoadCharacterPage.js */,
 				207CB7822CAA276200098463 /* Token.js */,
 				207CB7832CAA276200098463 /* Journal.js */,
 				207CB7842CAA276200098463 /* README.md */,
@@ -692,7 +688,6 @@
 				207CB8292CAA276200098463 /* CampaignPage.js in Resources */,
 				207CB8332CAA276200098463 /* color-picker.js in Resources */,
 				207CB80B2CAA276200098463 /* LOCK in Resources */,
-				207CB8132CAA276200098463 /* LoadCharacterPage.js in Resources */,
 				207CB8362CAA276200098463 /* DiceContextMenu in Resources */,
 				207CB7F92CAA276200098463 /* jquery-ui.min.js in Resources */,
 				207CB7FE2CAA276200098463 /* peerjs.min.js in Resources */,
@@ -772,7 +767,6 @@
 				207CB7E02CAA276200098463 /* CampaignPage.js in Resources */,
 				207CB7EA2CAA276200098463 /* color-picker.js in Resources */,
 				207CB7C22CAA276200098463 /* LOCK in Resources */,
-				207CB7CA2CAA276200098463 /* LoadCharacterPage.js in Resources */,
 				207CB7ED2CAA276200098463 /* DiceContextMenu in Resources */,
 				207CB7B02CAA276200098463 /* jquery-ui.min.js in Resources */,
 				207CB7B52CAA276200098463 /* peerjs.min.js in Resources */,
@@ -1050,6 +1044,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
@@ -1065,7 +1060,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1080,6 +1075,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
@@ -1095,7 +1091,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -1113,6 +1109,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
@@ -1133,7 +1130,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1149,6 +1146,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iOS (App)/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
@@ -1169,7 +1167,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1201,7 +1199,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1232,7 +1230,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1267,7 +1265,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1301,7 +1299,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
