@@ -1,0 +1,1363 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		207CB7112CAA276200098463 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7102CAA276200098463 /* AppDelegate.swift */; };
+		207CB7132CAA276200098463 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7122CAA276200098463 /* SceneDelegate.swift */; };
+		207CB7162CAA276200098463 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7142CAA276200098463 /* LaunchScreen.storyboard */; };
+		207CB7192CAA276200098463 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7172CAA276200098463 /* Main.storyboard */; };
+		207CB7222CAA276200098463 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7212CAA276200098463 /* AppDelegate.swift */; };
+		207CB7252CAA276200098463 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7232CAA276200098463 /* Main.storyboard */; };
+		207CB72D2CAA276200098463 /* AboveVTT Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 207CB72C2CAA276200098463 /* AboveVTT Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		207CB7372CAA276200098463 /* AboveVTT Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 207CB7362CAA276200098463 /* AboveVTT Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		207CB73D2CAA276200098463 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7002CAA276100098463 /* Main.html */; };
+		207CB73E2CAA276200098463 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7002CAA276100098463 /* Main.html */; };
+		207CB73F2CAA276200098463 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* Icon.png */; };
+		207CB7402CAA276200098463 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* Icon.png */; };
+		207CB7412CAA276200098463 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7032CAA276100098463 /* Style.css */; };
+		207CB7422CAA276200098463 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7032CAA276100098463 /* Style.css */; };
+		207CB7432CAA276200098463 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7042CAA276100098463 /* Script.js */; };
+		207CB7442CAA276200098463 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7042CAA276100098463 /* Script.js */; };
+		207CB7452CAA276200098463 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7052CAA276100098463 /* ViewController.swift */; };
+		207CB7462CAA276200098463 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7052CAA276100098463 /* ViewController.swift */; };
+		207CB7472CAA276200098463 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7062CAA276200098463 /* Assets.xcassets */; };
+		207CB7482CAA276200098463 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7062CAA276200098463 /* Assets.xcassets */; };
+		207CB7492CAA276200098463 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7082CAA276200098463 /* SafariWebExtensionHandler.swift */; };
+		207CB74A2CAA276200098463 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207CB7082CAA276200098463 /* SafariWebExtensionHandler.swift */; };
+		207CB7A52CAA276200098463 /* DDBApi.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75C2CAA276200098463 /* DDBApi.js */; };
+		207CB7A62CAA276200098463 /* purify.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75D2CAA276200098463 /* purify.min.js */; };
+		207CB7A72CAA276200098463 /* ajaxQueue in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75E2CAA276200098463 /* ajaxQueue */; };
+		207CB7A82CAA276200098463 /* PeerManager.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75F2CAA276200098463 /* PeerManager.js */; };
+		207CB7A92CAA276200098463 /* fuse.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7602CAA276200098463 /* fuse.min.js */; };
+		207CB7AA2CAA276200098463 /* abovevtt.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7612CAA276200098463 /* abovevtt.css */; };
+		207CB7AB2CAA276200098463 /* jquery.contextMenu.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7622CAA276200098463 /* jquery.contextMenu.css */; };
+		207CB7AC2CAA276200098463 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7632CAA276200098463 /* icon.png */; };
+		207CB7AD2CAA276200098463 /* magnific-popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7642CAA276200098463 /* magnific-popup.css */; };
+		207CB7AE2CAA276200098463 /* MonsterDice.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7652CAA276200098463 /* MonsterDice.js */; };
+		207CB7AF2CAA276200098463 /* jquery.magnific-popup.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7662CAA276200098463 /* jquery.magnific-popup.min.js */; };
+		207CB7B02CAA276200098463 /* jquery-ui.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7672CAA276200098463 /* jquery-ui.min.js */; };
+		207CB7B12CAA276200098463 /* jquery.contextMenu.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7682CAA276200098463 /* jquery.contextMenu.js */; };
+		207CB7B22CAA276200098463 /* Fog.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7692CAA276200098463 /* Fog.js */; };
+		207CB7B32CAA276200098463 /* jquery-ui.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76A2CAA276200098463 /* jquery-ui.min.css */; };
+		207CB7B42CAA276200098463 /* CoreFunctions.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76B2CAA276200098463 /* CoreFunctions.js */; };
+		207CB7B52CAA276200098463 /* peerjs.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76C2CAA276200098463 /* peerjs.min.js */; };
+		207CB7B62CAA276200098463 /* ScenesPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76D2CAA276200098463 /* ScenesPanel.js */; };
+		207CB7B72CAA276200098463 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76E2CAA276200098463 /* LICENSE */; };
+		207CB7B82CAA276200098463 /* AOETemplates.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76F2CAA276200098463 /* AOETemplates.js */; };
+		207CB7B92CAA276200098463 /* ScenesHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7702CAA276200098463 /* ScenesHandler.js */; };
+		207CB7BA2CAA276200098463 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7712CAA276200098463 /* images */; };
+		207CB7BB2CAA276200098463 /* Startup.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7722CAA276200098463 /* Startup.js */; };
+		207CB7BC2CAA276200098463 /* jquery-3.6.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7732CAA276200098463 /* jquery-3.6.0.min.js */; };
+		207CB7BD2CAA276200098463 /* ChatObserver.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7742CAA276200098463 /* ChatObserver.js */; };
+		207CB7BE2CAA276200098463 /* onedrive in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7752CAA276200098463 /* onedrive */; };
+		207CB7BF2CAA276200098463 /* PrivacyPolicy.txt in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7762CAA276200098463 /* PrivacyPolicy.txt */; };
+		207CB7C02CAA276200098463 /* StatHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7772CAA276200098463 /* StatHandler.js */; };
+		207CB7C12CAA276200098463 /* EncounterHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7782CAA276200098463 /* EncounterHandler.js */; };
+		207CB7C22CAA276200098463 /* LOCK in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7792CAA276200098463 /* LOCK */; };
+		207CB7C32CAA276200098463 /* jquery.ui.touch-punch.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77A2CAA276200098463 /* jquery.ui.touch-punch.js */; };
+		207CB7C42CAA276200098463 /* mousetrap.1.6.5.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77B2CAA276200098463 /* mousetrap.1.6.5.min.js */; };
+		207CB7C52CAA276200098463 /* CharactersPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77C2CAA276200098463 /* CharactersPage.js */; };
+		207CB7C62CAA276200098463 /* spectrum-2.0.8.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77D2CAA276200098463 /* spectrum-2.0.8.min.css */; };
+		207CB7C72CAA276200098463 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77E2CAA276200098463 /* docs */; };
+		207CB7C82CAA276200098463 /* MessageBroker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77F2CAA276200098463 /* MessageBroker.js */; };
+		207CB7C92CAA276200098463 /* scenedata in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7802CAA276200098463 /* scenedata */; };
+		207CB7CA2CAA276200098463 /* LoadCharacterPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7812CAA276200098463 /* LoadCharacterPage.js */; };
+		207CB7CB2CAA276200098463 /* Token.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7822CAA276200098463 /* Token.js */; };
+		207CB7CC2CAA276200098463 /* Journal.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7832CAA276200098463 /* Journal.js */; };
+		207CB7CD2CAA276200098463 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7842CAA276200098463 /* README.md */; };
+		207CB7CE2CAA276200098463 /* rpg-dice-roller.bundle.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7852CAA276200098463 /* rpg-dice-roller.bundle.min.js */; };
+		207CB7CF2CAA276200098463 /* jquery.ui.theme.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7862CAA276200098463 /* jquery.ui.theme.min.css */; };
+		207CB7D02CAA276200098463 /* built-in-tokens.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7872CAA276200098463 /* built-in-tokens.js */; };
+		207CB7D12CAA276200098463 /* Main.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7882CAA276200098463 /* Main.js */; };
+		207CB7D22CAA276200098463 /* Load.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7892CAA276200098463 /* Load.js */; };
+		207CB7D32CAA276200098463 /* TokenMenu.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78A2CAA276200098463 /* TokenMenu.js */; };
+		207CB7D42CAA276200098463 /* KeypressHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78B2CAA276200098463 /* KeypressHandler.js */; };
+		207CB7D52CAA276200098463 /* AboveApi.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78C2CAA276200098463 /* AboveApi.js */; };
+		207CB7D62CAA276200098463 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78D2CAA276200098463 /* audio */; };
+		207CB7D72CAA276200098463 /* spectrum-2.0.8.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78E2CAA276200098463 /* spectrum-2.0.8.min.js */; };
+		207CB7D82CAA276200098463 /* MonsterStatBlock.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78F2CAA276200098463 /* MonsterStatBlock.js */; };
+		207CB7D92CAA276200098463 /* PlayerPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7902CAA276200098463 /* PlayerPanel.js */; };
+		207CB7DA2CAA276200098463 /* jquery.csv.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7912CAA276200098463 /* jquery.csv.js */; };
+		207CB7DB2CAA276200098463 /* SceneData.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7922CAA276200098463 /* SceneData.js */; };
+		207CB7DC2CAA276200098463 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7932CAA276200098463 /* manifest.json */; };
+		207CB7DD2CAA276200098463 /* DiceRoller.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7942CAA276200098463 /* DiceRoller.js */; };
+		207CB7DE2CAA276200098463 /* TokenCustomization.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7952CAA276200098463 /* TokenCustomization.js */; };
+		207CB7DF2CAA276200098463 /* peerVideo.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7962CAA276200098463 /* peerVideo.js */; };
+		207CB7E02CAA276200098463 /* CampaignPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7972CAA276200098463 /* CampaignPage.js */; };
+		207CB7E12CAA276200098463 /* TokensPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7982CAA276200098463 /* TokensPanel.js */; };
+		207CB7E22CAA276200098463 /* SidebarPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7992CAA276200098463 /* SidebarPanel.js */; };
+		207CB7E32CAA276200098463 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79A2CAA276200098463 /* assets */; };
+		207CB7E42CAA276200098463 /* CombatTracker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79B2CAA276200098463 /* CombatTracker.js */; };
+		207CB7E52CAA276200098463 /* environment.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79C2CAA276200098463 /* environment.js */; };
+		207CB7E62CAA276200098463 /* Settings.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79D2CAA276200098463 /* Settings.js */; };
+		207CB7E72CAA276200098463 /* Text.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79E2CAA276200098463 /* Text.js */; };
+		207CB7E82CAA276200098463 /* LibrarySources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79F2CAA276200098463 /* LibrarySources.txt */; };
+		207CB7E92CAA276200098463 /* PeerCommunication.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A02CAA276200098463 /* PeerCommunication.js */; };
+		207CB7EA2CAA276200098463 /* color-picker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A12CAA276200098463 /* color-picker.js */; };
+		207CB7EB2CAA276200098463 /* lock.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A22CAA276200098463 /* lock.js */; };
+		207CB7EC2CAA276200098463 /* color-picker.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A32CAA276200098463 /* color-picker.min.css */; };
+		207CB7ED2CAA276200098463 /* DiceContextMenu in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A42CAA276200098463 /* DiceContextMenu */; };
+		207CB7EE2CAA276200098463 /* DDBApi.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75C2CAA276200098463 /* DDBApi.js */; };
+		207CB7EF2CAA276200098463 /* purify.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75D2CAA276200098463 /* purify.min.js */; };
+		207CB7F02CAA276200098463 /* ajaxQueue in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75E2CAA276200098463 /* ajaxQueue */; };
+		207CB7F12CAA276200098463 /* PeerManager.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB75F2CAA276200098463 /* PeerManager.js */; };
+		207CB7F22CAA276200098463 /* fuse.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7602CAA276200098463 /* fuse.min.js */; };
+		207CB7F32CAA276200098463 /* abovevtt.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7612CAA276200098463 /* abovevtt.css */; };
+		207CB7F42CAA276200098463 /* jquery.contextMenu.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7622CAA276200098463 /* jquery.contextMenu.css */; };
+		207CB7F52CAA276200098463 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7632CAA276200098463 /* icon.png */; };
+		207CB7F62CAA276200098463 /* magnific-popup.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7642CAA276200098463 /* magnific-popup.css */; };
+		207CB7F72CAA276200098463 /* MonsterDice.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7652CAA276200098463 /* MonsterDice.js */; };
+		207CB7F82CAA276200098463 /* jquery.magnific-popup.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7662CAA276200098463 /* jquery.magnific-popup.min.js */; };
+		207CB7F92CAA276200098463 /* jquery-ui.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7672CAA276200098463 /* jquery-ui.min.js */; };
+		207CB7FA2CAA276200098463 /* jquery.contextMenu.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7682CAA276200098463 /* jquery.contextMenu.js */; };
+		207CB7FB2CAA276200098463 /* Fog.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7692CAA276200098463 /* Fog.js */; };
+		207CB7FC2CAA276200098463 /* jquery-ui.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76A2CAA276200098463 /* jquery-ui.min.css */; };
+		207CB7FD2CAA276200098463 /* CoreFunctions.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76B2CAA276200098463 /* CoreFunctions.js */; };
+		207CB7FE2CAA276200098463 /* peerjs.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76C2CAA276200098463 /* peerjs.min.js */; };
+		207CB7FF2CAA276200098463 /* ScenesPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76D2CAA276200098463 /* ScenesPanel.js */; };
+		207CB8002CAA276200098463 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76E2CAA276200098463 /* LICENSE */; };
+		207CB8012CAA276200098463 /* AOETemplates.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB76F2CAA276200098463 /* AOETemplates.js */; };
+		207CB8022CAA276200098463 /* ScenesHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7702CAA276200098463 /* ScenesHandler.js */; };
+		207CB8032CAA276200098463 /* images in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7712CAA276200098463 /* images */; };
+		207CB8042CAA276200098463 /* Startup.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7722CAA276200098463 /* Startup.js */; };
+		207CB8052CAA276200098463 /* jquery-3.6.0.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7732CAA276200098463 /* jquery-3.6.0.min.js */; };
+		207CB8062CAA276200098463 /* ChatObserver.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7742CAA276200098463 /* ChatObserver.js */; };
+		207CB8072CAA276200098463 /* onedrive in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7752CAA276200098463 /* onedrive */; };
+		207CB8082CAA276200098463 /* PrivacyPolicy.txt in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7762CAA276200098463 /* PrivacyPolicy.txt */; };
+		207CB8092CAA276200098463 /* StatHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7772CAA276200098463 /* StatHandler.js */; };
+		207CB80A2CAA276200098463 /* EncounterHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7782CAA276200098463 /* EncounterHandler.js */; };
+		207CB80B2CAA276200098463 /* LOCK in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7792CAA276200098463 /* LOCK */; };
+		207CB80C2CAA276200098463 /* jquery.ui.touch-punch.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77A2CAA276200098463 /* jquery.ui.touch-punch.js */; };
+		207CB80D2CAA276200098463 /* mousetrap.1.6.5.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77B2CAA276200098463 /* mousetrap.1.6.5.min.js */; };
+		207CB80E2CAA276200098463 /* CharactersPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77C2CAA276200098463 /* CharactersPage.js */; };
+		207CB80F2CAA276200098463 /* spectrum-2.0.8.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77D2CAA276200098463 /* spectrum-2.0.8.min.css */; };
+		207CB8102CAA276200098463 /* docs in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77E2CAA276200098463 /* docs */; };
+		207CB8112CAA276200098463 /* MessageBroker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB77F2CAA276200098463 /* MessageBroker.js */; };
+		207CB8122CAA276200098463 /* scenedata in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7802CAA276200098463 /* scenedata */; };
+		207CB8132CAA276200098463 /* LoadCharacterPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7812CAA276200098463 /* LoadCharacterPage.js */; };
+		207CB8142CAA276200098463 /* Token.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7822CAA276200098463 /* Token.js */; };
+		207CB8152CAA276200098463 /* Journal.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7832CAA276200098463 /* Journal.js */; };
+		207CB8162CAA276200098463 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7842CAA276200098463 /* README.md */; };
+		207CB8172CAA276200098463 /* rpg-dice-roller.bundle.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7852CAA276200098463 /* rpg-dice-roller.bundle.min.js */; };
+		207CB8182CAA276200098463 /* jquery.ui.theme.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7862CAA276200098463 /* jquery.ui.theme.min.css */; };
+		207CB8192CAA276200098463 /* built-in-tokens.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7872CAA276200098463 /* built-in-tokens.js */; };
+		207CB81A2CAA276200098463 /* Main.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7882CAA276200098463 /* Main.js */; };
+		207CB81B2CAA276200098463 /* Load.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7892CAA276200098463 /* Load.js */; };
+		207CB81C2CAA276200098463 /* TokenMenu.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78A2CAA276200098463 /* TokenMenu.js */; };
+		207CB81D2CAA276200098463 /* KeypressHandler.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78B2CAA276200098463 /* KeypressHandler.js */; };
+		207CB81E2CAA276200098463 /* AboveApi.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78C2CAA276200098463 /* AboveApi.js */; };
+		207CB81F2CAA276200098463 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78D2CAA276200098463 /* audio */; };
+		207CB8202CAA276200098463 /* spectrum-2.0.8.min.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78E2CAA276200098463 /* spectrum-2.0.8.min.js */; };
+		207CB8212CAA276200098463 /* MonsterStatBlock.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB78F2CAA276200098463 /* MonsterStatBlock.js */; };
+		207CB8222CAA276200098463 /* PlayerPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7902CAA276200098463 /* PlayerPanel.js */; };
+		207CB8232CAA276200098463 /* jquery.csv.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7912CAA276200098463 /* jquery.csv.js */; };
+		207CB8242CAA276200098463 /* SceneData.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7922CAA276200098463 /* SceneData.js */; };
+		207CB8252CAA276200098463 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7932CAA276200098463 /* manifest.json */; };
+		207CB8262CAA276200098463 /* DiceRoller.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7942CAA276200098463 /* DiceRoller.js */; };
+		207CB8272CAA276200098463 /* TokenCustomization.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7952CAA276200098463 /* TokenCustomization.js */; };
+		207CB8282CAA276200098463 /* peerVideo.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7962CAA276200098463 /* peerVideo.js */; };
+		207CB8292CAA276200098463 /* CampaignPage.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7972CAA276200098463 /* CampaignPage.js */; };
+		207CB82A2CAA276200098463 /* TokensPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7982CAA276200098463 /* TokensPanel.js */; };
+		207CB82B2CAA276200098463 /* SidebarPanel.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7992CAA276200098463 /* SidebarPanel.js */; };
+		207CB82C2CAA276200098463 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79A2CAA276200098463 /* assets */; };
+		207CB82D2CAA276200098463 /* CombatTracker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79B2CAA276200098463 /* CombatTracker.js */; };
+		207CB82E2CAA276200098463 /* environment.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79C2CAA276200098463 /* environment.js */; };
+		207CB82F2CAA276200098463 /* Settings.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79D2CAA276200098463 /* Settings.js */; };
+		207CB8302CAA276200098463 /* Text.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79E2CAA276200098463 /* Text.js */; };
+		207CB8312CAA276200098463 /* LibrarySources.txt in Resources */ = {isa = PBXBuildFile; fileRef = 207CB79F2CAA276200098463 /* LibrarySources.txt */; };
+		207CB8322CAA276200098463 /* PeerCommunication.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A02CAA276200098463 /* PeerCommunication.js */; };
+		207CB8332CAA276200098463 /* color-picker.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A12CAA276200098463 /* color-picker.js */; };
+		207CB8342CAA276200098463 /* lock.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A22CAA276200098463 /* lock.js */; };
+		207CB8352CAA276200098463 /* color-picker.min.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A32CAA276200098463 /* color-picker.min.css */; };
+		207CB8362CAA276200098463 /* DiceContextMenu in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7A42CAA276200098463 /* DiceContextMenu */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		207CB72E2CAA276200098463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 207CB6FA2CAA276000098463 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 207CB72B2CAA276200098463;
+			remoteInfo = "AboveVTT Extension (iOS)";
+		};
+		207CB7382CAA276200098463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 207CB6FA2CAA276000098463 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 207CB7352CAA276200098463;
+			remoteInfo = "AboveVTT Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		207CB7502CAA276200098463 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				207CB72D2CAA276200098463 /* AboveVTT Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7572CAA276200098463 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				207CB7372CAA276200098463 /* AboveVTT Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		207CB7012CAA276100098463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		207CB7022CAA276100098463 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		207CB7032CAA276100098463 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		207CB7042CAA276100098463 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		207CB7052CAA276100098463 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		207CB7062CAA276200098463 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		207CB7082CAA276200098463 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		207CB70D2CAA276200098463 /* AboveVTT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AboveVTT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		207CB7102CAA276200098463 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		207CB7122CAA276200098463 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		207CB7152CAA276200098463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		207CB7182CAA276200098463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		207CB71A2CAA276200098463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		207CB71F2CAA276200098463 /* AboveVTT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AboveVTT.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		207CB7212CAA276200098463 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		207CB7242CAA276200098463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		207CB7262CAA276200098463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		207CB7272CAA276200098463 /* AboveVTT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AboveVTT.entitlements; sourceTree = "<group>"; };
+		207CB72C2CAA276200098463 /* AboveVTT Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "AboveVTT Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		207CB7312CAA276200098463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		207CB7362CAA276200098463 /* AboveVTT Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "AboveVTT Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		207CB73B2CAA276200098463 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		207CB73C2CAA276200098463 /* AboveVTT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AboveVTT.entitlements; sourceTree = "<group>"; };
+		207CB75C2CAA276200098463 /* DDBApi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DDBApi.js; path = ../../DDBApi.js; sourceTree = "<group>"; };
+		207CB75D2CAA276200098463 /* purify.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = purify.min.js; path = ../../purify.min.js; sourceTree = "<group>"; };
+		207CB75E2CAA276200098463 /* ajaxQueue */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ajaxQueue; path = ../../ajaxQueue; sourceTree = "<group>"; };
+		207CB75F2CAA276200098463 /* PeerManager.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = PeerManager.js; path = ../../PeerManager.js; sourceTree = "<group>"; };
+		207CB7602CAA276200098463 /* fuse.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = fuse.min.js; path = ../../fuse.min.js; sourceTree = "<group>"; };
+		207CB7612CAA276200098463 /* abovevtt.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = abovevtt.css; path = ../../abovevtt.css; sourceTree = "<group>"; };
+		207CB7622CAA276200098463 /* jquery.contextMenu.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = jquery.contextMenu.css; path = ../../jquery.contextMenu.css; sourceTree = "<group>"; };
+		207CB7632CAA276200098463 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = ../../icon.png; sourceTree = "<group>"; };
+		207CB7642CAA276200098463 /* magnific-popup.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "magnific-popup.css"; path = "../../magnific-popup.css"; sourceTree = "<group>"; };
+		207CB7652CAA276200098463 /* MonsterDice.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = MonsterDice.js; path = ../../MonsterDice.js; sourceTree = "<group>"; };
+		207CB7662CAA276200098463 /* jquery.magnific-popup.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery.magnific-popup.min.js"; path = "../../jquery.magnific-popup.min.js"; sourceTree = "<group>"; };
+		207CB7672CAA276200098463 /* jquery-ui.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery-ui.min.js"; path = "../../jquery-ui.min.js"; sourceTree = "<group>"; };
+		207CB7682CAA276200098463 /* jquery.contextMenu.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = jquery.contextMenu.js; path = ../../jquery.contextMenu.js; sourceTree = "<group>"; };
+		207CB7692CAA276200098463 /* Fog.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Fog.js; path = ../../Fog.js; sourceTree = "<group>"; };
+		207CB76A2CAA276200098463 /* jquery-ui.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "jquery-ui.min.css"; path = "../../jquery-ui.min.css"; sourceTree = "<group>"; };
+		207CB76B2CAA276200098463 /* CoreFunctions.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = CoreFunctions.js; path = ../../CoreFunctions.js; sourceTree = "<group>"; };
+		207CB76C2CAA276200098463 /* peerjs.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = peerjs.min.js; path = ../../peerjs.min.js; sourceTree = "<group>"; };
+		207CB76D2CAA276200098463 /* ScenesPanel.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = ScenesPanel.js; path = ../../ScenesPanel.js; sourceTree = "<group>"; };
+		207CB76E2CAA276200098463 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; name = LICENSE; path = ../../LICENSE; sourceTree = "<group>"; };
+		207CB76F2CAA276200098463 /* AOETemplates.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = AOETemplates.js; path = ../../AOETemplates.js; sourceTree = "<group>"; };
+		207CB7702CAA276200098463 /* ScenesHandler.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = ScenesHandler.js; path = ../../ScenesHandler.js; sourceTree = "<group>"; };
+		207CB7712CAA276200098463 /* images */ = {isa = PBXFileReference; lastKnownFileType = folder; name = images; path = ../../images; sourceTree = "<group>"; };
+		207CB7722CAA276200098463 /* Startup.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Startup.js; path = ../../Startup.js; sourceTree = "<group>"; };
+		207CB7732CAA276200098463 /* jquery-3.6.0.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery-3.6.0.min.js"; path = "../../jquery-3.6.0.min.js"; sourceTree = "<group>"; };
+		207CB7742CAA276200098463 /* ChatObserver.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = ChatObserver.js; path = ../../ChatObserver.js; sourceTree = "<group>"; };
+		207CB7752CAA276200098463 /* onedrive */ = {isa = PBXFileReference; lastKnownFileType = folder; name = onedrive; path = ../../onedrive; sourceTree = "<group>"; };
+		207CB7762CAA276200098463 /* PrivacyPolicy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = PrivacyPolicy.txt; path = ../../PrivacyPolicy.txt; sourceTree = "<group>"; };
+		207CB7772CAA276200098463 /* StatHandler.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = StatHandler.js; path = ../../StatHandler.js; sourceTree = "<group>"; };
+		207CB7782CAA276200098463 /* EncounterHandler.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = EncounterHandler.js; path = ../../EncounterHandler.js; sourceTree = "<group>"; };
+		207CB7792CAA276200098463 /* LOCK */ = {isa = PBXFileReference; lastKnownFileType = text; name = LOCK; path = ../../LOCK; sourceTree = "<group>"; };
+		207CB77A2CAA276200098463 /* jquery.ui.touch-punch.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "jquery.ui.touch-punch.js"; path = "../../jquery.ui.touch-punch.js"; sourceTree = "<group>"; };
+		207CB77B2CAA276200098463 /* mousetrap.1.6.5.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = mousetrap.1.6.5.min.js; path = ../../mousetrap.1.6.5.min.js; sourceTree = "<group>"; };
+		207CB77C2CAA276200098463 /* CharactersPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = CharactersPage.js; path = ../../CharactersPage.js; sourceTree = "<group>"; };
+		207CB77D2CAA276200098463 /* spectrum-2.0.8.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "spectrum-2.0.8.min.css"; path = "../../spectrum-2.0.8.min.css"; sourceTree = "<group>"; };
+		207CB77E2CAA276200098463 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; name = docs; path = ../../docs; sourceTree = "<group>"; };
+		207CB77F2CAA276200098463 /* MessageBroker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = MessageBroker.js; path = ../../MessageBroker.js; sourceTree = "<group>"; };
+		207CB7802CAA276200098463 /* scenedata */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scenedata; path = ../../scenedata; sourceTree = "<group>"; };
+		207CB7812CAA276200098463 /* LoadCharacterPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = LoadCharacterPage.js; path = ../../LoadCharacterPage.js; sourceTree = "<group>"; };
+		207CB7822CAA276200098463 /* Token.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Token.js; path = ../../Token.js; sourceTree = "<group>"; };
+		207CB7832CAA276200098463 /* Journal.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Journal.js; path = ../../Journal.js; sourceTree = "<group>"; };
+		207CB7842CAA276200098463 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../README.md; sourceTree = "<group>"; };
+		207CB7852CAA276200098463 /* rpg-dice-roller.bundle.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "rpg-dice-roller.bundle.min.js"; path = "../../rpg-dice-roller.bundle.min.js"; sourceTree = "<group>"; };
+		207CB7862CAA276200098463 /* jquery.ui.theme.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = jquery.ui.theme.min.css; path = ../../jquery.ui.theme.min.css; sourceTree = "<group>"; };
+		207CB7872CAA276200098463 /* built-in-tokens.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "built-in-tokens.js"; path = "../../built-in-tokens.js"; sourceTree = "<group>"; };
+		207CB7882CAA276200098463 /* Main.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Main.js; path = ../../Main.js; sourceTree = "<group>"; };
+		207CB7892CAA276200098463 /* Load.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Load.js; path = ../../Load.js; sourceTree = "<group>"; };
+		207CB78A2CAA276200098463 /* TokenMenu.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = TokenMenu.js; path = ../../TokenMenu.js; sourceTree = "<group>"; };
+		207CB78B2CAA276200098463 /* KeypressHandler.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = KeypressHandler.js; path = ../../KeypressHandler.js; sourceTree = "<group>"; };
+		207CB78C2CAA276200098463 /* AboveApi.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = AboveApi.js; path = ../../AboveApi.js; sourceTree = "<group>"; };
+		207CB78D2CAA276200098463 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audio; path = ../../audio; sourceTree = "<group>"; };
+		207CB78E2CAA276200098463 /* spectrum-2.0.8.min.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "spectrum-2.0.8.min.js"; path = "../../spectrum-2.0.8.min.js"; sourceTree = "<group>"; };
+		207CB78F2CAA276200098463 /* MonsterStatBlock.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = MonsterStatBlock.js; path = ../../MonsterStatBlock.js; sourceTree = "<group>"; };
+		207CB7902CAA276200098463 /* PlayerPanel.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = PlayerPanel.js; path = ../../PlayerPanel.js; sourceTree = "<group>"; };
+		207CB7912CAA276200098463 /* jquery.csv.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = jquery.csv.js; path = ../../jquery.csv.js; sourceTree = "<group>"; };
+		207CB7922CAA276200098463 /* SceneData.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = SceneData.js; path = ../../SceneData.js; sourceTree = "<group>"; };
+		207CB7932CAA276200098463 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../manifest.json; sourceTree = "<group>"; };
+		207CB7942CAA276200098463 /* DiceRoller.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = DiceRoller.js; path = ../../DiceRoller.js; sourceTree = "<group>"; };
+		207CB7952CAA276200098463 /* TokenCustomization.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = TokenCustomization.js; path = ../../TokenCustomization.js; sourceTree = "<group>"; };
+		207CB7962CAA276200098463 /* peerVideo.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = peerVideo.js; path = ../../peerVideo.js; sourceTree = "<group>"; };
+		207CB7972CAA276200098463 /* CampaignPage.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = CampaignPage.js; path = ../../CampaignPage.js; sourceTree = "<group>"; };
+		207CB7982CAA276200098463 /* TokensPanel.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = TokensPanel.js; path = ../../TokensPanel.js; sourceTree = "<group>"; };
+		207CB7992CAA276200098463 /* SidebarPanel.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = SidebarPanel.js; path = ../../SidebarPanel.js; sourceTree = "<group>"; };
+		207CB79A2CAA276200098463 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../../assets; sourceTree = "<group>"; };
+		207CB79B2CAA276200098463 /* CombatTracker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = CombatTracker.js; path = ../../CombatTracker.js; sourceTree = "<group>"; };
+		207CB79C2CAA276200098463 /* environment.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = environment.js; path = ../../environment.js; sourceTree = "<group>"; };
+		207CB79D2CAA276200098463 /* Settings.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Settings.js; path = ../../Settings.js; sourceTree = "<group>"; };
+		207CB79E2CAA276200098463 /* Text.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = Text.js; path = ../../Text.js; sourceTree = "<group>"; };
+		207CB79F2CAA276200098463 /* LibrarySources.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = LibrarySources.txt; path = ../../LibrarySources.txt; sourceTree = "<group>"; };
+		207CB7A02CAA276200098463 /* PeerCommunication.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = PeerCommunication.js; path = ../../PeerCommunication.js; sourceTree = "<group>"; };
+		207CB7A12CAA276200098463 /* color-picker.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "color-picker.js"; path = "../../color-picker.js"; sourceTree = "<group>"; };
+		207CB7A22CAA276200098463 /* lock.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = lock.js; path = ../../lock.js; sourceTree = "<group>"; };
+		207CB7A32CAA276200098463 /* color-picker.min.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; name = "color-picker.min.css"; path = "../../color-picker.min.css"; sourceTree = "<group>"; };
+		207CB7A42CAA276200098463 /* DiceContextMenu */ = {isa = PBXFileReference; lastKnownFileType = folder; name = DiceContextMenu; path = ../../DiceContextMenu; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		207CB70A2CAA276200098463 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB71C2CAA276200098463 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7292CAA276200098463 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7332CAA276200098463 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		207CB6F92CAA276000098463 = {
+			isa = PBXGroup;
+			children = (
+				207CB6FE2CAA276100098463 /* Shared (App) */,
+				207CB7072CAA276200098463 /* Shared (Extension) */,
+				207CB70F2CAA276200098463 /* iOS (App) */,
+				207CB7202CAA276200098463 /* macOS (App) */,
+				207CB7302CAA276200098463 /* iOS (Extension) */,
+				207CB73A2CAA276200098463 /* macOS (Extension) */,
+				207CB70E2CAA276200098463 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		207CB6FE2CAA276100098463 /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB7052CAA276100098463 /* ViewController.swift */,
+				207CB7062CAA276200098463 /* Assets.xcassets */,
+				207CB6FF2CAA276100098463 /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		207CB6FF2CAA276100098463 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				207CB7002CAA276100098463 /* Main.html */,
+				207CB7022CAA276100098463 /* Icon.png */,
+				207CB7032CAA276100098463 /* Style.css */,
+				207CB7042CAA276100098463 /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		207CB7072CAA276200098463 /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB75B2CAA276200098463 /* Resources */,
+				207CB7082CAA276200098463 /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		207CB70E2CAA276200098463 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				207CB70D2CAA276200098463 /* AboveVTT.app */,
+				207CB71F2CAA276200098463 /* AboveVTT.app */,
+				207CB72C2CAA276200098463 /* AboveVTT Extension.appex */,
+				207CB7362CAA276200098463 /* AboveVTT Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		207CB70F2CAA276200098463 /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB7102CAA276200098463 /* AppDelegate.swift */,
+				207CB7122CAA276200098463 /* SceneDelegate.swift */,
+				207CB7142CAA276200098463 /* LaunchScreen.storyboard */,
+				207CB7172CAA276200098463 /* Main.storyboard */,
+				207CB71A2CAA276200098463 /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		207CB7202CAA276200098463 /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB7212CAA276200098463 /* AppDelegate.swift */,
+				207CB7232CAA276200098463 /* Main.storyboard */,
+				207CB7262CAA276200098463 /* Info.plist */,
+				207CB7272CAA276200098463 /* AboveVTT.entitlements */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		207CB7302CAA276200098463 /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB7312CAA276200098463 /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		207CB73A2CAA276200098463 /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				207CB73B2CAA276200098463 /* Info.plist */,
+				207CB73C2CAA276200098463 /* AboveVTT.entitlements */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		207CB75B2CAA276200098463 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				207CB75C2CAA276200098463 /* DDBApi.js */,
+				207CB75D2CAA276200098463 /* purify.min.js */,
+				207CB75E2CAA276200098463 /* ajaxQueue */,
+				207CB75F2CAA276200098463 /* PeerManager.js */,
+				207CB7602CAA276200098463 /* fuse.min.js */,
+				207CB7612CAA276200098463 /* abovevtt.css */,
+				207CB7622CAA276200098463 /* jquery.contextMenu.css */,
+				207CB7632CAA276200098463 /* icon.png */,
+				207CB7642CAA276200098463 /* magnific-popup.css */,
+				207CB7652CAA276200098463 /* MonsterDice.js */,
+				207CB7662CAA276200098463 /* jquery.magnific-popup.min.js */,
+				207CB7672CAA276200098463 /* jquery-ui.min.js */,
+				207CB7682CAA276200098463 /* jquery.contextMenu.js */,
+				207CB7692CAA276200098463 /* Fog.js */,
+				207CB76A2CAA276200098463 /* jquery-ui.min.css */,
+				207CB76B2CAA276200098463 /* CoreFunctions.js */,
+				207CB76C2CAA276200098463 /* peerjs.min.js */,
+				207CB76D2CAA276200098463 /* ScenesPanel.js */,
+				207CB76E2CAA276200098463 /* LICENSE */,
+				207CB76F2CAA276200098463 /* AOETemplates.js */,
+				207CB7702CAA276200098463 /* ScenesHandler.js */,
+				207CB7712CAA276200098463 /* images */,
+				207CB7722CAA276200098463 /* Startup.js */,
+				207CB7732CAA276200098463 /* jquery-3.6.0.min.js */,
+				207CB7742CAA276200098463 /* ChatObserver.js */,
+				207CB7752CAA276200098463 /* onedrive */,
+				207CB7762CAA276200098463 /* PrivacyPolicy.txt */,
+				207CB7772CAA276200098463 /* StatHandler.js */,
+				207CB7782CAA276200098463 /* EncounterHandler.js */,
+				207CB7792CAA276200098463 /* LOCK */,
+				207CB77A2CAA276200098463 /* jquery.ui.touch-punch.js */,
+				207CB77B2CAA276200098463 /* mousetrap.1.6.5.min.js */,
+				207CB77C2CAA276200098463 /* CharactersPage.js */,
+				207CB77D2CAA276200098463 /* spectrum-2.0.8.min.css */,
+				207CB77E2CAA276200098463 /* docs */,
+				207CB77F2CAA276200098463 /* MessageBroker.js */,
+				207CB7802CAA276200098463 /* scenedata */,
+				207CB7812CAA276200098463 /* LoadCharacterPage.js */,
+				207CB7822CAA276200098463 /* Token.js */,
+				207CB7832CAA276200098463 /* Journal.js */,
+				207CB7842CAA276200098463 /* README.md */,
+				207CB7852CAA276200098463 /* rpg-dice-roller.bundle.min.js */,
+				207CB7862CAA276200098463 /* jquery.ui.theme.min.css */,
+				207CB7872CAA276200098463 /* built-in-tokens.js */,
+				207CB7882CAA276200098463 /* Main.js */,
+				207CB7892CAA276200098463 /* Load.js */,
+				207CB78A2CAA276200098463 /* TokenMenu.js */,
+				207CB78B2CAA276200098463 /* KeypressHandler.js */,
+				207CB78C2CAA276200098463 /* AboveApi.js */,
+				207CB78D2CAA276200098463 /* audio */,
+				207CB78E2CAA276200098463 /* spectrum-2.0.8.min.js */,
+				207CB78F2CAA276200098463 /* MonsterStatBlock.js */,
+				207CB7902CAA276200098463 /* PlayerPanel.js */,
+				207CB7912CAA276200098463 /* jquery.csv.js */,
+				207CB7922CAA276200098463 /* SceneData.js */,
+				207CB7932CAA276200098463 /* manifest.json */,
+				207CB7942CAA276200098463 /* DiceRoller.js */,
+				207CB7952CAA276200098463 /* TokenCustomization.js */,
+				207CB7962CAA276200098463 /* peerVideo.js */,
+				207CB7972CAA276200098463 /* CampaignPage.js */,
+				207CB7982CAA276200098463 /* TokensPanel.js */,
+				207CB7992CAA276200098463 /* SidebarPanel.js */,
+				207CB79A2CAA276200098463 /* assets */,
+				207CB79B2CAA276200098463 /* CombatTracker.js */,
+				207CB79C2CAA276200098463 /* environment.js */,
+				207CB79D2CAA276200098463 /* Settings.js */,
+				207CB79E2CAA276200098463 /* Text.js */,
+				207CB79F2CAA276200098463 /* LibrarySources.txt */,
+				207CB7A02CAA276200098463 /* PeerCommunication.js */,
+				207CB7A12CAA276200098463 /* color-picker.js */,
+				207CB7A22CAA276200098463 /* lock.js */,
+				207CB7A32CAA276200098463 /* color-picker.min.css */,
+				207CB7A42CAA276200098463 /* DiceContextMenu */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		207CB70C2CAA276200098463 /* AboveVTT (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 207CB7512CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT (iOS)" */;
+			buildPhases = (
+				207CB7092CAA276200098463 /* Sources */,
+				207CB70A2CAA276200098463 /* Frameworks */,
+				207CB70B2CAA276200098463 /* Resources */,
+				207CB7502CAA276200098463 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				207CB72F2CAA276200098463 /* PBXTargetDependency */,
+			);
+			name = "AboveVTT (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "AboveVTT (iOS)";
+			productReference = 207CB70D2CAA276200098463 /* AboveVTT.app */;
+			productType = "com.apple.product-type.application";
+		};
+		207CB71E2CAA276200098463 /* AboveVTT (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 207CB7582CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT (macOS)" */;
+			buildPhases = (
+				207CB71B2CAA276200098463 /* Sources */,
+				207CB71C2CAA276200098463 /* Frameworks */,
+				207CB71D2CAA276200098463 /* Resources */,
+				207CB7572CAA276200098463 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				207CB7392CAA276200098463 /* PBXTargetDependency */,
+			);
+			name = "AboveVTT (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "AboveVTT (macOS)";
+			productReference = 207CB71F2CAA276200098463 /* AboveVTT.app */;
+			productType = "com.apple.product-type.application";
+		};
+		207CB72B2CAA276200098463 /* AboveVTT Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 207CB74D2CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT Extension (iOS)" */;
+			buildPhases = (
+				207CB7282CAA276200098463 /* Sources */,
+				207CB7292CAA276200098463 /* Frameworks */,
+				207CB72A2CAA276200098463 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AboveVTT Extension (iOS)";
+			packageProductDependencies = (
+			);
+			productName = "AboveVTT Extension (iOS)";
+			productReference = 207CB72C2CAA276200098463 /* AboveVTT Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		207CB7352CAA276200098463 /* AboveVTT Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 207CB7542CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT Extension (macOS)" */;
+			buildPhases = (
+				207CB7322CAA276200098463 /* Sources */,
+				207CB7332CAA276200098463 /* Frameworks */,
+				207CB7342CAA276200098463 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AboveVTT Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "AboveVTT Extension (macOS)";
+			productReference = 207CB7362CAA276200098463 /* AboveVTT Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		207CB6FA2CAA276000098463 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					207CB70C2CAA276200098463 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					207CB71E2CAA276200098463 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					207CB72B2CAA276200098463 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					207CB7352CAA276200098463 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 207CB6FD2CAA276000098463 /* Build configuration list for PBXProject "AboveVTT" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 207CB6F92CAA276000098463;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 207CB70E2CAA276200098463 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				207CB70C2CAA276200098463 /* AboveVTT (iOS) */,
+				207CB71E2CAA276200098463 /* AboveVTT (macOS) */,
+				207CB72B2CAA276200098463 /* AboveVTT Extension (iOS) */,
+				207CB7352CAA276200098463 /* AboveVTT Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		207CB70B2CAA276200098463 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB73F2CAA276200098463 /* Icon.png in Resources */,
+				207CB7162CAA276200098463 /* LaunchScreen.storyboard in Resources */,
+				207CB73D2CAA276200098463 /* Main.html in Resources */,
+				207CB7432CAA276200098463 /* Script.js in Resources */,
+				207CB7472CAA276200098463 /* Assets.xcassets in Resources */,
+				207CB7192CAA276200098463 /* Main.storyboard in Resources */,
+				207CB7412CAA276200098463 /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB71D2CAA276200098463 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7402CAA276200098463 /* Icon.png in Resources */,
+				207CB7422CAA276200098463 /* Style.css in Resources */,
+				207CB7252CAA276200098463 /* Main.storyboard in Resources */,
+				207CB7442CAA276200098463 /* Script.js in Resources */,
+				207CB7482CAA276200098463 /* Assets.xcassets in Resources */,
+				207CB73E2CAA276200098463 /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB72A2CAA276200098463 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7FC2CAA276200098463 /* jquery-ui.min.css in Resources */,
+				207CB80E2CAA276200098463 /* CharactersPage.js in Resources */,
+				207CB8192CAA276200098463 /* built-in-tokens.js in Resources */,
+				207CB8292CAA276200098463 /* CampaignPage.js in Resources */,
+				207CB8332CAA276200098463 /* color-picker.js in Resources */,
+				207CB80B2CAA276200098463 /* LOCK in Resources */,
+				207CB8132CAA276200098463 /* LoadCharacterPage.js in Resources */,
+				207CB8362CAA276200098463 /* DiceContextMenu in Resources */,
+				207CB7F92CAA276200098463 /* jquery-ui.min.js in Resources */,
+				207CB7FE2CAA276200098463 /* peerjs.min.js in Resources */,
+				207CB8112CAA276200098463 /* MessageBroker.js in Resources */,
+				207CB7FB2CAA276200098463 /* Fog.js in Resources */,
+				207CB7FA2CAA276200098463 /* jquery.contextMenu.js in Resources */,
+				207CB80A2CAA276200098463 /* EncounterHandler.js in Resources */,
+				207CB7F32CAA276200098463 /* abovevtt.css in Resources */,
+				207CB8202CAA276200098463 /* spectrum-2.0.8.min.js in Resources */,
+				207CB80C2CAA276200098463 /* jquery.ui.touch-punch.js in Resources */,
+				207CB7F42CAA276200098463 /* jquery.contextMenu.css in Resources */,
+				207CB7F12CAA276200098463 /* PeerManager.js in Resources */,
+				207CB7FF2CAA276200098463 /* ScenesPanel.js in Resources */,
+				207CB8242CAA276200098463 /* SceneData.js in Resources */,
+				207CB82E2CAA276200098463 /* environment.js in Resources */,
+				207CB8342CAA276200098463 /* lock.js in Resources */,
+				207CB8082CAA276200098463 /* PrivacyPolicy.txt in Resources */,
+				207CB81F2CAA276200098463 /* audio in Resources */,
+				207CB81D2CAA276200098463 /* KeypressHandler.js in Resources */,
+				207CB8152CAA276200098463 /* Journal.js in Resources */,
+				207CB7EE2CAA276200098463 /* DDBApi.js in Resources */,
+				207CB82F2CAA276200098463 /* Settings.js in Resources */,
+				207CB8052CAA276200098463 /* jquery-3.6.0.min.js in Resources */,
+				207CB7F72CAA276200098463 /* MonsterDice.js in Resources */,
+				207CB8302CAA276200098463 /* Text.js in Resources */,
+				207CB8002CAA276200098463 /* LICENSE in Resources */,
+				207CB8032CAA276200098463 /* images in Resources */,
+				207CB7F52CAA276200098463 /* icon.png in Resources */,
+				207CB7EF2CAA276200098463 /* purify.min.js in Resources */,
+				207CB82C2CAA276200098463 /* assets in Resources */,
+				207CB8012CAA276200098463 /* AOETemplates.js in Resources */,
+				207CB7F62CAA276200098463 /* magnific-popup.css in Resources */,
+				207CB81A2CAA276200098463 /* Main.js in Resources */,
+				207CB8352CAA276200098463 /* color-picker.min.css in Resources */,
+				207CB80F2CAA276200098463 /* spectrum-2.0.8.min.css in Resources */,
+				207CB8122CAA276200098463 /* scenedata in Resources */,
+				207CB8172CAA276200098463 /* rpg-dice-roller.bundle.min.js in Resources */,
+				207CB8102CAA276200098463 /* docs in Resources */,
+				207CB8272CAA276200098463 /* TokenCustomization.js in Resources */,
+				207CB82B2CAA276200098463 /* SidebarPanel.js in Resources */,
+				207CB8252CAA276200098463 /* manifest.json in Resources */,
+				207CB7F82CAA276200098463 /* jquery.magnific-popup.min.js in Resources */,
+				207CB8022CAA276200098463 /* ScenesHandler.js in Resources */,
+				207CB8142CAA276200098463 /* Token.js in Resources */,
+				207CB7FD2CAA276200098463 /* CoreFunctions.js in Resources */,
+				207CB80D2CAA276200098463 /* mousetrap.1.6.5.min.js in Resources */,
+				207CB8262CAA276200098463 /* DiceRoller.js in Resources */,
+				207CB81E2CAA276200098463 /* AboveApi.js in Resources */,
+				207CB8182CAA276200098463 /* jquery.ui.theme.min.css in Resources */,
+				207CB7F22CAA276200098463 /* fuse.min.js in Resources */,
+				207CB8072CAA276200098463 /* onedrive in Resources */,
+				207CB8042CAA276200098463 /* Startup.js in Resources */,
+				207CB8322CAA276200098463 /* PeerCommunication.js in Resources */,
+				207CB81C2CAA276200098463 /* TokenMenu.js in Resources */,
+				207CB7F02CAA276200098463 /* ajaxQueue in Resources */,
+				207CB82A2CAA276200098463 /* TokensPanel.js in Resources */,
+				207CB8062CAA276200098463 /* ChatObserver.js in Resources */,
+				207CB8162CAA276200098463 /* README.md in Resources */,
+				207CB8212CAA276200098463 /* MonsterStatBlock.js in Resources */,
+				207CB8222CAA276200098463 /* PlayerPanel.js in Resources */,
+				207CB81B2CAA276200098463 /* Load.js in Resources */,
+				207CB8282CAA276200098463 /* peerVideo.js in Resources */,
+				207CB82D2CAA276200098463 /* CombatTracker.js in Resources */,
+				207CB8312CAA276200098463 /* LibrarySources.txt in Resources */,
+				207CB8232CAA276200098463 /* jquery.csv.js in Resources */,
+				207CB8092CAA276200098463 /* StatHandler.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7342CAA276200098463 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7B32CAA276200098463 /* jquery-ui.min.css in Resources */,
+				207CB7C52CAA276200098463 /* CharactersPage.js in Resources */,
+				207CB7D02CAA276200098463 /* built-in-tokens.js in Resources */,
+				207CB7E02CAA276200098463 /* CampaignPage.js in Resources */,
+				207CB7EA2CAA276200098463 /* color-picker.js in Resources */,
+				207CB7C22CAA276200098463 /* LOCK in Resources */,
+				207CB7CA2CAA276200098463 /* LoadCharacterPage.js in Resources */,
+				207CB7ED2CAA276200098463 /* DiceContextMenu in Resources */,
+				207CB7B02CAA276200098463 /* jquery-ui.min.js in Resources */,
+				207CB7B52CAA276200098463 /* peerjs.min.js in Resources */,
+				207CB7C82CAA276200098463 /* MessageBroker.js in Resources */,
+				207CB7B22CAA276200098463 /* Fog.js in Resources */,
+				207CB7B12CAA276200098463 /* jquery.contextMenu.js in Resources */,
+				207CB7C12CAA276200098463 /* EncounterHandler.js in Resources */,
+				207CB7AA2CAA276200098463 /* abovevtt.css in Resources */,
+				207CB7D72CAA276200098463 /* spectrum-2.0.8.min.js in Resources */,
+				207CB7C32CAA276200098463 /* jquery.ui.touch-punch.js in Resources */,
+				207CB7AB2CAA276200098463 /* jquery.contextMenu.css in Resources */,
+				207CB7A82CAA276200098463 /* PeerManager.js in Resources */,
+				207CB7B62CAA276200098463 /* ScenesPanel.js in Resources */,
+				207CB7DB2CAA276200098463 /* SceneData.js in Resources */,
+				207CB7E52CAA276200098463 /* environment.js in Resources */,
+				207CB7EB2CAA276200098463 /* lock.js in Resources */,
+				207CB7BF2CAA276200098463 /* PrivacyPolicy.txt in Resources */,
+				207CB7D62CAA276200098463 /* audio in Resources */,
+				207CB7D42CAA276200098463 /* KeypressHandler.js in Resources */,
+				207CB7CC2CAA276200098463 /* Journal.js in Resources */,
+				207CB7A52CAA276200098463 /* DDBApi.js in Resources */,
+				207CB7E62CAA276200098463 /* Settings.js in Resources */,
+				207CB7BC2CAA276200098463 /* jquery-3.6.0.min.js in Resources */,
+				207CB7AE2CAA276200098463 /* MonsterDice.js in Resources */,
+				207CB7E72CAA276200098463 /* Text.js in Resources */,
+				207CB7B72CAA276200098463 /* LICENSE in Resources */,
+				207CB7BA2CAA276200098463 /* images in Resources */,
+				207CB7AC2CAA276200098463 /* icon.png in Resources */,
+				207CB7A62CAA276200098463 /* purify.min.js in Resources */,
+				207CB7E32CAA276200098463 /* assets in Resources */,
+				207CB7B82CAA276200098463 /* AOETemplates.js in Resources */,
+				207CB7AD2CAA276200098463 /* magnific-popup.css in Resources */,
+				207CB7D12CAA276200098463 /* Main.js in Resources */,
+				207CB7EC2CAA276200098463 /* color-picker.min.css in Resources */,
+				207CB7C62CAA276200098463 /* spectrum-2.0.8.min.css in Resources */,
+				207CB7C92CAA276200098463 /* scenedata in Resources */,
+				207CB7CE2CAA276200098463 /* rpg-dice-roller.bundle.min.js in Resources */,
+				207CB7C72CAA276200098463 /* docs in Resources */,
+				207CB7DE2CAA276200098463 /* TokenCustomization.js in Resources */,
+				207CB7E22CAA276200098463 /* SidebarPanel.js in Resources */,
+				207CB7DC2CAA276200098463 /* manifest.json in Resources */,
+				207CB7AF2CAA276200098463 /* jquery.magnific-popup.min.js in Resources */,
+				207CB7B92CAA276200098463 /* ScenesHandler.js in Resources */,
+				207CB7CB2CAA276200098463 /* Token.js in Resources */,
+				207CB7B42CAA276200098463 /* CoreFunctions.js in Resources */,
+				207CB7C42CAA276200098463 /* mousetrap.1.6.5.min.js in Resources */,
+				207CB7DD2CAA276200098463 /* DiceRoller.js in Resources */,
+				207CB7D52CAA276200098463 /* AboveApi.js in Resources */,
+				207CB7CF2CAA276200098463 /* jquery.ui.theme.min.css in Resources */,
+				207CB7A92CAA276200098463 /* fuse.min.js in Resources */,
+				207CB7BE2CAA276200098463 /* onedrive in Resources */,
+				207CB7BB2CAA276200098463 /* Startup.js in Resources */,
+				207CB7E92CAA276200098463 /* PeerCommunication.js in Resources */,
+				207CB7D32CAA276200098463 /* TokenMenu.js in Resources */,
+				207CB7A72CAA276200098463 /* ajaxQueue in Resources */,
+				207CB7E12CAA276200098463 /* TokensPanel.js in Resources */,
+				207CB7BD2CAA276200098463 /* ChatObserver.js in Resources */,
+				207CB7CD2CAA276200098463 /* README.md in Resources */,
+				207CB7D82CAA276200098463 /* MonsterStatBlock.js in Resources */,
+				207CB7D92CAA276200098463 /* PlayerPanel.js in Resources */,
+				207CB7D22CAA276200098463 /* Load.js in Resources */,
+				207CB7DF2CAA276200098463 /* peerVideo.js in Resources */,
+				207CB7E42CAA276200098463 /* CombatTracker.js in Resources */,
+				207CB7E82CAA276200098463 /* LibrarySources.txt in Resources */,
+				207CB7DA2CAA276200098463 /* jquery.csv.js in Resources */,
+				207CB7C02CAA276200098463 /* StatHandler.js in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		207CB7092CAA276200098463 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7452CAA276200098463 /* ViewController.swift in Sources */,
+				207CB7112CAA276200098463 /* AppDelegate.swift in Sources */,
+				207CB7132CAA276200098463 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB71B2CAA276200098463 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7462CAA276200098463 /* ViewController.swift in Sources */,
+				207CB7222CAA276200098463 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7282CAA276200098463 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB7492CAA276200098463 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		207CB7322CAA276200098463 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				207CB74A2CAA276200098463 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		207CB72F2CAA276200098463 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 207CB72B2CAA276200098463 /* AboveVTT Extension (iOS) */;
+			targetProxy = 207CB72E2CAA276200098463 /* PBXContainerItemProxy */;
+		};
+		207CB7392CAA276200098463 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 207CB7352CAA276200098463 /* AboveVTT Extension (macOS) */;
+			targetProxy = 207CB7382CAA276200098463 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		207CB7002CAA276100098463 /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				207CB7012CAA276100098463 /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		207CB7142CAA276200098463 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				207CB7152CAA276200098463 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		207CB7172CAA276200098463 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				207CB7182CAA276200098463 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		207CB7232CAA276200098463 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				207CB7242CAA276200098463 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		207CB74B2CAA276200098463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		207CB74C2CAA276200098463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		207CB74E2CAA276200098463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_NAME = "AboveVTT Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		207CB74F2CAA276200098463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_NAME = "AboveVTT Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		207CB7522CAA276200098463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_NAME = AboveVTT;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		207CB7532CAA276200098463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_NAME = AboveVTT;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		207CB7552CAA276200098463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_NAME = "AboveVTT Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		207CB7562CAA276200098463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "AboveVTT Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT.Extension;
+				PRODUCT_NAME = "AboveVTT Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		207CB7592CAA276200098463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_NAME = AboveVTT;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		207CB75A2CAA276200098463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AboveVTT;
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourCompany.AboveVTT;
+				PRODUCT_NAME = AboveVTT;
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		207CB6FD2CAA276000098463 /* Build configuration list for PBXProject "AboveVTT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				207CB74B2CAA276200098463 /* Debug */,
+				207CB74C2CAA276200098463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		207CB74D2CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				207CB74E2CAA276200098463 /* Debug */,
+				207CB74F2CAA276200098463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		207CB7512CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				207CB7522CAA276200098463 /* Debug */,
+				207CB7532CAA276200098463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		207CB7542CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				207CB7552CAA276200098463 /* Debug */,
+				207CB7562CAA276200098463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		207CB7582CAA276200098463 /* Build configuration list for PBXNativeTarget "AboveVTT (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				207CB7592CAA276200098463 /* Debug */,
+				207CB75A2CAA276200098463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 207CB6FA2CAA276000098463 /* Project object */;
+}
