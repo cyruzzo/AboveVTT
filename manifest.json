@@ -9,7 +9,7 @@
 				"https://www.dndbeyond.com/campaigns/*",
 				"https://www.dndbeyond.com/encounters/*",
 				"https://www.dndbeyond.com/profile/*/characters/*",
-				"https://www.dndbeyond.com/characters/*",
+				"https://www.dndbeyond.com/characters/*"
 			],
 			"exclude_matches": [
 				"https://www.dndbeyond.com/campaigns/join/*"
