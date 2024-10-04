@@ -4686,8 +4686,8 @@ button.block-send-to-game-log span {
     margin: 0 2px;
     min-width: 30px;
 }
-#playersFolder .token-row-button,
-#playersFolder .token-row-gear {
+#playersFolder .folder-item-list .token-row-button,
+#playersFolder .folder-item-list .token-row-gear {
     position: relative;
     display: block;
     width: 24px;
@@ -4947,7 +4947,7 @@ button.block-send-to-game-log span {
 #playersFolder .players-popout-button{
     position: absolute;
     top: 0px;
-    right: 0px;
+    right: 30px;
     margin-right: 5px;
     margin-top: 5px; 
 }
@@ -5014,8 +5014,8 @@ button.block-send-to-game-log span {
 #playersFolder span.hp-value {
     color: #1b9af0;
 }
-#playersFolder .token-row-button svg, 
-#playersFolder .token-row-gear img {
+#playersFolder .folder-item-list .token-row-button svg, 
+#playersFolder .folder-item-list .token-row-gear img {
     position: absolute;
     top: 0;
     left: 0;

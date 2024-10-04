@@ -2057,12 +2057,14 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let customization;
     try {
-        customization = find_or_create_token_customization(listItem.type, listItem.id, RootFolder.Monsters.id, RootFolder.Monsters.id);
+        let rootId = RootFolder.allValues().find(d => listItem.folderPath.includes(d.path) && d.name != '')?.id;
+        customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId);
     } catch (error) {
         showError(error, "display_token_configuration_modal failed to create a customization object for listItem:", listItem);
         return;
     }
-
+    customization.parentId = listItem.parentId;
+    listItem.rootId = listItem.rootId;
     // close any that are already open just to be safe
     close_sidebar_modal();
     let sidebarPanel = new SidebarPanel("token-configuration-modal");
@@ -3517,10 +3519,11 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
 
 function find_token_options_for_list_item(listItem) {
     if (!listItem) return {};
+    let rootId = RootFolder.allValues().find(d => listItem.folderPath.includes(d.path) && d.name !='')?.id;
     if (listItem.isTypeBuiltinToken() || listItem.isTypeDDBToken()) {
-        return {...listItem.tokenOptions, ...find_token_customization(listItem.type, listItem.id)?.allCombinedOptions()};
+        return {...listItem.tokenOptions, ...find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId)?.allCombinedOptions()};
     } else {
-        return find_token_customization(listItem.type, listItem.id)?.allCombinedOptions() || {};
+        return find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId)?.allCombinedOptions() || {};
     }
 }
 
