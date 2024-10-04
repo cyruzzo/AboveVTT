@@ -4533,12 +4533,31 @@ function copy_selected_tokens() {
 	if (!window.DM) return;
 	window.TOKEN_PASTE_BUFFER = [];
 	let redrawBoundingBox = false;
+	let bounds = {
+		top: Infinity,
+		left: Infinity,
+		bottom: -Infinity,
+		right: -Infinity,
+		hpps: window.CURRENT_SCENE_DATA.hpps,
+		vpps: window.CURRENT_SCENE_DATA.vpps
+	};
 	for (let id in window.TOKEN_OBJECTS) {
 		let token = window.TOKEN_OBJECTS[id];
+
 		if (token.selected) { 
+			bounds = {
+				...bounds,
+				top: parseInt(token.options.top) < bounds.top ? parseInt(token.options.top) : bounds.top,
+				left: parseInt(token.options.left) < bounds.left ? parseInt(token.options.left) : bounds.left,
+				bottom: parseInt(token.options.top) > bounds.bottom ? parseInt(token.options.top) : bounds.bottom,
+				right: parseInt(token.options.left) > bounds.right ? parseInt(token.options.left) : bounds.right
+			}
 			window.TOKEN_PASTE_BUFFER.push(id);
 		}
 	}
+
+
+	window.TOKEN_PASTE_BOUNDS = bounds;
 	if (redrawBoundingBox) {
 		draw_selected_token_bounding_box();
 	}
@@ -4564,8 +4583,14 @@ function paste_selected_tokens(x, y) {
 		options.selected = true;
 		let center = center_of_view(); 
 		let mapView = convert_point_from_view_to_map(x, y, false);
-		options.top = `${mapView.y - Math.round(token.sizeHeight() / 2)}px`;
-		options.left = `${mapView.x - Math.round(token.sizeWidth() / 2) + token.sizeWidth()  * i + 5 - (token.sizeWidth() * ((window.TOKEN_PASTE_BUFFER.length/2)-1))}px`;
+
+		let bounds = window.TOKEN_PASTE_BOUNDS;
+		let left = (parseInt(options.left) - (bounds.right + bounds.left)/2)/bounds.hpps;
+		let top = (parseInt(options.top) - (bounds.bottom + bounds.top)/2)/bounds.vpps;
+
+
+		options.top = `${mapView.y + top*window.CURRENT_SCENE_DATA.vpps}px`;
+		options.left = `${mapView.x + left*window.CURRENT_SCENE_DATA.hpps}px`;
 		window.ScenesHandler.create_update_token(options);
 		// deselect the old and select the new so the user can easily move the new tokens around after pasting them
 		if(typeof window.TOKEN_OBJECTS[id] !== "undefined"){
@@ -4593,8 +4618,7 @@ function paste_selected_tokens(x, y) {
 			findButton.empty().append(findSVG);
 		}
 	}
-	// copy the newly selected tokens in case they paste again, we want them pasted in reference to the newly created tokens
-	copy_selected_tokens();
+
 	draw_selected_token_bounding_box();
 }
 
