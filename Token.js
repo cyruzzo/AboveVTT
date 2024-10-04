@@ -2871,7 +2871,7 @@ class Token {
 
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
-								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove))) {
+								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove ||  $('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')))) {
 
 
 									//console.log("sposto!");
