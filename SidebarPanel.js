@@ -753,13 +753,7 @@ class SidebarListItem {
   canEdit() {
     switch (this.type) {
       case ItemType.Folder:
-        switch (this.folderType) {
-          case ItemType.MyToken:
-          case ItemType.Scene:
-            return true;
-          default:
-            return false;
-        }
+        return true;
       case ItemType.MyToken:
       case ItemType.PC:
       case ItemType.Monster:
@@ -1119,9 +1113,9 @@ function build_sidebar_list_row(listItem) {
     if(listingImage?.includes != undefined && listingImage.includes('folder.svg')){
     img = $(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 309.267 309.267" style="enable-background:new 0 0 309.267 309.267;" xml:space="preserve">
         <g>
-          <path style="fill:${listItem.color ? `${listItem.color}` : '#D0994B'};" d="M260.944,43.491H125.64c0,0-18.324-28.994-28.994-28.994H48.323c-10.67,0-19.329,8.65-19.329,19.329   v222.286c0,10.67,8.659,19.329,19.329,19.329h212.621c10.67,0,19.329-8.659,19.329-19.329V62.82   C280.273,52.15,271.614,43.491,260.944,43.491z"/>
+          <path style="fill:${tokenCustomizations?.color ? `${tokenCustomizations?.color}` : listItem.color ? listItem.color : '#D0994B'};" d="M260.944,43.491H125.64c0,0-18.324-28.994-28.994-28.994H48.323c-10.67,0-19.329,8.65-19.329,19.329   v222.286c0,10.67,8.659,19.329,19.329,19.329h212.621c10.67,0,19.329-8.659,19.329-19.329V62.82   C280.273,52.15,271.614,43.491,260.944,43.491z"/>
           <path style="fill:#E4E7E7;" d="M28.994,72.484h251.279v77.317H28.994V72.484z"/>
-          <path style="fill:${listItem.color ? listItem.color : '#F4B459'};" d="M19.329,91.814h270.609c10.67,0,19.329,8.65,19.329,19.329l-19.329,164.298   c0,10.67-8.659,19.329-19.329,19.329H38.658c-10.67,0-19.329-8.659-19.329-19.329L0,111.143C0,100.463,8.659,91.814,19.329,91.814z   "/>
+          <path style="fill:${tokenCustomizations?.color ? tokenCustomizations?.color : listItem.color ? listItem.color : '#F4B459'};" d="M19.329,91.814h270.609c10.67,0,19.329,8.65,19.329,19.329l-19.329,164.298   c0,10.67-8.659,19.329-19.329,19.329H38.658c-10.67,0-19.329-8.659-19.329-19.329L0,111.143C0,100.463,8.659,91.814,19.329,91.814z   "/>
         </g>
     </svg>`)
     }
@@ -1743,11 +1737,12 @@ function display_folder_configure_modal(listItem) {
 
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_list_item_identifier(folderNameInput, listItem);
-  sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
+  if (itemType === ItemType.MyToken || itemType === ItemType.Scene){
+    sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
+  }
 
-
-
-  let folderColor = listItem.color ? listItem.color : '#F4B459';
+  let tokenCustomizations = find_token_customization(listItem.type, listItem.id);
+  let folderColor = tokenCustomizations?.color ? tokenCustomizations?.color : listItem.color ? listItem.color : '#F4B459';
 
   let folderColorInput = `<div class="token-image-modal-footer-select-wrapper">
               <div class="token-image-modal-footer-select-wrapper">
@@ -1767,16 +1762,15 @@ function display_folder_configure_modal(listItem) {
       clickoutFiresChange: true,
       appendTo: "parent"
   });
-  sidebarModal.body.find("input[name='folderColor']").spectrum("set", listItem.color);
+  sidebarModal.body.find("input[name='folderColor']").spectrum("set", folderColor);
   const colorPickerChange = function(e, tinycolor) {
       listItem.color = `rgba(${tinycolor._r}, ${tinycolor._g}, ${tinycolor._b}, ${tinycolor._a})`;
-
   };
   colorPickers.on('dragstop.spectrum', colorPickerChange);   // update the token as the player messes around with colors
   colorPickers.on('change.spectrum', colorPickerChange); // commit the changes when the user clicks the submit button
   colorPickers.on('hide.spectrum', colorPickerChange);   // the hide event includes the original color so let's change it back when we get it
 
-  if (itemType === ItemType.MyToken) {
+  if (itemType === ItemType.MyToken || (listItem.isTypeFolder() && itemType !== ItemType.Scene)) {
     let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
     let folderOptionsButton = build_override_token_options_button(sidebarModal, listItem, undefined, customization.tokenOptions, function (key, value) {
       customization.setTokenOption(key, value);
@@ -1788,50 +1782,51 @@ function display_folder_configure_modal(listItem) {
 
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {
-    let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
-    console.log(`saveButton nameInput`, nameInput);
-    let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
-    if (renameResult !== false) {
-      close_sidebar_modal();
-      expand_all_folders_up_to_id(listItem?.id);
-      // did_update_scenes();
+    if (itemType === ItemType.MyToken || itemType === ItemType.Scene){
+      let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
+      console.log(`saveButton nameInput`, nameInput);
+      let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
     }
-    if(itemType === ItemType.MyToken){
+    close_sidebar_modal();
+    if(itemType === ItemType.MyToken || (listItem.isTypeFolder() && itemType !== ItemType.Scene)){
       let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
       customization.color = listItem.color;
       persist_token_customization(customization);
       rebuild_token_items_list();
-      redraw_token_list();    
+      filter_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");   
     }
-    else{
+    else{ 
       let sceneIndex = window.ScenesHandler.scenes.findIndex( d => d.id == listItem.id);
       window.ScenesHandler.scenes[sceneIndex].color = listItem.color;
       window.ScenesHandler.persist_scene(sceneIndex);
       did_update_scenes();
     }
+    
     expand_all_folders_up_to_id(listItem.id);
 
   });
   sidebarModal.body.append(saveButton);
+  if(!RootFolder.allValues().some(d => d.id == listItem.id) && itemType !== ItemType.BuiltinToken){
+    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
+    set_list_item_identifier(deleteFolderAndMoveChildrenButton, listItem);
+    sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
+    deleteFolderAndMoveChildrenButton.on("click", function(event) {
+      let foundItem = find_sidebar_list_item($(event.currentTarget));
+      delete_folder_and_move_children_up_one_level(foundItem);
+      close_sidebar_modal();
+      expand_all_folders_up_to_item(foundItem);
+    });
+    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
+    set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
+    sidebarModal.footer.append(deleteFolderAndChildrenButton);
+    deleteFolderAndChildrenButton.on("click", function(event) {
+      let foundItem = find_sidebar_list_item($(event.currentTarget));
+      delete_folder_and_delete_children(foundItem);
+      close_sidebar_modal();
+      expand_all_folders_up_to_item(foundItem);
+    });
+  }
 
-  let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
-  set_list_item_identifier(deleteFolderAndMoveChildrenButton, listItem);
-  sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
-  deleteFolderAndMoveChildrenButton.on("click", function(event) {
-    let foundItem = find_sidebar_list_item($(event.currentTarget));
-    delete_folder_and_move_children_up_one_level(foundItem);
-    close_sidebar_modal();
-    expand_all_folders_up_to_item(foundItem);
-  });
-  let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
-  set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
-  sidebarModal.footer.append(deleteFolderAndChildrenButton);
-  deleteFolderAndChildrenButton.on("click", function(event) {
-    let foundItem = find_sidebar_list_item($(event.currentTarget));
-    delete_folder_and_delete_children(foundItem);
-    close_sidebar_modal();
-    expand_all_folders_up_to_item(foundItem);
-  });
 
   sidebarModal.body.find(`input[name="folderName"]`).select();
 }
