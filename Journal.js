@@ -13,35 +13,131 @@ class JournalManager{
 	
 	constructor(gameid){
 		this.gameid=gameid;
+		let promises = [];
+
+		let objectStore = gameIndexedDb.transaction(["journalData"]).objectStore(`journalData`)
 		
-		if (window.DM && (localStorage.getItem('Journal' + gameid) != null)) {
-			this.notes = $.parseJSON(localStorage.getItem('Journal' + gameid));
-		}
-		else{
-			this.notes={};
-		}
-		if (window.DM && (localStorage.getItem('JournalChapters' + gameid) != null)) {
-			this.chapters = $.parseJSON(localStorage.getItem('JournalChapters' + gameid));
-		}
-		else{
-			this.chapters=[];
-		}
-		if(window.DM && (localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
-			this.notes = {
-				...this.notes,
-				...$.parseJSON(localStorage.getItem('JournalStatblocks'))
+		
+	   	promises.push(new Promise((resolve) => { 
+		   	objectStore.get(`Journal`).onsuccess = (event) => {
+			 	if(event?.target?.result?.journalData){
+			 		this.notes = event?.target?.result?.journalData	
+				}
+				else {
+				  	if (window.DM && (localStorage.getItem('Journal' + gameid) != null)) {
+				  		this.notes = $.parseJSON(localStorage.getItem('Journal' + gameid));
+				  	}
+				  	else{
+				  		this.notes={};
+				  	}
+				}
+				let statBlockPromise = new Promise((resolve) => {
+					let globalObjectStore = globalIndexedDB.transaction(["journalData"]).objectStore(`journalData`)
+			  		globalObjectStore.get(`JournalStatblocks`).onsuccess = (event) => {
+					 	if(event?.target?.result?.journalData){
+						 	this.notes = {
+								...this.notes,
+								...event?.target?.result?.journalData
+							}			
+						}
+						else {
+							if(window.DM && (localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
+						  		this.notes = {
+						  			...this.notes,
+						  			...$.parseJSON(localStorage.getItem('JournalStatblocks'))
+						  		}
+						  	}
+						}
+						resolve(true);
+					}
+				})
+
+				statBlockPromise.then(()=>{resolve(true)});
+				
 			}
-		}
+		}))
+
+		promises.push(new Promise((resolve) => {
+			objectStore.get(`JournalChapters`).onsuccess = (event) => {
+			 	if(event?.target?.result?.journalData){
+			 		this.chapters = event?.target?.result?.journalData; 		
+				}
+				else{
+				  	if (window.DM && (localStorage.getItem('JournalChapters' + gameid) != null)) {
+				  		this.chapters = $.parseJSON(localStorage.getItem('JournalChapters' + gameid));
+				  	}
+				  	else{
+				  		this.chapters=[];
+				  	}
+			   	}
+				resolve(true);
+			}
+		}))
+
+
+
+
+		Promise.all(promises).then(() => {
+		  if(is_abovevtt_page()){
+		  	this.build_journal();
+		  }
+		});
 	}
+
+	
 	
 	persist(){
 		if(window.DM){
 			if(!this.statBlocks)
 				this.statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
-			localStorage.setItem('JournalStatblocks', JSON.stringify(this.statBlocks));
-			localStorage.setItem('Journal' + this.gameid, JSON.stringify(Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true))));
-			localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(this.chapters));
+			
+			let statBlocks = this.statBlocks
+			let chapters = this.chapters
+			let journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true))
+
+
+			let storeImage = gameIndexedDb.transaction([`journalData`], "readwrite")
+			let objectStore = storeImage.objectStore(`journalData`)
+
+			let globalObjectStore = globalIndexedDB.transaction(["journalData"], "readwrite").objectStore(`journalData`)
+
+
+			let deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
+			deleteRequest.onsuccess = (event) => {
+			  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
+			};
+			deleteRequest.onerror = (event) => {
+			  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
+			};
+
+			let journalDeleteRequest = objectStore.delete(`Journal`);
+			journalDeleteRequest.onsuccess = (event) => {
+			  const objectStoreRequest = objectStore.add({journalId: `Journal`, 'journalData': journal});
+			};
+			journalDeleteRequest.onerror = (event) => {
+			  const objectStoreRequest = objectStore.add({journalId: `Journal`, 'journalData': journal});
+			};
+
+	
+			let chapterDeleteRequest = objectStore.delete(`JournalChapters`);
+			chapterDeleteRequest.onsuccess = (event) => {
+			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
+			};
+			journalDeleteRequest.onerror = (event) => {
+			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
+			};
+
+			try{
+				localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   //hold onto these until 1.27 then we can clear them.
+				localStorage.setItem('Journal' + this.gameid, JSON.stringify(journal));
+				localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(chapters));
+			}
+			catch(e){
+				console.warn('localStorage Journal Storage Failed', e)
+			}
+
 		}
+
 	}
 	
 	
@@ -2446,10 +2542,7 @@ function init_journal(gameid){
 	
 	
 	
-	window.JOURNAL=new JournalManager(gameid);
-
-	window.JOURNAL.build_journal();
-	
+	window.JOURNAL=new JournalManager(gameid);	
 	
 }
 

@@ -131,26 +131,50 @@ function monitor_console_logs() {
   }
 }
 function openDB() {
-  const DBOpenRequest = indexedDB.open(`AboveVTT-${window.gameId}`);
+  const DBOpenRequest = indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
+  
   DBOpenRequest.onsuccess = (e) => {
-    window.exploredIndexedDb = DBOpenRequest.result;
+    window.gameIndexedDb = DBOpenRequest.result;
   };
   DBOpenRequest.onerror = (e) => {
     console.warn(e);
   };
   DBOpenRequest.onupgradeneeded = (event) => {
       const db = event.target.result;
-
-      // Create an objectStore to hold information about our customers. We're
-      // going to use "ssn" as our key path because it's guaranteed to be
-      // unique - or at least that's what I was told during the kickoff meeting.
-      const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+      if(!db.objectStoreNames?.contains('exploredData')){
+        const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+      }
+      if(!db.objectStoreNames?.contains('journalData')){
+        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+      }
   };
+   
+  if(window.DM){
+    const DBOpenRequest = indexedDB.open(`AboveVTT-Global`);
+    
+    DBOpenRequest.onsuccess = (e) => {
+      window.globalIndexedDB = DBOpenRequest.result;
+    };
+    DBOpenRequest.onerror = (e) => {
+      console.warn(e);
+    };
+    DBOpenRequest.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if(!db.objectStoreNames?.contains('exploredData')){
+          const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+        }
+        if(!db.objectStoreNames?.contains('journalData')){
+          const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+        }
+    };
+  } 
+
+
 }
 function deleteDB(){
   let d = confirm("DELETE ALL LOCAL EXPLORE DATA (CANNOT BE UNDONE)");
   if (d === true) {
-    const objectStore = exploredIndexedDb.transaction([`exploredData`], "readwrite").objectStore('exploredData');
+    const objectStore = gameIndexedDb.transaction([`exploredData`], "readwrite").objectStore('exploredData');
     const objectStoreRequest = objectStore.clear();
     objectStoreRequest.onsuccess = function(event) {       
       exploredCanvas =  document.getElementById("exploredCanvas");
@@ -173,7 +197,7 @@ function deleteCurrentExploredScene(){
 }
 
 function deleteExploredScene(sceneId){
-    const deleteRequest = exploredIndexedDb
+    const deleteRequest = gameIndexedDb
      .transaction([`exploredData`], "readwrite")
      .objectStore('exploredData')
      .delete(`explore${window.gameId}${sceneId}`);

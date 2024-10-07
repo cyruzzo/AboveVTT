@@ -5708,7 +5708,7 @@ function redraw_light(){
 
 
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-	if(exploredIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+	if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
 		let exploredCanvas = document.getElementById("exploredCanvas");
 		if($('#exploredCanvas').length == 0){
 			exploredCanvas =  document.createElement("canvas")
@@ -5722,7 +5722,7 @@ function redraw_light(){
 			$(exploredCanvas).attr('id', 'exploredCanvas');
 
 			$('#outer_light_container').append(exploredCanvas)	
-			exploredIndexedDb.transaction(["exploredData"])
+			gameIndexedDb.transaction(["exploredData"])
 			  .objectStore(`exploredData`)
 			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
 			 	if(event?.target?.result?.exploredData){
@@ -5746,7 +5746,7 @@ function redraw_light(){
 
 			let dataURI = exploredCanvas.toDataURL('image/jpg')
 
-			let storeImage = exploredIndexedDb.transaction([`exploredData`], "readwrite")
+			let storeImage = gameIndexedDb.transaction([`exploredData`], "readwrite")
 			let objectStore = storeImage.objectStore(`exploredData`)
 			let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
 			deleteRequest.onsuccess = (event) => {

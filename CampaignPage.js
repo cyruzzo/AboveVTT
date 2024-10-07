@@ -78,6 +78,8 @@ function inject_instructions() {
       localStorage.removeItem("Journal" + gameId);
       localStorage.removeItem("JournalChapters" + gameId);
       localStorage.removeItem("TokenSettings" + gameId);
+      gameIndexedDb.transaction([`exploredData`], "readwrite").objectStore('exploredData').clear();
+      gameIndexedDb.transaction([`journalData`], "readwrite").objectStore('journalData').clear();
     }
   });
   campaign_banner.append(delete_button);
@@ -88,6 +90,8 @@ function inject_instructions() {
       localStorage.removeItem("Soundpads");
       localStorage.removeItem("CustomTokens");
       localStorage.removeItem("TokenCustomizations");
+      globalIndexedDB.transaction([`customizationData`], "readwrite").objectStore('customizationData').clear();
+      globalIndexedDB.transaction([`journalData`], "readwrite").objectStore('journalData').clear();
     }
   });
   campaign_banner.append(delete_button2);
