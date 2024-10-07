@@ -243,27 +243,15 @@ class TokenCustomization {
     }
 
     findParent() {
-        if(window.tokenListItems == undefined || RootFolder.allValues().some(d => d.id == this.parentId) || this.parentId == '_')
-            return;
-        let parent = window.tokenListItems.find(tc => tc.id === this.parentId);
-        if(!parent)
-            return;
-        let rootId = RootFolder.allValues().find(d => parent.folderPath.includes(d.path) && d.name != '')?.id;
-        
-        if (rootId) {
-            try {
-                let parentCustomization = find_or_create_token_customization(parent.type, parent.id, parent.parentId, rootId);
-                return parentCustomization;
-            } catch (error) {
-                
-            }
-        }
-        return 
+        return window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id === this.parentId);
     }
     findAncestors(found = []) {
         found.push(this);
         let parent = this.findParent();
         if (parent) {
+            let rootId = RootFolder.allValues().find(d => parent.folderPath().includes(d.path) && d.name != '')?.id;
+            let parentCustomization = find_or_create_token_customization(parent.tokenType, parent.id, parent.parentId, rootId);
+            found.push(parentCustomization);
             return parent.findAncestors(found);
         } else {
             let root = RootFolder.findById(this.parentId);
