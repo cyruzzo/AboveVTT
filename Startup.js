@@ -36,7 +36,9 @@ $(function() {
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
       .then(() => {                   // load settings
-        window.exploredIndexedDb = undefined;
+        window.gameIndexedDb = undefined;
+        if(window.DM)
+          window.globalIndexedDB = undefined;
         openDB();
       })
       .then(()=> {

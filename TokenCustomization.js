@@ -611,7 +611,22 @@ function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOf
 
 function rollback_token_customizations_migration() {
     try {
+
+        let storeImage = window.globalIndexedDB.transaction([`customizationData`], "readwrite")
+        let objectStore = storeImage.objectStore(`customizationData`)
+
+
+        let deleteRequest = objectStore.delete(`TokenCustomizations`);
+        deleteRequest.onsuccess = (event) => {
+          const objectStoreRequest = objectStore.add({customizationId: `TokenCustomizations`, 'customizationData': []});
+        };
+        deleteRequest.onerror = (event) => {
+          const objectStoreRequest = objectStore.add({customizationId: `TokenCustomizations`, 'customizationData': []});
+        };
         localStorage.setItem("TokenCustomizations", JSON.stringify([]));
+
+
+
         let playerCustomizations = read_player_token_customizations();
         for (let playerId in playerCustomizations) {
             playerCustomizations[playerId].didMigrate = false;
@@ -629,8 +644,34 @@ function persist_all_token_customizations(customizations, callback) {
         callback = function(){};
     }
     console.log("persist_all_token_customizations starting", customizations, JSON.stringify(customizations));
-    // TODO: send to cloud instead of storing locally
-    localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
+
+ 
+            
+
+    let storeImage = globalIndexedDB.transaction([`customizationData`], "readwrite")
+    let objectStore = storeImage.objectStore(`customizationData`)
+
+
+    let deleteRequest = objectStore.delete(`TokenCustomizations`);
+    deleteRequest.onsuccess = (event) => {
+      const objectStoreRequest = objectStore.add({customizationId: `TokenCustomizations`, 'customizationData': customizations});
+    };
+    deleteRequest.onerror = (event) => {
+      const objectStoreRequest = objectStore.add({customizationId: `TokenCustomizations`, 'customizationData': customizations});
+    };
+
+            
+    try{
+        localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
+    }    
+    catch(e){
+        console.warn('localStorage saving Token Customizations Failed', e)
+    }
+
+
+
+
+
     window.TOKEN_CUSTOMIZATIONS = customizations;
     callback(true);
 }
@@ -692,22 +733,46 @@ function fetch_token_customizations(callback) {
     try {
         console.log("fetch_token_customizations starting");
         // TODO: fetch from the cloud instead of storing locally
-        let customMappingData = localStorage.getItem('TokenCustomizations');
-        let parsedCustomizations = [];
-        if (customMappingData !== undefined && customMappingData != null && customMappingData !== "undefined") {
-            console.debug("fetch_token_customizations customMappingData", customMappingData, typeof customMappingData);
-            $.parseJSON(customMappingData).forEach(obj => {
-                try {
-                    let parsed = TokenCustomization.fromJson(obj);
-                    parsedCustomizations.push(parsed);
-                } catch (error) {
-                    // this one failed, but keep trying to parse the others
-                    console.error("fetch_token_customizations failed to parse customization object", obj, error);
+
+          
+        let objectStore = globalIndexedDB.transaction(["customizationData"]).objectStore(`customizationData`)
+        let promises = [];
+        promises.push(new Promise((resolve) => { 
+            let customMappingData = undefined;
+            objectStore.get(`TokenCustomizations`).onsuccess = (event) => {
+                if(event?.target?.result?.customizationData){
+                   customMappingData = event?.target?.result?.customizationData
                 }
-            });
-        }
-        window.TOKEN_CUSTOMIZATIONS = parsedCustomizations;
-        callback(window.TOKEN_CUSTOMIZATIONS);
+                else {
+                    let localCustomizations = localStorage.getItem('TokenCustomizations');
+                    if(localCustomizations != null && localCustomizations !== undefined && localCustomizations !== "undefined")
+                        customMappingData = $.parseJSON(localCustomizations)
+                }
+                let parsedCustomizations = [];
+
+
+                
+                if (customMappingData != undefined) {
+                    console.debug("fetch_token_customizations customMappingData", customMappingData, typeof customMappingData);
+                    customMappingData.forEach(obj => {
+                        try {
+                            let parsed = TokenCustomization.fromJson(obj);
+                            parsedCustomizations.push(parsed);
+                        } catch (error) {
+                            // this one failed, but keep trying to parse the others
+                            console.error("fetch_token_customizations failed to parse customization object", obj, error);
+                        }
+                    });
+                }
+                window.TOKEN_CUSTOMIZATIONS = parsedCustomizations;
+                resolve(true);
+            }
+        }))
+        Promise.all(promises).then((values) => {          
+            callback(window.TOKEN_CUSTOMIZATIONS);
+        })
+
+        
     } catch (error) {
         console.error("fetch_token_customizations failed", error);
         callback(false);
