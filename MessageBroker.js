@@ -2230,20 +2230,20 @@ class MessageBroker {
 
 			let alertText = '';
 
-			if(message.eventType?.toLowerCase()?.includes('drawing')){
-				alertText = 'Drawings includes - drawings, walls, light drawings and text. You may have too many walls, try reducing the number of wall used on curves if possible. Longer straight walls will also perform better. Check console warnings for more message data.'
+			if(message.eventType?.toLowerCase()?.includes('draw')){
+				alertText = 'Drawings includes - drawings, walls, light drawings and text. \n\n You may have too many walls, try reducing the number of wall used on curves if possible. Longer straight walls will also perform better. \n\n Check console warnings for more message data.'
 			}
 			else if(message.eventType?.toLowerCase()?.includes('note')){
-				alertText = `If only 1 note sent below a journal note may be over 128000 characters including html - check this using the source button in notes (looks like <>). ${Object.keys(message.data.notes).length == 1 ? `Sent 1 note with title: ${message.data.notes.find(d=>d.title).title}` : `Sent ${Object.keys(message.data.notes).length} notes. Check console warnings for more message data.`}`			
+				alertText = `If only 1 note sent below a journal note may be over 128000 characters including html - check this using the source button in notes (looks like <>).\n\n  ${Object.keys(message.data.notes).length == 1 ? `Sent 1 note with title: ${message.data.notes.find(d=>d.title).title}` : `Sent ${Object.keys(message.data.notes).length} notes.`} \n\n Check console warnings for more message data.`			
 			}
 			else if(message.eventType?.toLowerCase()?.includes('token')){
-				alertText = 'You may have too many tokens on the map to send. Check console warnings for more message data.'
+				alertText = 'You may have too many tokens on the map to send. \n\n Check console warnings for more message data.'
 			}
 			else{
 				alertText = 'Check console warnings for more message data.'
 			}
 			
-			alert(`You reached the maximum message size for "${message.eventType.split('/')[message.eventType.split('/').length-1]}". ${alertText}`);
+			alert(`You reached the maximum message size for "${message.eventType.split('/')[message.eventType.split('/').length-1]}". \n\n ${alertText}`);
 			return;
 		}
 
