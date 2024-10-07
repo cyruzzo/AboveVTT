@@ -2229,13 +2229,14 @@ class MessageBroker {
 			console.warn('message too large', message)
 
 			let alertText = '';
-			if(message.eventType.includes('drawing') ){
+
+			if(message.eventType?.toLowerCase()?.includes('drawing')){
 				alertText = 'Drawings includes - drawings, walls, light drawings and text. You may have too many walls, try reducing the number of wall used on curves if possible. Longer straight walls will also perform better. Check console warnings for more message data.'
 			}
-			else if(message.eventType.includes('note') || message.eventType.includes('Note')){
+			else if(message.eventType?.toLowerCase()?.includes('note')){
 				alertText = `If only 1 note sent below a journal note may be over 128000 characters including html - check this using the source button in notes (looks like <>). ${Object.keys(message.data.notes).length == 1 ? `Sent 1 note with title: ${message.data.notes.find(d=>d.title).title}` : `Sent ${Object.keys(message.data.notes).length} notes. Check console warnings for more message data.`}`			
 			}
-			else if(message.eventType.includes('token')){
+			else if(message.eventType?.toLowerCase()?.includes('token')){
 				alertText = 'You may have too many tokens on the map to send. Check console warnings for more message data.'
 			}
 			else{
