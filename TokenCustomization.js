@@ -150,7 +150,7 @@ class TokenCustomization {
         if (typeof id !== "string" || id.length === 0) {
             throw new Error(`Invalid id ${id}`);
         }
-        if (typeof rootId !== "string" || rootId.length === 0) {
+        if ((typeof rootId !== "string" || rootId.length === 0) && parentId != '_') {
             throw new Error(`Invalid rootId ${rootId}`);
         }
         if (!TokenCustomization.validTypes.includes(tokenType)) {
@@ -243,7 +243,21 @@ class TokenCustomization {
     }
 
     findParent() {
-        return window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id === this.parentId);
+        if(window.tokenListItems == undefined || RootFolder.allValues().some(d => d.id == this.parentId) || this.parentId == '_')
+            return;
+        let parent = window.tokenListItems.find(tc => tc.id === this.parentId);
+
+        let rootId = RootFolder.allValues().find(d => parent.folderPath.includes(d.path) && d.name != '')?.id;
+        
+        if (rootId) {
+            try {
+                let parentCustomization = find_or_create_token_customization(parent.type, parent.id, parent.parentId, rootId);
+                return parentCustomization;
+            } catch (error) {
+                console.warn("Failed to create root customization for", this, error);
+            }
+        }
+        return 
     }
     findAncestors(found = []) {
         found.push(this);

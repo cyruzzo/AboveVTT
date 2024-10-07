@@ -3025,6 +3025,9 @@ function inject_encounter_monsters() {
 
             monsters.forEach(shortMonster => {
                 let monsterItem = monsterItems.find(item => item.monsterData.id === shortMonster.id);
+                monsterItem.folderPath = RootFolder.Encounters.path;
+                monsterItem.rootId = RootFolder.Encounters.id;
+                monsterItem.parentId = RootFolder.Encounters.id;
                 let monsterRow = build_sidebar_list_row(monsterItem);
                 enable_draggable_token_creation(monsterRow);
                 groupDiv.append(monsterRow);
