@@ -246,7 +246,8 @@ class TokenCustomization {
         if(window.tokenListItems == undefined || RootFolder.allValues().some(d => d.id == this.parentId) || this.parentId == '_')
             return;
         let parent = window.tokenListItems.find(tc => tc.id === this.parentId);
-
+        if(!parent)
+            return;
         let rootId = RootFolder.allValues().find(d => parent.folderPath.includes(d.path) && d.name != '')?.id;
         
         if (rootId) {
@@ -254,7 +255,7 @@ class TokenCustomization {
                 let parentCustomization = find_or_create_token_customization(parent.type, parent.id, parent.parentId, rootId);
                 return parentCustomization;
             } catch (error) {
-                console.warn("Failed to create root customization for", this, error);
+                
             }
         }
         return 
