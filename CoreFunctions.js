@@ -149,27 +149,24 @@ function openDB() {
       }
   };
    
-  if(window.DM){
-    const DBOpenRequest = indexedDB.open(`AboveVTT-Global`);
-    
-    DBOpenRequest.onsuccess = (e) => {
-      window.globalIndexedDB = DBOpenRequest.result;
-    };
-    DBOpenRequest.onerror = (e) => {
-      console.warn(e);
-    };
-    DBOpenRequest.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if(!db.objectStoreNames?.contains('exploredData')){
-          const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
-        }
-        if(!db.objectStoreNames?.contains('journalData')){
-          const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-        }
-    };
-  } 
-
-
+  
+  const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`);
+  
+  DBOpenRequest2.onsuccess = (e) => {
+    window.globalIndexedDB = DBOpenRequest2.result;
+  };
+  DBOpenRequest2.onerror = (e) => {
+    console.warn(e);
+  };
+  DBOpenRequest2.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if(!db.objectStoreNames?.contains('customizationData')){
+        const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+      }
+      if(!db.objectStoreNames?.contains('journalData')){
+        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+      }
+  };
 }
 function deleteDB(){
   let d = confirm("DELETE ALL LOCAL EXPLORE DATA (CANNOT BE UNDONE)");

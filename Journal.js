@@ -619,9 +619,7 @@ class JournalManager{
 					input_note_title.keypress(function(e){
 						if (e.which == 13 && input_note_title.val() !== "") {
 							self.notes[note_id].title = input_note_title.val();
-							window.MB.sendMessage('custom/myVTT/JournalNotes',{
-								notes: self.notes
-							});
+							self.sendNotes([self.notes[note_id]]);
 							self.persist();
 							self.build_journal();
 						}
@@ -631,8 +629,10 @@ class JournalManager{
 							self.build_journal();
 						}
 					});
-
-					input_note_title.blur(function(){		
+					input_note_title.off('click').on('click', function(e){
+						e.stopPropagation();
+					})
+					input_note_title.blur(function(event){	
 						let e = $.Event('keypress');
 					    e.which = 13;
 					    input_note_title.trigger(e);
@@ -725,13 +725,16 @@ class JournalManager{
 			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
-			window.ScenesHandler.build_adventures(function(){
-				for(let source in window.ScenesHandler.sources){
-					let sourcetitle = window.ScenesHandler.sources[source].title;
-					sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
-					window.ScenesHandler.sources[source].title = sourcetitle;
-					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
-				}
+			
+			chapterImport.one('click', function(){
+				window.ScenesHandler.build_adventures(function(){
+					for(let source in window.ScenesHandler.sources){
+						let sourcetitle = window.ScenesHandler.sources[source].title;
+						sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
+						window.ScenesHandler.sources[source].title = sourcetitle;
+						chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
+					}
+				})
 			});
 			chapterImport.on('change', function(){
 				let source = this.value;
