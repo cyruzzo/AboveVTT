@@ -292,7 +292,7 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
     }
     options = {
         ...options,
-        ...find_or_create_token_customization('aoe', `_Area_of_Effects_${shape}_AoE`, 'monstersFolder', 'monstersFolder').tokenOptions 
+        ...find_or_create_token_customization('aoe', `_Area_of_Effects_${shape}_AoE`, 'aoeFolder', 'aoeFolder').allCombinedOptions()
     }
     
     options.imgsrc = build_aoe_img_name(style, shape, name);
