@@ -726,16 +726,17 @@ class JournalManager{
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
 			
-			chapterImport.one('click', function(){
-				window.ScenesHandler.build_adventures(function(){
-					for(let source in window.ScenesHandler.sources){
-						let sourcetitle = window.ScenesHandler.sources[source].title;
-						sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
-						window.ScenesHandler.sources[source].title = sourcetitle;
-						chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
-					}
-				})
-			});
+			
+			window.ScenesHandler.build_adventures(function(){
+				for(let source in window.ScenesHandler.sources){
+					let sourcetitle = window.ScenesHandler.sources[source].title;
+					sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
+					window.ScenesHandler.sources[source].title = sourcetitle;
+					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
+				}
+			})
+			
+			chapterImport.trigger('click');
 			chapterImport.on('change', function(){
 				let source = this.value;
 				
