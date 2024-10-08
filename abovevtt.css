@@ -2780,6 +2780,15 @@ button.roll-button-mod.minus {
     cursor: pointer;
     height:30px;
 }
+.row-chapter .token-row-button .material-symbols-outlined,
+.row-chapter .token-row-button .material-icons,
+.note-list .token-row-button .material-symbols-outlined{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin: 0px;
+    padding: 0px;
+}
 .note-list .sidebar-list-item-row-item {
     margin-left:2px;
     width:calc(100% - 1px);
