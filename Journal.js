@@ -187,7 +187,7 @@ class JournalManager{
 
 		
 		const row_add_chapter=$("<div class='row-add-chapter'></div>");
-		const input_add_chapter=$("<input type='text' placeholder='New chapter name' class='input-add-chapter'>");
+		const input_add_chapter=$("<input type='text' placeholder='New folder name' class='input-add-chapter'>");
 		
 		input_add_chapter.on('keypress',function(e){
 			if (e.which==13 && input_add_chapter.val() !== ""){
