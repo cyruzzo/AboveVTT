@@ -205,7 +205,7 @@ class JournalManager{
 			}
 		});
 
-		const btn_add_chapter=$("<button id='btn_add_chapter'>Add Chapter</button>");
+		const btn_add_chapter=$("<button id='btn_add_chapter'>Add Folder</button>");
 
 		btn_add_chapter.click(function() {
 			if (input_add_chapter.val() == "") {
@@ -216,7 +216,7 @@ class JournalManager{
 			self.chapters.push({
 				title: input_add_chapter.val(),
 				collapsed: false,
-				notes: [],
+				notes: []
 			});
 			self.persist();
 			self.build_journal();
@@ -377,53 +377,7 @@ class JournalManager{
 			let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
 				
 			let row_chapter_title=$("<div class='row-chapter'></div>");
-			let btn_edit_chapter=$(`
-				<button style='height: 27px' class='token-row-button'>
-					<img  src='${window.EXTENSION_PATH}assets/icons/rename-icon.svg'>
-				</button>
-			`);
-
-			btn_edit_chapter.click(function(){
-				// Convert the chapter title to an input field and focus it
-				let input_chapter_title=$(`
-					<input type='text' class='input-add-chapter' value='${self.chapters[i].title}'>
-				`);
-				
-				input_chapter_title.keypress(function(e){
-					
-					if (e.which == 13 && input_chapter_title.val() !== "") {
-						self.chapters[i].title = input_chapter_title.val();
-						window.MB.sendMessage('custom/myVTT/JournalChapters',{
-							chapters: self.chapters
-						});
-						self.persist();
-						self.build_journal();
-					}
-
-					// If the user presses escape, cancel the edit
-					if (e.which == 27) {
-						self.build_journal();
-					}
-				});
-
-				input_chapter_title.blur(function(){		
-					let e = $.Event('keypress');
-				    e.which = 13;
-				    input_chapter_title.trigger(e);
-				});
-
-				row_chapter_title.empty();
-				row_chapter_title.append(btn_edit_chapter);
-				row_chapter_title.append(input_chapter_title);
-				input_chapter_title.focus();
-
-				// Convert the edit button to a save button
-				btn_edit_chapter.empty();
-				btn_edit_chapter.append(`
-					<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
-				`);
-				btn_edit_chapter.css('z-index', '5');
-			});
+			
 			
 			let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
 			chapter_title.text(self.chapters[i].title);
@@ -438,42 +392,9 @@ class JournalManager{
 				});
 			});
 			
-			let btn_del_chapter=$("<button class='btn-chapter-icon btn-delete-chapter'><img height=10 src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
-			
-			btn_del_chapter.click(function(){
-				// TODO: Make this better but default dialog is good enough for now
-				if(confirm("Delete this chapter and all the contained notes?")){
+	
 
-					for(let k=0;k<self.chapters[i].notes.length;k++){
-						let nid=self.chapters[i].notes[k];
-						delete self.notes[nid];
-					}
-					
-					self.chapters = self.chapters.filter(d => d.id != self.chapters[i].id)
-					
-					$(this).closest('.folder').find('.folder').each(function(){
-						let folderId = $(this).attr('data-id');
-						let chapter = self.chapters.filter(d => d.id == folderId)[0];
-
-
-						for(let k=0;k<chapter.notes.length;k++){
-							let nid=chapter.notes[k];
-							delete self.notes[nid];
-						}
-
-						self.chapters = self.chapters.filter(d => d.id != folderId)
-
-					})
-					
-					window.MB.sendMessage('custom/myVTT/JournalChapters',{
-						chapters: self.chapters
-					});
-					self.persist();
-					self.build_journal();
-				}
-			});
-
-			let add_note_btn=$("<button class='token-row-button' ><img style='height: 20px' src='"+window.EXTENSION_PATH+"assets/icons/add_note.svg'></button>");
+			let add_note_btn=$("<button class='token-row-button' ><span class='material-symbols-outlined'>add_notes</span></button>");
 
 			add_note_btn.click(function(){
 				let new_noteid=uuid();
@@ -522,62 +443,76 @@ class JournalManager{
 
 				input_add_note.focus();
 			});
-				row_chapter_title.append(folderIcon);	
-				row_chapter_title.append(chapter_title);
-				if(window.DM) {
-					row_chapter_title.append(add_note_btn);
-					row_chapter_title.append(btn_edit_chapter);
-					row_chapter_title.append(btn_del_chapter);	
-				}	
+			let add_fold_btn=$("<button class='token-row-button'><span class='material-icons'>create_new_folder</span></button>");
+			add_fold_btn.click(function(){
 
+				self.chapters.push({
+					title: "New Folder",
+					collapsed: false,
+					notes: [],
+					parentID: $(this).closest('.folder[data-id]').attr('data-id')
+				});
+				self.persist();
+				self.build_journal();
+				window.MB.sendMessage('custom/myVTT/JournalChapters',{
+					chapters: self.chapters
+				});
+
+			});
+			row_chapter_title.append(folderIcon);	
+			row_chapter_title.append(chapter_title);
+			if(window.DM) {
+				row_chapter_title.append(add_note_btn, add_fold_btn);
+			}	
+
+			let containsPlayerNotes = false;
+			for(let n=0; n<self.chapters[i].notes.length;n++){
+				let note_id=self.chapters[i].notes[n];
+				if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
+					containsPlayerNotes = true;
+				} 
+			}
+
+			if(window.DM || containsPlayerNotes) {
+				section_chapter.append(row_chapter_title);
+			} else {
+				section_chapter.append(row_chapter_title);
+				section_chapter.hide();
+			}
+
+			
+
+			if(!self.chapters[i].parentID){
+				chapter_list.append(section_chapter);
+			}
+			else{		
+				let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
+				let parentID = self.chapters[i]?.parentID
+				if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
+					delete self.chapters[i].parentID
+				}
+				if(parentFolder.length == 0){
+					self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
+					i -= 1; 
+					continue;
+				}	
 				let containsPlayerNotes = false;
 				for(let n=0; n<self.chapters[i].notes.length;n++){
 					let note_id=self.chapters[i].notes[n];
-					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
+					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
 						containsPlayerNotes = true;
 					} 
 				}
 
 				if(window.DM || containsPlayerNotes) {
-					section_chapter.append(row_chapter_title);
+					parentFolder.append(section_chapter);
+					parentFolder.show();
+					parentFolder.parents().show();
 				} else {
-					section_chapter.append(row_chapter_title);
+					parentFolder.append(section_chapter);
 					section_chapter.hide();
 				}
-
-				
-
-				if(!self.chapters[i].parentID){
-					chapter_list.append(section_chapter);
-				}
-				else{		
-					let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
-					let parentID = self.chapters[i]?.parentID
-					if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
-						delete self.chapters[i].parentID
-					}
-					if(parentFolder.length == 0){
-						self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
-						i -= 1; 
-						continue;
-					}	
-					let containsPlayerNotes = false;
-					for(let n=0; n<self.chapters[i].notes.length;n++){
-						let note_id=self.chapters[i].notes[n];
-						if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
-							containsPlayerNotes = true;
-						} 
-					}
-
-					if(window.DM || containsPlayerNotes) {
-						parentFolder.append(section_chapter);
-						parentFolder.show();
-						parentFolder.parents().show();
-					} else {
-						parentFolder.append(section_chapter);
-						section_chapter.hide();
-					}
-				}
+			}
 
 			journalPanel.body.append(chapter_list);
 
@@ -654,34 +589,20 @@ class JournalManager{
 
 
 
-				let edit_btn=$("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/conditons/note.svg'></button>");
+				let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
 				edit_btn.click(function(){
 					window.JOURNAL.edit_note(note_id);	
 				});
 				let note_index=n;
-				let delete_btn=$("<button class='btn-chapter-icon'><img src='"+window.EXTENSION_PATH+"assets/icons/delete.svg'></button>");
-				delete_btn.click(function(){
-					if(confirm("Delete this note?")){
-						console.log("deleting note_index"+note_index);
-						self.chapters[i].notes.splice(note_index,1);
-						delete self.notes[note_id];
-						self.build_journal();
-						self.persist();
-						window.MB.sendMessage('custom/myVTT/JournalChapters', {
-							chapters: self.chapters
-						});
-					}
-				});
+
 								
 				entry.append(prependIcon);
 				entry.append(entry_title);
 
 				if(window.DM){
 					if(!self.notes[note_id].ddbsource){
-						entry.append(edit_btn);
-						entry.append(rename_btn);		
+						entry.append(edit_btn);	
 					}
-					entry.append(delete_btn);
 				}
 
 				note_list.append(entry);
@@ -735,8 +656,6 @@ class JournalManager{
 					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
 				}
 			})
-			
-			chapterImport.trigger('click');
 			chapterImport.on('change', function(){
 				let source = this.value;
 				
@@ -793,6 +712,263 @@ class JournalManager{
 			})
 
 			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
+
+			$.contextMenu({
+		        selector: "#journal-panel .row-chapter",
+		        build: function(element, e) {
+
+		            let menuItems = {};
+
+		           	let i = window.JOURNAL.chapters.findIndex(d=>d.id==$(element).closest('[data-id]').attr('data-id'))
+							
+
+		            menuItems["rename"] = {
+		                name: "Rename",
+		                callback: function(itemKey, opt, originalEvent) {
+		                    let input_chapter_title=$(`<input type='text' class='input-add-chapter' value='${self.chapters[i].title}'>`);
+	
+							input_chapter_title.keypress(function(e){
+								
+								if (e.which == 13 && input_chapter_title.val() !== "") {
+									self.chapters[i].title = input_chapter_title.val();
+									window.MB.sendMessage('custom/myVTT/JournalChapters',{
+										chapters: self.chapters
+									});
+									self.persist();
+									self.build_journal();
+								}
+
+								// If the user presses escape, cancel the edit
+								if (e.which == 27) {
+									self.build_journal();
+								}
+							});
+							input_chapter_title.off('click.prevent').on('click.prevent', function(e){
+								e.stopPropagation();
+							})
+							input_chapter_title.blur(function(){		
+								let e = $.Event('keypress');
+							    e.which = 13;
+							    input_chapter_title.trigger(e);
+							});
+							let row_chapter_title = $(element).find('.journal-chapter-title');
+							row_chapter_title.empty();
+							row_chapter_title.append(input_chapter_title);
+							input_chapter_title.focus();
+
+			            }   
+	            	};     
+	            	menuItems['export'] = {
+	                    name: "Export Folder",
+	                    callback: function (itemKey, opt, e) {
+	                        let folder_export = function(notes, chapters) {
+	                            build_import_loading_indicator('Preparing Export File');
+	                            let DataFile = {
+	                                version: 2,
+	                                scenes: [{}],
+	                                tokencustomizations: [],
+	                                notes: {},
+	                                journalchapters: [],
+	                                soundpads: {}
+	                            };
+	                            let currentdate = new Date(); 
+	                            let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+	                         
+	                            DataFile.notes = notes;
+	                            DataFile.journalchapters = chapters;
+	                            download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-note.abovevtt`,"text/plain");
+	                                
+	                            $(".import-loading-indicator").remove();        
+	                        }
+	                        let exportNoteChapters = function(chapterId, chaptertoExport){
+
+
+	                            for(let i = 0; i<self.chapters.length; i++){
+	                                if(self.chapters[i].parentID == chapterId){
+	                                   exportNoteChapters(self.chapters[i].id, chaptertoExport);
+	                                   chaptertoExport.push(self.chapters[i]);
+	                                }
+	                            }
+	                        };
+
+	                        let notesToExport = function(chapters, notes){
+	                        	for(let k in chapters){
+	                                for(let j in chapters[k].notes){
+	                                	let noteId = chapters[k].notes[j];
+	                                	notes[noteId] = self.notes[chapters[k].notes[j]];
+	                                }
+	                            }
+	                        }
+	                        let currentChapter = {...window.JOURNAL.chapters[i]};
+	                        delete currentChapter.parentID;
+	                        let chaptersArray = [currentChapter];
+	                        exportNoteChapters(window.JOURNAL.chapters[i].id, chaptersArray)
+	                       	
+	                        
+	                        let notesObject = {};
+	                        notesToExport(chaptersArray, notesObject);
+
+	                       
+
+	                        folder_export(notesObject, chaptersArray);
+	                      
+	                    }
+	                };
+	                
+	                menuItems["delete"] = {
+	                    name: "Delete",
+	                    callback: function(itemKey, opt, originalEvent) {
+                        	if(confirm("Delete this chapter and all the contained notes?")){
+                        		
+                        		for(let k=0;k<self.chapters[i].notes.length;k++){
+									let nid=self.chapters[i].notes[k];
+									delete self.notes[nid];
+								}
+								
+								self.chapters = self.chapters.filter(d => d.id != self.chapters[i].id)
+								
+								$(element).closest('.folder').find('.folder').each(function(){
+									let folderId = $(this).attr('data-id');
+									let chapter = self.chapters.filter(d => d.id == folderId)[0];
+
+
+									for(let k=0;k<chapter.notes.length;k++){
+										let nid=chapter.notes[k];
+										delete self.notes[nid];
+									}
+
+									self.chapters = self.chapters.filter(d => d.id != folderId)
+
+								})
+								
+								window.MB.sendMessage('custom/myVTT/JournalChapters',{
+									chapters: self.chapters
+								});
+								self.persist();
+								self.build_journal();
+							}
+	                    }
+	                };
+
+		            if (Object.keys(menuItems).length === 0) {
+		                menuItems["not-allowed"] = {
+		                    name: "You are not allowed to configure this item",
+		                    disabled: true
+		                };
+		            }
+		            return { items: menuItems };
+		        }
+		    });
+			$.contextMenu({
+		        selector: "#journal-panel .note-list .sidebar-list-item-row",
+		        build: function(element, e) {
+
+		            let menuItems = {};
+
+		           	let note_id = $(element).closest('[data-id]').attr('data-id');
+					let i = window.JOURNAL.chapters.findIndex(d=>d.id==$(element).closest('.folder[data-id]').attr('data-id'))
+					let note_index =window.JOURNAL.chapters[i].notes.indexOf(note_id)
+							
+
+		            menuItems["rename"] = {
+		                name: "Rename",
+		                callback: function(itemKey, opt, originalEvent) {
+		                    //Convert the note title to an input field and focus it
+		                    const input_note_title=$(`
+		                    	<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
+		                    `);
+
+		                    input_note_title.keypress(function(e){
+		                    	if (e.which == 13 && input_note_title.val() !== "") {
+		                    		self.notes[note_id].title = input_note_title.val();
+		                    		self.sendNotes([self.notes[note_id]]);
+		                    		self.persist();
+		                    		self.build_journal();
+		                    	}
+
+		                    	// If the user presses escape, cancel the edit
+		                    	if (e.which == 27) {
+		                    		self.build_journal();
+		                    	}
+		                    });
+		                    input_note_title.off('click').on('click', function(e){
+		                    	e.stopPropagation();
+		                    })
+		                    input_note_title.blur(function(event){	
+		                    	let e = $.Event('keypress');
+		                        e.which = 13;
+		                        input_note_title.trigger(e);
+		                    });
+		              
+		                    let entry_title = $(element).find('.sidebar-list-item-row-details-title');
+							
+		                    entry_title.append(input_note_title);
+		                    input_note_title.focus();
+
+			            }   
+	            	};     
+            		menuItems['export'] = {
+            	        name: "Export Note",
+            	        callback: function (itemKey, opt, e) {
+      
+            	            let note_export = function(notes, chapters) {
+            	                build_import_loading_indicator('Preparing Export File');
+            	                let DataFile = {
+            	                    version: 2,
+            	                    scenes: [{}],
+            	                    tokencustomizations: [],
+            	                    notes: {},
+            	                    journalchapters: [],
+            	                    soundpads: {}
+            	                };
+            	                let currentdate = new Date(); 
+            	                let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
+            	             
+            	                DataFile.notes = notes;
+            	                DataFile.journalchapters = chapters;
+            	                download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CAMPAIGN_INFO.name}-${datetime}-note.abovevtt`,"text/plain");
+            	                    
+            	                $(".import-loading-indicator").remove();        
+            	            }
+
+            	            let exportNote = {};
+            	            exportNote[note_id] = self.notes[note_id];
+
+            	            let currentChapter = {...window.JOURNAL.chapters[i]};
+	                        delete currentChapter.parentID;
+	                        let chapterToExport = [currentChapter];
+	                        
+
+            	            note_export(exportNote, chapterToExport);
+            	          
+            	        }
+            	    };
+	                
+	                menuItems["delete"] = {
+	                    name: "Delete",
+	                    callback: function(itemKey, opt, originalEvent) {
+                        	if(confirm("Delete this note?")){
+                        		console.log("deleting note_index"+note_index);
+                        		self.chapters[i].notes.splice(note_index,1);
+                        		delete self.notes[note_id];
+                        		self.build_journal();
+                        		self.persist();
+                        		window.MB.sendMessage('custom/myVTT/JournalChapters', {
+                        			chapters: self.chapters
+                        		});
+                        	}
+	                    }
+	                };
+
+		            if (Object.keys(menuItems).length === 0) {
+		                menuItems["not-allowed"] = {
+		                    name: "You are not allowed to configure this item",
+		                    disabled: true
+		                };
+		            }
+		            return { items: menuItems };
+		        }
+		    });
 		}
 	}
 	
