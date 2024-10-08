@@ -18,7 +18,7 @@ class DDBApi {
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
     MYCOBALT_TOKEN = response.token;
-    MYCOBALT_TOKEN_EXPIRATION = Date.now() + (response.ttl * 200) - 10000;
+    MYCOBALT_TOKEN_EXPIRATION = Date.now() + (response.ttl * 1000) - 10000;
     return response.token;
   }
 
