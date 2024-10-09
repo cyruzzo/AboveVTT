@@ -3585,39 +3585,14 @@ function deselect_all_tokens() {
 }
 
 function token_health_aura(hpPercentage, auraType) {
-	//PERC TO RGB------------
-	const percentToHEX = function (percent) {
-		let HEX;
-		if (percent > 100) HEX = "#0000FF";
-		else {
-			if (percent === 100) percent = 99;
-			let r, g, b = 0;
-			if (percent < 50) {
-				g = Math.floor(255 * (percent / 50));
-				r = 255;
-			}
-			else {
-				g = 255;
-				r = Math.floor(255 * ((50 - percent % 50) / 50));
-			}
-			HEX = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-		}
-		return HEX;
-	}
-	//HEX TO RGB------------
-	const hexToRGB = function (hex) {
-		// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-		let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-		hex = hex.replace(shorthandRegex, function (m, r, g, b) {
-			return r + r + g + g + b + b;
-		});
-
-		const pHex = (n) => parseInt(n, 16);
-
-		let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
-	}
-	return (auraType && auraType.startsWith('aura-bloodied-')) ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 60%)") : hexToRGB(percentToHEX(hpPercentage));
+	const percentToCSSColor = function(p) {
+		if(p > 100) return "rgb(0 0 255 / 60%)";
+		if(p > 99) p = 99;
+		const r = p < 50 ? 255 : Math.floor(255 * ((50 - p % 50) / 50));
+		const g = p < 50 ? Math.floor(255 * (p / 50)) : 255;
+		return `rgb(${r} ${g} 0 / 60%)`;
+	};
+	return (auraType && auraType.startsWith('aura-bloodied-')) ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 60%)") : percentToCSSColor(hpPercentage);
 }
 
 function setTokenAudio(tokenOnMap, token){
