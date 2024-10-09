@@ -804,7 +804,7 @@ class Token {
 			} else if(this.options.healthauratype == "aura"){
 				this.options.disableaura = false;
 				this.options.enablepercenthpbar = false;
-			} else if(this.options.healthauratype.startsWith("aura-bloodied-")){
+			} else if(this.options.healthauratype && this.options.healthauratype.startsWith("aura-bloodied-")){
 				this.options.disableaura = false;
 				this.options.enablepercenthpbar = false;
 			}
@@ -3618,7 +3618,7 @@ function token_health_aura(hpPercentage, auraType) {
 		let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 		return result ? `rgb(${pHex(result[1])} ${pHex(result[2])} ${pHex(result[3])} / 60%)` : null;
 	}
-	return auraType.startsWith('aura-bloodied-') ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 60%)") : hexToRGB(percentToHEX(hpPercentage));
+	return (auraType && auraType.startsWith('aura-bloodied-')) ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 60%)") : hexToRGB(percentToHEX(hpPercentage));
 }
 
 function setTokenAudio(tokenOnMap, token){
