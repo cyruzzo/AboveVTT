@@ -815,7 +815,6 @@ class Token {
 		}
 
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
-		console.log("AURCOLOR", tokenHpAuraColor);
 		let tokenWidth =  this.sizeWidth();
 		let tokenHeight = this.sizeHeight();
 		
