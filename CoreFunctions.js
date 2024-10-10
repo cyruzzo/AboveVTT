@@ -930,6 +930,31 @@ function set_campaign_secret(campaignSecret) {
   window.CAMPAIGN_SECRET = campaignSecret;
 }
 
+function projector_scroll_event(event){
+      event.stopImmediatePropagation();
+      if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
+            let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
+            let center = center_of_view(); 
+
+
+            let zoom = $('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 ? false : window.ZOOM
+
+            tabCommunicationChannel.postMessage({
+              msgType: 'projectionScroll',
+              x: window.pageXOffset + window.innerWidth/2 - sidebarSize/2,
+              y: window.pageYOffset + window.innerHeight/2,
+              sceneId: window.CURRENT_SCENE_DATA.id,
+              innerHeight: window.innerHeight,
+              scrollPercentageY: (window.pageYOffset + window.innerHeight/2) / Math.max( document.body.scrollHeight, document.body.offsetHeight, 
+                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ),
+              scrollPercentageX:  (window.pageXOffset + window.innerWidth/2 - sidebarSize/2) / Math.max( document.body.scrollWidth, document.body.offsetWidth, 
+                   document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth ),
+              zoom: zoom,
+              mapPos: convert_point_from_view_to_map(center.x, center.y)
+            });
+      }
+}
+
 /** writes window.gameId and window.CAMPAIGN_SECRET to localStorage for faster retrieval in the future */
 function store_campaign_info() {
   const campaignId = window.gameId;
