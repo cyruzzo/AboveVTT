@@ -7753,10 +7753,12 @@ div.ddbc-tab-options--layout-pill>button{
 .url-validator.loading:before{
     display:none;
 }
-#projector_toggle{
+#projector_toggle,
+#projector_zoom_lock{
     display: none;
 }
-#projector_toggle.enabled{
+#projector_toggle.enabled,
+#projector_zoom_lock.enabled{
     display: block;
 }
 

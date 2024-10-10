@@ -512,7 +512,7 @@ function set_avtt_setting_value(name, newValue) {
 			local_peer_setting_changed(name, newValue);
 			break;
 		case "projector":
-			$('#projector_toggle').toggleClass('enabled', newValue);
+			$('#projector_toggle, #projector_zoom_lock').toggleClass('enabled', newValue);
 			break;
 		case "receiveCursorFromPeers":
 		case "receiveRulerFromPeers":

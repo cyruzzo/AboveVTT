@@ -173,6 +173,13 @@ function validateUrl(value) {
 const MAX_ZOOM = 5
 const MIN_ZOOM = 0.001
 
+
+const debounce_scroll_event = mydebounce(function(){
+		setTimeout(function(){
+			$(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
+		}, 200)	
+}, 200)
+
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
@@ -190,6 +197,10 @@ function change_zoom(newZoom, x, y, reset = false) {
 	window.ZOOM = newZoom;
 	let pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
+
+	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0)
+		$(window).off('scroll.projectorMode')
+	
 
 
 	if(reset != true){
@@ -215,7 +226,9 @@ function change_zoom(newZoom, x, y, reset = false) {
 
 
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-
+	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0)
+		debounce_scroll_event()
+	
 	
 	console.groupEnd()
 }
@@ -2829,10 +2842,32 @@ function init_zoom_buttons() {
 				window.ProjectorEnabled = false;
 			}
 		});
-		projector_toggle.append(`<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
-		zoom_section.append(projector_toggle);
+		projector_toggle.append(`<div class="ddbc-tab-options__header-heading"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
+		
+		const projector_zoom_lock = $(`<div id='projector_zoom_lock' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector zoom lock'></div>`);
+		projector_zoom_lock.click(function (event) {
+			console.log("projector_toggle", event);
+			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
+			if (iconWrapper.hasClass('ddbc-tab-options__header-heading--is-active')) {
+				iconWrapper.removeClass('ddbc-tab-options__header-heading--is-active');
+			} else {
+				iconWrapper.addClass('ddbc-tab-options__header-heading--is-active');
+			}
+		});
+		projector_zoom_lock.append(`<div class="ddbc-tab-options__header-heading" style='display: flex;align-content: center;align-items: center;justify-content: space-evenly;'>
+			<span class="material-symbols-outlined" style='font-size: 14px;padding: 3px;'>
+				lock
+			</span>
+			<span style="font-size: 38px;position: absolute;" class="material-symbols-outlined">
+				expand_content
+			</span>
+		</div>`);
+		
+
+		zoom_section.append(projector_zoom_lock, projector_toggle);
 		if (get_avtt_setting_value("projector")) {
 			projector_toggle.toggleClass('enabled', true);
+			projector_zoom_lock.toggleClass('enabled', true);
 		}
 
 		const cursor_ruler_toggle = $(`<div id='cursor_ruler_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Send Cursor/Ruler To Players'></div>`);

@@ -12,26 +12,7 @@ $(function() {
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
     $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
-    window.addEventListener("scroll", function(event) { // ddb has an scroll event listener on the character sheet where they add/remove classes and throttle the sheet scroll causing right click drag of the map to not be smooth
-      event.stopImmediatePropagation();
-      if($('#projector_toggle.enabled > [class*="is-active"]').length>0){
-            let sidebarSize = ($('#hide_rightpanel.point-right').length>0 ? 340 : 0);
-            let center = center_of_view(); 
-            tabCommunicationChannel.postMessage({
-              msgType: 'projectionScroll',
-              x: window.pageXOffset + window.innerWidth/2 - sidebarSize/2,
-              y: window.pageYOffset + window.innerHeight/2,
-              sceneId: window.CURRENT_SCENE_DATA.id,
-              innerHeight: window.innerHeight,
-              scrollPercentageY: (window.pageYOffset + window.innerHeight/2) / Math.max( document.body.scrollHeight, document.body.offsetHeight, 
-                   document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight ),
-              scrollPercentageX:  (window.pageXOffset + window.innerWidth/2 - sidebarSize/2) / Math.max( document.body.scrollWidth, document.body.offsetWidth, 
-                   document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth ),
-              zoom: window.ZOOM,
-              mapPos: convert_point_from_view_to_map(center.x, center.y)
-            });
-      }
-    }, true);
+    $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
     startup_step("Gathering basic campaign info");
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
@@ -187,7 +168,7 @@ $(function() {
               else{
                 throttleProjectionScroll(function(){
                   window.Projecting = true;
-                  if(windowRatio != 1 && window.ZOOM == event.data.zoom * windowRatio){
+                  if(event.data.zoom == false || (windowRatio != 1 && window.ZOOM == event.data.zoom * windowRatio)){
                     let viewPos = convert_point_from_map_to_view(event.data.mapPos.x, event.data.mapPos.y) 
                     window.scroll(viewPos.x - window.innerWidth/2 + sidebarSize/2 - 20, viewPos.y - window.innerHeight/2 - 20);  //20 for scrollbar  
                   }
