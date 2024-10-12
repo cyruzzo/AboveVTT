@@ -402,16 +402,23 @@ function showErrorMessage(error, ...extraInfo) {
   
   const extraStrings = extraInfo.map(ei => {
     if (typeof ei === "object") {
-      return JSON.stringify(ei).substr(0, 300) + "...";
+      if(JSON.stringify(ei).length>300)
+        return JSON.stringify(ei).substr(0, 300) + "...";
+      else
+        return JSON.stringify(ei)
     } else {
-      return ei?.toString().substr(0, 300) + "...";
+      if(ei?.toString().length>300)
+        return ei?.toString().substr(0, 300) + "...";
+      else
+        return ei?.toString()
     }
   }).join('<br />');
   if(typeof error.message == 'object'){
     error.message = JSON.strigify(error.message);
   }
   let container = $("#above-vtt-error-message");
-  error.message = error.message.substr(0, 300) + "...";
+  if(error.message.length > 300)
+    error.message = error.message.substr(0, 300) + "...";
   if (container.length === 0) {
 
     const container = $(`

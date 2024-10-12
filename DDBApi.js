@@ -26,17 +26,23 @@ class DDBApi {
     if (response.status < 400) {
       return response;
     }
-    // We have an error so let's try to parse it
-    console.debug("DDBApi.lookForErrors", response);
-    const responseJson = await response.json()
-      .catch(parsingError => console.error("DDBApi.lookForErrors Failed to parse json", response, parsingError));
-    const type = responseJson?.type || `Unknown Error ${response.status}`;
-    const messages = responseJson?.errors?.message?.join("; ") || "";
-    console.error(`DDB API Error: ${type} ${messages}`);
-    if(type == 'EncounterLimitException'){
-      alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
+    if(response.status == 410){
+      showError(new Error(`DDB 410 Error`), `<b>Try clearing <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">${navigator.userAgent.indexOf("Firefox") != -1 ? `temporary cached files and pages` : `cached images and files`}</div> and restarting the browser.</b>`, `<br/><b>As long as you do <span style='color: #900;'>not</span> clear <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">cookies and other site data</div> this should not remove any AboveVTT data.`);
     }
-    throw new Error(`DDB API Error: ${type} ${messages}`);
+    else{
+      // We have an error so let's try to parse it
+      console.debug("DDBApi.lookForErrors", response);
+      const responseJson = await response.json()
+        .catch(parsingError => console.error("DDBApi.lookForErrors Failed to parse json", response, parsingError));
+      const type = responseJson?.type || `Unknown Error ${response.status}`;
+      const messages = responseJson?.errors?.message?.join("; ") || "";
+      console.error(`DDB API Error: ${type} ${messages}`);
+      if(type == 'EncounterLimitException'){
+        alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
+      }
+      showError(new Error(`DDB API Error: ${type} ${messages}`));
+    }
+
   }
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
