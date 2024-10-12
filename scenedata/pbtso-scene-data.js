@@ -58943,30 +58943,9 @@ function get_scene_data_pbtso() {
 		"grid_color": "rgba(0, 0, 0, 0.5)",
 		"snap": "1"
 	},
-	"pbtso/the-shattered-obelisk/Map603Talhundereth": {
-		
-		"reveals": [
-			[
-				0,
-				0,
-				0,
-				0,
-				2,
-				0,
-				1
-			]
-		],
-		"gridStrokeNumberInput": "0.5",
-		"scale": 100,
+	"dnd/pbtso/the-shattered-obelisk/Map603Talhundereth": {
 		"vpps": 112.83333333333333,
-		"darkness_filter_number": "100",
 		"title": "Map 6.3: Talhundereth ",
-		"fog_of_war": "1",
-		
-		"upsq": "ft",
-		"scaleX": 1,
-		"scaleY": 1,
-		"gridType": "1",
 		"drawings": [
 			[
 				"line",
@@ -62095,17 +62074,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				710.7837837837837,
-				4262,
-				711.6837837837838,
-				4151,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0, 1)",
 				712,
 				4274,
@@ -63393,17 +63361,6 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				null,
-				3836,
-				2978,
-				3923,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
 				"rgba(0, 255, 0 ,1)",
 				2978,
 				3836,
@@ -64240,18 +64197,18 @@ function get_scene_data_pbtso() {
 			[
 				"line",
 				"wall",
-				"rgba(255, 100, 255, 1)",
-				null,
-				3504,
-				2179.0950118764845,
-				3584,
+				"rgba(100, 0, 255, 1)",
+				710,
+				4262,
+				711,
+				4151,
 				12,
-				1
+				1,
+				null
 			]
 		],
-		"fpsq": "5",
-		"tokens": {
-			"254f45de-31d7-4c21-9405-ec748fc956e6": {
+		"tokens": [
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#1E50DC",
@@ -64317,7 +64274,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"27a6b41c-6b63-4e1f-84fc-954edeb5f41d": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#800080",
@@ -64384,7 +64341,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"2810d212-714b-4e46-a140-3be785db8403": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#1E50DC",
@@ -64451,7 +64408,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"2e40fef1-a954-41a4-b8f9-e0d5c9fee76b": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#884DFF",
@@ -64517,7 +64474,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"3f7224e0-2fe5-4893-8ae7-e3edb87c422a": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#EC8AFF",
@@ -64584,7 +64541,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"3f767b09-cc6f-4e39-9695-87fb78401f95": {
+			{
 				"sizeId": 2,
 				"itemType": "monster",
 				"color": "#1E50DC",
@@ -64650,7 +64607,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"401f6c61-355d-4af5-8e30-cb14e1912602": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#808000",
@@ -64716,7 +64673,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"443e6c07-d52f-4ffe-b868-c9ba6c011339": {
+			{
 				"sizeId": 5,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -64783,7 +64740,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"44f34ef9-e019-4ba2-b68d-d7a1ba6dd219": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -64852,7 +64809,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"4cbd76c4-7ebb-43b7-9e97-6cbef81d92ec": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -64918,7 +64875,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"60237b93-4031-4e5b-a7d0-474237f40ee4": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#5F0404",
@@ -64984,7 +64941,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"681a1c49-0311-4e32-b2a9-49af6b1b0161": {
+			{
 				"sizeId": 2,
 				"itemType": "monster",
 				"color": "#200000",
@@ -65050,7 +65007,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"6ec42084-7126-482f-9f36-71ce031825e4": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -65116,7 +65073,47 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"71ac53fc-4f1a-475d-850a-32e190ffcf98": {
+			{
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#600060",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.525252525252525,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4181px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "686px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "71078378378378374262711683783783783841518b03a4c5-edfc-45a4-92c9-481b468c8a14",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#C0C0C0",
@@ -65185,7 +65182,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"7a7d0803-c5aa-4bd8-97f1-34e9029e6dc4": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FFD433",
@@ -65251,7 +65248,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"809f38da-d3ab-430b-bf05-53f75e16d483": {
+			{
 				"sizeId": 2,
 				"itemType": "monster",
 				"color": "#FFD433",
@@ -65317,7 +65314,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"83ee1e64-c801-41ae-aba1-077b37458c7d": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#5F0404",
@@ -65384,7 +65381,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"89668ff5-c5c7-4465-a9de-6d3c7cf520e3": {
+			{
 				"sizeId": 2,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -65450,7 +65447,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"9602f4e0-fb5d-4a19-b123-73e8b97a49fe": {
+			{
 				"sizeId": 5,
 				"itemType": "monster",
 				"color": "#400040",
@@ -65516,7 +65513,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"b3d83fe4-bb45-4933-96f9-7318414b8b14": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#808080",
@@ -65583,7 +65580,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"ba2a9194-54ba-4574-bf34-582444e06dfa": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#200000",
@@ -65650,7 +65647,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"ba4c085f-cb97-4462-b821-52335691cd76": {
+			{
 				"sizeId": 5,
 				"itemType": "monster",
 				"color": "#800080",
@@ -65717,7 +65714,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"be7853ed-7e20-4401-abaf-86ac73f9ed2c": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#1A6AFF",
@@ -65784,7 +65781,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"c36e7702-5481-4179-b384-9adb682a4e92": {
+			{
 				"sizeId": 2,
 				"itemType": "monster",
 				"color": "#884DFF",
@@ -65850,7 +65847,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"c39972c4-e736-4706-9fc7-570e6f99861f": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#1E50DC",
@@ -65916,7 +65913,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"cc497f98-a983-4f3f-8abb-7092ad63375d": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#600000",
@@ -65982,7 +65979,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"cfbcaec1-c338-44ac-b3a1-654bf497a678": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#FFD433",
@@ -66049,7 +66046,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"d39d23b0-d435-42e0-aa40-38821e37e16b": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -66119,7 +66116,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"d5bee56b-e7e7-46e3-aa69-0e6486f23a47": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#00E000",
@@ -66186,7 +66183,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"d9c6c181-fbf0-4b19-a001-d5c0a825aa46": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#884DFF",
@@ -66253,7 +66250,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"da5bf181-ee6b-4d37-8e4d-e461ef1c20e6": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#1E50DC",
@@ -66319,7 +66316,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"e8535650-b910-45c1-8986-f17d1279eb21": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#004000",
@@ -66385,7 +66382,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"f0fb614d-e14f-4274-8b74-73488ca6006f": {
+			{
 				"sizeId": 4,
 				"itemType": "monster",
 				"color": "#FF7433",
@@ -66452,7 +66449,7 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			},
-			"ff7ef849-7344-4b3a-9c4a-99cbaf29815d": {
+			{
 				"sizeId": 3,
 				"itemType": "monster",
 				"color": "#A0A0A0",
@@ -66519,23 +66516,12 @@ function get_scene_data_pbtso() {
 				"enablepercenthpbar": false,
 				"revealInFog": false
 			}
-		},
+		],
 		"darkness_filter": "100",
-		"grid_line_width": "0.5",
-		"grid_subdivided": "0",
-		"scale_factor": 1,
 		"offsetx": 31.86666666666656,
 		"dm_map_usable": "1",
 		"offsety": 82.83333333333341,
-		"dm_map_is_video": "0",
-		"grid": "0",
-		"scale_check": true,
-		
-		"player_map_is_video": "0",
 		"hpps": 113.13333333333334,
-		"disableSceneVision": "0",
-		"grid_color": "rgba(0, 0, 0, 0.5)",
-		"snap": "1"
 	},
 	"pbtso/the-shattered-obelisk/Map604CryptoftheTalhund": {
 		
