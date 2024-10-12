@@ -907,7 +907,14 @@ class JournalManager{
 		                    input_note_title.focus();
 
 			            }   
-	            	};     
+	            	};   
+	            	menuItems["copyLink"] = {
+		                name: "Copy Note Link",
+		                callback: function(itemKey, opt, originalEvent) {
+		                	let copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
+		                    navigator.clipboard.writeText(copyLink);
+			            }   
+	            	};   
             		menuItems['export'] = {
             	        name: "Export Note",
             	        callback: function (itemKey, opt, e) {
@@ -1124,6 +1131,113 @@ class JournalManager{
 	add_journal_tooltip_targets(target){
 		$(target).find('.tooltip-hover').each(function(){
 			let self = this;
+			if($(self).hasClass('note-tooltip')){
+					let noteId = $(self).attr('data-id');
+					if(noteId.replace(/[-+*&<>]/gi, '') == $(self).text().replace(/[-+*&<>\s]/gi, '')){
+						noteId = Object.values(window.JOURNAL.notes).filter(d=> d.title.trim().toLowerCase().replace(/[-+*&<>\s]/gi, '').includes($(self).text().trim().toLowerCase().replace(/[-+*&<>\s]/gi, '')))[0]?.id
+					}
+					
+				$(self).off('click.openNote').on('click.openNote', function(event){
+					event.preventDefault();
+					event.stopPropagation();
+					if(noteId != undefined)
+						window.JOURNAL.display_note(noteId);		
+				})
+				if(window.JOURNAL.notes[noteId] != undefined){
+					let noteHover = `<div>
+						<div class="tooltip-header">
+				       	 	<div class="tooltip-header-icon">
+				            
+					        	</div>
+					        <div class="tooltip-header-text">
+					            ${window.JOURNAL.notes[noteId].title}
+					        </div>
+					        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+					           Note
+					        </div>
+			    		</div>
+				   		<div class="tooltip-body note-text">
+					        <div class="tooltip-body-description">
+					            <div class="tooltip-body-description-text note-text">
+					                ${window.JOURNAL.notes[noteId].text}
+					            </div>
+					        </div>
+					    </div>
+					</div>`
+
+			
+					let hoverNoteTimer;
+					$(self).on({
+						'mouseover': function(e){
+							hoverNoteTimer = setTimeout(function () {
+				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+						            flyout.addClass('note-flyout');
+						            const tooltipHtml = $(noteHover);
+									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+									window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+									add_stat_block_hover(tooltipHtml);
+						            flyout.append(tooltipHtml);
+						            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+						            sendToGamelogButton.css({ "float": "right" });
+						            sendToGamelogButton.on("click", function(ce) {
+						                ce.stopPropagation();
+						                ce.preventDefault();
+										
+						                send_html_to_gamelog(noteHover);
+						            });
+						            let flyoutLeft = e.clientX+20
+						            if(flyoutLeft + 400 > window.innerWidth){
+						            	flyoutLeft = window.innerWidth - 420
+						            }
+						            flyout.css({
+						            	left: flyoutLeft,
+						            	width: '400px'
+						            })
+
+						            const buttonFooter = $("<div></div>");
+						            buttonFooter.css({
+						                height: "40px",
+						                width: "100%",
+						                position: "relative",
+						                background: "#fff"
+						            });
+						            window.JOURNAL.block_send_to_buttons(flyout);
+						            flyout.append(buttonFooter);
+						            buttonFooter.append(sendToGamelogButton);
+						            flyout.find("a").attr("target","_blank");
+						      		flyout.off('click').on('click', '.int_source_link', function(event){
+										event.preventDefault();
+										render_source_chapter_in_iframe(event.target.href);
+									});
+									
+
+						            flyout.hover(function (hoverEvent) {
+						                if (hoverEvent.type === "mouseenter") {
+						                    clearTimeout(removeToolTipTimer);
+						                    removeToolTipTimer = undefined;
+						                } else {
+						                    remove_tooltip(500);
+						                }
+						            });
+
+						            flyout.css("background-color", "#fff");
+						        });
+				        	}, 500);		
+						
+						},
+						'mouseout': function(e){
+							clearTimeout(hoverNoteTimer)
+							remove_tooltip(500, false);
+						}
+				
+				    });
+				}
+				
+
+				return;	
+			}
 			if(!$(self).attr('data-tooltip-href'))
 			window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 				$(self).attr('data-tooltip-href', url);
@@ -1554,6 +1668,13 @@ class JournalManager{
                 }
             }
 
+
+            input = input.replace(/\[note\](.*?)\[\/note\]/g, function(m){
+            	let note = m.replace(/<\/?p>/g, '').replace(/\s?\[note\]\s?|\s?\[\/note\]\s?/g, '').replace('[/note]', '');   	
+            	const noteId = note.replace(/\s/g, '-').split(';')[0];
+            	note = (note.split(';')[1]) ? note.split(';')[1] : note;
+                return `<a class="tooltip-hover note-tooltip" data-id=${noteId}>${note}</a>`
+            })
             input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];;

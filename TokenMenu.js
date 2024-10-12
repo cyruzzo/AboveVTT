@@ -2533,19 +2533,25 @@ function build_notes_flyout_menu(tokenIds) {
 		let has_note=id in window.JOURNAL.notes;
 		if(has_note){
 			let viewNoteButton = $(`<button class="icon-view-note material-icons">View Note</button>`)		
+			let noteLinkButton = $(`<button class="icon-view-note material-icons">Copy Note Link</button>`)		
+			
 			let deleteNoteButton = $(`<button class="icon-note-delete material-icons">Delete Note</button>`)
+			
 			editNoteButton = $(`<button class="icon-note material-icons">Edit Note</button>`)
-			body.append(viewNoteButton);
-			body.append(editNoteButton);		
-			body.append(deleteNoteButton);	
+			body.append(viewNoteButton, noteLinkButton, editNoteButton, deleteNoteButton);	
 			viewNoteButton.off().on("click", function(){
 				window.JOURNAL.display_note(id);
+			});
+			noteLinkButton.off().on("click", function(){
+				let copyLink = `[note]${id};${window.JOURNAL.notes[id].title}[/note]`
+		        navigator.clipboard.writeText(copyLink);
 			});
 			deleteNoteButton.off().on("click", function(){
 				if(id in window.JOURNAL.notes){
 					delete window.JOURNAL.notes[id];
 					window.JOURNAL.persist();
-					window.TOKEN_OBJECTS[id].place();			
+					window.TOKEN_OBJECTS[id].place();	
+					build_notes_flyout_menu(tokenIds)		
 				}
 			});
 		}
@@ -2562,8 +2568,10 @@ function build_notes_flyout_menu(tokenIds) {
 					plain: '',
 					player: false
 				}
+				build_notes_flyout_menu(tokenIds)
 			}
 			window.JOURNAL.edit_note(id);
+
 		});		
 	}
 
