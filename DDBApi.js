@@ -13,7 +13,7 @@ class DDBApi {
       return MYCOBALT_TOKEN;
     }
     const url = `https://auth-service.dndbeyond.com/v1/cobalt-token`;
-    const config = { method: 'POST', credentials: 'include' };
+    const config = { method: 'POST', credentials: 'include', cache: 'no-store' };
     console.log("DDBApi is refreshing auth token");
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
@@ -26,17 +26,23 @@ class DDBApi {
     if (response.status < 400) {
       return response;
     }
-    // We have an error so let's try to parse it
-    console.debug("DDBApi.lookForErrors", response);
-    const responseJson = await response.json()
-      .catch(parsingError => console.error("DDBApi.lookForErrors Failed to parse json", response, parsingError));
-    const type = responseJson?.type || `Unknown Error ${response.status}`;
-    const messages = responseJson?.errors?.message?.join("; ") || "";
-    console.error(`DDB API Error: ${type} ${messages}`);
-    if(type == 'EncounterLimitException'){
-      alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
+    if(response.status == 410){
+      showError(new Error(`DDB 410 Error`), `<b>Try clearing <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">${navigator.userAgent.indexOf("Firefox") != -1 ? `temporary cached files and pages` : `cached images and files`}</div> and restarting the browser.</b>`, `<br/><b>As long as you do <span style='color: #900;'>not</span> clear <div style="backdrop-filter: brightness(0.8);padding: 0px 3px;display: inline-block;border-radius: 5px;">cookies and other site data</div> this should not remove any AboveVTT data.`);
     }
-    throw new Error(`DDB API Error: ${type} ${messages}`);
+    else{
+      // We have an error so let's try to parse it
+      console.debug("DDBApi.lookForErrors", response);
+      const responseJson = await response.json()
+        .catch(parsingError => console.error("DDBApi.lookForErrors Failed to parse json", response, parsingError));
+      const type = responseJson?.type || `Unknown Error ${response.status}`;
+      const messages = responseJson?.errors?.message?.join("; ") || "";
+      console.error(`DDB API Error: ${type} ${messages}`);
+      if(type == 'EncounterLimitException'){
+        alert("Encounter limit reached. AboveVTT needs 1 encounter slot free to join as DM. If you are on a free DDB account you are limited to 8 encounter slots. Please try deleting an encounter.")
+      }
+      showError(new Error(`DDB API Error: ${type} ${messages}`));
+    }
+
   }
 
   static async fetchJsonWithToken(url, extraConfig = {}) {
@@ -46,8 +52,9 @@ class DDBApi {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store'
     }
     const request = await fetch(url, config).then(DDBApi.lookForErrors)
     return await request.json();
@@ -55,7 +62,7 @@ class DDBApi {
 
   static async fetchJsonWithCredentials(url, extraConfig = {}) {
     console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, {...extraConfig, credentials: 'include' }).then(DDBApi.lookForErrors);
+    const request = await fetch(url, {...extraConfig, credentials: 'include', cache: 'no-store'}).then(DDBApi.lookForErrors);
     console.debug("DDBApi.fetchJsonWithCredentials request", request);
     const response = await request.json();
     console.debug("DDBApi.fetchJsonWithCredentials response", response);
@@ -79,7 +86,8 @@ class DDBApi {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      }
+      },
+      cache: 'no-store'
     }
     // Explicitly not calling `lookForErrors` here because we don't actually care if this succeeds.
     // We're just trying to clean up anything that we can
