@@ -236,7 +236,7 @@ class WaypointManagerClass {
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, playerId), alpha;
+				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, playerId, alpha);
 			} else {
 				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY, playerId, alpha);
 			}
