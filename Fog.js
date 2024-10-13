@@ -100,7 +100,10 @@ class WaypointManagerClass {
 		this.currentWaypointIndex = 0;
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
 		this.timeout = undefined;
-		this.timerId = undefined;
+		/**
+		* @type {number | undefined}
+		*/
+		this.fadeoutAnimationId = undefined;
 		this.drawStyle = {
 			lineWidth: Math.max(25 * Math.max((1 - window.ZOOM), 0), 5),
 			color: window.color ? window.color : "#f2f2f2",
@@ -444,33 +447,47 @@ class WaypointManagerClass {
 		// only ever allow a single fadeout to occur
 		// this stops weird flashing behaviour with interacting
 		// interval function calls
-		if (this.timerId){
+		if (this.fadeoutAnimationId) {
 			return
 		}
-		this.timerId = setInterval(function(){ fadeout() }, 100);
 
-		function fadeout(){
+		let prevFrameTime, deltaTime;
+		/**
+		* This is a function expression to make sure `this` is available.
+		* @type {FrameRequestCallback}
+		*/
+		const fadeout = (time) =>{
+			if (prevFrameTime === undefined) {
+				deltaTime = 0;
+			} else {
+				deltaTime = time - prevFrameTime;
+			}
+			prevFrameTime = time;
+
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
 			self.draw(false, undefined, undefined, alpha, window.PLAYER_ID)
-			alpha = alpha - 0.08;
-			if (alpha <= 0.0){
-				self.cancelFadeout()
+			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
+			if (alpha <= 0.0) {
 				self.clearWaypoints();
 				clear_temp_canvas(playerID)
+				return;
 			}
-		}
+
+			this.fadeoutAnimationId = requestAnimationFrame(fadeout)
+		};
+
+		this.fadeoutAnimationId = requestAnimationFrame(fadeout);
 	}
 
 	/**
 	 *
 	 */
 	cancelFadeout(){
-		if (this.timerId !== undefined){
-			clearInterval(this.timerId);
+		if (this.fadeoutAnimationId !== undefined) {
+			cancelAnimationFrame(this.fadeoutAnimationId);
 			this.ctx.globalAlpha = 1.0
-			this.timerId = undefined
-
+			this.fadeoutAnimationId = undefined
 		}
 	}
 };
