@@ -207,29 +207,95 @@ class WaypointManagerClass {
 		return { x: snapPointXStart, y: snapPointYStart }
 	}
 
-	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
-	// as otherwise the token sits on the measurement label
+	/**
+	* Find ruler container for this player or create it
+	* @param playerId {string | boolean}
+	*/
+	getOrCreateDrawingContainer(playerId) {
+		const rulerContainerId = `ruler-container-${playerId}`;
+
+		let rulerContainer = document.getElementById(rulerContainerId)
+		if (!rulerContainer) {
+			const rulerContainerDiv = document.createElement("div");
+			rulerContainerDiv.id = rulerContainerId;
+			document.getElementById("VTT").append(rulerContainerDiv);
+
+			// re-query to get created element
+			rulerContainer = document.getElementById(rulerContainerId);
+		}
+		return rulerContainer;
+	}
+
+	/**
+	* Empties ruler container for this player
+	* @param playerId
+	*/
+	clearWaypointDrawings(playerId) {
+		const rulerContainerId = `ruler-container-${playerId}`;
+
+		let rulerContainer = document.getElementById(rulerContainerId)
+		if (!rulerContainer) {
+			// it's empty then
+			return;
+		}
+
+		rulerContainer.innerHTML = "";
+	}
+
+	/**
+	* @returns {{sceneHeight: number, sceneWidth: number}}
+	*/
+	getSceneMapSize() {
+		const sceneMap = document.getElementById("scene_map");
+		return { sceneHeight: Math.floor(sceneMap.offsetHeight), sceneWidth: Math.floor(sceneMap.offsetWidth) }
+	}
+
+	/**
+	* Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
+	* as otherwise the token sits on the measurement label
+	* @param midlineLabels {boolean} always false
+	* @param labelX {number | undefined} if provided, move last text of last waypoint there
+	* @param labelY {number | undefined} if provided, move last text of last waypoint there
+	* @param alpha {number | undefined} set alpha of drawings to this, 1 if unset
+	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
+	*/
 	draw(midlineLabels, labelX, labelY, alpha = 1, playerId=window.PLAYER_ID) {
-		$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}']`).remove();
-		
+		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
+
+		// update alpha for the entire container
+		rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+
+		const sceneMapSize = this.getSceneMapSize();
+
 		let cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
+		let elementsToDraw = "";
 		for (let i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, playerId, alpha);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, sceneMapSize);
 			} else {
-				this.drawWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY, playerId, alpha);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY, sceneMapSize);
 			}
-			cumulativeDistance += this.coords[i].distance;
+			cumulativeDistance += this.coords[i].distance
 		}
+
+		rulerContainer.innerHTML = elementsToDraw;
 	}
 
-	// Draw a waypoint segment with all the lines and labels etc.
-	drawWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY, playerId, alpha) {
-
+	/**
+	* Make a waypoint segment SVGs with all the lines and labels etc.
+	* @param coord {{startX: number, startY: number, endX: number, endY: number, distance: number}}
+	* @param cumulativeDistance {number}
+	* @param midlineLabels {boolean}
+	* @param labelX {number}
+	* @param labelY {number}
+	* @param sceneMapSize {{sceneHeight: number, sceneWidth: number}}
+	* @returns {string} SVG elements for waypoint line and label
+	*/
+	makeWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY, sceneMapSize) {
 		// Snap to centre of current grid square
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		let snapPointXStart = coord.startX;
@@ -379,34 +445,25 @@ class WaypointManagerClass {
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);*/
-		
-		const sceneMap = $('#scene_map');
-		const sceneWidth = Math.floor(sceneMap.width());
-		const sceneHeight = Math.floor(sceneMap.height());
 
-		const vtt = $('#VTT');
+		const { sceneWidth, sceneHeight } = sceneMapSize;
 
 		// add ruler line and text
-		let rulerLineSVG = $(`
-			<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
+		const rulerLineSVG = `
+			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
 				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
 				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
 			</svg>
-		`);
-		let textSVG = $(`
-			<svg data-player-id='${playerId}' class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width}px;'>
+		`;
+		const textSVG = `
+			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width}px;'>
 				<text x="1" y="11">
 					${text}
 				</text>
-			</svg>`
-		);
-		vtt.append(
-			rulerLineSVG,
-			textSVG
-		)	
+			</svg>
+		`;
 
-		// update alpha of all added svgs 
-		$(`svg[data-player-id='${playerId}']`).css('--svg-text-alpha', alpha);
+		return `${rulerLineSVG}${textSVG}`;
 	}
 
 	/**
@@ -3890,7 +3947,7 @@ function calculateFourthPoint(point1, point2, point3) {
 }
 function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
-	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}']`).remove();
+	WaypointManager.clearWaypointDrawings(playerId)
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){

@@ -704,7 +704,7 @@ function clear_peer_canvas(playerId) {
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  $(`.ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-text[data-player-id='${playerId}']`).remove();
+  WaypointManager.clearWaypointDrawings(playerId)
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */
