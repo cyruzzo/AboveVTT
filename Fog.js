@@ -251,15 +251,13 @@ class WaypointManagerClass {
 	}
 
 	/**
-	* Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
-	* as otherwise the token sits on the measurement label
-	* @param midlineLabels {boolean} always false
+	* Draw the waypoints, note that we sum up the cumulative distance
 	* @param labelX {number | undefined} if provided, move last text of last waypoint there
 	* @param labelY {number | undefined} if provided, move last text of last waypoint there
 	* @param alpha {number | undefined} set alpha of drawings to this, 1 if unset
 	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
 	*/
-	draw(midlineLabels, labelX, labelY, alpha = 1, playerId=window.PLAYER_ID) {
+	draw(labelX = undefined, labelY = undefined, alpha = 1, playerId=window.PLAYER_ID) {
 		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
 
 		// update alpha for the entire container
@@ -275,9 +273,9 @@ class WaypointManagerClass {
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, undefined, undefined, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize);
 			} else {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, midlineLabels, labelX, labelY, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize);
 			}
 			cumulativeDistance += this.coords[i].distance
 		}
@@ -289,13 +287,12 @@ class WaypointManagerClass {
 	* Make a waypoint segment SVGs with all the lines and labels etc.
 	* @param coord {{startX: number, startY: number, endX: number, endY: number, distance: number}}
 	* @param cumulativeDistance {number}
-	* @param midlineLabels {boolean}
 	* @param labelX {number}
 	* @param labelY {number}
 	* @param sceneMapSize {{sceneHeight: number, sceneWidth: number}}
 	* @returns {string} SVG elements for waypoint line and label
 	*/
-	makeWaypointSegment(coord, cumulativeDistance, midlineLabels, labelX, labelY, sceneMapSize) {
+	makeWaypointSegment(coord, cumulativeDistance, labelX, labelY, sceneMapSize) {
 		// Snap to centre of current grid square
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		let snapPointXStart = coord.startX;
@@ -361,30 +358,10 @@ class WaypointManagerClass {
 		let text = `${totalDistance}${unitSymbol}`
 		let textMetrics = this.ctx.measureText(text);
 
-		// Calculate our positions and dmensions based on if we are measuring (midlineLabels == false) or
-		// token dragging (midlineLabels == true)
 		let contrastRect = { x: 0, y: 0, width: 0, height: 0 }
 		let textRect = { x: 0, y: 0, width: 0, height: 0 }
 
-		if (midlineLabels === true) {
-
-			// Calculate our coords and dimensions
-			textX = (snapPointXStart + snapPointXEnd) / 2;
-			textY = (snapPointYStart + snapPointYEnd) / 2;
-
-			contrastRect.x = textX - margin;
-			contrastRect.y = textY - margin;
-			contrastRect.width = textMetrics.width + (margin * 4);
-			contrastRect.height = heightOffset + (margin * 3);
-
-			textRect.x = textX;
-			textRect.y = textY;
-			textRect.width = textMetrics.width + (margin * 3);
-			textRect.height = heightOffset + margin;
-
-			// Knock the text down slightly
-			textY += (margin * 2);
-		} else if (labelX !== undefined && labelY !== undefined) {
+		if (labelX !== undefined && labelY !== undefined) {
 
 			// Calculate our coords and dimensions
 			contrastRect.x = labelX - margin + slopeModifier;
@@ -501,7 +478,7 @@ class WaypointManagerClass {
 
 			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
 			self.ctx.globalAlpha = alpha;
-			self.draw(false, undefined, undefined, alpha, window.PLAYER_ID)
+			self.draw(undefined, undefined, alpha, window.PLAYER_ID)
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
@@ -2475,7 +2452,7 @@ function drawing_mousemove(e) {
 					WaypointManager.cancelFadeout()
 					WaypointManager.registerMouseMove(mouseX, mouseY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
-					WaypointManager.draw(false);
+					WaypointManager.draw();
 					window.temp_context.fillStyle = '#f50';
 					sendRulerPositionToPeers();
 				}

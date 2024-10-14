@@ -2815,7 +2815,7 @@ class Token {
 
 							clear_temp_canvas();
 							WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
-							WaypointManager.draw(false, Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+							WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 						}
 						if (!self.options.hidden) {
 							sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);

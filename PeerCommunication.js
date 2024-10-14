@@ -711,7 +711,7 @@ function clear_peer_canvas(playerId) {
 function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
   const waypointManager = window.PEER_RULERS[playerId];
-  waypointManager.draw(false, undefined, undefined, undefined, playerId);
+  waypointManager.draw(undefined, undefined, undefined, playerId);
   
 }
 
