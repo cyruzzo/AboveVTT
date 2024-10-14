@@ -155,8 +155,13 @@ class WaypointManagerClass {
 		}
 	}
 
-	// Draw a nice circle
-	drawBobble(x, y, radius, playerId) {
+	/**
+	* Draw a nice circle
+	* @param x {number}
+	* @param y {number}
+	* @returns {string} <circle> tag
+	*/
+	makeBobble(x, y) {
 		/*
 		this.ctx.beginPath();
 		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
@@ -166,10 +171,7 @@ class WaypointManagerClass {
 		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 		*/
-		let existingBobbles = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`).html();
-	    let newBobble = `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'>`;
-	    $(`.ruler-svg-bobbles[data-player-id='${playerId}']`).html(existingBobbles + newBobble);
-
+	    return `<circle cx='${x}px' cy='${y}px' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'></circle>`;
 	}
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
@@ -396,39 +398,53 @@ class WaypointManagerClass {
 		this.ctx.fillStyle = this.drawStyle.textColor
 		this.ctx.textBaseline = 'top';
 		this.ctx.fillText(text, textX, textY);*/
-		let sceneWidth = Math.floor($('#scene_map').width());
-		let sceneHeight = Math.floor($('#scene_map').height());
+		
+		const sceneMap = $('#scene_map');
+		const sceneWidth = Math.floor(sceneMap.width());
+		const sceneHeight = Math.floor(sceneMap.height());
 
+		const vtt = $('#VTT');
 
+		// add ruler line and text
 		let rulerLineSVG = $(`
 			<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
-			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
-			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
-
+				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
+				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
 			</svg>
-		`)
-
-		let rulerBobbleSVG = $(`
-			<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
-			</svg>
-		`)
-
-
+		`);
 		let textSVG = $(`
 			<svg data-player-id='${playerId}' class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width}px;'>
 				<text x="1" y="11">
 					${text}
 				</text>
-			</svg>`)
-		$('#VTT').append(rulerLineSVG)	
-		$('#VTT').append(textSVG)
+			</svg>`
+		);
+		vtt.append(
+			rulerLineSVG,
+			textSVG
+		)	
 
-		if($(`.ruler-svg-bobbles[data-player-id='${playerId}]'`).length == 0){
-			$('#VTT').append(rulerBobbleSVG)
+		// add player bobble container if there isn't one
+		let playerBobbleContainer = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`)
+		if (playerBobbleContainer.length === 0) {
+			let rulerBobbleContainerSvg = $(`
+				<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
+				</svg>
+			`)
+			vtt.append(rulerBobbleContainerSvg)
+			
+			// re-query the container now that it has been added
+            playerBobbleContainer = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`)
 		}
+		
+		// add bobbles to the container
+		playerBobbleContainer.append(
+			this.makeBobble(snapPointXStart, snapPointYStart),
+			this.makeBobble(snapPointXEnd, snapPointYEnd)
+		);
+
+		// update alpha of all added svgs 
 		$(`svg[data-player-id='${playerId}']`).css('--svg-text-alpha', alpha);
-		this.drawBobble(snapPointXStart, snapPointYStart, undefined, playerId);
-		this.drawBobble(snapPointXEnd, snapPointYEnd, undefined, playerId);
 	}
 
 	/**
