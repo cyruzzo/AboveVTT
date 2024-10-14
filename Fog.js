@@ -155,25 +155,6 @@ class WaypointManagerClass {
 		}
 	}
 
-	/**
-	* Draw a nice circle
-	* @param x {number}
-	* @param y {number}
-	* @returns {string} <circle> tag
-	*/
-	makeBobble(x, y) {
-		/*
-		this.ctx.beginPath();
-		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-		this.ctx.lineWidth = radius
-		this.ctx.strokeStyle = this.drawStyle.outlineColor
-		this.ctx.stroke();
-		this.ctx.fillStyle =  this.drawStyle.color
-		this.ctx.fill();
-		*/
-	    return `<circle cx='${x}px' cy='${y}px' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'></circle>`;
-	}
-
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	checkNewWaypoint(mousex, mousey) {
 			//console.log("Incrementing waypoint");
@@ -229,7 +210,7 @@ class WaypointManagerClass {
 	// Draw the waypoints, note that we sum up the cumulative distance, midlineLabels is true for token drag
 	// as otherwise the token sits on the measurement label
 	draw(midlineLabels, labelX, labelY, alpha = 1, playerId=window.PLAYER_ID) {
-		$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
+		$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}']`).remove();
 		
 		let cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
@@ -423,25 +404,6 @@ class WaypointManagerClass {
 			rulerLineSVG,
 			textSVG
 		)	
-
-		// add player bobble container if there isn't one
-		let playerBobbleContainer = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`)
-		if (playerBobbleContainer.length === 0) {
-			let rulerBobbleContainerSvg = $(`
-				<svg data-player-id='${playerId}' viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
-				</svg>
-			`)
-			vtt.append(rulerBobbleContainerSvg)
-			
-			// re-query the container now that it has been added
-            playerBobbleContainer = $(`.ruler-svg-bobbles[data-player-id='${playerId}']`)
-		}
-		
-		// add bobbles to the container
-		playerBobbleContainer.append(
-			this.makeBobble(snapPointXStart, snapPointYStart),
-			this.makeBobble(snapPointXEnd, snapPointYEnd)
-		);
 
 		// update alpha of all added svgs 
 		$(`svg[data-player-id='${playerId}']`).css('--svg-text-alpha', alpha);
@@ -3928,7 +3890,7 @@ function calculateFourthPoint(point1, point2, point3) {
 }
 function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
-	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}']`).remove();
+	$(`.ruler-svg-text[data-player-id='${playerId}'], .ruler-svg-line[data-player-id='${playerId}']`).remove();
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){
