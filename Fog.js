@@ -96,6 +96,10 @@ class WaypointManagerClass {
 		this.canvas=undefined;
 		this.ctx=undefined;
 		this.numWaypoints = 0;
+		
+		/**
+		* @type {{startX: number, startY: number, endX: number, endY: number, distance: number, labelX: number | undefined, labelY: number | undefined}[]}
+		*/
 		this.coords = [];
 		this.currentWaypointIndex = 0;
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
@@ -269,15 +273,27 @@ class WaypointManagerClass {
 		this.numberOfDiagonals = 0;
 		let elementsToDraw = "";
 		for (let i = 0; i < this.coords.length; i++) {
+			const waypointCoordinates = this.coords[i];
+
+			// remember labelX and labelY to recall it when redrawing while fading away
+			// if labelX and labelY are undefined, we are redrawing and should not do this
+			if (labelX != null && labelY != null) {
+				const lastWaypoint = i === this.coords.length - 1
+				if (lastWaypoint) {
+					waypointCoordinates.labelX = labelX;
+					waypointCoordinates.labelY = labelY;
+				}
+			}
+			
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(waypointCoordinates, cumulativeDistance, sceneMapSize);
 			} else {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(waypointCoordinates, cumulativeDistance, sceneMapSize);
 			}
-			cumulativeDistance += this.coords[i].distance
+			cumulativeDistance += waypointCoordinates.distance
 		}
 
 		rulerContainer.innerHTML = elementsToDraw;
@@ -285,14 +301,12 @@ class WaypointManagerClass {
 
 	/**
 	* Make a waypoint segment SVGs with all the lines and labels etc.
-	* @param coord {{startX: number, startY: number, endX: number, endY: number, distance: number}}
+	* @param coord {{startX: number, startY: number, endX: number, endY: number, distance: number, labelX: number | undefined, labelY: number | undefined}}
 	* @param cumulativeDistance {number}
-	* @param labelX {number}
-	* @param labelY {number}
 	* @param sceneMapSize {{sceneHeight: number, sceneWidth: number}}
 	* @returns {string} SVG elements for waypoint line and label
 	*/
-	makeWaypointSegment(coord, cumulativeDistance, labelX, labelY, sceneMapSize) {
+	makeWaypointSegment(coord, cumulativeDistance, sceneMapSize) {
 		// Snap to centre of current grid square
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		let snapPointXStart = coord.startX;
@@ -361,8 +375,8 @@ class WaypointManagerClass {
 		let contrastRect = { x: 0, y: 0, width: 0, height: 0 }
 		let textRect = { x: 0, y: 0, width: 0, height: 0 }
 
+		const { labelX, labelY} = coord;
 		if (labelX !== undefined && labelY !== undefined) {
-
 			// Calculate our coords and dimensions
 			contrastRect.x = labelX - margin + slopeModifier;
 			contrastRect.y = labelY - margin + slopeModifier;
