@@ -704,14 +704,14 @@ function clear_peer_canvas(playerId) {
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  $(`.ruler-svg-line[data-player-id='${playerId}'], .ruler-svg-bobbles[data-player-id='${playerId}'], .ruler-svg-text[data-player-id='${playerId}']`).remove();
+  WaypointManager.clearWaypointDrawings(playerId)
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */
 function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
   const waypointManager = window.PEER_RULERS[playerId];
-  waypointManager.draw(false, undefined, undefined, undefined, playerId);
+  waypointManager.draw(undefined, undefined, undefined, playerId);
   
 }
 
