@@ -3893,7 +3893,7 @@ function is_sidebar_visible() {
  * This will show/hide the sidebar regardless of which page we are playing on.
  */
 function toggle_sidebar_visibility() {
-		if (is_sidebar_visible() || (window.innerWidth < 1024 && $(`[class*='styles_mobileNav']>div`).length==0)) {
+		if (is_sidebar_visible() || (!window.DM && window.innerWidth < 1024 && $(`[class*='styles_mobileNav']>div`).length==0)) {
 			hide_sidebar();
 		} else {
 			show_sidebar();
