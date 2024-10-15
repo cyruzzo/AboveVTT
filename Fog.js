@@ -175,7 +175,7 @@ class WaypointManagerClass {
 		this.ctx.fillStyle =  this.drawStyle.color
 		this.ctx.fill();
 		*/
-	    return `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'>`;
+	    return `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}' />`;
 	}
 
 	// Increment the current index into the array of waypoints, and draw a small indicator
