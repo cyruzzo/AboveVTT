@@ -110,7 +110,6 @@ window.scripts = [
 	// AboveVTT files that execute when loaded
 	{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 	{ src: "CampaignPage.js" },
-	{ src: "CharactersPage.js" },
 	{ src: "audio/index.js", type: "module" },
 	{ src: "onedrive/onedrivemsal.js" },
 	{ src: "onedrive/onedrivepicker.js" },
