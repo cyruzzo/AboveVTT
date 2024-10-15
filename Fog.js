@@ -2363,7 +2363,7 @@ function drawing_mousedown(e) {
 			window.MOUSEMOVEWAIT = false;
 		}
 	}
-	else{
+	else if(e.button !== 2 && !window.MOUSEDOWN && !WaypointManager.isMeasuring()){
 		window.BEGIN_MOUSEX = pointX
 		window.BEGIN_MOUSEY = pointY
 		window.MOUSEDOWN = true;
