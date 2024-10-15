@@ -528,6 +528,7 @@ class WaypointManagerClass {
 	 */
 	cancelFadeout(){
 		if (this.fadeoutAnimationId !== undefined) {
+			clear_temp_canvas();
 			cancelAnimationFrame(this.fadeoutAnimationId);
 			this.ctx.globalAlpha = 1.0
 			this.fadeoutAnimationId = undefined
@@ -3523,6 +3524,7 @@ function handle_drawing_button_click() {
 		let menu
 		// FIND THE MENU
 		// button has a menu
+		window.WaypointManager?.clearWaypoints();
 		if ($(clicked).hasClass("menu-button")){
 			menu = clicked.id.replace("button", "menu" )
 			menu = "#" + menu
