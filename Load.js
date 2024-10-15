@@ -117,7 +117,9 @@ window.scripts = [
 	{ src: "Startup.js", type: "module" }
 
 ]
-
+if(!window.location.pathname.includes("/characters/")){
+	window.scripts = window.scripts.filter(d=> d.src != 'CharactersPage.js');
+}
 // Too many of our scripts depend on each other.
 // This ensures that they are loaded sequentially to avoid any race conditions.
 function injectScript() {
