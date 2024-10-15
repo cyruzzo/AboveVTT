@@ -66,12 +66,15 @@ Mousetrap.bind('r', function () {       //ruler
 });
 
 
-Mousetrap.bind('s', function () {       //video fullscreen toggle
+Mousetrap.bind('s', function () {       //select
     $('#select-button').click()
 });
 
+Mousetrap.bind('e', function () {       //elev
+    $('#elev_button').click()
+});
 
-Mousetrap.bind('v', function () {       //video fullscreen toggle 
+Mousetrap.bind('v', function () {       //video toggle 
     if(shiftHeld)
         return;
 
