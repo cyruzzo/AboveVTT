@@ -159,6 +159,25 @@ class WaypointManagerClass {
 		}
 	}
 
+	/**
+	* Draw a nice circle
+	* @param x {number}
+	* @param y {number}
+	* @returns {string} <circle> tag
+	*/
+	makeBobble(x, y) {
+		/*
+		this.ctx.beginPath();
+		this.ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+		this.ctx.lineWidth = radius
+		this.ctx.strokeStyle = this.drawStyle.outlineColor
+		this.ctx.stroke();
+		this.ctx.fillStyle =  this.drawStyle.color
+		this.ctx.fill();
+		*/
+	    return `<circle cx='${x}' cy='${y}' fill='${this.drawStyle.color}' stroke='${this.drawStyle.outlineColor}'>`;
+	}
+
 	// Increment the current index into the array of waypoints, and draw a small indicator
 	checkNewWaypoint(mousex, mousey) {
 			//console.log("Incrementing waypoint");
@@ -453,8 +472,17 @@ class WaypointManagerClass {
 				</text>
 			</svg>
 		`;
-
-		return `${rulerLineSVG}${textSVG}`;
+		
+		// add bobbles at the start and the end of the line
+		const startBobble = this.makeBobble(snapPointXStart, snapPointYStart);
+		const endBobble = this.makeBobble(snapPointXEnd, snapPointYEnd)
+		const bobbles = `
+			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
+				${startBobble}
+				${endBobble}
+        	</svg>
+		`;
+		return `${rulerLineSVG}${textSVG}${bobbles}`;
 	}
 
 	/**
