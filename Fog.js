@@ -291,17 +291,24 @@ class WaypointManagerClass {
 		let cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		let elementsToDraw = "";
+		const { sceneWidth, sceneHeight } = sceneMapSize;
+		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
+		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
+
+
 		for (let i = 0; i < this.coords.length; i++) {
 			// We do the beginPath here because otherwise the lines on subsequent waypoints get
 			// drawn over the labels...
 			this.ctx.beginPath();
 			if (i < this.coords.length - 1) {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
 			} else {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize);
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
 			}
+
 			cumulativeDistance += this.coords[i].distance
 		}
+		elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
 
 		rulerContainer.innerHTML = elementsToDraw;
 	}
@@ -315,7 +322,7 @@ class WaypointManagerClass {
 	* @param sceneMapSize {{sceneHeight: number, sceneWidth: number}}
 	* @returns {string} SVG elements for waypoint line and label
 	*/
-	makeWaypointSegment(coord, cumulativeDistance, labelX, labelY, sceneMapSize) {
+	makeWaypointSegment(coord, cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines) {
 		// Snap to centre of current grid square
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		let snapPointXStart = coord.startX;
@@ -448,12 +455,24 @@ class WaypointManagerClass {
 		const { sceneWidth, sceneHeight } = sceneMapSize;
 
 		// add ruler line and text
+
 		const rulerLineSVG = `
-			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'>
-				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"/>
-				<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"/>
-			</svg>
+			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.outlineColor}"></line>
+			<line x1='${snapPointXStart}' y1='${snapPointYStart}' x2='${snapPointXEnd}' y2='${snapPointYEnd}' stroke="${this.drawStyle.color}"></line>
 		`;
+		lines.append(rulerLineSVG);
+
+		
+		if(bobbles.children().length == 0){
+			const startBobble = this.makeBobble(snapPointXStart, snapPointYStart);
+			const endBobble = this.makeBobble(snapPointXEnd, snapPointYEnd)
+			bobbles.append(startBobble, endBobble);
+		}
+		else{
+			const endBobble = this.makeBobble(snapPointXEnd, snapPointYEnd)
+			bobbles.append(endBobble);
+		}
+
 		const textSVG = `
 			<svg class='ruler-svg-text' style='top:${textY*window.CURRENT_SCENE_DATA.scale_factor}px; left:${textX*window.CURRENT_SCENE_DATA.scale_factor}px; width:${textRect.width}px;'>
 				<text x="1" y="11">
@@ -461,17 +480,8 @@ class WaypointManagerClass {
 				</text>
 			</svg>
 		`;
-		
-		// add bobbles at the start and the end of the line
-		const startBobble = this.makeBobble(snapPointXStart, snapPointYStart);
-		const endBobble = this.makeBobble(snapPointXEnd, snapPointYEnd)
-		const bobbles = `
-			<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'>
-				${startBobble}
-				${endBobble}
-        	</svg>
-		`;
-		return `${rulerLineSVG}${textSVG}${bobbles}`;
+	
+		return `${textSVG}`;
 	}
 
 	/**
@@ -1201,7 +1211,7 @@ function reset_canvas(apply_zoom=true) {
 			$("#VTT").css("--scene-scale", 1)
 		}
 		else{
-			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);
+			$("#VTT").css("--scene-scale", window.CURRENT_SCENE_DATA.scale_factor);		
 		}
 		canvas_grid.width = $("#scene_map").width();
 		canvas_grid.height = $("#scene_map").height();
