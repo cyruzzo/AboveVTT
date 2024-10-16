@@ -10636,7 +10636,12 @@ div#playlistFields {
     display: flex;
     gap: 10px
 }
-
+.glc-game-log .stat-block .stats{
+    flex-direction:column;
+}
+.glc-game-log .stat-block .stats>table{
+    margin:0px;
+}
 .stat-block .stats+p {
     margin-top: 10px
 }
