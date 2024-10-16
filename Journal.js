@@ -1354,6 +1354,8 @@ class JournalManager{
 		// replace all "to hit" and "damage" rolls
 	
 		let currentElement = $(target).clone()
+		const dashToMinus = /([\s>])−(\d)/gi
+		
 
 		// apply most specific regex first matching all possible ways to write a dice notation
 		// to account for all the nuances of DNDB dice notation.
@@ -1370,6 +1372,7 @@ class JournalManager{
 		const actionType = "roll"
 		const rollType = "AboveVTT"
 		const updated = currentElement.html()
+			.replaceAll(dashToMinus, `$1-$2`)
 			.replaceAll(damageRollRegexBracket, `<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $1$2$5</button>`)
 			.replaceAll(damageRollRegex, `$1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$5`)
 			.replaceAll(hitRollRegexBracket, `<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $1$2$3</button>`)
