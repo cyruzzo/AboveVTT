@@ -1625,8 +1625,20 @@ class MessageBroker {
 		if(!window.DM && data.language != undefined){
 			const knownLanguages = window.pcs?.find(d=>d.characterId == window.PLAYER_ID)?.proficiencyGroups[3]?.values?.trim().split(/\s*,\s*/gi);
 			knownLanguages?.push('Telepathy');
-			if(!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name))
-				data.text = data.text.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+			if(!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name)){
+				const container = $("<div>").html(data.text);
+		    const elements = container.find("*");
+		    const textNodes = elements.contents().not(elements);
+		    textNodes.each(function() {
+	        	let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+	        
+	          $(document.createTextNode(newText)).insertBefore(this);
+	             
+	          $(this).remove();
+		        
+		    });
+		    data.text = container.html();
+			}
 		}
 
 		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
