@@ -743,7 +743,6 @@ function change_sidbar_tab(clickedTab, isCharacterSheetInfo = false) {
 		// Since the user clicked the tab, we need to show the gamelog instead of any detail info that was previously shown.
 		$("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last").click()
 	}
-
 }
 
 /**
@@ -1257,6 +1256,8 @@ function init_controls() {
 	b4.append(b4ImageDivWrapper);
 	b4.click(switch_control);
 	sidebarControls.append(b4);
+
+
 
 	/*b4 = $("<button id='switch_spell' class='tab-btn hasTooltip button-icon' data-name='Spells' data-target='#spells-panel'></button>").click(switch_control);
 	b4.append("<img src='"+window.EXTENSION_PATH + "assets/icons/magic-wand.svg' height='100%;'>");
@@ -2101,6 +2102,22 @@ function inject_chat_buttons() {
 Advantage: 2d20kh1 (keep highest)&#xa;
 Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 '/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
+	
+	const languageSelect= $(`<select id='chat-language'></select>`)
+	const ignoredLanguages = ['All'];
+
+	const knownLanguages = window.pcs?.find(d=>d.characterId == window.PLAYER_ID)?.proficiencyGroups[3]?.values?.trim().split(/\s*,\s*/gi);
+	knownLanguages?.push('Telepathy');
+	for(let i in window.ddbConfigJson.languages){
+		if(ignoredLanguages.includes(window.ddbConfigJson.languages[i].name))
+			continue;
+		if(!window.DM && !knownLanguages.includes(window.ddbConfigJson.languages[i].name))
+			continue;
+		const option = $(`<option value='${window.ddbConfigJson.languages[i].id}'>${window.ddbConfigJson.languages[i].name}</option>`)
+		languageSelect.append(option);
+	}
+
+	$(".glc-game-log").append(languageSelect);
 
 	$(".glc-game-log").append($(`
 		<div class="dice-roller">

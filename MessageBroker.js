@@ -1622,6 +1622,13 @@ class MessageBroker {
 		let timestamp = d.toLocaleTimeString();
 		let datestamp = d.toLocaleDateString();
 		
+		if(!window.DM && data.language != undefined){
+			const knownLanguages = window.pcs?.find(d=>d.characterId == window.PLAYER_ID)?.proficiencyGroups[3]?.values?.trim().split(/\s*,\s*/gi);
+			knownLanguages?.push('Telepathy');
+			if(!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name))
+				data.text = data.text.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+		}
+
 		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
 			return $(`
 				<li class="tss-8-Other-ref tss-17y30t1-GameLogEntry-Other-Flex">

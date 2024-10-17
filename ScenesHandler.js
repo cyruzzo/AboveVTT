@@ -672,6 +672,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	build_adventures(callback) {
 		let self = this;
+
+		if(Object.keys(window.ddbConfigJson.sources).length!=0){
+			
+		}
 		if(Object.keys(self.sources).length!=0){
 			callback();
 			return;

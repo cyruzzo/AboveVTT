@@ -10551,6 +10551,22 @@ div#playlistFields {
     left: 174px;
 }
 
+.glc-game-log #chat-language{
+    font-size: 10px;
+    outline: none;
+    margin-top: 1px;
+    float: left;
+    position: absolute;
+    right: 5px;
+    bottom: 65px;
+    border-radius: 0px 5px 5px 0px;
+    padding: 0px;
+    width: 16px;
+    border: 1px solid #ddd;
+    border-left: 0px;
+    border-color: #444;
+    height: 30px;
+}
 
 
 /***** NEW STAT BLOCKS ****/
