@@ -647,15 +647,13 @@ class JournalManager{
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
 			
+			for(let source in window.ddbConfigJson.sources){
+				const currentSource = window.ddbConfigJson.sources[source]
+				const sourcetitle = currentSource.description;
+				const sourceValue = currentSource.sourceURL.replaceAll(/sources\//gi, '');
+				chapterImport.append($(`<option value='${sourceValue}'>${sourcetitle}</option>`));
+			}
 			
-			window.ScenesHandler.build_adventures(function(){
-				for(let source in window.ScenesHandler.sources){
-					let sourcetitle = window.ScenesHandler.sources[source].title;
-					sourcetitle = sourcetitle.replaceAll(/\n.*\<span.*span>[\s]+?\n|[\n]|\s\s/gi, '');
-					window.ScenesHandler.sources[source].title = sourcetitle;
-					chapterImport.append($(`<option value='${source}'>${sourcetitle}</option>`));
-				}
-			})
 			
 			chapterImport.on('change', function(){
 				let source = this.value;
@@ -689,10 +687,11 @@ class JournalManager{
 				}
 				else{
 					self.chapters.push({
-						title: window.ScenesHandler.sources[source].title,
+						title: window.ddbConfigJson.sources[source].title,
 						collapsed: false,
 						notes: [],
 					});
+					source = source.sourceURL.replaceAll(/sources\//gi, '');
 					window.ScenesHandler.build_chapters(source, function(){
 						for(let chapter in window.ScenesHandler.sources[source].chapters){
 							let new_noteid=uuid();

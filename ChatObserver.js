@@ -68,7 +68,8 @@ class ChatObserver {
                 player: window.PLAYER_NAME,
                 img: window.PLAYER_IMG,
                 text: `<div><span class='aboveDiceTotal'>${roll.total}</span><span class='aboveDiceOutput'>${roll.output}</span></div>`,
-                whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``
+                whisper: (gamelog_send_to_text() != "Everyone") ? window.PLAYER_NAME : ``,
+                language: $('#chat-language').val()
             };
             window.MB.inject_chat(msgdata);       
         }
@@ -88,7 +89,9 @@ class ChatObserver {
         let data = {
             player: window.PLAYER_NAME,
             img: window.PLAYER_IMG,
-            dmonly: false
+            dmonly: false,
+            language: $('#chat-language').val()
+
         };
 
         if (text.startsWith("/w")) {
