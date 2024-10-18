@@ -1621,23 +1621,23 @@ class MessageBroker {
 		let datetime = d.toISOString();
 		let timestamp = d.toLocaleTimeString();
 		let datestamp = d.toLocaleDateString();
-		
-		if(!window.DM && data.language != undefined){
-			const knownLanguages = window.pcs?.find(d=>d.characterId == window.PLAYER_ID)?.proficiencyGroups[3]?.values?.trim().split(/\s*,\s*/gi);
-			knownLanguages?.push('Telepathy');
-			if(!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name)){
+
+		// hide message if PC doesn't speak this language
+		if (!window.DM && data.language != undefined) {
+			const pc = find_pc_by_player_id(my_player_id())
+			const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
+			knownLanguages.push('Telepathy');
+
+			if (!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name)) {
 				const container = $("<div>").html(data.text);
-		    const elements = container.find("*");
-		    const textNodes = elements.contents().not(elements);
-		    textNodes.each(function() {
-	        	let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
-	        
-	          $(document.createTextNode(newText)).insertBefore(this);
-	             
-	          $(this).remove();
-		        
-		    });
-		    data.text = container.html();
+				const elements = container.find("*");
+				const textNodes = elements.contents().not(elements);
+				textNodes.each(function () {
+					let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+					$(document.createTextNode(newText)).insertBefore(this);
+					$(this).remove();
+				});
+				data.text = container.html();
 			}
 		}
 
