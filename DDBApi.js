@@ -148,8 +148,8 @@ class DDBApi {
     const avttId = is_encounters_page() ? window.location.pathname.split("/").pop() : undefined;
     const avttEncounters = encounters.filter(e => e.id !== avttId && e.name === DEFAULT_AVTT_ENCOUNTER_DATA.name);
     console.debug(`DDBApi.deleteAboveVttEncounters avttId: ${avttId}, avttEncounters:`, avttEncounters);
-    const failedEncounters = localStorage.getItem('avttFailedDeleteEncounters');
-    let newFailed = (failedEncounters != null && failedEncounters != undefined) ? failedEncounters : [];
+    const failedEncounters = JSON.parse(localStorage.getItem('avttFailedDelete'));
+    let newFailed = (failedEncounters != null && failedEncounters != undefined && Array.isArray(failedEncounters)) ? failedEncounters : [];
     for (const encounter of avttEncounters) {
       if(newFailed.includes(encounter.id))
         continue;
@@ -158,7 +158,7 @@ class DDBApi {
       console.log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
       if(response.status == 401){
         newFailed.push(encounter.id)
-        localStorage.setItem('avttFailedDeleteEncounters', newFailed);
+        localStorage.setItem('avttFailedDelete', JSON.stringify(newFailed));
       }    
     }
   }
