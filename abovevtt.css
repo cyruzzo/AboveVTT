@@ -6095,6 +6095,41 @@ div#selectedTokensBorderRotationGrabberConnector,
     box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
 }
 
+
+div#tokenOptionsContainer button#adv{
+    filter: sepia(0.3) hue-rotate(63deg) saturate(8) drop-shadow(0px 0px 0px #0F0);
+    right:32px;
+}
+
+div#tokenOptionsContainer button#disadv{
+    filter: sepia(0.3) hue-rotate(312deg) saturate(14) drop-shadow(0px 0px 0px #F00);
+    right: 10px;
+}
+
+div#tokenOptionsContainer button#adv,
+div#tokenOptionsContainer button#disadv{
+    width:20px;
+    background:none;
+    outline:none;
+    border:none;
+    height:20px;
+    position:absolute;
+    opacity:0.2;
+    padding:0px;
+}
+div#tokenOptionsContainer button#adv:hover,
+div#tokenOptionsContainer button#disadv:hover{
+    opacity:1;
+}
+div#tokenOptionsContainer button#adv:before,
+div#tokenOptionsContainer button#disadv:before{
+    width:100%;
+    height:100%;
+}
+
+div#tokenOptionsContainer .remove-from-ct>button{
+    display:none;
+}
 .context-menu-list{
     border-radius: 10px !important;
 }

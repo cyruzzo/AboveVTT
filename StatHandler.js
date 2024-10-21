@@ -43,8 +43,8 @@ class StatHandler {
 		}
 	}
 
-	rollInit(monsterid, callback, open5eSlug = undefined, tokenId = undefined) {
-
+	rollInit(monsterid, callback, open5eSlug = undefined, tokenId = undefined, adv=false, dis=false) {
+		let dice = adv ? '2d20kh1+' : dis ? '2d20kl1+' : '1d20+'
 		if(window.TOKEN_OBJECTS[tokenId].options.combatGroupToken){
 			let modArray = [];
 			let statArray = [];
@@ -86,7 +86,7 @@ class StatHandler {
 				const sumStat = statArray.reduce((a, b) => a + b, 0);
 				const stat = (sumStat / statArray.length) || 0;
 
-				let expression = "1d20+" + modifier;
+				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				let total = parseFloat(Math.floor(roll.total) + stat/100).toFixed(2);
@@ -103,7 +103,7 @@ class StatHandler {
 		{
 			this.getStat(monsterid, function(data) {
 				let modifier = Math.floor((data.stats[1].value - 10) / 2.0);
-				let expression = "1d20+" + modifier;
+				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + data.stats[1].value/100).toFixed(2);
@@ -116,7 +116,7 @@ class StatHandler {
 		}
 		else if(monsterid =='customStat'){
 			let modifier = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customInit) : (window.TOKEN_OBJECTS[tokenId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined) ? parseInt(window.TOKEN_OBJECTS[tokenId].options.customStat[1].mod) : 0;
-			let expression = (!isNaN(modifier)) ? "1d20+" + modifier : '0';
+			let expression = (!isNaN(modifier)) ? dice + modifier : '0';
 			let roll = new rpgDiceRoller.DiceRoll(expression);
 			let decimalAdd = (window.TOKEN_OBJECTS[tokenId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[tokenId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[tokenId]?.options?.customStat[1]?.mod != undefined)) ? ((modifier*2)+10)/100 : 0
 			console.log(expression + "->" + roll.total);
@@ -130,7 +130,7 @@ class StatHandler {
 		else{
 			this.getStat(monsterid, function(stat) {
 				let modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
-				let expression = "1d20+" + modifier;
+				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);
 				let total = parseFloat(roll.total + stat.data.stats[1].value/100).toFixed(2);

@@ -613,7 +613,7 @@ function ct_reorder(persist=true) {
 }
 
 
-function ct_add_token(token,persist=true,disablerolling=false){
+function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=false){
 	if(token.options.name == "Not in the current map")
 		return;
 	if (token.isAoe()) {
@@ -766,7 +766,7 @@ function ct_add_token(token,persist=true,disablerolling=false){
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
 				debounceCombatReorder();
-			}, token.options.itemId, token.options.id);
+			}, token.options.itemId, token.options.id, adv, dis);
 		}
 	}
 
