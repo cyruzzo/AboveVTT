@@ -2086,13 +2086,16 @@ function monitor_character_sidebar_changes() {
  * @returns
  */
 function inject_chat_buttons() {
-	if ($(".glc-game-log").find("#chat-text").length > 0) {
-		// make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
+	const gameLog = $(".glc-game-log");
+
+	if (gameLog.find("#chat-text").length > 0) {
+		// Make sure we only ever inject these once.
+		// This gets called a lot on the character sheet which is intentional.
 		return;
 	}
-	// AGGIUNGI CHAT
-	// the text has to be up against the left for it to style correctly
-	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;
+
+	// The text has to have no tabulation for it to style correctly
+	const hoverTooltip = `Dice Rolling Format: /cmd diceNotation action  &#xa;
 '/r 1d20'&#xa;
 '/roll 1d4 punch:damage'&#xa;
 '/hit 2d20kh1+2 longsword ADV'&#xa;
@@ -2101,8 +2104,16 @@ function inject_chat_buttons() {
 '/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;
 Advantage: 2d20kh1 (keep highest)&#xa;
 Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
-'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
-	
+'/w [playername] a whisper to playername'`;
+
+	const chatTextWrapper = $(`<div class="chat-text-wrapper sidebar-hover-text" data-hover="${hoverTooltip}"></div>`)
+	gameLog.append(chatTextWrapper);
+
+	chatTextWrapper.append($(`<input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'>`));
+
+	const languageSelectWrapper = $(`<div class="chat-language-wrapper"></div>`)
+	chatTextWrapper.append(languageSelectWrapper)
+
 	const languageSelect= $(`<select id='chat-language'></select>`)
 	const ignoredLanguages = ['All'];
 	const pc = find_pc_by_player_id(my_player_id())
@@ -2118,9 +2129,9 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 		languageSelect.append(option);
 	}
 
-	$(".glc-game-log").append(languageSelect);
+	languageSelectWrapper.append(languageSelect);
 
-	$(".glc-game-log").append($(`
+	gameLog.append($(`
 		<div class="dice-roller">
 			<div>
 				<img title="d4" alt="d4" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d4.svg"}"/>
@@ -2146,7 +2157,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 		</div>
 	`));
 
-	$(".dice-roller > div img").on("click", function(e) {
+	$(".dice-roller > div img").on("click", function (e) {
 		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// DDB dice are on the screen so let's use those. Ours will synchronize when these change.
 			if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
@@ -2167,7 +2178,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				$(this).parent().append(`<span class="dice-badge">${parseInt(dataCount) + 1}</span>`);
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				if(!$(".roll-mod-container").hasClass('show')){
+				if (!$(".roll-mod-container").hasClass('show')) {
 					$(".roll-mod-container").addClass("show");
 					$(".roll-mod-container").find('input').val(0);
 				}
@@ -2177,12 +2188,12 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 		}
 	});
 
-	
-	window.rollButtonObserver = new MutationObserver(function() {
-        // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
+
+	window.rollButtonObserver = new MutationObserver(function () {
+		// Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
 
 		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-			$(".dice-die-button").each(function() {
+			$(".dice-die-button").each(function () {
 				let dieSize = $(this).attr("data-dice");
 				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
 				let diceCountElement = $(this).find(".dice-die-button__count");
@@ -2198,9 +2209,9 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 
 
 			// make sure our roll button is shown/hidden after all animations have completed
-			setTimeout(function() {
+			setTimeout(function () {
 				if ($(".dice-toolbar").hasClass("rollable")) {
-					if(!$(".roll-mod-container").hasClass('show')){
+					if (!$(".roll-mod-container").hasClass('show')) {
 						$(".roll-mod-container").addClass("show");
 						$(".roll-mod-container").find('input').val(0);
 					}
@@ -2209,73 +2220,71 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				}
 			}, 0);
 		}
-    })
+	})
 
 	let watchForDicePanel = new MutationObserver((mutations) => {
-	 mutations.every((mutation) => {
-	    if (!mutation.addedNodes) return
+		mutations.every((mutation) => {
+			if (!mutation.addedNodes) return
 
-	    for (let i = 0; i < mutation.addedNodes.length; i++) {
-	      // do things to your newly added nodes here
-	      let node = mutation.addedNodes[i]
-	      if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length>0)){
-	        const mutation_target = $(".dice-toolbar__dropdown")[0];
-			const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-			window.rollButtonObserver.observe(mutation_target, mutation_config);
-			watchForDicePanel.disconnect();
-			return false;
-	      }
-	    }
-	    return true // must return true if doesn't break
-	  })
+			for (let i = 0; i < mutation.addedNodes.length; i++) {
+				// do things to your newly added nodes here
+				let node = mutation.addedNodes[i]
+				if ((node.className == 'dice-rolling-panel' || $('.dice-rolling-panel').length > 0)) {
+					const mutation_target = $(".dice-toolbar__dropdown")[0];
+					const mutation_config = {attributes: true, childList: true, characterData: true, subtree: true};
+					window.rollButtonObserver.observe(mutation_target, mutation_config);
+					watchForDicePanel.disconnect();
+					return false;
+				}
+			}
+			return true // must return true if doesn't break
+		})
 	});
 
-	window.sendToDefaultObserver = new MutationObserver(function() {
-    	localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
+	window.sendToDefaultObserver = new MutationObserver(function () {
+		localStorage.setItem(`${gameId}-sendToDefault`, gamelog_send_to_text());
 	})
 
 
 	let gamelogObserver = new MutationObserver((mutations) => {
-	 mutations.every((mutation) => {
-	    if (!mutation.addedNodes) return
-	    for (let i = 0; i < mutation.addedNodes.length; i++) {
-	      // do things to your newly added nodes here
-	      let node = mutation.addedNodes[i]
-	      if($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length>0){
-	      	const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
-					const sendto_mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+		mutations.every((mutation) => {
+			if (!mutation.addedNodes) return
+			for (let i = 0; i < mutation.addedNodes.length; i++) {
+				// do things to your newly added nodes here
+				let node = mutation.addedNodes[i]
+				if ($(node).attr('class')?.includes('-SendToLabel') || $('.glc-game-log [class*="-SendToLabel"] ~ button').length > 0) {
+					const sendto_mutation_target = $(".glc-game-log [class*='-SendToLabel'] ~ button")[0];
+					const sendto_mutation_config = {
+						attributes: true,
+						childList: true,
+						characterData: true,
+						subtree: true
+					};
 					window.sendToDefaultObserver.observe(sendto_mutation_target, sendto_mutation_config);
 					gamelogObserver.disconnect();
 					return false;
-	      }
-	    }
-	    return true // must return true if doesn't break
-	  })
+				}
+			}
+			return true // must return true if doesn't break
+		})
 	});
 
 	watchForDicePanel.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
 	gamelogObserver.observe(document.body, {childList: true, subtree: true, attributes: false, characterData: false});
 
-	
 
-
-
-	
-
-	
-
-	$(".dice-roller > div img").on("contextmenu", function(e) {
+	$(".dice-roller > div img").on("contextmenu", function (e) {
 		e.preventDefault();
 
 		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			// There are DDB dice on the screen so update those buttons. Ours will synchronize when these change.
 			// the only way I could get this to work was with pure javascript. Everything that I tried with jQuery did nothing
 			let dieSize = $(this).attr("alt");
-			let  element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
-			let  e = element.ownerDocument.createEvent('MouseEvents');
+			let element = $(`.dice-die-button[data-dice='${dieSize}']`)[0];
+			let e = element.ownerDocument.createEvent('MouseEvents');
 			e.initMouseEvent('contextmenu', true, true,
-					element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
-					false, false, false, 2, null);
+				element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+				false, false, false, 2, null);
 			element.dispatchEvent(e);
 		} else {
 			let dataCount = $(this).attr("data-count");
@@ -2290,7 +2299,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				}
 			}
 			if ($(".dice-roller > div img[data-count]").length > 0) {
-				if(!$(".roll-mod-container").hasClass('show')){
+				if (!$(".roll-mod-container").hasClass('show')) {
 					$(".roll-mod-container").addClass("show");
 					$(".roll-mod-container").find('input').val(0);
 				}
@@ -2309,18 +2318,17 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			</div>`)
 		modInput.append(rollButton);
 
-		
+
 		$("body").append(modInput);
 
-		modInput.off('click.button').on('click.button', 'button.roll-button-mod', function(e){
+		modInput.off('click.button').on('click.button', 'button.roll-button-mod', function (e) {
 			e.preventDefault();
 			const clickedButton = $(this)
 			const input = modInput.find('input');
-			if(clickedButton.hasClass('minus')){
-				input.val(parseInt(input.val())-1);
-			}
-			else if(clickedButton.hasClass('plus')){
-				input.val(parseInt(input.val())+1);
+			if (clickedButton.hasClass('minus')) {
+				input.val(parseInt(input.val()) - 1);
+			} else if (clickedButton.hasClass('plus')) {
+				input.val(parseInt(input.val()) + 1);
 			}
 		});
 		rollButton.on("click", function (e) {
@@ -2335,15 +2343,15 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 			}
 
 			const rollExpression = [];
-			$(".dice-roller > div img[data-count]").each(function() {
+			$(".dice-roller > div img[data-count]").each(function () {
 				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
 			});
-			let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
+			let expression = `${rollExpression.join("+")}${modValue < 0 ? modValue : `+${modValue}`}`
 			let sendToDM = window.DM || false;
 			let sentAsDDB = send_rpg_dice_to_ddb(expression, sendToDM);
 			if (!sentAsDDB) {
 				const roll = new rpgDiceRoller.DiceRoll(rollExpression.join("+"));
-				
+
 				const text = roll.output;
 				const uuid = new Date().getTime();
 				const data = {
@@ -2362,7 +2370,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 						$(this).remove();
 					});
 				}
-						
+
 			}
 
 			$(".roll-mod-container").removeClass("show");
@@ -2375,7 +2383,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 		window.chatObserver = new ChatObserver();
 	}
 	window.chatObserver.observe($("#chat-text"));
-	$(".GameLog_GameLog__2z_HZ").scroll(function() {
+	$(".GameLog_GameLog__2z_HZ").scroll(function () {
 		if ($(this).scrollTop() >= 0) {
 			$(this).removeClass("highlight-gamelog");
 		}
@@ -2383,7 +2391,7 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 
 	// open, resize, then close the `Send To: (Default)` drop down. It won't resize unless it's open
 	$("div.MuiPaper-root.MuiMenu-paper").click();
-	setTimeout(function() {
+	setTimeout(function () {
 		$("div.MuiPaper-root.MuiMenu-paper").css({
 			"min-width": "200px"
 		})
@@ -4017,10 +4025,6 @@ function popoutGamelogCleanup(){
 		    top: 0 !important;
 		    height: 100% !important;
 		}
-		.body-rpgcampaign select#chat-language {
-	    bottom:0px;
-	    right: 6px;
-		}
 	</style>`);
 	$(childWindows["Gamelog"].document).find(".gamelog-button, button[class*='gamelog-button']").click();
 	removeFromPopoutWindow("Gamelog", ".dice-roller");
@@ -4035,9 +4039,8 @@ function popoutGamelogCleanup(){
 	removeFromPopoutWindow("Gamelog", "iframe");
 	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
 	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
-	$(childWindows["Gamelog"].document).find(".glc-game-log").append($("#chat-language").clone(true, true));
 
-	$(childWindows["Gamelog"].document).find("#chat-language").off('change.value').on('change.value', function(){
+	$(childWindows["Gamelog"].document).find(".chat-text-wrapper").off('change.value').on('change.value', function(){
 		$("#chat-language").val($(this).val());
 	})
 	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);

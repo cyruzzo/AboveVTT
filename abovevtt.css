@@ -2480,13 +2480,54 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     margin-right: 0px;
 }
 
-.chat-text-wrapper{
-    width:100%;
-    padding: 0px 20px;
+.chat-text-wrapper {
+    width: 100%;
+    padding: 0 16px;
+    display: flex;
+    margin-bottom: 12px;
 }
+
 #chat-text {
-    width:100%;
-    height:30px;
+    flex-grow: 1;
+    background: #fff;
+    height: 32px;
+    border: 1px solid #101010;
+    padding: 0 8px;
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+}
+
+#chat-text:not(:focus) {
+    outline: none;
+}
+
+#chat-language {
+    background: #fff;
+    border: 1px solid #101010;
+    border-radius: 0 5px 5px 0;
+    width: 30px;
+    height: 32px;
+    cursor: pointer;
+    color: transparent;
+    transition: background-color 150ms ease-in;
+}
+
+#chat-language:hover {
+    background-color: #ddd;
+}
+
+#chat-language > option {
+    background-color: #fff;
+    color: #000;
+}
+
+.chat-language-wrapper::after {
+    content: "⌄";
+    position: absolute;
+    right: 21px;
+    font-size: 24px;
+    line-height: 22px;
+    pointer-events: none;
 }
 
 .highlight-gamelog {
@@ -2513,7 +2554,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
     display: flex;
     justify-content: space-around;
     width: 320px;
-    margin: 10px 0 15px 0;
+    margin-bottom: 16px;
 }
 
 .dice-roller > div {
@@ -10567,24 +10608,6 @@ div#playlistFields {
     position: absolute;
     left: 174px;
 }
-
-.glc-game-log #chat-language{
-    font-size: 10px;
-    outline: none;
-    margin-top: 1px;
-    float: left;
-    position: absolute;
-    right: 5px;
-    bottom: 65px;
-    border-radius: 0px 5px 5px 0px;
-    padding: 0px;
-    width: 16px;
-    border: 1px solid #ddd;
-    border-left: 0px;
-    border-color: #444;
-    height: 30px;
-}
-
 
 /***** NEW STAT BLOCKS ****/
 
