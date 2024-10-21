@@ -2796,6 +2796,8 @@ function build_source_book_chapter_import_section(sceneSet) {
 	sectionHtml.find(".ddb-collapsible__header").hide();
 	sectionHtml.css("border", "none");
 	let DDB_EXTRAS = get_ddb_extras();
+	let sceneData = [];
+
 	sceneSet.forEach(async scene => {
 		if (scene.uuid in DDB_EXTRAS) {
 			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid]}
@@ -2803,9 +2805,54 @@ function build_source_book_chapter_import_section(sceneSet) {
 		else if(scene.uuid.replace('dnd/', '') in DDB_EXTRAS){
 			scene = {...scene, ...DDB_EXTRAS[scene.uuid.replace('dnd/', '')]}
 		}
+		sceneData.push(scene);
 		const sceneHtml = await build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 		sectionHtml.find("ul").append(sceneHtml);
 	});
+
+	const import_chapter = $(`<div class='listing-card__callout-button import-button'>Import Chapter</button>`)
+	const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
+	const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
+
+	import_chapter.off('click.importChap').on('click.importChap', function(){
+		for(let i in sceneData){
+			sceneData[i] = {
+				...default_scene_data(),
+				...sceneData[i],
+				id: uuid(),
+				folderPath: folderPath,
+				parentId: parentId
+			}
+		}
+
+		AboveApi.migrateScenes(window.gameId, sceneData)
+			.then(() => {
+				let journalUpdated = false;
+				for(let i in sceneData){
+					if(sceneData[i].notes != undefined){
+						journalUpdated = true;
+						for(let id in sceneData[i].notes){
+							window.JOURNAL.notes[id] = sceneData[i].notes[id];
+						}
+						delete importData.notes;
+						
+					}
+				}
+				if(journalUpdated == true)
+					window.JOURNAL.persist();
+				window.ScenesHandler.scenes = window.ScenesHandler.scenes.concat(sceneData);
+				did_update_scenes();
+				$(`.scene-item[data-scene-id='${sceneData[0].id}'] .dm_scenes_button`).click();
+				$("#sources-import-main-container").remove();
+				expand_all_folders_up_to_id(sceneData[0].id);
+			})
+			.catch(error => {
+				showError(error, "Failed to import scene", importData);
+			});
+	})
+		
+
+	container.find('.ddb-collapsible-filter.j-collapsible__search').append(import_chapter)
 
 	return container;
 }
@@ -3086,7 +3133,7 @@ function build_import_container() {
 
       <div class="static-container">
 
-        <div class="ddb-collapsible-filter j-collapsible__search">
+        <div class="ddb-collapsible-filter j-collapsible__search" style='display: flex;justify-content: space-between;'>
           <div class="ddb-collapsible-filter__box">
             <div class="ddb-collapsible-filter__search-icon"></div>
             <input type="search" class="j-collapsible__search-input ddb-collapsible-filter__input" id="collapsible-search-input" placeholder="Search by Name or Source">
