@@ -2105,16 +2105,14 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 	
 	const languageSelect= $(`<select id='chat-language'></select>`)
 	const ignoredLanguages = ['All'];
-	const pc = find_pc_by_player_id(my_player_id())
-			
-	const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
-	knownLanguages?.push('Telepathy');
-	for(let i in window.ddbConfigJson.languages){
-		if(ignoredLanguages.includes(window.ddbConfigJson.languages[i].name))
+
+	const knownLanguages = get_my_known_languages();
+	for (const language of window.ddbConfigJson.languages) {
+		if (ignoredLanguages.includes(language.name))
 			continue;
-		if(!window.DM && !knownLanguages.includes(window.ddbConfigJson.languages[i].name))
+		if (!window.DM && !knownLanguages.includes(language.name))
 			continue;
-		const option = $(`<option value='${window.ddbConfigJson.languages[i].id}'>${window.ddbConfigJson.languages[i].name}</option>`)
+		const option = $(`<option value='${language.id}'>${language.name}</option>`)
 		languageSelect.append(option);
 	}
 

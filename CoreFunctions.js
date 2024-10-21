@@ -745,6 +745,17 @@ async function rebuild_window_pcs() {
   });
 }
 
+/**
+ * Returns known languages of player's PC
+ * @returns {string[]}
+ */
+function get_my_known_languages() {
+  const pc = find_pc_by_player_id(my_player_id())
+  const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
+  knownLanguages?.push('Telepathy');
+  return knownLanguages;
+}
+
 async function rebuild_window_users() {
   window.playerUsers = await DDBApi.fetchCampaignUserDetails(window.gameId);
   let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
