@@ -13,7 +13,7 @@ class DDBApi {
       return MYCOBALT_TOKEN;
     }
     const url = `https://auth-service.dndbeyond.com/v1/cobalt-token`;
-    const config = { method: 'POST', credentials: 'include', cache: 'no-store' };
+    const config = { method: 'POST', credentials: 'include' };
     console.log("DDBApi is refreshing auth token");
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
@@ -53,8 +53,7 @@ class DDBApi {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
-      cache: 'no-store'
+      }
     }
     const request = await fetch(url, config).then(DDBApi.lookForErrors)
     return await request.json();
@@ -62,7 +61,7 @@ class DDBApi {
 
   static async fetchJsonWithCredentials(url, extraConfig = {}) {
     console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, {...extraConfig, credentials: 'include', cache: 'no-store'}).then(DDBApi.lookForErrors);
+    const request = await fetch(url, {...extraConfig, credentials: 'include'}).then(DDBApi.lookForErrors);
     console.debug("DDBApi.fetchJsonWithCredentials request", request);
     const response = await request.json();
     console.debug("DDBApi.fetchJsonWithCredentials response", response);
@@ -86,8 +85,7 @@ class DDBApi {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
-      cache: 'no-store'
+      }
     }
     // Explicitly not calling `lookForErrors` here because we don't actually care if this succeeds.
     // We're just trying to clean up anything that we can
