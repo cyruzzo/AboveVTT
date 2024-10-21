@@ -988,6 +988,10 @@ div.top_menu.visible,
     text-overflow: ellipsis;
 }
 
+#splash {
+    background: #f8f2d4 url(https://www.dndbeyond.com/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png);
+}
+
 div#scene_selector,
 #text_controller_inside,
 #combat_tracker_inside,
