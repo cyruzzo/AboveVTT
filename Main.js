@@ -4018,7 +4018,7 @@ function popoutGamelogCleanup(){
 		    height: 100% !important;
 		}
 		.body-rpgcampaign select#chat-language {
-	    bottom:1px;
+	    bottom:0px;
 	    right: 6px;
 		}
 	</style>`);
