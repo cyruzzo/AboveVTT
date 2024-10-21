@@ -1687,11 +1687,8 @@ class JournalManager{
             	languageText = languageText.replace(/<\/?p>/g, '');   	
 
 
-            	if (!window.DM && (language) != undefined) {
-					const pc = find_pc_by_player_id(my_player_id())
-					const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.toLowerCase().trim().split(/\s*,\s*/gi) ?? [];
-					knownLanguages.push('telepathy');
-
+            	if (!window.DM && language != undefined) {
+					const knownLanguages = get_my_known_languages().map(language => language.toLowerCase())
 					if (!knownLanguages.includes(language.toLowerCase())) {
 						const container = $("<div>").html(languageText);
 						const elements = container.find("*").add(container);

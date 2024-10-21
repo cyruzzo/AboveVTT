@@ -1624,11 +1624,9 @@ class MessageBroker {
 
 		// hide message if PC doesn't speak this language
 		if (!window.DM && data.language != undefined) {
-			const pc = find_pc_by_player_id(my_player_id())
-			const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
-			knownLanguages.push('Telepathy');
-
-			if (!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name)) {
+			const knownLanguages = get_my_known_languages()
+			const messageLanguage = window.ddbConfigJson.languages.find(d => d.id == data.language)?.name;
+			if (!knownLanguages.includes(messageLanguage)) {
 				const container = $("<div>").html(data.text);
 				const elements = container.find("*").add(container);
 				const textNodes = elements.contents().not(elements);
