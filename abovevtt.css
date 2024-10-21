@@ -5254,7 +5254,9 @@ span.exhaustion-pip.last{
     opacity: 0;
     color: #fff;
 }
-
+.body-rpgcampaign .chat-text-wrapper.sidebar-hover-text:before  {
+    bottom:35px;
+}
 .chat-text-wrapper.sidebar-hover-text:hover:before {
     transition: opacity 500ms linear 500ms;
     opacity: 1;
