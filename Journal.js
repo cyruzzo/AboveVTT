@@ -81,6 +81,10 @@ class JournalManager{
 		  if(is_abovevtt_page()){
 		  	this.build_journal();
 		  }
+		    if(window.DM && !is_gamelog_popout()){
+			  	// also sync the journal
+			    window.JOURNAL?.sync();
+			}
 		});
 	}
 
@@ -1115,10 +1119,19 @@ class JournalManager{
 		btn_popout.click(function(){	
 			let uiId = $(this).siblings(".note").attr("id");
 			let journal_text = $(`#${uiId}.note .note-text`)
-			popoutWindow(self.notes[id].title, note, journal_text.width(), journal_text.height());
-			removeFromPopoutWindow(self.notes[id].title, ".visibility-container");
-			removeFromPopoutWindow(self.notes[id].title, ".ui-resizable-handle");
-			$(window.childWindows[self.notes[id].title].document).find(".note").attr("style", "overflow:visible; max-height: none !important; height: auto; min-height: 100%;");
+			let title = self.notes[id].title.trim();
+			popoutWindow(title, note, journal_text.width(), journal_text.height());
+			removeFromPopoutWindow(title, ".visibility-container");
+			removeFromPopoutWindow(title, ".ui-resizable-handle");
+			$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
+				body div.note[id^="ui-id"]{
+					height: 100% !important;
+				    max-height: 100% !important;
+				    overflow: auto !important;
+				}
+			</stlye>`);
+			
+			
 			$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
 		});
 		note.off('click').on('click', '.int_source_link', function(event){
@@ -1670,7 +1683,30 @@ class JournalManager{
                 }
             }
 
+            input = input.replace(/\[language=(.*?)\](.*?)\[\/language\]/g, function(m, language, languageText){
+            	languageText = languageText.replace(/<\/?p>/g, '');   	
 
+
+            	if (!window.DM && (language) != undefined) {
+					const pc = find_pc_by_player_id(my_player_id())
+					const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
+					knownLanguages.push('Telepathy');
+
+					if (!knownLanguages.includes(language)) {
+						const container = $("<div>").html(languageText);
+						const elements = container.find("*").add(container);
+						const textNodes = elements.contents().not(elements);
+						textNodes.each(function () {
+							let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+							$(document.createTextNode(newText)).insertBefore(this);
+							$(this).remove();
+						});
+						languageText = container.html();
+					}
+				}
+
+                return `${languageText}`
+            })
             input = input.replace(/\[note\](.*?)\[\/note\]/g, function(m){
             	let note = m.replace(/<\/?p>/g, '').replace(/\s?\[note\]\s?|\s?\[\/note\]\s?/g, '').replace('[/note]', '');   	
             	const noteId = note.replace(/\s/g, '-').split(';')[0];

@@ -2,27 +2,32 @@
 
 $(function() {
   if (is_campaign_page()) {
+    window.gameIndexedDb = undefined;
+    if(window.DM)
+      window.globalIndexedDB = undefined;
+   
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
       .then(harvest_campaign_secret)  // find our join link
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
-      .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages
-      .then(async () => {
-        if (is_gamelog_popout()) {
-          window.MB = new MessageBroker();
-          inject_chat_buttons();
-          window.JOURNAL=new JournalManager(window.gameid);
-          window.ddbConfigJson = await DDBApi.fetchConfigJson();
-          const queryString = window.location.search;
-          const urlParams = new URLSearchParams(queryString);
-          window.PLAYER_ID = urlParams.get('id');
-          window.DM = window.PLAYER_ID == 'false';
-          window.PLAYER_NAME = urlParams.get('player_name');
-        } else {
-          inject_instructions();
-          inject_dm_join_button();
-          inject_player_join_buttons();
-        }
+      .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
+      .then(() => {
+         openCampaignDB(async function() {
+          if (is_gamelog_popout()) {
+            window.MB = new MessageBroker();
+            window.JOURNAL = new JournalManager(window.gameId);
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            window.PLAYER_ID = urlParams.get('id');
+            window.DM = window.PLAYER_ID == 'false';
+            window.PLAYER_NAME = urlParams.get('player_name');
+            inject_chat_buttons();
+          } else {
+            inject_instructions();
+            inject_dm_join_button();  
+            inject_player_join_buttons();
+          }
+         });
       })
       .catch(error => {
         showError(error, "Failed to set up campaign page");
@@ -30,6 +35,46 @@ $(function() {
   }
 });
 
+
+async function openCampaignDB(startUp = function(){}) {
+  const DBOpenRequest = await indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
+  
+  DBOpenRequest.onsuccess = (e) => {
+    window.gameIndexedDb = DBOpenRequest.result;
+  };
+  DBOpenRequest.onerror = (e) => {
+    console.warn(e);
+  };
+  DBOpenRequest.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if(!db.objectStoreNames?.contains('exploredData')){
+        const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+      }
+      if(!db.objectStoreNames?.contains('journalData')){
+        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+      }
+  };
+   
+  
+  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`);
+  
+  DBOpenRequest2.onsuccess = (e) => {
+    window.globalIndexedDB = DBOpenRequest2.result;
+    startUp()
+  };
+  DBOpenRequest2.onerror = (e) => {
+    console.warn(e);
+  };
+  DBOpenRequest2.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if(!db.objectStoreNames?.contains('customizationData')){
+        const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+      }
+      if(!db.objectStoreNames?.contains('journalData')){
+        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+      }
+  };
+}
 function inject_instructions() {
   if (!is_campaign_page()) return;
 

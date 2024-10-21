@@ -38,10 +38,7 @@ function init_sidebar_tabs() {
   } else {
     window.JOURNAL.build_journal()
   }
-  if(window.DM){
-    // also sync the journal
-    window.JOURNAL?.sync();
-  }
+
   $("#settings-panel").remove();
   settingsPanel = new SidebarPanel("settings-panel", false);
   sidebarContent.append(settingsPanel.build());

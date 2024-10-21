@@ -5953,25 +5953,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     padding: 2px 1px 2px 0px;
 }
     
-.body-rpgcharacter-sheet .journal-button{
-    filter: none;
-    border: 1px solid #c5c5c5;
-    background: #f6f6f6;
-    font-weight: normal;
-    position: absolute;
-    right: 43px;
-    top: 6px;
-    width: 30px;
-    height: 27px;   
-    border-radius: 3px;
-}
-.body-rpgcharacter-sheet .journal-button svg {
-    padding: 0px;
-    transform: scale(1.1);
-    left: 4px;
-    top: 3px;
-    position: relative;
-}
+
 #combat_tracker_inside #endplayerturn{
     pointer-events: none;
     background: #ddd;

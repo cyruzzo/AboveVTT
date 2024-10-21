@@ -2105,8 +2105,9 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 	
 	const languageSelect= $(`<select id='chat-language'></select>`)
 	const ignoredLanguages = ['All'];
-
-	const knownLanguages = window.pcs?.find(d=>d.characterId == window.PLAYER_ID)?.proficiencyGroups[3]?.values?.trim().split(/\s*,\s*/gi);
+	const pc = find_pc_by_player_id(my_player_id())
+			
+	const knownLanguages = pc?.proficiencyGroups.find(g => g.group === "Languages")?.values?.trim().split(/\s*,\s*/gi) ?? [];
 	knownLanguages?.push('Telepathy');
 	for(let i in window.ddbConfigJson.languages){
 		if(ignoredLanguages.includes(window.ddbConfigJson.languages[i].name))
@@ -3960,6 +3961,11 @@ function addGamelogPopoutButton(){
 		// 	$(childWindows["Gamelog"].document).find("body").append(beholderIndicator);
 		// }, 1000)
 		childWindows["Gamelog"].addEventListener('load', popoutGamelogCleanup)
+		childWindows["Gamelog"].pcs = window.pcs;
+		childWindows["Gamelog"].TOKEN_OBJECTS = window.TOKEN_OBJECTS;
+		childWindows["Gamelog"].ddbConfigJson = window.ddbConfigJson
+		childWindows["Gamelog"].gameId = window.gameId;
+
 	});
 	$(`.glc-game-log>[class*='Container-Flex']>[class*='Title']`).append(gamelog_popout);
 }
@@ -4011,6 +4017,10 @@ function popoutGamelogCleanup(){
 		    top: 0 !important;
 		    height: 100% !important;
 		}
+		.body-rpgcampaign select#chat-language {
+	    bottom:1px;
+	    right: 6px;
+		}
 	</style>`);
 	$(childWindows["Gamelog"].document).find(".gamelog-button, button[class*='gamelog-button']").click();
 	removeFromPopoutWindow("Gamelog", ".dice-roller");
@@ -4025,6 +4035,11 @@ function popoutGamelogCleanup(){
 	removeFromPopoutWindow("Gamelog", "iframe");
 	$(childWindows["Gamelog"].document).find("body").append(gamelogMessageBroker);
 	$(childWindows["Gamelog"].document).find(".glc-game-log").append($(".chat-text-wrapper").clone(true, true));
+	$(childWindows["Gamelog"].document).find(".glc-game-log").append($("#chat-language").clone(true, true));
+
+	$(childWindows["Gamelog"].document).find("#chat-language").off('change.value').on('change.value', function(){
+		$("#chat-language").val($(this).val());
+	})
 	setTimeout(function(){removeFromPopoutWindow("Gamelog", "body>.sidebar-panel-loading-indicator")}, 200);
 }
 function updatePopoutWindow(name, cloneSelector){

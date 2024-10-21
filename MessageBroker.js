@@ -1630,7 +1630,7 @@ class MessageBroker {
 
 			if (!knownLanguages.includes(window.ddbConfigJson.languages.find(d => d.id == data.language).name)) {
 				const container = $("<div>").html(data.text);
-				const elements = container.find("*");
+				const elements = container.find("*").add(container);
 				const textNodes = elements.contents().not(elements);
 				textNodes.each(function () {
 					let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));

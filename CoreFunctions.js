@@ -130,8 +130,8 @@ function monitor_console_logs() {
     });
   }
 }
-function openDB() {
-  const DBOpenRequest = indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
+async function openDB() {
+  const DBOpenRequest = await indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
   
   DBOpenRequest.onsuccess = (e) => {
     window.gameIndexedDb = DBOpenRequest.result;
@@ -150,7 +150,7 @@ function openDB() {
   };
    
   
-  const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`);
+  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`);
   
   DBOpenRequest2.onsuccess = (e) => {
     window.globalIndexedDB = DBOpenRequest2.result;
@@ -640,6 +640,9 @@ function generic_pc_object(isDM) {
       {name: "int", save: 0, score: 10, label: "Intelligence", modifier: 0},
       {name: "wis", save: 0, score: 10, label: "Wisdom", modifier: 0},
       {name: "cha", save: 0, score: 10, label: "Charisma", modifier: 0}
+    ],
+    proficiencyGroups: [
+      {group: 'Languages', values: ''}
     ]
   };
   if (isDM) {
