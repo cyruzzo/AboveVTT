@@ -10598,10 +10598,13 @@ div#playlistFields {
     border-image: linear-gradient(to top, transparent 0% 25%, var(--border-color, #0008) 25% 75%, transparent 75%) 1;
     border-width: 0px 0px 0px 1px;
     border-style: solid; 
+    margin-right: 3px;
+    font-size:20px;
 }
 
 #chat-language option {
     background: var(--theme-background-solid, #fff);
+    font-size:12px;
 }
 
 /***** NEW STAT BLOCKS ****/
