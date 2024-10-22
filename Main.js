@@ -4015,7 +4015,7 @@ function popoutGamelogCleanup(){
 		}
 		.body-rpgcampaign select#chat-language {
 	    bottom:0px;
-	    right: 6px;
+	    right: 20px;
 		}
 	</style>`);
 	$(childWindows["Gamelog"].document).find(".gamelog-button, button[class*='gamelog-button']").click();
