@@ -3639,14 +3639,14 @@ function is_player_sheet_open() {
  */
 function show_player_sheet() {
 	$("#character-tools-target").css({
-		"visibility": "visible",
+		"display": "",
 	});
 	$(".ct-character-sheet__inner").css({
-		"visibility": "visible",
+		"display": "",
 		"z-index": 110
 	});
 	$(".site-bar").css({
-		"visibility": "visible",
+		"display": "",
 		"z-index": 110
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
@@ -3667,16 +3667,16 @@ function show_player_sheet() {
  */
 function hide_player_sheet() {
 	$("#character-tools-target").css({
-		"visibility": "hidden",
+		"display": "none",
 	});
 	$(".ct-character-sheet__inner").css({
-		"visibility": "hidden",
+		"display": "none",
 		"z-index": -1
 	});
 	if ($(".site-bar #lock_display").length == 0) {
 		// don't hide it if the DM is watching
 		$(".site-bar").css({
-			"visibility": "hidden",
+			"display": "none",
 			"z-index": -1
 		});
 	}
