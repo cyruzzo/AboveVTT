@@ -757,7 +757,7 @@ function get_my_known_languages() {
 }
 
 async function rebuild_window_users() {
-  window.playerUsers = await DDBApi.fetchCampaignUserDetails(window.gameId);
+  window.playerUsers = await DDBApi.fetchCampaignCharacters(window.gameId);
   let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
   window.myUser = playerUser ? playerUser : 'THE_DM'; 
 }
