@@ -199,6 +199,8 @@ class DDBApi {
 
   static async fetchCampaignCharacters(campaignId) {
     // This is what the campaign page calls to fetch characters
+    if(window.playerUsers != undefined)
+      return window.playerUsers
     const url = `https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${campaignId}`;
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
@@ -209,10 +211,7 @@ class DDBApi {
     return await DDBApi.fetchCharacterDetails(characterIds);
   }
 
-  static async fetchCampaignUserDetails(campaignId = window.gameId){
-    let request = await DDBApi.fetchJsonWithToken(`https://www.dndbeyond.com/api/campaign/stt/active-short-characters/${campaignId}`);
-    return request.data;
-  }
+
 
   static async fetchCharacterDetails(characterIds) {
     if (!Array.isArray(characterIds) || characterIds.length === 0) {
@@ -230,6 +229,8 @@ class DDBApi {
   }
 
   static async fetchConfigJson() {
+    if(window.ddbConfigJson != undefined)
+      return window.ddbConfigJson
     const url = "https://www.dndbeyond.com/api/config/json";
     return await DDBApi.fetchJsonWithToken(url);
   }
@@ -243,10 +244,15 @@ class DDBApi {
 
   static async fetchCampaignCharacterIds(campaignId) {
     let characterIds = [];
+    if(window.playerUsers){
+      characterIds = window.playerUsers.map(c => c.id);
+      return characterIds;
+    }
+
     try {
       // This is what the campaign page calls
-      const activeCharacters = await DDBApi.fetchActiveCharacters(campaignId);
-      characterIds = activeCharacters.map(c => c.id);
+      window.playerUsers = await DDBApi.fetchActiveCharacters(campaignId);
+      characterIds = window.playerUsers.map(c => c.id);
     } catch (error) {
       console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
     }
