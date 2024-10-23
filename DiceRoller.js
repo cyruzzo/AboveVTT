@@ -1,6 +1,7 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
 const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/g; 
 const validExpressionRegex = /^[dkhlro<=>\s\d+\-\(\)]*$/g; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/; // matches only the slash command. EG: `/r 1d20` would only match `/r`
@@ -147,6 +148,9 @@ class DiceRoll {
 
         // find all dice expressions in the expression. converts "1d20+1d4" to ["1d20", "1d4"]
         let separateDiceExpressions = parsedExpression.match(allDiceRegex)
+        if(window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true){
+            separateDiceExpressions = parsedExpression.match(rpgDiceRegex);
+        }
         if (!separateDiceExpressions) {
             console.warn("Not parsing expression because there are no valid dice expressions within it", expression);
             $('#chat-text:focus').addClass("chat-error-shake");
