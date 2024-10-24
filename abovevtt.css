@@ -7116,11 +7116,12 @@ button span.onedrive-btn-status{
 }
 
 
-.invalidExpression:before{
+.chat-text-wrapper.sidebar-hover-text.invalidExpression:before{
     content: attr(data-content);
     display: block;
     position: relative;
     top: 0;
+    opacity: 1;
 }
 
 #conditions-flyout li{
@@ -10695,6 +10696,13 @@ div#playlistFields {
 }
 .glc-game-log .stat-block .stats>table{
     margin:0px;
+}
+.glc-game-log .stat-block{
+    color: var(--theme-contrast);
+}
+.ct-sidebar .glc-game-log .stat-block .stats table tbody button.avtt-roll-button,
+.ct-sidebar .glc-game-log .stat-block .stats table tbody tr:hover button.avtt-roll-button{
+    background-color: #fff;
 }
 .stat-block .stats+p {
     margin-top: 10px
