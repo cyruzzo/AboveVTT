@@ -505,7 +505,7 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('[class*="styles_spellName"]').text();
       }
       else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ct-spells-spell__label, [class*="styles_spellName"]').text();
+        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('[class*="styles_spellName"]').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
         rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
