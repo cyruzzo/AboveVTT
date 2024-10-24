@@ -777,9 +777,6 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).toggleClass('disadvantageHover', false)
       })
       spells.off('click.multiroll').on('click.multiroll', function(e) {
-        e.stopPropagation();
-        $(this).closest('.ct-content-group').find(`.ct-slot-manager [aria-checked='false']`).first().click();
-
         let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);  
         let spellSave = $(this).parent().find(`.ct-spells-spell__save`);   
         let spellSaveText;
