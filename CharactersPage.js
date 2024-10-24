@@ -505,16 +505,16 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-attack--spell`).find('[class*="styles_spellName"]').text();
       }
       else if($(rollButton).parents(`.ct-spells-spell`).length > 0){
-        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ct-spells-spell__label').text();
+        rollTitle = $(rollButton).closest(`.ct-spells-spell`).find('.ct-spells-spell__label, [class*="styles_spellName"]').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-weapon`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-weapon`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-attack--item`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-attack--item`).find('.ddbc-item-name, [class*="styles_itemName"]').text();
       }
       else if($(rollButton).parents(`.ddbc-combat-action-attack-general`).length > 0){
-        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name').text();
+        rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
       }
     }
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
