@@ -10700,7 +10700,7 @@ div#playlistFields {
 .glc-game-log .stat-block{
     color: var(--theme-contrast);
 }
-.ct-sidebar .glc-game-log .stat-block .stats table tbody button.avtt-roll-button,
+.ct-sidebar .glc-game-log .stat-block .stats table tbody tr button.avtt-roll-button,
 .ct-sidebar .glc-game-log .stat-block .stats table tbody tr:hover button.avtt-roll-button{
     background-color: #fff;
 }
