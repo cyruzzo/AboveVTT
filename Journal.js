@@ -1146,7 +1146,7 @@ class JournalManager{
 			if($(self).hasClass('note-tooltip')){
 					let noteId = $(self).attr('data-id');
 					if(noteId.replace(/[-+*&<>]/gi, '') == $(self).text().replace(/[-+*&<>\s]/gi, '')){
-						noteId = Object.values(window.JOURNAL.notes).filter(d=> d.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes($(self).text()?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]?.id
+						noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes($(self).text()?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
 					}
 					
 				$(self).off('click.openNote').on('click.openNote', function(event){
