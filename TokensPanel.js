@@ -2492,15 +2492,8 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     }
     let revealVisionInput = build_dropdown_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
-        console.log(`${name} setting is now ${newValue}`);
-        tokens.forEach(token => {
-            if(newValue == 'true')
-                newValue = true;
-            else if(newValue == 'false')
-                newValue = false;
-            token.options[name] = newValue;
-            token.place_sync_persist();
-        });
+        customization.tokenOptions[name] = newValue;
+        persist_token_customization(customization); 
     });
 
 
