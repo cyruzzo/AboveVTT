@@ -4428,7 +4428,9 @@ div#initialPosition_row input[type=number] {
     background-color: var(--theme-table-row-bg-hover,#e3f4eb);
     color: var(--theme-table-row-fg-hover,#222)
 }
-
+.note-text a{
+    cursor:pointer;
+}
 .text--quote-box ~ .block-send-to-game-log{
     right:25px;
     top:-8px
