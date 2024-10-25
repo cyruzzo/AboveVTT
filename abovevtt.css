@@ -4405,6 +4405,18 @@ div#initialPosition_row input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+/*do our own css of mobile character sheets due to disabling ddb event that changes classes*/
+.ct-character-sheet-mobile__header{
+    position: sticky !important;
+    top: -73px !important;
+}
+.ct-character-sheet-mobile{
+    padding-top:0px !important;
+}
+.ct-combat-mobile{
+    position: sticky !important;
+    top: 0px !important;
+}
 
 div#initialPosition_row input[type=number] {
   -moz-appearance: textfield;
