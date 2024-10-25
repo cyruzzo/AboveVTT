@@ -198,7 +198,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 	let pageX = Math.round(centerX * window.ZOOM - zoomCenterX) + window.VTTMargin;
 	let pageY = Math.round(centerY * window.ZOOM - zoomCenterY) + window.VTTMargin;
 
-	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0)
+	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 && window.DM)
 		$(window).off('scroll.projectorMode')
 	
 
@@ -226,7 +226,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 
 
 	$(".peerCursorPosition").css("transform", "scale(" + 1/window.ZOOM + ")");
-	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0)
+	if($('#projector_zoom_lock.enabled > [class*="is-active"]').length>0 && window.DM)
 		debounce_scroll_event()
 	
 	

@@ -12,7 +12,6 @@ $(function() {
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
     $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
-    $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
     startup_step("Gathering basic campaign info");
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
@@ -441,6 +440,7 @@ async function start_above_vtt_for_dm() {
   window.MB.sendMessage("custom/myVTT/DMAvatar", {
     avatar: dmAvatarUrl
   })
+  $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
   remove_loading_overlay();
 }
 
@@ -478,6 +478,12 @@ async function start_above_vtt_for_players() {
       $("#youtube_controls_button").css('visibility', 'hidden');
     }
   });
+
+  /*prevents repainting due to ddb adjusting player sheet classes and throttling it*/
+  document.addEventListener('scroll', function(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+  }, true);
 
   startup_step("Fetching scene from AboveVTT server");
   const currentSceneData = await AboveApi.getCurrentScene();
