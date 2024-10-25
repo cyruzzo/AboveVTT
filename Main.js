@@ -2667,7 +2667,11 @@ function init_ui() {
 	// Function separated so it can be dis/enabled
 	function mousemove(m) {
 		if (curDown) {
-			window.scrollBy(curXPos - m.pageX, curYPos - m.pageY)
+			let scrollOptions = {
+				left: window.scrollX + curXPos - m.pageX,
+				top: window.scrollY + curYPos - m.pageY
+			}
+			requestAnimationFrame(function(){window.scrollTo(scrollOptions)});
 		}
 	}
 
