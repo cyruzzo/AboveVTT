@@ -1287,7 +1287,7 @@ function observe_character_sheet_changes(documentToObserve) {
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
               inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:first-of-type'));
             }else{
-              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__inner [class*="styles_content"]>div:first-of-type'));
+              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__inner [class*="styles_pane"]>[class*="styles_content"]>div:first-of-type'));
             }
             
           }
