@@ -534,7 +534,7 @@ function openCombatTrackerSettings(){
 		handle_basic_form_toggle_click(e)
 	});
 	let tieBreakerRow = form_row(`tie_breaker`, `Add Tie Breaker to Initiative Rolls`, tieBreakerToggle)
-	
+
 	if(window.DM){
 		form.append(tieBreakerRow);
 	}
@@ -550,6 +550,13 @@ function openCombatTrackerSettings(){
 	});
 	let autoRollInitAtTopRow = form_row(`auto_init`, `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, autoRollInitAtTopToggle)
 	form.append(autoRollInitAtTopRow);
+
+	let removeInitToggle = form_toggle('remove_init', `When enabled instead of using a tokens saved initiative when removed and added back to combat it will be rerolled.`, combatSettingData['remove_init'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let removeInitRow = form_row(`remove_init`, `Disable Init Save on Clear/Remove`, removeInitToggle)
+	if(window.DM)
+		form.append(removeInitRow);
 
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
