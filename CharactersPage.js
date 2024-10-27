@@ -695,7 +695,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     }
 
-    if(is_abovevtt_page()){
+    if(is_abovevtt_page() || window.self != window.top){
       const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
       if (icons.length > 0) {
         icons.wrap(function() {
