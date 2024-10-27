@@ -5945,7 +5945,9 @@ div#selectedTokensBorderRotationGrabberConnector,
 .popout-button {
     top: 2px;
 }
-
+.ct-sidebar__inner .glc-game-log .abovevtt-sidebar-injected *{
+    color: rgb(92, 112, 128);
+}
 .glc-game-log .popout-button{
     position: relative;
     display: inline; 

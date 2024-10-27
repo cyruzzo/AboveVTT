@@ -1286,6 +1286,7 @@ function inject_sidebar_send_to_gamelog_button(sidebarPaneContent) {
     let sidebar = sidebarPaneContent.closest(".ct-sidebar__portal");
     let toInject = $(`<div style='width: 100%;'></div>`);
     toInject.attr("class", sidebarPaneContent.attr("class")); // set the class on our new element
+    toInject.toggleClass('abovevtt-sidebar-injected', true);
     // required
     toInject.append(sidebar.find(".ct-sidebar__header").clone());
 
