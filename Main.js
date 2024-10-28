@@ -2084,39 +2084,24 @@ function monitor_character_sidebar_changes() {
  * @returns
  */
 function inject_chat_buttons() {
-	if ($(".glc-game-log").find("#chat-text").length > 0) {
+	const gameLog = $(".glc-game-log");
+	if (gameLog.find("#chat-text").length > 0) {
 		// make sure we only ever inject these once. This gets called a lot on the character sheet which is intentional, but just in case we accidentally call it too many times, let's log it, and return
 		return;
 	}
-	// AGGIUNGI CHAT
-	// the text has to be up against the left for it to style correctly
-	$(".glc-game-log").append($(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;
-'/r 1d20'&#xa;
-'/roll 1d4 punch:damage'&#xa;
-'/hit 2d20kh1+2 longsword ADV'&#xa;
-'/dmg 1d8-2 longsword'&#xa;
-'/save 2d20kl1 DEX DISADV'&#xa;
-'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;
-Advantage: 2d20kh1 (keep highest)&#xa;
-Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
-'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`));
-	
-	const languageSelect= $(`<select id='chat-language'></select>`)
-	const ignoredLanguages = ['All'];
 
-	const knownLanguages = get_my_known_languages();
-	for (const language of window.ddbConfigJson.languages) {
-		if (ignoredLanguages.includes(language.name))
-			continue;
-		if (!window.DM && !knownLanguages.includes(language.name))
-			continue;
-		const option = $(`<option value='${language.id}'>${language.name}</option>`)
-		languageSelect.append(option);
-	}
-
-	$(".glc-game-log").append(languageSelect);
-
-	$(".glc-game-log").append($(`
+	const chatTextWrapper = $(`<div class='chat-text-wrapper sidebar-hover-text' data-hover="Dice Rolling Format: /cmd diceNotation action  &#xa;
+		'/r 1d20'&#xa;
+		'/roll 1d4 punch:bludgeoning damage'&#xa;
+		'/hit 2d20kh1+2 longsword ADV'&#xa;
+		'/dmg 1d8-2 longsword:slashing'&#xa;
+		'/save 2d20kl1 DEX DISADV'&#xa;
+		'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;
+		Advantage: 2d20kh1 (keep highest)&#xa;
+		Disadvantage: 2d20kl1 (keep lowest)&#xa;
+		'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`
+	);
+  const diceRoller = $(`
 		<div class="dice-roller">
 			<div>
 				<img title="d4" alt="d4" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d4.svg"}"/>
@@ -2140,7 +2125,21 @@ Disadvantage: 2d20kl1 (keep lowest)&#xa;&#xa;
 				<img title="d20" alt="d20" height="40px" src="${window.EXTENSION_PATH + "assets/dice/d20.svg"}"/>
 			</div>
 		</div>
-	`));
+	`)	
+	const languageSelect= $(`<select id='chat-language'></select>`)
+	const ignoredLanguages = ['All'];
+
+	const knownLanguages = get_my_known_languages();
+	for (const language of window.ddbConfigJson.languages) {
+		if (ignoredLanguages.includes(language.name))
+			continue;
+		if (!window.DM && !knownLanguages.includes(language.name))
+			continue;
+		const option = $(`<option value='${language.id}'>${language.name}</option>`)
+		languageSelect.append(option);
+	}
+
+	gameLog.append(chatTextWrapper, languageSelect, diceRoller);
 
 	$(".dice-roller > div img").on("click", function(e) {
 		if ($(".dice-toolbar__dropdown").length > 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {

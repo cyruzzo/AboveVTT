@@ -3559,8 +3559,7 @@ div#selectedTokensBorder {
 }
 
 .abovevtt-roll-container .above-vtt-roll-whisper {
-    position: absolute;
-    top: 28px;
+    position: relative;
     left: 0px;
     width: 220px;
     text-wrap: nowrap;
@@ -3569,6 +3568,7 @@ div#selectedTokensBorder {
     color: #716f6f;
     font-size: 10px;
     font-weight: bold;
+    line-height: 1;
 }
 div.token-image {
     width: 100%;
