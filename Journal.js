@@ -653,8 +653,11 @@ class JournalManager{
 			
 			for(let source in window.ddbConfigJson.sources){
 				const currentSource = window.ddbConfigJson.sources[source]
+				if(currentSource.sourceURL == '')
+					continue;
 				const sourcetitle = currentSource.description;
 				const sourceValue = currentSource.sourceURL.replaceAll(/sources\//gi, '');
+
 				chapterImport.append($(`<option value='${sourceValue}'>${sourcetitle}</option>`));
 			}
 			
