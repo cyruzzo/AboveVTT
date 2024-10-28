@@ -691,26 +691,28 @@ class JournalManager{
 				}
 				else{
 					self.chapters.push({
-						title: window.ddbConfigJson.sources[source].title,
+						title: window.ddbConfigJson.sources.find(d=> d.sourceURL.includes(source))?.description,
 						collapsed: false,
 						notes: [],
-					});
-					source = source.sourceURL.replaceAll(/sources\//gi, '');
-					window.ScenesHandler.build_chapters(source, function(){
-						for(let chapter in window.ScenesHandler.sources[source].chapters){
-							let new_noteid=uuid();
-							let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
-							self.notes[new_noteid]={
-								title: new_note_title,
-								text: "",
-								player: false,
-								plain: "",
-								ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
-							};
-							self.chapters[self.chapters.length-1].notes.push(new_noteid);
-						}
-						self.persist();
-						self.build_journal();
+					});	
+
+					window.ScenesHandler.build_adventures(function() {
+						window.ScenesHandler.build_chapters(source, function(){
+							for(let chapter in window.ScenesHandler.sources[source].chapters){
+								let new_noteid=uuid();
+								let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+								self.notes[new_noteid]={
+									title: new_note_title,
+									text: "",
+									player: false,
+									plain: "",
+									ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+								};
+								self.chapters[self.chapters.length-1].notes.push(new_noteid);
+							}
+							self.persist();
+							self.build_journal();
+						});
 					});
 				}
 			})
