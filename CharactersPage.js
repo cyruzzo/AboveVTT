@@ -444,6 +444,7 @@ function getRollData(rollButton){
     let expression = '';
     let rollType = 'custom';
     let rollTitle = 'AboveVTT';
+    let damageType = undefined;
     if($(rollButton).find('.ddbc-damage__value').length>0){
       expression = $(rollButton).find('.ddbc-damage__value').text().replace(/\s/g, '');
     }
@@ -462,7 +463,9 @@ function getRollData(rollButton){
       rollType = $(rollButton).attr('data-rolltype');;
     }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
-      expression = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command')).expression;
+      let slashCommand = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command'))
+      expression = slashCommand.expression;
+      damageType = slashCommand.damageType;
       let title = $(rollButton).attr('title').split(':');
       if(title != undefined && title[0] != undefined){
         rollTitle = title[0];
@@ -520,7 +523,7 @@ function getRollData(rollButton){
     const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
 
     const followingText = $(rollButton)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
-    const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined     
+    damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
   
     return {
