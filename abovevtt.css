@@ -3510,7 +3510,7 @@ div#selectedTokensBorder {
     }
   }
 .above-vtt-container-roll-output{
-    position: absolute;
+    position: relative;
     top: 33%;
     left: 0px;
     width: 220px;
@@ -3541,7 +3541,7 @@ div#selectedTokensBorder {
     flex: 1 1 auto;
     min-width: 0px;
     overflow: hidden;
-    top: -13px;
+    top: 0px;
     position: relative;
 }
 .abovevtt-roll-container [class*='Total-Other-Collapsed-Pending-Flex'] {
@@ -5960,6 +5960,26 @@ div#selectedTokensBorderRotationGrabberConnector,
     fill: #000;
     right: 0;
 } 
+.glc-game-log [class*='-Result']>[class*='-Line-Title-'] {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+.glc-game-log [class*='-Result']>[class*='-Line-Title-']{
+    visibility: hidden;
+    font-size:0px;
+}
+.glc-game-log [class*='-Result']>[class*='-Line-Title-'] span{
+    font-size:12px;
+    max-width:100%;
+    overflow:hidden;
+    visibility: visible;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+}
 .journal-button{
     filter: none;
     border: 1px solid #c5c5c5;

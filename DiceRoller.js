@@ -125,7 +125,7 @@ class DiceRoll {
      * @param entityId {string|undefined} the id of the entity associated with this roll. If {entityType} is "character" this should be the id for that character. If {entityType} is "monster" this should be the id for that monster. If {entityType} is "user" this should be the id for that user.
      * @param sendToOverride {string|undefined} if undefined, the roll will go to whatever the gamelog is set to.
      */
-    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined) {
+    constructor(expression, action = undefined, rollType = undefined, name = undefined, avatarUrl = undefined, entityType = undefined, entityId = undefined, sendToOverride = undefined, damageType = undefined) {
 
         let parsedExpression = expression.replaceAll(/\s+/g, "").replaceAll(/^(d\d+)|([+-])(d\d+)/g, '$21$1$3');; // remove all spaces and 1's to d6 -> 1d6, d8 -> 1d8 etc.
 
@@ -173,6 +173,7 @@ class DiceRoll {
         this.action = action;
         this.rollType = rollType;
         this.sendToOverride = sendToOverride;
+        this.damageType = damageType;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
         if (entityType) this.entityType = entityType;
@@ -225,12 +226,14 @@ class DiceRoll {
         let action = modifiedSlashCommand.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
         console.debug("DiceRoll.fromSlashCommand text: ", slashCommandText, ", slashCommand:", slashCommand, ", expression: ", expression, ", action: ", action);
         let rollType = undefined;
+        let damageType = undefined;
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
             [action, rollType] = action.split(":") || [undefined, undefined];
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
         } else if (slashCommand.startsWith("/dmg")) {
+            [action, damageType] = action.split(":") || [action, undefined];
             rollType = "damage";
         } else if (slashCommand.startsWith("/skill")) {
             rollType = "check";
@@ -239,7 +242,7 @@ class DiceRoll {
         } else if (slashCommand.startsWith("/heal")) {
             rollType = "heal";
         }
-        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride);
+        return new DiceRoll(expression, action, rollType, name, avatarUrl, entityType, entityId, sendToOverride, damageType);
     }
 }
 
@@ -378,15 +381,18 @@ class DiceRoller {
                 if(damageType == undefined && this.#pendingDamageType != undefined){
                     damageType = this.#pendingDamageType;
                 }
+                else if(damageType == undefined && diceRoll.damageType != undefined){
+                    damageType = diceRoll.damageType;
+                }
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
                   text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${diceRoll.expression}<br>${roll.output.replace(regExpression, '')}'>
                             <div class="tss-kucurx-Result">
                                 <div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other">
-                                    <span class='aboveDiceOutput'>${rollTitle}: 
-                                        <span class='abovevtt-roll-${rollType.replace(' ', '-')}'>${damageType != undefined ? `${damageType} ` : ''}${rollType}</span>
-                                    </span>
+                                    <span class='aboveDiceOutput'>${rollTitle}</span>
+                                    :
+                                    <span class='abovevtt-roll-${rollType.replace(' ', '-')}'>${damageType != undefined ? `${damageType} ` : ''}${rollType}</span>
                                 </div>
                             </div>
                             <svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg>
@@ -427,6 +433,9 @@ class DiceRoller {
                 if(damageType == undefined && this.#pendingDamageType != undefined){
                     damageType = this.#pendingDamageType;
                     this.#pendingDamageType = undefined;
+                }
+                else if(damageType == undefined && diceRoll.damageType != undefined){
+                    damageType = diceRoll.damageType;
                 }
                 let rollData = {
                     roll: roll,
