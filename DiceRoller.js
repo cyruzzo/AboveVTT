@@ -230,6 +230,9 @@ class DiceRoll {
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
             [action, rollType] = action.split(":") || [undefined, undefined];
+            if(rollType.toLowerCase().includes('damage')){
+                [damageType, rollType] = [rollType.replaceAll(/([\s]+)?damage/gi, ''), 'damage'];
+            }
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
         } else if (slashCommand.startsWith("/dmg")) {

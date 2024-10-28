@@ -1087,6 +1087,7 @@ function observe_character_sheet_changes(documentToObserve) {
           
           let damageTypeText = window.diceRoller.getDamageType(rollButtons[i]);
           let diceRoll;
+
           if(data.expression != undefined){
             if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
                if(e.altKey){
@@ -1109,6 +1110,8 @@ function observe_character_sheet_changes(documentToObserve) {
             else{
               diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
             }
+            if(damageTypeText == undefined && data.damageType != undefined)
+              damageTypeText = data.damageType
             window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText, damageTypeText);
           }
         }   
