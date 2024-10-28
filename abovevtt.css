@@ -6045,6 +6045,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     text-transform: uppercase;
     font-weight: 700;
     color: rgb(92, 112, 128);
+    line-height: 1;
 }
 
 [class*='Line-Title'] .aboveDiceOutput .skill-tooltip{
