@@ -230,8 +230,9 @@ class DiceRoll {
         if (slashCommand.startsWith("/r")) {
             // /r and /roll allow users to set both the action and the rollType by separating them with `:` so try to parse that out
             [action, rollType] = action.split(":") || [undefined, undefined];
-            if(rollType.toLowerCase().includes('damage')){
-                [damageType, rollType] = [rollType.replaceAll(/([\s]+)?damage/gi, ''), 'damage'];
+            const damageRegex = /([\s]+)?damage/gi;
+            if(rollType?.match(damageRegex)){
+                [damageType, rollType] = [rollType.replaceAll(damageRegex, ''), 'damage'];
             }
         } else if (slashCommand.startsWith("/hit")) {
             rollType = "to hit";
@@ -406,7 +407,7 @@ class DiceRoller {
         window.diceRoller.setPendingDamageType(damageTypeText);
       return damageTypeText;
     }
-    
+
     /**
      * Attempts to parse the expression, and roll DDB dice.
      * If dice are rolled, the results will be processed to make sure the expression is properly calculated.
