@@ -3008,7 +3008,7 @@ function build_age_inputs(tokenAges, tokenMaxAges, ageChangeHandler, maxAgeChang
 	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
 
 	let output = $(`
- 		<div class="token-image-modal-footer-select-wrapper">
+ 		<div class="token-image-modal-footer-select-wrapper sidebar-hover-text" data-hover='Sets a countdown timer on the token, useful for temporary summoned creatures. Counts down once per turn.'>
  			<div class="token-image-modal-footer-title">Token Time Limit</div>
  			<select name="data-token-size">
 			 	${maxAge === -1 ? '<option value="multiple" selected="selected" disabled="disabled">Multiple Values</option>' : ""}
@@ -3018,7 +3018,7 @@ function build_age_inputs(tokenAges, tokenMaxAges, ageChangeHandler, maxAgeChang
  				<option value="custom" ${maxAge === 'custom' ? "selected='selected'": ""}>Custom</option>
  			</select>
  		</div>
- 		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
+ 		<div class="token-image-modal-footer-select-wrapper sidebar-hover-text" style="${customStyle}" data-hover='Length of countdown timer'>
  			<div class="token-image-modal-footer-title">Custom Time Limit</div>
  			<input type="number" min="0" step="1"
 			 name="data-token-size-custom" value=${age} style="width: 3rem;">
