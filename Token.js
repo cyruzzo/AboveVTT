@@ -476,7 +476,7 @@ class Token {
 			delete window.all_token_objects[id];
 			if (id in window.JOURNAL.notes) {
 				delete window.JOURNAL.notes[id];
-				localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+				window.JOURNAL.persist();
 			}
 		}
 
@@ -4584,7 +4584,7 @@ function paste_selected_tokens(x, y) {
 			window.JOURNAL.notes[newId] = structuredClone(window.JOURNAL.notes[id]);
 			let copiedNote = window.JOURNAL.notes[newId];
 			copiedNote.title = window.TOKEN_OBJECTS[id].options.name;
-			localStorage.setItem('Journal' + window.gameId, JSON.stringify(window.JOURNAL.notes));
+			window.JOURNAL.persist();
 			window.MB.sendMessage('custom/myVTT/note',{
 				id: newId,
 				note:copiedNote
