@@ -481,8 +481,11 @@ async function start_above_vtt_for_players() {
 
   /*prevents repainting due to ddb adjusting player sheet classes and throttling it*/
   document.addEventListener('scroll', function(e) {
+    if(!$(e.target).is('[class*="-GameLog"]')){
       e.preventDefault();
       e.stopImmediatePropagation();
+    }
+
   }, true);
 
   startup_step("Fetching scene from AboveVTT server");
