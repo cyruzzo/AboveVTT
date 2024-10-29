@@ -2256,6 +2256,9 @@ class MessageBroker {
 			else if(message.eventType?.toLowerCase()?.includes('token')){
 				alertText = `You may have too many tokens on the map to send.\n\nNumber of Tokens: ${Object.keys(window.TOKEN_OBJECTS).length}\n\nCheck console warnings for more message data.`
 			}
+			else if(message.eventType?.toLowerCase()?.includes('ct')){
+				alertText = `You may have too many tokens in the combat tracker.\n\nNumber of Tokens in CT: ${message.data.length-1}\n\nCheck console warnings for more message data.`
+			}
 			else{
 				alertText = 'Check console warnings for more message data.'
 			}
