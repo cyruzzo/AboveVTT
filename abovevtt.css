@@ -1264,7 +1264,9 @@ input {
     border: 1px solid #3d3d3d;
 }
 
-#scene_properties form > button {
+#scene_properties form > button,
+#combat-tracker-settings form > button
+ {
     float: right;
     vertical-align: bottom;
     margin-top: 20px;
@@ -1459,12 +1461,22 @@ div#template_section {
     border-bottom:  1px solid #00000066;
 }
 
-div#scene_properties {
+div#scene_properties,
+div#combat-tracker-settings {
     margin: 0 5px;
 }
 
-div#scene_properties form > div {
+div#scene_properties form > div,
+div#combat-tracker-settings form > div {
     margin: 5px 0;
+}
+
+#combat-tracker-settings form > div {
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    align-items: center;
 }
 
 #importer_toggles {

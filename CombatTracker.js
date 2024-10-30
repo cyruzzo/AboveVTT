@@ -289,6 +289,9 @@ function init_combat_tracker(){
 				if(combatSettingData['scroll_to_next'] == '1'){
 					window.TOKEN_OBJECTS[currentTarget].highlight();
 				}	
+				if(combatSettingData['select_next'] == '1'){
+					$(`#tokens .token[data-id='${currentTarget}']`).click();
+				}
 			}
 
 		}
@@ -326,6 +329,9 @@ function init_combat_tracker(){
 				let combatSettingData = getCombatTrackersettings();
 				if(combatSettingData['scroll_to_next'] == '1'){
 					window.TOKEN_OBJECTS[newTarget].highlight();
+				}
+				if(combatSettingData['select_next'] == '1'){
+					$(`#tokens .token[data-id='${newTarget}']`).click();
 				}
 			}
 
@@ -374,6 +380,9 @@ function init_combat_tracker(){
 				let combatSettingData = getCombatTrackersettings();
 				if(combatSettingData['scroll_to_next'] == '1'){
 					window.TOKEN_OBJECTS[newTarget].highlight();
+				}
+				if(combatSettingData['select_next'] == '1'){
+					$(`#tokens .token[data-id='${newTarget}']`).click();
 				}
 			}
 		}
@@ -458,7 +467,10 @@ function getCombatTrackersettings(){
 	if(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`) == null){
 		combatSettingData = {
 			tie_breaker: 0,
-			scroll_to_next: 0
+			scroll_to_next: 0,
+			select_next: 0,
+			auto_init: 0,
+			remove_init: 0
 		}
 	}else{
 		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
@@ -470,9 +482,9 @@ function openCombatTrackerSettings(){
 
 	function form_row(name, title, inputOverride=null, imageValidation=false) {
 		const row = $(`<div style='width:100%;' id='${name}_row'/>`);
-		const rowLabel = $("<div style='display: inline-block; width:80%'>" + title + "</div>");
+		const rowLabel = $("<div>" + title + "</div>");
 		rowLabel.css("font-weight", "bold");
-		const rowInputWrapper = $("<div style='display:inline-block; width:20%; padding-right:8px' />");
+		const rowInputWrapper = $("<div/>");
 		let rowInput
 		if(!inputOverride){
 			if (imageValidation){
@@ -508,20 +520,18 @@ function openCombatTrackerSettings(){
 	$("#edit_dialog").remove();
 
 
-	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
 	dialog = $(`<div id='edit_dialog'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 
-	scene_properties = $('<div id="scene_properties"/>');
-	dialog.append(scene_properties);
+	ctSettings = $('<div id="combat-tracker-settings"/>');
+	dialog.append(ctSettings);
 
 
+	adjust_create_import_edit_container(dialog, undefined, undefined, 2000, 360);
 
-	adjust_create_import_edit_container(dialog, undefined, undefined, 2000, 300);
-
-	let container = scene_properties;
+	let container = ctSettings;
 
 	container.empty();
 
@@ -545,6 +555,12 @@ function openCombatTrackerSettings(){
 	let scrollToNextRow = form_row(`scroll_to_next`, `Auto Center Token on Next/Prev`, scrollToNextToggle)
 	form.append(scrollToNextRow);
 
+	let autoSelectNextToggle = form_toggle('select_next', 'Select Token on Next/Prev', combatSettingData['select_next'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let autoSelectNextRow = form_row(`select_next`, `Select Token on Next/Prev`, autoSelectNextToggle)
+	form.append(autoSelectNextRow);
+
 	let autoRollInitAtTopToggle = form_toggle('auto_init', `${window.DM ? 'Auto Roll Monster Init at Top of Round' : 'Auto Roll Initiative at Top of Round'}`, combatSettingData['auto_init'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
@@ -554,7 +570,7 @@ function openCombatTrackerSettings(){
 	let removeInitToggle = form_toggle('remove_init', `When enabled instead of using a tokens saved initiative when removed and added back to combat it will be rerolled.`, combatSettingData['remove_init'] == '1', function(e){
 		handle_basic_form_toggle_click(e)
 	});
-	let removeInitRow = form_row(`remove_init`, `Disable Init Save on Clear/Remove`, removeInitToggle)
+	let removeInitRow = form_row(`remove_init`, `Ignore token's saved init on add to combat`, removeInitToggle)
 	if(window.DM)
 		form.append(removeInitRow);
 
@@ -1163,6 +1179,9 @@ function ct_load(data=null){
 						let combatSettingData = getCombatTrackersettings();
 						if(combatSettingData['scroll_to_next'] == '1'){
 							window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
+						}
+						if(combatSettingData['select_next'] == '1'){
+							$(`#tokens .token[data-id='${data[i]['data-target']}']`).click();
 						}
 					}
 					if(window.all_token_objects[data[i]['data-target']].isCurrentPlayer() || window.all_token_objects[data[i]['data-target']].options.player_owned){

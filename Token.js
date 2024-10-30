@@ -2004,7 +2004,7 @@ class Token {
 							let thisSelected = !(parentToken.hasClass('tokenselected'));
 							let count = 0;
 							if (shiftHeld == false) {
-								deselect_all_tokens();
+								deselect_all_tokens(true);
 							}
 							if (thisSelected == true) {
 								parentToken.addClass('tokenselected');
@@ -3046,7 +3046,7 @@ class Token {
 					let thisSelected = !(parentToken.hasClass('tokenselected'));
 					let count = 0;
 					if (shiftHeld == false) {
-						deselect_all_tokens();
+						deselect_all_tokens(true);
 					}
 					if (thisSelected == true) {
 						parentToken.addClass('tokenselected');
@@ -3555,7 +3555,7 @@ function token_menu() {
 		return;
 }
 
-function deselect_all_tokens() {
+function deselect_all_tokens(ignoreVisionUpdate = false) {
 	window.MULTIPLE_TOKEN_SELECTED = false;
 	for (let id in window.TOKEN_OBJECTS) {
 		let curr = window.TOKEN_OBJECTS[id];
@@ -3566,26 +3566,28 @@ function deselect_all_tokens() {
 	}
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
-	let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
+	if(ignoreVisionUpdate == false){
+		let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+		let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
 
- 	if(window.DM && darknessPercent < 40){
- 		darknessPercent = 40;
- 		$('#raycastingCanvas').css('opacity', '0');
- 	}
- 	else if(window.DM){
- 		$('#raycastingCanvas').css('opacity', '');
- 	}
-	$('#VTT').css('--darkness-filter', darknessPercent + "%");
-   	if(window.DM){
-   		$("#light_container [id^='light_']").css('visibility', "visible");
-   		$(`.token`).show();
-		$(`.door-button`).css('visibility', '');
-		$(`.aura-element`).show();
-   	}
-   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
-   		window.SelectedTokenVision = false;
-   	}
+	 	if(window.DM && darknessPercent < 40){
+	 		darknessPercent = 40;
+	 		$('#raycastingCanvas').css('opacity', '0');
+	 	}
+	 	else if(window.DM){
+	 		$('#raycastingCanvas').css('opacity', '');
+	 	}
+		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+	   	if(window.DM){
+	   		$("#light_container [id^='light_']").css('visibility', "visible");
+	   		$(`.token`).show();
+			$(`.door-button`).css('visibility', '');
+			$(`.aura-element`).show();
+	   	}
+	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+	   		window.SelectedTokenVision = false;
+	   	}
+  	}
 }
 
 function token_health_aura(hpPercentage, auraType) {
