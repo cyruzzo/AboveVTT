@@ -874,7 +874,7 @@ async function harvest_game_id() {
   }
 
   if (is_characters_page()) {
-    const campaignSummaryButton = $(".ddbc-campaign-summary");
+    const campaignSummaryButton = $(".ddbc-campaign-summary, [class*='styles_campaignSummary']");
     if (campaignSummaryButton.length > 0) {
       if ($(".ct-campaign-pane__name-link").length === 0) {
         campaignSummaryButton.click(); // campaign sidebar is closed. open it
