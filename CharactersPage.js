@@ -931,6 +931,7 @@ function observe_character_sheet_changes(documentToObserve) {
         let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
          <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
          <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
+         <div style='margin-bottom:5px;'>• Double Damage Total is 2*(dice damage+mod)</div>
          <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
          <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
           </div>`)
