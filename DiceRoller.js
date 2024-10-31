@@ -679,7 +679,7 @@ class DiceRoller {
                 let newExpression = `${diceRoll.expression}+${maxRoll}`;
                 this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
-            else if(critType == 2){
+            else if(critType == 2 || critType == 3){
                 this.roll(new DiceRoll(diceRoll.expression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
         }
@@ -888,10 +888,13 @@ class DiceRoller {
 
                 // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
                 let calculatedTotal = eval(replacedExpression);
+                if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+                    calculatedTotal = calculatedTotal * 2; 
+                }
                 console.log("pendingExpression: ", this.#pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
 
                 // we successfully processed the expression, now let's update the message object
-                r.diceNotationStr = this.#pendingDiceRoll.expression; // this doesn't appear to actually do anything
+                r.diceNotationStr = this.#pendingDiceRoll.expression; 
                 r.diceNotation.constant = this.#pendingDiceRoll.calculatedConstant;
                 r.result.constant = this.#pendingDiceRoll.calculatedConstant;
                 r.result.text = replacedExpression;
@@ -934,6 +937,10 @@ class DiceRoller {
             ddbMessage.avttExpression = this.#pendingDiceRoll.expression;
             ddbMessage.avttExpressionResult = this.#pendingDiceRoll.expressionResult;
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
+        }
+        if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+            ddbMessage.avttExpression = `2(${this.#pendingDiceRoll.expression})`;
+            ddbMessage.avttExpressionResult = `2(${this.#pendingDiceRoll.expressionResult})`;
         }
         ddbMessage.avttSpellSave = this.#pendingSpellSave;
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
