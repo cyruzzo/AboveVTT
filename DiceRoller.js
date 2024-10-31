@@ -484,10 +484,21 @@ class DiceRoller {
                 else if(damageType == undefined && diceRoll.damageType != undefined){
                     damageType = diceRoll.damageType;
                 }
+                let doubleCrit = false;
+                let output = roll.output.replace(regExpression, '');
+                let total = roll.total;
+                let expression = diceRoll.expression;
+                if(this.#critAttackAction != undefined && critType == 3){
+                    doubleCrit = true;
+                    total = total * 2;
+                    const outputSplit = output.split(' = ')
+                    output = `2*[${outputSplit[0]}] = ${parseInt(outputSplit[1])*2}`
+                    expression = `2*[${expression}]`
+                }
                 msgdata = {
                 player: diceRoll.name ? diceRoll.name : window.PLAYER_NAME,
                   img: diceRoll.avatarUrl ?  diceRoll.avatarUrl : window.PLAYER_IMG,
-                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${diceRoll.expression}<br>${roll.output.replace(regExpression, '')}'>
+                  text: `<div class="tss-24rg5g-DiceResultContainer-Flex abovevtt-roll-container ${critClass}" title='${expression}<br>${output}'>
                             <div class="tss-kucurx-Result">
                                 <div class="tss-3-Other-ref tss-1o65fpw-Line-Title-Other">
                                     <span class='aboveDiceOutput'>${rollTitle}</span>
@@ -498,7 +509,7 @@ class DiceRoller {
                             <svg width="1" height="32" class="tss-10y9gcy-Divider"><path fill="currentColor" d="M0 0h1v32H0z"></path></svg>
                             <div class="tss-1jo3bnd-TotalContainer-Flex">
                                 <div class="tss-3-Other-ref tss-3-Collapsed-ref tss-3-Pending-ref tss-jpjmd5-Total-Other-Collapsed-Pending-Flex">
-                                    <span class='aboveDiceTotal'>${roll.total}</span>
+                                    <span class='aboveDiceTotal'>${total}</span>
                                 </div>
                                 ${spellSave != undefined ? `<div class='custom-spell-save-text'><span>${spellSave}</span></div>` : ''}
                             </div>
@@ -508,7 +519,7 @@ class DiceRoller {
                   whisper: (diceRoll.sendToOverride == "DungeonMaster") ? dm_id : ((gamelog_send_to_text() != "Everyone" && diceRoll.sendToOverride != "Everyone") || diceRoll.sendToOverride == "Self") ? window.PLAYER_NAME :  ``,
                   rollType: rollType,
                   rollTitle: rollTitle,
-                  result: roll.total,
+                  result: doubleCrit == true  ? 2*roll.total : roll.total,
                   playerId: window.PLAYER_ID,
                   sendTo: window.sendToTab,
                   entityType: diceRoll.entityType,
