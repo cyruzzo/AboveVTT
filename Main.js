@@ -3840,7 +3840,8 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
 
-	$(".ct-character-header-desktop__group--campaign").css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
+
+	$("[class*='styles_campaignSummary']").closest('[class*="styles_container"]').css({ "position": "relative", "top": "15px", "left": "auto", "right": "-10px", "margin-right": "0px" });
 	let height = `${$.position?.scrollbarWidth() ? 512 - $.position.scrollbarWidth() : 512}px`
 	let searchableHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
   let containerHeight = `${$.position?.scrollbarWidth() ? 563 - $.position.scrollbarWidth() : 563}px`
@@ -3881,7 +3882,7 @@ function reset_character_sheet_css() {
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").removeAttr( 'style' );
 	$(".ct-character-header-desktop__group-tidbits").removeAttr( 'style' );
 
-	$(".ct-character-header-desktop__group--campaign").removeAttr( 'style' );
+	$("[class*='styles_campaignSummary']").closest('[class*="styles_container"]').removeAttr( 'style' );
 	$(".ct-primary-box").removeAttr( 'style' );
 	$(".ddbc-tab-options__content").removeAttr( 'style' );
 
