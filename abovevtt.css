@@ -3499,12 +3499,16 @@ div#selectedTokensBorder {
 .aoe-token-tileable {
     height: 100%;
     width: 100%;
-    opacity: 50%;
+    opacity: var(--opacity);
     background-repeat: repeat;
     background-size: 300px;
     filter: blur(0.5px);
     position: absolute;
     animation: mymove 5s infinite alternate ease-in-out ;
+}
+.reduceMovement .aoe-token-tileable {
+    --opacity:0.5;
+    animation: none !important;
 }
 #token_map_items .underDarkness .aoe-token-tileable{
     background-size: calc(300px / var(--scene-scale));
@@ -3515,10 +3519,10 @@ div#selectedTokensBorder {
 }
 @keyframes mymove {
     from{
-        opacity: 0.3
+        --opacity: 0.2
     }
     to {
-        opacity: 0.7
+        --opacity: 0.5
     }
   }
 .above-vtt-container-roll-output{
