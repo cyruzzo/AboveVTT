@@ -50,6 +50,8 @@ async function export_scene_import_data(){
 			DataFile[currentSceneData.uuid].notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 		}
 		if(window.JOURNAL.notes[tokenID] != undefined){
+			if(DataFile[currentSceneData.uuid].notes == undefined)
+				DataFile[currentSceneData.uuid].notes = {};
 			DataFile[currentSceneData.uuid].notes[tokenID] = window.JOURNAL.notes[tokenID];
 		}
 	}
@@ -125542,6 +125544,7 @@ function get_ddb_extras() {
 		...get_scene_data_toa(),
 		...get_scene_data_tod(),
 		...get_scene_data_veor(),
+		...get_scene_data_hcs()
 	}
 }
 
