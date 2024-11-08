@@ -88,6 +88,7 @@ window.scripts = [
 	{ src: "scenedata/pbtso-scene-data.js" },
 	{ src: "scenedata/loe-scene-data.js" },
 	{ src: "scenedata/veor-scene-data.js" },
+	{ src: "scenedata/hcs-scene-data.js" },
 	{ src: "ScenesHandler.js" },
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
