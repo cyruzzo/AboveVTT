@@ -7892,6 +7892,12 @@ body:not(.body-rpgcampaign) .site-bar{
     opacity: 0 !important;
 }
 
+#tokens .grouprotate .token-image,
+#tokens .grouprotate .base,
+#tokens .grouprotate .hpvisualbar{
+    opacity: 1 !important;
+}
+
 .audio-token .audio-radius{
     position: absolute;
     border-radius: 50%;
