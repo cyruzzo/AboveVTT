@@ -4464,8 +4464,8 @@ async function do_draw_selected_token_bounding_box() {
 						let tokenHeight = window.TOKEN_OBJECTS[id].sizeHeight();
 						let widthAdded = tokenHeight;
 						
-						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/window.CURRENT_SCENE_DATA.scale_factor);
-						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2  + (widthAdded*dir.y/window.CURRENT_SCENE_DATA.scale_factor);
+						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/2);
+						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2 + (widthAdded*dir.y/2);
 					}
 					else{
 						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2;
