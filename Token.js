@@ -3305,10 +3305,12 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 	}
 }
 
-function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false) {
-
-	let mapX = ((pageX - window.VTTMargin) * (1.0 / window.ZOOM));
-	let mapY = ((pageY - window.VTTMargin) * (1.0 / window.ZOOM));
+function convert_point_from_view_to_map(pageX, pageY, forceNoSnap = false, ignoreOffset = false) {
+	// adjust for map offset and zoom
+	const startX = ignoreOffset == false ? window.CURRENT_SCENE_DATA.offsetx : 0;
+	const startY = ignoreOffset == false ? window.CURRENT_SCENE_DATA.offsety : 0;
+	let mapX = ((pageX - window.VTTMargin) * (1.0 / window.ZOOM)) - startX;
+	let mapY = ((pageY - window.VTTMargin) * (1.0 / window.ZOOM)) - startY;
 	if (forceNoSnap === true) {
 		return { x: mapX, y: mapY };
 	}
@@ -4478,11 +4480,14 @@ async function do_draw_selected_token_bounding_box() {
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
 
-						window.TOKEN_OBJECTS[id].options.rotation = angle + parseInt($(`.token[data-id='${id}']`).css('--token-rotation'));
-						$(`.token[data-id='${id}']`).css('--token-rotation', `-${angle}deg`);
-						currentplace = $(`#tokens .token[data-id='${id}'] .token-image`).offset();
-
-						newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true)
+						window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat($(`.token[data-id='${id}']`).css('--token-rotation'));
+						let sceneToken = $(`#tokens .token[data-id='${id}']`)
+						sceneToken.css({
+							'rotate': `-${angle%360}deg`
+						});
+						currentplace = sceneToken.offset();
+						
+						newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
 						window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
 						window.TOKEN_OBJECTS[id].options.top = `${newCoords.y}px`;
 						
