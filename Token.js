@@ -4358,7 +4358,7 @@ async function do_draw_selected_token_bounding_box() {
 			grabber2.css('border-radius', `${Math.ceil(grabberSize / 2)}px`); // make it round
 			grabber2.css('padding', '2px');
 			grabber2.css('cursor', 'move');
-			if(window.CURRENTLY_SELECTED_TOKENS.length > 1)
+			if(window.CURRENTLY_SELECTED_TOKENS.length > 1 || (window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()))
 				$("#tokens").append(grabber2);
 
 			// handle eye grabber dragging
@@ -4427,18 +4427,25 @@ async function do_draw_selected_token_bounding_box() {
 
 
 					$('.tokenselected').wrap('<div class="grouprotate"></div>');
+
+					
+					
 					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
 						$(`#scene_map_container .token[data-id='${id}']`).remove();
+						
+					
+						let sceneToken = $(`div.token[data-id='${id}']`)
+
 
 						let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
 						let tokenImagePosition = $(`div.token[data-id='${id}']>.token-image`).position();
 						let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
 						let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
-						let tokenTop = ($(`div.token[data-id='${id}']`).position().top + tokenImagePosition.top) / (window.ZOOM);
+						let tokenTop = (sceneToken.position().top + tokenImagePosition.top) / (window.ZOOM);
 						let tokenBottom = tokenTop + tokenImageHeight;
-						let tokenLeft = ($(`div.token[data-id='${id}']`).position().left  + tokenImagePosition.left) / (window.ZOOM);
+						let tokenLeft = (sceneToken.position().left  + tokenImagePosition.left) / (window.ZOOM);
 						let tokenRight = tokenLeft + tokenImageWidth;
 						
 						furthest_coord.top  = (furthest_coord.top  == undefined) ? tokenTop : Math.min(furthest_coord.top, tokenTop)
@@ -4448,8 +4455,29 @@ async function do_draw_selected_token_bounding_box() {
 						furthest_coord.bottom  = (furthest_coord.bottom  == undefined) ? tokenBottom : Math.max(furthest_coord.bottom , tokenBottom)
 					}
 
-					centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2;
-					centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2;
+					if(window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
+						let id = window.CURRENTLY_SELECTED_TOKENS[0];
+						let rayAngle = 90;
+						let ray = new Ray({x: (furthest_coord.left + furthest_coord.right)/2, y: (furthest_coord.top + furthest_coord.bottom)/2}, degreeToRadian(parseFloat($(`div.token[data-id='${id}']`).css('--token-rotation')) % 360 - rayAngle));	
+						let dir = ray.dir;
+						let tokenWidth = window.TOKEN_OBJECTS[id].sizeWidth();
+						let tokenHeight = window.TOKEN_OBJECTS[id].sizeHeight();
+						let widthAdded = tokenHeight;
+						
+						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2 + (widthAdded*dir.x/window.CURRENT_SCENE_DATA.scale_factor);
+						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2  + (widthAdded*dir.y/window.CURRENT_SCENE_DATA.scale_factor);
+					}
+					else{
+						centerPointRotateOrigin.x = (furthest_coord.left + furthest_coord.right)/2;
+						centerPointRotateOrigin.y = (furthest_coord.top + furthest_coord.bottom)/2;	
+					}
+						
+						
+
+					
+
+
+				
 					$('.grouprotate').css('transform-origin', `${centerPointRotateOrigin.x}px ${centerPointRotateOrigin.y}px` )
 
 					// the drag has started so remove the bounding boxes, but not the grabber
@@ -4468,6 +4496,10 @@ async function do_draw_selected_token_bounding_box() {
 					};
 
 					angle = rotation_towards_cursor_from_point(centerPointRotateOrigin.x, centerPointRotateOrigin.y, ui.position.left, ui.position.top, event.shiftKey)
+					if(window.CURRENTLY_SELECTED_TOKENS.length == 1 && window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]].isAoe()){
+						let id = window.CURRENTLY_SELECTED_TOKENS[0];
+						angle = angle-parseFloat($(`.token[data-id='${id}']`).css('--token-rotation')); // account for group rotation grabber being at corner
+					}
 					$(`.grouprotate`).css({
 						'rotate': `${angle}deg`		
 					});
@@ -4480,12 +4512,23 @@ async function do_draw_selected_token_bounding_box() {
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
 
-						window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat($(`.token[data-id='${id}']`).css('--token-rotation'));
 						let sceneToken = $(`#tokens .token[data-id='${id}']`)
-						sceneToken.css({
-							'rotate': `-${angle%360}deg`
-						});
-						currentplace = sceneToken.offset();
+
+						window.TOKEN_OBJECTS[id].options.rotation = angle + parseFloat(sceneToken.css('--token-rotation'))
+						
+						
+						if(window.CURRENTLY_SELECTED_TOKENS.length > 1){
+							sceneToken.css({
+								'rotate': `-${angle%360}deg`
+							});
+							currentplace = sceneToken.offset();
+						}
+						else{
+							sceneToken.css({
+								'rotate': `-${(angle+parseFloat(sceneToken.css('--token-rotation')))%360}deg`
+							});
+							currentplace = sceneToken.find('.token-image').offset();
+						}
 						
 						newCoords = convert_point_from_view_to_map(currentplace.left, currentplace.top, true, true)
 						window.TOKEN_OBJECTS[id].options.left = `${newCoords.x}px`;
