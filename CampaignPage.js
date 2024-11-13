@@ -5,7 +5,7 @@ $(function() {
     window.gameIndexedDb = undefined;
     if(window.DM)
       window.globalIndexedDB = undefined;
-   
+    monitor_console_logs();
     harvest_game_id()                 // find our campaign id
       .then(set_game_id)              // set it to window.gameId
       .then(harvest_campaign_secret)  // find our join link
