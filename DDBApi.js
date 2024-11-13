@@ -156,7 +156,12 @@ class DDBApi {
       console.log("DDBApi.deleteAboveVttEncounters delete encounter response:", response.status);
       if(response.status == 401){
         newFailed.push(encounter.id)
-        localStorage.setItem('avttFailedDelete', JSON.stringify(newFailed));
+        try{
+          localStorage.setItem('avttFailedDelete', JSON.stringify(newFailed));
+        }
+        catch(e){
+          console.warn('localStorage avttFailedDelete Failed', e)
+        }
       }    
     }
   }
