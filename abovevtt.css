@@ -4233,6 +4233,9 @@ div.token-image-modal-footer-title {
     font-size: 13px;
     /*width: 100%;*/
 }
+.image-size-wrapper .image-size-title {
+    min-width: 60%;
+}
 h1.token-image-modal-footer-title,
 h2.token-image-modal-footer-title,
 h3.token-image-modal-footer-title,
@@ -6130,6 +6133,7 @@ div#selectedTokensBorderRotationGrabberConnector,
     display: flex;
     align-self: center;
     line-height: 20px;
+    margin-top: 2px !important;
 }
 .context-menu-flyout,
 #tokenOptionsContainer input:not([type="range"]),
@@ -6946,8 +6950,12 @@ button span.onedrive-btn-status{
     object-fit: cover;
     width: 100%;
     height: 100%;
-    object-position: top;
 } 
+.token>.token-image{
+    object-position: var(--offsetX, center) var(--offsetY, top);
+    object-view-box: var(--view-box);
+    opacity: var(--image-opacity);
+}
 
 .base:after{
     content: "";
@@ -7041,12 +7049,12 @@ button span.onedrive-btn-status{
     display:  inline-block !important;
 }
 #aoe_feet_height,
-.image-scale-input-number {
+.image-scale-input-number,
+.image-input-number {
     float: right;
     padding-left: 5px !important;
     width: 48px !important;
     height: 24px !important;
-    margin-top: 4px !important;
     margin-bottom: 2px !important;
 }
 .sp-replacer.sp-light{
@@ -7076,7 +7084,8 @@ button span.onedrive-btn-status{
 .lightRow .sp-replacer.sp-light{
     float:left;
 }
-.image-scale-input-range {
+.image-scale-input-range,
+.image-input-range{
     width: 100%;
 }
 .flyout-from-menu-item,

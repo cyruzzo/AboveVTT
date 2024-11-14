@@ -186,10 +186,24 @@ class TokenCustomization {
         } else if (value === false || value === "false") {
             this.tokenOptions[key] = false;
         } else if (!isNaN(parseFloat(value)) && typeof value === "string") {
-            if (value.includes(".")) {
-                this.tokenOptions[key] = parseFloat(value);
-            } else {
-                this.tokenOptions[key] = parseInt(value);
+            if(key.includes(".")){
+                const keys = key.split('.');
+                if(keys.length == 2){
+                    if(this.tokenOptions[keys[0]] == undefined)
+                        this.tokenOptions[keys[0]] = {};
+                    if (value.includes(".")) {
+                        this.tokenOptions[keys[0]][keys[1]] = parseFloat(value);
+                    } else {
+                        this.tokenOptions[keys[0]][keys[1]] = parseInt(value);
+                    } 
+                }
+            }
+            else{
+                if (value.includes(".")) {
+                    this.tokenOptions[key] = parseFloat(value);
+                } else {
+                    this.tokenOptions[key] = parseInt(value);
+                }
             }
         } else {
             this.tokenOptions[key] = value;
