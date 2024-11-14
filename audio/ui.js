@@ -337,11 +337,11 @@ function init_mixer() {
         const text_calc = $('body>div.track-name:first');
         text_calc.html(`${text}.....`);
         const nameWidth = text_calc.width();
-        
+        const overflowVal = target.is('.track-name') ? 230 : 100;
 
         target.css({
-            "--name-width-overflow": (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0,
-            "--overflow-speed": (100 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
+            "--name-width-overflow": (overflowVal - nameWidth < 0) ? overflowVal - 10 - nameWidth+'px' : 0,
+            "--overflow-speed": (overflowVal - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
         });   
     })
     $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
