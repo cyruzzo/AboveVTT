@@ -2948,14 +2948,19 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 		let tokenOffsetX = tokens.map(t => t.options.offset?.x);
 		let uniqueOffsetX = [...new Set(tokenOffsetX)];
-		let startingOffsetX = uniqueOffsetX.length === 1 ? uniqueOffsetX[0] : 0;
+
+		let startingOffsetX = uniqueOffsetX.length === 1 && uniqueOffsetX[0] != undefined ? uniqueOffsetX[0] : 0;
 		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', -100, 100, 5, function (offsetX, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
-					token.options.offset = {};
+				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
-				$(`.VTTToken[data-id='${token.options.id}']`).css("--offsetX", `${parseInt(token.sizeWidth()) / underdarknessDivisor* offsetX/100}px`)
+				$(`.VTTToken[data-id='${token.options.id}']`).css({
+					"--offsetX": `${parseInt(token.sizeWidth()) / underdarknessDivisor * offsetX/100}px`,
+					"--offsetY": `${parseInt(token.sizeHeight()) / underdarknessDivisor * token.options.offset.y/100}px`
+				})
+
 				if(persist)
 					token.place_sync_persist();
 			});
@@ -2964,14 +2969,18 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 		let tokenOffsetY = tokens.map(t => t.options.offset?.y);
 		let uniqueOffsetY = [...new Set(tokenOffsetY)];
-		let startingOffsetY = uniqueOffsetY.length === 1 ? uniqueOffsetY[0] : 0;
+		let startingOffsetY = uniqueOffsetY.length === 1  && uniqueOffsetY[0] != undefined ? uniqueOffsetY[0] : 0;
+
 		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', -100, 100, 5, function (offsetY, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
-					token.options.offset = {};
+					token.options.offset = {x: 0, y:0};
 				token.options.offset.y = offsetY;
-				$(`.VTTToken[data-id='${token.options.id}']`).css("--offsetY", `${parseInt(token.sizeHeight()) / underdarknessDivisor * offsetY/100}px`)
+				$(`.VTTToken[data-id='${token.options.id}']`).css({
+					"--offsetX": `${parseInt(token.sizeWidth()) / underdarknessDivisor * token.options.offset.x/100}px`,
+					"--offsetY": `${parseInt(token.sizeHeight()) / underdarknessDivisor * offsetY/100}px`
+				})
 				if(persist)
 					token.place_sync_persist();
 			});
@@ -2981,8 +2990,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 		let tokenImageZoom = tokens.map(t => t.options.imageZoom);
 		let uniqueImageZoom = [...new Set(tokenImageZoom)];
-		let startingImageZoom = uniqueImageZoom.length === 1 ? uniqueImageZoom[0] : 0;
-		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom', -100, 100, 5, function (imageZoom, persist=false) {
+		let startingImageZoom = uniqueImageZoom.length === 1 && uniqueImageZoom[0] != undefined ? uniqueImageZoom[0] : 0;
+		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom %', -100, 100, 5, function (imageZoom, persist=false) {
 			tokens.forEach(token => {
 				token.options.imageZoom = imageZoom;
 				const newInset = 40 * imageZoom/100;
@@ -2995,7 +3004,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
 		let uniqueOpacity = [...new Set(tokenOpacity)];
-		let startingOpacity = uniqueOpacity.length === 1 ? uniqueOpacity[0] : 1;
+		let startingOpacity = uniqueOpacity.length === 1 && uniqueOpacity[0] != undefined ? uniqueOpacity[0] : 1;
 		let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0.1, 1, 0.1, function (opacity, persist=false) {
 			tokens.forEach(token => {
 				token.options.imageOpacity = opacity;
@@ -3244,10 +3253,11 @@ function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, s
 	imageWrapper.append(imageInputRange); // input below label
 	return imageWrapper;
 }
-function build_token_num_input(startingScale, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
-	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
 
-	imageInput.val(startingScale || 1);
+function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
+	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="${startingScale}" name="Image Scale">`);
+
+	imageInput.val(startingScale);
 
 	imageInput.on('keyup', function(event) {
 		let value = event.target.value;	
