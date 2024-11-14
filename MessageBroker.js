@@ -845,6 +845,7 @@ class MessageBroker {
 				if(!window.DM){
 					window.JOURNAL.chapters=msg.data.chapters;
 					window.JOURNAL.build_journal();
+					window.JOURNAL.persist(true);
 				}
 			}
 			
@@ -859,12 +860,11 @@ class MessageBroker {
 					}				
 					if(msg.data.popup)
 						window.JOURNAL.display_note(msg.data.id);
-					
+					window.JOURNAL.persist(true);
 				}
 			}
 			if(msg.eventType=="custom/myVTT/notesSync"){
 				if(!window.DM){
-
 					for(let i in msg.data.notes){
 						let noteId = msg.data.notes[i].id;
 						window.JOURNAL.notes[noteId] = msg.data.notes[i];
@@ -873,7 +873,8 @@ class MessageBroker {
 							window.TOKEN_OBJECTS[msg.data.id].place();	
 						}	
 					}			
-					window.JOURNAL.build_journal();				
+					window.JOURNAL.build_journal();			
+					window.JOURNAL.persist(true);	
 				}
 			}
 			if(msg.eventType=="custom/myVTT/DMAvatar"){
