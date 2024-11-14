@@ -37,6 +37,8 @@ function init_mixer() {
     let playlists = window.MIXER.playlists();
     let playlistInput = $(`<select id='mixerPlaylists'></select>`);
     let playlistType = $(``)
+
+
     /** @param {Object.<string, Channel>} */
     const drawChannelList = (channels) => {
         playlistInput.find('option').remove();
@@ -74,12 +76,7 @@ function init_mixer() {
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
             }     
         });
-        let text_calc = $('body>div.track-name:first');
-        text_calc.html(`Animated Map Audio.....`)
-        $('body').prepend(text_calc);
-        let nameWidth = text_calc.width();
 
-        channelNameDiv.find(".channelName").css("--name-width-overflow", (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0);
         /** @type {Object.<string, Channel>} */
         Object.entries(channels).forEach(([id, channel]) => {
             if(!channel?.src){
@@ -97,15 +94,6 @@ function init_mixer() {
             item.setAttribute("data-id", id);
 
 
-            let text_calc = $('body>div.track-name:first');
-            text_calc.html(`$${channel.name}.....`);
-            let nameWidth = text_calc.width();
-
-
-            channelNameDiv.find(".channelName").css({
-                "--name-width-overflow": (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0,
-                "--overflow-speed": (100 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
-            });
 
             //item.append(window.MIXER.channelVolumeSlider(id), window.MIXER.channelProgressBar(id));
             let remove = $('<button class="channel-remove-button"">X</button>');
@@ -342,7 +330,20 @@ function init_mixer() {
              $('style#mixer-paused').remove();
         }
     });
+    $("#sounds-panel").off('mouseover.channelName').on('mouseover.channelName', '.channelName, .track-name', function(e){
+        const target = $(e.currentTarget)
+        
+        const text = $(e.currentTarget).text();
+        const text_calc = $('body>div.track-name:first');
+        text_calc.html(`${text}.....`);
+        const nameWidth = text_calc.width();
+        
 
+        target.css({
+            "--name-width-overflow": (100 - nameWidth < 0) ? 90 - nameWidth+'px' : 0,
+            "--overflow-speed": (100 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
+        });   
+    })
     $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
     $('#master-volume').append(clear, sequentialPlay, playPause);
 }
@@ -414,97 +415,101 @@ function init_trackLibrary() {
     // track list
     const trackList = document.createElement("ul");
     trackList.id = 'track-list';
+
+
+    $(trackList).off('click.play').on('click.play', '.track-play-pause-button', function(e){
+        const currentTrack = $(e.currentTarget).closest('li')
+        const track = {name: currentTrack.attr('data-name'), src:currentTrack.attr('data-src')};
+        if($('.sequential-button').hasClass('pressed')){
+            $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
+        }
+        const channel = new Channel(track.name, track.src);
+        channel.paused = false;
+        channel.loop = false;
+        window.MIXER.addChannel(channel);
+        if(window.MIXER.paused){
+            window.MIXER.togglePaused();
+            const playPause = $('.mixer-play-pause-button');
+            const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
+            const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
+            pause_svg.css('display', 'block');
+            mixer_playlist_svg.css('display', 'none');
+            playPause.toggleClass('playing', true);
+            playPause.toggleClass('pressed', true);
+            $('style#mixer-paused').remove();
+        }
+            
+    });
+    $(trackList).off('click.addTrack').on('click.addTrack', '.track-add-to-mixer', function(e){
+        const currentTrack = $(e.currentTarget).closest('li')
+        const track = {name: currentTrack.attr('data-name'), src:currentTrack.attr('data-src')};
+        const channel = new Channel(track.name, track.src);
+        channel.paused = true;
+        channel.loop = false;
+        window.MIXER.addChannel(channel);
+    });
+    $(trackList).off('click.addToken').on('click.addToken', '.track-add-token-mixer', function(e){
+        const currentTrack = $(e.currentTarget).closest('li')
+        const track = {name: currentTrack.attr('data-name'), src:currentTrack.attr('data-src')};
+        const channel = new Channel(track.name, track.src);
+        channel.paused = false;
+        channel.loop = true;     
+        channel.range = 30;
+        channel.attenuate = true;
+        channel.wallsBlocked = true;
+        channel.tokenVolume = {};
+        let options = {
+            ...default_options(),
+            ...window.TOKEN_SETTINGS,
+            tokenStyleSelect: 'noConstraint',
+            hidden: true,
+            imgsrc: `${window.EXTENSION_PATH}assets/icons/speaker.svg`,
+            audioChannel: channel,
+            name: channel.name
+        }
+
+        options.audioChannel.token = options.id;
+        place_token_in_center_of_view(options);
+    });
+
+
+
     trackLibrary.onchange((e) => {
         trackList.innerHTML = "";
         /** @type {typeof trackLibrary}  */
+        const newTrackList = $('<div></div>')
         const tl = e.target
-        const sortedTL = new Map([...tl.map().entries()]
-            .filter(a => a[1].src!=undefined)
-            .sort((a, b) => a[1].name.toUpperCase().localeCompare(b[1].name.toUpperCase()))); //sort Track Library alphabetically
+        const sortedTL = new Map([...tl.map().entries()].sort((a, b) => a[1].name.toUpperCase().localeCompare(b[1].name.toUpperCase())))
+                            
         sortedTL.forEach((track, id) => {
             const item = document.createElement("li");
             item.className = "audio-row";
             item.setAttribute("data-id", id);
             item.setAttribute("data-src", track.src);
+            item.setAttribute("data-name", track.name);
             $(item).append($(`<div class='trackNameOverflow'><div class='track-name'>${track.name}</div></div>`))
      
-            let text_calc = $('body>div.track-name:first');
-            text_calc.html(`${track.name}.....`);
-            let nameWidth = text_calc.width();
-            
 
-            $(item).find('.track-name').css({
-                "--name-width-overflow": (230 - nameWidth < 0) ? 220 - nameWidth+'px' : 0,
-                "--overflow-speed": (230 - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
-            });
             // play button
-            let track_play_button = $('<button class="track-play-pause-button"></button>');          
-            let play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
+            const track_play_button = $('<button class="track-play-pause-button"></button>');          
+            const play_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M8 19V5L19 12ZM10 12ZM10 15.35 15.25 12 10 8.65Z"/></svg>');               
             track_play_button.append(play_svg);
 
-
-
-            track_play_button.on('click', function(){
-                if($('.sequential-button').hasClass('pressed')){
-                    $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
-                }
-                const channel = new Channel(track.name, track.src);
-                channel.paused = false;
-                channel.loop = false;
-                window.MIXER.addChannel(channel);
-                if(window.MIXER.paused){
-                    window.MIXER.togglePaused();
-                    const playPause = $('.mixer-play-pause-button');
-                    const mixer_playlist_svg = $('.mixer-play-pause-button svg:first-of-type');
-                    const pause_svg = $('.mixer-play-pause-button svg:nth-of-type(2)');
-                    pause_svg.css('display', 'block');
-                    mixer_playlist_svg.css('display', 'none');
-                    playPause.toggleClass('playing', true);
-                    playPause.toggleClass('pressed', true);
-                    $('style#mixer-paused').remove();
-                }
-                    
-            });
-            let track_add_button = $('<button class="track-add-to-mixer"></button>');          
-            let add_svg = $('<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>');               
+            const track_add_button = $('<button class="track-add-to-mixer"></button>');          
+            const add_svg = $('<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>');               
             track_add_button.append(add_svg);
-            track_add_button.on('click', function(){
-                const channel = new Channel(track.name, track.src);
-                channel.paused = true;
-                channel.loop = false;
-                window.MIXER.addChannel(channel);
-            });
 
-            let track_add_token = $('<button class="track-add-token-mixer"></button>');          
-            let add_token_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');               
+
+            const track_add_token = $('<button class="track-add-token-mixer"></button>');          
+            const add_token_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg>');               
             track_add_token.append(add_token_svg);
-            track_add_token.on('click', function(){
-                const channel = new Channel(track.name, track.src);
-                channel.paused = false;
-                channel.loop = true;     
-                channel.range = 30;
-                channel.attenuate = true;
-                channel.wallsBlocked = true;
-                channel.tokenVolume = {};
-                let options = {
-                    ...default_options(),
-                    ...window.TOKEN_SETTINGS,
-                    tokenStyleSelect: 'noConstraint',
-                    hidden: true,
-                    imgsrc: `${window.EXTENSION_PATH}assets/icons/speaker.svg`,
-                    audioChannel: channel,
-                    name: channel.name
-                }
-
-                options.audioChannel.token = options.id;
-                place_token_in_center_of_view(options);
-            });
-
-
+            
 
             $(item).append(track_play_button, track_add_button, track_add_token); 
-            trackList.append(item);
+            $(newTrackList).append(item);
         });
+        trackList.innerHTML = newTrackList[0].innerHTML;
+        window.TRACK_LIBRARY.filterTrackLibrary($(`#sounds-panel input[placeholder='Search']`).val())
     });
 
     $.contextMenu({

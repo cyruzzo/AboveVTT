@@ -5492,6 +5492,10 @@ div#selectedTokensBorderRotationGrabberConnector,
     height: 25px;
 }
 
+#track-list .audio-row.hidden-track{
+    display:none;
+}
+
 #track-list li:hover {
     background-color:lightskyblue;
 }
