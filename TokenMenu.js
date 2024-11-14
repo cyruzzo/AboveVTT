@@ -2921,17 +2921,17 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 
 	if (!allTokensAreAoe) {
-
 		//image scaling size
 		let tokenImageScales = tokens.map(t => t.options.imageSize);
 		let uniqueScales = [...new Set(tokenImageScales)];
 		let startingScale = uniqueScales.length === 1 ? uniqueScales[0] : 1;
-		let imageSizeWrapper = build_token_image_scale_input(startingScale, tokens, function (imageSize) {
+		let imageSizeWrapper = build_token_image_scale_input(startingScale, tokens, function (imageSize, persist=false) {
 			tokens.forEach(token => {
 				imageSize = clampTokenImageSize(imageSize, token.options.size);
 				token.options.imageSize = imageSize;
 				$(`.VTTToken[data-id='${token.options.id}']`).css("--token-scale", imageSize)
-				token.place_sync_persist();
+				if(persist == true)
+					token.place_sync_persist();
 			});
 		});
 		body.append(imageSizeWrapper);
@@ -2944,6 +2944,67 @@ function build_adjustments_flyout_menu(tokenIds) {
 			imageSizeInput.attr("title", "Aoe tokens can't be adjusted this way")
 		}
 
+		
+
+		let tokenOffsetX = tokens.map(t => t.options.offset?.x);
+		let uniqueOffsetX = [...new Set(tokenOffsetX)];
+		let startingOffsetX = uniqueOffsetX.length === 1 ? uniqueOffsetX[0] : 0;
+		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', -100, 100, 5, function (offsetX, persist=false) {
+			tokens.forEach(token => {
+				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+				if(token.options.offset == undefined)
+					token.options.offset = {};
+				token.options.offset.x = offsetX;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--offsetX", `${parseInt(token.sizeWidth()) / underdarknessDivisor* offsetX/100}px`)
+				if(persist)
+					token.place_sync_persist();
+			});
+		});
+		body.append(offsetXWrapper);
+
+		let tokenOffsetY = tokens.map(t => t.options.offset?.y);
+		let uniqueOffsetY = [...new Set(tokenOffsetY)];
+		let startingOffsetY = uniqueOffsetY.length === 1 ? uniqueOffsetY[0] : 0;
+		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', -100, 100, 5, function (offsetY, persist=false) {
+			tokens.forEach(token => {
+				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+				if(token.options.offset == undefined)
+					token.options.offset = {};
+				token.options.offset.y = offsetY;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--offsetY", `${parseInt(token.sizeHeight()) / underdarknessDivisor * offsetY/100}px`)
+				if(persist)
+					token.place_sync_persist();
+			});
+		});
+		body.append(offsetYWrapper);
+
+
+		let tokenImageZoom = tokens.map(t => t.options.imageZoom);
+		let uniqueImageZoom = [...new Set(tokenImageZoom)];
+		let startingImageZoom = uniqueImageZoom.length === 1 ? uniqueImageZoom[0] : 0;
+		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom', -100, 100, 5, function (imageZoom, persist=false) {
+			tokens.forEach(token => {
+				token.options.imageZoom = imageZoom;
+				const newInset = 40 * imageZoom/100;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--view-box", `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`);
+				if(persist)
+					token.place_sync_persist();
+			});
+		});
+		body.append(imageZoomWrapper);
+
+		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
+		let uniqueOpacity = [...new Set(tokenOpacity)];
+		let startingOpacity = uniqueOpacity.length === 1 ? uniqueOpacity[0] : 1;
+		let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0.1, 1, 0.1, function (opacity, persist=false) {
+			tokens.forEach(token => {
+				token.options.imageOpacity = opacity;
+				$(`.VTTToken[data-id='${token.options.id}']`).css("--image-opacity", opacity)
+				if(persist)
+					token.place_sync_persist();
+			});
+		});
+		body.append(opacityWrapper);
 
 		//border color selections
 		let tokenBorderColors = tokens.map(t => t.options.color);
@@ -3088,7 +3149,7 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		}
 			imageSizeInput.val(imageSize);
 			imageSizeInputRange.val(imageSize);
-			didUpdate(imageSize);
+			didUpdate(imageSize, true);
 		} else if (event.key === "Escape") {
 			$(event.target).blur();
 		}
@@ -3101,22 +3162,26 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 		}
 		imageSizeInput.val(imageSize);	
 		imageSizeInputRange.val(imageSize);
-		didUpdate(imageSize);
+		didUpdate(imageSize, true);
 
 		imageSizeInputRange.val(imageSizeInput.val());
 	});
 	imageSizeInput.on(' input change', function(){
-		imageSizeInputRange.val(imageSizeInput.val());
+		let imageSize = event.target.value;
+		imageSizeInputRange.val(imageSize);
+		didUpdate(imageSize);
 	});
 	imageSizeInputRange.on(' input change', function(){
-		imageSizeInput.val(imageSizeInputRange.val());
+		let imageSize = event.target.value;
+		imageSizeInput.val(imageSize);
+		didUpdate(imageSize);
 	});
 	imageSizeInputRange.on('mouseup', function(){
 		let imageSize = event.target.value;	
 		if(tokens !== false){
 			imageSize = clampTokenImageSize(imageSize, tokens[0].options.size);
 		}
-		didUpdate(imageSize);
+		didUpdate(imageSize, true);
 	});
 	let imageSizeWrapper = $(`
 		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
@@ -3128,6 +3193,89 @@ function build_token_image_scale_input(startingScale, tokens, didUpdate) {
 	return imageSizeWrapper;
 }
 
+function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
+	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+	let imageInputRange = $(`<input class="image-input-range" type="range" value="1" min="${min}" max="${max}" step="${step}"/>`);
+	imageInput.val(startingScale || 1);
+	imageInputRange.val(startingScale || 1);
+	imageInput.on('keyup', function(event) {
+		let value = event.target.value;	
+		
+
+		if (event.key === "Enter") {
+	
+			imageInput.val(value);
+			imageInputRange.val(value);
+			didUpdate(value, true);
+		} else if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+		imageInputRange.val(imageInput.val());
+	});
+	imageInput.on('focusout', function(event) {
+		let value = event.target.value;		
+		
+		imageInput.val(value);	
+		imageInputRange.val(value);
+		didUpdate(value, true);
+
+		imageInputRange.val(imageInput.val());
+	});
+	imageInput.on(' input change', function(){
+		let value = event.target.value;
+		didUpdate(value);
+		imageInputRange.val(imageInput.val());
+	});
+	imageInputRange.on(' input change', function(){
+		let value = event.target.value;
+		didUpdate(value);
+		imageInput.val(imageInputRange.val());
+	});
+	imageInputRange.on('mouseup', function(){
+		let value = event.target.value;	
+		didUpdate(value, true);
+	});
+	let imageWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">${name}</div>
+		</div>
+	`);
+	imageWrapper.append(imageInput); // Beside Label
+	imageWrapper.append(imageInputRange); // input below label
+	return imageWrapper;
+}
+function build_token_num_input(startingScale, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
+	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="1.0" name="Image Scale">`);
+
+	imageInput.val(startingScale || 1);
+
+	imageInput.on('keyup', function(event) {
+		let value = event.target.value;	
+		if (event.key === "Enter") {
+			imageInput.val(value);
+			didUpdate(value, true);
+		} else if (event.key === "Escape") {
+			$(event.target).blur();
+		}
+	});
+	imageInput.on('focusout', function(event) {
+		let value = event.target.value;		
+		imageInput.val(value);	
+		didUpdate(value, true);
+	});
+	imageInput.on('input change', function(){
+		let value = event.target.value;	
+		imageInput.val(value);
+		didUpdate(value);
+	});
+	let imageWrapper = $(`
+		<div class="token-image-modal-url-label-wrapper image-size-wrapper">
+			<div class="token-image-modal-footer-title image-size-title">${name}</div>
+		</div>
+	`);
+	imageWrapper.append(imageInput); // Beside Label
+	return imageWrapper;
+}
 function build_options_flyout_menu(tokenIds) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 

@@ -808,7 +808,7 @@ function build_example_token(options) {
 	if(mergedOptions.maxAge !== false && isNaN(parseInt(mergedOptions.age))){
 		mergedOptions.age = 1;
 	}
-
+	mergedOptions.exampleToken = true;
 	// TODO: this is horribly inneficient. Clean up token.place and then update this
 	let token = new Token(mergedOptions);
 	token.place(0);
