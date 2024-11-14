@@ -1827,7 +1827,7 @@ class Token {
 			let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
 			let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
 			let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
-			let imageZoom = (this.options.imageZoom != undefined) ? 40 * this.options.imageZoom/100 : 0;
+			let imageZoom = (this.options.imageZoom != undefined) ? 49.5 * this.options.imageZoom/100 : 0;
 			let rotation = 0;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
@@ -2354,7 +2354,7 @@ class Token {
 					let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
 					let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
 					let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
-					let imageZoom = (this.options.imageZoom != undefined) ? 40 * this.options.imageZoom/100 : 0;
+					let imageZoom = (this.options.imageZoom != undefined) ? 49.5 * this.options.imageZoom/100 : 0;
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){

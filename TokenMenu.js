@@ -2950,7 +2950,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetX = [...new Set(tokenOffsetX)];
 
 		let startingOffsetX = uniqueOffsetX.length === 1 && uniqueOffsetX[0] != undefined ? uniqueOffsetX[0] : 0;
-		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', -100, 100, 5, function (offsetX, persist=false) {
+		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', '', '', 5, function (offsetX, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
@@ -2971,7 +2971,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetY = [...new Set(tokenOffsetY)];
 		let startingOffsetY = uniqueOffsetY.length === 1  && uniqueOffsetY[0] != undefined ? uniqueOffsetY[0] : 0;
 
-		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', -100, 100, 5, function (offsetY, persist=false) {
+		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', '', '', 5, function (offsetY, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
@@ -2994,7 +2994,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom %', -100, 100, 5, function (imageZoom, persist=false) {
 			tokens.forEach(token => {
 				token.options.imageZoom = imageZoom;
-				const newInset = 40 * imageZoom/100;
+				const newInset = 49.5 * imageZoom/100;
 				$(`.VTTToken[data-id='${token.options.id}']`).css("--view-box", `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`);
 				if(persist)
 					token.place_sync_persist();
@@ -3005,7 +3005,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let tokenOpacity = tokens.map(t => t.options.imageOpacity);
 		let uniqueOpacity = [...new Set(tokenOpacity)];
 		let startingOpacity = uniqueOpacity.length === 1 && uniqueOpacity[0] != undefined ? uniqueOpacity[0] : 1;
-		let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0.1, 1, 0.1, function (opacity, persist=false) {
+		let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0, 1, 0.1, function (opacity, persist=false) {
 			tokens.forEach(token => {
 				token.options.imageOpacity = opacity;
 				$(`.VTTToken[data-id='${token.options.id}']`).css("--image-opacity", opacity)
