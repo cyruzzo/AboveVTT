@@ -33,9 +33,10 @@ class Library extends EventTarget {
      * @private
      * @param {Map<string, T>} library
      */
-    _write(library) {
+    _write(library, dispatchEvent=true) {
         localStorage.setItem(this._localStorageKey, JSON.stringify([...library]));
-        this.dispatchEvent(new Event("onchange"));
+        if(dispatchEvent == true)
+            this.dispatchEvent(new Event("onchange"));
     }
 
     /**
@@ -90,7 +91,7 @@ class Library extends EventTarget {
     delete(id) {
         const library = this.map();
         const r = library.delete(id);
-        this._write(library);
+        this._write(library, false);
         return r;
     }
 

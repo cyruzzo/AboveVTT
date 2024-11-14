@@ -88,14 +88,18 @@ class TrackLibrary extends Library {
     filterTrackLibrary(searchFilter = ''){
         let tracks = $('#track-list .audio-row');
       
-        tracks.show();           
+                 
         if(searchFilter != ''){
+            tracks.toggleClass('hidden-track', true);  
             let filterArray = searchFilter.split(" ");
             let regex = new RegExp( filterArray.join( "|" ), "i");
-            tracks.filter(item => !regex.test(tracks[item].textContent) && 
-                !this.find(tracks[item].textContent, tracks[item].dataset.src)[1].tags
-                    .some(function(tag) { return regex.test(tag); }))
-                        .hide();
+            let libraryTracks = [...this.map()]; // do this here instead of using `this.find` to speed up the find below
+            tracks.filter(item => regex.test(tracks[item].textContent) || 
+                regex.test(libraryTracks.find(([_, track]) => track.name === tracks[item].textContent || track.src === tracks[item].dataset.src)[1].tags)
+            ).toggleClass('hidden-track', false);   
+        }
+        else{
+            tracks.toggleClass('hidden-track', false);
         }
 
     }
