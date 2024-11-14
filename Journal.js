@@ -33,22 +33,36 @@ class JournalManager{
 				}
 				let statBlockPromise = new Promise((resolve) => {
 					let globalObjectStore = globalIndexedDB.transaction(["journalData"]).objectStore(`journalData`)
-			  		globalObjectStore.get(`JournalStatblocks`).onsuccess = (event) => {
-					 	if(event?.target?.result?.journalData){
-						 	this.notes = {
-								...this.notes,
-								...event?.target?.result?.journalData
-							}			
+					if(window.DM){
+				  		globalObjectStore.get(`JournalStatblocks`).onsuccess = (event) => {
+						 	if(event?.target?.result?.journalData){
+							 	this.notes = {
+									...this.notes,
+									...event?.target?.result?.journalData
+								}			
+							}
+							else {
+								if((localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
+							  		this.notes = {
+							  			...this.notes,
+							  			...$.parseJSON(localStorage.getItem('JournalStatblocks'))
+							  		}
+							  	}
+							}
+							resolve(true);
 						}
-						else {
-							if(window.DM && (localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
-						  		this.notes = {
-						  			...this.notes,
-						  			...$.parseJSON(localStorage.getItem('JournalStatblocks'))
-						  		}
-						  	}
+					}
+
+					else{
+				  		globalObjectStore.get(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`).onsuccess = (event) => {
+						 	if(event?.target?.result?.journalData){
+							 	this.notes = {
+									...this.notes,
+									...event?.target?.result?.journalData
+								}			
+							}
+							resolve(true);
 						}
-						resolve(true);
 					}
 				})
 
@@ -90,14 +104,12 @@ class JournalManager{
 
 	
 	
-	persist(){
-		if(window.DM){
-			if(!this.statBlocks)
-				this.statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
-			
-			let statBlocks = this.statBlocks
+	persist(allowPlayerPersist=false){
+		if(window.DM || allowPlayerPersist){ 
+
+			let statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
 			let chapters = this.chapters
-			let journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true))
+			let journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true));
 
 
 			let storeImage = gameIndexedDb.transaction([`journalData`], "readwrite")
@@ -105,14 +117,25 @@ class JournalManager{
 
 			let globalObjectStore = globalIndexedDB.transaction(["journalData"], "readwrite").objectStore(`journalData`)
 
+			if(window.DM){ // store your own statblocks as DM
+				let deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
+				deleteRequest.onsuccess = (event) => {
+				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
+				};
+				deleteRequest.onerror = (event) => {
+				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
+				};
+			}
+			else{ // store other DMs statblocks for use when DM isn't online; We keep these seperate so we don't override our own statblocks with another DMs statblock set.
+				let deleteRequest = globalObjectStore.delete(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`);
+				deleteRequest.onsuccess = (event) => {
+				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`, 'journalData': statBlocks});
+				};
+				deleteRequest.onerror = (event) => {
+				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`, 'journalData': statBlocks});
+				};
+			}
 
-			let deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
-			deleteRequest.onsuccess = (event) => {
-			  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
-			};
-			deleteRequest.onerror = (event) => {
-			  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
-			};
 
 			let journalDeleteRequest = objectStore.delete(`Journal`);
 			journalDeleteRequest.onsuccess = (event) => {
@@ -130,14 +153,15 @@ class JournalManager{
 			journalDeleteRequest.onerror = (event) => {
 			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
 			};
-
-			try{
-				localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   //hold onto these until 1.27 then we can clear them.
-				localStorage.setItem('Journal' + this.gameid, JSON.stringify(journal));
-				localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(chapters));
-			}
-			catch(e){
-				console.warn('localStorage Journal Storage Failed', e)
+			if(window.DM){ // old storage kept as backup for now. 
+				try{
+					localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   // we may decide to clear these on succesful storage migration above after 1.29
+					localStorage.setItem('Journal' + this.gameid, JSON.stringify(journal));
+					localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(chapters));
+				}
+				catch(e){
+					console.warn('localStorage Journal Storage Failed', e) // prevent errors from stopping code when local storage is full.
+				}
 			}
 
 		}
@@ -1866,7 +1890,6 @@ class JournalManager{
 		    	self.notes[id].text = editor.getContent();
 		    	self.notes[id].plain= editor.getContent({ format: 'text' });
 		    	self.notes[id].statBlock=statBlock;
-		    	self.statBlocks = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true))
 		    	self.persist();
 		    }
 		}, 800)
@@ -2845,7 +2868,6 @@ class JournalManager{
 				self.notes[note_id].text =tinymce.activeEditor.getContent();
 				self.notes[note_id].plain=tinymce.activeEditor.getContent({ format: 'text' });
 				self.notes[note_id].statBlock=statBlock;
-				self.statBlocks = Object.fromEntries(Object.entries(self.notes).filter(([key, value]) => self.notes[key].statBlock == true))
 				self.persist();
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition

@@ -149,7 +149,7 @@ async function openDB() {
   };
    
   
-  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`);
+  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`, 2);
   
   DBOpenRequest2.onsuccess = (e) => {
     window.globalIndexedDB = DBOpenRequest2.result;
