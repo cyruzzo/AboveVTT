@@ -1822,8 +1822,12 @@ class Token {
 
 			/* UPDATE COMBAT TRACKER */
 			this.update_combat_tracker()
-
+			let underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 			let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+			let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
+			let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
+			let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
+			let imageZoom = (this.options.imageZoom != undefined) ? 40 * this.options.imageZoom/100 : 0;
 			let rotation = 0;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
@@ -1873,8 +1877,15 @@ class Token {
 
 				old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 				old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
-				old.css("--token-rotation", rotation+"deg");
-				old.css("--token-scale", imageScale);
+				old.css({
+					"--token-scale": imageScale,
+					"--token-rotation": `${rotation}deg`,
+					"--offsetX": `${imageOffsetX}px`,
+					"--offsetY": `${imageOffsetY}px`,
+					"--image-opacity": `${imageOpacity}`,
+					"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
+
+				});
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
 					'--token-rotation': `${rotation}deg`,
 					'--token-scale': imageScale
@@ -2337,8 +2348,13 @@ class Token {
 					if(this.options.legacyaspectratio == false) {
 						imgClass = 'token-image preserve-aspect-ratio';
 					}
+					let underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 					let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
 					let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+					let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
+					let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
+					let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
+					let imageZoom = (this.options.imageZoom != undefined) ? 40 * this.options.imageZoom/100 : 0;
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
@@ -2349,8 +2365,14 @@ class Token {
 						tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
 					}
 					
-					tok.css("--token-scale", imageScale);
-					tok.css("--token-rotation", `${rotation}deg`);
+					tok.css({
+						"--token-scale": imageScale,
+						"--token-rotation": `${rotation}deg`,
+						"--offsetX": `${imageOffsetX}px`,
+						"--offsetY": `${imageOffsetY}px`,
+						"--image-opacity": `${imageOpacity}`,
+						"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
+					});
 					if(!(this.options.square)){
 						tokenImage.addClass("token-round");
 					}
@@ -2373,8 +2395,15 @@ class Token {
 
 				} else {
 					tokenImage = build_aoe_token_image(this, imageScale, rotation)
-					tok.css("--token-scale", imageScale);
-					tok.css("--token-rotation", `${rotation}deg`);
+
+					tok.css({
+						"--token-scale": imageScale,
+						"--token-rotation": `${rotation}deg`,
+						"--offsetX": `${imageOffsetX}px`,
+						"--offsetY": `${imageOffsetY}px`,
+						"--image-opacity": `${imageOpacity}`,
+						"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
+					});
 					tok.toggleClass("isAoe", true);
 					if(this.isLineAoe()){
 						tok.toggleClass('lineAoe', true)

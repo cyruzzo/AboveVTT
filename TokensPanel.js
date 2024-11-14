@@ -2300,6 +2300,42 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     });
     inputWrapper.append(imageScaleWrapper);
 
+    let startingOffsetX = customization.tokenOptions.offset?.x || 0;
+    let offsetXWrapper = build_token_num_input(startingOffsetX, false, 'Image Offset X', -100, 100, 5, function (offsetX) {
+        if(customization.tokenOptions.offset == undefined)
+            customization.tokenOptions.offset = {x: 0, y: 0}
+        customization.tokenOptions.offset.y = offsetX;
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);
+    });
+    inputWrapper.append(offsetXWrapper);
+
+    let startingOffsetY = customization.tokenOptions.offset?.y || 0;
+    let offsetYWrapper = build_token_num_input(startingOffsetY, false, 'Image Offset Y', -100, 100, 5, function (offsetY) {
+        if(customization.tokenOptions.offset == undefined)
+            customization.tokenOptions.offset = {x: 0, y: 0}
+        customization.tokenOptions.offset.y = offsetY;
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);
+    });
+    inputWrapper.append(offsetYWrapper);
+
+
+    let startingImageZoom = customization.tokenOptions.imageZoom || 0;
+    let imageZoomWrapper = build_token_num_input(startingImageZoom, false, 'Image Zoom %', -100, 100, 5, function (imageZoom) { 
+        customization.setTokenOption("imageZoom", imageZoom);
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);  
+    });
+    inputWrapper.append(imageZoomWrapper);
+
+    let startingOpacity = customization.tokenOptions.imageOpacity || 1;
+    let opacityWrapper = build_token_num_input(startingOpacity, tokens,  'Image Opacity', 0.1, 1, 0.1, function (opacity) {
+        customization.setTokenOption("imageOpacity", opacity);
+        persist_token_customization(customization);
+        decorate_modal_images(sidebarPanel, listItem, placedToken);
+    });
+    inputWrapper.append(opacityWrapper);
 
     // border color
     if(listItem.isTypePC()){
