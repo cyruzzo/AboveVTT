@@ -2948,17 +2948,19 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 		let tokenOffsetX = tokens.map(t => t.options.offset?.x);
 		let uniqueOffsetX = [...new Set(tokenOffsetX)];
+
 		let startingOffsetX = uniqueOffsetX.length === 1 && uniqueOffsetX[0] != undefined ? uniqueOffsetX[0] : 0;
 		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', -100, 100, 5, function (offsetX, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
-					token.options.offset = {x: 0, y:0};
+				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
 					"--offsetX": `${parseInt(token.sizeWidth()) / underdarknessDivisor * offsetX/100}px`,
 					"--offsetY": `${parseInt(token.sizeHeight()) / underdarknessDivisor * token.options.offset.y/100}px`
 				})
+
 				if(persist)
 					token.place_sync_persist();
 			});
@@ -2968,6 +2970,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let tokenOffsetY = tokens.map(t => t.options.offset?.y);
 		let uniqueOffsetY = [...new Set(tokenOffsetY)];
 		let startingOffsetY = uniqueOffsetY.length === 1  && uniqueOffsetY[0] != undefined ? uniqueOffsetY[0] : 0;
+
 		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', -100, 100, 5, function (offsetY, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
@@ -3250,6 +3253,7 @@ function build_token_scale_input(startingScale, tokens, name, min=0.1, max=10, s
 	imageWrapper.append(imageInputRange); // input below label
 	return imageWrapper;
 }
+
 function build_token_num_input(startingScale=1, tokens, name, min=0.1, max=10, step=0.1, didUpdate) {
 	let imageInput = $(`<input class="image-input-number" type="number" max="${max}" min="${min}" step="${step}" title="Token Image Scale" placeholder="${startingScale}" name="Image Scale">`);
 

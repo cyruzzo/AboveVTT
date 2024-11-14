@@ -2302,6 +2302,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     let startingOffsetX = customization.tokenOptions.offset?.x || 0;
     let offsetXWrapper = build_token_num_input(startingOffsetX, false, 'Image Offset X', -100, 100, 5, function (offsetX) {
+
         if(customization.tokenOptions.offset == undefined)
             customization.tokenOptions.offset = {x: 0, y: 0}
         customization.tokenOptions.offset.y = offsetX;
