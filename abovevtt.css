@@ -10895,3 +10895,75 @@ div#playlistFields {
 }
 
 /***** END NEW STAT BLOCKS ****/
+
+/*** Combat tracker and note print styles ***/
+@media print{
+
+    body div.note.ui-dialog-content[id],
+    body div.note-text{
+        overflow: unset !important;
+        display: block !important;
+        position: relative !important;
+        background: none !important;
+        height:unset !important;
+        border:none !important;
+        max-height: unset !important;
+    }
+    body#site {
+        overflow: auto !important;
+    }
+    
+    #combat_area{
+        border-collapse: separate !important;
+        border-spacing: 5px 10px !important;
+    }
+    #combat_tracker_inside,
+    #combat_tracker_inside .tracker-list{
+        width:300px !important;
+        overflow: unset !important;
+        display: block !important;
+        position: relative !important;
+        background: none !important;
+        height:unset !important;
+        border:none !important;
+    }  
+    #combat_tracker_inside{
+        display: flex !important;
+        flex-direction: column-reverse !important;
+    }
+    #combat_footer{
+        padding: 13px 4px 4px 4px !important;
+    }
+    #combat_area tr td:first-of-type,
+    #combat_area tr td:nth-of-type(2)
+    {
+        width: unset !important;
+    }
+    #combat_area tr td:nth-of-type(4) {
+        width: 5px !important;
+    }
+    #combat_area tr td:nth-of-type(3),
+    #combat_area tr td:nth-of-type(5) {
+        width: 68% !important;
+    }
+    #round_number_label{
+        background: none !important;
+        text-align:left !important;
+        margin-left:15px !important;
+    }
+    #round_number_label:before,
+    .hasTooltip.CTToken::after{
+        display:none !important;
+    }
+    #combat_footer{
+        display:none !important;
+    }
+    .tracker-list table{
+        border-spacing: 5px 15px !important;
+    }
+    #combat_tracker_inside button{
+        display:none !important;
+        
+    }
+    
+}
