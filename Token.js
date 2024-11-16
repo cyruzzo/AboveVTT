@@ -1828,8 +1828,9 @@ class Token {
 			const imageOffsetY = this.options.offset?.y;
 			const imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
 			const imageZoom = this.options.imageZoom != undefined ? parseFloat(this.options.imageZoom): undefined;
-			const rotation = 0;
 			const newInset = imageZoom != undefined ? 49.5 * imageZoom/100 : undefined;
+			let rotation = 0;
+			
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
