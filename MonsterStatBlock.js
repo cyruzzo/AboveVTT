@@ -54,7 +54,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     container.append(html);
     if(customStatBlock){
       window.JOURNAL.translateHtmlAndBlocks(html)
-      window.JOURNAL.add_journal_roll_buttons(html, tokenId);
+      add_journal_roll_buttons(html, tokenId);
       window.JOURNAL.add_journal_tooltip_targets(html);
 
       

@@ -1711,7 +1711,7 @@ class Token {
 					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
 								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
-								window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml);
 					            flyout.append(tooltipHtml);
