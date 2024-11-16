@@ -813,7 +813,8 @@ function build_example_token(options) {
 	let token = new Token(mergedOptions);
 	token.place(0);
 	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
-	html.find('img.token-image').attr('src', mergedOptions.imgsrc);
+	html.find('.token-image').attr('src', mergedOptions.imgsrc);
+	html.find('div.token-image').attr('background-image', `url(${mergedOptions.imgsrc})`);
 	token.delete(false);
 
 	html.addClass("example-token");

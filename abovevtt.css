@@ -4086,6 +4086,7 @@ body {
 
 .preserve-aspect-ratio {
     object-fit: contain;
+    background-size: contain;
 }
 
 .sidebar-modal {
@@ -5388,7 +5389,13 @@ div.sidebar__pane-content div.tooltip::after {
 .token img:not(.note-condition):not(.condition-img), .token [data-img]:not(.aoe-shape-line), .token .token-image{
     pointer-events:none !important;
 }
-
+.div-token-image{
+    background-repeat: no-repeat !important;
+    background-size: var(--image-zoom, cover) !important;
+}
+.div-token-image.preserve-aspect-ratio{
+    background-size: var(--image-zoom, contain) !important;
+}
 .set-conditions-button .tooltip-hover,
 .remove-conditions-button .tooltip-hover{
     pointer-events:none;
