@@ -1998,8 +1998,8 @@ function door_note_icon(id){
 							    </div>
 							</div>`
 				            const tooltipHtml = $(noteHover);
-							window.JOURNAL. translateHtmlAndBlocks(tooltipHtml);	
-							window.JOURNAL.add_journal_roll_buttons(tooltipHtml);
+							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+							add_journal_roll_buttons(tooltipHtml);
 							window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 				            flyout.append(tooltipHtml);
 				            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);

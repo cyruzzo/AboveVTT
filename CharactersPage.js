@@ -330,6 +330,7 @@ async function init_characters_pages(container = $(document)) {
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
     window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
   }
+
   // it's ok to call both of these, because they will do any clean up they might need and then return early
   init_character_sheet_page();
   init_character_list_page_without_avtt();
@@ -656,9 +657,16 @@ function observe_character_sheet_changes(documentToObserve) {
           return button;
         });
         console.log(`${icons.length} aoe spells discovered`);
-      }
+      }    
     }
-   
+    const snippets = documentToObserve.find(".ddbc-snippet__content:not('.above-vtt-visited'), .ct-sidebar__pane-content>div:first-of-type [class*='ct-'] > [class*='-detail']:not('.above-vtt-visited'), .ct-sidebar__inner [class*='styles_content']>div:first-of-type [class*='ct-'] > [class*='-detail']:not('.above-vtt-visited')");
+
+    if(add_journal_roll_buttons && snippets.length > 0){
+      snippets.addClass("above-vtt-visited");
+      snippets.each(function(){
+        add_journal_roll_buttons($(this));
+      })
+    }
 
 
     const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 

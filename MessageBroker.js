@@ -364,7 +364,7 @@ class MessageBroker {
 							li.animate({ opacity: 0 }, animationDuration, function() {
 							 	li.html(newlihtml);
 							 	window.JOURNAL.translateHtmlAndBlocks(li);	
-								window.JOURNAL.add_journal_roll_buttons(li);
+								add_journal_roll_buttons(li);
 								window.JOURNAL.add_journal_tooltip_targets(li);
 								add_stat_block_hover(li)
 								let neweight = li.height();
