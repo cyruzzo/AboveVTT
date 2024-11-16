@@ -1822,13 +1822,14 @@ class Token {
 
 			/* UPDATE COMBAT TRACKER */
 			this.update_combat_tracker()
-			let underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-			let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
-			let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
-			let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
-			let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
-			let imageZoom = (this.options.imageZoom != undefined) ? 49.5 * this.options.imageZoom/100 : 0;
-			let rotation = 0;
+			const underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+			const imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+			const imageOffsetX = this.options.offset?.x;
+			const imageOffsetY = this.options.offset?.y;
+			const imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
+			const imageZoom = this.options.imageZoom != undefined ? parseFloat(this.options.imageZoom): undefined;
+			const rotation = 0;
+			const newInset = imageZoom != undefined ? 49.5 * imageZoom/100 : undefined;
 			if (this.options.rotation != undefined) {
 				rotation = this.options.rotation;
 			}
@@ -1880,10 +1881,11 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": `${imageOffsetX}px`,
-					"--offsetY": `${imageOffsetY}px`,
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)}%` : (imageOffsetY != undefined ? 0 : ''),
+					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
 					"--image-opacity": `${imageOpacity}`,
-					"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
+					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
+					"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
 
 				});
 				$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
@@ -1988,7 +1990,7 @@ class Token {
 								video = true;
 							} 
 							else{
-								tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+								tokenImage = $("<div data-div-image='true' style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
 							}
 							oldImage = tokenImage;
 							old.append(tokenImage);
@@ -2348,13 +2350,14 @@ class Token {
 					if(this.options.legacyaspectratio == false) {
 						imgClass = 'token-image preserve-aspect-ratio';
 					}
-					let underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-					let rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
-					let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
-					let imageOffsetX = (this.options.offset?.x != undefined) ? parseInt(this.sizeWidth()) / underdarknessDivisor * this.options.offset?.x/100 : undefined;
-					let imageOffsetY = (this.options.offset?.y != undefined) ? parseInt(this.sizeHeight()) / underdarknessDivisor * this.options.offset?.y/100 : undefined;
-					let imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
-					let imageZoom = (this.options.imageZoom != undefined) ? 49.5 * this.options.imageZoom/100 : 0;
+					const underdarknessDivisor = this.options.underDarkness && !this.options.exampleToken ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+					const rotation = (this.options.rotation != undefined) ? this.options.imageSize : 0;
+					const imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
+					const imageOffsetX = this.options.offset?.x;
+					const imageOffsetY = this.options.offset?.y;
+					const imageOpacity = (this.options.imageOpacity != undefined) ? this.options.imageOpacity : 1;
+					const imageZoom = this.options.imageZoom != undefined ? parseFloat(this.options.imageZoom) : undefined;
+					const newInset = imageZoom != undefined ? 49.5 * imageZoom/100 : undefined;
 					this.options.imgsrc = update_old_discord_link(this.options.imgsrc) // this might be able to be removed in the future - it's to update maps with tokens already on them
 					let video = false;
 					if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
@@ -2362,16 +2365,17 @@ class Token {
 						video = true;
 					} 
 					else{
-						tokenImage = $("<img style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");
+						tokenImage = $("<div style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
 					}
 					
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": `${imageOffsetX}px`,
-						"--offsetY": `${imageOffsetY}px`,
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)}%` : (imageOffsetY != undefined ? 0 : ''),
+						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
 						"--image-opacity": `${imageOpacity}`,
-						"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
+						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
+						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
 					});
 					if(!(this.options.square)){
 						tokenImage.addClass("token-round");
@@ -2399,10 +2403,6 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": `${imageOffsetX}px`,
-						"--offsetY": `${imageOffsetY}px`,
-						"--image-opacity": `${imageOpacity}`,
-						"--view-box": `inset(${imageZoom}% ${imageZoom}% ${imageZoom}% ${imageZoom}%)`
 					});
 					tok.toggleClass("isAoe", true);
 					if(this.isLineAoe()){

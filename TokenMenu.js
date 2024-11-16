@@ -2950,15 +2950,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetX = [...new Set(tokenOffsetX)];
 
 		let startingOffsetX = uniqueOffsetX.length === 1 && uniqueOffsetX[0] != undefined ? uniqueOffsetX[0] : 0;
-		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', '', '', 5, function (offsetX, persist=false) {
+		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X %', '', '', 1, function (offsetX, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
 				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseInt(token.sizeWidth()) / underdarknessDivisor * offsetX/100}px`,
-					"--offsetY": `${parseInt(token.sizeHeight()) / underdarknessDivisor * token.options.offset.y/100}px`
+					"--offsetX": `${parseFloat(offsetX)}%`,
+					"--offsetY": `${parseFloat(token.options.offset.y)}%`
 				})
 
 				if(persist)
@@ -2971,15 +2971,15 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetY = [...new Set(tokenOffsetY)];
 		let startingOffsetY = uniqueOffsetY.length === 1  && uniqueOffsetY[0] != undefined ? uniqueOffsetY[0] : 0;
 
-		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', '', '', 5, function (offsetY, persist=false) {
+		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y %', '', '', 1, function (offsetY, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
 					token.options.offset = {x: 0, y:0};
 				token.options.offset.y = offsetY;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseInt(token.sizeWidth()) / underdarknessDivisor * token.options.offset.x/100}px`,
-					"--offsetY": `${parseInt(token.sizeHeight()) / underdarknessDivisor * offsetY/100}px`
+					"--offsetX": `${parseFloat(token.options.offset.x)}%`,
+					"--offsetY": `${parseFloat(offsetY)}%`
 				})
 				if(persist)
 					token.place_sync_persist();
@@ -2991,11 +2991,14 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let tokenImageZoom = tokens.map(t => t.options.imageZoom);
 		let uniqueImageZoom = [...new Set(tokenImageZoom)];
 		let startingImageZoom = uniqueImageZoom.length === 1 && uniqueImageZoom[0] != undefined ? uniqueImageZoom[0] : 0;
-		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom %', -100, 100, 5, function (imageZoom, persist=false) {
+		let imageZoomWrapper = build_token_num_input(startingImageZoom, tokens, 'Image Zoom %', -100, '', 5, function (imageZoom, persist=false) {
 			tokens.forEach(token => {
 				token.options.imageZoom = imageZoom;
-				const newInset = 49.5 * imageZoom/100;
-				$(`.VTTToken[data-id='${token.options.id}']`).css("--view-box", `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`);
+				const newInset = 49.5 * parseFloat(imageZoom)/100;
+				$(`.VTTToken[data-id='${token.options.id}']`).css({
+					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
+					"--image-zoom": `${parseFloat(imageZoom)+100}%` //adjust from viewbox to background-size property
+				});
 				if(persist)
 					token.place_sync_persist();
 			});
