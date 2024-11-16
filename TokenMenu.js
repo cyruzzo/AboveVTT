@@ -2957,7 +2957,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(offsetX)}%`,
+					"--offsetX": `${parseFloat(offsetX)+50}%`,
 					"--offsetY": `${parseFloat(token.options.offset.y)}%`
 				})
 
@@ -2978,7 +2978,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 					token.options.offset = {x: 0, y:0};
 				token.options.offset.y = offsetY;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(token.options.offset.x)}%`,
+					"--offsetX": `${parseFloat(token.options.offset.x)+50}%`,
 					"--offsetY": `${parseFloat(offsetY)}%`
 				})
 				if(persist)

@@ -1882,7 +1882,7 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)}%` : (imageOffsetY != undefined ? 0 : ''),
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)+50}%` : (imageOffsetY != undefined ? 50 : ''),
 					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
 					"--image-opacity": `${imageOpacity}`,
 					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
@@ -2372,7 +2372,7 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)}%` : (imageOffsetY != undefined ? 0 : ''),
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)+50}%` : (imageOffsetY != undefined ? 50 : ''),
 						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
 						"--image-opacity": `${imageOpacity}`,
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
