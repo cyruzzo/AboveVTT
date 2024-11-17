@@ -7,24 +7,24 @@ $(function() {
 let recentCharacterUpdates = {};
 
 const debounce_add_extras = mydebounce(() => {
-  if (is_abovevtt_page()) {
+  if (is_abovevtt_page() || window.self != window.top) {
     $('.add-monster-token-to-vtt').remove();
     const extraRows = $('.ct-extra-row')
     for(let i=0; i<extraRows.length; i++){
       $(extraRows[i]).append($(`<button class='add-monster-token-to-vtt'>+</button>`)) 
     }
-    let pc = find_pc_by_player_id(my_player_id(), false)
+    let pc = window.top.find_pc_by_player_id(window.self.PLAYER_ID, false)
     const playerTokenID = pc ? pc.sheet : '';
     $('.add-monster-token-to-vtt').off('click.addExtra').on('click.addExtra', async function(e){
       e.stopImmediatePropagation();
-      let tokenPosition = (window.TOKEN_OBJECTS[playerTokenID]) ? 
+      let tokenPosition = (window.top.TOKEN_OBJECTS[playerTokenID]) ? 
         {
-          x: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.left) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2,
-          y: parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.top) + parseFloat(window.TOKEN_OBJECTS[playerTokenID].options.size)/2
+          x: parseFloat(window.top.TOKEN_OBJECTS[playerTokenID].options.left) + parseFloat(window.top.TOKEN_OBJECTS[playerTokenID].options.size)/2,
+          y: parseFloat(window.top.TOKEN_OBJECTS[playerTokenID].options.top) + parseFloat(window.top.TOKEN_OBJECTS[playerTokenID].options.size)/2
         } : 
-        center_of_view();
+        window.top.center_of_view();
 
-      let playerData = await DDBApi.fetchCharacterDetails([window.PLAYER_ID])
+      let playerData = await DDBApi.fetchCharacterDetails([window.self.PLAYER_ID])
       let tokenName = $(this).parent().find('.ddbc-extra-name').text().replace("*", '');
       let monsterData = playerData[0].extras.creatures.filter(d => d.name == tokenName)[0];
 
@@ -44,18 +44,26 @@ const debounce_add_extras = mydebounce(() => {
         lockRestrictDrop: "none",
         restrictPlayerMove: false
       }
-      if(!window.TOKEN_OBJECTS[playerTokenID])
-        tokenPosition = convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
-      window.MB.sendMessage("custom/myVTT/place-extras-token", {
+      if(!window.top.TOKEN_OBJECTS[playerTokenID])
+        tokenPosition = window.top.convert_point_from_view_to_map(tokenPosition.x, tokenPosition.y)
+
+      const data = {
           monsterData: monsterData,
           centerView: tokenPosition,
-          sceneId: window.CURRENT_SCENE_DATA.id,
+          sceneId: window.top.CURRENT_SCENE_DATA.id,
           extraOptions: extraOptions
-      });
+      }
+      if(window.top.DM){
+        tabCommunicationChannel.postMessage({
+          msgType: 'dropExtra',
+          characterId: window.location.href.split('/').slice(-1)[0],
+          data: data
+        });
+      }
+      else{
+        window.MB.sendMessage("custom/myVTT/place-extras-token", data);
+      }
     })
-  
- 
-  
   } 
 
 }, 100);
