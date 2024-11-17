@@ -475,15 +475,16 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			width: width,
 			height: height,
 			videoId: videoid,
-			playerVars: { 'autoplay': 1, 'controls': 1, 'rel': 0 },
+			playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0 },
 			events: {
 				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
 				'onReady': function(e) { 
-					let ytvolume= $("#youtube_volume").val();
+					let ytvolume=window.MIXER?.state()?.animatedMap?.volume != undefined ? window.MIXER?.state()?.animatedMap?.volume : $("#youtube_volume").val();
 					if(ytvolume)
-						window.YTPLAYER.setVolume(ytvolume); 
+						e.target.setVolume(ytvolume); 
 					else
-						window.YTPLAYER.setVolume(50);
+						e.target.setVolume(25);
+					e.target.playVideo();
 				}			
 			}
 		});
@@ -547,12 +548,13 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		if (width != null) {
 			newmapSize = 'width: ' + width + 'px; height: ' + height + 'px;';
 		}
-		let videoVolume = 0.5;
+		let videoVolume = window.MIXER?.state()?.animatedMap?.volume != undefined ? window.MIXER?.state()?.animatedMap?.volume : $("#youtube_volume").val() != undefined ? $("#youtube_volume").val() : 0.25;
+		
 		if(window.DM){
-			videoVolume = $("#youtube_volume").val()/100 * $("#master-volume input").val();
+			videoVolume = videoVolume/100 * $("#master-volume input").val();
 		}
 		else{
-			videoVolume = 0.5 * $("#master-volume input").val()
+			videoVolume = videoVolume * $("#master-volume input").val()
 		}
 		if(url.includes('google')){
 	    if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0 ) {

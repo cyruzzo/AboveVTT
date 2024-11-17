@@ -515,6 +515,16 @@ class Mixer extends EventTarget {
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
 
+    updateAnimatedMapVolume(volume) {
+        const state = this.state();
+        if (!(state.animatedMap)) {
+            state.animatedMap = {}
+        }
+        state.animatedMap.volume=volume;
+        this._write(state);
+    }
+
+
     // extras
     clear() {
         const state = this.state();
