@@ -57,24 +57,26 @@ function init_mixer() {
         mixerChannels.innerHTML = "";
         let youtube_section= $("<li class='audio-row'></li>");;    
         let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>Animated Map Audio</div>`)
-        let youtube_volume = $(`<input type="range" min="0." max="100" value="${window.YTPLAYER ? window.YTPLAYER.volume : 50}" step="1" class="volume-control" id="youtube_volume">`);
+        let youtube_volume = $(`<input type="range" min="0" max="100" value="${window.MIXER.state()?.animatedMap?.volume != undefined ? window.MIXER.state().animatedMap.volume : window.YTPLAYER ? window.YTPLAYER.volume : 25}" step="1" class="volume-control" id="youtube_volume">`);
         $(youtube_section).append(channelNameDiv, youtube_volume);
         $(mixerChannels).append(youtube_section);
         youtube_volume.on("change", function() {
-
+            const newVolume = $("#youtube_volume").val();
+            const masterVolume = $("#master-volume input").val();
             if (window.YTPLAYER) {
-                window.YTPLAYER.volume = $("#youtube_volume").val();
-                window.YTPLAYER.setVolume(window.YTPLAYER.volume*$("#master-volume input").val());
+                window.YTPLAYER.volume = newVolume;
+                window.YTPLAYER.setVolume(window.YTPLAYER.volume*masterVolume);
             }   
             if($('video#scene_map').length > 0)
-                $('video#scene_map')[0].volume = $("#youtube_volume").val()/100 * $("#master-volume input").val();  
+                $('video#scene_map')[0].volume = newVolume/100 * masterVolume;  
 
             if(window.YTPLAYER || $('video#scene_map').length>0){
                 let data={
-                    volume: $("#youtube_volume").val()
+                    volume: newVolume
                 };
                 window.MB.sendMessage("custom/myVTT/changeyoutube",data);
-            }     
+            }   
+            window.MIXER.updateAnimatedMapVolume(newVolume);
         });
 
         /** @type {Object.<string, Channel>} */
