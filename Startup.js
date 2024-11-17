@@ -148,7 +148,14 @@ $(function() {
               }   
             }
           }
-                           
+          if(window.DM && event.data.msgType=='dropExtra'){    
+            let left = parseInt(event.data.data.centerView.x);
+            let top = parseInt(event.data.data.centerView.y);
+            let monsterId = event.data.data.monsterData.baseId;
+            fetch_and_cache_monsters([monsterId], function(){
+              create_and_place_token(window.cached_monster_items[monsterId], undefined, undefined, left, top, undefined, undefined, true, event.data.data.extraOptions)
+            });
+          }                 
                   
           if(!window.DM){
             if(event.data.msgType == 'CharacterData'){
