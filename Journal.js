@@ -1628,8 +1628,8 @@ class JournalManager{
 	close_all_notes(){
 		$("textarea[data-note-id]").each(function(){
 			let taid=$(this).attr('id')
-			tinyMCE.get(taid).execCommand('mceSave');
-			$(this).closest(".note").dialog("close");
+			tinyMCE.get(taid)?.execCommand('mceSave');
+			$(this).closest(".note")?.dialog("close");
 		});
 	}
 
