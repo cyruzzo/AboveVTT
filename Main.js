@@ -794,9 +794,9 @@ function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 		$(".sidebar-panel-loading-indicator").hide();
 		return;
 	}
-	if(window.TOKEN_OBJECTS[tokenId].options.monster == 'open5e'){
+	if(window.all_token_objects[tokenId].options.monster == 'open5e'){
 		let container = build_draggable_monster_window();
-		build_and_display_stat_block_with_id(window.TOKEN_OBJECTS[tokenId].options.stat, container, tokenId, function () {
+		build_and_display_stat_block_with_id(window.all_token_objects[tokenId].options.stat, container, tokenId, function () {
 			$(".sidebar-panel-loading-indicator").hide();
 		}, true);
 		return;
