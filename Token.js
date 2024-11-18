@@ -3765,10 +3765,11 @@ function setTokenAuras (token, options) {
 	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		// use sizeWidth and sizeHeight???
-		const totalAura = innerAuraSize + outerAuraSize;
+		
 		const auraRadius = innerAuraSize ? (innerAuraSize + (options.size/window.CURRENT_SCENE_DATA.scale_factor / 2)) : 0;
+		const totalAura = auraRadius + outerAuraSize;
 		const auraBg = `radial-gradient(${options.aura1.color} ${auraRadius}px, ${options.aura2.color} ${auraRadius}px ${totalAura}px);`;
-		const totalSize = parseInt(options.size)/window.CURRENT_SCENE_DATA.scale_factor+ (2 * totalAura);
+		const totalSize = (2 * totalAura);
 		const absPosOffset = (options.size/window.CURRENT_SCENE_DATA.scale_factor - totalSize) / 2;
 		const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 		const showAura = (token.parent().parent().find("#aura_" + tokenId).length > 0) ? token.parent().parent().find("#aura_" + tokenId).css('display') : '';
@@ -3780,8 +3781,8 @@ function setTokenAuras (token, options) {
 		
 
 
-		const auraStyles = `width:${totalSize }px;
-							height:${totalSize }px;
+		const auraStyles = `width:${totalSize}px;
+							height:${totalSize}px;
 							left:${absPosOffset}px;
 							top:${absPosOffset}px;
 							background-image:${auraBg};
@@ -3873,10 +3874,11 @@ function setTokenLight (token, options) {
 		}
 
 		// use sizeWidth and sizeHeight???
-		const totallight = innerlightSize + outerlightSize;
+		
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
+		const totallight = lightRadius + outerlightSize;
 		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px ${totallight}px);`;
-		const totalSize = (totallight == 0) ? 0 : optionsSize + (2 * totallight);
+		const totalSize = (totallight == 0) ? 0 : (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
 		
 		const color1Values = options?.light1?.color ? options.light1.color.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(0, 3).join() : '255, 255, 255';
