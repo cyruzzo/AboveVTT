@@ -1421,6 +1421,13 @@ class Token {
 				const conditionContainer = $("<div class='dnd-condition condition-container' />");
 				const symbolImage = $("<img class='condition-img' src='/content/1-0-1449-0/skins/waterdeep/images/icons/conditions/" + conditionSymbolName + ".svg'/>");
 				const conditionDescription = isExhaustion ? CONDITIONS.Exhaustion : CONDITIONS[conditionName];
+
+				if(conditionDescription == undefined){ // in case someone selected a condition from a translated character sheet remove it from the conditions array.
+					this.options.conditions.splice(i, 1);
+					i = i != this.options.conditions.length-1 ? i-1: i;	
+					continue;
+				}
+
 				conditionContainer.css('width', symbolSize + "px");
 				conditionContainer.css("height", symbolSize + "px");
 				conditionContainer.css("position", "relative");
