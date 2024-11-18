@@ -578,7 +578,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		{
 		  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 		}
-		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.5' onloadstart="this.volume=${videoVolume}" id="scene_map" src="${url}" />`);
+		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.25' onloadstart="this.volume=${videoVolume/100}" id="scene_map" src="${url}" />`);
 		newmap.off("loadeddata").one("loadeddata", callback);
 		newmap.off("error").on("error", map_load_error_cb);
 
@@ -1800,20 +1800,30 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
-			button.avtt-roll-button {
-				/* lifted from DDB encounter stat blocks  */
-				color: #b43c35;
-				border: 1px solid #b43c35;
-				border-radius: 4px;
-				background-color: #fff;
-				white-space: nowrap;
-				font-size: 14px;
-				font-weight: 600;
-				font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
-				line-height: 18px;
-				letter-spacing: 1px;
-				padding: 1px 4px 0;
-			}			
+			button.avtt-roll-button,
+			.ct-sidebar__inner .integrated-dice__container,
+			.ct-sidebar__inner .avtt-roll-button{
+			      /* lifted from DDB encounter stat blocks  */
+			      color: var(--theme-contrast, #b43c35);
+			      background: transparent !important;
+			      border: 1px solid var(--theme-color, #b43c35);
+			      border-radius: 4px;
+			      background-color: #fff;
+			      white-space: nowrap;
+			      font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
+			      letter-spacing: 1px;
+			      padding: 1px 4px 0;	       
+			}
+			.ct-sidebar__inner .integrated-dice__container, .ct-sidebar__inner .avtt-roll-button{
+			    font-size:12px;
+			    line-height:10px;
+			    padding:2px 2px 1px 2px;
+			}
+      .ct-sidebar__inner .stat-block .avtt-roll-button{
+          font-size:15px;
+          line-height:15px;
+          font-weight: unset;
+      }
 			.MuiPaper-root {
 				padding: 0px 16px;
 				width: 100px;

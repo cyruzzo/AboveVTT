@@ -269,7 +269,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
 
   let slashCommandElements = $(currentElement).find('.abovevtt-slash-command-journal')
 
-  let $newHTML = $(updated);
+  let $newHTML = $(`<div></div>`).html(updated);
     $newHTML.find('.ignore-abovevtt-formating').each(function(index){
     $(this).empty().append(ignoreFormatting[index].innerHTML);
     })
@@ -294,10 +294,10 @@ function add_journal_roll_buttons(target, tokenId=undefined){
   
 
 
-  $(target).html($newHTML);
+  $(target).html($newHTML[0].innerHTML);
 
 
-
+  
   $(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
     let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
     rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
@@ -360,7 +360,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
   currentElement = null
 
 
-  
+
   $(target).find(".avtt-roll-button").click(clickHandler);
   $(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
