@@ -667,7 +667,15 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log(`${icons.length} aoe spells discovered`);
       }    
     }
-    const snippets = documentToObserve.find(".ddbc-snippet__content:not('.above-vtt-visited'), .ct-sidebar__pane-content>div:first-of-type [class*='ct-'] > [class*='-detail']:not('.above-vtt-visited'), .ct-sidebar__inner [class*='styles_content']>div:first-of-type [class*='ct-'] > [class*='-detail']:not('.above-vtt-visited')");
+    const snippets = documentToObserve.find(`
+      .ddbc-snippet__content p:not('.above-vtt-visited'), 
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) p:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not(.above-vtt-visited),
+      [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited)
+    `);
 
     if(add_journal_roll_buttons && snippets.length > 0){
       snippets.addClass("above-vtt-visited");
@@ -763,42 +771,6 @@ function observe_character_sheet_changes(documentToObserve) {
           } 
         }     
       });
-      if($(`style#advantageHover`).length == 0){
-          $('body').append(`
-            <style id='advantageHover'>
-            .ddbc-combat-attack__icon.above-vtt-visited,
-            .ct-spells-spell__action.above-vtt-visited .ct-spells-spell__at-will{
-              border: 1px solid var(--theme-color, #ddd);
-              border-radius: 5px;
-              padding: 3px;
-              margin: 0px 2px 0px 0px;
-            }
-            #site .advantageHover svg [fill="#b0b7bd"], 
-            #site .advantageHover svg [fill="#242528"],
-            #site .advantageHover svg .prefix__st0,
-            #site .advantageHover svg .prefix__st2,
-            #site .advantageHover svg .prefix__st4,
-            #site .advantageHover svg [fill="#b0b7bd"] *, 
-            #site .advantageHover svg [fill="#242528"] *{
-              fill: #4fcf4f !important;
-            }
-            #site .advantageHover {
-              color: #4fcf4f !important;
-            }
-            #site .disadvantageHover svg [fill="#b0b7bd"], 
-            #site .disadvantageHover svg [fill="#242528"],
-            #site .disadvantageHover svg .prefix__st0,
-            #site .disadvantageHover svg .prefix__st2,
-            #site .disadvantageHover svg .prefix__st4,
-            #site .disadvantageHover svg [fill="#b0b7bd"] *, 
-            #site .disadvantageHover svg [fill="#242528"] *{
-                fill: #bb4242 !important;
-            }
-            #site .disadvantageHover {
-              color: #4fcf4f !important;
-            }
-          </style>`);
-      }
     }
 
 
@@ -1069,19 +1041,30 @@ function observe_character_sheet_changes(documentToObserve) {
               menu[class*='styles_tabs']{
                   margin-bottom: 6px;
               }
-              button.avtt-roll-button {
+              button.avtt-roll-button,
+              .ct-sidebar__inner .integrated-dice__container,
+              .ct-sidebar__inner .avtt-roll-button{
                   /* lifted from DDB encounter stat blocks  */
-                  color: #b43c35;
-                  border: 1px solid #b43c35;
-                  border-radius: 4px;
-                  background-color: #fff;
+                  color: var(--theme-contrast, #b43c35) !important;
+                  background: transparent !important;
+                  border: 1px solid var(--theme-color, #b43c35) !important;
+                  border-radius: 4px !important;
                   white-space: nowrap;
-                  font-size: 14px;
-                  font-weight: 600;
                   font-family: Roboto Condensed,Open Sans,Helvetica,sans-serif;
-                  line-height: 18px;
                   letter-spacing: 1px;
-                  padding: 1px 4px 0;
+                  padding: 1px 4px 0;  
+              }
+              .ct-sidebar__inner .integrated-dice__container, 
+              .ct-sidebar__inner .avtt-roll-button{
+                  font-size:12px;
+                  line-height:10px;
+                  padding:2px 2px 1px 2px;
+              }
+              
+              .ct-sidebar__inner .stat-block .avtt-roll-button{
+                  font-size:15px;
+                  line-height:15px;
+                  font-weight: unset;
               }
               [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
               .ct-primary-box__tab--actions .ddbc-tab-options__content{
