@@ -5987,9 +5987,9 @@ div#selectedTokensBorderRotationGrabberConnector,
     filter: none;
 }
 .glc-game-log .popout-button path:not([fill='none']){
-    fill: #000;
+    fill: var(--theme-contrast);
     right: 0;
-} 
+}
 .glc-game-log [class*='-Result']>[class*='-Line-Title-'] {
     display: flex;
     flex-direction: column;
