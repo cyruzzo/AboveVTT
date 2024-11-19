@@ -238,11 +238,11 @@ $(target).find(outerSelector).each(function() {
 				// can only be saving throw or skills here, which is either save/check respectively
 				const rollType = label === "Saving Throws" ? "save" : "check"
 				// will be DEX/CON/ATHLETICS/PERCEPTION
-				const actionType = $(tidbit).text().trim().split(" ")[0]
+				const actionType = tidbit.trim().replace(/\s\S+$/, '')
 				// matches " +1 " or " + 1 "
-				const rollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])/gi
+				const rollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])?/gi
 				
-				allTidBits.push(tidbit.replaceAll(rollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='${rollType}' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'> $2</button>$3`))
+				allTidBits.push(tidbit.replaceAll(rollRegex, `$1<button data-exp='1d20' data-mod='$2' data-rolltype='${rollType}' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'> $2</button>$3`))
 			})		
 			$(this).find(dataSelector).html(allTidBits);				
 		}
@@ -283,7 +283,7 @@ function scan_player_creature_pane(target) {
 	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit",".ddbc-creature-block__tidbit-label", ".ddbc-creature-block__tidbit-data" )
 
 	// replace all "to hit" and "damage" rolls
-	$(target).find(".ct-creature-pane__block p").each(function() {
+	$(target).find("p").each(function() {
 		let currentElement = $(this).clone()
 		if (currentElement.find(".avtt-roll-button").length === 0) {
 			// apply most specific regex first matching all possible ways to write a dice notation
@@ -318,7 +318,7 @@ function scan_player_creature_pane(target) {
 		currentElement = null
 	});
 	$(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
-		let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '');
+		let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '') || $(this).attr('data-actiontype');
 		rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
 		rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
 		rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
