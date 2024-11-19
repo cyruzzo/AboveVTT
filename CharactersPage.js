@@ -684,6 +684,12 @@ function observe_character_sheet_changes(documentToObserve) {
       })
     }
 
+    const extras_stats = documentToObserve.find(`.ct-sidebar__inner .ddbc-creature-block:not(.above-vtt-visited)`);
+    if(extras_stats.length>0){
+      extras_stats.addClass("above-vtt-visited");   
+      scan_player_creature_pane($(extras_stats));
+    }
+
 
     const spells = documentToObserve.find(".ct-spells-spell__action:not('.above-vtt-visited')") 
     if (spells.length > 0){
@@ -1059,12 +1065,20 @@ function observe_character_sheet_changes(documentToObserve) {
                   font-size:12px;
                   line-height:10px;
                   padding:2px 2px 1px 2px;
-              }
-              
+              }    
               .ct-sidebar__inner .stat-block .avtt-roll-button{
                   font-size:15px;
                   line-height:15px;
                   font-weight: unset;
+              }
+              .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button{
+                  /* lifted from DDB encounter stat blocks  */
+                  color: #b43c35 !important;
+                  background: #fff !important;
+                  border: 1px solid #b43c35 !important;
+                  line-height:unset !important;
+                  font-size:unset !important;
+                  padding: 1px 4px 0 !important;  
               }
               [class*='ct-primary-box__tab'] .ddbc-tab-options__body,
               .ct-primary-box__tab--actions .ddbc-tab-options__content{
@@ -1193,9 +1207,7 @@ function observe_character_sheet_changes(documentToObserve) {
             }
             gameLogButton.click()
         }
-        if (($(mutationTarget).hasClass('ct-sidebar__inner') || $(mutation.addedNodes[0]).hasClass('ct-creature-pane')) && mutationTarget.find('.ct-creature-pane').length>0) {
-          scan_player_creature_pane(mutationTarget);
-        }
+
 
         if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find('.ct-game-log-pane').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here

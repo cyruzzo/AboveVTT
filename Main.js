@@ -1824,6 +1824,15 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
           line-height:15px;
           font-weight: unset;
       }
+      .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button{
+          /* lifted from DDB encounter stat blocks  */
+          color: #b43c35 !important;
+          background: #fff !important;
+          border: 1px solid #b43c35 !important;
+          line-height:unset !important;
+          font-size:unset !important;
+          padding: 1px 4px 0 !important;  
+      }
 			.MuiPaper-root {
 				padding: 0px 16px;
 				width: 100px;
