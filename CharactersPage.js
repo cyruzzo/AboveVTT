@@ -434,10 +434,10 @@ function convertToRPGRoller(){
           
           
           if (rollData.rollType === "damage") {
-            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           } else {
-            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
@@ -706,7 +706,7 @@ function observe_character_sheet_changes(documentToObserve) {
         }
         e.stopImmediatePropagation();
         
-        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType);
 
       };
 
@@ -728,7 +728,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         
         if (rollData.rollType === "damage") {
-          damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+          damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
             .present(e.clientY, e.clientX) 
         } else {
           standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
