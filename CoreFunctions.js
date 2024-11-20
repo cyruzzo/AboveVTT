@@ -230,7 +230,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
   };
 
   const rightClickHandler = function(contextmenuEvent) {
-    clickEvent.stopPropagation();
+    contextmenuEvent.stopPropagation();
     roll_button_contextmenu_handler(contextmenuEvent, rollName, rollImage, tokenId ? "monster" : undefined, tokenId);
   }
 
