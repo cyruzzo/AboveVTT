@@ -1111,7 +1111,7 @@ function observe_character_sheet_changes(documentToObserve) {
                   border: 1px solid var(--theme-color);
                   background: var(--theme-background);
               }
-              button.avtt-roll-button,
+              .ct-character-sheet__inner button.avtt-roll-button,
               .ct-sidebar__inner .integrated-dice__container,
               .ct-sidebar__inner .avtt-roll-button{
                   /* lifted from DDB encounter stat blocks  */
@@ -1124,6 +1124,11 @@ function observe_character_sheet_changes(documentToObserve) {
                   letter-spacing: 1px;
                   padding: 1px 4px 0;  
               }
+              .ct-character-sheet__inner button.avtt-roll-button:hover,
+              .ct-sidebar__inner .integrated-dice__container:hover,
+              .ct-sidebar__inner .avtt-roll-button:hover{
+                background: var(--theme-transparent, #ced9e0) !important;
+              }
               .ct-sidebar__inner .integrated-dice__container, 
               .ct-sidebar__inner .avtt-roll-button{
                   font-size:12px;
@@ -1135,6 +1140,16 @@ function observe_character_sheet_changes(documentToObserve) {
                   line-height:15px;
                   font-weight: unset;
               }
+
+              .ct-sidebar__inner .glc-game-log .abovevtt-sidebar-injected button.avtt-roll-button{
+                color: rgb(92, 112, 128) !important;
+              }
+
+              .ct-sidebar__inner .glc-game-log .abovevtt-sidebar-injected button.avtt-roll-button:hover{
+                background: #ced9e0 !important;
+              }
+
+
               .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button{
                   /* lifted from DDB encounter stat blocks  */
                   color: #b43c35 !important;

@@ -8451,7 +8451,7 @@ button.journal-view-button.journal-button {
 }
 [class*='MessageContainer-Flex'] div[role='listitem'] p,
 [class*='MessageContainer-Flex'] div[role='listitem'] span{
-    margin-left:2px
+    margin:0px 0px 0px 2px;
 }
 [class*='MessageContainer-Flex'] div[role='listitem']
 { 
