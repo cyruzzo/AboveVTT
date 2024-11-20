@@ -283,7 +283,7 @@ function scan_player_creature_pane(target) {
 	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit",".ddbc-creature-block__tidbit-label", ".ddbc-creature-block__tidbit-data" )
 
 	// replace all "to hit" and "damage" rolls
-	$(target).find("p").each(function() {
+	$(target).find("p, .ddbc-creature-block__attribute-data-extra").each(function() {
 		let currentElement = $(this).clone()
 		if (currentElement.find(".avtt-roll-button").length === 0) {
 			// apply most specific regex first matching all possible ways to write a dice notation
@@ -323,6 +323,7 @@ function scan_player_creature_pane(target) {
 		rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
 		rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
 		rollAction = (rollAction == '') ? $(this).closest('strong').text().replace('.', '') : rollAction;
+		
 
 		rollAction = rollAction.replace(/\s[\s(]+Recharge.*/gi, '') 
 		

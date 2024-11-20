@@ -943,11 +943,6 @@ function get_my_known_languages() {
   return knownLanguages;
 }
 
-async function rebuild_window_users() {
-  window.playerUsers = await DDBApi.fetchCampaignCharacters(window.gameId);
-  let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
-  window.myUser = playerUser ? playerUser : 'THE_DM'; 
-}
 
 function update_pc_with_data(playerId, data) {
   if (data.constructor !== Object) {
