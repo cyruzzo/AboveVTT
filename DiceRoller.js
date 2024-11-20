@@ -254,8 +254,8 @@ function getRollData(rollButton){
     let rollType = 'custom';
     let rollTitle = 'AboveVTT';
     let damageType = undefined;
-    if($(rollButton).find('.ddbc-damage__value').length>0){
-      expression = $(rollButton).find('.ddbc-damage__value').text().replace(/\s/g, '');
+    if($(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
+      expression = $(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text().replace(/\s/g, '');
     }
     else if($(rollButton).find('.ddbc-signed-number').length>0){
       expression = `1d20${$(rollButton).find('.ddbc-signed-number').attr('aria-label').replace(/\s/g, '')}`;

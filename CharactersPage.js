@@ -672,13 +672,14 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log(`${icons.length} aoe spells discovered`);
       }    
     }
+    //for character page snippets and sidebar text. Can add anything else that's text isn't modified without removing parent.
     const snippets = documentToObserve.find(`
       .ddbc-snippet__content p:not('.above-vtt-visited'), 
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) p:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not([class*='__modifier']):not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div>div[class*='-detail']>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not(.above-vtt-visited),
       [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited)
     `);
 
@@ -689,6 +690,58 @@ function observe_character_sheet_changes(documentToObserve) {
       })
     }
 
+    // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar
+    const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited)`) 
+    if(manualSetRollbuttons.length > 0){
+      manualSetRollbuttons.addClass("above-vtt-visited");
+      const rollImage = window.PLAYER_IMG
+      const rollName = window.PLAYER_NAME
+
+      const clickHandler = function(e) {
+
+        let rollData = {} 
+        rollData = getRollData(this);
+        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
+          return;
+        }
+        e.stopImmediatePropagation();
+        
+        window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+
+      };
+
+      const rightClickHandler = function(e) {
+        let rollData = {} 
+        if($(this).hasClass('avtt-roll-formula-button')){
+           rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+           rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+        }
+        else{
+           rollData = getRollData(this)
+        }
+        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
+          return;
+        }
+        e.stopPropagation();
+        e.preventDefault();
+
+        
+        
+        if (rollData.rollType === "damage") {
+          damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+            .present(e.clientY, e.clientX) 
+        } else {
+          standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG)
+            .present(e.clientY, e.clientX)
+        }
+      }
+      manualSetRollbuttons.each(function(){
+        const button = $(`<button class='avtt-roll-button'></button>`)
+        button.click(clickHandler);
+        button.on("contextmenu", rightClickHandler);
+        $(this).wrap(button);
+      })
+    }
     const extras_stats = documentToObserve.find(`.ct-sidebar__inner .ddbc-creature-block:not(.above-vtt-visited)`);
     if(extras_stats.length>0){
       extras_stats.addClass("above-vtt-visited");   
