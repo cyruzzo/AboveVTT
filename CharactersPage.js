@@ -1052,6 +1052,12 @@ function observe_character_sheet_changes(documentToObserve) {
               menu[class*='styles_tabs']{
                   margin-bottom: 6px;
               }
+              div button.add-monster-token-to-vtt {
+                  border-radius: 5px;
+                  padding: 2px 6px;
+                  border: 1px solid var(--theme-color);
+                  background: var(--theme-background);
+              }
               button.avtt-roll-button,
               .ct-sidebar__inner .integrated-dice__container,
               .ct-sidebar__inner .avtt-roll-button{
