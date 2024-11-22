@@ -777,7 +777,7 @@ class DiceRoller {
             if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
                 ddbMessage.data.context.avatarUrl = dmAvatarUrl
             }
-            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId) && ddbMessage?.data?.context != undefined){
+            else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0 && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
             } 
             if((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled"){
@@ -979,7 +979,7 @@ class DiceRoller {
         } 
         else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId || ddbMessage.entityId == 'false'){
             ddbMessage.data.context.avatarUrl = dmAvatarUrl
-        } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)){
+        } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0){
             ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
         }      
         if (isValid(this.#pendingDiceRoll.name)) {
