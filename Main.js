@@ -208,11 +208,10 @@ function change_zoom(newZoom, x, y, reset = false) {
 		$(window).scrollTop(pageY);	
 	}
 
-	$("body").css({
+	$('#VTT').css({
 		"--window-zoom": window.ZOOM,
 		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
-	}) 
-
+	})
 	set_default_vttwrapper_size();
 	if(reset == true){
 		$("#scene_map")[0].scrollIntoView({
@@ -1307,6 +1306,7 @@ function init_mouse_zoom() {
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
+			e.stopPropagation();
 			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
 				newScale = window.ZOOM * 0.9;
