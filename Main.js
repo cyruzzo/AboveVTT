@@ -2597,8 +2597,8 @@ function init_ui() {
 
 	window.ZOOM = 1.0;
 
-	$('body').css('--window-zoom', window.ZOOM);
-	VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px;  '/>`);
+	
+	const VTT = $(`<div id='VTT' style='position:absolute; top:0px;left:0px;  '/>`);
 
 	//VTT.css("margin-left","200px");
 	//VTT.css("margin-top","200px");
@@ -2706,7 +2706,9 @@ function init_ui() {
 				left: window.scrollX + curXPos - m.pageX,
 				top: window.scrollY + curYPos - m.pageY
 			}
-			requestAnimationFrame(function(){window.scrollTo(scrollOptions)});
+			requestAnimationFrame(function(){
+				window.scrollTo(scrollOptions)
+			});
 		}
 	}
 
@@ -2718,9 +2720,8 @@ function init_ui() {
 		if (m.button == 2) { // ONLY THE RIGHT CLICK
 			if($(m.target).closest($(".context-menu-root")).length>0 ) // AVOID RIGHT CLICK TRAP
 				return;
-			//e.preventDefault();
 			curDown = true;
-			$("body").css("cursor", "grabbing");
+			$("#VTT, #black_layer").css("cursor", "grabbing");
 			//cover iframes so you can drag through windows
 			if (get_avtt_setting_value("iframeStatBlocks") === true) {
 				// iframes yoink the right-click drag when you're moving the map. The non-iframe stat blocks don't need to worry about this
@@ -2733,8 +2734,11 @@ function init_ui() {
 
 	// Function separated so it can be dis/enabled
 	function mouseup(event) {
-		curDown = false;
-		$("body").css("cursor", "");
+		
+		if (event.button == 2) {
+			curDown = false;
+			$("#VTT, #black_layer").css("cursor", "");
+		}
 		//remove iframe cover that prevents mouse interaction
 		$('.iframeResizeCover').remove();
 		if (event.target.tagName.toLowerCase() !== 'a') {
