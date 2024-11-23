@@ -742,7 +742,7 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).wrap(button);
       })
     }
-    const extras_stats = documentToObserve.find(`.ct-sidebar__inner .ddbc-creature-block:not(.above-vtt-visited)`);
+    const extras_stats = documentToObserve.find(`.ct-sidebar__inner .ddbc-creature-block:not(.above-vtt-visited), [class*='styles_creatureBlock']:not(.above-vtt-visited)`);
     if(extras_stats.length>0){
       extras_stats.addClass("above-vtt-visited");   
       scan_player_creature_pane($(extras_stats));
@@ -1150,7 +1150,8 @@ function observe_character_sheet_changes(documentToObserve) {
               }
 
 
-              .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button{
+              .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button,
+              .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-roll-button{
                   /* lifted from DDB encounter stat blocks  */
                   color: #b43c35 !important;
                   background: #fff !important;

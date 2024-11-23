@@ -259,14 +259,14 @@ $(target).find(outerSelector).each(function() {
 function scan_player_creature_pane(target) {
 	console.group("scan_player_creature_pan")
 
-	const creatureType = target.find(".ct-sidebar__header .ct-sidebar__header-parent").text(); // wildshape, familiar, summoned, etc
-	const creatureName = target.find(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
+	const creatureType = $(".ct-sidebar__header .ct-sidebar__header-parent, .ct-sidebar__header>div:first-of-type").text(); // wildshape, familiar, summoned, etc	
+	const creatureName = $(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
 	let pcSheet = find_currently_open_character_sheet();
 	const pc = find_pc_by_player_id(pcSheet);
 	let creatureAvatar = window.pc?.image;
  	try {
  		// not all creatures have an avatar for some reason
- 		creatureAvatar = target.find(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
+ 		creatureAvatar = $(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
  	} catch { }
 	const displayName = `${pc.name} (${creatureName} ${creatureType})`;
 	
@@ -279,8 +279,8 @@ function scan_player_creature_pane(target) {
 	}
 
 
-	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat", ".ddbc-creature-block__ability-heading")
-	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit",".ddbc-creature-block__tidbit-label", ".ddbc-creature-block__tidbit-data" )
+	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat, [class*='styles_stats']>[class*='styles_stat']", ".ddbc-creature-block__ability-heading, [class*='styles_statHeading']")
+	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit, [class*='styles_tidbit']",".ddbc-creature-block__tidbit-label, [class*='styles_tidbitLabel']", ".ddbc-creature-block__tidbit-data, p" )
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find("p, .ddbc-creature-block__attribute-data-extra").each(function() {
