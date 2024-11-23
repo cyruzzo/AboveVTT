@@ -685,6 +685,14 @@ function observe_character_sheet_changes(documentToObserve) {
 
     if(add_journal_roll_buttons && snippets.length > 0){
       snippets.addClass("above-vtt-visited");
+      snippets.find('.ddbc-snippet__tag').each(function(){
+        $(this).parent().replaceWith($(this).text());
+      })
+      snippets.find('td').each(function(){
+          let text = $(this).text();
+          text = text.replace("–", "-");
+          $(this).text(text);
+      })
       snippets.each(function(){
         add_journal_roll_buttons($(this));
       })
