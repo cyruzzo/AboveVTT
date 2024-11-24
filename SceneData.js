@@ -44753,50 +44753,6 @@ function get_ddb_extras() {
 		    "width": 3600,
 		    "height": 2280
 		},
-		"sdw/bronze-shrine/Map3CavernswithBahamutShrine": {
-			"dm_map_usable": "1",
-			"snap": "1",
-			"hpps": "86",
-			"vpps": "86",
-			"fpsq": "5",
-			"offsetx": "37",
-			"offsety": "30",
-			"grid_subdivided": "0",
-			"scale_factor": 1
-		},
-		"sdw/death-knight-dreadnaught/Map5DeathknightDreadnaught": {
-			"dm_map_usable": "1",
-			"snap": "1",
-			"hpps": "86",
-			"vpps": "86",
-			"fpsq": "5",
-			"offsetx": "38",
-			"offsety": "25",
-			"grid_subdivided": "0",
-			"scale_factor": 1
-		},
-		"sdw/iniarvs-tower/Map6RuinsofIniarvsTower": {
-			"dm_map_usable": "1",
-			"snap": "1",
-			"hpps": "86",
-			"vpps": "86",
-			"fpsq": "5",
-			"offsetx": "36",
-			"offsety": "25",
-			"grid_subdivided": "0",
-			"scale_factor": 1
-		},
-		"sdw/leilon-point/Map7LeilonPointFarmingCommunity": {
-			"dm_map_usable": "1",
-			"snap": "1",
-			"hpps": 86,
-			"vpps": 86,
-			"fpsq": "5",
-			"offsetx": 74,
-			"offsety": 50,
-			"grid_subdivided": "1",
-			"scale_factor": 2
-		},
 		"dc/dumathoins-gulch/Map3DumathoinsGulch": {
 			"dm_map_usable": "1",
 			"snap": "1",
@@ -125544,7 +125500,9 @@ function get_ddb_extras() {
 		...get_scene_data_toa(),
 		...get_scene_data_tod(),
 		...get_scene_data_veor(),
-		...get_scene_data_hcs()
+		...get_scene_data_hcs(),
+		...get_scene_data_dosi(),
+		...get_scene_data_sdw()
 	}
 }
 
