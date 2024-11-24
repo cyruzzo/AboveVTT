@@ -16223,8 +16223,9 @@ function get_ddb_extras() {
 			"hpps": 52.666666666666664,
 			"conversion": 0.33
 		},
-		"idrotf/doom-of-ythryn/MapMap73spireofiriolarthas": {
-			"vpps": 104.66666666666667,
+		"dnd/idrotf/doom-of-ythryn/MapMap73spireofiriolarthas": {
+			"scale": 57.692307692307686,
+			"vpps": 51.666666666666664,
 			"title": "Map 7.3: spire of iriolarthas ",
 			"drawings": [
 				[
@@ -16542,20 +16543,6 @@ function get_ddb_extras() {
 					4894,
 					2214,
 					4752,
-					2356,
-					6,
-					2,
-					false,
-					"",
-					""
-				],
-				[
-					"line",
-					"wall",
-					"rgba(0, 255, 0, 1)",
-					4752,
-					2356,
-					4240,
 					2356,
 					6,
 					2,
@@ -20229,10 +20216,52 @@ function get_ddb_extras() {
 					null,
 					"15",
 					2
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					4240,
+					2356,
+					4368,
+					2356,
+					6,
+					2,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					4752,
+					2356,
+					4584,
+					2356,
+					6,
+					2,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					4368,
+					2356,
+					4584,
+					2356,
+					12,
+					2,
+					0,
+					"",
+					""
 				]
 			],
-			"tokens": {
-				"d935497d-4bd1-4d1b-ac09-a3d19af70ce8": {
+			"tokens": [
+				{
 					"auraVisible": true,
 					"disablestat": true,
 					"gridSquares": 0.5,
@@ -20258,7 +20287,7 @@ function get_ddb_extras() {
 					},
 					"aura1": {
 						"color": "rgba(29.340983243599965, 161.976, 25.54361519999999, 0)",
-						"feet": "4"
+						"feet": "8"
 					},
 					"tokenStyleSelect": "definitelyNotAToken",
 					"revealname": false,
@@ -20275,8 +20304,8 @@ function get_ddb_extras() {
 					"itemId": "_AboveVTT_Tokens_Overlays_Big_Bang",
 					"healthauratype": "aura",
 					"placeType": "count",
-					"size": 104,
-					"left": "4410px",
+					"size": 52,
+					"left": "4441px",
 					"name": "Big Bang",
 					"defaultmaxhptype": "average",
 					"disableborder": true,
@@ -20294,7 +20323,7 @@ function get_ddb_extras() {
 					"alwaysshowname": false,
 					"restrictPlayerMove": true,
 					"listItemPath": "/AboveVTT Tokens/Overlays/Big Bang",
-					"top": "3706px",
+					"top": "3720px",
 					"hidehpbar": true,
 					"hitPointInfo": {
 						"maximum": 0,
@@ -20311,14 +20340,14 @@ function get_ddb_extras() {
 					"disableaura": false,
 					"revealInFog": true
 				}
-			},
+			],
 			"darkness_filter": "100",
+			"conversion": 0.495,
 			"scale_factor": 2,
-			"offsetx": 14,
+			"offsetx": 6,
 			"dm_map_usable": "1",
-			"offsety": 36.666666666666515,
-			"hpps": 104,
-			"conversion": 0.495
+			"offsety": 40.33333333333341,
+			"hpps": 52,
 		},
 		"gos/the-sinister-secret-of-saltmarsh/map21hauntedhouse": {
 			
