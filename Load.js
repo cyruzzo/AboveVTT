@@ -89,6 +89,8 @@ window.scripts = [
 	{ src: "scenedata/loe-scene-data.js" },
 	{ src: "scenedata/veor-scene-data.js" },
 	{ src: "scenedata/hcs-scene-data.js" },
+	{ src: "scenedata/dosi-scene-data.js" },
+	{ src: "scenedata/sdw-scene-data.js" },
 	{ src: "ScenesHandler.js" },
 	{ src: "ScenesPanel.js" },
 	{ src: "Settings.js" },
