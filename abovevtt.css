@@ -4949,7 +4949,9 @@ button.block-send-to-game-log span {
 #token-configuration-modal{
     height: unset;
 }
-
+#tokens-panel{
+    overflow-x: hidden;
+}
 .tokens-panel-back-button {
     background-image: url(https://media-waterdeep.cursecdn.com/file-attachments/0/737/chevron-left-green.svg);
     background-repeat: no-repeat;
