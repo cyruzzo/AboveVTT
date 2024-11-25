@@ -1889,8 +1889,8 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)+50}%` : (imageOffsetY != undefined ? 50 : ''),
-					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : (imageOffsetY != undefined ? '0px' : ''),
+					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : (imageOffsetX != undefined ? '0px' : ''),
 					"--image-opacity": `${imageOpacity}`,
 					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
 					"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -2193,7 +2193,12 @@ class Token {
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								"--token-border-width": tokenBorderWidth,
-								'border-width': old.find('.token-image').css('border-width')
+								'border-width': old.find('.token-image').css('border-width'),
+			    				"--offsetX": old.css('--offsetX'),
+			    				"--offsetY": old.css('--offsetY'),
+								"--image-opacity": old.css('--image-opacity'),
+								"--view-box": old.css('--view-box'),
+								"--image-zoom": old.css('--image-zoom')
 							})
 					        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 					        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
@@ -2220,7 +2225,12 @@ class Token {
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
 								"--token-border-width": tokenBorderWidth,
-								'border-width': old.find('.token-image').css('border-width')
+								'border-width': old.find('.token-image').css('border-width'),
+			    				"--offsetX": old.css('--offsetX'),
+			    				"--offsetY": old.css('--offsetY'),
+								"--image-opacity": old.css('--image-opacity'),
+								"--view-box": old.css('--view-box'),
+								"--image-zoom": old.css('--image-zoom')
 							})
 							copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
 							copyToken.toggleClass('lockedToken', this.options.locked==true)
@@ -2379,8 +2389,8 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)+50}%` : (imageOffsetY != undefined ? 50 : ''),
-						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)}%` : (imageOffsetX != undefined ? 0 : ''),
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : (imageOffsetY != undefined ? '0px' : ''),
+						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : (imageOffsetX != undefined ? '0px' : ''),
 						"--image-opacity": `${imageOpacity}`,
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
 						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
