@@ -1979,7 +1979,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         window.JOURNAL.notes[customization.id] = {
             id: customization.id,
             plain: statBlock,
-            player: false,
+            player: true,
             statBlock: true,
             text: statBlock
         };
