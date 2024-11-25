@@ -2433,6 +2433,37 @@ class JournalManager{
 			    font-family: MrsEavesSmallCaps,Roboto,Open Sans,Helvetica,sans-serif;
 			    font-size: 34px;
 			    font-weight: 700;
+			}		
+			.ddbc-creature-block {
+			    background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-block-top-texture.png),url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/paper-texture.png);
+			    background-size: 100% auto;
+			    background-position: top;
+			    background-repeat: no-repeat,repeat;
+			    position: relative;
+			    box-shadow: 0 0 5px #979aa4;
+			    border: 1px solid #d4d0ce;
+			    padding: 15px 10px;
+			    font-family: Scala Sans Offc,Roboto,Helvetica,sans-serif;
+			    font-size: 15px
+			}
+
+			.ddbc-creature-block:after,.ddbc-creature-block:before {
+			    content: "";
+			    display: block;
+			    background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-bar-book.png) 50%;
+			    background-size: 100% 100%;
+			    height: 6px;
+			    position: absolute;
+			    left: -3px;
+			    right: -3px
+			}
+
+			.ddbc-creature-block:before {
+			    top: -3px
+			}
+
+			.ddbc-creature-block:after {
+			    bottom: -3px
 			}
 			@font-face {
 			    font-family: Scala Sans Offc;
