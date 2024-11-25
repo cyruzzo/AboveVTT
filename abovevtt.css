@@ -10377,7 +10377,12 @@ li.audio-row:hover .channel-progress-bar-total
 .token-image[src*='assets/icons/speaker.svg']{
     filter: invert(1) drop-shadow(1px 1px 0px #000) !important;
 }
-
+.token>.token-image{
+    background-position: calc(50% + var(--offsetX)) calc(0% - var(--offsetY)) !important;
+}
+.token.underDarkness>.token-image{
+    background-position: calc(50% + calc(var(--offsetX) / var(--scene-scale, 1))) calc(0% - calc(var(--offsetY) / var(--scene-scale, 1))) !important;
+}
 #tokens .audio-token.token:not(.underDarkness),
 #map_items .audio-token.token{
     background: #060b04;
@@ -10917,6 +10922,8 @@ div#playlistFields {
     bottom: -6px;
     top: unset
 }
+
+
 
 
 /***** END NEW STAT BLOCKS ****/

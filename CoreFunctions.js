@@ -1262,7 +1262,7 @@ function updateTokenSrc(url, container, video=false){
   url = parse_img(url)
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
-    container.css('background', `url(${url.replace('embed?', 'download?')}) var(--offsetX) var(--offsetY)`)
+    container.css('background', `url(${url.replace('embed?', 'download?')})`)
   }
   else if(url.includes("https://1drv.ms/"))
   {
@@ -1273,11 +1273,11 @@ function updateTokenSrc(url, container, video=false){
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
     container.attr('src', url);
-    container.css('background', `url(${url}) var(--offsetX, center) var(--offsetY, top)`)
+    container.css('background', `url(${url})`)
   }
   else{
     container.attr('src', url);
-    container.css('background', `url(${url}) var(--offsetX, center) var(--offsetY, top)`)
+    container.css('background', `url(${url})`)
   }
 }
 

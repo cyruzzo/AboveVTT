@@ -2957,8 +2957,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(offsetX)+50}%`,
-					"--offsetY": `${parseFloat(token.options.offset.y)}%`
+					"--offsetX": `${parseFloat(offsetX) * token.options.gridSquares}px`,
+					"--offsetY": `${parseFloat(token.options.offset.y) * token.options.gridSquares}px`
 				})
 
 				if(persist)
@@ -2978,8 +2978,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 					token.options.offset = {x: 0, y:0};
 				token.options.offset.y = offsetY;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(token.options.offset.x)+50}%`,
-					"--offsetY": `${parseFloat(offsetY)}%`
+					"--offsetX": `${parseFloat(token.options.offset.x) * token.options.gridSquares}px`,
+					"--offsetY": `${parseFloat(offsetY) * token.options.gridSquares}px`
 				})
 				if(persist)
 					token.place_sync_persist();
