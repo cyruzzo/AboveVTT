@@ -5541,6 +5541,12 @@ div#selectedTokensBorderRotationGrabberConnector,
 }
 
 
+
+#VTT{
+    z-index:2;
+    transform: scale(var(--window-zoom));
+}
+
 .ability-block {
     font-size: 14px;
     display: flex;
@@ -5593,10 +5599,6 @@ div#selectedTokensBorderRotationGrabberConnector,
 .mon-stat-block__feature-label{
         font-weight: 700;
 }
-#VTT{
-    z-index:2;
-    transform: scale(var(--window-zoom));
-}
 .mon-stat-block{
     padding: 15px 10px;
 }
@@ -5631,6 +5633,16 @@ div#selectedTokensBorderRotationGrabberConnector,
 .monster-details,
 .detail-content .image{
     margin-bottom:0px;
+}
+.mon-stat-block__description-block h3, .mon-stat-block__description-block-heading {
+    border-bottom: 1px solid #822000;
+    color: #822000;
+    font-family: Scala Sans Offc,Roboto,Open Sans,Helvetica,sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    margin-top: 20px;
 }
 .top_menu.visible,
 .ddbc-tab-options--layout-pill{
@@ -10911,6 +10923,119 @@ div#playlistFields {
 
 /***** END NEW STAT BLOCKS ****/
 
+/***Font Faces*****/
+@font-face {
+    font-family: Scala Sans Offc;
+    font-style: normal;
+    font-weight: 700;
+    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Bold.048d2d142baf798dc56f.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: Scala Sans Offc;
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc.0eea070d2279b1a6be23.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: Scala Sans Offc;
+    font-style: italic;
+    font-weight: 700;
+    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-BoldIta.740e4d6d85a09a9cd0a0.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: Scala Sans Offc;
+    font-style: italic;
+    font-weight: 400;
+    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Ita.86c4513e1c4b869189c2.ttf) format("truetype")
+}
+
+@font-face {
+    font-family: MrsEavesSmallCaps;
+    font-style: normal;
+    font-weight: 100;
+    src: url(https://media.dndbeyond.com/encounter-builder/static/media/MrsEavesSmallCaps.1744d7a566b5a2ccca6c.ttf) format("truetype")
+}
+@font-face {
+  font-family: "Tiamat Condensed SC Regular";
+  src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("https://www.dndbeyond.com/fonts/roboto-regular.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: "Roboto Condensed";
+    src: url("https://www.dndbeyond.com/fonts/robotocondensed-regular-webfont.woff2") format("woff2")
+}
+@import url("//fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto:400,500,700|Gloria+Hallelujah:400,700");@font-face {
+    font-family: 'Roboto Regular';
+    src: url("https://www.dndbeyond.com/fonts/roboto-regular.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: 'Tiamat Condensed SC Regular';
+    src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2")
+}
+
+@font-face {
+    font-family: 'Scala Sans Offc';
+    src: url("../fonts/ScalaSansOffc-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'Scala Sans Offc';
+    src: url("../fonts/ScalaSansOffc.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'Scala Sans Offc';
+    src: url("../fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
+    font-weight: bold;
+    font-style: italic
+}
+
+@font-face {
+    font-family: 'Scala Sans Offc';
+    src: url("../fonts/ScalaSansOffc-Ita.ttf") format("truetype");
+    font-weight: normal;
+    font-style: italic
+}
+
+@font-face {
+    font-family: 'Scala Sans SC Offc';
+    src: url("../fonts/ScalaSansScOffc.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'Scala Sans SC Offc';
+    src: url("../fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
+    font-weight: bold;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'MrsEavesSmallCaps';
+    src: url("../fonts/MrsEavesSmallCaps.ttf") format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
+
+@font-face {
+    font-family: 'DearSarahPro';
+    src: url("../fonts/DearSarahPro.ttf") format("truetype");
+    font-weight: 100;
+    font-style: normal
+}
 /*** Combat tracker and note print styles ***/
 @media print{
 
