@@ -1794,6 +1794,15 @@ function register_token_row_context_menu() {
                     }
                 };
             }
+            if(rowItem.isTypeMonster()){
+                menuItems["copyDDBToken"] = {
+                    name: 'Copy to My Tokens',
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                        create_ddb_token_copy_inside(itemToPlace);
+                    }
+                }
+            }
             if(rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter()){
                 menuItems["border"] = "---";
 
@@ -1930,7 +1939,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
  * Creates a new "My Token" object within a folder
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
-function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='') {
+function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='', options = undefined, statBlock = undefined) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
@@ -1954,10 +1963,28 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         listItem.id,
         { name: newTokenName,
           alternativeImages: [tokenImage]
-        }
+        },
     );
     if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
         customization.tokenOptions.videoToken = true;
+    }
+    if(options != undefined){
+        customization.tokenOptions = {
+            ...customization.tokenOptions,
+            ...options,
+            alternativeImages: [options.imgsrc]
+        }
+    }
+    if(statBlock != undefined){
+        window.JOURNAL.notes[customization.id] = {
+            id: customization.id,
+            plain: statBlock,
+            player: false,
+            statBlock: true,
+            text: statBlock
+        };
+        window.JOURNAL.persist();
+        customization.tokenOptions.statBlock = customization.id;
     }
 
     persist_token_customization(customization, function (didSucceed, error) {
@@ -3070,6 +3097,7 @@ function inject_encounter_monsters() {
 function did_change_mytokens_items() {
     rebuild_token_items_list();
     redraw_token_list();
+    filter_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");
 }
 
 /**
@@ -3558,6 +3586,40 @@ function find_token_options_for_list_item(listItem) {
     } else {
         return find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId)?.allCombinedOptions() || {};
     }
+}
+
+function create_ddb_token_copy_inside(listItem){
+    if (!listItem) return {};
+
+    // set up whatever you need to. We'll override a few things after
+    let foundOptions = find_token_options_for_list_item(listItem);
+    let options = {...foundOptions}; // we may need to put this in specific places within the switch statement below
+  
+    options.name = listItem.name;
+    
+    let tokenSizeSetting;
+    let tokenSize;
+
+    tokenSizeSetting = options.tokenSize;
+    tokenSize = parseInt(tokenSizeSetting);
+    if (tokenSizeSetting === undefined || typeof tokenSizeSetting !== 'number') {
+        options.sizeId = listItem.monsterData.sizeId;
+        // TODO: handle custom sizes
+    }
+    options.monster = 'customStat'
+    
+    if(foundOptions.color != undefined){
+        options.color = foundOptions.color;
+    }
+
+    options.imgsrc = random_image_for_item(listItem);
+
+    // TODO: figure out if we still need to do this, and where they are coming from
+    delete options.undefined;
+    delete options[""];
+    const statBlock = build_stat_block_for_copy(listItem, options)
+
+    
 }
 
 function display_change_image_modal(placedToken) {

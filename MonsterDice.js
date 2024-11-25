@@ -162,7 +162,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
 			let numberFound = parseInt(foundMatches[1]);
 			if (!isNaN(numberFound)) {
-				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : descriptionPostfix; // `1st level `, `2nd level `, etc.
+				const foundDescription = includeMatchingDescription ? foundMatches.input.substring(0, foundMatches.index) : ''; // `1st level `, `2nd level `, etc.
 				const key = foundDescription.replace(/\s/g, ""); // `1stlevel`, `2ndlevel`, etc.
 				// token already has this ability tracked, update the input
 				if (token.options.abilityTracker?.[key] >= 0){

@@ -45,6 +45,20 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
     }
 }
 
+function build_stat_block_for_copy(listItem, options){
+  const monsterData = listItem.monsterData;
+  let cachedMonsterItem = cached_monster_items[monsterData.id];
+    if (cachedMonsterItem) {
+        // we have a cached monster. this data is the best data we have so display that instead of whatever we were given
+        create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cachedMonsterItem.monsterData)));
+    } else {
+       let monsterId = (monsterData.slug) ? monsterData.slug : monsterData.id
+        fetch_and_cache_monsters([monsterId], function () {
+           create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_monster_items[monsterId].monsterData)));
+        }, false);
+    }
+}
+
 function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
     const token = window.TOKEN_OBJECTS[tokenId];
     const html = (customStatBlock) ? $(`
@@ -443,7 +457,277 @@ function build_monster_stat_block(statBlock, token) {
 </div>
 `;
 }
+function build_monster_copy_stat_block(statBlock) {
+    if (!statBlock.userHasAccess) {
+        return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
+    }
+    return `
+<div class="container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
+  <div id="content" class="main content-container" style="padding:0!important">
+    <section class="primary-content" role="main">
 
+      <div class="monster-details">
+
+        <div class="more-info details-more-info" style="padding: 2px;">
+          <div class="detail-content">
+
+            <div class="mon-stat-block ddbc-creature-block" style="column-count: 1;margin:0;">
+              <div class="mon-stat-block__header ddbc-creature-block__header">
+                <div class="mon-stat-block__name ddbc-creature-block__name">
+                  <a class="mon-stat-block__name-link ddbc-creature-block__name-link" href="${statBlock.data.url}" target="_blank">
+                    ${statBlock.data.name}
+                  </a>
+                </div>
+
+                <div class="mon-stat-block__meta ddbc-creature-block__meta">${statBlock.sizeName} ${statBlock.monsterTypeHtml}, ${statBlock.alignmentName}</div>
+              </div>
+              <div class="mon-stat-block__separator ddbc-creature-block__separator">
+                <img class="mon-stat-block__separator-img ddbc-creature-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+              </div>
+              <div class="mon-stat-block__attributes">
+                <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
+                  <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Armor Class</span>
+                  <span class="mon-stat-block__attribute-value">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.data.armorClass}
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        ${statBlock.data.armorClassDescription}
+                    </span>
+                  </span>
+                </div>
+                <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
+                  <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
+                  <span class="mon-stat-block__attribute-data">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.data.averageHitPoints}
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        (${statBlock.data.hitPointDice.diceString})
+                    </span>
+                  </span>
+                </div>
+                <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
+                  <span class="mon-stat-block__attribute-label">Speed</span>
+                  <span class="mon-stat-block__attribute-data">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.speedDescription}
+                    </span>
+                  </span>
+                </div>
+              </div>
+              <div class="mon-stat-block__stat-block">
+                <div class="mon-stat-block__separator">
+                  <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+                </div>
+                <div class="ability-block ddbc-creature-block__abilities">
+                  <div class="ability-block__stat ability-block__stat--str ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">STR</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.str}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.str, "STR")}</span>
+                    </div>
+                  </div>
+                  <div class="ability-block__stat ability-block__stat--dex ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">DEX</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.dex}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.dex, "DEX")}</span>
+                    </div>
+                  </div>
+                  <div class="ability-block__stat ability-block__stat--con ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">CON</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.con}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.con, "CON")}</span>
+                    </div>
+                  </div>
+                  <div class="ability-block__stat ability-block__stat--int ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">INT</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.int}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.int, "INT")}</span>
+                    </div>
+                  </div>
+                  <div class="ability-block__stat ability-block__stat--wis ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">WIS</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.wis}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.wis, "WIS")}</span>
+                    </div>
+                  </div>
+                  <div class="ability-block__stat ability-block__stat--cha ddbc-creature-block__ability-stat">
+                    <div class="ability-block__heading ddbc-creature-block__ability-heading">CHA</div>
+                    <div class="ability-block__data">
+                      <span class="ability-block__score">${statBlock.cha}</span>
+                      <span class="ability-block__modifier ddbc-creature-block__ability-modifier">${statBlock.statButton(statBlock.cha, "CHA")}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mon-stat-block__separator">
+                  <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+                </div>
+              </div>
+              <div class="mon-stat-block__tidbits">
+                ${$(`<div>${statBlock.savingThrowsHtml}</div>`).text() != '' ? `
+                 <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                  <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Saving Throws</span>
+                  <span class="mon-stat-block__tidbit-data">
+                    ${statBlock.savingThrowsHtml}
+                  </span>
+                </div>
+                `: ''}  
+               
+                ${$(`<div>${statBlock.skillsHtml}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.skillsHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.damageVulnerabilitiesHtml}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Damage Vulnerabilities</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.damageVulnerabilitiesHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.damageResistancesHtml}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Damage Resistances</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.damageResistancesHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.damageImmunitiesHtml}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Damage Immunities</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.damageImmunitiesHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.conditionImmunitiesHtml}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Condition Immunities</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.conditionImmunitiesHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.sensesHtml}</div>`).text() ? `
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Senses</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.sensesHtml}
+                    </span>
+                  </div>
+                `: ''}
+
+
+                <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                  <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Languages</span>
+                  <span class="mon-stat-block__tidbit-data">
+                    ${statBlock.languagesHtml}
+                  </span>
+                </div>
+
+                <div class="mon-stat-block__tidbit-container">
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Challenge</span>
+                    <span class="mon-stat-block__tidbit-data">
+                      ${statBlock.challengeRatingHtml}
+                    </span>
+                  </div>
+
+                  <div class="mon-stat-block__tidbit-spacer"></div>
+                  <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                    <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Proficiency Bonus</span>
+                    <span class="mon-stat-block__tidbit-data">
+                        ${statBlock.proficiencyBonusHtml}
+                    </span>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div class="mon-stat-block__separator">
+                <img class="mon-stat-block__separator-img" alt="" src="https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg">
+              </div>
+              
+              <div class="mon-stat-block__description-blocks ddbc-creature-block__description-blocks">
+                ${$(`<div>${statBlock.specialTraitsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                    <div class="mon-stat-block__description-block-content">
+                      ${statBlock.specialTraitsDescription}
+                    </div>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.actionsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                    <div class="mon-stat-block__description-block-heading ddbc-creature-block__description-block-heading">Actions</div>
+                    <div class="mon-stat-block__description-block-content">
+                      ${statBlock.actionsDescription}
+                    </div>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.bonusActionsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                      <div class="mon-stat-block__description-block-heading ddbc-creature-block__description-block-heading">Bonus Actions</div>
+                      <div class="mon-stat-block__description-block-content">
+                        ${statBlock.bonusActionsDescription}
+                      </div>
+                  </div>
+                `: ''} 
+    
+                ${$(`<div>${statBlock.reactionsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                      <div class="mon-stat-block__description-block-heading ddbc-creature-block__description-block-heading">Reactions</div>
+                      <div class="mon-stat-block__description-block-content">
+                        ${statBlock.reactionsDescription}
+                      </div>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.legendaryActionsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                      <div class="mon-stat-block__description-block-heading ddbc-creature-block__description-block-heading">Legendary Actions</div>
+                      <div class="mon-stat-block__description-block-content">
+                        ${statBlock.legendaryActionsDescription}
+                      </div>
+                  </div>
+                `: ''}
+
+                ${$(`<div>${statBlock.mythicActionsDescription}</div>`).text() != '' ? `
+                  <div class="mon-stat-block__description-block ddbc-creature-block__description-block">
+                      <div class="mon-stat-block__description-block-heading ddbc-creature-block__description-block-heading">Mythic Actions</div>
+                      <div class="mon-stat-block__description-block-content">
+                        ${statBlock.mythicActionsDescription}
+                      </div>
+                  </div>
+                `: ''}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+`;
+}
 class MonsterStatBlock {
     constructor(data) {
         this.data = data;
