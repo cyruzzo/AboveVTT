@@ -2224,9 +2224,10 @@ class JournalManager{
 				 letter-spacing: .35px;
 				 font-weight: 500;
 				 color: var(--monster-header-color,#5b160c);
-				 font-size: var(--monster-trait-header-size,18px);
+				 font-size: var(--monster-trait-header-size,22px);
 				 font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
-				 border-bottom: 2px solid var(--monster-header-underline,#7a3c2f) 
+				 border-bottom: 2px solid var(--monster-header-underline,#7a3c2f);
+				 font-variant: small-caps; 
 			}
 			.stat-block .monster-header+p {
 				 break-before: avoid 
