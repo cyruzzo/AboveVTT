@@ -10379,6 +10379,7 @@ li.audio-row:hover .channel-progress-bar-total
 }
 .token>.token-image{
     background-position: calc(50% + var(--offsetX)) calc(0% - var(--offsetY)) !important;
+    background-origin: border-box !important;
 }
 .token.underDarkness>.token-image{
     background-position: calc(50% + calc(var(--offsetX) / var(--scene-scale, 1))) calc(0% - calc(var(--offsetY) / var(--scene-scale, 1))) !important;
