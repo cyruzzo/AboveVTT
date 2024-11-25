@@ -2331,9 +2331,6 @@ class JournalManager{
 				 bottom: -6px;
 				 top: unset 
 			}
-			*+.stat-block {
-				 margin-top: 24px 
-			}
 			.ability-block {
 			    font-size: 14px;
 			    display: flex;
