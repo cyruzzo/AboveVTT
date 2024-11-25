@@ -1710,6 +1710,848 @@ class JournalManager{
 		    	self.persist();
 		    }
 		}, 800)
+
+		const contentStyles = `
+			:root {
+				 --theme-page-fg-color: #242527;
+			}
+			/* END - Default text color */
+			*{
+				 font-family: Roboto, Helvetica, sans-serif;
+			}
+			.abovevtt-mon-stat-block__separator{
+				 max-width: 100%;
+				 min-height: 30px;
+				 margin: 0px;
+				 background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat 
+			}
+			.dm-eyes-only{
+				 border: 1px solid #000;
+				 border-radius: 5px;
+				 background: #f5f5f5;
+				 padding: 0px 5px;
+				 margin: 9px 10px;
+				 display: ${window.DM ? 'block' : 'none'};
+				 position: relative;
+			}
+			.dm-eyes-only:before {
+				 display:block;
+				 position:absolute;
+				 content:'DM Eyes Only';
+				 top: -10px;
+				 right: 2px;
+				 float:right;
+				 border:1px #000 solid;
+				 border-radius:5px;
+				 background: #f5f5f5;
+				 font-weight: bold;
+				 font-size:10px;
+				 padding:0px 4px;
+			}
+			.Basic-Text-Frame {
+				 clear: both;
+				 border: 1px solid #d4d0ce;
+				 background: white;
+				 padding: 15px 
+			}
+			@media(min-width: 768px) {
+				 .Basic-Text-Frame {
+					 -webkit-column-count:2;
+					 column-count: 2 
+				}
+			}
+			.one-column-stat {
+				 -webkit-column-count:1;
+				 column-count: 1;
+			}
+			.Basic-Text-Frame-2 {
+				 border: 1px solid #d4d0ce;
+				 background: white;
+				 padding: 15px 
+			}
+			.ignore-abovevtt-formating{
+				 border: 2px dotted #b100ff;
+			}
+			@media(min-width: 768px) {
+				 .Basic-Text-Frame-2 {
+					 float:right;
+					 margin: 30px 0 15px 20px;
+					 width: 410px 
+				}
+			}
+			.Basic-Text-Frame-2 .compendium-image-center {
+				 margin-bottom: 20px;
+				 display: block 
+			}
+			.Basic-Text-Frame-3 {
+				 border: 1px solid #d4d0ce;
+				 background: white;
+				 padding: 15px 
+			}
+			@media(min-width: 768px) {
+				 .Basic-Text-Frame-3 {
+					 float:left;
+					 margin: 30px 20px 15px 0;
+					 width: 410px 
+				}
+			}
+			.Basic-Text-Frame-3 .compendium-image-center {
+				 margin-bottom: 20px;
+				 display: block 
+			}
+			.Basic-Text-Frame,.Basic-Text-Frame-2,.Basic-Text-Frame-3 {
+				 position: relative;
+				 box-shadow: 0 0 5px #979AA4 
+			}
+			.Basic-Text-Frame::before,.Basic-Text-Frame::after,.Basic-Text-Frame-2::before,.Basic-Text-Frame-2::after,.Basic-Text-Frame-3::before,.Basic-Text-Frame-3::after {
+				 content: '';
+				 background-image: url("../images/MMStatBar_lrg.jpg");
+				 background-size: 100% 100%;
+				 background-position: center;
+				 height: 4px;
+				 display: inline-block;
+				 position: absolute 
+			}
+			.Basic-Text-Frame::before,.Basic-Text-Frame-2::before,.Basic-Text-Frame-3::before {
+				 left: -3px;
+				 top: -3px;
+				 right: -3px 
+			}
+			.Basic-Text-Frame::after,.Basic-Text-Frame-2::after,.Basic-Text-Frame-3::after {
+				 left: -3px;
+				 bottom: -3px;
+				 right: -3px 
+			}
+			.Stat-Block-Styles_Stat-Block-Title {
+				 font-size: 18px!important;
+				 font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+				 text-transform: uppercase;
+				 font-weight: bold;
+				 line-height: 1.4!important;
+				 margin-bottom: 0!important;
+				 display: inline;
+				 margin-right: 8px 
+			}
+			.Stat-Block-Styles_Stat-Block-Metadata {
+				 font-style: italic;
+				 font-size: 14px!important;
+				 line-height: 1.4!important;
+				 margin-bottom: 8px!important 
+			}
+			.Stat-Block-Styles_Stat-Block-Metadata::after {
+				 content: "";
+				 display: block;
+				 border-bottom: 2px solid #bc0f0f;
+				 padding-top: 5px 
+			}
+			.Stat-Block-Styles_Stat-Block-Bar-Object-Space,.Stat-Block-Styles_Stat-Block-Bar-Object-Space-Last {
+				 display: none 
+			}
+			.Stat-Block-Styles_Stat-Block-Data,.Stat-Block-Styles_Stat-Block-Data-Last,.Stat-Block-Styles_Stat-Block-Body,.Stat-Block-Styles_Stat-Block-Hanging,.Stat-Block-Styles_Stat-Block-Hanging-Last,.Stat-Block-Styles_Stat-Block-Body-Last--apply-before-heading- {
+				 font-size: 14px!important;
+				 line-height: 1.4!important;
+				 margin-bottom: 10px!important 
+			}
+			.Stat-Block-Styles_Stat-Block-Heading,.Stat-Block-Styles_Stat-Block-Heading--after-last-bar- {
+				 font-size: 16px!important;
+				 font-weight: bold;
+				 font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif 
+			}
+			.Stat-Block-Styles_Stat-Block-Heading::after,.Stat-Block-Styles_Stat-Block-Heading--after-last-bar-::after {
+				 content: "";
+				 display: block;
+				 border-bottom: 1px solid #bc0f0f;
+				 padding-top: 2px 
+			}
+			.Stat-Block-Styles_Stat-Block-Data-Last {
+				 border-bottom: 2px solid #bc0f0f;
+				 padding-bottom: 10px 
+			}
+			.stat-block-ability-scores {
+				 display: -webkit-flex;
+				 display: -ms-flexbox;
+				 display: flex;
+				 -webkit-flex-wrap: wrap;
+				 -ms-flex-wrap: wrap;
+				 flex-wrap: wrap;
+				 border-top: 2px solid #bc0f0f;
+				 border-bottom: 2px solid #bc0f0f;
+				 margin: 10px 0 
+			}
+			.stat-block-ability-scores-stat {
+				 width: 33.33333%;
+				 padding: 10px 5px;
+				 text-align: center 
+			}
+			/* START - New quote box implementation */
+			.text--quote-box {
+				 display: block !important;
+				 background-color: var(--compendium-quote-box-color, #FAF8EC) !important;
+				/*Fallback: if the variable isn't declared, it'll default to pale yellow*/
+				 padding: 20px 25px 15px 25px !important;
+				 position: relative !important;
+				 width: auto !important;
+				 display: flex !important;
+				 flex-direction: column !important;
+				 overflow: visible !important;
+				 border-radius: 0 !important;
+				 border-left: 1px solid !important;
+				 border-right: 1px solid !important;
+				 border-color: var(--compendium-quote-box-border, #620000) !important;
+				/*Fallback: if the variable isn't declared, it'll default to dark red*/
+				 border-top: 0;
+				 border-bottom: 0;
+				 color: var(--theme-page-fg-color, #242527) !important;
+				 margin: 40px 20px !important;
+				 line-height: 1.6 !important;
+				 font-size: 14px !important;
+			}
+			.text--quote-box::before {
+				 top: -4px !important;
+			}
+			.text--quote-box::before, .text--quote-box::after {
+				 content: '';
+				 border-radius: 50%;
+				 background-position: left !important;
+				 background-size: contain !important;
+				 background-repeat: no-repeat !important;
+				 height: 8px !important;
+				 width: 8px !important;
+				 left: -4px !important;
+				 position: absolute !important;
+				 background-color: var(--compendium-quote-box-corner, #620000);
+			}
+			.text--quote-box::after {
+				 bottom: -4px !important;
+			}
+			.text--quote-box p:first-of-type::before {
+				 top: -4px !important;
+			}
+			.text--quote-box p:first-of-type::before, .text--quote-box p:last-of-type::after {
+				 content: '';
+				 border-radius: 50%;
+				 background-position: right !important;
+				 background-size: contain !important;
+				 background-repeat: no-repeat !important;
+				 height: 8px !important;
+				 width: 8px !important;
+				 right: -4px !important;
+				 position: absolute !important;
+				 background-color: var(--compendium-quote-box-corner, #620000);
+			}
+			.text--quote-box p:last-of-type::after {
+				 bottom: -4px !important;
+			}
+			.text--quote-box p:last-of-type {
+				 margin-bottom: 5px !important;
+			}
+			/* END - New quote box implementation */
+			/* START - New rules sidebar implementation */
+			.text--rules-sidebar {
+				 display: block !important;
+				 background-color: var(--compendium-rules-sidebar-color, #DAE4C1) !important;
+				/*Fallback: if the variable isn't declared, it'll default to pale-green*/
+				 position: relative !important;
+				 width: auto !important;
+				 display: flex !important;
+				 flex-direction: column !important;
+				 overflow: visible !important;
+				 margin: 30px 5px !important;
+				 line-height: 1.6 !important;
+				 font-size: 14px !important;
+				 padding: 25px 28px 15px 30px !important;
+				 border-radius: 0 !important;
+				 border-top: 3px solid #231f20 !important;
+				 border-bottom: 3px solid #231f20 !important;
+				 border-left: 1.5px solid #b3b3b3 !important;
+				 border-right: 1.5px solid #b3b3b3 !important;
+				 color: var(--theme-page-fg-color, #242527) !important;
+				 filter: drop-shadow(0px 5px 8px #ccc);
+			}
+			.text--rules-sidebar p:first-of-type {
+				 text-transform: uppercase;
+				 font-weight: bold;
+				 font-size: 16px;
+			}
+			.text--rules-sidebar .action-tooltip, .text--rules-sidebar .condition-tooltip, .text--rules-sidebar .item-tooltip, .text--rules-sidebar .rule-tooltip, .text--rules-sidebar .sense-tooltip, .text--rules-sidebar .skill-tooltip, .text--rules-sidebar .weapon-properties-tooltip, .text--rules-sidebar .action-tooltip {
+				 color: #129b54 !important;
+			}
+			.text--rules-sidebar::before {
+				 top: -13px !important;
+				 right: 0.1px !important;
+				 left: 0.1px !important;
+			}
+			.text--rules-sidebar::before {
+				 content: '';
+				 background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
+				 background-position: left, right !important;
+				 background-size: contain !important;
+				 background-repeat: no-repeat !important;
+				 height: 11px !important;
+				 position: absolute !important;
+				 z-index: -1;
+			}
+			.text--rules-sidebar::after {
+				 bottom: -13px !important;
+				 right: -0.1px !important;
+				 left: 0.1px !important;
+			}
+			.text--rules-sidebar::after {
+				 content: '';
+				 background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
+				 background-position: left, right !important;
+				 background-size: contain !important;
+				 background-repeat: no-repeat !important;
+				 height: 11px !important;
+				 position: absolute !important;
+				 z-index: -1;
+				 transform: scaleY(-1);
+			}
+			/* END - New rules sidebar implementation */
+			/* START - CSS header variables */
+			h1::after {
+				 background-color: var(--h1-underline, var(--header-underline, #47D18C));
+			}
+			h2::after {
+				 background-color: var(--h2-underline, var(--header-underline, #47D18C));
+			}
+			h3::after {
+				 background-color: var(--h3-underline, var(--header-underline, #47D18C));
+			}
+			/* END - CSS header variables */
+			/* START - Underlines compendium links */
+			a:not(.ddb-lightbox-outer, h3 > a):hover, a:not(.ddb-lightbox-outer, h3 > a):focus {
+				 text-decoration: underline;
+			}
+			/* END - Underlines Compendium links */
+			/** TEMP new .text--quote-box type for compendium content - needs to be added to compiled **/
+			.text--quote-box.compendium-indented-callout-.text--quote-box {
+				 background: transparent !important;
+				 font-size: 16px !important;
+				 border-left: 4px solid #e0dcdc !important;
+				 border-right: none !important;
+				 padding: 10px 20px !important;
+				 margin: 30px 0 !important;
+			}
+			.text--quote-box.compendium-indented-callout-.text--quote-box::before {
+				 content: none !important;
+			}
+			.text--quote-box.compendium-indented-callout-.text--quote-box::after {
+				 content: none !important;
+			}
+			/** END TEMP new .text--quote-box type **/
+			h6 {
+				 font-size: 14px !important;
+				 font-weight: bold !important;
+			}
+			h1 {
+				 font-size: 32px!important;
+				 font-weight: 400!important 
+			}
+			h2 {
+				 font-size: 26px!important;
+				 font-weight: 400!important;
+				 clear: both 
+			}
+			h3 {
+				 font-size: 22px!important;
+				 font-weight: 400!important;
+				 clear: both 
+			}
+			h4 {
+				 font-size: 18px!important;
+				 font-weight: 700!important 
+			}
+			h5 {
+				 font-size: 16px!important;
+				 font-weight: 700!important 
+			}
+			.rules-text a {
+				 color: #129b54!important;
+				 transition: .3s 
+			}
+			.rules-text p:first-child {
+				 font-size: 16px 
+			}
+			.stat-block-background {
+				 background-repeat: no-repeat;
+				 -webkit-box-shadow: 0 5px 8px 0 #aaa;
+				 -moz-box-shadow: 0 5px 8px 0 #aaa;
+				 box-shadow: 0 5px 8px 0 #aaa;
+				 background-position: top!important;
+				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important 
+			}
+			.stat-block-background:after,.stat-block-background:before {
+				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important 
+			}
+			.block-torn-paper,.epigraph,.epigraph--with-author {
+				 overflow: auto;
+				 background: var(--theme-quote-bg-color,#fff);
+				 color: var(--theme-quote-fg-color,#242527);
+				 margin: 40px 0;
+				 line-height: 1.6;
+				 font-size: 14px;
+				 border: solid transparent;
+				 border-width: 20px 10px;
+				 border-image-source: var(--theme-quote-border,url(https://media.dndbeyond.com/ddb-compendium-client/5f1f1d66d16be68cf09d6ca172f8df92.png));
+				 border-image-repeat: repeat;
+				 border-image-slice: 20 10 20 10 fill;
+				 padding: 10px;
+				 position: relative 
+			}
+			.epigraph--with-author p:last-child {
+				 font-style: italic;
+				 text-align: right 
+			}
+			.rules-text {
+				 overflow: auto;
+				 display: block;
+				 margin: 30px 0;
+				 line-height: 1.6;
+				 font-size: 14px;
+				 color: var(--theme-rules-text-fg-color,#242527);
+				 border-color: transparent;
+				 border-style: solid;
+				 border-width: 15px 20px;
+				 border-image-repeat: repeat;
+				 border-image-slice: 21 30 21 30 fill;
+				 background-color: transparent;
+				 padding: 20px 10px 10px;
+				 position: relative;
+				 border-image-source: var(--theme-rules-text-border,url(https://media.dndbeyond.com/ddb-compendium-client/463d4668370589a1a73886611645df7e.png));
+				 -webkit-filter: drop-shadow(0 5px 8px #ccc);
+				 filter: drop-shadow(0 5px 8px #ccc) 
+			}
+			.rules-text p:first-child {
+				 text-transform: uppercase;
+				 font-weight: 700 
+			}
+			.read-aloud-text {
+				 overflow: auto;
+				 display: block;
+				 margin: 30px 0;
+				 line-height: 1.6;
+				 font-size: 14px;
+				 color: var(--theme-read-aloud-fg-color,#242527);
+				 border: 8px solid transparent;
+				 border-image-repeat: repeat;
+				 border-image-slice: 8 8 8 8 fill;
+				 background-color: transparent;
+				 padding: 20px 20px 10px!important;
+				 position: relative;
+				 border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png)) 
+			}
+			.custom-stat{
+				 font-weight:bold;
+				 border: 1px dotted #666;
+			}
+			.custom-avghp.custom-stat {
+				 color: #F00;
+			}
+			.custom-hp-roll.custom-stat {
+				 color: #8f03b3;
+			}
+			.custom-initiative.custom-stat{
+				 color: #007900;
+			}
+			.custom-pc-sheet.custom-stat{
+				 color: #08a1e3;
+			}
+			.abovevtt-slash-command-journal{
+				 color: #b43c35;
+			}
+			.custom-ac.custom-stat{
+				 color: #00F;
+			}
+			/***** NEW STAT BLOCKS ****/
+			.stat-block {
+				 --compendium-p-bottom: 0;
+				 border: 1px solid #a7a3a0;
+				 background-color: #fefcef;
+				 padding: 10px;
+				 position: relative;
+				 background-repeat: no-repeat;
+				 box-shadow: 0 5px 8px 0 var(--stat-block-shadow,#aaa);
+				 background-position: top;
+				 background: var(--stat-block-bg-override,#f6f3ee);
+				 font-size: 16px;
+				 line-height: 19.6px;
+				 border-radius: 8px;
+				 outline: 1px solid #a7a3a0;
+				 outline-offset: -4px;
+				 font-family: var(--stat-block-font,Roboto,Helvetica,sans-serif);
+				 columns: 384px 2 
+			}
+			.stat-block :is(h2,h3,h4,h5) {
+				 --header-font-override: 22px;
+				 font-family: Roboto Condensed;
+				 text-transform: uppercase;
+				 font-weight: 700;
+				 margin-right: 8px;
+				 margin-block-end:0
+			}
+			.stat-block :is(h2,h3,h4,h5):after {
+				 content: "";
+				 display: block;
+				 width: 100%;
+				 margin: 2px auto 8px;
+				 height: 1px;
+				 background: var(--monster-header-underline,#7a3c2f);
+				 column-span: all 
+			}
+			.stat-block p {
+				 break-inside: avoid;
+				 font-size: 15px;
+				 line-height: 1.4 
+			}
+			.stat-block p+p {
+				 --compendium-p-top: 10px 
+			}
+			.stat-block p:first-of-type {
+				 margin-top: 0;
+				 font-style: italic;
+				 opacity: .8 
+			}
+			.stat-block p:first-of-type+p {
+				 --compendium-p-top: 16px 
+			}
+			.stat-block :is(ol,ul,dl) {
+				 margin-bottom: 0;
+				 padding-top: 0 
+			}
+			.stat-block .monster-header {
+				 padding-top: 4px;
+				 letter-spacing: .35px;
+				 font-weight: 500;
+				 color: var(--monster-header-color,#5b160c);
+				 font-size: var(--monster-trait-header-size,18px);
+				 font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
+				 border-bottom: 2px solid var(--monster-header-underline,#7a3c2f) 
+			}
+			.stat-block .monster-header+p {
+				 break-before: avoid 
+			}
+			.stat-block .stats {
+				 display: flex;
+				 gap: 10px 
+			}
+			.stat-block .stats+p {
+				 margin-top: 10px 
+			}
+			.stat-block .stats table.abilities-saves {
+				 --theme-table-row-color: transparent;
+				 flex: 1 1 auto;
+				 line-height: 24px;
+				 background: revert;
+				 border: none;
+				 font-size: 16px;
+				 break-inside: avoid 
+			}
+			.stat-block .stats table.abilities-saves.physical {
+				 --stats-score: #ede6d9;
+				 --stats-mods: #ded4cc;
+				 --stats-score-hover: rgba(153,127,109,0.49019607843137253);
+				 --stats-mods-hover: rgba(153,109,114,0.49019607843137253) 
+			}
+			.stat-block .stats table.abilities-saves.mental {
+				 --stats-score: #d8dad1;
+				 --stats-mods: #d0caca;
+				 --stats-score-hover: rgba(109,141,153,0.49019607843137253);
+				 --stats-mods-hover: rgba(117,109,153,0.49019607843137253) 
+			}
+			.stat-block .stats table.abilities-saves thead {
+				 border: none;
+				 height: revert;
+				 min-height: 45px 
+			}
+			.stat-block .stats table.abilities-saves thead tr {
+				 height: revert;
+				 min-height: 45px 
+			}
+			.stat-block .stats table.abilities-saves thead tr th {
+				 padding: 5px 2px 0!important;
+				 background: inherit;
+				 color: inherit;
+				 vertical-align: bottom;
+				 border: none;
+				 text-transform: uppercase;
+				 font-weight: 500;
+				 font-size: 14px 
+			}
+			.stat-block .stats table.abilities-saves tbody {
+				 border: none 
+			}
+			.stat-block .stats table.abilities-saves tbody tr {
+				 background-color: var(--theme-table-row-color,#fdfdfd);
+				 color: var(--theme-table-header-fg-color,#222) 
+			}
+			.stat-block .stats table.abilities-saves tbody tr:hover {
+				 background-color: var(--stats-hover) 
+			}
+			.stat-block .stats table.abilities-saves tbody tr:hover :nth-child(-n+3) {
+				 background-color: var(--stats-score-hover) 
+			}
+			.stat-block .stats table.abilities-saves tbody tr:hover :nth-child(n+3) {
+				 background-color: var(--stats-mods-hover) 
+			}
+			.stat-block .stats table.abilities-saves tbody tr :nth-child(-n+3) {
+				 background-color: var(--stats-score) 
+			}
+			.stat-block .stats table.abilities-saves tbody tr :nth-child(n+3) {
+				 background-color: var(--stats-mods) 
+			}
+			.stat-block .stats table.abilities-saves tbody th {
+				 text-transform: uppercase;
+				 font-weight: 700;
+				 border: none;
+				 padding-left: 6px;
+				 font-size: 16px 
+			}
+			.stat-block .stats table.abilities-saves tbody td {
+				 min-width: revert;
+				 padding: 5px 10px!important;
+				 border: none;
+				 font-size: 16px 
+			}
+			.stat-block .stats table.abilities-saves tr :is(th,td) {
+				 transition: .3s 
+			}
+			.stat-block p:nth-of-type(2) strong+strong {
+				 margin-left: 30px 
+			}
+			.stat-block figure {
+				 position: static;
+				 margin: 0 auto 
+			}
+			.stat-block figure .artist-credit {
+				 text-align: end;
+				 right: 0;
+				 left: 0;
+				 bottom: -6px;
+				 top: unset 
+			}
+			*+.stat-block {
+				 margin-top: 24px 
+			}
+			.ability-block {
+			    font-size: 14px;
+			    display: flex;
+			    flex-wrap: wrap;
+			    margin: 10px 0;
+			    color: #4f1300;
+			}
+			.ability-block__stat {
+			    width: 30%;
+			    padding: 5px 0;
+			    text-align: center;
+			}
+
+			.ability-block__heading {
+			    font-weight: bold;
+			}
+
+			.ability-block__data {
+			    display: flex;
+			    flex-direction: row;
+			    align-items: center;
+			    justify-content: center;
+			}
+
+			.ability-block__modifier {
+			    margin-left: 2px;
+			}
+			.mon-stat-block__meta {
+			    font-style: italic;
+			    margin-bottom: 15px;
+			}
+			.mon-stat-block__name {
+			    color: #822000;
+			    font-family: MrsEavesSmallCaps,Roboto,Open Sans,Helvetica,sans-serif;
+			    font-size: 34px;
+			    font-weight: 700;
+			}
+			.mon-stat-block__attribute, .mon-stat-block__feature {
+			    color: #822000;
+			    line-height: 1.2;
+			    margin: 5px 0;
+			}
+			.mon-stat-block__name .mon-stat-block__name-link, 
+			.mon-stat-block__name .mon-stat-block__name-link:active, 
+			.mon-stat-block__name .mon-stat-block__name-link:hover, 
+			.mon-stat-block__name .mon-stat-block__name-link:visited {
+			    color: #822000;
+			}
+			.mon-stat-block__attribute-label, 
+			.mon-stat-block__feature-label{
+			        font-weight: 700;
+			}
+			.mon-stat-block{
+			    padding: 15px 10px;
+			}
+			.more-info footer{
+			    padding: 0px;
+			}
+			.mon-stat-block{
+			    padding: 15px 10px;
+			  
+			}
+			.ddbc-creature-block__name {
+			    font-size: 30px;
+			}
+			.monster-details .more-info footer{
+			    padding: 0px;
+			    height: 20px;
+			}
+
+			.monster-details .more-info footer .source.monster-source {
+			    font-size: inherit;
+			    font-family: inherit;
+			    font-style: inherit;
+			    margin-top: 0px;
+			    float:left;
+			}
+			.monster-details .more-info.details-more-info:after {
+			    display:none
+			}
+			.monster-details .more-info-content{
+			    padding: 0px !important;
+			}
+			.monster-details,
+			.detail-content .image{
+			    margin-bottom:0px;
+			}
+			.mon-stat-block__description-block h3, .mon-stat-block__description-block-heading {
+			    border-bottom: 1px solid #822000;
+			    color: #822000;
+			    font-family: Scala Sans Offc,Roboto,Open Sans,Helvetica,sans-serif;
+			    font-size: 24px;
+			    font-weight: 400;
+			    line-height: 1.4;
+			    margin-bottom: 15px;
+			    margin-top: 20px;
+			}
+			.mon-stat-block__name *{
+			    color: #822000;
+			    font-family: MrsEavesSmallCaps,Roboto,Open Sans,Helvetica,sans-serif;
+			    font-size: 34px;
+			    font-weight: 700;
+			}
+			@font-face {
+			    font-family: Scala Sans Offc;
+			    font-style: normal;
+			    font-weight: 700;
+			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Bold.048d2d142baf798dc56f.ttf) format("truetype")
+			}
+
+			@font-face {
+			    font-family: Scala Sans Offc;
+			    font-style: normal;
+			    font-weight: 400;
+			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc.0eea070d2279b1a6be23.ttf) format("truetype")
+			}
+
+			@font-face {
+			    font-family: Scala Sans Offc;
+			    font-style: italic;
+			    font-weight: 700;
+			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-BoldIta.740e4d6d85a09a9cd0a0.ttf) format("truetype")
+			}
+
+			@font-face {
+			    font-family: Scala Sans Offc;
+			    font-style: italic;
+			    font-weight: 400;
+			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/ScalaSansOffc-Ita.86c4513e1c4b869189c2.ttf) format("truetype")
+			}
+
+			@font-face {
+			    font-family: MrsEavesSmallCaps;
+			    font-style: normal;
+			    font-weight: 100;
+			    src: url(https://media.dndbeyond.com/encounter-builder/static/media/MrsEavesSmallCaps.1744d7a566b5a2ccca6c.ttf) format("truetype")
+			}
+			@font-face {
+			  font-family: "Tiamat Condensed SC Regular";
+			  src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2");
+			}
+			@font-face {
+			    font-family: "Roboto";
+			    src: url("https://www.dndbeyond.com/fonts/roboto-regular.woff2") format("woff2")
+			}
+
+			@font-face {
+			    font-family: "Roboto Condensed";
+			    src: url("https://www.dndbeyond.com/fonts/robotocondensed-regular-webfont.woff2") format("woff2")
+			}
+			@import url("//fonts.googleapis.com/css?family=Roboto+Condensed:400,700|Roboto:400,500,700|Gloria+Hallelujah:400,700");@font-face {
+			    font-family: 'Roboto Regular';
+			    src: url("https://www.dndbeyond.com/fonts/roboto-regular.woff2") format("woff2")
+			}
+
+			@font-face {
+			    font-family: 'Tiamat Condensed SC Regular';
+			    src: url("https://www.dndbeyond.com/fonts/tiamatcondensedsc-regular-webfont.woff2") format("woff2")
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans Offc';
+			    src: url("../fonts/ScalaSansOffc-Bold.ttf") format("truetype");
+			    font-weight: bold;
+			    font-style: normal
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans Offc';
+			    src: url("../fonts/ScalaSansOffc.ttf") format("truetype");
+			    font-weight: normal;
+			    font-style: normal
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans Offc';
+			    src: url("../fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
+			    font-weight: bold;
+			    font-style: italic
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans Offc';
+			    src: url("../fonts/ScalaSansOffc-Ita.ttf") format("truetype");
+			    font-weight: normal;
+			    font-style: italic
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans SC Offc';
+			    src: url("../fonts/ScalaSansScOffc.ttf") format("truetype");
+			    font-weight: normal;
+			    font-style: normal
+			}
+
+			@font-face {
+			    font-family: 'Scala Sans SC Offc';
+			    src: url("../fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
+			    font-weight: bold;
+			    font-style: normal
+			}
+
+			@font-face {
+			    font-family: 'MrsEavesSmallCaps';
+			    src: url("../fonts/MrsEavesSmallCaps.ttf") format("truetype");
+			    font-weight: 100;
+			    font-style: normal
+			}
+
+			@font-face {
+			    font-family: 'DearSarahPro';
+			    src: url("../fonts/DearSarahPro.ttf") format("truetype");
+			    font-weight: 100;
+			    font-style: normal
+			}
+			
+			/***** END NEW STAT BLOCKS ****/
+		`
+
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
@@ -1747,7 +2589,7 @@ class JournalManager{
 			    {
 			      "title": "2014 Monster Sheet",
 			      "description": "Add a monster sheet template",
-			      "content": `<div class="Basic-Text-Frame stat-block-background one-column-stat" style="font-family: 'Scala Sans Offc', Roboto, Helvetica, sans-serif;">
+			      "content": `<style>${contentStyles}</style><div class="Basic-Text-Frame stat-block-background one-column-stat" style="font-family: 'Scala Sans Offc', Roboto, Helvetica, sans-serif;">
 								<div class="mon-stat-block__name"><span class="mon-stat-block__name-link"> Bandit Captain <br /></span></div>
 								<div class="mon-stat-block__meta">Medium Humanoid (Any Race), Any Non-Lawful Alignment</div>
 								<p><img class="mon-stat-block__separator-img" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg" alt="" /></p>
@@ -1795,7 +2637,7 @@ class JournalManager{
 			    {
 			    	"title": "2024 Monster Sheet",
 			    	"description": "Add a monster sheet template",
-			    	"content": `<div class="stat-block">
+			    	"content": `<style>${contentStyles}</style><div class="stat-block">
 						<div class="monster-header">Skeleton</div>
 						<p>Medium Undead, Lawful Evil</p>
 						<p><strong>AC</strong> 13 <strong>Initiative</strong> +3 (13)</p>
@@ -1881,7 +2723,7 @@ class JournalManager{
 			    {
 			    	"title": "Caster Spell List",
 			    	"description": "Add a spell block for casters.",
-			    	"content": `<p>Spellcasting. The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:</p>
+			    	"content": `<style>${contentStyles}</style><p>Spellcasting. The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:</p>
 <p>Cantrips (at will): fire bolt, light, mage hand, prestidigitation</p>
 <p>1st level (4 slots): detect magic, mage armor, magic missile, shield</p>
 <p>2nd level (3 slots): misty step, suggestion</p>
@@ -1957,728 +2799,7 @@ class JournalManager{
 			media_alt_source: false,
 			media_poster: false,
 			statusbar: false,
-			content_style: `
-				/* START LRKP CSS fixes */
-
-				/* COMPENDIUM IMPROVEMENTS */
-				/* START - Default text color */
-
-				:root {
-					--theme-page-fg-color: #242527;
-				}
-				/* END - Default text color */
-				*{
-					font-family: Roboto, Helvetica, sans-serif;
-				}
-				.abovevtt-mon-stat-block__separator{
-		    		max-width: 100%;
-				    min-height: 30px;
-				    margin: 0px;
-				    background: url('https://media-waterdeep.cursecdn.com/file-attachments/0/579/stat-block-header-bar.svg') center center no-repeat
-				}
-				.dm-eyes-only{
-				    border: 1px solid #000;
-				    border-radius: 5px;
-				    background: #f5f5f5;
-				    padding: 0px 5px;
-				    margin: 9px 10px;
-					display: ${window.DM ? 'block' : 'none'};
-					position: relative;
-				}
-				.dm-eyes-only:before {
-				    display:block;
-				    position:absolute;
-				    content:'DM Eyes Only';
-				    top: -10px;
-				    right: 2px;
-				    float:right;
-				    border:1px #000 solid;
-				    border-radius:5px;
-				    background: #f5f5f5;
-				    font-weight: bold;
-				    font-size:10px;
-				    padding:0px 4px;
-				}
-				.Basic-Text-Frame {
-				    clear: both;
-				    border: 1px solid #d4d0ce;
-				    background: white;
-				    padding: 15px
-				}
-
-				@media(min-width: 768px) {
-				    .Basic-Text-Frame {
-				        -webkit-column-count:2;
-				        column-count: 2
-				    }
-
-				}
-				.one-column-stat {
-					-webkit-column-count:1;
-					column-count: 1;
-				}
-				.Basic-Text-Frame-2 {
-				    border: 1px solid #d4d0ce;
-				    background: white;
-				    padding: 15px
-				}
-				.ignore-abovevtt-formating{
-					border: 2px dotted #b100ff;
-				}
-
-				@media(min-width: 768px) {
-				    .Basic-Text-Frame-2 {
-				        float:right;
-				        margin: 30px 0 15px 20px;
-				        width: 410px
-				    }
-				}
-
-				.Basic-Text-Frame-2 .compendium-image-center {
-				    margin-bottom: 20px;
-				    display: block
-				}
-
-				.Basic-Text-Frame-3 {
-				    border: 1px solid #d4d0ce;
-				    background: white;
-				    padding: 15px
-				}
-
-				@media(min-width: 768px) {
-				    .Basic-Text-Frame-3 {
-				        float:left;
-				        margin: 30px 20px 15px 0;
-				        width: 410px
-				    }
-				}
-
-				.Basic-Text-Frame-3 .compendium-image-center {
-				    margin-bottom: 20px;
-				    display: block
-				}
-
-				.Basic-Text-Frame,.Basic-Text-Frame-2,.Basic-Text-Frame-3 {
-				    position: relative;
-				    box-shadow: 0 0 5px #979AA4
-				}
-
-				.Basic-Text-Frame::before,.Basic-Text-Frame::after,.Basic-Text-Frame-2::before,.Basic-Text-Frame-2::after,.Basic-Text-Frame-3::before,.Basic-Text-Frame-3::after {
-				    content: '';
-				    background-image: url("../images/MMStatBar_lrg.jpg");
-				    background-size: 100% 100%;
-				    background-position: center;
-				    height: 4px;
-				    display: inline-block;
-				    position: absolute
-				}
-
-				.Basic-Text-Frame::before,.Basic-Text-Frame-2::before,.Basic-Text-Frame-3::before {
-				    left: -3px;
-				    top: -3px;
-				    right: -3px
-				}
-
-				.Basic-Text-Frame::after,.Basic-Text-Frame-2::after,.Basic-Text-Frame-3::after {
-				    left: -3px;
-				    bottom: -3px;
-				    right: -3px
-				}
-
-				.Stat-Block-Styles_Stat-Block-Title {
-				    font-size: 18px!important;
-				    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
-				    text-transform: uppercase;
-				    font-weight: bold;
-				    line-height: 1.4!important;
-				    margin-bottom: 0!important;
-				    display: inline;
-				    margin-right: 8px
-				}
-
-				.Stat-Block-Styles_Stat-Block-Metadata {
-				    font-style: italic;
-				    font-size: 14px!important;
-				    line-height: 1.4!important;
-				    margin-bottom: 8px!important
-				}
-
-				.Stat-Block-Styles_Stat-Block-Metadata::after {
-				    content: "";
-				    display: block;
-				    border-bottom: 2px solid #bc0f0f;
-				    padding-top: 5px
-				}
-
-				.Stat-Block-Styles_Stat-Block-Bar-Object-Space,.Stat-Block-Styles_Stat-Block-Bar-Object-Space-Last {
-				    display: none
-				}
-
-				.Stat-Block-Styles_Stat-Block-Data,.Stat-Block-Styles_Stat-Block-Data-Last,.Stat-Block-Styles_Stat-Block-Body,.Stat-Block-Styles_Stat-Block-Hanging,.Stat-Block-Styles_Stat-Block-Hanging-Last,.Stat-Block-Styles_Stat-Block-Body-Last--apply-before-heading- {
-				    font-size: 14px!important;
-				    line-height: 1.4!important;
-				    margin-bottom: 10px!important
-				}
-
-				.Stat-Block-Styles_Stat-Block-Heading,.Stat-Block-Styles_Stat-Block-Heading--after-last-bar- {
-				    font-size: 16px!important;
-				    font-weight: bold;
-				    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif
-				}
-
-				.Stat-Block-Styles_Stat-Block-Heading::after,.Stat-Block-Styles_Stat-Block-Heading--after-last-bar-::after {
-				    content: "";
-				    display: block;
-				    border-bottom: 1px solid #bc0f0f;
-				    padding-top: 2px
-				}
-
-				.Stat-Block-Styles_Stat-Block-Data-Last {
-				    border-bottom: 2px solid #bc0f0f;
-				    padding-bottom: 10px
-				}
-
-				.stat-block-ability-scores {
-				    display: -webkit-flex;
-				    display: -ms-flexbox;
-				    display: flex;
-				    -webkit-flex-wrap: wrap;
-				    -ms-flex-wrap: wrap;
-				    flex-wrap: wrap;
-				    border-top: 2px solid #bc0f0f;
-				    border-bottom: 2px solid #bc0f0f;
-				    margin: 10px 0
-				}
-
-				.stat-block-ability-scores-stat {
-				    width: 33.33333%;
-				    padding: 10px 5px;
-				    text-align: center
-				}
-				/* START - New quote box implementation */
-				.text--quote-box {
-				    display: block !important;
-				    background-color: var(--compendium-quote-box-color, #FAF8EC) !important; /*Fallback: if the variable isn't declared, it'll default to pale yellow*/
-				    padding: 20px 25px 15px 25px !important;
-				    position: relative !important;
-				    width: auto !important;
-				    display: flex !important;
-				    flex-direction: column !important;
-				    overflow: visible !important;
-				    border-radius: 0 !important;
-				    border-left: 1px solid !important;
-				    border-right: 1px solid !important;
-				    border-color: var(--compendium-quote-box-border, #620000) !important; /*Fallback: if the variable isn't declared, it'll default to dark red*/
-				    border-top: 0;
-				    border-bottom: 0;
-				    color: var(--theme-page-fg-color, #242527) !important;
-				    margin: 40px 20px !important;
-				    line-height: 1.6 !important;
-				    font-size: 14px !important;
-				}
-				.text--quote-box::before {
-				    top: -4px !important;
-				}
-				.text--quote-box::before, .text--quote-box::after {
-				    content: '';
-				    border-radius: 50%;
-				    background-position: left !important;
-				    background-size: contain !important;
-				    background-repeat: no-repeat !important;
-				    height: 8px !important;
-				    width: 8px !important;
-				    left: -4px !important;
-				    position: absolute !important;
-				    background-color: var(--compendium-quote-box-corner, #620000);
-				}
-				 .text--quote-box::after {
-				    bottom: -4px !important;
-				}
-				 .text--quote-box p:first-of-type::before {
-				    top: -4px !important;
-				}
-				 .text--quote-box p:first-of-type::before,  .text--quote-box p:last-of-type::after {
-				    content: '';
-				    border-radius: 50%;
-				    background-position: right !important;
-				    background-size: contain !important;
-				    background-repeat: no-repeat !important;
-				    height: 8px !important;
-				    width: 8px !important;
-				    right: -4px !important;
-				    position: absolute !important;
-				    background-color: var(--compendium-quote-box-corner, #620000);
-				}
-				 .text--quote-box p:last-of-type::after {
-				    bottom: -4px !important;
-				}
-				 .text--quote-box p:last-of-type {
-				    margin-bottom: 5px !important;
-				}
-				/* END - New quote box implementation */
-
-				/* START - New rules sidebar implementation */
-				.text--rules-sidebar {
-				    display: block !important;
-				    background-color: var(--compendium-rules-sidebar-color, #DAE4C1) !important; /*Fallback: if the variable isn't declared, it'll default to pale-green*/
-				    position: relative !important;
-				    width: auto !important;
-				    display: flex !important;
-				    flex-direction: column !important;
-				    overflow: visible !important;
-				    margin: 30px 5px !important;
-				    line-height: 1.6 !important;
-				    font-size: 14px !important;
-				    padding: 25px 28px 15px 30px !important;
-				    border-radius: 0 !important;
-				    border-top: 3px solid #231f20 !important;
-				    border-bottom: 3px solid #231f20 !important;
-				    border-left: 1.5px solid  #b3b3b3 !important;
-				    border-right: 1.5px solid  #b3b3b3 !important;
-				    color: var(--theme-page-fg-color, #242527) !important;
-				    filter: drop-shadow(0px 5px 8px #ccc);
-				}
-
-				.text--rules-sidebar p:first-of-type {
-				    text-transform: uppercase;
-				    font-weight: bold;
-				    font-size: 16px;
-				}
-
-				.text--rules-sidebar .action-tooltip, .text--rules-sidebar .condition-tooltip, .text--rules-sidebar .item-tooltip, .text--rules-sidebar .rule-tooltip, .text--rules-sidebar .sense-tooltip, .text--rules-sidebar .skill-tooltip, .text--rules-sidebar .weapon-properties-tooltip, .text--rules-sidebar .action-tooltip {
-				    color: #129b54 !important;
-				}
-
-				.text--rules-sidebar::before {
-				    top: -13px !important;
-				    right: 0.1px !important;
-				    left: 0.1px !important;
-				}
-
-				.text--rules-sidebar::before {
-				    content: '';
-				    background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
-				    background-position: left, right !important;
-				    background-size: contain !important;
-				    background-repeat: no-repeat !important;
-				    height: 11px !important;
-				    position: absolute !important;
-				    z-index: -1;
-				}
-
-				.text--rules-sidebar::after {
-				    bottom: -13px !important;
-				    right: -0.1px !important;
-				    left: 0.1px !important;
-				}
-				.text--rules-sidebar::after {
-				    content: '';
-				    background-image: url("https://media.dndbeyond.com/compendium-images/components/--right-rules.svg"),url("https://media.dndbeyond.com/compendium-images/components/--left-rules.svg") !important;
-				    background-position: left, right !important;
-				    background-size: contain !important;
-				    background-repeat: no-repeat !important;
-				    height: 11px !important;
-				    position: absolute !important;
-				    z-index: -1;
-				    transform: scaleY(-1);
-				}
-				/* END - New rules sidebar implementation */
-
-				/* START - CSS header variables */
-				h1::after {
-				    background-color: var(--h1-underline, var(--header-underline, #47D18C));
-				}
-				h2::after {
-				    background-color: var(--h2-underline, var(--header-underline, #47D18C));
-				}
-				h3::after {
-				    background-color: var(--h3-underline, var(--header-underline, #47D18C));
-				}
-				/* END -  CSS header variables */
-
-				/* START - Underlines compendium links */
-				a:not(.ddb-lightbox-outer, h3 > a):hover,
-				a:not(.ddb-lightbox-outer, h3 > a):focus {
-				    text-decoration: underline;
-				}
-				/* END - Underlines Compendium links */
-
-				
-				/** TEMP new .text--quote-box type for compendium content - needs to be added to compiled **/
-
-				.text--quote-box.compendium-indented-callout-.text--quote-box {
-				    background: transparent !important;
-				    font-size: 16px !important;
-				    border-left: 4px solid #e0dcdc !important;
-				    border-right: none !important;
-				    padding: 10px 20px !important;
-				    margin: 30px 0 !important;
-				}
-
-				.text--quote-box.compendium-indented-callout-.text--quote-box::before {
-				    content: none !important;
-				}
-
-				.text--quote-box.compendium-indented-callout-.text--quote-box::after {
-				    content: none !important;
-				}  
-
-				/** END TEMP new .text--quote-box type **/
-
-				
-				h6 {
-				    font-size: 14px !important;
-				    font-weight: bold !important;
-				}
-
-
-				h1 {
-				    font-size: 32px!important;
-				    font-weight: 400!important
-				}
-
-				h2 {
-				    font-size: 26px!important;
-				    font-weight: 400!important;
-				    clear: both
-				}
-
-				h3 {
-				    font-size: 22px!important;
-				    font-weight: 400!important;
-				    clear: both
-				}
-
-				h4 {
-				    font-size: 18px!important;
-				    font-weight: 700!important
-				}
-
-				h5 {
-				    font-size: 16px!important;
-				    font-weight: 700!important
-				}
-
-		
-				.rules-text a {
-				    color: #129b54!important;
-				    transition: .3s
-				}
-
-				.rules-text p:first-child {
-				    font-size: 16px
-				}
-
-
-				.stat-block-background {
-				    background-repeat: no-repeat;
-				    -webkit-box-shadow: 0 5px 8px 0 #aaa;
-				    -moz-box-shadow: 0 5px 8px 0 #aaa;
-				    box-shadow: 0 5px 8px 0 #aaa;
-				    background-position: top!important;
-				    background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important
-				}
-
-				.stat-block-background:after,.stat-block-background:before {
-				    background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important
-				}
-
-
-				.block-torn-paper,.epigraph,.epigraph--with-author {
-				    overflow: auto;
-				    background: var(--theme-quote-bg-color,#fff);
-				    color: var(--theme-quote-fg-color,#242527);
-				    margin: 40px 0;
-				    line-height: 1.6;
-				    font-size: 14px;
-				    border: solid transparent;
-				    border-width: 20px 10px;
-				    border-image-source: var(--theme-quote-border,url(https://media.dndbeyond.com/ddb-compendium-client/5f1f1d66d16be68cf09d6ca172f8df92.png));
-				    border-image-repeat: repeat;
-				    border-image-slice: 20 10 20 10 fill;
-				    padding: 10px;
-				    position: relative
-				}
-
-				.epigraph--with-author p:last-child {
-				    font-style: italic;
-				    text-align: right
-				}
-
-				.rules-text {
-				    overflow: auto;
-				    display: block;
-				    margin: 30px 0;
-				    line-height: 1.6;
-				    font-size: 14px;
-				    color: var(--theme-rules-text-fg-color,#242527);
-				    border-color: transparent;
-				    border-style: solid;
-				    border-width: 15px 20px;
-				    border-image-repeat: repeat;
-				    border-image-slice: 21 30 21 30 fill;
-				    background-color: transparent;
-				    padding: 20px 10px 10px;
-				    position: relative;
-				    border-image-source: var(--theme-rules-text-border,url(https://media.dndbeyond.com/ddb-compendium-client/463d4668370589a1a73886611645df7e.png));
-				    -webkit-filter: drop-shadow(0 5px 8px #ccc);
-				    filter: drop-shadow(0 5px 8px #ccc)
-				}
-
-				.rules-text p:first-child {
-				    text-transform: uppercase;
-				    font-weight: 700
-				}
-
-				.read-aloud-text {
-				    overflow: auto;
-				    display: block;
-				    margin: 30px 0;
-				    line-height: 1.6;
-				    font-size: 14px;
-				    color: var(--theme-read-aloud-fg-color,#242527);
-				    border: 8px solid transparent;
-				    border-image-repeat: repeat;
-				    border-image-slice: 8 8 8 8 fill;
-				    background-color: transparent;
-				    padding: 20px 20px 10px!important;
-				    position: relative;
-				    border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
-				}
-				  .custom-stat{
-				  	font-weight:bold;
-				  	border: 1px dotted #666;
-				  }
-				  .custom-avghp.custom-stat
-			      {
-
-			      	color: #F00;
-			      }
-			      
-			      .custom-hp-roll.custom-stat
-			      {
-			      	color: #8f03b3;
-			      }
-			      
-			      .custom-initiative.custom-stat{
-			      	color: #007900;
-			      }
-
-			      .custom-pc-sheet.custom-stat{
-			      	color: #08a1e3;
-			      }
-
-			      .abovevtt-slash-command-journal{
-			      	color: #b43c35;
-			      }
-				  
-			      .custom-ac.custom-stat{
-			      	color: #00F;
-			      }
-			      /***** NEW STAT BLOCKS ****/
-
-
-			      .stat-block {
-			          --compendium-p-bottom: 0;
-			          border: 1px solid #a7a3a0;
-			          background-color: #fefcef;
-			          padding: 10px;
-			          position: relative;
-			          background-repeat: no-repeat;
-			          box-shadow: 0 5px 8px 0 var(--stat-block-shadow,#aaa);
-			          background-position: top;
-			          background: var(--stat-block-bg-override,#f6f3ee);
-			          font-size: 16px;
-			          line-height: 19.6px;
-			          border-radius: 8px;
-			          outline: 1px solid #a7a3a0;
-			          outline-offset: -4px;
-			          font-family: var(--stat-block-font,Roboto,Helvetica,sans-serif);
-			          columns: 384px 2
-			      }
-
-			      .stat-block :is(h2,h3,h4,h5) {
-			          --header-font-override: 22px;
-			          font-family: Roboto Condensed;
-			          text-transform: uppercase;
-			          font-weight: 700;
-			          margin-right: 8px;
-			          margin-block-end:0}
-
-			      .stat-block :is(h2,h3,h4,h5):after {
-			          content: "";
-			          display: block;
-			          width: 100%;
-			          margin: 2px auto 8px;
-			          height: 1px;
-			          background: var(--monster-header-underline,#7a3c2f);
-			          column-span: all
-			      }
-
-			      .stat-block p {
-			          break-inside: avoid;
-			          font-size: 15px;
-			          line-height: 1.4
-			      }
-
-			      .stat-block p+p {
-			          --compendium-p-top: 10px
-			      }
-
-			       .stat-block p:first-of-type {
-			          margin-top: 0;
-			          font-style: italic;
-			          opacity: .8
-			      }
-
-			      .stat-block p:first-of-type+p {
-			          --compendium-p-top: 16px
-			      }
-
-			      .stat-block :is(ol,ul,dl) {
-			          margin-bottom: 0;
-			          padding-top: 0
-			      }
-
-			      .stat-block .monster-header {
-			          padding-top: 4px;
-			          letter-spacing: .35px;
-			          font-weight: 500;
-			          color: var(--monster-header-color,#5b160c);
-			          font-size: var(--monster-trait-header-size,18px);
-			          font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
-			          border-bottom: 2px solid var(--monster-header-underline,#7a3c2f)
-			      }
-
-			      .stat-block .monster-header+p {
-			          break-before: avoid
-			      }
-
-			      .stat-block .stats {
-			          display: flex;
-			          gap: 10px
-			      }
-
-			      .stat-block .stats+p {
-			          margin-top: 10px
-			      }
-
-			      .stat-block .stats table.abilities-saves {
-			          --theme-table-row-color: transparent;
-			          flex: 1 1 auto;
-			          line-height: 24px;
-			          background: revert;
-			          border: none;
-			          font-size: 16px;
-			          break-inside: avoid
-			      }
-
-			      .stat-block .stats table.abilities-saves.physical {
-			          --stats-score: #ede6d9;
-			          --stats-mods: #ded4cc;
-			          --stats-score-hover: rgba(153,127,109,0.49019607843137253);
-			          --stats-mods-hover: rgba(153,109,114,0.49019607843137253)
-			      }
-
-			      .stat-block .stats table.abilities-saves.mental {
-			          --stats-score: #d8dad1;
-			          --stats-mods: #d0caca;
-			          --stats-score-hover: rgba(109,141,153,0.49019607843137253);
-			          --stats-mods-hover: rgba(117,109,153,0.49019607843137253)
-			      }
-
-			      .stat-block .stats table.abilities-saves thead {
-			          border: none;
-			          height: revert;
-			          min-height: 45px
-			      }
-
-			      .stat-block .stats table.abilities-saves thead tr {
-			          height: revert;
-			          min-height: 45px
-			      }
-
-			      .stat-block .stats table.abilities-saves thead tr th {
-			          padding: 5px 2px 0!important;
-			          background: inherit;
-			          color: inherit;
-			          vertical-align: bottom;
-			          border: none;
-			          text-transform: uppercase;
-			          font-weight: 500;
-			          font-size: 14px
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody {
-			          border: none
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr {
-			          background-color: var(--theme-table-row-color,#fdfdfd);
-			          color: var(--theme-table-header-fg-color,#222)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr:hover {
-			          background-color: var(--stats-hover)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr:hover :nth-child(-n+3) {
-			          background-color: var(--stats-score-hover)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr:hover :nth-child(n+3) {
-			          background-color: var(--stats-mods-hover)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr :nth-child(-n+3) {
-			          background-color: var(--stats-score)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody tr :nth-child(n+3) {
-			          background-color: var(--stats-mods)
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody th {
-			          text-transform: uppercase;
-			          font-weight: 700;
-			          border: none;
-			          padding-left: 6px;
-			          font-size: 16px
-			      }
-
-			      .stat-block .stats table.abilities-saves tbody td {
-			          min-width: revert;
-			          padding: 5px 10px!important;
-			          border: none;
-			          font-size: 16px
-			      }
-
-			      .stat-block .stats table.abilities-saves tr :is(th,td) {
-			          transition: .3s
-			      }
-
-			      .stat-block p:nth-of-type(2) strong+strong {
-			          margin-left: 30px
-			      }
-			      .stat-block figure {
-			          position: static;
-			          margin: 0 auto
-			      }
-
-			      .stat-block figure .artist-credit {
-			          text-align: end;
-			          right: 0;
-			          left: 0;
-			          bottom: -6px;
-			          top: unset
-			      }
-
-			      *+.stat-block {
-			          margin-top: 24px
-			      }
-
-			      /***** END NEW STAT BLOCKS ****/
-				`,
+			content_style: contentStyles,
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');
