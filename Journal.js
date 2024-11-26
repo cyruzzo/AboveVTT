@@ -1402,6 +1402,10 @@ class JournalManager{
 		for(let i=0; i<pastedButtons.length; i++){
 			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
 		}
+		const trackerSpans = target.find('.note-tracker');
+		for(let i=0; i<trackerSpans.length; i++){
+			$(trackerSpans[i]).replaceWith(`[track]${$(trackerSpans[i]).text()}[/track]`);
+		}
     	let data = $(target).clone().html();
 
         let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
@@ -1617,7 +1621,7 @@ class JournalManager{
                 return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
-            input = input.replace(/\[track\]([a-zA-Z]+)\s+([\d]+)\[\/track\]/g, function(m, m1, m2){
+            input = input.replace(/\[track\]([a-zA-Z\s]+)([\d]+)\[\/track\]/g, function(m, m1, m2){
                 return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
             })
 
@@ -1797,6 +1801,9 @@ class JournalManager{
 			}
 			.ignore-abovevtt-formating{
 				 border: 2px dotted #b100ff;
+			}
+			.note-tracker{
+				 border: 1px dotted #bb5600;
 			}
 			@media(min-width: 768px) {
 				 .Basic-Text-Frame-2 {
@@ -2627,6 +2634,7 @@ class JournalManager{
 			      { title: 'Stat Block Paper (1 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background one-column-stat' },
 			      { title: 'Stat Block Paper (2 Column)', block: 'div', wrapper: true, classes: 'Basic-Text-Frame stat-block-background' },
 			      { title: 'For DM Eyes Online', block: 'div', wrapper: true, classes: 'dm-eyes-only' },
+			      { title: 'Add Ability Tracker; Format: "Wild Shape 2"', inline: 'span', wrapper:true, classes: 'note-tracker'},
 			      { title: 'Ignore AboveVTT auto formating', inline: 'span', wrapper: true, classes: 'ignore-abovevtt-formating' },
 			    ] },
 			    { title: 'Custom Statblock Stats', items: [
