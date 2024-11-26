@@ -762,8 +762,12 @@ select#doorTypeSelectUVTT{
     z-index: -10000;
 }
 
-#resizeDragMon:visible iframe {
-    z-index: 10000;
+#resizeDragMon .avtt-stat-block-container iframe {
+    z-index: 1;
+}
+
+body:has(div#resizeDragMon iframe:hover)  {
+    overflow: hidden !important;
 }
 
 .ui-resizable-handle {
