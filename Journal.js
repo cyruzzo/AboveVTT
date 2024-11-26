@@ -1148,7 +1148,7 @@ class JournalManager{
 		btn_popout.click(function(){	
 			let uiId = $(this).siblings(".note").attr("id");
 			let journal_text = $(`#${uiId}.note .note-text`)
-			let title = self.notes[id].title.trim();
+			let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
 			popoutWindow(title, note, journal_text.width(), journal_text.height());
 			removeFromPopoutWindow(title, ".visibility-container");
 			removeFromPopoutWindow(title, ".ui-resizable-handle");
