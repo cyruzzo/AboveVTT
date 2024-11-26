@@ -4019,9 +4019,15 @@ width=${width},height=${height},left=100,top=100`;
 	childWindows[name].onbeforeunload = function(){
 		closePopout(name);
 	}
-	setTimeout(function(){
-		childWindows[name].document.title = name
-	}, 1000);
+	function checkTitle() {
+		if(childWindows[name].document && childWindows[name].document?.title != name){    
+	    childWindows[name].document.title = name; 
+	    setTimeout(checkTitle, 1000); 
+	  }
+	}	
+
+	checkTitle();
+
 	$(childWindows[name].document).find('body, head').empty();
 	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
 	$(childWindows[name].document).find('head').append($('link, style').clone());
