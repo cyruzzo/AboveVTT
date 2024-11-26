@@ -1094,7 +1094,19 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     }
                     break;
             }
-            
+            if(listItem.monsterData.senses.length > 0 && foundOptions.vision == undefined){
+                let darkvision = 0;
+                for(let i=0; i < listItem.monsterData.senses.length; i++){
+                    const ftPosition = listItem.monsterData.senses[i].notes.indexOf('ft.')
+                    const range = parseInt(listItem.monsterData.senses[i].notes.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+                options.vision = {
+                    feet: darkvision.toString(),
+                    color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
+                }
+            }
             break;
         case ItemType.Open5e:
              switch (options['defaultmaxhptype']) {
@@ -1396,6 +1408,11 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     if(foundOptions.color != undefined){
         options.color = foundOptions.color;
     }
+
+
+
+
+
     options.itemType = listItem.type;
     options.itemId = listItem.id;
     options.listItemPath = listItem.fullPath();
