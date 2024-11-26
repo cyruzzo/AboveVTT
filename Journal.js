@@ -1595,7 +1595,11 @@ class JournalManager{
                 return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
+            input = input.replace(/\[track\]([a-zA-Z]+)\s+([\d]+)\[\/track\]/g, function(m, m1, m2){
+                return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
+            })
 
+           
  
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
