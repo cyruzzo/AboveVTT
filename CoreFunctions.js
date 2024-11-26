@@ -1627,9 +1627,13 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
         childWindows[name].onbeforeunload = function(){
           closePopout(name);
         }
-        setTimeout(function(){
-          childWindows[name].document.title = name
-        }, 1000);
+        function checkTitle() {
+          if(childWindows[name].document && childWindows[name].document?.title != name){    
+            childWindows[name].document.title = name; 
+            setTimeout(checkTitle, 1000); 
+          }
+        } 
+        checkTitle();
       }
       else{
         popoutWindow(titleBarText, $(popoutSelector), container.width(), container.height());
