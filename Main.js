@@ -2723,9 +2723,10 @@ function init_ui() {
 			curDown = true;
 			$("#VTT, #black_layer").css("cursor", "grabbing");
 			//cover iframes so you can drag through windows
-			if (get_avtt_setting_value("iframeStatBlocks") === true) {
+			const openDraggables = $("#resizeDragMon");
+			if (openDraggables.find('iframe').length>0) {
 				// iframes yoink the right-click drag when you're moving the map. The non-iframe stat blocks don't need to worry about this
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+				openDraggables.append($('<div class="iframeResizeCover"></div>'));
 			}
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			//return false;
