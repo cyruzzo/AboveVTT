@@ -1104,7 +1104,29 @@ class JournalManager{
 		this.add_journal_tooltip_targets(note_text);
 		this.block_send_to_buttons(note_text);
 		add_stat_block_hover(note_text);
-		
+		$(note_text).find('.add-input').each(function(){
+		    let numberFound = $(this).attr('data-number');
+		    const spellName = $(this).attr('data-spell');
+		    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+		    const track_ability = function(key, updatedValue){	    	
+				if (self.notes[id].abilityTracker === undefined) {
+					self.notes[id].abilityTracker = {};
+				}
+				const asNumber = parseInt(updatedValue); 
+				self.notes[id].abilityTracker[key] = asNumber;
+				window.JOURNAL.persist();
+	    	}
+		    if (self.notes[id].abilityTracker?.[spellName]>= 0){
+	    		numberFound = self.notes[id].abilityTracker[spellName]
+	    	} 
+	    	else{
+		    	track_ability(spellName, numberFound)
+		    }
+
+		    let input = createCountTracker(self.notes[id], spellName, numberFound, remainingText, "", track_ability);
+		    $(this).find('p').remove();
+		    $(this).after(input)
+	    })
 		note.append(note_text);
 		note.find("a").attr("target","_blank");
 		note.dialog({

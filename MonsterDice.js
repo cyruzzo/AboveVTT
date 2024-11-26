@@ -131,12 +131,15 @@ function rebuild_ability_trackers(target, tokenId){
  * @param {string} descriptionPostfix 
  * @returns 
  */
-function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix) {
+function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback) {
 	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
 	input.off("change").on("change", function(changeEvent) {
 		const updatedValue = changeEvent.target.value;
 		console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
-		token.track_ability(key, updatedValue);
+		if(callback)
+			callback(key, updatedValue);
+		else
+			token.track_ability(key, updatedValue);
 	});
 	return input
 }

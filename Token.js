@@ -1708,7 +1708,7 @@ class Token {
 
 							
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
-		
+				const noteId = this.options.id;
 				let hoverNoteTimer;
 				conditionContainer.on({
 					'mouseover': function(e){
@@ -1721,6 +1721,30 @@ class Token {
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml);
+
+								$(tooltipHtml).find('.add-input').each(function(){
+								    let numberFound = $(this).attr('data-number');
+								    const spellName = $(this).attr('data-spell');
+								    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+								    const track_ability = function(key, updatedValue){	    	
+										if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
+											window.JOURNAL.notes[noteId].abilityTracker = {};
+										}
+										const asNumber = parseInt(updatedValue); 
+										window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
+										window.JOURNAL.persist();
+							    	}
+								    if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName]>= 0){
+							    		numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
+							    	} 
+							    	else{
+								    	track_ability(spellName, numberFound)
+								    }
+
+								    let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
+								    $(this).find('p').remove();
+								    $(this).after(input)
+							    })
 					            flyout.append(tooltipHtml);
 					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 					            sendToGamelogButton.css({ "float": "right" });
