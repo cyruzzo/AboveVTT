@@ -1914,8 +1914,8 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : (imageOffsetY != undefined ? '0px' : ''),
-					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : (imageOffsetX != undefined ? '0px' : ''),
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : '0px',
+					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
 					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
 					"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -2414,8 +2414,8 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : (imageOffsetY != undefined ? '0px' : ''),
-						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : (imageOffsetX != undefined ? '0px' : ''),
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : '0px',
+						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
 						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -3326,7 +3326,11 @@ function default_options() {
 		light2: {
 			feet: "0",
 			color: "rgba(142, 142, 142, 1)"
-		}		
+		},		
+		offset: {
+			x:0,
+			y:0
+		}
 	};
 }
 
