@@ -2950,7 +2950,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetX = [...new Set(tokenOffsetX)];
 
 		let startingOffsetX = uniqueOffsetX.length === 1 && uniqueOffsetX[0] != undefined ? uniqueOffsetX[0] : 0;
-		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X %', '', '', 1, function (offsetX, persist=false) {
+		let offsetXWrapper = build_token_num_input(startingOffsetX, tokens, 'Image Offset X', '', '', 1, function (offsetX, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
@@ -2971,7 +2971,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 		let uniqueOffsetY = [...new Set(tokenOffsetY)];
 		let startingOffsetY = uniqueOffsetY.length === 1  && uniqueOffsetY[0] != undefined ? uniqueOffsetY[0] : 0;
 
-		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y %', '', '', 1, function (offsetY, persist=false) {
+		let offsetYWrapper = build_token_num_input(startingOffsetY, tokens, 'Image Offset Y', '', '', 1, function (offsetY, persist=false) {
 			tokens.forEach(token => {
 				let underdarknessDivisor = token.options.underDarkness ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 				if(token.options.offset == undefined)
