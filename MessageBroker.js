@@ -27,6 +27,10 @@ function clearFrame(){
 	});
 }
 
+const debounceSendNote = mydebounce(function(id, note){
+	window.MB.sendMessage('custom/myVTT/note',  {note: note, id: id, from:window.PLAYER_ID})
+}, 2000);
+
 const delayedClear = mydebounce(() => clearFrame());
 
 function hideVideo(streamerid) {
@@ -850,7 +854,7 @@ class MessageBroker {
 			}
 			
 			if(msg.eventType=="custom/myVTT/note"){
-				if(!window.DM){
+				if(!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID)){
 					window.JOURNAL.notes[msg.data.id]=msg.data.note;
 					
 					window.JOURNAL.build_journal();
@@ -860,7 +864,17 @@ class MessageBroker {
 					}				
 					if(msg.data.popup)
 						window.JOURNAL.display_note(msg.data.id);
+					const openNote = $(`.note[data-id='${msg.data.id}']`);
+					
+
+					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){
+						for(let i in window.JOURNAL.notes[msg.data.id].abilityTracker){
+							openNote.find(`input[data-tracker-key='${i}']`).val(window.JOURNAL.notes[msg.data.id].abilityTracker[i])
+						}
+					}
+
 					window.JOURNAL.persist(true);
+
 				}
 			}
 			if(msg.eventType=="custom/myVTT/notesSync"){

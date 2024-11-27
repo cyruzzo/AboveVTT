@@ -1733,6 +1733,7 @@ class Token {
 										const asNumber = parseInt(updatedValue); 
 										window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
 										window.JOURNAL.persist();
+										debounceSendNote(noteId, window.JOURNAL.notes[noteId])
 							    	}
 								    if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName]>= 0){
 							    		numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]

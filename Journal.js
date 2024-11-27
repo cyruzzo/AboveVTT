@@ -1015,7 +1015,7 @@ class JournalManager{
 	
 	display_note(id, statBlock = false){
 		let self=this;
-		let note=$("<div class='note'></div>");
+		let note=$(`<div class='note' data-id='${id}'></div>`);
 		
 		note.attr('title',self.notes[id].title);
 		if(window.DM){
@@ -1115,6 +1115,7 @@ class JournalManager{
 				const asNumber = parseInt(updatedValue); 
 				self.notes[id].abilityTracker[key] = asNumber;
 				window.JOURNAL.persist();
+				debounceSendNote(id, self.notes[id])
 	    	}
 		    if (self.notes[id].abilityTracker?.[spellName]>= 0){
 	    		numberFound = self.notes[id].abilityTracker[spellName]
