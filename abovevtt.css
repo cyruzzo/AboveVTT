@@ -10420,6 +10420,15 @@ li.audio-row:hover .channel-progress-bar-total
 .token.underDarkness>.token-image{
     background-position: calc(50% + calc(var(--offsetX) / var(--scene-scale, 1))) calc(0% - calc(var(--offsetY) / var(--scene-scale, 1))) !important;
 }
+.token>.base~.token-image,
+.token>.token-image.freeform{
+    background-position: calc(50% + var(--offsetX)) calc(50% - var(--offsetY)) !important;
+}
+.token.underDarkness>.base~.token-image,
+.token.underDarkness>.token-image.freeform{
+    background-position: calc(50% + calc(var(--offsetX) / var(--scene-scale, 1))) calc(50% - calc(var(--offsetY) / var(--scene-scale, 1))) !important;
+}
+
 #tokens .audio-token.token:not(.underDarkness),
 #map_items .audio-token.token{
     background: #060b04;
