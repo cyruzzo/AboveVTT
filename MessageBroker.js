@@ -1950,6 +1950,11 @@ class MessageBroker {
 						window.DRAWINGS = [];
 					}
 					window.LOADING = true;
+					if(!window.DM && data.player_map_is_video=='1'){
+						data.map = data.player_map;
+						data.is_video = data.player_map_is_video;
+					}
+
 					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						console.group("load_scenemap callback")
 						if(!window.CURRENT_SCENE_DATA.scale_factor)
