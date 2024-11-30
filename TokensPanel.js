@@ -3482,7 +3482,7 @@ function register_custom_token_image_context_menu() {
                     imgHtml.addClass('magnify');                         
                     imgHtml.attr('href', imgHtml.attr('src'));
                     imgHtml = imgHtml[0].outerHTML;
-                    imgHtml = imgHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
+                    imgHtml = imgHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop').replace('div', 'img');
                     let msgdata = {
                         player: window.PLAYER_NAME,
                         img: window.PLAYER_IMG, 
