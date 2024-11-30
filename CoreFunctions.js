@@ -129,43 +129,50 @@ function monitor_console_logs() {
     });
   }
 }
-async function openDB() {
-  const DBOpenRequest = await indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
+function openDB() {
   
-  DBOpenRequest.onsuccess = (e) => {
-    window.gameIndexedDb = DBOpenRequest.result;
-  };
-  DBOpenRequest.onerror = (e) => {
-    console.warn(e);
-  };
-  DBOpenRequest.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if(!db.objectStoreNames?.contains('exploredData')){
-        const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
-      }
-      if(!db.objectStoreNames?.contains('journalData')){
-        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-      }
-  };
+  let promises =[];
+  promises.push(new Promise(async (resolve, reject) => {
+      const DBOpenRequest = await indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
+      DBOpenRequest.onsuccess = (e) => {       
+        resolve(DBOpenRequest.result);
+      };
+      DBOpenRequest.onerror = (e) => {
+        console.warn(e);
+      };
+      DBOpenRequest.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if(!db.objectStoreNames?.contains('exploredData')){
+            const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+          }
+          if(!db.objectStoreNames?.contains('journalData')){
+            const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+          }
+      };
+    })
+  );
    
-  
-  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`, 2);
-  
-  DBOpenRequest2.onsuccess = (e) => {
-    window.globalIndexedDB = DBOpenRequest2.result;
-  };
-  DBOpenRequest2.onerror = (e) => {
-    console.warn(e);
-  };
-  DBOpenRequest2.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if(!db.objectStoreNames?.contains('customizationData')){
-        const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
-      }
-      if(!db.objectStoreNames?.contains('journalData')){
-        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-      }
-  };
+  promises.push(new Promise(async (resolve, reject) => {
+      const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`, 2);
+      
+      DBOpenRequest2.onsuccess = (e) => {
+        resolve(DBOpenRequest2.result);
+      };
+      DBOpenRequest2.onerror = (e) => {
+        console.warn(e);
+      };
+      DBOpenRequest2.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if(!db.objectStoreNames?.contains('customizationData')){
+            const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+          }
+          if(!db.objectStoreNames?.contains('journalData')){
+            const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+          }
+      };
+    })
+  );
+  return Promise.all(promises);
 }
 function deleteDB(){
   let d = confirm("DELETE ALL LOCAL EXPLORE DATA (CANNOT BE UNDONE)");
