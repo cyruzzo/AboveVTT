@@ -208,7 +208,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 		$(window).scrollTop(pageY);	
 	}
 
-	$('#VTT').css({
+	$('#VTTWRAPPER').css({
 		"--window-zoom": window.ZOOM,
 		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
 	})
