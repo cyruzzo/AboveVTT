@@ -19,9 +19,11 @@ $(function() {
         window.gameIndexedDb = undefined;
         if(window.DM)
           window.globalIndexedDB = undefined;
-        openDB();
       })
-      .then(()=> {
+      .then(openDB)
+      .then((databases)=> {
+        window.gameIndexedDb = databases[0];
+        window.globalIndexedDB = databases[1];
         window.EXPERIMENTAL_SETTINGS = JSON.parse(localStorage.getItem(`ExperimentalSettings${window.gameId}`)) || {};
         if (is_release_build()) {
           // in case someone left this on during beta testing, we should not allow it here
