@@ -1208,7 +1208,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             break;
     }
     if(options.statBlock && window.JOURNAL.notes[options.statBlock]){
-        const statText = window.JOURNAL.notes[options.statBlock].text
+        let statText = $(`<div>${window.JOURNAL.notes[options.statBlock].text}</div>`);
+        statText.find('style').remove();
+        statText=statText[0].innerHTML;
         let hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
 
