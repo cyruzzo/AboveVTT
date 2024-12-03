@@ -332,6 +332,16 @@ function avtt_settings() {
 				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
 			],
 			defaultValue: false
+		},
+		{
+			name: "iconUi",
+			label: "Mobile/Icon UI",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `` },
+				{ value: false, label: "Disable", description: `` }
+			],
+			defaultValue: false
 		}
 	];
 
@@ -544,6 +554,9 @@ function set_avtt_setting_value(name, newValue) {
 		 	$('body').toggleClass('reduceMovement', newValue)
 		 	if(newValue == false)
 		 		animationSetup()
+		 	break;
+		 case "iconUi":
+		 	$('body').toggleClass('mobileAVTTUI', newValue)
 		 	break;
 	}
 }

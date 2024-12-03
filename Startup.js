@@ -66,6 +66,7 @@ $(function() {
           $(`[class*='listItemTextRoot']:contains('${lastSendToDefault}')`).click();
         }
         $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
+        $('body').toggleClass('mobileAVTTUI', (window.EXPERIMENTAL_SETTINGS['iconUi'] == true));
           // STREAMING STUFF
 
         window.STREAMPEERS = {};
