@@ -10974,6 +10974,118 @@ div#playlistFields {
 
 /***** END NEW STAT BLOCKS ****/
 
+
+
+/***** Icon UI *****/
+
+.mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
+.mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>div,
+.mobileAVTTUI #combat_tracker div.ddbc-tab-options--layout-pill>button{
+    width: 30px !important;
+    height: 30px !important;
+    text-indent: 40px;
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px 0px 3px 0px;
+    font-size: 20px;
+}
+.mobileAVTTUI>div.ddbc-tab-options--layout-pill{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    top:38px !important;
+}
+.mobileAVTTUI  div.ddbc-tab-options--layout-pill>button#help_button{
+    position:fixed;
+    top:calc(100% - 30px) !important;
+    left: 5px;
+}
+.mobileAVTTUI #combat_tracker div.ddbc-tab-options--layout-pill>button{
+    position:fixed;
+    top: 5px !important;
+    left: 5px !important;
+}
+.mobileAVTTUI #peerVideo_switch {
+    left: 35px !important;
+    top:calc(100% - 30px) !important;
+}
+.mobileAVTTUI #peerVideo_switch .ddbc-tab-options__header-heading{
+    text-indent: 200px;
+    overflow:hidden;
+    position:absolute;
+    width:30px !important;
+    height: 30px !important;
+    top:calc(100% - 30px) !important; 
+}
+.mobileAVTTUI #peerVideo_switch .ddbc-tab-options__header-heading .button-icon{
+    position:absolute;
+    left:-1px;
+    font-size:26px;
+    text-indent:0px;
+}
+
+.mobileAVTTUI .top_menu{
+    left: 30px !important;
+    top: 5px !important;
+    transition: none !important;
+}
+.mobileAVTTUI #bucket_menu{
+    left:130px !important;
+    top: 225px !important;
+}
+.mobileAVTTUI #combat_tracker_inside{
+    left:40px;
+    top: 7px;
+}
+.mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button:before, 
+.mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>div:before,
+.mobileAVTTUI #combat_tracker div.ddbc-tab-options--layout-pill>button:before{
+    font-family: 'Material Symbols Outlined';
+    font-size: 22px;
+    padding:4px;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    fill: #fff !important;
+    display: block;
+    height: 30px;
+    width: 30px;
+    text-indent: 0px;
+}
+.mobileAVTTUI #select-button:before{
+    content:"\f82f";        
+}
+.mobileAVTTUI #ruler_button:before{
+    content:"\e41c";   
+}
+.mobileAVTTUI #fog_button:before{
+    content:"\e818";   
+}
+.mobileAVTTUI #wall_button:before{
+    content:"\e205";   
+}
+.mobileAVTTUI #elev_button:before{
+    content:"\f6e7";   
+}
+.mobileAVTTUI #vision_button:before{
+    content:"\f588";   
+}
+.mobileAVTTUI #draw_button:before{
+    content:"\e746";   
+}
+.mobileAVTTUI #text_button:before{
+    content:"\e262";   
+}
+.mobileAVTTUI #aoe_button:before{
+    content:"\e57b";   
+}
+.mobileAVTTUI #help_button:before{
+    content:"\e887";   
+}   
+.mobileAVTTUI #combat_button:before{
+    content:"\f889";   
+}
+
+
+
 /***Font Faces*****/
 @font-face {
     font-family: Scala Sans Offc;

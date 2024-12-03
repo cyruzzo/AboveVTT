@@ -1590,7 +1590,12 @@ function redraw_elev(openLegened = false) {
 	}
 }
 function open_elev_legend(){
-	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', '32px', '317px', false, '.row-color');
+	const mobileUI = $('body').hasClass('mobileAVTTUI');
+	const position = {
+		top: mobileUI ? '7px' :'32px',
+		left: mobileUI ? '150px':'317px'
+	}
+	let elevationWindow = find_or_create_generic_draggable_window('elev_legend_window', 'Elevation Legend', false, false, undefined, '200px', 'fit-content', position.top, position.left, false, '.row-color');
 	elevationWindow.find('.elevationLegendDiv').remove();
 
 
