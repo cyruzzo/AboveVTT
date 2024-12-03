@@ -3982,8 +3982,8 @@ function show_sidebar() {
 	} else {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
-
-	
+	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '340px');
+	window.dispatchEvent(new Event('resize'));
 	addGamelogPopoutButton()
 }
 
@@ -4136,6 +4136,8 @@ function hide_sidebar() {
 	} else {
 		$("#sheet").addClass("sidebar_hidden");
 	}
+	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '0px');
+	window.dispatchEvent(new Event('resize'));
 }
 
 /**
