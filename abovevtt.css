@@ -11018,7 +11018,10 @@ div#playlistFields {
     top:calc(100% - 30px) !important; 
 }
 .mobileAVTTUI #peerVideo_switch .ddbc-tab-options__header-heading .button-icon{
-    font-size:27px;
+    position:absolute;
+    left:-1px;
+    font-size:26px;
+    text-indent:0px;
 }
 
 .mobileAVTTUI .top_menu{
