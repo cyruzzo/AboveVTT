@@ -52,7 +52,7 @@ button#startScreenShare{
 
 
 canvas.dice-rolling-panel__container{
-    max-width: calc(100% - 340px) !important;
+    max-width: calc(100% - var(--sidebar-width, 340px)) !important;
 }
 
 .abovevttTempMessage{
@@ -2629,7 +2629,7 @@ body .roll-mod-container input.roll-input-mod[type="number"] {
     z-index: 99999999;
     display: flex;
     position: fixed;
-    right: 343px;
+    right: calc(3px + var(--sidebar-width, 340px));
     bottom: 5px;
     opacity: 1;
     transition: all 0.3s ease-in-out;
