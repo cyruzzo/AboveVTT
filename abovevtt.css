@@ -11015,13 +11015,16 @@ div#playlistFields {
     position:absolute;
     width:30px !important;
     height: 30px !important;
-    top:calc(100% - 30px) !important; 
+    margin: 0px 0px 0px 5px !important;
 }
 .mobileAVTTUI #peerVideo_switch .ddbc-tab-options__header-heading .button-icon{
-    position:absolute;
-    left:-1px;
-    font-size:26px;
-    text-indent:0px;
+    position: absolute;
+    margin: 0 !important;
+    font-size: 22px;
+    text-indent: 0px;
+    padding: 4px;
+    top: 0px;
+    left: 0px;
 }
 
 .mobileAVTTUI .top_menu{
