@@ -263,7 +263,7 @@ class TokenCustomization {
         found.push(this);
         let parent = this.findParent();
         if (parent && parent.parentId != this.id && parent.parentId != '') {
-            let rootId = RootFolder.allValues().find(d => parent.folderPath().includes(d.path) && d.name != '')?.id;
+            let rootId = parent.rootId || RootFolder.allValues().find(d => parent.folderPath().includes(d.path) && d.name != '')?.id;
             let parentCustomization = find_or_create_token_customization(parent.tokenType, parent.id, parent.parentId, rootId);
             found.push(parentCustomization);
             return parent.findAncestors(found);
@@ -540,16 +540,12 @@ function migrate_token_customizations() {
 
 function migrate_convert_mytokens_to_customizations(listOfMyTokenFolders, listOfMyTokens) {
 
-    let existingPaths = new Set();
     let easyFolderReference = {};
     window.TOKEN_CUSTOMIZATIONS.forEach(tc => {
         if (tc.tokenType === ItemType.Folder && tc.rootId === RootFolder.MyTokens.id) {
             const fullPath = tc.fullPath();
             easyFolderReference[fullPath] = tc.id;
-            existingPaths.add(fullPath);
-        } else if (tc.tokenType === ItemType.MyToken) {
-            existingPaths.add(tc.fullPath());
-        }
+        } 
     });
     listOfMyTokenFolders.forEach(folder => {
         const fullPath = sanitize_folder_path(`${RootFolder.MyTokens.path}/${folder.folderPath}/${folder.name}`);

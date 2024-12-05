@@ -12,10 +12,10 @@ function init_sidebar_tabs() {
     sidebarContent.append(tokensPanel.build());
     init_tokens_panel();
 
-      $("#scenes-panel").remove();
-      scenesPanel = new SidebarPanel("scenes-panel", false);
-      sidebarContent.append(scenesPanel.build());
-      init_scenes_panel();
+    $("#scenes-panel").remove();
+    scenesPanel = new SidebarPanel("scenes-panel", false);
+    sidebarContent.append(scenesPanel.build());
+    init_scenes_panel();
 
   } else {
     $("#players-panel").remove();
