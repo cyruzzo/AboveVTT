@@ -262,7 +262,7 @@ class TokenCustomization {
     findAncestors(found = []) {
         found.push(this);
         let parent = this.findParent();
-        if (parent) {
+        if (parent && parent.parentId != this.id && parent.parentId != '') {
             let rootId = RootFolder.allValues().find(d => parent.folderPath().includes(d.path) && d.name != '')?.id;
             let parentCustomization = find_or_create_token_customization(parent.tokenType, parent.id, parent.parentId, rootId);
             found.push(parentCustomization);
@@ -285,7 +285,7 @@ class TokenCustomization {
     }
     folderPath() {
         const parent = this.findParent();
-        if (parent) {
+        if (parent && parent.parentId != this.id && parent.parentId != '') {
             return sanitize_folder_path(parent.findAncestors().reverse().map(tc => tc.name()).join("/"));
         }
         const root = RootFolder.findById(this.parentId) || RootFolder.findById(this.rootId);
