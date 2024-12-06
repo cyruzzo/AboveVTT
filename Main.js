@@ -2736,10 +2736,8 @@ function init_ui() {
 	// Function separated so it can be dis/enabled
 	function mouseup(event) {
 		
-		if (event.button == 2) {
-			curDown = false;
-			$("#VTT, #black_layer").css("cursor", "");
-		}
+		curDown = false;
+		$("#VTT, #black_layer").css("cursor", "");
 		//remove iframe cover that prevents mouse interaction
 		$('.iframeResizeCover').remove();
 		if (event.target.tagName.toLowerCase() !== 'a') {
