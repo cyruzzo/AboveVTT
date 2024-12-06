@@ -286,11 +286,25 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[currentTarget].options.current = true;
 				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
 				let combatSettingData = getCombatTrackersettings();
+				let group = false;
+				if(window.TOKEN_OBJECTS[currentTarget].options.combatGroupToken){
+					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[currentTarget].options.combatGroup && !d.options.combatGroupToken);
+				}
 				if(combatSettingData['scroll_to_next'] == '1'){
-					window.TOKEN_OBJECTS[currentTarget].highlight();
+					if(group){
+						window.TOKEN_OBJECTS[group.options.id].highlight();
+					}
+					else{
+						window.TOKEN_OBJECTS[currentTarget].highlight();
+					}				
 				}	
 				if(combatSettingData['select_next'] == '1'){
-					$(`#tokens .token[data-id='${currentTarget}']`).click();
+					if(group){
+						$(`#tokens .token[data-id='${group.options.id}']`).click();
+					}
+					else{
+						$(`#tokens .token[data-id='${currentTarget}']`).click();
+					}	
 				}
 			}
 
@@ -327,11 +341,25 @@ function init_combat_tracker(){
 				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
 				let combatSettingData = getCombatTrackersettings();
-				if(combatSettingData['scroll_to_next'] == '1'){
-					window.TOKEN_OBJECTS[newTarget].highlight();
+				let group = false;
+				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
+					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
 				}
+				if(combatSettingData['scroll_to_next'] == '1'){
+					if(group){
+						window.TOKEN_OBJECTS[group.options.id].highlight();
+					}
+					else{
+						window.TOKEN_OBJECTS[newTarget].highlight();
+					}				
+				}	
 				if(combatSettingData['select_next'] == '1'){
-					$(`#tokens .token[data-id='${newTarget}']`).click();
+					if(group){
+						$(`#tokens .token[data-id='${group.options.id}']`).click();
+					}
+					else{
+						$(`#tokens .token[data-id='${newTarget}']`).click();
+					}	
 				}
 			}
 
@@ -378,11 +406,25 @@ function init_combat_tracker(){
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				window.TOKEN_OBJECTS[newTarget].update_and_sync();
 				let combatSettingData = getCombatTrackersettings();
-				if(combatSettingData['scroll_to_next'] == '1'){
-					window.TOKEN_OBJECTS[newTarget].highlight();
+				let group = false;
+				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
+					group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[newTarget].options.combatGroup && !d.options.combatGroupToken);
 				}
+				if(combatSettingData['scroll_to_next'] == '1'){
+					if(group){
+						window.TOKEN_OBJECTS[group.options.id].highlight();
+					}
+					else{
+						window.TOKEN_OBJECTS[newTarget].highlight();
+					}				
+				}	
 				if(combatSettingData['select_next'] == '1'){
-					$(`#tokens .token[data-id='${newTarget}']`).click();
+					if(group){
+						$(`#tokens .token[data-id='${group.options.id}']`).click();
+					}
+					else{
+						$(`#tokens .token[data-id='${newTarget}']`).click();
+					}	
 				}
 			}
 		}
@@ -1177,11 +1219,25 @@ function ct_load(data=null){
 					$("#combat_area tr[data-target='"+data[i]['data-target']+"']").attr("data-current","1");
 					if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
 						let combatSettingData = getCombatTrackersettings();
-						if(combatSettingData['scroll_to_next'] == '1'){
-							window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
+						let group = false;
+						if(window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroupToken){
+							group = Object.values(window.TOKEN_OBJECTS).find(d=> d.options.combatGroup == window.TOKEN_OBJECTS[data[i]['data-target']].options.combatGroup && !d.options.combatGroupToken);
 						}
+						if(combatSettingData['scroll_to_next'] == '1'){
+							if(group){
+								window.TOKEN_OBJECTS[group.options.id].highlight();
+							}
+							else{
+								window.TOKEN_OBJECTS[data[i]['data-target']].highlight();
+							}				
+						}	
 						if(combatSettingData['select_next'] == '1'){
-							$(`#tokens .token[data-id='${data[i]['data-target']}']`).click();
+							if(group){
+								$(`#tokens .token[data-id='${group.options.id}']`).click();
+							}
+							else{
+								$(`#tokens .token[data-id='${data[i]['data-target']}']`).click();
+							}	
 						}
 					}
 					if(window.all_token_objects[data[i]['data-target']].isCurrentPlayer() || window.all_token_objects[data[i]['data-target']].options.player_owned){
