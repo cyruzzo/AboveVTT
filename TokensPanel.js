@@ -2734,7 +2734,6 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     let tokenOptionsButton = build_override_token_options_button(sidebarPanel, listItem, placedToken, customization.tokenOptions, function(name, value) {
         customization.setTokenOption(name, value);
     }, function () {
-        display_token_configuration_modal(listItem, placedToken);
         let visionInput = $("input[name='visionColor']").spectrum("get");
         let light1Input = $("input[name='light1Color']").spectrum("get");
         let light2Input = $("input[name='light2Color']").spectrum("get");
