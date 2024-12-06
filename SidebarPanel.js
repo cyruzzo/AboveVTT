@@ -1116,7 +1116,7 @@ function build_sidebar_list_row(listItem) {
         </g>
     </svg>`)
     }
-    else if(tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage.includes(d))){
+    else if(tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage?.includes(d))){
         img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
         video = true;
     } else{
