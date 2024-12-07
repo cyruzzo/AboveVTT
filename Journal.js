@@ -192,7 +192,7 @@ class JournalManager{
 
 	sendNotes(sendNotes){
 		let self=this;
-		if(sendNotes.length > 1 && JSON.stringify(sendNotes).length > 128000) {
+		if(sendNotes.length > 1 && JSON.stringify(sendNotes).length > 120000) {
 			let sendNotes1 = sendNotes.slice(0, parseInt(sendNotes.length/2))
       		let sendNotes2 = sendNotes.slice(parseInt(sendNotes.length/2), sendNotes.length)
       		self.sendNotes(sendNotes1);

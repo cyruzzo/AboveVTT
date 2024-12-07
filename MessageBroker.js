@@ -1878,7 +1878,7 @@ class MessageBroker {
 
 					if(data.dm_map_usable=="1"){ // IN THE CLOUD WE DON'T RECEIVE WIDTH AND HEIGT. ALWAYS LOAD THE DM_MAP FIRST, AS TO GET THE PROPER WIDTH
 						data.map=data.dm_map;
-						if(data.dm_map_is_video=="1")
+						if(data.dm_map_is_video=="1" || data.dm_map?.includes('youtube.com') || data.dm_map?.includes("youtu.be"))
 							data.is_video=true;
 					}
 					else{
@@ -1950,7 +1950,7 @@ class MessageBroker {
 						window.DRAWINGS = [];
 					}
 					window.LOADING = true;
-					if(!window.DM && (data.player_map_is_video == '1' || data.is_video == '1')){
+					if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
 						data.map = data.player_map;
 						data.is_video = data.player_map_is_video;
 					}
