@@ -5427,6 +5427,16 @@ button.avtt-roll-button,
     letter-spacing: 1px;
     padding: 1px 4px 0;
 }
+button.avtt-roll-button:has(button.avtt-roll-button) {
+    border:0 !important;
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.ddbc-snippet p.above-vtt-visited button.avtt-roll-button{
+    font-size:unset;
+    font-weight:unset;
+}
 .ct-sidebar__portal{
     overflow: unset !important;
     z-index: 57000 !important;
