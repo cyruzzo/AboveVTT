@@ -685,7 +685,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
     if(add_journal_roll_buttons && snippets.length > 0){
       snippets.addClass("above-vtt-visited");
-      snippets.find('.ddbc-snippet__tag').each(function(){
+      snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){
         $(this).parent().replaceWith($(this).text());
       })
       snippets.find('td').each(function(){
