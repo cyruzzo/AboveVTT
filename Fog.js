@@ -2143,7 +2143,7 @@ function get_event_cursor_position(event) {
             }
         });
     }
-	console.log(`Caps Lock is now ${get_event_cursor_position.isCapsLockOn ? 'ON' : 'OFF'}`);
+	// console.log(`Caps Lock is now ${get_event_cursor_position.isCapsLockOn ? 'ON' : 'OFF'}`);
 
     let eventLocation = {
         pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
@@ -2152,19 +2152,19 @@ function get_event_cursor_position(event) {
 
     let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
-    console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
-	console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
+    // console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
+	// console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
 
     if (window.CURRENT_SCENE_DATA.gridType === "1" && get_event_cursor_position.isCapsLockOn) {
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
 
-        console.log(`Grid size: ${gridWidth} x ${gridHeight}`);
+        // console.log(`Grid size: ${gridWidth} x ${gridHeight}`);
         pointX = Math.round(pointX / gridWidth) * gridWidth;
         pointY = Math.round(pointY / gridHeight) * gridHeight;
-        console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
+        // console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
     } else {
-        console.log("Snapping skipped.");
+        // console.log("Snapping skipped.");
     }
 
     return [pointX, pointY];
