@@ -2122,16 +2122,54 @@ function is_rgba_fully_transparent(rgba){
 	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
-function get_event_cursor_position(event){
-	let eventLocation = {
-		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
-		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
-	}
-	const pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+function get_event_cursor_position(event) {
 
-	return [pointX, pointY]
+    // Static variable to track Caps Lock state
+    if (typeof get_event_cursor_position.isCapsLockOn === 'undefined') {
+        get_event_cursor_position.isCapsLockOn = false;
+
+        // Listen for keyboard events to update Caps Lock state
+        document.addEventListener('keydown', (e) => {
+            if (e.getModifierState && e.getModifierState('CapsLock')) {
+                get_event_cursor_position.isCapsLockOn = true;
+            } else {
+                get_event_cursor_position.isCapsLockOn = false;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!e.getModifierState || !e.getModifierState('CapsLock')) {
+                get_event_cursor_position.isCapsLockOn = false;
+            }
+        });
+    }
+	console.log(`Caps Lock is now ${get_event_cursor_position.isCapsLockOn ? 'ON' : 'OFF'}`);
+
+    let eventLocation = {
+        pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
+        pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
+    };
+
+    let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
+    let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+    console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
+	console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
+
+    if (window.CURRENT_SCENE_DATA.gridType === "1" && get_event_cursor_position.isCapsLockOn) {
+        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
+        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+
+        console.log(`Grid size: ${gridWidth} x ${gridHeight}`);
+        pointX = Math.round(pointX / gridWidth) * gridWidth;
+        pointY = Math.round(pointY / gridHeight) * gridHeight;
+        console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
+    } else {
+        console.log("Snapping skipped.");
+    }
+
+    return [pointX, pointY];
 }
+
 function numToColor(num, alpha, max) {
     let valueAsPercentageOfMax = num / max;
 	// actual max is 16777215 but represnts white so we will take a max that is
