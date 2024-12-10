@@ -2141,8 +2141,8 @@ function get_snapped_coordinates(pointX, pointY) {
         // Square grid
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
-        pointX = Math.floor(pointX / gridWidth) * gridWidth + offsetX;
-        pointY = Math.floor(pointY / gridHeight) * gridHeight + offsetY;
+        pointX = Math.round((pointX-offsetX) / gridWidth) * gridWidth + offsetX;
+        pointY = Math.round((pointY-offsetY) / gridHeight) * gridHeight + offsetY;
     } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
         // Hex grid (vertical or horizontal)
         console.log("Hex snapping is not implemented yet.");
