@@ -2122,16 +2122,66 @@ function is_rgba_fully_transparent(rgba){
 	return rgba.split(",")?.[3]?.trim().replace(")","") === "0"
 }
 
-function get_event_cursor_position(event){
-	let eventLocation = {
-		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
-		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
-	}
-	const pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
-	const pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+/**
+ * Snaps the given coordinates to the nearest grid intersection, based on the current scene data.
+ * Supports square grids and includes offsets if they are defined. TODO vert and horz hex
+ * 
+ * @param {number} pointX - The X-coordinate to be snapped.
+ * @param {number} pointY - The Y-coordinate to be snapped.
+ * @returns {Array<number>} - The snapped [X, Y] coordinates.
+ */
+function get_snapped_coordinates(pointX, pointY) {
+    console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
+    console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
 
-	return [pointX, pointY]
+    const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
+    const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
+
+    if (window.CURRENT_SCENE_DATA.gridType === "1") {
+        // Square grid
+        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
+        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+        pointX = Math.floor(pointX / gridWidth) * gridWidth + offsetX;
+        pointY = Math.floor(pointY / gridHeight) * gridHeight + offsetY;
+    } else if (window.CURRENT_SCENE_DATA.gridType === "2" || window.CURRENT_SCENE_DATA.gridType === "3") {
+        // Hex grid (vertical or horizontal)
+        console.log("Hex snapping is not implemented yet.");
+    }
+
+    console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
+    return [pointX, pointY];
 }
+
+/**
+ * Converts a cursor event to coordinates in the virtual tabletop, with optional snapping.
+ * Snapping behavior is controlled by the global toggleSnap flag.
+ * 
+ * @param {Event} event - The cursor event (e.g., mouse or touch event).
+ * @returns {Array<number>} - The calculated [X, Y] coordinates.
+ */
+function get_event_cursor_position(event) {
+    // check snap (treat it like token snap for simplicity)
+    const snapToGrid = (window.CURRENT_SCENE_DATA.snap && !window.toggleSnap) || (!window.CURRENT_SCENE_DATA.snap && window.toggleSnap);
+    console.log(`Snap to Grid is now ${snapToGrid ? 'ON' : 'OFF'}`);
+
+    // Determine the cursor location from the event
+    let eventLocation = {
+        pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
+        pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
+    };
+
+    // Convert to local coordinates
+    let pointX = Math.round(((eventLocation.pageX - window.VTTMargin) * (1.0 / window.ZOOM)));
+    let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
+
+    // Apply snapping if enabled
+    if (snapToGrid) {
+        [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
+    }
+
+    return [pointX, pointY];
+}
+
 function numToColor(num, alpha, max) {
     let valueAsPercentageOfMax = num / max;
 	// actual max is 16777215 but represnts white so we will take a max that is
