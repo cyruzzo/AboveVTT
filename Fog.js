@@ -2124,7 +2124,7 @@ function is_rgba_fully_transparent(rgba){
 
 /**
  * Snaps the given coordinates to the nearest grid intersection, based on the current scene data.
- * Supports square, vert or horz hex grids and includes offsets if they are defined.
+ * Supports square grids and includes offsets if they are defined. TODO vert and horz hex
  * 
  * @param {number} pointX - The X-coordinate to be snapped.
  * @param {number} pointY - The Y-coordinate to be snapped.
