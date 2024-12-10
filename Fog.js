@@ -3259,11 +3259,11 @@ function drawing_mouseup(e) {
 				left = (intersectingWalls[i].left != false) ? intersectingWalls[i].left : left;
 				right = (intersectingWalls[i].right != false) ? intersectingWalls[i].right : right;
 
-				if(bottom != false){
+				if(bottom != false && !Array.isArray(bottom?.x)){
 					x1 = bottom.x;
 					y1 = bottom.y;
 				}
-				if(left != false){
+				if(left != false && !Array.isArray(right?.y)){
 					if(x1 == undefined){
 						x1 = left.x;
 						y1 = left.y;
@@ -3273,7 +3273,7 @@ function drawing_mouseup(e) {
 						y2 = left.y;
 					}
 				}
-				if(right != false){
+				if(right != false && !Array.isArray(left?.y)){
 					if(x1 == undefined){
 						x1 = right.x;
 						y1 = right.y;
@@ -3283,7 +3283,7 @@ function drawing_mouseup(e) {
 						y2 = right.y;
 					}
 				}
-				if(top != false){	
+				if(top != false && !Array.isArray(top?.x)){	
 					if(x1 == undefined){
 						x1 = top.x;
 						y1 = top.y;
