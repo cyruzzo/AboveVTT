@@ -2,10 +2,12 @@ name: Sync Pull Request with Main
 
 on:
   pull_request:
-    types: [opened, synchronize] # Triggers on PR creation or updates to the branch
+    types: [opened, synchronize] # Trigger on PR creation or updates to the branch
 
 jobs:
   sync-with-main:
+    # Only run if the PR is from a fork and for the PR author's branch
+    if: ${{ github.event.pull_request.head.repo.owner.login == github.event.pull_request.user.login }}
     runs-on: ubuntu-latest
 
     steps:
@@ -13,6 +15,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Configure Git
         run: |
