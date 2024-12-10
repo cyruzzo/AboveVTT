@@ -2137,13 +2137,13 @@ function get_snapped_coordinates(pointX, pointY) {
     const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
     const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
 
-    if (window.CURRENT_SCENE_DATA.gridType === "1") {
+    if (window.CURRENT_SCENE_DATA.gridType == "1") {
         // Square grid
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
         pointX = Math.floor(pointX / gridWidth) * gridWidth + offsetX;
         pointY = Math.floor(pointY / gridHeight) * gridHeight + offsetY;
-    } else if (window.CURRENT_SCENE_DATA.gridType === "2" || window.CURRENT_SCENE_DATA.gridType === "3") {
+    } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
         // Hex grid (vertical or horizontal)
         console.log("Hex snapping is not implemented yet.");
     }
@@ -2160,9 +2160,6 @@ function get_snapped_coordinates(pointX, pointY) {
  * @returns {Array<number>} - The calculated [X, Y] coordinates.
  */
 function get_event_cursor_position(event) {
-    // check snap (treat it like token snap for simplicity)
-    const snapToGrid = (window.CURRENT_SCENE_DATA.snap && !window.toggleSnap) || (!window.CURRENT_SCENE_DATA.snap && window.toggleSnap);
-    console.log(`Snap to Grid is now ${snapToGrid ? 'ON' : 'OFF'}`);
 
     // Determine the cursor location from the event
     let eventLocation = {
@@ -2175,7 +2172,7 @@ function get_event_cursor_position(event) {
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
     // Apply snapping if enabled
-    if (snapToGrid) {
+    if (window.toggleSnap) {
         [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
     }
 
@@ -3040,10 +3037,22 @@ function drawing_mouseup(e) {
 			let xInside; 
 			let yInside;
 			
-			xInside = (rectLine.rx < wallLine[0].a.x) && (rectLine.rx < wallLine[0].b.x) && (rectLine.rx+rectLine.rw > wallLine[0].b.x ) && (rectLine.rx+rectLine.rw > wallLine[0].a.x )		
-			yInside = (rectLine.ry < wallLine[0].a.y) && (rectLine.ry < wallLine[0].b.y) && (rectLine.ry+rectLine.rh > wallLine[0].b.y ) && (rectLine.ry+rectLine.rh > wallLine[0].a.y )
+			xInside = (rectLine.rx <= wallLine[0].a.x) && (rectLine.rx <= wallLine[0].b.x) && (rectLine.rx+rectLine.rw >= wallLine[0].b.x ) && (rectLine.rx+rectLine.rw >= wallLine[0].a.x )		
+			yInside = (rectLine.ry <= wallLine[0].a.y) && (rectLine.ry <= wallLine[0].b.y) && (rectLine.ry+rectLine.rh >= wallLine[0].b.y ) && (rectLine.ry+rectLine.rh >= wallLine[0].a.y )
 			
-			
+			if(Array.isArray(left?.x)){
+				left.x = left.x.sort((n1,n2) => n2-n1)[2]
+			}
+			if(Array.isArray(right?.x)){
+				right.x = right.x.sort((n1,n2) => n2-n1)[1]
+			}
+			if(Array.isArray(top?.y)){
+				top.y = top.y.sort((n1,n2) => n2-n1)[2]
+			}
+			if(Array.isArray(bottom?.y)){
+				bottom.y = bottom.y.sort((n1,n2) => n2-n1)[1]
+			}
+
 
 			fullyInside = (yInside &&  xInside)
 	
@@ -3103,7 +3112,8 @@ function drawing_mouseup(e) {
 					let x2;
 					let y1;
 					let y2;
-					if(left != false){
+	
+					if(left != false && !Array.isArray(left?.y)){
 						if(wallLine[0].b.x > wallLine[0].a.x){
 							x1 = (wallLine[0].a.x);
 							y1 = (wallLine[0].a.y);
@@ -3129,7 +3139,7 @@ function drawing_mouseup(e) {
 						window.DRAWINGS.push(data);
 						undoArray.push([...data]);
 					}	
-					if(right != false){
+					if(right != false && !Array.isArray(right?.y)){
 						if(wallLine[0].b.x > wallLine[0].a.x){
 							x1 = (wallLine[0].b.x);
 							y1 = (wallLine[0].b.y);
@@ -3157,7 +3167,7 @@ function drawing_mouseup(e) {
 						window.DRAWINGS.push(data);	
 						undoArray.push([...data]);			
 					}
-					if(top != false){
+					if(top != false && !Array.isArray(top?.x)){
 						if(wallLine[0].a.y > wallLine[0].b.y){
 							x1 = (wallLine[0].b.x);
 							y1 = (wallLine[0].b.y);
@@ -3185,7 +3195,7 @@ function drawing_mouseup(e) {
 						undoArray.push([...data]);
 					
 					}
-					if(bottom != false){
+					if(bottom != false && !Array.isArray(bottom?.x)){
 						if(wallLine[0].a.y > wallLine[0].b.y){
 							x1 = (wallLine[0].a.x);
 							y1 = (wallLine[0].a.y);
@@ -5504,6 +5514,16 @@ function lineLine(x1, y1, x2, y2, x3, y3, x4, y4) {
     let intersectionY = y1 + (uA * (y2-y1));
 
     return {x: intersectionX, y: intersectionY};
+  }
+  else if(isNaN(uB) && isNaN(uB)){
+  	if((x3<x1&&x3<x2&&x4<x1&&x4<x2) || (x3>x1&&x3>x2&&x4>x1&&x4>x2) || (y3<y1&&y3<y2&&y4<y1&&y4<y2) || (y3>y1&&y3>y2&&y4>y1&&y4>x2))
+  		return false;
+  	else if(y1==y2 && y2==y3 && y3==y4){
+  		return {x: [x1, x2, x3, x4], y: y1};
+  	}
+  	else if(x1==x2 && x2==x3 && x3==x4){
+  		return {x: x1, y: [y1, y2, y3, y4]};
+  	}
   }
   return false;
 }
