@@ -2123,8 +2123,40 @@ function is_rgba_fully_transparent(rgba){
 }
 
 /**
+ * Snaps a point to the nearest hex cell.
+ *
+ * @param {number} x - The X-coordinate to snap.
+ * @param {number} y - The Y-coordinate to snap.
+ * @param {string} gridType - Either "2" (vertical hex) or "3" (horizontal hex).
+ * @param {number} hexWidth - Width of the hexagon (from one flat side to the other).
+ * @param {number} hexHeight - Height of the hexagon (from one point to the opposite).
+ * @returns {Array<number>} - The snapped [X, Y] coordinates.
+ */
+function snapToHexGrid(x, y, gridType, hexWidth, hexHeight) {
+    const hexSize = hexWidth / 2; // Side length (assuming hexWidth == hexHeight for simplicity)
+
+    if (gridType === "2") {
+        // Vertical hex (aligned columns)
+        const q = Math.round(x / (hexWidth * 0.75)); // Axial column
+        const r = Math.round((y - (q % 2) * (hexHeight / 2)) / hexHeight); // Axial row
+        const snappedX = q * (hexWidth * 0.75);
+        const snappedY = r * hexHeight + (q % 2) * (hexHeight / 2);
+        return [snappedX, snappedY];
+    } else if (gridType === "3") {
+        // Horizontal hex (aligned rows)
+        const r = Math.round(y / (hexHeight * 0.75)); // Axial row
+        const q = Math.round((x - (r % 2) * (hexWidth / 2)) / hexWidth); // Axial column
+        const snappedX = q * hexWidth + (r % 2) * (hexWidth / 2);
+        const snappedY = r * (hexHeight * 0.75);
+        return [snappedX, snappedY];
+    }
+
+    return [x, y]; // Default: No snapping
+}
+
+/**
  * Snaps the given coordinates to the nearest grid intersection, based on the current scene data.
- * Supports square grids and includes offsets if they are defined.
+ * Supports square, vert or horz hex grids and includes offsets if they are defined.
  * 
  * @param {number} pointX - The X-coordinate to be snapped.
  * @param {number} pointY - The Y-coordinate to be snapped.
@@ -2134,29 +2166,28 @@ function get_snapped_coordinates(pointX, pointY) {
     console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
     console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
 
-    if (window.CURRENT_SCENE_DATA.gridType !== undefined) {
-        // Safely parse offsets, defaulting to 0 if undefined
-        const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
-        const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
+    const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
+    const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
 
-        if (window.CURRENT_SCENE_DATA.gridType == "1") {
-            // Square grid
-            const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
-            const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
-            pointX = Math.floor(pointX / gridWidth) * gridWidth + offsetX;
-            pointY = Math.floor(pointY / gridHeight) * gridHeight + offsetY;
-            console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
-        } else if (window.CURRENT_SCENE_DATA.gridType == "2") {
-            // Vertical hex grid (to be implemented)
-            console.log("Vertical hex snapping is not implemented yet.");
-        } else if (window.CURRENT_SCENE_DATA.gridType == "3") {
-            // Horizontal hex grid (to be implemented)
-            console.log("Horizontal hex snapping is not implemented yet.");
-        }
+    if (window.CURRENT_SCENE_DATA.gridType === "1") {
+        // Square grid
+        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
+        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+        pointX = Math.floor(pointX / gridWidth) * gridWidth + offsetX;
+        pointY = Math.floor(pointY / gridHeight) * gridHeight + offsetY;
+    } else if (window.CURRENT_SCENE_DATA.gridType === "2" || window.CURRENT_SCENE_DATA.gridType === "3") {
+        // Hex grid (vertical or horizontal)
+        const hexWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
+        const hexHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+        [pointX, pointY] = snapToHexGrid(pointX - offsetX, pointY - offsetY, window.CURRENT_SCENE_DATA.gridType, hexWidth, hexHeight);
+        pointX += offsetX;
+        pointY += offsetY;
     }
 
+    console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
     return [pointX, pointY];
 }
+
 
 /**
  * Converts a cursor event to coordinates in the virtual tabletop, with optional snapping.
