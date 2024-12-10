@@ -13,3 +13,17 @@ jobs:
         run: |
           git fetch origin main
           git merge origin/main --no-edit || exit 1
+
+      - name: Push updates to PR branch
+        if: success()
+        run: git push origin HEAD
+
+      - name: Notify PR author of merge conflict
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.pull_request.number }},
+              body: "⚠️ Merge conflict detected. Please resolve conflicts with the `main` branch."
+            });
