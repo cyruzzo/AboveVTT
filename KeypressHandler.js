@@ -351,6 +351,20 @@ Mousetrap.bind('ctrl', function () {
 	ctrlHeld=false;
 	window.toggleSnap=false;
 }, 'keyup');
+Mousetrap.bind('ctrl+shift', function () {
+    ctrlHeld=true;
+    shiftHeld=true;
+    $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
+      window.shiftHeld = false;
+    })
+    window.toggleSnap=true;
+}, 'keydown');
+
+Mousetrap.bind('ctrl+shift', function () {
+    ctrlHeld=false;
+    shiftHeld = false;
+    window.toggleSnap=false;
+}, 'keyup');
 
 Mousetrap.bind('shift+h', function () {
     unhide_interface();
