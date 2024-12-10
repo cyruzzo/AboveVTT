@@ -121,7 +121,17 @@ Mousetrap.bind('shift+space', function (e) {     //collapse/show character sheet
             window.TOKEN_OBJECTS[tokenId].highlight();   
     }
 });
-
+Mousetrap.bind('shift+s', function (e) { 
+    e.preventDefault();
+    if ($('#grid_snap_drawings .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+        $('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+        window.toggleDrawingSnap = false;
+    } else {
+        $('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+        window.toggleDrawingSnap = true;
+    }
+});
+           
 
 Mousetrap.bind('q', function () {       //collapse/show sidebar. (q is next to tab, also used to show/hide elements)
     $('#hide_rightpanel').click()
