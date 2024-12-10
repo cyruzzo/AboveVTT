@@ -2172,7 +2172,7 @@ function get_event_cursor_position(event) {
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
     // Apply snapping if enabled
-    if (window.toggleSnap) {
+    if ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap)) {
         [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
     }
 

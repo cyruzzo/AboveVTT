@@ -1612,7 +1612,7 @@ function  init_sheet() {
 			toggle_player_sheet();
 		});
 		let  sheet_resize_button = $("<div id='sheet_resize_button' class='hasTooltip button-icon hideable ddbc-tab-options--layout-pill' data-name='Resize character sheet'><div class='ddbc-tab-options__header-heading'>Toggle Sheet Size</div></div>");
-		sheet_resize_button.css({ "position": "absolute", "top": "2px", "left": "-314px", "z-index": "999" });
+		sheet_resize_button.css({ "position": "absolute", "top": "2px", "left": "-369px", "z-index": "999" });
 		sheet_resize_button.find(".ddbc-tab-options__header-heading").css({ "padding": "6px" });
 		$(".avtt-sidebar-controls").append(sheet_resize_button);
 		// $(".ct-character-sheet__inner").append(sheet_resize_button);
@@ -3062,7 +3062,6 @@ function init_zoom_buttons() {
 			}
 		});
 	
-		zoom_section.append(select_locked);
 
 		let pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
 		<div class="ddbc-tab-options__header-heading">
@@ -3090,10 +3089,28 @@ function init_zoom_buttons() {
 			}
 		});
 
-		zoom_section.append(ping_center);
-		zoom_section.append(pause_players);
+		zoom_section.append(select_locked, ping_center, pause_players);
 	}
 
+
+	let grid_snap_drawings = $(`<div id='grid_snap_drawings' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Grid Snap Drawings'> 
+	<div class="ddbc-tab-options__header-heading">
+			<span style="font-size: 20px;" class="material-symbols-outlined">
+				rebase_edit
+			</span>
+	</div></div>
+	`);
+
+	grid_snap_drawings.click(async function(){
+		if ($('#grid_snap_drawings .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
+			$('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+			window.toggleDrawingSnap = false;
+		} else {
+			$('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
+			window.toggleDrawingSnap = true;
+		}
+	});
+	zoom_section.append(grid_snap_drawings)
 
 	let selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
 	<div class="ddbc-tab-options__header-heading">
@@ -3168,7 +3185,7 @@ function init_zoom_buttons() {
 	if (window.DM) {
 		zoom_section.css("right","371px");
 	} else {
-		zoom_section.css("left","-225px");
+		zoom_section.css("right","420px");
 	}
 }
 
@@ -3323,6 +3340,14 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+W</dt>
 							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+S</dt>
+							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
+						<dl>
+						<dl>
+							<dt>Hold CTRL while drawing</dt>
+							<dd>Temporary toggle snap drawings to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click Token</dt>
