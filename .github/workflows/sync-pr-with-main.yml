@@ -1,0 +1,29 @@
+name: Sync Pull Request with Main
+
+on:
+  pull_request:
+    types: [opened, synchronize] # Triggers on PR creation or updates to the branch
+
+jobs:
+  sync-with-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and merge main
+        run: |
+          git fetch origin main
+          git merge origin/main --no-edit || exit 1
+
+      - name: Push updates to PR branch
+        run: |
+          git push origin HEAD
