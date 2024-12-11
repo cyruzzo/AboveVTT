@@ -2494,6 +2494,29 @@ function drawing_mousemove(e) {
 					isFilled,
 					window.LINEWIDTH);
 			}
+			else if(window.DRAWFUNCTION === "wall-door-convert" || window.DRAWFUNCTION === "wall-door" || window.DRAWFUNCTION === "door-door-convert"){
+				drawRect(window.temp_context,
+						window.BEGIN_MOUSEX,
+						window.BEGIN_MOUSEY,
+						width,
+						height,
+						window.DRAWCOLOR,
+						isFilled,
+						3,
+						true);
+			}
+			else if(window.DRAWFUNCTION === "wall-eraser" || window.DRAWFUNCTION === "wall-height-convert" || window.DRAWFUNCTION === "wall-door-convert"  || window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert"){
+				drawRect(window.temp_context,
+						window.BEGIN_MOUSEX,
+						window.BEGIN_MOUSEY,
+						width,
+						height,
+						`rgba(255, 255, 255, 1)`,
+						isFilled,
+						3,
+						undefined,
+						true);
+			}
 			else{
 				drawRect(window.temp_context,
 						window.BEGIN_MOUSEX,
@@ -3720,21 +3743,30 @@ function drawCircle(ctx, centerX, centerY, radius, style, fill=true, lineWidth =
 
 }
 
-function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6)
+function drawRect(ctx, startx, starty, width, height, style, fill=true, lineWidth = 6, addStrokeToFill = false, addDottedStrokeToBorder)
 {
 	ctx.beginPath();
+	ctx.lineWidth = lineWidth;
+	ctx.strokeStyle = style;
+	ctx.fillStyle = style;
 	if(fill)
 	{
-		ctx.fillStyle = style;
-		ctx.fillRect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.fill()
+		if(addStrokeToFill){
+			ctx.stroke();
+		}
 	}
 	else
 	{
-		ctx.lineWidth = lineWidth;
-		ctx.strokeStyle = style;
-		ctx.beginPath();
 		ctx.rect(startx/window.CURRENT_SCENE_DATA.scale_factor, starty/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.stroke();
+		if(addDottedStrokeToBorder){
+			ctx.setLineDash([2*lineWidth, 2*lineWidth])
+			ctx.strokeStyle = `rgba(0,0,0,1)`;
+			ctx.stroke();
+			ctx.setLineDash([]);
+		}
 	}
 
 }
