@@ -3077,11 +3077,12 @@ function drawing_mouseup(e) {
 			}
 
 
-			fullyInside = (yInside &&  xInside)
+			fullyInside = (yInside &&  xInside);
+			const onePixel = (top.y == bottom.y && (Array.isArray(left?.y) || Array.isArray(right?.y))) || (left.x == right.x && (Array.isArray(top?.x) || Array.isArray(bottom?.x)))
 	
 
 
-			if(left != false || right != false || top != false || bottom != false || fullyInside){
+			if(fullyInside || (!onePixel && (left != false || right != false || top != false || bottom != false))){
 				if(window.DRAWFUNCTION == "wall-eraser-one" || window.DRAWFUNCTION === "door-door-convert" || window.DRAWFUNCTION == 'wall-height-convert'){
 					fullyInside = true;
 				}
