@@ -502,7 +502,7 @@ async function start_above_vtt_for_players() {
     reposition_player_sheet();
     setTimeout(function(){
       if(!window.showPanel){
-        hide_sidebar();
+        hide_sidebar(false);
       }
     }, 1000);
     if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
