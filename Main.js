@@ -4140,7 +4140,7 @@ function closePopout(name){
  * This will hide the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
  */
-function hide_sidebar() {
+function hide_sidebar(triggerResize = true) {
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-left").removeClass("point-right");
 	toggleButton.attr('data-visible', 0);
@@ -4160,7 +4160,8 @@ function hide_sidebar() {
 		$("#sheet").addClass("sidebar_hidden");
 	}
 	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '0px');
-	window.dispatchEvent(new Event('resize'));
+	if(triggerResize)
+		window.dispatchEvent(new Event('resize'));
 }
 
 /**
