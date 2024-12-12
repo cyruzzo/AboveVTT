@@ -514,7 +514,7 @@ const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
       return;  // ideally, we would add the event listener to the map only, but I couldn't find a clean way to do that without restructuring things
     }
 
-    const [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent);
+    const [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent, true);
     noisy_log("sendCursorPositionToPeers", mouseX, mouseY);
     window.PeerManager.send(PeerEvent.cursor(mouseX, mouseY, undefined, false));
   } catch (error) {
