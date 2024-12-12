@@ -2131,8 +2131,6 @@ function is_rgba_fully_transparent(rgba){
  * @returns {Array<number>} - The snapped [X, Y] coordinates.
  */
 function get_snapped_coordinates(pointX, pointY) {
-    console.log(`Before snapping - x: ${pointX}, y: ${pointY}`);
-    console.log(`Grid type: ${window.CURRENT_SCENE_DATA.gridType}`);
 
     const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
     const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
@@ -2148,7 +2146,6 @@ function get_snapped_coordinates(pointX, pointY) {
         console.log("Hex snapping is not implemented yet.");
     }
 
-    console.log(`After snapping - x: ${pointX}, y: ${pointY}`);
     return [pointX, pointY];
 }
 
@@ -2159,8 +2156,7 @@ function get_snapped_coordinates(pointX, pointY) {
  * @param {Event} event - The cursor event (e.g., mouse or touch event).
  * @returns {Array<number>} - The calculated [X, Y] coordinates.
  */
-function get_event_cursor_position(event) {
-
+function get_event_cursor_position(event, preventSnap = false) {
     // Determine the cursor location from the event
     let eventLocation = {
         pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
@@ -2172,7 +2168,7 @@ function get_event_cursor_position(event) {
     let pointY = Math.round(((eventLocation.pageY - window.VTTMargin) * (1.0 / window.ZOOM)));
 
     // Apply snapping if enabled
-    if ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap)) {
+    if (!preventSnap && ((window.toggleSnap && !window.toggleDrawingSnap) || (window.toggleDrawingSnap && !window.toggleSnap))) {
         [pointX, pointY] = get_snapped_coordinates(pointX, pointY);
     }
 
@@ -5338,14 +5334,6 @@ Ray.prototype.cast = function(boundary) {
   const x4 = this.pos.x + this.dir.x;
   const y4 = this.pos.y + this.dir.y;
   
-  const addedScale = 1;
-
-  x1 = x1 < x3 ? x1+addedScale : x1-addedScale
-  y1 = y1 < y3 ? y1+addedScale : y1-addedScale
-
-  x2 = x2 < x4 ? x2+addedScale : x2-addedScale
-  y2 = y2 < y4 ? y2+addedScale : y2-addedScale
-
   const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
   // if denominator is zero then the ray and boundary are parallel
   if (den === 0) {
@@ -5356,7 +5344,7 @@ Ray.prototype.cast = function(boundary) {
   let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
   let u = -((x1 -x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
   
-  if (t > 0 && t < 1 && u > 0) {
+  if (t >= 0 && t <= 1 && u >= 0) {
     const pt = new Vector();
     pt.x = x1 + t * (x2 - x1);
     pt.y = y1 + t * (y2 - y1);
