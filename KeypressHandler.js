@@ -361,7 +361,8 @@ Mousetrap.bind('ctrl', function () {
 	ctrlHeld=false;
 	window.toggleSnap=false;
 }, 'keyup');
-Mousetrap.bind('ctrl+shift', function () {
+
+Mousetrap.bind(['ctrl+shift', 'shift+ctrl'], function () {
     ctrlHeld=true;
     shiftHeld=true;
     $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
@@ -370,7 +371,7 @@ Mousetrap.bind('ctrl+shift', function () {
     window.toggleSnap=true;
 }, 'keydown');
 
-Mousetrap.bind('ctrl+shift', function () {
+Mousetrap.bind(['ctrl+shift', 'shift+ctrl'], function () {
     ctrlHeld=false;
     shiftHeld = false;
     window.toggleSnap=false;

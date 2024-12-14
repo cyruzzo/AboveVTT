@@ -1791,7 +1791,10 @@ function redraw_light_walls(clear=true){
 					},
 				    {size: 2, color: 'rgb(0, 0, 0)'},
 				    undefined,
-				    `wallHeight${parseInt(x)}${parseInt(y)}`
+				    `wallHeight${parseInt(x)}${parseInt(y)}`,
+				    undefined,
+				    undefined,
+				    true
 				);
 				drawLine(ctx, x, y, width, height, color, lineWidth, scale, true);
 			}
@@ -3663,9 +3666,10 @@ function handle_drawing_button_click() {
 			if($('#show_walls').hasClass('button-enabled') || $(clicked).is("#wall_button") || $("#wall_button").hasClass('ddbc-tab-options__header-heading--is-active')  || $('.top_menu.visible [data-shape="paint-bucket"]').hasClass('button-enabled')){
 				redraw_light_walls();
 				$('.hiddenDoor').css('display', 'block');	
+				$(`[id*='wallHeight']`).css('display', 'block');
 			}
 			else{
-				$(`[id*='wallHeight']`).remove();
+				$(`[id*='wallHeight']`).css('display', 'none');
 				$('#walls_layer').css('display', 'none');		
 				$('.hiddenDoor').css('display', '');	
 			}
@@ -4926,9 +4930,6 @@ function init_walls_menu(buttons){
 	$("body").append(wall_menu);
 
 	let wall_button = $("<button style='display:inline;width:75px' id='wall_button' class='drawbutton menu-button hideable ddbc-tab-options__header-heading'><u>W</u>alls</button>");
-	wall_button.on('click', function(){
-		redraw_light_walls();
-	});
 	buttons.append(wall_button);
 	wall_menu.css("left",wall_button.position().left);
 }
