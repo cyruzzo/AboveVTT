@@ -623,7 +623,8 @@ function draw_text(
     rectColor = 'transparent',
     id = '',
     scale = (window.CURRENT_SCENE_DATA.scale_factor == "") ? 1 : window.CURRENT_SCENE_DATA.scale_factor,
-    hidden = false
+    hidden = false,
+    wallText = false
 ) {
 
     if($(`svg[id='${id}']`).length>0)
@@ -665,127 +666,132 @@ function draw_text(
         <svg id='${id}' width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="opacity:${hiddenOpacity}; left: ${startingX}px; top: ${startingY-font.size}px; position:absolute; z-index: 500">
             <title>${text}</title>
             <rect x="0" y="0" width="${width}" height="${height}" style="fill:${rectColor}"/>
-            <svg x="0.5" y="${font.size*-0.14}" style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; font-family: ${font.font};">
+            <g x="0.5" y="${font.size*-0.14}" style="text-anchor: ${anchor}; font-size:${font.size}px; font-style:${font.style}; font-weight: ${font.weight}; font-family: ${font.font};">
                 <text x="${x}" y="0" style="fill: ${font.color}; stroke: ${stroke.color}; stroke-width: ${stroke.size}; text-decoration: ${underline} ${font.color}; filter:${shadowStyle};stroke-linecap:butt;stroke-linejoin:round;paint-order:stroke;stroke-opacity:1;"></text>
-            </svg>
+            </g>
          </svg>
     `);
 
  
     $('#text_div').append(textSVG);
 
-
-
-    let words = text.split(/(\s)/g);
-
-    let line = '';
-    let element = $(`svg#${id} text`)[0];
-    element.innerHTML = '<tspan id="PROCESSING"></tspan>';
-    let lineNumber = 0;
-    for (let n = 0; n < words.length; n++) {
-        let testLine = line + words[n] + ' ';
-        let testElem = document.getElementById('PROCESSING');
-        /*  Add line in testElement */
-        testElem.innerHTML = testLine;
-        /* Messure textElement */
-        let metrics = testElem.getBoundingClientRect();
-        testWidth = metrics.width;
-       
-        if(words[n].includes('\n')  && n > 0){
-            let splitNewLines = words[n].split(/(\n)/g);
-            for(let i = 0; i < splitNewLines.length; i++){
-                if(splitNewLines[i] == '\n'){
-                    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
-                    lineNumber++;
-
-                    line = splitNewLines[i] + ' ';
-                }
-            }
-          
-        }
-        else if (testWidth / window.ZOOM > width && n > 0) {
-            element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
-            lineNumber++
-            line = words[n] + ' ';
-        } else {
-            line = testLine;
-        }
+    if(wallText == true){
+        let element = $(`svg#${id} text`)[0];
+        const wallHeights = text?.trim()?.split(' \n ')?.reverse();
+        element.innerHTML += wallHeights[0] ? `<tspan x="${x}" y="${font.size+0*font.size}">${wallHeights[0]}</tspan>` : '';
+        element.innerHTML += wallHeights[1] ? `<tspan x="${x}" y="${font.size+1*font.size}">${wallHeights[1]}</tspan>` : '';
     }
-    element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
-    document.getElementById("PROCESSING").remove();
+    else{
+        let words = text.split(/(\s)/g);
 
-    textSVG.draggable({
-        distance: 5,
-        start: function () {
-            $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
-            $("#sheet").append($('<div class="iframeResizeCover"></div>'));
-        },
-        drag: function(event,ui)
-        {
-            ui.position.top = Math.round((ui.position.top - window.VTTMargin) / window.ZOOM );
-            ui.position.left = Math.round((ui.position.left - window.VTTMargin) / window.ZOOM );
+        let line = '';
+        let element = $(`svg#${id} text`)[0];
+        element.innerHTML = '<tspan id="PROCESSING"></tspan>';
+        let lineNumber = 0;
+        for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let testElem = document.getElementById('PROCESSING');
+            /*  Add line in testElement */
+            testElem.innerHTML = testLine;
+            /* Messure textElement */
+            let metrics = testElem.getBoundingClientRect();
+            testWidth = metrics.width;
+           
+            if(words[n].includes('\n')  && n > 0){
+                let splitNewLines = words[n].split(/(\n)/g);
+                for(let i = 0; i < splitNewLines.length; i++){
+                    if(splitNewLines[i] == '\n'){
+                        element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+                        lineNumber++;
 
-        },  
-        stop: function (event, ui) {
-            $('.iframeResizeCover').remove();
-            
+                        line = splitNewLines[i] + ' ';
+                    }
+                }
+              
+            }
+            else if (testWidth / window.ZOOM > width && n > 0) {
+                element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+                lineNumber++
+                line = words[n] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+        element.innerHTML += `<tspan x="${x}" y="${font.size+lineNumber*font.size}">${line}</tspan>`;
+        document.getElementById("PROCESSING").remove();
+
+        textSVG.draggable({
+            distance: 5,
+            start: function () {
+                $("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));
+                $("#sheet").append($('<div class="iframeResizeCover"></div>'));
+            },
+            drag: function(event,ui)
+            {
+                ui.position.top = Math.round((ui.position.top - window.VTTMargin) / window.ZOOM );
+                ui.position.left = Math.round((ui.position.left - window.VTTMargin) / window.ZOOM );
+
+            },  
+            stop: function (event, ui) {
+                $('.iframeResizeCover').remove();
+                
+                for(let drawing in window.DRAWINGS){
+                    if(window.DRAWINGS[drawing][9] != id)
+                        continue;
+                    window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
+                    window.DRAWINGS[drawing][2] = parseInt($(this).css('top'))*adjustScale + parseInt(font.size)*adjustScale;    
+                }          
+                sync_drawings();
+            }
+        });
+
+
+        textSVG.on('contextmenu', function(e){
+            $(this).remove();
             for(let drawing in window.DRAWINGS){
-                if(window.DRAWINGS[drawing][9] != id)
-                    continue;
-                window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
-                window.DRAWINGS[drawing][2] = parseInt($(this).css('top'))*adjustScale + parseInt(font.size)*adjustScale;    
+                if(window.DRAWINGS[drawing][9] == this.id){
+                    if(!window.DRAWINGS[drawing][11]){
+                        window.DRAWINGS[drawing][11] = true;
+                    }
+                    else{
+                        window.DRAWINGS[drawing][11] = false;
+                    }
+                }
             }
-                        
+            redraw_text();
             sync_drawings();
-        }
-    });
-
-
-    textSVG.on('contextmenu', function(e){
-        $(this).remove();
-        for(let drawing in window.DRAWINGS){
-            if(window.DRAWINGS[drawing][9] == this.id){
-                if(!window.DRAWINGS[drawing][11]){
-                    window.DRAWINGS[drawing][11] = true;
-                }
-                else{
-                    window.DRAWINGS[drawing][11] = false;
-                }
+            return false;
+        });
+        textSVG.on('dblclick', function(){
+            let text_data = window.DRAWINGS.filter(d => d[9] == this.id)[0];
+            if(window.TEXTDATA == undefined){
+                window.TEXTDATA = {};
             }
-        }
-        redraw_text();
-        sync_drawings();
-        return false;
-    });
-    textSVG.on('dblclick', function(){
-        let text_data = window.DRAWINGS.filter(d => d[9] == this.id)[0];
-        if(window.TEXTDATA == undefined){
-            window.TEXTDATA = {};
-        }
-        let scaleConversion = text_data[10]/window.CURRENT_SCENE_DATA.scale_factor
-        window.TEXTDATA.text_alignment = text_data[6].align;
-        window.TEXTDATA.text_color = text_data[6].color;
-        window.TEXTDATA.text_background_color = text_data[8];
-        window.TEXTDATA.text_font = text_data[6].font;
-        window.TEXTDATA.text_size = text_data[6].size / scaleConversion;
-        window.TEXTDATA.text_bold = (parseInt(text_data[6].weight) == 700) ? true : false;
-        window.TEXTDATA.text_italic = (text_data[6].style == 'italic') ? true : false;
-        window.TEXTDATA.text_underline = text_data[6].underline;
-        window.TEXTDATA.stroke_color = text_data[7].color;
-        window.TEXTDATA.stroke_size = text_data[7].size / scaleConversion;
-        window.TEXTDATA.text_shadow = (text_data[6].shadow != 'none') ? true : false;
-        window.TEXTDATA.text_hide = text_data[11];
-        create_text_controller(true)
+            let scaleConversion = text_data[10]/window.CURRENT_SCENE_DATA.scale_factor
+            window.TEXTDATA.text_alignment = text_data[6].align;
+            window.TEXTDATA.text_color = text_data[6].color;
+            window.TEXTDATA.text_background_color = text_data[8];
+            window.TEXTDATA.text_font = text_data[6].font;
+            window.TEXTDATA.text_size = text_data[6].size / scaleConversion;
+            window.TEXTDATA.text_bold = (parseInt(text_data[6].weight) == 700) ? true : false;
+            window.TEXTDATA.text_italic = (text_data[6].style == 'italic') ? true : false;
+            window.TEXTDATA.text_underline = text_data[6].underline;
+            window.TEXTDATA.stroke_color = text_data[7].color;
+            window.TEXTDATA.stroke_size = text_data[7].size / scaleConversion;
+            window.TEXTDATA.text_shadow = (text_data[6].shadow != 'none') ? true : false;
+            window.TEXTDATA.text_hide = text_data[11];
+            create_text_controller(true)
 
-        let bounds = $(this)[0].getBoundingClientRect();
-        create_moveable_text_box(bounds.left, bounds.top-25, bounds.width, bounds.height+25, text)
-        apply_settings_to_boxes();
-        store_text_settings();
-        
-       window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
-        $(this).remove();
-        sync_drawings();
-    });
+            let bounds = $(this)[0].getBoundingClientRect();
+            create_moveable_text_box(bounds.left, bounds.top-25, bounds.width, bounds.height+25, text)
+            apply_settings_to_boxes();
+            store_text_settings();
+            
+           window.DRAWINGS = window.DRAWINGS.filter((d) => d[9] != $(this)[0].id);
+            $(this).remove();
+            sync_drawings();
+        });
+    }
 }
 
 
