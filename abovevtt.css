@@ -8831,6 +8831,15 @@ button.journal-view-button.journal-button {
     position: relative;
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
+
+.note-text iframe.journal-site-embed{
+    display:block;
+    position:absolute;
+    width:100%;
+    height:100%;
+    top: 42px;
+}
+
 :root .custom-stat-block{
     --theme-page-fg-color: #242527;
 }
