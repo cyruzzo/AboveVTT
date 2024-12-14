@@ -8837,8 +8837,13 @@ button.journal-view-button.journal-button {
     position:absolute;
     width:100%;
     height:100%;
+    top: 0px;
+}
+
+.visibility-container ~ .note-text iframe.journal-site-embed{
     top: 42px;
 }
+
 
 :root .custom-stat-block{
     --theme-page-fg-color: #242527;
