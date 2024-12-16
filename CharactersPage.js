@@ -592,7 +592,9 @@ function observe_character_sheet_changes(documentToObserve) {
   }
 
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
-
+    if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
+      return;
+    
     // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
