@@ -40,7 +40,7 @@ const availableToAoe = [
 
 
 
-
+const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/24);
 
 let debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
@@ -2819,7 +2819,7 @@ class Token {
 					 * @param {Object} ui UI-object
 					 */
 					drag: function(event, ui) {
-					
+
 						
 						let zoom = parseFloat(window.ZOOM);
 
@@ -3054,7 +3054,8 @@ class Token {
 								}
 							}													
 						}
-
+						if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+							throttleLight();
 					}
 				});
 				let classToClick = null;
