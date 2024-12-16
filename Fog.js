@@ -5946,7 +5946,7 @@ function redraw_light(){
 
 
 	if(!window.DM || window.SelectedTokenVision){
-		do_check_token_visibility();
+		throttleTokenCheck();
 	}
 	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
 		debounceAudioChecks();

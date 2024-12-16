@@ -342,6 +342,16 @@ function avtt_settings() {
 				{ value: false, label: "Disable", description: `` }
 			],
 			defaultValue: false
+		},
+		{
+			name: "dragLight",
+			label: "Update vision on token drag",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `While dragging a token vision will update` },
+				{ value: false, label: "Disable", description: `Vision will only update on dropping the token` }
+			],
+			defaultValue: false
 		}
 	];
 
