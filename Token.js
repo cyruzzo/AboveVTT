@@ -41,6 +41,7 @@ const availableToAoe = [
 
 
 const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/24);
+const throttleTokenCheck = throttle(() => {requestAnimationFrame(do_check_token_visibility)}, 1000/5);
 
 let debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
@@ -2876,10 +2877,11 @@ class Token {
 							}
 							else{
 								ui.position = (window.oldTokenPosition[self.options.id] != undefined) ? window.oldTokenPosition[self.options.id] : {left: ui.originalPosition.left/zoom, top: ui.originalPosition.top/zoom};
-							}
+							}	
 
 						}
-
+						self.options.left = `${ui.position.left}px`;
+						self.options.top = `${ui.position.top}px`;
 						const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 						
 						if (allowTokenMeasurement) {
@@ -2967,7 +2969,8 @@ class Token {
 
 									$(tok).css('left', tokenX + "px");
 									$(tok).css('top', tokenY + "px");
-
+									curr.options.left =  tokenX + "px";
+									curr.options.top = tokenY+"px";
 									if(!window.DM && window.playerTokenAuraIsLight){
 										const left = (tokenX + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 										const top = (tokenY + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
