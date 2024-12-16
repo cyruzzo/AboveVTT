@@ -5334,21 +5334,33 @@ Ray.prototype.cast = function(boundary) {
   const y3 = this.pos.y;
   const x4 = this.pos.x + this.dir.x;
   const y4 = this.pos.y + this.dir.y;
-  
-  const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+
+  const r = {
+  	x: (x2 - x1),
+  	y: (y2 - y1)
+  }
+  const s = {
+  	x: (x4 - x3),
+  	y: (y4 - y3)
+  }
+  const den = (r.x * s.y) - (s.x * r.y);
   // if denominator is zero then the ray and boundary are parallel
   if (den === 0) {
     return;
   }
   
+  const ca = {
+  	x: (x3 - x1),
+  	y: (y3 - y1)
+  }
   // numerator divided by denominator
-  let t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
-  let u = -((x1 -x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+  let t = ((ca.x * s.y) - (ca.y * s.x)) / den;
+  let u = ((ca.x * r.y) - (ca.y * r.x)) / den;
   
   if (t >= 0 && t <= 1 && u >= 0) {
     const pt = new Vector();
-    pt.x = x1 + t * (x2 - x1);
-    pt.y = y1 + t * (y2 - y1);
+    pt.x = x1 + t * r.x;
+    pt.y = y1 + t * r.y;
     return pt;
   } else {
     return;
