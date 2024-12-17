@@ -594,7 +594,12 @@ function observe_character_sheet_changes(documentToObserve) {
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
     if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
       return;
-    
+    const ignoreMutations = mutationList.some(d => {
+      const target = $(d.target); 
+      return target.closest('#VTTWRAPPER').length>0 || target.hasClass('peerCursorPosition')
+    })
+    if(ignoreMutations)
+      return;
     // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
