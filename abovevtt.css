@@ -766,9 +766,7 @@ select#doorTypeSelectUVTT{
     z-index: 1;
 }
 
-body:has(div#resizeDragMon iframe:hover)  {
-    overflow: hidden !important;
-}
+
 
 .ui-resizable-handle {
     z-index: 50100 !important;
