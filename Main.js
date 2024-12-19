@@ -1937,14 +1937,6 @@ function close_player_sheet()
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
-
-	if (window.character_sheet_observer) {
-		window.character_sheet_observer.disconnect();
-		delete window.character_sheet_observer;
-	}
-	if(!window.DM){
-			observe_character_sheet_changes($(document));
-	}
 }
 
 /**
@@ -3986,7 +3978,7 @@ function toggle_sidebar_visibility() {
  * This will show the sidebar regardless of which page we are playing on.
  * It will also adjust the position of the character sheet .
  */
-function show_sidebar() {
+function show_sidebar(dispatchResize = true) {
 
 	let toggleButton = $("#hide_rightpanel");
 	toggleButton.addClass("point-right").removeClass("point-left");
@@ -4006,7 +3998,8 @@ function show_sidebar() {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
 	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '340px');
-	window.dispatchEvent(new Event('resize'));
+	if(dispatchResize)
+		window.dispatchEvent(new Event('resize'));
 	addGamelogPopoutButton()
 }
 

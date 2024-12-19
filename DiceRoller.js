@@ -962,19 +962,19 @@ class DiceRoller {
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = this.#pendingDamageType;
 
-        if (["character", "monster"].includes(this.#pendingDiceRoll.entityType)) {
+        if (["character", "monster"].includes(this.#pendingDiceRoll?.entityType)) {
             ddbMessage.entityType = this.#pendingDiceRoll.entityType;
             ddbMessage.data.context.entityType = this.#pendingDiceRoll.entityType;
         }
-        if (this.#pendingDiceRoll.entityId !== undefined) {
+        if (this.#pendingDiceRoll?.entityId !== undefined) {
             ddbMessage.entityId = this.#pendingDiceRoll.entityId;
             ddbMessage.data.context.entityId = this.#pendingDiceRoll.entityId;
         }
         const isValid = (str) => { return typeof str === "string" && true && str.length > 0 };
-        if (isValid(this.#pendingDiceRoll.action)) {
+        if (isValid(this.#pendingDiceRoll?.action)) {
             ddbMessage.data.action = this.#pendingDiceRoll.action;
         }
-        if (isValid(this.#pendingDiceRoll.avatarUrl)) {
+        if (isValid(this.#pendingDiceRoll?.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = this.#pendingDiceRoll.avatarUrl;
         } 
         else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId || ddbMessage.entityId == 'false'){
@@ -982,7 +982,7 @@ class DiceRoller {
         } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0){
             ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
         }      
-        if (isValid(this.#pendingDiceRoll.name)) {
+        if (isValid(this.#pendingDiceRoll?.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
         }
     }
