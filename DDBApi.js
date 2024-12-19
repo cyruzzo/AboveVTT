@@ -233,12 +233,11 @@ class DDBApi {
     return response.foundCharacters;
   }
 
-  static async fetchRuleData() {
+  static async fetchConfigJson() {
     if(window.ddbConfigJson != undefined)
       return window.ddbConfigJson
-    const url = "https://character-service.dndbeyond.com/character/v5/rule-data";
-    const ruleData = await DDBApi.fetchJsonWithToken(url);
-    return await ruleData.data;
+    const url = "https://www.dndbeyond.com/api/config/json";
+    return await DDBApi.fetchJsonWithToken(url);
   }
 
   static async fetchActiveCharacters(campaignId) {
@@ -261,17 +260,18 @@ class DDBApi {
       characterIds = window.playerUsers.map(c => c.id);
     } catch (error) {
       console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      try {
+        window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
+        window.playerUsers.forEach(c => {
+          if (!characterIds.includes(c.id)) {
+            characterIds.push(c.id);
+          }
+        });
+      } catch (error) {
+        console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      }
     }
-    try {
-      window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-      window.playerUsers.forEach(c => {
-        if (!characterIds.includes(c.id)) {
-          characterIds.push(c.id);
-        }
-      });
-    } catch (error) {
-      console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
-    }
+
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
     window.myUser = playerUser ? playerUser : 'THE_DM'; 
     return characterIds;
