@@ -771,10 +771,14 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
-        if(message.source != 'beyond20'){
-            this.ddbDispatch(message);
+        if(this.#waitingForRoll && message.source == 'Beyond20'){
+            return;
         }
-        else if (!this.#waitingForRoll) {
+        if (!this.#waitingForRoll) {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.debug("swap image only, not capturing: ", message);
             let ddbMessage = { ...message };
             if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
@@ -795,12 +799,20 @@ class DiceRoller {
                 this.ddbDispatch(ddbMessage);
             }
         } else if (message.eventType === "dice/roll/pending") {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#swapDiceRollMetadata(ddbMessage);
             this.#pendingMessage = ddbMessage;
             this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessage?.data?.rollId === message.data.rollId) {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.log("capturing fulfilled message: ", message)
             let alteredMessage = this.#swapRollData(message);
             console.log("altered fulfilled message: ", alteredMessage);

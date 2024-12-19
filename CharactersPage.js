@@ -391,7 +391,8 @@ async function init_characters_pages(container = $(document)) {
 
 
     window.diceRoller = new DiceRoller(); 
-    window.ddbConfigJson = await DDBApi.fetchConfigJson();
+    if(!window.ddbConfigJson)
+      window.ddbConfigJson = await DDBApi.fetchConfigJson();
   }
 }
 

@@ -18,7 +18,7 @@ class DDBApi {
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
     MYCOBALT_TOKEN = response.token;
-    MYCOBALT_TOKEN_EXPIRATION = Date.now() + (response.ttl * 1000);
+    MYCOBALT_TOKEN_EXPIRATION = Date.now() + ((response.ttl - 30) * 1000);
     return response.token;
   }
 
@@ -260,17 +260,18 @@ class DDBApi {
       characterIds = window.playerUsers.map(c => c.id);
     } catch (error) {
       console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      try {
+        window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
+        window.playerUsers.forEach(c => {
+          if (!characterIds.includes(c.id)) {
+            characterIds.push(c.id);
+          }
+        });
+      } catch (error) {
+        console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      }
     }
-    try {
-      window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-      window.playerUsers.forEach(c => {
-        if (!characterIds.includes(c.id)) {
-          characterIds.push(c.id);
-        }
-      });
-    } catch (error) {
-      console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
-    }
+
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
     window.myUser = playerUser ? playerUser : 'THE_DM'; 
     return characterIds;
