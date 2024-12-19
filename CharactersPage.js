@@ -391,7 +391,8 @@ async function init_characters_pages(container = $(document)) {
 
 
     window.diceRoller = new DiceRoller(); 
-    window.ddbConfigJson = await DDBApi.fetchConfigJson();
+    if(!window.ddbConfigJson)
+      window.ddbConfigJson = await DDBApi.fetchConfigJson();
   }
 }
 
@@ -462,10 +463,23 @@ function init_character_sheet_page() {
 
   // check for name and image
   set_window_name_and_image(function() {
-    observe_character_sheet_changes($(document));
+    observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+    observe_non_sheet_changes($(document));
     inject_join_exit_abovevtt_button();
     observe_character_theme_change();
     observe_character_image_change();
+    $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
+      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
+      if(e.shiftKey){
+        $(target).toggleClass('advantageHover', true)
+      }
+      else if(e.ctrlKey || e.metaKey){
+        $(target).toggleClass('disadvantageHover', true)
+      }else{
+        $(target).toggleClass('advantageHover', false)
+        $(target).toggleClass('disadvantageHover', false)
+      }
+    });
   });
 
   // observe window resizing and injeect our join/exit button if necessary
@@ -592,14 +606,10 @@ function observe_character_sheet_changes(documentToObserve) {
   }
 
   window.character_sheet_observer = new MutationObserver(function(mutationList, observer) {
-    if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
+    if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
       return;
-    const ignoreMutations = mutationList.some(d => {
-      const target = $(d.target); 
-      return target.closest('#VTTWRAPPER').length>0 || target.hasClass('peerCursorPosition')
-    })
-    if(ignoreMutations)
-      return;
+
+   
     // console.log("character_sheet_observer", mutationList);
 
     // initial injection of our buttons
@@ -1243,18 +1253,7 @@ function observe_character_sheet_changes(documentToObserve) {
     }
 
 
-    $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
-      if(e.shiftKey){
-        $(target).toggleClass('advantageHover', true)
-      }
-      else if(e.ctrlKey || e.metaKey){
-        $(target).toggleClass('disadvantageHover', true)
-      }else{
-        $(target).toggleClass('advantageHover', false)
-        $(target).toggleClass('disadvantageHover', false)
-      }
-    });
+
 
     
     // handle updates to element changes that would strip our buttons
@@ -1294,19 +1293,7 @@ function observe_character_sheet_changes(documentToObserve) {
           });
         }
 
-        if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):not(:has(~ .alertify))').length>0 && !['Beyond 20 Settings', 'Beyond 20 Quick Settings', 'Beyond20 Hotkey'].includes($('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text())){
-          const abovePage = is_abovevtt_page();       
-          $('.alertify ~ div.alertify:not(.ajs-hidden):not(:has(~ .alertify)) .ajs-button.ajs-ok').click();        
-          if(abovePage || !window.EXPERIMENTAL_SETTINGS?.rpgRoller){
-            let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button")
-            if(gameLogButton.length == 0){
-              gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
-            }
-            gameLogButton.click();
-          }
-          if(abovePage)
-           window.MB.reprocess_chat_message_history();
-        }
+
 
 
         if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find('.ct-game-log-pane').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
@@ -1328,10 +1315,9 @@ function observe_character_sheet_changes(documentToObserve) {
         if(is_abovevtt_page()){
            
             // console.log(`sidebar inserted: ${event.target.classList}`);
-          if (mutationTarget.hasClass('ct-sidebar__pane-content')){
+          if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
-            show_sidebar();
-        
+            show_sidebar(false);
           }
             
           if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane')) {
@@ -1461,12 +1447,49 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     });
   });
+  for(let i = 0; i<documentToObserve.length; i++){
+    const mutation_target = documentToObserve.get(i);
+    const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+    window.character_sheet_observer.observe(mutation_target, mutation_config);
+  }
 
-  const mutation_target = documentToObserve.get(0);
-  const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
-  window.character_sheet_observer.observe(mutation_target, mutation_config);
 }
 
+function observe_non_sheet_changes(documentToObserve) {
+  if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
+    return;
+
+  window.non_sheet_observer = new MutationObserver(function(mutationList, observer) {
+    mutationList.forEach(mutation => {
+      try {
+        let mutationTarget = $(mutation.target);
+        //Remove beyond20 popup and swtich to gamelog
+        if((mutationTarget.hasClass('.ajs-ok:not(.ajs-hidden)') || mutationTarget.find('.ajs-ok:not(.ajs-hidden)').length>0) && $('.alertify ~ div.alertify:not(.ajs-hidden):not(:has(~ .alertify))').length>0 && !['Beyond 20 Settings', 'Beyond 20 Quick Settings', 'Beyond20 Hotkey'].includes($('.alertify ~ div.alertify:not(.ajs-hidden):last-of-type .ajs-header').text())){
+          const abovePage = is_abovevtt_page();       
+          $('.alertify ~ div.alertify:not(.ajs-hidden):not(:has(~ .alertify)) .ajs-button.ajs-ok').click();        
+          if(abovePage || !window.EXPERIMENTAL_SETTINGS?.rpgRoller){
+            let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button")
+            if(gameLogButton.length == 0){
+              gameLogButton = $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
+            }
+            gameLogButton.click();
+          }
+          if(abovePage)
+           window.MB.reprocess_chat_message_history();
+        }
+      }
+      catch{
+        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
+      }
+    })
+  });
+
+  for(let i = 0; i<documentToObserve.length; i++){
+    const mutation_target = documentToObserve.get(i);
+    const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+    window.non_sheet_observer.observe(mutation_target, mutation_config);
+  }
+}
 /** Attempts to read the player name and image from the page every.
  * This will retry every second until it successfully reads from the page
  * @param {function} callback a function to execute after player name and image have been read from the page */

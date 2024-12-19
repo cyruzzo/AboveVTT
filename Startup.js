@@ -400,7 +400,8 @@ async function start_above_vtt_common() {
   localStorage.removeItem(`CampaignCharacters${window.gameId}`); // clean up old pc data
 
   startup_step("Fetching config data from DDB");
-  window.ddbConfigJson = await DDBApi.fetchConfigJson();
+  if(!window.ddbConfigJson)
+    window.ddbConfigJson = await DDBApi.fetchConfigJson();
 
   window.ddbConfigJson.conditions.forEach(condition => {
     CONDITIONS[condition.definition.name] = condition.definition.description; 

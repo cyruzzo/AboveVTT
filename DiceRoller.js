@@ -771,7 +771,14 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
+        if(this.#waitingForRoll && message.source == 'Beyond20'){
+            return;
+        }
         if (!this.#waitingForRoll) {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.debug("swap image only, not capturing: ", message);
             let ddbMessage = { ...message };
             if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
@@ -792,12 +799,20 @@ class DiceRoller {
                 this.ddbDispatch(ddbMessage);
             }
         } else if (message.eventType === "dice/roll/pending") {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };
             this.#swapDiceRollMetadata(ddbMessage);
             this.#pendingMessage = ddbMessage;
             this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessage?.data?.rollId === message.data.rollId) {
+            if(message.source == 'Beyond20'){
+                this.ddbDispatch(message);
+                return;
+            }
             console.log("capturing fulfilled message: ", message)
             let alteredMessage = this.#swapRollData(message);
             console.log("altered fulfilled message: ", alteredMessage);
@@ -962,19 +977,19 @@ class DiceRoller {
         if(ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
             ddbMessage.avttDamageType = this.#pendingDamageType;
 
-        if (["character", "monster"].includes(this.#pendingDiceRoll.entityType)) {
+        if (["character", "monster"].includes(this.#pendingDiceRoll?.entityType)) {
             ddbMessage.entityType = this.#pendingDiceRoll.entityType;
             ddbMessage.data.context.entityType = this.#pendingDiceRoll.entityType;
         }
-        if (this.#pendingDiceRoll.entityId !== undefined) {
+        if (this.#pendingDiceRoll?.entityId !== undefined) {
             ddbMessage.entityId = this.#pendingDiceRoll.entityId;
             ddbMessage.data.context.entityId = this.#pendingDiceRoll.entityId;
         }
         const isValid = (str) => { return typeof str === "string" && true && str.length > 0 };
-        if (isValid(this.#pendingDiceRoll.action)) {
+        if (isValid(this.#pendingDiceRoll?.action)) {
             ddbMessage.data.action = this.#pendingDiceRoll.action;
         }
-        if (isValid(this.#pendingDiceRoll.avatarUrl)) {
+        if (isValid(this.#pendingDiceRoll?.avatarUrl)) {
             ddbMessage.data.context.avatarUrl = this.#pendingDiceRoll.avatarUrl;
         } 
         else if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId || ddbMessage.entityId == 'false'){
@@ -982,7 +997,7 @@ class DiceRoller {
         } else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0){
             ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
         }      
-        if (isValid(this.#pendingDiceRoll.name)) {
+        if (isValid(this.#pendingDiceRoll?.name)) {
             ddbMessage.data.context.name = this.#pendingDiceRoll.name;
         }
     }
