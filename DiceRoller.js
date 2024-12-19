@@ -771,7 +771,10 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
-        if (!this.#waitingForRoll) {
+        if(message.source != 'beyond20'){
+            this.ddbDispatch(message);
+        }
+        else if (!this.#waitingForRoll) {
             console.debug("swap image only, not capturing: ", message);
             let ddbMessage = { ...message };
             if(window.CAMPAIGN_INFO?.dmId == ddbMessage.entityId ){
