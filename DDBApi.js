@@ -18,7 +18,7 @@ class DDBApi {
     const request = await fetch(url, config).then(DDBApi.lookForErrors);
     const response = await request.json();
     MYCOBALT_TOKEN = response.token;
-    MYCOBALT_TOKEN_EXPIRATION = Date.now() + (response.ttl * 1000);
+    MYCOBALT_TOKEN_EXPIRATION = Date.now() + ((response.ttl - 30) * 1000);
     return response.token;
   }
 
@@ -233,11 +233,12 @@ class DDBApi {
     return response.foundCharacters;
   }
 
-  static async fetchConfigJson() {
+  static async fetchRuleData() {
     if(window.ddbConfigJson != undefined)
       return window.ddbConfigJson
-    const url = "https://www.dndbeyond.com/api/config/json";
-    return await DDBApi.fetchJsonWithToken(url);
+    const url = "https://character-service.dndbeyond.com/character/v5/rule-data";
+    const ruleData = await DDBApi.fetchJsonWithToken(url);
+    return await ruleData.data;
   }
 
   static async fetchActiveCharacters(campaignId) {

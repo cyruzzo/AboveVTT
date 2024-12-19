@@ -1937,6 +1937,13 @@ function close_player_sheet()
 		}
 		window.MB.sendMessage("custom/myVTT/player_sheet_closed", { player_sheet: window.PLAYER_SHEET });
 	}
+	if (window.character_sheet_observer) {
+		window.character_sheet_observer.disconnect();
+		delete window.character_sheet_observer;
+	}
+	if(!window.DM){
+			observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+	}
 }
 
 /**
