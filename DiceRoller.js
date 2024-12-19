@@ -771,7 +771,7 @@ class DiceRoller {
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
     #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
-        if(message.source != 'beyond20'){
+        if(message.source == 'Beyond20'){
             this.ddbDispatch(message);
         }
         else if (!this.#waitingForRoll) {
