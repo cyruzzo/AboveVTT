@@ -636,6 +636,8 @@ function rollback_token_customizations_migration() {
         deleteRequest.onerror = (event) => {
           const objectStoreRequest = objectStore.add({customizationId: `TokenCustomizations`, 'customizationData': []});
         };
+
+
         localStorage.setItem("TokenCustomizations", JSON.stringify([]));
 
 
@@ -675,7 +677,9 @@ function persist_all_token_customizations(customizations, callback) {
 
             
     try{
+        /*stop saving this here in 1.30 - clear out at later date
         localStorage.setItem("TokenCustomizations", JSON.stringify(customizations));
+        */
     }    
     catch(e){
         console.warn('localStorage saving Token Customizations Failed', e)

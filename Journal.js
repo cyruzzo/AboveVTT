@@ -155,9 +155,14 @@ class JournalManager{
 			};
 			if(window.DM){ // old storage kept as backup for now. 
 				try{
-					localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   // we may decide to clear these on succesful storage migration above after 1.29
+					/*
+					Stop saving this here in 1.30 - remove at later date once confirmed migrated. 
+
+					localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   
 					localStorage.setItem('Journal' + this.gameid, JSON.stringify(journal));
 					localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(chapters));
+
+					*/ 
 				}
 				catch(e){
 					console.warn('localStorage Journal Storage Failed', e) // prevent errors from stopping code when local storage is full.
