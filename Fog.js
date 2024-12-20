@@ -547,24 +547,23 @@ class WaypointManagerClass {
 
 
 function is_token_under_fog(tokenid, fogContext=undefined){
-	if(window.DM && !window.SelectedTokenVision)
+	if((window.DM && !window.SelectedTokenVision) || window.TOKEN_OBJECTS[tokenid].options.revealInFog)
 		return false;
-
 	if(fogContext == undefined){
-		fogContext = $('#fog_overlay')[0].getContext('2d', {willReadFrequently: true});
+		fogContext = $('#fog_overlay')[0].getContext('2d');
 	}
 	let left = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let top = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[tokenid].options.size / 2)) / window.CURRENT_SCENE_DATA.scale_factor;
 	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
 
-	if (!window.TOKEN_OBJECTS[tokenid].options.revealInFog && pixeldata[3] >= 100)
+	if (pixeldata[3] >= 100)
 		return true;
 	else
 		return false;
 }
 function is_token_in_raycasting_context(tokenid, rayContext=undefined){
 	if(rayContext == undefined){
-		rayContext = $("#raycastingCanvas")[0].getContext('2d');
+		rayContext = $("#raycastingCanvas")[0].getContext('2d', {willReadFrequently: true});
 	}
 
 	let pixeldata = rayContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor),(parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor), 1, 1).data;
@@ -614,7 +613,7 @@ function is_door_under_fog(door, fogContext=undefined){
 		return false;
 
 	if(fogContext == undefined){
-		fogContext = $('#fog_overlay')[0].getContext('2d', {willReadFrequently: true});
+		fogContext = $('#fog_overlay')[0].getContext('2d');
 	}
 	
 
@@ -720,17 +719,10 @@ function do_check_token_visibility() {
 		$(`.aura-element`).show();
 		return;
 	}
-	if(window.fogContext == undefined){
-		let canvas = document.getElementById("fog_overlay");
-
-		if (canvas.style.diplay == "none")
-			return;
-		window.fogContext = canvas.getContext("2d",  { willReadFrequently: true });
-	}
-	
 
 	let promises = [];
 
+	let fogContext = $('#fog_overlay')[0].getContext('2d');
 	let lightContext = window.lightInLos.getContext('2d');
 	let rayContext = $('#raycastingCanvas')[0].getContext('2d');
 	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
@@ -749,6 +741,7 @@ function do_check_token_visibility() {
 	let showAuraIds = [];
 	let showDoors =[];
 	let hideDoors =[];
+	let dmSelectedTokens = [];
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken)
 			continue;
@@ -762,7 +755,7 @@ function do_check_token_visibility() {
 		
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
-			const inFog = (playerTokenId != id && is_token_under_fog(id, window.fogContext)); // this token is in fog and not the players token
+			const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
 
 			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
 			
@@ -786,7 +779,7 @@ function do_check_token_visibility() {
 				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
 					showAuraIds.push(auraSelector);
 			}else if(dmSelected){
-				showTokenIds.push(tokenSelector);
+				dmSelectedTokens.push(tokenSelector);
 			}
 			resolve();
 		}));
@@ -811,25 +804,25 @@ function do_check_token_visibility() {
 		}));
 	}
 
-	Promise.all(promises).then(() => {
-		hideDoors = hideDoors.join(',')
-		showDoors = showDoors.join(',')
-		showTokenIds = showTokenIds.join(',')
-		showAuraIds = showAuraIds.join(',')
-		hideIds = hideIds.join(',')
+	Promise.all(promises).then(
+		requestAnimationFrame(() => {
+			hideIds = hideIds.join(',');
+			showTokenIds = showTokenIds.join(',');
+			showAuraIds = showAuraIds.join(',');	
+			dmSelectedTokens = dmSelectedTokens.join(',');
 
-		if(window.DM){
-			$(showTokenIds).css({'display': 'flex'});
-		}
-		else{
+			$(hideIds).hide();
 			$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
-		}
+			$(showAuraIds).show()
+			$(dmSelectedTokens).css({'display': 'flex'});
 
-		$(hideIds).hide();
-		$(showAuraIds).show()
-		$(showDoors).css('visibility', 'visible');
-		$(hideDoors).css('visibility', 'hidden');
-	});
+			hideDoors = hideDoors.join(',');
+			showDoors = showDoors.join(',');
+			
+			$(showDoors).css('visibility', 'visible');
+			$(hideDoors).css('visibility', 'hidden');
+		})
+	);
 
 	console.log("finished");
 }
@@ -5911,55 +5904,56 @@ function redraw_light(){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 	}	
 
+	requestAnimationFrame(function(){
+		context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+		if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+			let exploredCanvas = document.getElementById("exploredCanvas");
+			if($('#exploredCanvas').length == 0){
+				exploredCanvas =  document.createElement("canvas")
+				exploredCanvas.width = canvasWidth;
+				exploredCanvas.height = canvasHeight;
 
-	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-	if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
-		let exploredCanvas = document.getElementById("exploredCanvas");
-		if($('#exploredCanvas').length == 0){
-			exploredCanvas =  document.createElement("canvas")
-			exploredCanvas.width = canvasWidth;
-			exploredCanvas.height = canvasHeight;
-
-			if(window.exploredCanvasContext == undefined){
-				window.exploredCanvasContext = exploredCanvas.getContext('2d');
-			}
-
-			window.exploredCanvasContext.globalCompositeOperation='source-over';
-			window.exploredCanvasContext.fillStyle = "black";
-			window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
-			$(exploredCanvas).attr('id', 'exploredCanvas');
-
-			$('#outer_light_container').append(exploredCanvas)	
-			gameIndexedDb.transaction(["exploredData"])
-			  .objectStore(`exploredData`)
-			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
-			 	if(event?.target?.result?.exploredData){
-				  	let img = new Image;
-
-					img.onload = function(){
-					  window.exploredCanvasContext.drawImage(img,0,0); 
-					  window.exploredCanvasContext.globalCompositeOperation='lighten';
-					  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-					};
-					img.src = event.target.result.exploredData;
+				if(window.exploredCanvasContext == undefined){
+					window.exploredCanvasContext = exploredCanvas.getContext('2d');
 				}
-			};		
-		}
-		else{
-			if(window.exploredCanvasContext == undefined){
-				window.exploredCanvasContext = exploredCanvas.getContext('2d');
+
+				window.exploredCanvasContext.globalCompositeOperation='source-over';
+				window.exploredCanvasContext.fillStyle = "black";
+				window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
+				$(exploredCanvas).attr('id', 'exploredCanvas');
+
+				$('#outer_light_container').append(exploredCanvas)	
+				gameIndexedDb.transaction(["exploredData"])
+				  .objectStore(`exploredData`)
+				  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
+				 	if(event?.target?.result?.exploredData){
+					  	let img = new Image;
+
+						img.onload = function(){
+						  window.exploredCanvasContext.drawImage(img,0,0); 
+						  window.exploredCanvasContext.globalCompositeOperation='lighten';
+						  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+						};
+						img.src = event.target.result.exploredData;
+					}
+				};		
 			}
-			window.exploredCanvasContext.globalCompositeOperation='lighten';
-			window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+			else{
+				if(window.exploredCanvasContext == undefined){
+					window.exploredCanvasContext = exploredCanvas.getContext('2d');
+				}
+				window.exploredCanvasContext.globalCompositeOperation='lighten';
+				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 
-			debounceStoreExplored(exploredCanvas);
+				debounceStoreExplored(exploredCanvas);
+			}
+		
 		}
-	
-	}
 
-	else{
-		$('#exploredCanvas').remove();
-	}
+		else{
+			$('#exploredCanvas').remove();
+		}
+	});
 
 
 	if(!window.DM || window.SelectedTokenVision){
