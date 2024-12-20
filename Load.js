@@ -182,4 +182,4 @@ function injectScript() {
 	(document.head || document.documentElement).appendChild(s);
 }
 
-injectScript();
+setTimeout(injectScript, 2000) // this timeout prevents DDB from thinking we are browsing as a bot by giving it enough time to run it's own loading before sending more requests.
