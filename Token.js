@@ -42,7 +42,19 @@ const availableToAoe = [
 
 const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/24);
 const throttleTokenCheck = throttle(() => {requestAnimationFrame(do_check_token_visibility)}, 1000/5);
+const debounceStoreExplored = mydebounce((exploredCanvas) => {		
+	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
+	let storeImage = gameIndexedDb.transaction([`exploredData`], "readwrite")
+	let objectStore = storeImage.objectStore(`exploredData`)
+	let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
+	deleteRequest.onsuccess = (event) => {
+	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+	};
+	deleteRequest.onerror = (event) => {
+	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+	};
+}, 5000)
 let debounceLightChecks = mydebounce(() => {		
 		if(window.DRAGGING)
 			return;
