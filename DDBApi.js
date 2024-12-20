@@ -260,17 +260,18 @@ class DDBApi {
       characterIds = window.playerUsers.map(c => c.id);
     } catch (error) {
       console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      try {
+        window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
+        window.playerUsers.forEach(c => {
+          if (!characterIds.includes(c.id)) {
+            characterIds.push(c.id);
+          }
+        });
+      } catch (error) {
+        console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
+      }
     }
-    try {
-      window.playerUsers = await DDBApi.fetchCampaignCharacters(campaignId);
-      window.playerUsers.forEach(c => {
-        if (!characterIds.includes(c.id)) {
-          characterIds.push(c.id);
-        }
-      });
-    } catch (error) {
-      console.warn("fetchCampaignCharacterIds caught an error trying to collect ids from fetchActiveCharacters", error);
-    }
+
     let playerUser = window.playerUsers.filter(d=> d.id == window.PLAYER_ID)[0]?.userId;
     window.myUser = playerUser ? playerUser : 'THE_DM'; 
     return characterIds;
