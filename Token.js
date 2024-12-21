@@ -40,7 +40,7 @@ const availableToAoe = [
 
 
 
-const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/24);
+const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/8);
 const throttleTokenCheck = throttle(() => {requestAnimationFrame(do_check_token_visibility)}, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
@@ -2697,6 +2697,7 @@ class Token {
 						let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 						self.selected = true;
+						window.CURRENTLY_SELECTED_TOKENS.push(self.options.id);
 						$("#tokens [data-id='" + self.options.id + "']").toggleClass(["tokenselected", 'pause_click'], true);
 						if(tok.is(":animated")){
 							self.stopAnimation();

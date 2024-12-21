@@ -3055,6 +3055,11 @@ button.roll-button-mod.minus {
     filter: blur(calc(3px / var(--scene-scale)));
 
 }
+
+.aura-element-container-clip [id*='vision_'].notVisible,
+.door-button.notVisible{
+    visibility: hidden;
+}
 div#selectedTokensBorder {
     pointer-events: none;
 }
