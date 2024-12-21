@@ -119,25 +119,10 @@ class DDBApi {
   static async fetchAllEncounters() {
     console.log(`DDBApi.fetchAllEncounters starting`);
 
-    const url = `https://encounter-service.dndbeyond.com/v1/encounters`;
-
-    // make the first request to get pagination info
-    console.log(`DDBApi.fetchAllEncounters attempting to fetch page 1`);
-    const firstPage = await DDBApi.fetchJsonWithToken(`${url}?page=1`);
-    let encounters = firstPage.data;
-    const numberOfPages = firstPage.pagination.pages;
-    if (isNaN(numberOfPages)) {
-      throw new Error(`Unexpected Pagination Data: ${JSON.stringify(firstPage.pagination)}`);
-    } else {
-      console.log(`DDBApi.fetchAllEncounters attempting to fetch pages 2 through ${numberOfPages}`);
-    }
-    for (let i = 2; i <= numberOfPages; i++) {
-      const response = await DDBApi.fetchJsonWithToken(`${url}?page=${i}`)
-      console.debug(`DDBApi.fetchAllEncounters page ${i} response: `, response);
-      encounters = encounters.concat(response.data);
-      console.log(`DDBApi.fetchAllEncounters successfully fetched page ${i}`);
-    }
-    return encounters;
+    const url = `https://encounter-service.dndbeyond.com/v1/encounters?skip=0&take=99999`;
+    const response = await DDBApi.fetchJsonWithToken(`${url}`)
+    
+    return response.data;
   }
 
   static async deleteAboveVttEncounters(encounters) {
