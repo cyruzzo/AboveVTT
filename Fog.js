@@ -563,7 +563,7 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 }
 function is_token_in_raycasting_context(tokenid, rayContext=undefined){
 	if(rayContext == undefined){
-		rayContext = $("#raycastingCanvas")[0].getContext('2d', {willReadFrequently: true});
+		rayContext = $("#raycastingCanvas")[0].getContext('2d');
 	}
 
 	let pixeldata = rayContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor),(parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor), 1, 1).data;
@@ -594,7 +594,7 @@ function is_token_under_light_aura(tokenid, lightContext=undefined){
 
 function is_token_under_truesight_aura(tokenid, truesightContext=undefined){
 	if(truesightContext == undefined){
-		truesightContext = window.truesightCanvas.getContext('2d', {willReadFrequently: true});
+		truesightContext = window.truesightCanvas.getContext('2d');
 	}
 
 	let pixeldata = truesightContext.getImageData(parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeWidth()/ window.CURRENT_SCENE_DATA.scale_factor, window.TOKEN_OBJECTS[tokenid].sizeHeight()/ window.CURRENT_SCENE_DATA.scale_factor).data;
@@ -630,7 +630,7 @@ function is_door_under_fog(door, fogContext=undefined){
 
 function is_door_under_light_aura(door, lightContext=undefined){
 	if(lightContext == undefined){
-		lightContext = window.lightInLos.getContext('2d', {willReadFrequently: true});
+		lightContext = window.lightInLos.getContext('2d');
 	}
 
 
@@ -713,9 +713,9 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
-	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('.tokenselected').length == 0)){
+	if((window.DM && !window.SelectedTokenVision) || (window.DM && window.CURRENTLY_SELECTED_TOKENS.length == 0)){
 		$(`.token`).show();
-		$(`.door-button`).css('visibility', '');
+		$(`.door-button`).toggleClass('notVisible', false);
 		$(`.aura-element`).show();
 		return;
 	}
@@ -743,23 +743,22 @@ function do_check_token_visibility() {
 	let hideDoors =[];
 	let dmSelectedTokens = [];
 	for (let id in window.TOKEN_OBJECTS) {
-		if(window.TOKEN_OBJECTS[id].options.combatGroupToken)
+		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
 			continue;
 		promises.push(new Promise(function(resolve) {
 			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
-
 			//Combining some and filter cut down about 140ms for average sized picture
-		
+			
 			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 			
 			const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
 
 			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
 			
-			const dmSelected = window.DM && $(tokenSelector).hasClass('tokenselected')
+			const dmSelected = window.DM && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
 
@@ -781,6 +780,8 @@ function do_check_token_visibility() {
 			}else if(dmSelected){
 				dmSelectedTokens.push(tokenSelector);
 			}
+			
+			
 			resolve();
 		}));
 	}
@@ -789,8 +790,7 @@ function do_check_token_visibility() {
 		let door = doors[i];
 		promises.push(new Promise(function(resolve) {
 
-			//Combining some and filter cut down about 140ms for average sized picture	
-			const inFog = (is_door_under_fog(door, window.fogContext)); // this token is in fog and not the players token
+			const inFog = (is_door_under_fog(door, fogContext)); // this token is in fog and not the players token
 
 			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_door_under_light_aura(door, lightContext) && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
@@ -804,25 +804,24 @@ function do_check_token_visibility() {
 		}));
 	}
 
-	Promise.all(promises).then(
-		requestAnimationFrame(() => {
-			hideIds = hideIds.join(',');
-			showTokenIds = showTokenIds.join(',');
-			showAuraIds = showAuraIds.join(',');	
-			dmSelectedTokens = dmSelectedTokens.join(',');
+	Promise.all(promises);
+	requestAnimationFrame(() => {
+		hideIds = hideIds.join(',');
+		showTokenIds = showTokenIds.join(',');
+		showAuraIds = showAuraIds.join(',');	
+		dmSelectedTokens = dmSelectedTokens.join(',');
 
-			$(hideIds).hide();
-			$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
-			$(showAuraIds).show()
-			$(dmSelectedTokens).css({'display': 'flex'});
+		$(hideIds).hide();
+		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
+		$(showAuraIds).show()
+		$(dmSelectedTokens).css({'display': 'flex'});
 
-			hideDoors = hideDoors.join(',');
-			showDoors = showDoors.join(',');
-			
-			$(showDoors).css('visibility', 'visible');
-			$(hideDoors).css('visibility', 'hidden');
-		})
-	);
+		hideDoors = hideDoors.join(',');
+		showDoors = showDoors.join(',');
+		
+		$(showDoors).toggleClass('notVisible', false);
+		$(hideDoors).toggleClass('notVisible', true);
+	})
 
 	console.log("finished");
 }
@@ -5805,10 +5804,10 @@ function redraw_light(){
 			let tokenVisionAura = $(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`);
 
 			if(window.SelectedTokenVision){
-				tokenVisionAura.css('visibility', 'hidden');
+				tokenVisionAura.toggleClass('notVisible', true);
 			}
 			else if(window.DM && !window.SelectedTokenVision){
-				tokenVisionAura.css('visibility', 'visible'); 
+				tokenVisionAura.toggleClass('notVisible', false);
 			}
 
 			clipped_light(auraId, lightPolygon, playerTokenId);
@@ -5852,8 +5851,7 @@ function redraw_light(){
 					}
 				}
 
-
-				tokenVisionAura.css('visibility', 'visible'); 		
+				tokenVisionAura.toggleClass('notVisible', false);	
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 

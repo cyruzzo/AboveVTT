@@ -68,6 +68,15 @@ class DDBApi {
     return response;
   }
 
+  static async fetchJsonWithoutCredentials(url, extraConfig = {}) {
+    console.debug("DDBApi.fetchJsonWithCredentials url", url)
+    const request = await fetch(url, {...extraConfig}).then(DDBApi.lookForErrors);
+    console.debug("DDBApi.fetchJsonWithCredentials request", request);
+    const response = await request.json();
+    console.debug("DDBApi.fetchJsonWithCredentials response", response);
+    return response;
+  }
+
   static async postJsonWithToken(url, body) {
     const config = {
       method: 'POST',
@@ -111,7 +120,7 @@ class DDBApi {
     }
 
     const url = `https://encounter-service.dndbeyond.com/v1/encounters/${id}`;
-    const response = await DDBApi.fetchJsonWithCredentials(url);
+    const response = await DDBApi.fetchJsonWithoutCredentials(url);
     console.debug("DDBApi.fetchEncounter response", response);
     return response.data;
   }
@@ -228,7 +237,7 @@ class DDBApi {
   static async fetchActiveCharacters(campaignId) {
     // This is what the encounter page called at one point, but seems to use fetchCampaignCharacters now
     const url = `https://www.dndbeyond.com/api/campaign/active-characters/${campaignId}`
-    const response = await DDBApi.fetchJsonWithCredentials(url);
+    const response = await DDBApi.fetchJsonWithoutCredentials(url);
     return response.data;
   }
 
