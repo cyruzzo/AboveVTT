@@ -656,9 +656,10 @@ function check_single_token_visibility(id){
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
-	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
 
-	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	
 	const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
 	
 	const inFog = playerTokenId != id && is_token_under_fog(id, fogContext); // this token is in fog
@@ -733,15 +734,18 @@ function do_check_token_visibility() {
 		truesightContext = window.truesightCanvas.getContext('2d');
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	let playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
+	
+	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-	let playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+	
 	let hideIds = [];
 	let showTokenIds = [];
 	let showAuraIds = [];
 	let showDoors =[];
 	let hideDoors =[];
 	let dmSelectedTokens = [];
+
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
 			continue;
@@ -813,7 +817,7 @@ function do_check_token_visibility() {
 
 		$(hideIds).hide();
 		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
-		$(showAuraIds).show()
+		$(showAuraIds).show();
 		$(dmSelectedTokens).css({'display': 'flex'});
 
 		hideDoors = hideDoors.join(',');
@@ -5810,7 +5814,7 @@ function redraw_light(){
 				tokenVisionAura.toggleClass('notVisible', false);
 			}
 
-			clipped_light(auraId, lightPolygon, playerTokenId);
+			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight);
 
 			if(window.lightAuraClipPolygon[auraId]?.canvas != undefined){
 				lightInLosContext.globalCompositeOperation='source-over';
@@ -5952,11 +5956,13 @@ function redraw_light(){
 			$('#exploredCanvas').remove();
 		}
 	});
-
-
+	
 	if(!window.DM || window.SelectedTokenVision){
-		throttleTokenCheck();
+		requestAnimationFrame(function(){
+			throttleTokenCheck();
+		});
 	}
+
 	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
 		debounceAudioChecks();
 	}
@@ -5985,6 +5991,8 @@ function redraw_light(){
 				
 		}, 20);
 	}
+
+
 }
 
 
@@ -6049,7 +6057,7 @@ function draw_darkness_aoe_to_canvas(ctx, canvas=lightInLos){
 
 
 }
-function clipped_light(auraId, maskPolygon, playerTokenId){
+function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height()){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
@@ -6068,9 +6076,9 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
-	const selectedTokenCheck = (!window.SelectedTokenVision || $(`.tokenselected[data-id='${auraId}']`).length!=0 || $(`.tokenselected`).length == 0)
+	const selectedTokenCheck = (!window.SelectedTokenVision || window.CURRENTLY_SELECTED_TOKENS.includes(auraId))
 
-	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || window.TOKEN_OBJECTS[auraId].options.share_vision == true || window.TOKEN_OBJECTS[auraId].options.share_vision == window.myUser || auraId.includes(window.PLAYER_ID) || ((window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' || window.TOKEN_OBJECTS[auraId].options.share_vision != false) && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
+	let circleRadius = (lightRadius > darkvisionRadius) ? lightRadius : (selectedTokenCheck && (window.DM || window.TOKEN_OBJECTS[auraId].options.share_vision == true || window.TOKEN_OBJECTS[auraId].options.share_vision == window.myUser || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType == 'pc' && playerTokenId == undefined))) ? darkvisionRadius : (lightRadius > 0) ? lightRadius : 0;
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top.replace('px', '')) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] != undefined){
@@ -6086,8 +6094,8 @@ function clipped_light(auraId, maskPolygon, playerTokenId){
 	}
 	let lightCanvas = document.createElement('canvas');
 	let lightAuraClipPolygonCtx = lightCanvas.getContext('2d');
-	lightCanvas.width = $("#raycastingCanvas").width();
-	lightCanvas.height =  $("#raycastingCanvas").height();
+	lightCanvas.width = canvasWidth;
+	lightCanvas.height = canvasHeight;
 
 	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
 	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
