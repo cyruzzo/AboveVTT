@@ -1109,51 +1109,38 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			$(this).off().on("click", function(){
 				if($(this).text() == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else if($(this).text() == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			});
 		});
 
 
-		// DICE STREAMING ?!?!
-		let diceRollPanel = $(".dice-rolling-panel__container");
-		if (diceRollPanel.length > 0) {
-			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
-		}
 		if (window.JOINTHEDICESTREAM) {
 
-			for (let i in window.STREAMPEERS) {
-				console.log("replacing the track")
-				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-			}
+			joinDiceRoom();
 			setTimeout(function(){
 				if(sendToText == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			}, 1000)
-			setTimeout(function(){
-				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
-					from: window.MYSTREAMID
-				})
-			}, 500);
 		}
 	}
 	else {
@@ -1163,7 +1150,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		$("[id^='streamer-']").remove();
 		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
 			to: "everyone",
-			from: window.MYSTREAMID
+			from: diceplayer_id
 		})
 		for (let peer in window.STREAMPEERS) {
 			window.STREAMPEERS[peer].close();

@@ -107,6 +107,7 @@
 			"PeerManager.js",
 			"PeerCommunication.js",
 			"peerVideo.js",
+			"peerDice.js",
 			"onedrive/*"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
