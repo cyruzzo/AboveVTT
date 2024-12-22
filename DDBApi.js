@@ -48,33 +48,25 @@ class DDBApi {
   static async fetchJsonWithToken(url, extraConfig = {}) {
     const token = await DDBApi.#refreshToken();
     const config = {...extraConfig,
-      credentials: 'omit',
       headers: {
         'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
       }
     }
     const request = await fetch(url, config).then(DDBApi.lookForErrors)
     return await request.json();
   }
 
-  static async fetchJsonWithCredentials(url, extraConfig = {}) {
-    console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, {...extraConfig, credentials: 'include'}).then(DDBApi.lookForErrors);
-    console.debug("DDBApi.fetchJsonWithCredentials request", request);
-    const response = await request.json();
-    console.debug("DDBApi.fetchJsonWithCredentials response", response);
-    return response;
-  }
-
-  static async fetchJsonWithoutCredentials(url, extraConfig = {}) {
-    console.debug("DDBApi.fetchJsonWithCredentials url", url)
-    const request = await fetch(url, {...extraConfig}).then(DDBApi.lookForErrors);
-    console.debug("DDBApi.fetchJsonWithCredentials request", request);
-    const response = await request.json();
-    console.debug("DDBApi.fetchJsonWithCredentials response", response);
-    return response;
+    static async fetchJsonWithTokenOmitCred(url, extraConfig = {}) {
+    const token = await DDBApi.#refreshToken();
+    const config = {...extraConfig,
+      credentials: 'omit',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+    const request = await fetch(url, config).then(DDBApi.lookForErrors)
+    return await request.json();
   }
 
   static async postJsonWithToken(url, body) {
@@ -82,7 +74,7 @@ class DDBApi {
       method: 'POST',
       body: JSON.stringify(body)
     }
-    return await DDBApi.fetchJsonWithToken(url, config);
+    return await DDBApi.fetchJsonWithTokenOmitCred(url, config);
   }
 
   static async deleteWithToken(url) {
@@ -120,7 +112,7 @@ class DDBApi {
     }
 
     const url = `https://encounter-service.dndbeyond.com/v1/encounters/${id}`;
-    const response = await DDBApi.fetchJsonWithoutCredentials(url);
+    const response = await DDBApi.fetchJsonWithToken(url);
     console.debug("DDBApi.fetchEncounter response", response);
     return response.data;
   }
@@ -237,7 +229,7 @@ class DDBApi {
   static async fetchActiveCharacters(campaignId) {
     // This is what the encounter page called at one point, but seems to use fetchCampaignCharacters now
     const url = `https://www.dndbeyond.com/api/campaign/active-characters/${campaignId}`
-    const response = await DDBApi.fetchJsonWithoutCredentials(url);
+    const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
   }
 
