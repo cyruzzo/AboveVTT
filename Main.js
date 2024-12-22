@@ -1873,27 +1873,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		console.log("removing headers");
 
 
-		// DICE STREAMING ?!?!
-		if(!window.DM){
-			let firstTime=false;
-			if(!window.MYMEDIASTREAM)
-				firstTime = true;
-			let diceRollPanel = $(event.target).contents().find(".dice-rolling-panel__container");
-			if (diceRollPanel.length > 0) {
-				window.MYMEDIASTREAM = diceRollPanel.get(0).captureStream(0);
-
-
-				if (window.JOINTHEDICESTREAM) {
-					// we should tear down and reconnect
-					for (let i in window.STREAMPEERS) {
-						console.log("replacing the track")
-						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-					}
-				}
-
-			}
-
+		if (window.JOINTHEDICESTREAM) {
+			joinDiceRoom();
 		}
+
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
 

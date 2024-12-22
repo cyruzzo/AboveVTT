@@ -106,6 +106,7 @@ window.scripts = [
 	{ src: "PeerManager.js" },
 	{ src: "PeerCommunication.js" },
 	{ src: "peerVideo.js"},
+	{ src: "peerDice.js"},
 	{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 	{ src: "DiceRoller.js" },
 	{ src: "Main.js" },

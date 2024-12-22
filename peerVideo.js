@@ -183,7 +183,7 @@ function joinRoom(room = window.gameId) {
             window.videoConnectedPeers.push(room_id);
             setRemoteStream(stream, call.peer)
             call.on('close', () => {
-                $(`video#${call.peer}`).remove();
+                $(`.video-meet-area video#${call.peer}`).remove();
             })
         })
         window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
@@ -274,7 +274,7 @@ function getMediaDevice(){
               call.on('stream', (stream) => {
                 setRemoteStream(stream, call.peer);   
                 call.on('close', () => {
-                    $(`video#${call.peer}`).remove();
+                    $(`.video-meet-area video#${call.peer}`).remove();
                 })   
               })
             }
@@ -313,7 +313,7 @@ function startScreenShare() {
           call.on('stream', (stream) => {
             setRemoteStream(stream, call.peer);   
             call.on('close', () => {
-                $(`video#${call.peer}`).remove();
+                $(`.video-meet-area video#${call.peer}`).remove();
             })   
           })
         }

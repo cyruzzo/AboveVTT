@@ -220,93 +220,7 @@ const debounceSendNote = mydebounce(function(id, note){
 
 const delayedClear = mydebounce(() => clearFrame());
 
-function hideVideo(streamerid) {
-		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", true);
-}
 
-function revealVideo(streamerid) {
-		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", false);
-}
-
-function addVideo(stream,streamerid) {
-	$("#streamer-video-"+streamerid+" , #streamer-canvas-"+streamerid).remove();
-	let video = document.createElement("video");
-	video.setAttribute("class", "dicestream");
-	video.setAttribute("id","streamer-video-"+streamerid);
-	video.autoplay = true;
-	$(video).hide();
-	video.srcObject = stream;
-	document.body.appendChild(video);
-	video.play();
-	
-	
-	let dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
-	dicecanvas.attr("id","streamer-canvas-"+streamerid);
-	//dicecanvas.css("opacity",0.5);
-	dicecanvas.css("position","fixed");
-	dicecanvas.css("top","50%");
-	dicecanvas.css("left","50%");
-	dicecanvas.css("transform","translate(-50%, -50%)");
-	dicecanvas.css("z-index",60000);
-	dicecanvas.css("touch-action","none");
-	dicecanvas.css("pointer-events","none");
-	dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)");
-	dicecanvas.css("clip-path", "inset(2px 2px 2px 2px)");
-	$("#site").append(dicecanvas);
-	
-	
-	window.MB.sendMessage("custom/myVTT/whatsyourdicerolldefault", {
-		to: streamerid,
-		from: window.MYSTREAMID
-	});
-	
-	let canvas=dicecanvas.get(0);
-	let ctx=canvas.getContext('2d');
-	let tmpcanvas = document.createElement("canvas");
-  video.addEventListener("resize", function(){
-  		let videoAspectRatio = video.videoWidth / video.videoHeight
-			if (video.videoWidth > video.videoHeight)
-			{
-				tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-				tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
-			}
-			else {
-				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
-				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
-			}
-			dicecanvas.attr("width", tmpcanvas.width + "px");
-			dicecanvas.attr("height", tmpcanvas.height  + "px");
-			dicecanvas.css("height",tmpcanvas.height);
-			dicecanvas.css("width",tmpcanvas.width );
-  });
-
-	let updateCanvas=function(){
-		//resize canvas due to Chrome bug - this may be fixed in chrome later
-		resizeCanvasChromeBug()
-		
-		let tmpctx = tmpcanvas.getContext("2d");
-		window.requestAnimationFrame(updateCanvas);
-		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
-		if(tmpcanvas.width>0)
-		{
-			const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
-
-			for (let i = 0; i < frame.data.length; i += 4) {
-				const red = frame.data[i + 0];
-				const green = frame.data[i + 1];
-				const blue = frame.data[i + 2];
-				if ((red < 24) && (green < 24) && (blue < 24))
-					frame.data[i + 3] = 128;
-				if ((red < 8) && (green < 8) && (blue < 8))
-					frame.data[i + 3] = 0;
-				
-				
-			}
-			ctx.putImageData(frame,0,0);	
-		}
-	};
-	updateCanvas();
-}
 
 function resizeCanvasChromeBug(){
 	let diceRollCanvas = $(".dice-rolling-panel__container");
@@ -998,55 +912,45 @@ class MessageBroker {
 				}
 			}
 			
-			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				setTimeout( () => {
-				let peer= window.STREAMPEERS[msg.data.from];
-				if(peer.remoteDescription!= null)
-					peer.addIceCandidate(msg.data.ice);
-				},500); // ritardalo un po'
-			}
+
 			if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				if( (!diceplayer_id)  || (msg.data.to!= diceplayer_id) )
 					return;
 				let sendToText = gamelog_send_to_text()	
 				if(sendToText == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});		
 				}
 				else if(sendToText == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			}
 
 			if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
-				if(window.STREAMPEERS[msg.data.from] === undefined || (msg.data.to != "everyone" && msg.data.to != window.MYSTREAMID)){
+				let dicePeer = window.diceCurrentPeers.filter(d=> d.peer==msg.data.from)[0]
+				if(dicePeer === undefined || (msg.data.to != "everyone" && msg.data.to != diceplayer_id)){
 				 return;
 				}	
-					$("[id^='streamer-"+msg.data.from+"']").remove();
-					window.STREAMPEERS[msg.data.from].close();
-					delete window.STREAMPEERS[msg.data.from];
-					if(msg.data.to != "everyone"){
-						window.MB.inject_chat({
-	              player: window.PLAYER_NAME,
-	              img: window.PLAYER_IMG,
-	              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
-	              whisper: window.PLAYER_NAME
-	          });
-					}
+				$("[id^='streamer-"+msg.data.from+"']").remove();
+				dicePeer.close();
+				if(msg.data.to != "everyone"){
+					window.MB.inject_chat({
+              player: window.PLAYER_NAME,
+              img: window.PLAYER_IMG,
+              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+              whisper: window.PLAYER_NAME
+          });
+				}
 			}
 
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
@@ -1055,17 +959,17 @@ class MessageBroker {
 
 			if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
 				if(!window.DM){		
-					hideVideo(msg.data.streamid);
+					hideDiceVideo(msg.data.streamid);
 				}		
 				else{
-					revealVideo(msg.data.streamid);
+					revealDiceVideo(msg.data.streamid);
 				}
 			}
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
-					hideVideo(msg.data.streamid);
+					hideDiceVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/revealmydicestream"){
-					revealVideo(msg.data.streamid);
+					revealDiceVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
 					enable_dice_streaming_feature(true);				
@@ -1548,7 +1452,7 @@ class MessageBroker {
               window.videoConnectedPeers.push(msg.data.id);
               setRemoteStream(stream, call.peer);   
               call.on('close', () => {
-                $(`video#${call.peer}`).remove();
+                $(`.video-meet-area video#${call.peer}`).remove();
             	})   
           })
           window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
@@ -1556,8 +1460,24 @@ class MessageBroker {
 				}
 			}
 			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
-					$(`video#${msg.data.id}`).remove();
+					$(`.video-meet-area video#${msg.data.id}`).remove();
 			}
+
+			if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
+				if(msg.data.id != diceplayer_id){
+					let call = window.diceVideoPeer.call(msg.data.id, window.MYMEDIASTREAM)
+          call.on('stream', (stream) => {
+              window.diceVideoConnectedPeers.push(msg.data.id);
+              setDiceRemoteStream(stream, call.peer);   
+              call.on('close', () => {
+                $(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
+            	})   
+          })
+          window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
+          window.diceCurrentPeers.push(call);
+				}
+			}
+
 
 		};
 
