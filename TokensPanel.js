@@ -2897,15 +2897,16 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
     }
 
     function* addExampleToken(index) {
-
+        
         while(index < index+10){
             setTimeout(function(){
                 let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
                 modalBody.append(tokenDiv);
+                index++;
             })
-            index++;
             yield
         }
+       
     }
     let buildToken = addExampleToken(0);
     modalBody.off('scroll.exampleToken').on('scroll.exampleToken', function(){
