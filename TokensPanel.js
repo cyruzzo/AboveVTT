@@ -2896,19 +2896,35 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         })
     }
 
-
+    function* addExampleToken(index) {
+        
+        while(index < index+10){
+            setTimeout(function(){
+                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
+                modalBody.append(tokenDiv);
+                index++;
+            })
+            yield
+        }
+       
+    }
+    let buildToken = addExampleToken(0);
+    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', function(){
+        if (modalBody.scrollTop() + 500 >= 
+            modalBody[0].scrollHeight) { 
+            for(let i = 0; i<10; i++){
+                buildToken.next()
+            }
+        } 
+    });
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
-            setTimeout(function () {
-                // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
-                // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
-                // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
-                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
-                modalBody.append(tokenDiv);
-            });
+            if(i<10){
+                buildToken.next();
+            }
         }
     }
 
