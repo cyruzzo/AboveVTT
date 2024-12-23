@@ -210,10 +210,9 @@ const moveLoop = async function(callback = function(){}){
     return true;
 }
 
-let debounceMoveRequest = mydebounce(
-    throttle(() => {
+let throttleMoveRequest = throttle(() => {
        requestAnimationFrame(moveKeyWatch) 
-    }, 30), 25);
+    }, 20);
 
 
 
@@ -253,7 +252,7 @@ Mousetrap.bind('up', function (e) {
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().prevAll().not("[data-skip='true']").first().children().first().click()
     }
-    debounceMoveRequest();
+    throttleMoveRequest();
 }, 'keydown');
 Mousetrap.bind('down', function (e) {
     arrowKeysHeld[1] = 1;
@@ -263,21 +262,21 @@ Mousetrap.bind('down', function (e) {
         e.preventDefault();
         $(`${visibleMenuId} .ddbc-tab-options__header-heading--is-active`).first().parent().nextAll().not("[data-skip='true']").first().children().first().click()
     }
-    debounceMoveRequest();
+    throttleMoveRequest();
 }, 'keydown');
 Mousetrap.bind('left', function (e) {
     arrowKeysHeld[2] = 1;
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         e.preventDefault();
     }
-    debounceMoveRequest();
+    throttleMoveRequest();
 }, 'keydown');
 Mousetrap.bind('right', function (e) {
     arrowKeysHeld[3] = 1;
     if ($("#select-button").hasClass("button-enabled") || !window.DM) {
         e.preventDefault();    
     }
-    debounceMoveRequest();
+    throttleMoveRequest();
 }, 'keydown');
 
 Mousetrap.bind('up', function (e) {

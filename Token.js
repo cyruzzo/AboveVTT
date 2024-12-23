@@ -71,6 +71,11 @@ let debounceAudioChecks = mydebounce(() => {
 	checkAudioVolume();
 }, 20)
 
+const debouncePlace = mydebounce((token) => {
+	token.place(0);
+
+}, 300);
+
 
 function random_token_color() {
 	const randomColorIndex = getRandomInt(0, TOKEN_COLORS.length);
@@ -644,15 +649,122 @@ class Token {
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = this.isAoe() ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
+
+
 		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
+
 			this.options.top = tokenPosition.y + 'px';
 			this.options.left = tokenPosition.x + 'px';
+			const selector = "div[data-id='" + this.options.id + "']";
+			const old = $("#tokens").find(selector);
 
-			this.place(100)
-			this.update_and_sync();
+			if (old.css("left") != this.options.left || old.css("top") != this.options.top)
+				remove_selected_token_bounding_box();
+
+			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
+				complete: async function() {
+					$('.token[data-clone-id^="dragging-"]').remove();
+				}
+			});
+			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
+				setTokenAuras(old, this.options);
+				setTokenLight(old, this.options);
+				setTokenBase(old, this.options);
+			}
+			setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
+			if(this.options.darkness){
+				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
+				copyImage.css({
+					left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+					top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+					'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+					'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
+					width: `var(--token-width)`,
+					height: `var(--token-height)`,
+					'max-width': `var(--token-width)`,
+					'max-height': `var(--token-height)`,
+					'--z-index-diff': old.css('--z-index-diff'),
+					'--token-scale': old.css('--token-scale'),
+    				'--token-rotation': old.css('--token-rotation')
+				})
+			}
+			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
+				old.toggleClass('underDarkness', true);
+				if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
+					let tokenClone = old.clone();
+					tokenClone.css({
+						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
+						width: `var(--token-width)`,
+						height: `var(--token-height)`,
+						'max-width': `var(--token-width)`,
+						'max-height': `var(--token-height)`,
+						'--z-index-diff': old.css('--z-index-diff'),
+						'opacity': this.options.hidden ? '0.5' : '1',
+						'--hp-percentage': `${this.hpPercentage}%`,
+						"--token-border-width": tokenBorderWidth,
+						'border-width': old.find('.token-image').css('border-width'),
+	    				"--offsetX": old.css('--offsetX'),
+	    				"--offsetY": old.css('--offsetY'),
+						"--image-opacity": old.css('--image-opacity'),
+						"--view-box": old.css('--view-box'),
+						"--image-zoom": old.css('--image-zoom')
+					})
+			        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
+			        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
+			        tokenClone.toggleClass('lockedToken', this.options.locked==true)
+					tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
+					tokenClone.attr('data-name', old.attr('data-name'));
+					tokenClone.toggleClass('hasTooltip', $(old).hasClass('hasTooltip'));
+			        $('#token_map_items').append(tokenClone);
+				}
+				else{
+					let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
+					copyToken.css({
+						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
+						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
+						width: `var(--token-width)`,
+						height: `var(--token-height)`,
+						'max-width': `var(--token-width)`,
+						'max-height': `var(--token-height)`,
+						'--z-index-diff': old.css('--z-index-diff'),
+						'--token-scale': old.css('--token-scale'),
+	    				'--token-rotation': old.css('--token-rotation'),
+						'opacity': this.options.hidden ? '0.5' : '1',
+						'--hp-percentage': `${this.hpPercentage}%`,
+						"--token-border-width": tokenBorderWidth,
+						'border-width': old.find('.token-image').css('border-width'),
+	    				"--offsetX": old.css('--offsetX'),
+	    				"--offsetY": old.css('--offsetY'),
+						"--image-opacity": old.css('--image-opacity'),
+						"--view-box": old.css('--view-box'),
+						"--image-zoom": old.css('--image-zoom')
+					})
+					copyToken.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove()
+					copyToken.toggleClass('lockedToken', this.options.locked==true)
+					copyToken.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
+					copyToken.attr('data-name', old.attr('data-name'));
+					copyToken.toggleClass('hasTooltip', $(old).hasClass('hasTooltip'));
+				}
+
+				let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
+				let oldImage = old.find('.token-image');
+
+				if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
+					copyImage.attr("src", parse_img(this.options.imgsrc));
+				}
+			}
+
+			if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+				throttleLight();
+				
+			debouncePlace(this);
+			this.update_and_sync();	
 		}
-		
-
 	}
 
 	snap_to_closest_square() {
@@ -3199,7 +3311,12 @@ class Token {
 				new Promise(() => this.update_health_aura(token)),
 				new Promise(() => this.update_dead_cross(token)),
 				new Promise(() => toggle_player_selectable(this, token)),
-				new Promise(debounceLightChecks),
+				new Promise(() => {
+					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+						throttleLight();
+					else
+						debounceLightChecks()
+				}),
 				new Promise(debounceAudioChecks)
 			]).catch((error) => {
 		        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
