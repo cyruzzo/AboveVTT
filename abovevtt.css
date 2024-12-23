@@ -4952,6 +4952,7 @@ button.block-send-to-game-log span {
 }
 #token-configuration-modal .sidebar-panel-body{
     min-height:300px;
+    max-height:500px;
 }
 #token-configuration-modal{
     height: unset;
