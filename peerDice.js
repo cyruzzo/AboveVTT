@@ -9,7 +9,9 @@ window.diceCurrentPeers = [];
 function setDiceRemoteStream(stream, peerId) {
 
     let video = $(`.remote-dice-video#${peerId}`);
-    video.remove()
+    video.remove();
+
+    $(`#streamer-canvas-${peerId}`).remove();
 
     video = $(`<video class='remote-dice-video' id='${peerId}'></video>`)
     $(`body`).append(video);
