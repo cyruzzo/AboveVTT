@@ -18,7 +18,7 @@ function setDiceRemoteStream(stream, peerId) {
     video[0].play();
 
 
-    let dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
+    let dicecanvas=$(`<canvas width='${video[0].videoWidth}' height='${video[0].videoHeight}' class='streamer-canvas' />`);
     dicecanvas.attr("id","streamer-canvas-"+peerId);
     //dicecanvas.css("opacity",0.5);
     dicecanvas.css("position","fixed");
@@ -41,34 +41,33 @@ function setDiceRemoteStream(stream, peerId) {
     let canvas=dicecanvas.get(0);
     let ctx=canvas.getContext('2d');
     let tmpcanvas = document.createElement("canvas");
+    let tmpctx = tmpcanvas.getContext("2d");
     video.off('resize.dice').on("resize.dice", function(){
         let videoAspectRatio = video[0].videoWidth / video[0].videoHeight
-            if (video[0].videoWidth > video[0].videoHeight)
-            {
-                tmpcanvas.width = Math.min(video[0].videoWidth, window.innerWidth);
-                tmpcanvas.height = Math.min(video[0].videoHeight, window.innerWidth / videoAspectRatio);       
-            }
-            else {
-                tmpcanvas.width = Math.min(video[0].videoWidth, window.innerHeight / (1 / videoAspectRatio));
-                tmpcanvas.height = Math.min(video[0].videoHeight, window.innerHeight);     
-            }
-            dicecanvas.attr("width", tmpcanvas.width + "px");
-            dicecanvas.attr("height", tmpcanvas.height  + "px");
-            dicecanvas.css("height",tmpcanvas.height);
-            dicecanvas.css("width",tmpcanvas.width );
+        if (video[0].videoWidth > video[0].videoHeight)
+        {
+            tmpcanvas.width = Math.min(video[0].videoWidth, window.innerWidth);
+            tmpcanvas.height = Math.min(video[0].videoHeight, window.innerWidth / videoAspectRatio);       
+        }
+        else {
+            tmpcanvas.width = Math.min(video[0].videoWidth, window.innerHeight / (1 / videoAspectRatio));
+            tmpcanvas.height = Math.min(video[0].videoHeight, window.innerHeight);     
+        }
+        dicecanvas.attr("width", tmpcanvas.width + "px");
+        dicecanvas.attr("height", tmpcanvas.height  + "px");
+        dicecanvas.css("height",tmpcanvas.height);
+        dicecanvas.css("width",tmpcanvas.width );
     });
     let stop = false;
     let frameCount = 0;
-    let fpsInterval = 1000/24;
+    let fpsInterval = 1000/16;
     let then = Date.now();
 
     let startTime = then;
     let now, elapsed;
     let updateCanvas=function(){
         //resize canvas due to Chrome bug - this may be fixed in chrome later
-        //resizeCanvasChromeBug()
-        
-        let tmpctx = tmpcanvas.getContext("2d");
+        //resizeCanvasChromeBug()    - looks like this is fixed, will keep comment here in case needed 
         requestAnimationFrame(updateCanvas);
         now = Date.now();
         elapsed = now - then;
