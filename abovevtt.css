@@ -7487,7 +7487,7 @@ button span.onedrive-btn-status{
 
 .VTTToken .base.square ~ .hpvisualbar:before {
     --mask-size: calc(95% - 2px / var(--window-zoom));
-    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%%), linear-gradient(to top, #0000 var(--mask-size), #000 95%%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%%), linear-gradient(to right, #0000 var(--mask-size), #000 95%%);
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%), linear-gradient(to top, #0000 var(--mask-size), #000 95%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%), linear-gradient(to right, #0000 var(--mask-size), #000 95%);
     clip-path: none;
 }
 
