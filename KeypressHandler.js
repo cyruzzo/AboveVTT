@@ -284,26 +284,26 @@ Mousetrap.bind('up', function (e) {
     setTimeout(()=>{
      arrowKeysHeld[0] = 0;   
      debounceLightChecks(); 
-    },50)
+    },80)
 
 }, 'keyup');
 Mousetrap.bind('down', function (e) {
     setTimeout(()=>{
      arrowKeysHeld[1] = 0; 
      debounceLightChecks();        
-    },50)  
+    },80)  
 }, 'keyup');
 Mousetrap.bind('left', function (e) {
     setTimeout(()=>{
      arrowKeysHeld[2] = 0;  
      debounceLightChecks();     
-    },50) 
+    },80) 
 }, 'keyup');
 Mousetrap.bind('right', function (e) {
     setTimeout(()=>{
      arrowKeysHeld[3] = 0;  
      debounceLightChecks();    
-    },50)          
+    },80)          
 }, 'keyup');
 
 Mousetrap.bind('alt', function () {
