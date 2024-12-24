@@ -6892,7 +6892,7 @@ input.max_hp[disabled]{
 }
 
 .token>.token-image{
-    --aura-width: max(2px, calc(3px / var(--window-zoom)));
+    --aura-width: max(2px, calc(2px / var(--window-zoom)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
@@ -7021,7 +7021,7 @@ button span.onedrive-btn-status{
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
 #token_map_items .token[data-notatoken]>.token-image{
-    --aura-width: max(1px, calc(calc(4px / var(--window-zoom)) / var(--scene-scale)));
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)));
     --zoom-border-width: max(1px, calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
@@ -7055,7 +7055,7 @@ button span.onedrive-btn-status{
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
-    --aura-width: max(1px, calc(0.5px / var(--window-zoom)));
+    --aura-width: max(1px, calc(1px / var(--window-zoom)));
     filter:  drop-shadow(#ffffff22 0px 0px) 
         drop-shadow(var(--token-border-color) 0 0 var(--aura-width)) 
         drop-shadow(var(--token-border-color) 0 0) 
@@ -7066,8 +7066,13 @@ button span.onedrive-btn-status{
         drop-shadow(var(--token-temp-hp) 0 0)
         drop-shadow(var(--token-temp-hp) 0 0);
 }
+#VTT .token[data-notatoken]>.token-image.freeform, 
+#token-configuration-modal .token[data-notatoken]>.token-image.freeform{
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)))
+}
+
 .token[data-notatoken]>.token-image.freeform {
-    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(0.5px / var(--scene-scale)) / var(--window-zoom)));
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)))
 }
 .token>.token-image:not(.preserve-aspect-ratio) {
     object-fit: cover;
@@ -7094,7 +7099,7 @@ button span.onedrive-btn-status{
 
 }
 [data-notatoken] .base:after{
-    --aura-width: max(calc(5px / var(--scene-scale)), calc(calc(5px / var(--scene-scale)) / var(--window-zoom)));
+    --aura-width:max(calc(5px / var(--scene-scale)), calc(calc(5px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 .base.large-or-smaller-base:after{
@@ -7103,7 +7108,7 @@ button span.onedrive-btn-status{
 }
 
 [data-notatoken] .base.large-or-smaller-base:after{
-    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(2px / var(--window-zoom)) / var(--scene-scale)));
+    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(2px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 
@@ -7448,13 +7453,12 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(98% - 7px);
+    --mask-size:calc(100% - 4px);
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
-    height: calc(100% + 5px / min(1, var(--window-zoom)));
-    width: calc(100% + 5px / min(1, var(--window-zoom)));
-    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    right: 0px;
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
     background-color: #000;
     background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
                             var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
@@ -7467,10 +7471,10 @@ button span.onedrive-btn-status{
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before,
 .VTTToken.underDarkness:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size: calc(100% - calc(13px / var(--scene-scale)));
-    height: 105%;
-    width: 105%;
-    top: -4%;
-    left: -4%;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -7507,10 +7511,10 @@ button span.onedrive-btn-status{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-   top: calc(5px / var(--scene-scale));
-    left: calc(5px / var(--scene-scale));
-    right: calc(5px / var(--scene-scale));
-    bottom: calc(5px / var(--scene-scale));
+   top: calc(4px / var(--scene-scale));
+   left: calc(4px / var(--scene-scale));
+   right: calc(4px / var(--scene-scale));
+   bottom: calc(4px / var(--scene-scale));
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
