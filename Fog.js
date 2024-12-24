@@ -5967,32 +5967,6 @@ function redraw_light(){
 		debounceAudioChecks();
 	}
 
-	if(Math.abs(startTime-Date.now()) > 100){
-		debounceLightChecks = mydebounce(() => {	
-				if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
-					return;	
-				if(window.walls?.length < 5){
-					redraw_light_walls();	
-				}
-				//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-				redraw_light();
-				
-		}, 250);
-	}
-	else{
-		debounceLightChecks = mydebounce(() => {	
-			if(window.DRAGGING || arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])
-					return;	
-			if(window.walls?.length < 5){
-				redraw_light_walls();	
-			}
-			//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-			redraw_light();
-				
-		}, 20);
-	}
-
-
 }
 
 
