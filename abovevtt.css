@@ -7021,7 +7021,7 @@ button span.onedrive-btn-status{
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
 #token_map_items .token[data-notatoken]>.token-image{
-    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)));
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(2px / var(--scene-scale)) / var(--window-zoom)));
     --zoom-border-width: max(1px, calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
     box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
