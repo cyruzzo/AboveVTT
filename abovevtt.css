@@ -2317,6 +2317,37 @@ body>[class*='styles_mobileNav']>button{
     outline-offset: 0;
     filter: none;
 }
+[data-id^='/profile'] .hpbar:before {
+    opacity: 0;
+    pointer-events:none;
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size);
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 10%;
+    line-height: var(--font-size);
+    counter-reset: hp var(--base-hp) temp var(--temp-hp);
+    content: 'HP: ' counter(hp) '\aTemp: ' counter(temp);
+    z-index: 10000;
+    width: fit-content;
+    padding: 3px;
+    white-space: pre;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: opacity 0s 0s;
+}
+
+[data-id^='/profile'] .hpbar:hover:before {
+    opacity:1;
+    transition: opacity 200ms 400ms;
+}
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
     display: inline-block;
@@ -6859,7 +6890,7 @@ input.max_hp[disabled]{
     --aura-width: max(2px, calc(3px / var(--window-zoom)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 button.dropboxChooser{
     padding-left: 18px !important;
@@ -6988,7 +7019,7 @@ button span.onedrive-btn-status{
     --aura-width: max(1px, calc(calc(4px / var(--window-zoom)) / var(--scene-scale)));
     --zoom-border-width: max(1px, calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 #VTT .token>.base~.token-image,
 #token-configuration-modal .token>.base~.token-image
@@ -7020,7 +7051,15 @@ button span.onedrive-btn-status{
     min-height: 0px;
     min-width: 0px;
     --aura-width: max(1px, calc(0.5px / var(--window-zoom)));
-    filter:  drop-shadow(#ffffff22 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px var(--aura-width)) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
+    filter:  drop-shadow(#ffffff22 0px 0px) 
+        drop-shadow(var(--token-border-color) 0 0 var(--aura-width)) 
+        drop-shadow(var(--token-border-color) 0 0) 
+        drop-shadow(var(--token-hp-aura-color) 0 0 var(--aura-width)) 
+        drop-shadow(var(--token-hp-aura-color) 0 0)  
+        drop-shadow(var(--token-hp-aura-color) 0 0)  
+        drop-shadow(var(--token-temp-hp) 0 0 var(--aura-width))
+        drop-shadow(var(--token-temp-hp) 0 0)
+        drop-shadow(var(--token-temp-hp) 0 0);
 }
 .token[data-notatoken]>.token-image.freeform {
     --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(0.5px / var(--scene-scale)) / var(--window-zoom)));
@@ -7046,7 +7085,8 @@ button span.onedrive-btn-status{
     background-size: 30%;
     opacity: 1;
     --aura-width: max(5px, calc(5px / var(--window-zoom)));
-    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
+
 }
 [data-notatoken] .base:after{
     --aura-width: max(calc(5px / var(--scene-scale)), calc(calc(5px / var(--scene-scale)) / var(--window-zoom)));
@@ -7054,7 +7094,7 @@ button span.onedrive-btn-status{
 
 .base.large-or-smaller-base:after{
     --aura-width: max(2px, calc(2px / var(--window-zoom)));
-    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 
 [data-notatoken] .base.large-or-smaller-base:after{
@@ -7411,7 +7451,9 @@ button span.onedrive-btn-status{
     left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
     right: 0px;
     background-color: #000;
-    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
+    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
+                            var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+                            var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
@@ -7433,7 +7475,9 @@ button span.onedrive-btn-status{
 .VTTToken .base ~ .hpvisualbar:before {
     background-size: 100%;
     background-color: transparent;
-    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%);
+    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
+                        var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+                        var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);

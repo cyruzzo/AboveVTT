@@ -178,6 +178,11 @@ class Token {
 		this.options.temp_hp = newValue; // backwards compatibility
 	}
 
+	/** @return {number} the percentage of this token's temp HP divided by it's max hp */
+	get tempHpPercentage() {
+		return Math.round((this.tempHp / this.maxHp) * 100);
+	}
+
 	/** @return {number} the value of this token's max HP */
 	get maxHp() {
 		if (!isNaN(this.options.hitPointInfo?.maximum)) {
@@ -672,6 +677,7 @@ class Token {
 				setTokenBase(old, this.options);
 			}
 			setTokenBase($(`[data-notatoken='notatoken_${this.options.id}']`), this.options);
+			let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";	
 			if(this.options.darkness){
 				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
@@ -937,6 +943,8 @@ class Token {
 
 		if (this.maxHp > 0) {
 			token.css('--hp-percentage', `${this.hpPercentage}%`);
+			token.css('--temp-hp-percentage', `${this.tempHpPercentage}%`);
+			token.css('--total-percentage', `${this.tempHpPercentage + this.hpPercentage}%`)
 		}
 
 		const tokenHpAuraColor = token_health_aura(this.hpPercentage, this.options.healthauratype);
@@ -957,7 +965,7 @@ class Token {
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
-				token.css('--token-temp-hp', "#4444ffbd");
+				token.css('--token-temp-hp', "#4444ff");
 			}
 			else {
 				token.css('--token-temp-hp', "transparent");
@@ -1032,6 +1040,7 @@ class Token {
 			'--token-border-color': token.css('--token-border-color'), 
 			'--token-hp-aura-color': token.css('--token-hp-aura-color'),
 			'--hp-percentage': token.css('--hp-percentage'),
+			'--temp-hp-percentage': token.css('--temp-hp-percentage'),
 			'--token-temp-hp': token.css('--token-temp-hp'),
 		})
 		underdarknessToken.children('.token-image').css({
@@ -1408,6 +1417,10 @@ class Token {
 				token.find(".hpbar").css("visibility", "hidden");
 			} else {
 				token.find(".hpbar").css("visibility", "visible");
+				if(this.tempHp >= 0){
+					token.find(".hpbar").css("--base-hp", this.baseHp);
+					token.find(".hpbar").css("--temp-hp", this.tempHp);
+				}
 			}
 			if (!this.options.ac && !this.options.armorClass) { // even if we are supposed to show it, only show them if they have something to show.
 				token.find(".ac").hide();
@@ -2342,6 +2355,7 @@ class Token {
 								'--z-index-diff': old.css('--z-index-diff'),
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
+								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
 								"--token-border-width": tokenBorderWidth,
 								'border-width': old.find('.token-image').css('border-width'),
 			    				"--offsetX": old.css('--offsetX'),
@@ -2374,6 +2388,7 @@ class Token {
 			    				'--token-rotation': old.css('--token-rotation'),
 								'opacity': this.options.hidden ? '0.5' : '1',
 								'--hp-percentage': `${this.hpPercentage}%`,
+								'--temp-hp-percentage': `${this.tempHpPercentage}%`,
 								"--token-border-width": tokenBorderWidth,
 								'border-width': old.find('.token-image').css('border-width'),
 			    				"--offsetX": old.css('--offsetX'),
@@ -3810,9 +3825,9 @@ function token_health_aura(hpPercentage, auraType) {
 		if(p > 99) p = 99;
 		const r = p < 50 ? 255 : Math.floor(255 * ((50 - p % 50) / 50));
 		const g = p < 50 ? Math.floor(255 * (p / 50)) : 255;
-		return `rgb(${r} ${g} 0 / 60%)`;
+		return `rgb(${r} ${g} 0 / 100%)`;
 	};
-	return (auraType && auraType.startsWith('aura-bloodied-')) ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 60%)") : percentToCSSColor(hpPercentage);
+	return (auraType && auraType.startsWith('aura-bloodied-')) ? ((hpPercentage > parseInt(auraType.split('-')[2])) ? "rgb(0 0 0 / 0%)" : "rgb(255 0 0 / 100%)") : percentToCSSColor(hpPercentage);
 }
 
 function setTokenAudio(tokenOnMap, token){
@@ -4766,7 +4781,8 @@ async function do_draw_selected_token_bounding_box() {
 			});
 		}
 	)
-	debounceLightChecks();
+	
+	();
 }
 
 /// removes everything that draw_selected_token_bounding_box added
