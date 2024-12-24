@@ -2568,10 +2568,10 @@ class Token {
 					updateTokenSrc(this.options.imgsrc, tokenImage, video);
 
 					if(this.options.disableborder)
-						tokenImage.css("border-width","0");
+						tok.css("border-width","0");
 					else{
 						let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
-						tokenImage.css("--token-border-width",tokenBorderWidth);
+						tok.css("--token-border-width",tokenBorderWidth);
 					}
 					
 					tokenImage.css("max-height", this.options.size);
@@ -4782,7 +4782,7 @@ async function do_draw_selected_token_bounding_box() {
 		}
 	)
 	
-	();
+	debounceLightChecks();
 }
 
 /// removes everything that draw_selected_token_bounding_box added

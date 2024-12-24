@@ -7460,11 +7460,11 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size: calc(100% - 7px / min(1, var(--scene-scale)));
-    height: calc(100% + 7px / min(1, var(--scene-scale)));
-    width: calc(100% + 7px / min(1, var(--scene-scale)));
-    top: min(-3px, calc(-3px / min(1, var(--scene-scale))));
-    left: min(-3px, calc(-3px / min(1, var(--scene-scale))));
+    --mask-size: calc(100% - 9%);
+    height: 110%;
+    width: 110%;
+    top: -7%;
+    left: -7%;
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -7487,7 +7487,7 @@ button span.onedrive-btn-status{
 
 .VTTToken .base.square ~ .hpvisualbar:before {
     --mask-size: calc(95% - 2px / var(--window-zoom));
-    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 100%), linear-gradient(to top, #0000 var(--mask-size), #000 100%), linear-gradient(to bottom, #0000 var(--mask-size), #000 100%), linear-gradient(to right, #0000 var(--mask-size), #000 100%);
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%%), linear-gradient(to top, #0000 var(--mask-size), #000 95%%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%%), linear-gradient(to right, #0000 var(--mask-size), #000 95%%);
     clip-path: none;
 }
 
@@ -7501,10 +7501,10 @@ button span.onedrive-btn-status{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    top: 1%;
+    left: 1%;
+    right: 1%;
+    bottom: 1%;
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
@@ -7513,10 +7513,10 @@ button span.onedrive-btn-status{
     bottom: 2px;
 }
 .VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
-    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    top: 2%;
+    left: 2%;
+    right: 5%;
+    bottom: 5%;
 }
 .hpvisualbar{
     pointer-events: none;
