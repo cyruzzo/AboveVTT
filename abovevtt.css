@@ -7467,10 +7467,10 @@ button span.onedrive-btn-status{
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before,
 .VTTToken.underDarkness:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size: calc(100% - calc(13px / var(--scene-scale)));
-    height: calc(100% + calc(5px / var(--scene-scale)));
-    width: calc(100% + calc(5px / var(--scene-scale)));
-    top: calc(-2px / var(--scene-scale));
-    left: calc(-2px / var(--scene-scale));
+    height: 105%;
+    width: 105%;
+    top: -4%;
+    left: -4%;
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
