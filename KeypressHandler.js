@@ -201,7 +201,7 @@ function handle_menu_number_press(e) {
 Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
     handle_menu_number_press(e)
 });
-const moveLoop = async function(callback = function(){}){
+const moveLoop = function(callback = function(){}){
     for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
         let id = window.CURRENTLY_SELECTED_TOKENS[i];
         let token = window.TOKEN_OBJECTS[id];
@@ -210,12 +210,13 @@ const moveLoop = async function(callback = function(){}){
     return true;
 }
 
-let throttleMoveRequest = throttle(() => {
-       requestAnimationFrame(moveKeyWatch) 
-    }, 20);
+//Throttle so the token doesn't immediately fly off map if button is held and set trailing only we can register diagonal movement as 1 move.
+const throttleMoveRequest = throttle(() => {
+    requestAnimationFrame(moveKeyWatch);
+}, 5, {leading: false, trailing: true})
 
 
-
+//setTimeout so we can be sure diagonal key combos are pressed or not.
 function moveKeyWatch() {
     if (arrowKeysHeld[0] && arrowKeysHeld[2]) {
         moveLoop(function(token){token.moveUpLeft()});
@@ -240,7 +241,7 @@ function moveKeyWatch() {
     }
     else if (arrowKeysHeld[3]) {
        moveLoop(function(token){token.moveRight()});
-    }    
+    }  
 }
 
 
