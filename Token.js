@@ -681,8 +681,8 @@ class Token {
 			if(this.options.darkness){
 				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
-					left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-					top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 					'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 					'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 					width: `var(--token-width)`,
@@ -699,8 +699,8 @@ class Token {
 				if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 					let tokenClone = old.clone();
 					tokenClone.css({
-						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -729,8 +729,8 @@ class Token {
 				else{
 					let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
 					copyToken.css({
-						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -2326,8 +2326,8 @@ class Token {
 				if(this.options.darkness){
 					let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 					copyImage.css({
-						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -2344,8 +2344,8 @@ class Token {
 						if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 							let tokenClone = old.clone();
 							tokenClone.css({
-								left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-								top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+								left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+								top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 								'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 								'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 								width: `var(--token-width)`,
@@ -2375,8 +2375,8 @@ class Token {
 						else{
 							let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
 							copyToken.css({
-								left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-								top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+								left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+								top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 								'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 								'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 								width: `var(--token-width)`,
@@ -2717,8 +2717,8 @@ class Token {
 				if(this.options.darkness){
 					let tokenClone = tok.clone();
 					tokenClone.css({
-						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 						width: `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						height: `calc(${this.sizeHeight()}px / var(--scene-scale))`
 					})
@@ -3297,8 +3297,8 @@ class Token {
 					if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 						let tokenClone = tok.clone();
 						tokenClone.css({
-							left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
-							top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
+							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
+							top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
 							'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 							'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 							width: `var(--token-width)`,
