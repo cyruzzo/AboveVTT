@@ -681,8 +681,8 @@ class Token {
 			if(this.options.darkness){
 				let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 				copyImage.css({
-					left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-					top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+					left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+					top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 					'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 					'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 					width: `var(--token-width)`,
@@ -699,8 +699,8 @@ class Token {
 				if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 					let tokenClone = old.clone();
 					tokenClone.css({
-						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -729,8 +729,8 @@ class Token {
 				else{
 					let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
 					copyToken.css({
-						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -2326,8 +2326,8 @@ class Token {
 				if(this.options.darkness){
 					let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 					copyImage.css({
-						left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-						top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+						left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+						top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 						'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 						width: `var(--token-width)`,
@@ -2344,8 +2344,8 @@ class Token {
 						if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 							let tokenClone = old.clone();
 							tokenClone.css({
-								left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-								top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+								left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+								top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 								'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 								'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 								width: `var(--token-width)`,
@@ -2375,8 +2375,8 @@ class Token {
 						else{
 							let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
 							copyToken.css({
-								left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-								top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+								left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+								top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 								'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 								'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 								width: `var(--token-width)`,
@@ -3297,8 +3297,8 @@ class Token {
 					if($(`[data-notatoken='notatoken_${this.options.id}']`).length == 0){
 						let tokenClone = tok.clone();
 						tokenClone.css({
-							left: parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor,
-							top: parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor,
+							left: parseInt(parseFloat(this.options.left) / window.CURRENT_SCENE_DATA.scale_factor),
+							top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 							'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
 							'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 							width: `var(--token-width)`,
@@ -3306,11 +3306,8 @@ class Token {
 							'max-width': `var(--token-width)`,
 							'max-height': `var(--token-height)`,
 							'--z-index-diff': tok.css('--z-index-diff'),
-							'--token-scale': tok.css('--token-scale'),
-		    				'--token-rotation': tok.css('--token-rotation'),
 							'opacity': this.options.hidden ? '0.5' : '1',
 							'--hp-percentage': `${this.hpPercentage}%`,
-							'--temp-hp-percentage': `${this.tempHpPercentage}%`,
 							"--token-border-width": tokenBorderWidth,
 							'border-width': tok.find('.token-image').css('border-width'),
 		    				"--offsetX": tok.css('--offsetX'),
@@ -3320,9 +3317,11 @@ class Token {
 							"--image-zoom": tok.css('--image-zoom')
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
+				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();    
 				        tokenClone.toggleClass('lockedToken', this.options.locked==true)
 						tokenClone.toggleClass('declutterToken', this.options.lockRestrictDrop == "declutter")
-				        tokenClone.children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();      
+						tokenClone.attr('data-name', tok.attr('data-name'));
+						tokenClone.toggleClass('hasTooltip', $(tok).hasClass('hasTooltip'));
 				        $('#token_map_items').append(tokenClone);
 					}	
 			    }
