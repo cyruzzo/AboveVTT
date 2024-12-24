@@ -62,7 +62,7 @@ let debounceLightChecks = mydebounce(() => {
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		redraw_light();
+		requestAnimationFrame(redraw_light);
 		debounceAudioChecks();
 		
 }, 20);
