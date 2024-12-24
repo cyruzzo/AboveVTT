@@ -987,8 +987,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = (this.options.underDarkness == true) ? Math.round(tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor)) : Math.round(tokenWidth - 6);
-				tokenHeight = (this.options.underDarkness == true) ? Math.round(tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor)) : Math.round(tokenHeight - 6);
+				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
+				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -2528,6 +2528,8 @@ class Token {
 
 				let tokenImage
 				// new aoe tokens use arrays as imsrc
+				let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
+						
 				if (!this.isAoe()){
 					let imgClass = 'token-image';
 					if(this.options.legacyaspectratio == false) {
@@ -2570,7 +2572,6 @@ class Token {
 					if(this.options.disableborder)
 						tok.css("border-width","0");
 					else{
-						let tokenBorderWidth = (this.options.underDarkness == true) ? (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2 / window.CURRENT_SCENE_DATA.scale_factor)+"px" : (this.sizeWidth() / window.CURRENT_SCENE_DATA.hpps * 2)+"px";
 						tok.css("--token-border-width",tokenBorderWidth);
 					}
 					
@@ -3302,7 +3303,21 @@ class Token {
 							'--token-height': `calc(${this.sizeHeight()}px / var(--scene-scale))`,
 							width: `var(--token-width)`,
 							height: `var(--token-height)`,
-							opacity: this.options.hidden ? '0.5' : '1'
+							'max-width': `var(--token-width)`,
+							'max-height': `var(--token-height)`,
+							'--z-index-diff': tok.css('--z-index-diff'),
+							'--token-scale': tok.css('--token-scale'),
+		    				'--token-rotation': tok.css('--token-rotation'),
+							'opacity': this.options.hidden ? '0.5' : '1',
+							'--hp-percentage': `${this.hpPercentage}%`,
+							'--temp-hp-percentage': `${this.tempHpPercentage}%`,
+							"--token-border-width": tokenBorderWidth,
+							'border-width': tok.find('.token-image').css('border-width'),
+		    				"--offsetX": tok.css('--offsetX'),
+		    				"--offsetY": tok.css('--offsetY'),
+							"--image-opacity": tok.css('--image-opacity'),
+							"--view-box": tok.css('--view-box'),
+							"--image-zoom": tok.css('--image-zoom')
 						})
 				        tokenClone.attr('data-notatoken', `notatoken_${this.options.id}`);
 				        tokenClone.toggleClass('lockedToken', this.options.locked==true)

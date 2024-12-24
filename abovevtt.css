@@ -6829,7 +6829,7 @@ input.max_hp[disabled]{
     border: inset 5px var(--token-border-color, #ffffff44);
 }
 [data-notatoken].token>.base{
-    border-width: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    border-width: calc(5px / var(--scene-scale));
 }
 
 .token>.base,
@@ -6842,7 +6842,12 @@ input.max_hp[disabled]{
     margin: 5% 0 0 5%;
 }
 
-
+.token.underDarkness>.base,
+.token.underDarkness>.base ~ .hpvisualbar,
+.token[data-notatoken]>.base,
+.token[data-notatoken]>.base ~ .hpvisualbar{
+    margin: round(down, 5%, 1px) 0 0 round(up, 5%, 1px);
+}
 
 .VTTToken .base{
     filter: drop-shadow(0.5px 0px 1px #000b);
@@ -6880,10 +6885,10 @@ input.max_hp[disabled]{
     bottom: calc(-5px / var(--scene-scale));
 }
 [data-notatoken] .base.large-or-smaller-base.circle:before{
-    top: calc(-5px / var(--scene-scale));
-    left: calc(-5px / var(--scene-scale));
-    right: calc(-5px / var(--scene-scale));
-    bottom: calc(-5px / var(--scene-scale));
+    top: calc(-2px / var(--scene-scale));
+    left: calc(-2px / var(--scene-scale));
+    right: calc(-2px / var(--scene-scale));
+    bottom: calc(-2px / var(--scene-scale));
 }
 
 .token>.token-image{
@@ -7459,12 +7464,13 @@ button span.onedrive-btn-status{
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
 }
 
-.VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size: calc(100% - 9%);
-    height: 110%;
-    width: 110%;
-    top: -7%;
-    left: -7%;
+.VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before,
+.VTTToken.underDarkness:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size: calc(100% - calc(13px / var(--scene-scale)));
+    height: calc(100% + calc(5px / var(--scene-scale)));
+    width: calc(100% + calc(5px / var(--scene-scale)));
+    top: calc(-2px / var(--scene-scale));
+    left: calc(-2px / var(--scene-scale));
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -7501,10 +7507,10 @@ button span.onedrive-btn-status{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-    top: 1%;
-    left: 1%;
-    right: 1%;
-    bottom: 1%;
+   top: calc(5px / var(--scene-scale));
+    left: calc(5px / var(--scene-scale));
+    right: calc(5px / var(--scene-scale));
+    bottom: calc(5px / var(--scene-scale));
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
@@ -7513,10 +7519,10 @@ button span.onedrive-btn-status{
     bottom: 2px;
 }
 .VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
-    top: 2%;
-    left: 2%;
-    right: 5%;
-    bottom: 5%;
+   top: calc(2px / var(--scene-scale));
+    left: calc(2px / var(--scene-scale));
+    right: calc(2px / var(--scene-scale));
+    bottom: calc(2px / var(--scene-scale));
 }
 .hpvisualbar{
     pointer-events: none;
