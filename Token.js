@@ -960,8 +960,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
-				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
+				tokenWidth = tokenWidth - 10;
+				tokenHeight = tokenHeight - 10;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -976,8 +976,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (1/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 1;
-				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (1/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 1;
+				tokenWidth = tokenWidth - 3;
+				tokenHeight = tokenHeight - 3;
 			}
 			token.css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -987,8 +987,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = (this.options.underDarkness == true) ? tokenWidth - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenWidth - 6;
-				tokenHeight = (this.options.underDarkness == true) ? tokenHeight - (6/window.CURRENT_SCENE_DATA.scale_factor) : tokenHeight - 6;
+				tokenWidth = tokenWidth - 10;
+				tokenHeight = tokenHeight - 10;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {

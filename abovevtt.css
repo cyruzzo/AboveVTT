@@ -7448,13 +7448,12 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(98% - 7px);
+    --mask-size:calc(100% - 4px);
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
-    height: calc(100% + 5px / min(1, var(--window-zoom)));
-    width: calc(100% + 5px / min(1, var(--window-zoom)));
-    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    right: 0px;
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    left: 0px;
     background-color: #000;
     background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
                             var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
@@ -7467,10 +7466,10 @@ button span.onedrive-btn-status{
 .VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before,
 .VTTToken.underDarkness:not(.freeform):not(.hasbase) .hpvisualbar:before{
     --mask-size: calc(100% - calc(13px / var(--scene-scale)));
-    height: 105%;
-    width: 105%;
-    top: -4%;
-    left: -4%;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
