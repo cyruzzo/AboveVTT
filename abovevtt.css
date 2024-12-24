@@ -7066,6 +7066,11 @@ button span.onedrive-btn-status{
         drop-shadow(var(--token-temp-hp) 0 0)
         drop-shadow(var(--token-temp-hp) 0 0);
 }
+#VTT .token[data-notatoken]>.token-image.freeform, 
+#token-configuration-modal .token[data-notatoken]>.token-image.freeform{
+    --aura-width: calc(1px / var(--scene-scale))
+}
+
 .token[data-notatoken]>.token-image.freeform {
     --aura-width: calc(1px / var(--scene-scale))
 }
