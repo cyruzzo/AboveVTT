@@ -1456,10 +1456,11 @@ function observe_character_sheet_changes(documentToObserve) {
 }
 
 function observe_non_sheet_changes(documentToObserve) {
-  if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
-    return;
+
 
   window.non_sheet_observer = new MutationObserver(function(mutationList, observer) {
+    if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
+      return;
     mutationList.forEach(mutation => {
       try {
         let mutationTarget = $(mutation.target);

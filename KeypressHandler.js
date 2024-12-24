@@ -283,26 +283,21 @@ Mousetrap.bind('right', function (e) {
 Mousetrap.bind('up', function (e) {
     setTimeout(()=>{
      arrowKeysHeld[0] = 0;   
-     debounceLightChecks(); 
     },50)
-
 }, 'keyup');
 Mousetrap.bind('down', function (e) {
     setTimeout(()=>{
-     arrowKeysHeld[1] = 0; 
-     debounceLightChecks();        
+     arrowKeysHeld[1] = 0;     
     },50)  
 }, 'keyup');
 Mousetrap.bind('left', function (e) {
     setTimeout(()=>{
-     arrowKeysHeld[2] = 0;  
-     debounceLightChecks();     
+     arrowKeysHeld[2] = 0;     
     },50) 
 }, 'keyup');
 Mousetrap.bind('right', function (e) {
     setTimeout(()=>{
-     arrowKeysHeld[3] = 0;  
-     debounceLightChecks();    
+     arrowKeysHeld[3] = 0;   
     },50)          
 }, 'keyup');
 
