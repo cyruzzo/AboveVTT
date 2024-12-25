@@ -1047,7 +1047,7 @@ function observe_character_sheet_changes(documentToObserve) {
       })
       attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                      
         let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
