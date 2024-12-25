@@ -464,7 +464,7 @@ function init_character_sheet_page() {
   // check for name and image
   set_window_name_and_image(function() {
     observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
-    observe_non_sheet_changes($(document));
+    observe_non_sheet_changes($('body'));
     inject_join_exit_abovevtt_button();
     observe_character_theme_change();
     observe_character_image_change();
@@ -1487,7 +1487,8 @@ function observe_non_sheet_changes(documentToObserve) {
 
   for(let i = 0; i<documentToObserve.length; i++){
     const mutation_target = documentToObserve.get(i);
-    const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+    //observers changes to body direct children being removed/added
+    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: false };
     window.non_sheet_observer.observe(mutation_target, mutation_config);
   }
 }
