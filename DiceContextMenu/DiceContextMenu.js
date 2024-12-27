@@ -68,6 +68,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
         
         menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
+            .row("Perfect Crit", "", false)
             .row("Flat Roll", "", true)
         )
         menu.onRollClick(dcm => {
