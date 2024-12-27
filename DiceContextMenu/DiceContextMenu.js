@@ -77,16 +77,25 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             let diceRoll;
             if (rollAsIndex === 0) {
                 // crit damage
-                diceExpression = diceExpression.replaceAll(/(\d)+(d)/gi, function(m){
-                    return `${parseInt(m)*2}d`
+                diceExpression = diceExpression.replaceAll(/([\d]+)d/gi, function(m, m1){
+                    return `${parseInt(m1)*2}d`
                 })
                 diceRoll = new DiceRoll(diceExpression)
-            } else if (rollAsIndex === 1) {
+            } 
+             else if (rollAsIndex === 1) {
+                // perfect crit damage
+                diceExpression = diceExpression.replaceAll(/([\d]+)d([\d]+)/gi, function(m, m1, m2){
+                    return `${m}+${parseInt(m1)*parseInt(m2)}`
+                })
+                diceRoll = new DiceRoll(diceExpression)
+            } 
+            else if (rollAsIndex === 2) {
                 // flat roll
                 diceRoll = new DiceRoll(`${diceExpression}`);
             } else { // not possible
                 console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
+
 
 
             diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
