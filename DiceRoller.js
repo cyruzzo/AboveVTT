@@ -392,6 +392,7 @@ class DiceRoller {
     #pendingCritType = undefined;
     #pendingSpellSave = undefined;
     #pendingDamageType = undefined;
+    #pendingCrit = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -421,6 +422,7 @@ class DiceRoller {
     setPendingDamageType(damageTypeText){
         this.#pendingDamageType = damageTypeText;
     }
+
     /// PUBLIC FUNCTIONS
     getDamageType(button){
       let damageTypeIcon = $(button).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
@@ -446,7 +448,7 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the dice expression to parse and roll. EG: 1d20+4
      * @returns {boolean} whether or not dice were rolled
      */
-    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined, damageType = undefined) {
+    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined, damageType = undefined, forceCritType = undefined) {
         try {
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
@@ -520,7 +522,7 @@ class DiceRoller {
                 let output = roll.output.replace(regExpression, '');
                 let total = roll.total;
                 let expression = diceRoll.expression;
-                if(this.#critAttackAction != undefined && critType == 3){
+                if((this.#critAttackAction != undefined && critType == 3) || forceCritType == 3){
                     doubleCrit = true;
                     total = total * 2;
                     const outputSplit = output.split(' = ')
@@ -646,6 +648,7 @@ class DiceRoller {
             this.#pendingCritType = critType;
             this.#pendingSpellSave = spellSave;
             this.#pendingDamageType = damageType;
+            this.#pendingCrit = forceCritType;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -792,6 +795,7 @@ class DiceRoller {
         this.#pendingDiceRoll = undefined;
         this.#pendingSpellSave = undefined;
         this.#pendingDamageType = undefined;
+        this.#pendingCrit = undefined;
                 
     }
 
@@ -946,7 +950,7 @@ class DiceRoller {
 
                 // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
                 let calculatedTotal = eval(replacedExpression);
-                if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+                if((this.#critAttackAction != undefined && this.#pendingCritType == 3) || this.#pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
                 console.log("pendingExpression: ", this.#pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
@@ -996,7 +1000,7 @@ class DiceRoller {
             ddbMessage.avttExpressionResult = this.#pendingDiceRoll.expressionResult;
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
-        if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+        if((this.#critAttackAction != undefined && this.#pendingCritType == 3) || this.#pendingCrit == 3){
             ddbMessage.avttExpression = `2(${this.#pendingDiceRoll.expression})`;
             ddbMessage.avttExpressionResult = `2(${this.#pendingDiceRoll.expressionResult})`;
         }

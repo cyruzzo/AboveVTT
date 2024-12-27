@@ -86,6 +86,7 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
         menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
             .row("Perfect Crit", "", false)
+            .row("Double Damage", "", false)
             .row("Flat Roll", "", true)
             .expressionRow('Roll: ', diceExpression, function(newExpression){
                 diceExpression = newExpression;
@@ -110,11 +111,16 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
                 })
                 diceRoll = new DiceRoll(diceExpression)
             } 
-            else if (rollAsIndex === 2) {
-                // flat roll
+            else if (rollAsIndex === 2 ) {
+                // double damage
                 diceRoll = new DiceRoll(`${diceExpression}`);
-            } else { // not possible
-                console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
+            }
+            else if (rollAsIndex === 3) {
+                // flat roll 
+                diceRoll = new DiceRoll(`${diceExpression}`);
+            }
+             else { // not possible
+                console.warn("DiceContextMenu unexpectedly gave an  invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
 
 
@@ -126,8 +132,10 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             diceRoll.avatarUrl = avatarUrl;
             diceRoll.entityType = entityType;
             diceRoll.entityId = entityId;
-           
-            window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
+
+            const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
+
+            window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, undefined, damageType, doubleDamage);
             
         });
 
