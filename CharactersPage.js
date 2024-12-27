@@ -891,7 +891,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         let settingOption = { 
             "versatile":{
-              label: "Versatile rolls",
+              label: "Icon Roll Versatile weapons",
               type: "dropdown",
               options: [
                 { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
@@ -901,7 +901,7 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "both"
             },
             "crit":{
-              label: "Crit Type",
+              label: "Icon Roll Crit Type",
               type: "dropdown",
               options:[
                 { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
@@ -912,7 +912,7 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "0"
             },
             "critRange":{
-              label: "Crit Range",
+              label: "Icon Roll Crit Range",
               type: "input",
               inputType: 'number',
               max: '20',
@@ -921,32 +921,32 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "20"
             },
             "hitRoll":{
-              label: "Added to Attack Rolls",
+              label: "Added to all Attack Rolls",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "damageRoll":{
-              label: "Added to Damage Rolls",
+              label: "Added to all Damage Rolls",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "checkRoll":{
-              label: "Added to Ability Checks",
+              label: "Added to all Ability Checks",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "saveRoll":{
-              label: "Added to Saves Rolls",
+              label: "Added to all Saves",
               type: "input",
               inputType: "text",
               defaultValue: ""
             }
         }
-        let options = $(`<div id='icon-roll-options' 
-          style= 'z-index: 100000;
+        let options = $(`<div id='icon-roll-options'  
+              style= 'z-index: 100000;
               width: 20%;
               height: 20%;
               width: 300px;
@@ -958,13 +958,13 @@ function observe_character_sheet_changes(documentToObserve) {
               transform: translate(-50%, -50%);
               background: var(--theme-background-solid);
               box-shadow: 0px 0px 4px var(--theme-contrast);
-              padding-right: 5px;
               border-radius: 15px;
               border: 1px solid var(--theme-contrast);
               color: var(--theme-contrast);
-              overflow: scroll;
-            '>
-        </div>`)
+              overflow:hidden;'>  
+              </div>`)
+        let optionsContents = $(`<div style='overflow: auto; max-height:100%;'></div>`);
+        options.append(optionsContents);
         let closeOptions = $(`<div id='close-icon-roll-options' 
           style='z-index: 99999;
             height: 100%;
@@ -1018,20 +1018,20 @@ function observe_character_sheet_changes(documentToObserve) {
             
             wrapper.append(input);
 
-            options.append(wrapper)
+            optionsContents.append(wrapper)
         }
         let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
-         <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
+         <div style='margin-bottom:5px;'>• Settings mentioning 'Icon Rolls' only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
          <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
          <div style='margin-bottom:5px;'>• Double Damage Total is 2*(dice damage+mod)</div>
-         <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
-         <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
+         <div style='margin-bottom:5px;'>• For icon rolls hold Shift/Ctrl to roll ADV/DIS respectively.</div>
+         <div style='margin-bottom:5px;'>• For icon rolls hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
           </div>`)
-        options.append(optionsInfo);
+        optionsContents.append(optionsInfo);
 
       }
       if($('#avtt-icon-roll-span').length == 0){
-        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
         settings.off().on('click', function(){
           $('#close-icon-roll-options').css('display', 'block');
           $('#icon-roll-options').css('display', 'block');
@@ -1088,27 +1088,23 @@ function observe_character_sheet_changes(documentToObserve) {
           let diceRoll;
 
           if(data.expression != undefined){
-            if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-               if(e.altKey){
-                  if(e.shiftKey){
-                    diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                   }
-                   else if(e.ctrlKey || e.metaKey){
-                    diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                   }
-               }
-               else if(e.shiftKey){
-                diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-               }
-               else if(e.ctrlKey || e.metaKey){
-                diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-               }else{
-                diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-               }
+            if (/^1d20/g.test(data.expression)) {
+              if(e.altKey){
+                if(e.shiftKey){
+                  data.expression = data.expression.replaceAll(/^1d20/g, '3d20kh1')
+                 }
+                 else if(e.ctrlKey || e.metaKey){
+                  data.expression = data.expression.replaceAll(/^1d20/g, '3d20kl1')
+                 }
+              }
+              else if(e.shiftKey){
+                data.expression = data.expression.replaceAll(/^1d20/g, '2d20kh1')
+              }
+              else if(e.ctrlKey || e.metaKey){
+                data.expression = data.expression.replaceAll(/^1d20/g, '3d20k11')
+              }  
             }
-            else{
-              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-            }
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
             if(damageTypeText == undefined && data.damageType != undefined)
               damageTypeText = data.damageType
             window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText, damageTypeText);
