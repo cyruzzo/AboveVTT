@@ -294,8 +294,6 @@ function getRollData(rollButton){
       }
     }
 
-    let roll = new rpgDiceRoller.DiceRoll(expression); 
-    let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
 
     if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
       rollType = 'save'
@@ -334,12 +332,41 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
       }
     }
-    const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    
+    let roll = new rpgDiceRoller.DiceRoll(expression); 
+    let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
+    let modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+  
+    if(rollType == 'damage' && window.CHARACTER_AVTT_SETTINGS?.damageRoll?.match(allDiceRegex)){
+        expression = `${expression}+${window.CHARACTER_AVTT_SETTINGS.damageRoll}`;
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    else if((rollType == 'to hit' || rollType == 'attack') && window.CHARACTER_AVTT_SETTINGS?.hitRoll?.match(allDiceRegex)){
+        expression = `${expression}+${window.CHARACTER_AVTT_SETTINGS.hitRoll}`;
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    else if((rollType == 'check') && window.CHARACTER_AVTT_SETTINGS?.checkRoll?.match(allDiceRegex)){
+        expression = `${expression}+${window.CHARACTER_AVTT_SETTINGS.checkRoll}`;
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+     else if((rollType == 'save') && window.CHARACTER_AVTT_SETTINGS?.saveRoll?.match(allDiceRegex)){
+        expression = `${expression}+${window.CHARACTER_AVTT_SETTINGS.saveRoll}`;
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    
 
     const followingText = $(rollButton)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
-  
+
+
+
+    
+
     return {
       roll: roll,
       expression: expression,

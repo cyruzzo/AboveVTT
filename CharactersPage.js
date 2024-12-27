@@ -407,11 +407,7 @@ const debounceRemoveRPGRoller =  mydebounce(() => {
 
 
 function convertToRPGRoller(){
-    if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-      $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller')
-      $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-      return;
-    }
+
     let urlSplit = window.location.href.split("/");
     if(urlSplit.length > 0 && !is_abovevtt_page()) {
       window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
@@ -426,9 +422,7 @@ function convertToRPGRoller(){
           else{
              rollData = getRollData(this)
           }
-          if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-            return;
-          }
+
           e.stopPropagation();
           e.preventDefault();
 
@@ -726,9 +720,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         let rollData = {} 
         rollData = getRollData(this);
-        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-          return;
-        }
+
         e.stopImmediatePropagation();
         
         window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType);
@@ -744,9 +736,7 @@ function observe_character_sheet_changes(documentToObserve) {
         else{
            rollData = getRollData(this)
         }
-        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-          return;
-        }
+
         e.stopPropagation();
         e.preventDefault();
 
@@ -929,6 +919,30 @@ function observe_character_sheet_changes(documentToObserve) {
               min: '1',
               step: '1',
               defaultValue: "20"
+            },
+            "hitRoll":{
+              label: "Added to Attack Rolls",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "damageRoll":{
+              label: "Added to Damage Rolls",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "checkRoll":{
+              label: "Added to Ability Checks",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "saveRoll":{
+              label: "Added to Saves Rolls",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
             }
         }
         let options = $(`<div id='icon-roll-options' 
@@ -948,6 +962,7 @@ function observe_character_sheet_changes(documentToObserve) {
               border-radius: 15px;
               border: 1px solid var(--theme-contrast);
               color: var(--theme-contrast);
+              overflow: scroll;
             '>
         </div>`)
         let closeOptions = $(`<div id='close-icon-roll-options' 
@@ -1252,7 +1267,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }    
     }
 
-
+    debounceConvertToRPGRoller();
 
 
     
@@ -1261,24 +1276,6 @@ function observe_character_sheet_changes(documentToObserve) {
       try {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
-         mutation.addedNodes.forEach(function(added_node){
-          if($(added_node).hasClass('integrated-dice__container') || $(added_node).find('.integrated-dice__container')){
-            if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top){
-              debounceConvertToRPGRoller();
-            }
-            else{
-              $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-              $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller') 
-            }         
-          }
-        })
-        if(mutationTarget[0].nodeName == 'BUTTON' && mutationTarget.attr('name') == 'rpgRoller'){
-          if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
-            debounceConvertToRPGRoller();
-          else
-            $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
-            $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-        }
         
         if(is_abovevtt_page()){
           mutation.removedNodes.forEach(function(removed_node) {
