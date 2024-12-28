@@ -60,7 +60,7 @@
     background-color: transparent;
     outline: 0px;
     border: 0px;
-    margin: 0px;
+    margin: 2px;
     border-radius: 0px;
     cursor: pointer;
     user-select: none;
@@ -77,7 +77,7 @@
     width: 100%;
     box-sizing: border-box;
     text-align: left;
-    padding: 8px 16px;
+    padding: 0px 16px 0px 0px;
     transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
@@ -89,12 +89,14 @@
     text-align: left;
     cursor: pointer;
     user-select: none;
+    justify-content: center;
+    margin: 0px 6px;
 }
 
 .dcm-svg {
     user-select: none;
-    width: 1em;
-    height: 1em;
+    width: 20px;
+    height: 20px;
     display: inline-block;
     fill: currentcolor;
     flex-shrink: 0;
