@@ -22,11 +22,11 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     if (expression === "1d20" || /^1d20/g.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
         menu.section("ROLL WITH:", s => s
-            .row("Super Advantage", svg_advantage(), false)
+            .row("Super Advantage", `${svg_advantage()}${svg_advantage()}`, false)
             .row("Advantage", svg_advantage(), false)
             .row("Flat (One Die)", svg_flat(), true)
             .row("Disadvantage", svg_disadvantage(), false)
-            .row("Super Disadvantage", svg_disadvantage(), false)
+            .row("Super Disadvantage", `${svg_disadvantage()}${svg_disadvantage()}`, false)
             .expressionRow('Roll: ', expression, function(newExpression){
                 expression = newExpression;
             })
