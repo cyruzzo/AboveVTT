@@ -921,25 +921,25 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "20"
             },
             "hitRoll":{
-              label: "Added to all Attack Rolls",
+              label: "Added to Attacks",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "damageRoll":{
-              label: "Added to all Damage Rolls",
+              label: "Added to Damage",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "checkRoll":{
-              label: "Added to all Ability Checks",
+              label: "Added to Ability Checks",
               type: "input",
               inputType: "text",
               defaultValue: ""
             },
             "saveRoll":{
-              label: "Added to all Saves",
+              label: "Added to Saves",
               type: "input",
               inputType: "text",
               defaultValue: ""
@@ -949,7 +949,8 @@ function observe_character_sheet_changes(documentToObserve) {
               style= 'z-index: 100000;
               width: 20%;
               height: 20%;
-              width: 300px;
+              width: 350px;
+              max-width: 80%;
               height: 300px;
               position: fixed;
               display: none;
@@ -985,7 +986,7 @@ function observe_character_sheet_changes(documentToObserve) {
               window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
             }
            let wrapper = $(`
-             <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 10px 0px 10px 0px;align-items: center;' data-option-name="${i}">
+             <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 5px 0px;align-items: center;' data-option-name="${i}">
                <div style="margin-right: 3px; margin-left: 10px; flex-grow: 1;font-weight: 700;font-size: 14px;">${settingOption[i].label}:</div>
              </div>
            `);
@@ -1135,6 +1136,11 @@ function observe_character_sheet_changes(documentToObserve) {
       if($(`style#advantageHover`).length == 0){
           $('body').append(`
             <style id='advantageHover'>
+              div#icon-roll-options input,
+              div#icon-roll-options select{
+                  width: 140px;
+                  max-width:50%
+              }
               menu[class*='styles_tabs']>li>button[class*='styles_tabButton']{
                   max-height: 26px;
               }
