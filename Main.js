@@ -448,7 +448,7 @@ function remove_loading_overlay() {
  * @param {Function} callback trigged after map is loaded
  */
 async function load_scenemap(url, is_video = false, width = null, height = null, UVTTFile = false, callback = null) {
-
+	clearInterval(window.YTINTERVAL);
 	$("#scene_map_container").toggleClass('map-loading', true);
 
 	$("[id='scene_map']").remove();
@@ -476,7 +476,9 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			videoId: videoid,
 			playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0 },
 			events: {
-				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
+				'onStateChange': function(event) {  
+					if (event.data == 0) window.YTPLAYER.seekTo(0); 
+				},
 				'onReady': function(e) { 
 					let ytvolume=window.MIXER?.state()?.animatedMap?.volume != undefined ? window.MIXER?.state()?.animatedMap?.volume : $("#youtube_volume").val();
 					if(ytvolume)
@@ -484,29 +486,22 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 					else
 						e.target.setVolume(25);
 					e.target.playVideo();
+
+	        const loopTime = window.YTPLAYER.playerInfo.duration - 0.15;
+
+	        window.YTINTERVAL = setInterval(function (){
+	          const current_time = window.YTPLAYER.getCurrentTime();
+	          if (current_time > loopTime) {
+	            	window.YTPLAYER.seekTo(0);
+								window.YTPLAYER.playVideo();
+	          }
+	        }, 10);
 				}			
 			}
 		});
 
 
-		let smooth = function() {
-			if (window.YTPLAYER.playerInfo.playerState != 1){ // Something went wrong. tries to reset
-				window.YTPLAYER.seekTo(0);
-				window.YTPLAYER.playVideo();
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
-				return;
-			}
-			remaining = window.YTPLAYER.playerInfo.duration - window.YTPLAYER.playerInfo.currentTime;
-			if (remaining < 2) { // We should be able to just skip on the last second
-				window.YTPLAYER.seekTo(0);
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
-			}
-			else {
-				window.YTTIMEOUT = setTimeout(smooth, (remaining / 2 ) * 1000);
-			}
-		};
 
-		window.YTTIMEOUT = setTimeout(smooth, 5000);
 		callback();
 		$("#scene_map_container").toggleClass('map-loading', false);
 	}
