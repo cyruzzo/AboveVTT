@@ -2769,6 +2769,8 @@ button.roll-button-mod.minus {
     align-items: center;
     text-align: center;
     text-transform: uppercase;
+    z-index: 100;
+    position: relative;
 }
 #above-vtt-error-message .github-issue-workaround:before {
     content: "workaround available";

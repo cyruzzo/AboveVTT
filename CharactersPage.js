@@ -1037,7 +1037,7 @@ function observe_character_sheet_changes(documentToObserve) {
           $('#close-icon-roll-options').css('display', 'block');
           $('#icon-roll-options').css('display', 'block');
         }) 
-        $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
+        $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(settings)
       }
 
       $(attackIcons).addClass("above-vtt-visited");
