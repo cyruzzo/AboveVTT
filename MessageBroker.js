@@ -76,7 +76,7 @@ const debounceHandleInjected = mydebounce(() => {
 				add_journal_roll_buttons(li);
 				window.JOURNAL.add_journal_tooltip_targets(li);
 				add_stat_block_hover(li)
-				let newheight = li.height();
+				let newheight = li.find('>[class*="MessageContainer-Flex"]').height();
 				li.height(newheight);
 			
 				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
@@ -94,6 +94,8 @@ const debounceHandleInjected = mydebounce(() => {
 								li.find('.chat-link').css('display', 'none');
 							}
 							$(img[i]).attr('href', img[i].src);
+							newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+							li.height(newheight);
 						}
 						$(img[i]).off('error').on("error", function (e) {
 	            let el = $(e.target)
@@ -139,6 +141,8 @@ const debounceHandleInjected = mydebounce(() => {
 											});
 											li.find('.chat-link').css('display', 'none');
 										}
+										newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+										li.height(newheight);
 						}, false);
 					}
 				}
