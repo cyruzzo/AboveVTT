@@ -1065,16 +1065,13 @@ async function harvest_game_id() {
   }
 
   if (is_characters_page()) {
-    const campaignSummaryButton = $(".ddbc-campaign-summary, [class*='styles_campaignSummary']");
-    if (campaignSummaryButton.length > 0) {
-      if ($(".ct-campaign-pane__name-link").length === 0) {
-        campaignSummaryButton.click(); // campaign sidebar is closed. open it
-      }
-      const fromLink = $(".ct-campaign-pane__name-link").attr("href")?.split("/")?.pop();
-      if (typeof fromLink === "string" && fromLink.length > 1) {
-        return fromLink;
-      }
+   
+    
+    const fromLink = $("[href^='/games/']").attr("href")?.split("/")?.pop();
+    if (typeof fromLink === "string" && fromLink.length > 1) {
+      return fromLink;
     }
+    
 
     // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();
