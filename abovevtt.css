@@ -6839,10 +6839,8 @@ input.max_hp[disabled]{
     width: 90%;
     height: 90%;
     position: absolute;
-    top: 0;
-    left: 0;
-    margin: 5% 0 0 5%;
 }
+
 
 
 
@@ -6863,7 +6861,7 @@ input.max_hp[disabled]{
     left: -5px;
     right: -5px;
     bottom: -5px;
-    background: radial-gradient(transparent 45% 67%, #00000088 74% 94%);
+    background: radial-gradient(transparent 68%, #000000 72%);
     border-radius: 50%;
     z-index: 1;
     position: absolute;
@@ -6876,16 +6874,16 @@ input.max_hp[disabled]{
     bottom: -2px;
 }
 [data-notatoken] .base.circle:before{
-    top: calc(-4px / var(--scene-scale));
-    left: calc(-4px / var(--scene-scale));
-    right: calc(-4px / var(--scene-scale));
-    bottom: calc(-4px / var(--scene-scale));
+    top: min(-1px, calc(-4px / var(--scene-scale)));
+    left: min(-1px, calc(-4px / var(--scene-scale)));
+    right: min(-1px, calc(-4px / var(--scene-scale)));
+    bottom: min(-1px, calc(-4px / var(--scene-scale)));
 }
 [data-notatoken] .base.large-or-smaller-base.circle:before{
-    top: calc(-3px / var(--scene-scale));
-    left: calc(-3px / var(--scene-scale));
-    right: calc(-3px / var(--scene-scale));
-    bottom: calc(-3px / var(--scene-scale));
+    top: min(-1px, calc(-3px / var(--scene-scale)));
+    left: min(-1px, calc(-3px / var(--scene-scale)));
+    right: min(-1px, calc(-3px / var(--scene-scale)));
+    bottom: min(-1px, calc(-3px / var(--scene-scale)));
 }
 
 .token>.token-image{
@@ -7450,7 +7448,7 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(100% - 4px);
+    --mask-size:calc(100% - 7px);
     border-radius: 50%;
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
     height: calc(100% - 7px);
@@ -7514,10 +7512,10 @@ button span.onedrive-btn-status{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-   top: calc(4px / var(--scene-scale));
-   left: calc(4px / var(--scene-scale));
-   right: calc(4px / var(--scene-scale));
-   bottom: calc(4px / var(--scene-scale));
+   top: max(1px, calc(4px / var(--scene-scale)));
+   left: max(1px, calc(4px / var(--scene-scale)));
+   right: max(1px, calc(4px / var(--scene-scale)));
+   bottom: max(1px, calc(4px / var(--scene-scale)));
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
@@ -7526,10 +7524,10 @@ button span.onedrive-btn-status{
     bottom: 2px;
 }
 .VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
-   top: calc(2px / var(--scene-scale));
-    left: calc(2px / var(--scene-scale));
-    right: calc(2px / var(--scene-scale));
-    bottom: calc(2px / var(--scene-scale));
+    top: max(1px, calc(2px / var(--scene-scale)));
+    left: max(1px, calc(2px / var(--scene-scale)));
+    right: max(1px, calc(2px / var(--scene-scale)));
+    bottom: max(1px, calc(2px / var(--scene-scale)));
 }
 .hpvisualbar{
     pointer-events: none;
