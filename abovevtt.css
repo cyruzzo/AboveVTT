@@ -6844,12 +6844,7 @@ input.max_hp[disabled]{
     margin: 5% 0 0 5%;
 }
 
-.token.underDarkness>.base,
-.token.underDarkness>.base ~ .hpvisualbar,
-.token[data-notatoken]>.base,
-.token[data-notatoken]>.base ~ .hpvisualbar{
-    margin: round(down, 5%, 1px) 0 0 round(up, 5%, 1px);
-}
+
 
 .VTTToken .base{
     filter: drop-shadow(0.5px 0px 1px #000b);
