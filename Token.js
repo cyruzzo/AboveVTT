@@ -987,8 +987,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 10;
-				tokenHeight = tokenHeight - 10;
+				tokenWidth = tokenWidth - 16;
+				tokenHeight = tokenHeight - 16;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
