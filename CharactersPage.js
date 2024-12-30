@@ -339,6 +339,7 @@ function read_inspiration(container = $(document)) {
 
 // Good canidate for service worker
 async function init_characters_pages(container = $(document)) {
+
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
     window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
@@ -348,61 +349,7 @@ async function init_characters_pages(container = $(document)) {
   init_character_sheet_page();
   init_character_list_page_without_avtt();
 
-  if(!is_abovevtt_page()){
-    tabCommunicationChannel.addEventListener ('message', (event) => {
-      if(event.data.msgType == 'setupObserver'){
-        if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
-          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-        }else{
-          convertToRPGRoller();
-        }
-
-        window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
-        if(window.sendToTab != false || event.data.tab == undefined){
-          window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
-        }
-        if(window.sendToTabRPGRoller != false || event.data.rpgTab == undefined){
-          window.sendToTabRPGRoller = (window.self != window.top) ? event.data.iframeTab : event.data.rpgTab;   
-        }
-      }
-      if(event.data.msgType =='removeObserver'){
-        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-        delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-        window.sendToTabRPGRoller = undefined;
-        window.sendToTab = undefined;
-        setTimeout(function(){
-          tabCommunicationChannel.postMessage({
-           msgType: 'isAboveOpen'
-          });
-        }, 300)
-        
-      }
-      if(event.data.msgType =='disableSendToTab' && window.self == window.top){
-        window.sendToTab = undefined;
-      }
-
-
-    })
-    tabCommunicationChannel.postMessage({
-      msgType: 'isAboveOpen'
-    })
-
-
-    window.diceRoller = new DiceRoller(); 
-    if(!window.ddbConfigJson)
-      window.ddbConfigJson = await DDBApi.fetchConfigJson();
-  }
-  harvest_game_id()                 // find our campaign id
-    .then(set_game_id)              // set it to window.gameId
-    .then(harvest_campaign_secret)  // find our join link
-    .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
-    .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
-    .then(async () => {
-      window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
-      window.myUser = $('#message-broker-client').attr('data-userid');
-    })
+ 
   
 }
 
@@ -462,7 +409,7 @@ function convertToRPGRoller(){
 
 
 /** actions to take on the character sheet when AboveVTT is NOT running */
-function init_character_sheet_page() {
+async function init_character_sheet_page() {
   if (!is_characters_page()) return;
 
   // check for name and image
@@ -490,6 +437,63 @@ function init_character_sheet_page() {
   window.addEventListener('resize', function(event) {
     inject_join_exit_abovevtt_button();
   }); 
+
+  if(!is_abovevtt_page()){
+    tabCommunicationChannel.addEventListener ('message', (event) => {
+      if(event.data.msgType == 'setupObserver'){
+        if(event.data.tab == undefined && event.data.rpgRoller != true && window.self==window.top){
+          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+          $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
+        }else{
+          convertToRPGRoller();
+        }
+
+        window.EXPERIMENTAL_SETTINGS['rpgRoller'] = event.data.rpgRoller;
+        if(window.sendToTab != false || event.data.tab == undefined){
+          window.sendToTab = (window.self != window.top) ? event.data.iframeTab : event.data.tab;     
+        }
+        if(window.sendToTabRPGRoller != false || event.data.rpgTab == undefined){
+          window.sendToTabRPGRoller = (window.self != window.top) ? event.data.iframeTab : event.data.rpgTab;   
+        }
+      }
+      if(event.data.msgType =='removeObserver'){
+        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+        $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
+        delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
+        window.sendToTabRPGRoller = undefined;
+        window.sendToTab = undefined;
+        setTimeout(function(){
+          tabCommunicationChannel.postMessage({
+           msgType: 'isAboveOpen'
+          });
+        }, 300)
+        
+      }
+      if(event.data.msgType =='disableSendToTab' && window.self == window.top){
+        window.sendToTab = undefined;
+      }
+    })
+    tabCommunicationChannel.postMessage({
+      msgType: 'isAboveOpen'
+    })
+
+
+    window.diceRoller = new DiceRoller(); 
+    if(!window.ddbConfigJson)
+      window.ddbConfigJson = await DDBApi.fetchConfigJson();
+
+    setTimeout(function(){    
+      harvest_game_id()                 // find our campaign id
+        .then(set_game_id)              // set it to window.gameId
+        .then(harvest_campaign_secret)  // find our join link
+        .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
+        .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
+        .then(async () => {
+          window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
+          window.myUser = $('#message-broker-client').attr('data-userid');
+        })
+    }, 5000)
+  }
 }
 
 /** actions to take on the characters list when AboveVTT is NOT running */
