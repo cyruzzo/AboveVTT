@@ -394,6 +394,16 @@ async function init_characters_pages(container = $(document)) {
     if(!window.ddbConfigJson)
       window.ddbConfigJson = await DDBApi.fetchConfigJson();
   }
+  harvest_game_id()                 // find our campaign id
+    .then(set_game_id)              // set it to window.gameId
+    .then(harvest_campaign_secret)  // find our join link
+    .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
+    .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
+    .then(async () => {
+      window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
+      window.myUser = $('#message-broker-client').attr('data-userid');
+    })
+  
 }
 
 const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
