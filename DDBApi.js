@@ -223,7 +223,7 @@ class DDBApi {
     if(window.ddbConfigJson != undefined)
       return window.ddbConfigJson
     const url = "https://www.dndbeyond.com/api/config/json";
-    return await DDBApi.fetchJsonWithToken(url);
+    return await $.get(url);
   }
 
   static async fetchActiveCharacters(campaignId) {
