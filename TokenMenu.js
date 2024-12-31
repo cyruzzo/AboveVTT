@@ -831,7 +831,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				}
 				t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 					window.MB.sendMessage('custom/myVTT/token', t.options);
-				}, 10);
+				}, 300);
 				t.place_sync_persist();
 				ct_add_token(window.TOKEN_OBJECTS[group], false, clickEvent.shiftKey, clickEvent.ctrlKey)
 			}

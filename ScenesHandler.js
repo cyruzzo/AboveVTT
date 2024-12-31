@@ -1013,7 +1013,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			window.TOKEN_OBJECTS[id].sync = mydebounce(function(e) {
 				if(window.TOKEN_OBJECTS[id])
 					window.MB.sendMessage('custom/myVTT/token', window.TOKEN_OBJECTS[id].options);
-			}, 10);
+			}, 300);
 		}
 
 		window.TOKEN_OBJECTS[id].place_sync_persist();
