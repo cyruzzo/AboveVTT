@@ -967,8 +967,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 10;
-				tokenHeight = tokenHeight - 10;
+				tokenWidth = tokenWidth - window.CURRENT_SCENE_DATA.hpps/10;
+				tokenHeight = tokenHeight - window.CURRENT_SCENE_DATA.vpps/10;
 			}
 			token.css('--token-hp-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
@@ -983,8 +983,8 @@ class Token {
 		} 
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 3;
-				tokenHeight = tokenHeight - 3;
+				tokenWidth = tokenWidth - Math.min(1, window.CURRENT_SCENE_DATA.hpps/40);
+				tokenHeight = tokenHeight - Math.min(1, window.CURRENT_SCENE_DATA.vpps/40);
 			}
 			token.css('--token-border-color', this.options.color);
 			$("#combat_area tr[data-target='" + this.options.id + "'] img[class*='Avatar']").css("border-color", this.options.color);
@@ -994,8 +994,8 @@ class Token {
 		}
 		else {
 			if(this.options.tokenStyleSelect === "circle" || this.options.tokenStyleSelect === "square"){
-				tokenWidth = tokenWidth - 16;
-				tokenHeight = tokenHeight - 16;
+				tokenWidth = tokenWidth - window.CURRENT_SCENE_DATA.hpps/10;
+				tokenHeight = tokenHeight - window.CURRENT_SCENE_DATA.vpps/10;
 			}
 			token.css('--token-hpbar-aura-color', tokenHpAuraColor);
 			if(this.tempHp) {
