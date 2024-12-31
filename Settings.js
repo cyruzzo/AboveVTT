@@ -1594,9 +1594,11 @@ function import_readfile() {
 			AboveApi.migrateScenes(window.gameId, DataFile.scenes)
 				.then(() => {
 					$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
-					$(".import-loading-indicator .loading-status-indicator__subtext").text("Import complete. Please rejoin AboveVTT");
-					alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
-					location.reload();
+					setTimeout(function(){
+						alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+						location.reload();
+					}, 2000) // allow time for journal/token customization persist via indexedDB onsuccess.
+
 				})
 				.catch(error => {
 					showError(error, "cloud_migration failed");
