@@ -2823,6 +2823,16 @@ function build_source_book_chapter_import_section(sceneSet) {
 				folderPath: folderPath,
 				parentId: parentId
 			}
+			if(Array.isArray(sceneData[i].tokens)){
+				let tokensObject = {}
+				for(let token in sceneData[i].tokens){
+
+					let tokenId = sceneData[i].tokens[token].id;
+					let statBlockID = sceneData[i].tokens[token].statBlock
+					tokensObject[tokenId] = sceneData[i].tokens[token];		
+				}	
+				sceneData[i].tokens = tokensObject;
+			}
 		}
 
 		AboveApi.migrateScenes(window.gameId, sceneData)
@@ -3093,6 +3103,15 @@ async function build_tutorial_import_list_item(scene, logo, allowMagnific = true
 			folderPath: folderPath,
 			parentId: parentId
 		};
+		if(Array.isArray(importData.tokens)){
+			let tokensObject = {}
+			for(let token in importData.tokens){
+
+				let tokenId = importData.tokens[token].id;
+				tokensObject[tokenId] = importData.tokens[token];		
+			}	
+			importData.tokens = tokensObject;
+		}
 
 		AboveApi.migrateScenes(window.gameId, [importData])
 			.then(() => {
