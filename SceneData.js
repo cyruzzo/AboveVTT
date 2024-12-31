@@ -56,7 +56,7 @@ async function export_scene_import_data(){
 		if(window.JOURNAL.notes[tokenId] != undefined){
 			if(DataFile[uuid].notes == undefined)
 				DataFile[uuid].notes = {};
-			DataFile[uuid].notes[tokenID] = window.JOURNAL.notes[tokenID];
+			DataFile[uuid].notes[tokenId] = window.JOURNAL.notes[tokenId];
 		}
 		tokensObject[tokenId] = DataFile[uuid].tokens[token];		
 	}	

@@ -1,7685 +1,14925 @@
 function get_scene_data_loe() {
 	return {
-	"loe/boulderwood-path/Map601boulderwoodpath": {
-		"itemType": "scene",
-		
-		"reveals": [
-			[
-				0,
-				0,
-				0,
-				0,
-				2,
-				0,
-				1
-			],
-			[
-				115,
-				1029,
-				35,
-				15,
-				0,
-				0,
-				1
-			],
-			[
+		"loe/boulderwood-path/Map601boulderwoodpath": {
+			"itemType": "scene",
+			
+			"reveals": [
 				[
-					{
-						"x": 47,
-						"y": 1032
-					},
-					{
-						"x": 194,
-						"y": 927
-					},
-					{
-						"x": 319,
-						"y": 855
-					},
-					{
-						"x": 496,
-						"y": 800
-					},
-					{
-						"x": 633,
-						"y": 697
-					},
-					{
-						"x": 725,
-						"y": 543
-					},
-					{
-						"x": 862,
-						"y": 369
-					},
-					{
-						"x": 920,
-						"y": 197
-					},
-					{
-						"x": 927,
-						"y": 20
-					},
-					{
-						"x": 922,
-						"y": -45
-					},
-					{
-						"x": 3,
-						"y": 3
-					},
-					{
-						"x": 3,
-						"y": 1059
-					}
+					0,
+					0,
+					0,
+					0,
+					2,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": 12,
-						"y": 1057
-					},
-					{
-						"x": 269,
-						"y": 895
-					},
-					{
-						"x": 516,
-						"y": 788
-					},
-					{
-						"x": 655,
-						"y": 697
-					},
-					{
-						"x": 670,
-						"y": 583
-					},
-					{
-						"x": 840,
-						"y": 419
-					},
-					{
-						"x": 910,
-						"y": 246
-					},
-					{
-						"x": 934,
-						"y": -3
-					},
-					{
-						"x": -2,
-						"y": 2
-					}
+					115,
+					1029,
+					35,
+					15,
+					0,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				1,
-				1
-			],
-			[
 				[
-					{
-						"x": -17,
-						"y": 2292
-					},
-					{
-						"x": 462,
-						"y": 2182
-					},
-					{
-						"x": 844,
-						"y": 2270
-					},
-					{
-						"x": 1595,
-						"y": 2309
-					},
-					{
-						"x": 2016,
-						"y": 2495
-					},
-					{
-						"x": 2302,
-						"y": 2843
-					},
-					{
-						"x": 2380,
-						"y": 2999
-					},
-					{
-						"x": 0,
-						"y": 3009
-					}
+					[
+						{
+							"x": 47,
+							"y": 1032
+						},
+						{
+							"x": 194,
+							"y": 927
+						},
+						{
+							"x": 319,
+							"y": 855
+						},
+						{
+							"x": 496,
+							"y": 800
+						},
+						{
+							"x": 633,
+							"y": 697
+						},
+						{
+							"x": 725,
+							"y": 543
+						},
+						{
+							"x": 862,
+							"y": 369
+						},
+						{
+							"x": 920,
+							"y": 197
+						},
+						{
+							"x": 927,
+							"y": 20
+						},
+						{
+							"x": 922,
+							"y": -45
+						},
+						{
+							"x": 3,
+							"y": 3
+						},
+						{
+							"x": 3,
+							"y": 1059
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				1,
-				1
-			],
-			[
 				[
-					{
-						"x": 2478,
-						"y": -2
-					},
-					{
-						"x": 2549,
-						"y": 188
-					},
-					{
-						"x": 2226,
-						"y": 590
-					},
-					{
-						"x": 2077,
-						"y": 854
-					},
-					{
-						"x": 1896,
-						"y": 1218
-					},
-					{
-						"x": 2119,
-						"y": 1331
-					},
-					{
-						"x": 2576,
-						"y": 1370
-					},
-					{
-						"x": 2889,
-						"y": 1563
-					},
-					{
-						"x": 3043,
-						"y": 1683
-					},
-					{
-						"x": 3014,
-						"y": 2
-					}
+					[
+						{
+							"x": 12,
+							"y": 1057
+						},
+						{
+							"x": 269,
+							"y": 895
+						},
+						{
+							"x": 516,
+							"y": 788
+						},
+						{
+							"x": 655,
+							"y": 697
+						},
+						{
+							"x": 670,
+							"y": 583
+						},
+						{
+							"x": 840,
+							"y": 419
+						},
+						{
+							"x": 910,
+							"y": 246
+						},
+						{
+							"x": 934,
+							"y": -3
+						},
+						{
+							"x": -2,
+							"y": 2
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					1,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				1,
-				1
-			],
-			[
-				408,
-				1171,
-				-674,
-				-433,
-				0,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": -7,
-						"y": 735
-					},
-					{
-						"x": 368,
-						"y": 639
-					},
-					{
-						"x": 643,
-						"y": 589
-					},
-					{
-						"x": 766,
-						"y": 497
-					},
-					{
-						"x": 924,
-						"y": 691
-					},
-					{
-						"x": 412,
-						"y": 1089
-					}
+					[
+						{
+							"x": -17,
+							"y": 2292
+						},
+						{
+							"x": 462,
+							"y": 2182
+						},
+						{
+							"x": 844,
+							"y": 2270
+						},
+						{
+							"x": 1595,
+							"y": 2309
+						},
+						{
+							"x": 2016,
+							"y": 2495
+						},
+						{
+							"x": 2302,
+							"y": 2843
+						},
+						{
+							"x": 2380,
+							"y": 2999
+						},
+						{
+							"x": 0,
+							"y": 3009
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					1,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			],
-			[
-				533,
-				2171,
-				-127,
-				59,
-				0,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": 1717,
-						"y": 2360
-					},
-					{
-						"x": 1395,
-						"y": 2343
-					},
-					{
-						"x": 1005,
-						"y": 2312
-					},
-					{
-						"x": 708,
-						"y": 2321
-					},
-					{
-						"x": 558,
-						"y": 2306
-					},
-					{
-						"x": 431,
-						"y": 2349
-					},
-					{
-						"x": 195,
-						"y": 2464
-					},
-					{
-						"x": 0,
-						"y": 2614
-					},
-					{
-						"x": 0,
-						"y": 2269
-					},
-					{
-						"x": 603,
-						"y": 2081
-					},
-					{
-						"x": 1756,
-						"y": 2265
-					}
+					[
+						{
+							"x": 2478,
+							"y": -2
+						},
+						{
+							"x": 2549,
+							"y": 188
+						},
+						{
+							"x": 2226,
+							"y": 590
+						},
+						{
+							"x": 2077,
+							"y": 854
+						},
+						{
+							"x": 1896,
+							"y": 1218
+						},
+						{
+							"x": 2119,
+							"y": 1331
+						},
+						{
+							"x": 2576,
+							"y": 1370
+						},
+						{
+							"x": 2889,
+							"y": 1563
+						},
+						{
+							"x": 3043,
+							"y": 1683
+						},
+						{
+							"x": 3014,
+							"y": 2
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					1,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": 2236,
-						"y": 484
-					},
-					{
-						"x": 2392,
-						"y": 577
-					},
-					{
-						"x": 2534,
-						"y": 546
-					},
-					{
-						"x": 2628,
-						"y": 347
-					},
-					{
-						"x": 2618,
-						"y": 246
-					},
-					{
-						"x": 2536,
-						"y": -21
-					},
-					{
-						"x": 2308,
-						"y": -47
-					}
+					408,
+					1171,
+					-674,
+					-433,
+					0,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": 2019,
-						"y": 1291
-					},
-					{
-						"x": 2017,
-						"y": 1147
-					},
-					{
-						"x": 2017,
-						"y": 1001
-					},
-					{
-						"x": 2105,
-						"y": 851
-					},
-					{
-						"x": 2224,
-						"y": 644
-					},
-					{
-						"x": 2314,
-						"y": 509
-					},
-					{
-						"x": 2175,
-						"y": 509
-					},
-					{
-						"x": 1843,
-						"y": 1114
-					},
-					{
-						"x": 1838,
-						"y": 1243
-					}
+					[
+						{
+							"x": -7,
+							"y": 735
+						},
+						{
+							"x": 368,
+							"y": 639
+						},
+						{
+							"x": 643,
+							"y": 589
+						},
+						{
+							"x": 766,
+							"y": 497
+						},
+						{
+							"x": 924,
+							"y": 691
+						},
+						{
+							"x": 412,
+							"y": 1089
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			],
-			[
 				[
-					{
-						"x": 2306,
-						"y": 536
-					},
-					{
-						"x": 2440,
-						"y": 386
-					},
-					{
-						"x": 2520,
-						"y": 248
-					},
-					{
-						"x": 2554,
-						"y": 148
-					},
-					{
-						"x": 2528,
-						"y": -8
-					},
-					{
-						"x": 2682,
-						"y": -18
-					},
-					{
-						"x": 2682,
-						"y": 575
-					},
-					{
-						"x": 2538,
-						"y": 642
-					}
+					533,
+					2171,
+					-127,
+					59,
+					0,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				1,
-				1
-			],
-			[
 				[
-					{
-						"x": 2411,
-						"y": 531
-					},
-					{
-						"x": 2341,
-						"y": 558
-					},
-					{
-						"x": 2343,
-						"y": 599
-					},
-					{
-						"x": 2421,
-						"y": 601
-					}
+					[
+						{
+							"x": 1717,
+							"y": 2360
+						},
+						{
+							"x": 1395,
+							"y": 2343
+						},
+						{
+							"x": 1005,
+							"y": 2312
+						},
+						{
+							"x": 708,
+							"y": 2321
+						},
+						{
+							"x": 558,
+							"y": 2306
+						},
+						{
+							"x": 431,
+							"y": 2349
+						},
+						{
+							"x": 195,
+							"y": 2464
+						},
+						{
+							"x": 0,
+							"y": 2614
+						},
+						{
+							"x": 0,
+							"y": 2269
+						},
+						{
+							"x": 603,
+							"y": 2081
+						},
+						{
+							"x": 1756,
+							"y": 2265
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				1,
-				1
-			],
-			[
 				[
-					{
-						"x": 2027,
-						"y": 1291
-					},
-					{
-						"x": 2267,
-						"y": 1297
-					},
-					{
-						"x": 2596,
-						"y": 1264
-					},
-					{
-						"x": 2868,
-						"y": 1494
-					},
-					{
-						"x": 3002,
-						"y": 1510
-					},
-					{
-						"x": 3033,
-						"y": 1711
-					},
-					{
-						"x": 2799,
-						"y": 1738
-					}
+					[
+						{
+							"x": 2236,
+							"y": 484
+						},
+						{
+							"x": 2392,
+							"y": 577
+						},
+						{
+							"x": 2534,
+							"y": 546
+						},
+						{
+							"x": 2628,
+							"y": 347
+						},
+						{
+							"x": 2618,
+							"y": 246
+						},
+						{
+							"x": 2536,
+							"y": -21
+						},
+						{
+							"x": 2308,
+							"y": -47
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				3,
-				0,
-				1
-			]
-		],
-		"gridStrokeNumberInput": "0.5",
-		"scale": 100,
-		"vpps": "100",
-		"darkness_filter_number": "100",
-		"title": "Map: Boulderwood Path ",
-		"fog_of_war": "1",
-		
-		"upsq": "ft",
-		"folderPath": "/Boulderwood Path",
-		"scaleX": 1,
-		"scaleY": 1,
-		"playlist": "0",
-		"gridType": "1",
-		"drawings": [
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2598,
-				2771,
-				2705,
-				3082,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				-55,
-				2282,
-				250,
-				2111,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				250,
-				2111,
-				599,
-				2073,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				599,
-				2073,
-				852,
-				2125,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				852,
-				2125,
-				992,
-				2086,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				992,
-				2086,
-				1333,
-				2031,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1333,
-				2031,
-				1680,
-				2128,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1680,
-				2128,
-				1943,
-				2210,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1943,
-				2210,
-				2397,
-				2458,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2397,
-				2458,
-				2598,
-				2771,
-				6,
-				1,
-				false
-			],
-			[
-				"polygon",
-				"light",
-				"rgba(153, 153, 153, 0.261)",
 				[
-					{
-						"x": -34,
-						"y": 2302
-					}
+					[
+						{
+							"x": 2019,
+							"y": 1291
+						},
+						{
+							"x": 2017,
+							"y": 1147
+						},
+						{
+							"x": 2017,
+							"y": 1001
+						},
+						{
+							"x": 2105,
+							"y": 851
+						},
+						{
+							"x": 2224,
+							"y": 644
+						},
+						{
+							"x": 2314,
+							"y": 509
+						},
+						{
+							"x": 2175,
+							"y": 509
+						},
+						{
+							"x": 1843,
+							"y": 1114
+						},
+						{
+							"x": 1838,
+							"y": 1243
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
 				],
-				null,
-				null,
-				null,
-				"100.33333333333333",
-				1
+				[
+					[
+						{
+							"x": 2306,
+							"y": 536
+						},
+						{
+							"x": 2440,
+							"y": 386
+						},
+						{
+							"x": 2520,
+							"y": 248
+						},
+						{
+							"x": 2554,
+							"y": 148
+						},
+						{
+							"x": 2528,
+							"y": -8
+						},
+						{
+							"x": 2682,
+							"y": -18
+						},
+						{
+							"x": 2682,
+							"y": 575
+						},
+						{
+							"x": 2538,
+							"y": 642
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					1,
+					1
+				],
+				[
+					[
+						{
+							"x": 2411,
+							"y": 531
+						},
+						{
+							"x": 2341,
+							"y": 558
+						},
+						{
+							"x": 2343,
+							"y": 599
+						},
+						{
+							"x": 2421,
+							"y": 601
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					1,
+					1
+				],
+				[
+					[
+						{
+							"x": 2027,
+							"y": 1291
+						},
+						{
+							"x": 2267,
+							"y": 1297
+						},
+						{
+							"x": 2596,
+							"y": 1264
+						},
+						{
+							"x": 2868,
+							"y": 1494
+						},
+						{
+							"x": 3002,
+							"y": 1510
+						},
+						{
+							"x": 3033,
+							"y": 1711
+						},
+						{
+							"x": 2799,
+							"y": 1738
+						}
+					],
+					null,
+					null,
+					null,
+					3,
+					0,
+					1
+				]
 			],
-			[
-				"rect",
-				"light",
-				"rgba(153, 153, 153, 0.261)",
-				-60,
-				-23,
-				3162,
-				3113,
-				"100.33333333333333",
-				1
+			"gridStrokeNumberInput": "0.5",
+			"scale": 100,
+			"vpps": "100",
+			"darkness_filter_number": "100",
+			"title": "Map: Boulderwood Path ",
+			"fog_of_war": "1",
+			
+			"upsq": "ft",
+			"folderPath": "/Boulderwood Path",
+			"scaleX": 1,
+			"scaleY": 1,
+			"playlist": "0",
+			"gridType": "1",
+			"drawings": [
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2598,
+					2771,
+					2705,
+					3082,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					-55,
+					2282,
+					250,
+					2111,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					250,
+					2111,
+					599,
+					2073,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					599,
+					2073,
+					852,
+					2125,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					852,
+					2125,
+					992,
+					2086,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					992,
+					2086,
+					1333,
+					2031,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1333,
+					2031,
+					1680,
+					2128,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1680,
+					2128,
+					1943,
+					2210,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1943,
+					2210,
+					2397,
+					2458,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2397,
+					2458,
+					2598,
+					2771,
+					6,
+					1,
+					false
+				],
+				[
+					"polygon",
+					"light",
+					"rgba(153, 153, 153, 0.261)",
+					[
+						{
+							"x": -34,
+							"y": 2302
+						}
+					],
+					null,
+					null,
+					null,
+					"100.33333333333333",
+					1
+				],
+				[
+					"rect",
+					"light",
+					"rgba(153, 153, 153, 0.261)",
+					-60,
+					-23,
+					3162,
+					3113,
+					"100.33333333333333",
+					1
+				],
+				[
+					"rect",
+					"light",
+					"rgba(153, 153, 153, 0.261)",
+					-1170,
+					-253,
+					0,
+					0,
+					"100.33333333333333",
+					1
+				]
 			],
-			[
-				"rect",
-				"light",
-				"rgba(153, 153, 153, 0.261)",
-				-1170,
-				-253,
-				0,
-				0,
-				"100.33333333333333",
-				1
-			]
-		],
-		"fpsq": "5",
-		"tokens": {
-			"03b339cf-b3d9-47b1-8a06-23d7cac75b05": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
+			"fpsq": "5",
+			"tokens": {
+				"03b339cf-b3d9-47b1-8a06-23d7cac75b05": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "03b339cf-b3d9-47b1-8a06-23d7cac75b05",
+					"imgsrc": "https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037166,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2778px",
+					"name": "Venomous Gnoll",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#000040",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Venomous Gnoll",
+					"top": "2214px",
+					"hidehpbar": false,
+					"stat": 4037166,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037166,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"id": "03b339cf-b3d9-47b1-8a06-23d7cac75b05",
-				"imgsrc": "https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
+				"0c2cd0d1-441a-48d4-a34a-6d6fb6b61ef3": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 52,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "0c2cd0d1-441a-48d4-a34a-6d6fb6b61ef3",
+					"imgsrc": "https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037112,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2785px",
+					"name": "Gnoll Brute",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#404000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 52,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Gnoll Brute",
+					"top": "2351px",
+					"hidehpbar": false,
+					"stat": 4037112,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 52,
+						"current": 52,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037112,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"aura2": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
+				"17ca7c3b-00ee-4b13-b462-456569eb293c": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 85,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "17ca7c3b-00ee-4b13-b462-456569eb293c",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/718/638368832438105607.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037157,
+					"square": true,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "2296.13px",
+					"name": "Sky Drake",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#808080",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 85,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Sky Drake",
+					"top": "2107.66px",
+					"hidehpbar": false,
+					"stat": 4037157,
+					"hitPointInfo": {
+						"maximum": 85,
+						"current": 85,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037157,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"aura1": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
+				"21b82e66-9e31-4609-ad4d-4869f8c103f7": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "21b82e66-9e31-4609-ad4d-4869f8c103f7",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "488.374px",
+					"name": "Eye Crow 4",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "209.801px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
+				"32747cdf-1b21-4089-ad50-4473081a0f5e": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 97,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "32747cdf-1b21-4089-ad50-4473081a0f5e",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037125,
+					"square": false,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "2309.97px",
+					"name": "Lupilisk Elder 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 97,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Elder",
+					"top": "1094.3px",
+					"hidehpbar": false,
+					"stat": 4037125,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 97,
+						"current": 97,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037125,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"itemId": 4037166,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2778px",
-				"name": "Venomous Gnoll",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#000040",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Venomous Gnoll",
-				"top": "2214px",
-				"hidehpbar": false,
-				"stat": 4037166,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
+				"360c179f-93fb-4cea-b4d3-6ed2a8b697e2": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Letters",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "360c179f-93fb-4cea-b4d3-6ed2a8b697e2",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "97px",
+					"name": "! - Exclamation Mark",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#E0E0E0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+					"top": "1201px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037166,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
+				"361b6cee-1a0f-4190-9b47-2f90ba250b9f": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "361b6cee-1a0f-4190-9b47-2f90ba250b9f",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_01",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "298px",
+					"name": "01",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#E0E0E0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/01",
+					"top": "1401px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"36a2bfeb-4b25-454c-8d33-a7048b2171ac": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 9,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "36a2bfeb-4b25-454c-8d33-a7048b2171ac",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037088,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2799px",
+					"name": "Beast Gnoll 4",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 9,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Beast Gnoll",
+					"top": "2094px",
+					"hidehpbar": false,
+					"stat": 4037088,
+					"hitPointInfo": {
+						"maximum": 9,
+						"current": 9,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037088,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"38d758a6-d8d8-4cfe-985e-42e58294d25f": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "38d758a6-d8d8-4cfe-985e-42e58294d25f",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "638.954px",
+					"name": "Eye Crow 7",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "154.067px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"3f04fc7f-9115-407c-85e8-796a34e047d1": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "3f04fc7f-9115-407c-85e8-796a34e047d1",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "444.787px",
+					"name": "Lupilisk Whelp",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#006060",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "2459.75px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"42933a82-310f-46bc-aa93-db88bbd4e82c": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Letters",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "42933a82-310f-46bc-aa93-db88bbd4e82c",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "-3px",
+					"name": "! - Exclamation Mark",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#F032E6",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+					"top": "1201px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"449bc66b-48af-4ff7-a772-1505461e9cb2": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "449bc66b-48af-4ff7-a772-1505461e9cb2",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_03",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "2404px",
+					"name": "03",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#00A000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/03",
+					"top": "2001px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"4c0d8af4-f44f-45ac-ade4-311129aee901": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "4c0d8af4-f44f-45ac-ade4-311129aee901",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_06",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "601.03px",
+					"name": "06",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#008000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/06",
+					"top": "219.366px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"55eec42b-c2b0-4fdd-98ad-48cd16ae817f": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 9,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "55eec42b-c2b0-4fdd-98ad-48cd16ae817f",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037088,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2589px",
+					"name": "Beast Gnoll 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 9,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Beast Gnoll",
+					"top": "2158px",
+					"hidehpbar": false,
+					"stat": 4037088,
+					"hitPointInfo": {
+						"maximum": 9,
+						"current": 9,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037088,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"5a01ea4a-d156-4e49-99cf-ab3f67299af0": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 60,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "5a01ea4a-d156-4e49-99cf-ab3f67299af0",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037127,
+					"square": false,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "1903px",
+					"name": "Lupilisk 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 60,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk",
+					"top": "1px",
+					"hidehpbar": false,
+					"stat": 4037127,
+					"hitPointInfo": {
+						"maximum": 60,
+						"current": 60,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037127,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"5e4bd087-6e50-494a-9f0c-8d28a3b7daa1": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "5e4bd087-6e50-494a-9f0c-8d28a3b7daa1",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_04",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "2404px",
+					"name": "04",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#00E5FF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/04",
+					"top": "1001px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"674d2c9c-4427-4b88-9933-789e28b3209b": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 45,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "674d2c9c-4427-4b88-9933-789e28b3209b",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037125,
+					"square": false,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "1634.72px",
+					"name": "Lupilisk Elder",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#600000",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 97,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Elder",
+					"top": "2442.64px",
+					"hidehpbar": false,
+					"stat": 4037125,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/4675/672/636747837699453839.jpeg",
+						"https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 97,
+						"current": 45,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037125,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"6798521a-ac79-4be3-9079-3189a3021875": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 9,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "6798521a-ac79-4be3-9079-3189a3021875",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037088,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2691px",
+					"name": "Beast Gnoll",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#000000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 9,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Beast Gnoll",
+					"top": "2005px",
+					"hidehpbar": false,
+					"stat": 4037088,
+					"hitPointInfo": {
+						"maximum": 9,
+						"current": 9,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037088,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"74983780-ffe9-48b7-ba8f-764177a96dba": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "74983780-ffe9-48b7-ba8f-764177a96dba",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "879.492px",
+					"name": "Eye Crow 11",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#911EB4",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "145.267px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"8203cd61-156a-4341-ad07-3426b9a6ce4b": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 9,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "8203cd61-156a-4341-ad07-3426b9a6ce4b",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037088,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2685px",
+					"name": "Beast Gnoll 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 9,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Beast Gnoll",
+					"top": "2313px",
+					"hidehpbar": false,
+					"stat": 4037088,
+					"hitPointInfo": {
+						"maximum": 9,
+						"current": 9,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037088,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"9004d2b9-c8ce-4f23-ad3b-c6e9bb702b41": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 52,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "9004d2b9-c8ce-4f23-ad3b-c6e9bb702b41",
+					"imgsrc": "https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037112,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2900px",
+					"name": "Gnoll Brute 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 52,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Gnoll Brute",
+					"top": "2204px",
+					"hidehpbar": false,
+					"stat": 4037112,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 52,
+						"current": 52,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037112,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"96a19377-4d8f-475c-a68d-f6cc33ec6317": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "96a19377-4d8f-475c-a68d-f6cc33ec6317",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "710.333px",
+					"name": "Eye Crow 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "535.407px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"97f0f09c-01fa-41da-85de-3d84d7d969ab": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "97f0f09c-01fa-41da-85de-3d84d7d969ab",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2103px",
+					"name": "Lupilisk Whelp 9",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#000000",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "301px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a432b913-babd-4bc3-9b5e-f90dcb8675cf": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a432b913-babd-4bc3-9b5e-f90dcb8675cf",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2505.63px",
+					"name": "Lupilisk Whelp 8",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#00E5FF",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "1082.16px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a9d18e50-d142-46f1-abd1-d6f84e7524f3": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 60,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a9d18e50-d142-46f1-abd1-d6f84e7524f3",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037127,
+					"square": false,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "1501px",
+					"name": "Lupilisk 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 60,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk",
+					"top": "201px",
+					"hidehpbar": false,
+					"stat": 4037127,
+					"hitPointInfo": {
+						"maximum": 60,
+						"current": 60,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037127,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"ab548635-a220-4028-acf3-bdd3fc7d66e0": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Letters",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "ab548635-a220-4028-acf3-bdd3fc7d66e0",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2806px",
+					"name": "! - Exclamation Mark",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#00E000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+					"top": "2001px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b33c2e99-be38-42b4-91df-81dc4a458e0d": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "b33c2e99-be38-42b4-91df-81dc4a458e0d",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "551.931px",
+					"name": "Eye Crow 5",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "172.645px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b583ccb0-85ab-4176-be1a-dbda3cd516d9": {
+					"disablestat": false,
+					"gridSquares": 1.993355481727575,
+					"custom_conditions": [],
+					"hp": 60,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "b583ccb0-85ab-4176-be1a-dbda3cd516d9",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037127,
+					"square": false,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "1064.48px",
+					"name": "Lupilisk",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#006000",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 60,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk",
+					"top": "2448.06px",
+					"hidehpbar": false,
+					"stat": 4037127,
+					"hitPointInfo": {
+						"maximum": 60,
+						"current": 60,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037127,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 9,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b7afa80e-93b4-472b-84fd-164503293293": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "b7afa80e-93b4-472b-84fd-164503293293",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2212.39px",
+					"name": "Lupilisk Whelp 7",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "1167.61px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"bbfe7759-d706-4d19-9cf1-1c1721f64132": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "bbfe7759-d706-4d19-9cf1-1c1721f64132",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "832.558px",
+					"name": "Eye Crow 6",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "465.983px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"bc0d0919-f872-4d94-8515-98f884a0a60a": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 13,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "bc0d0919-f872-4d94-8515-98f884a0a60a",
+					"imgsrc": "https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037166,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "2693px",
+					"name": "Venomous Gnoll 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Venomous Gnoll",
+					"top": "2194px",
+					"hidehpbar": false,
+					"stat": 4037166,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037166,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"c0f94686-8657-478a-aa72-cdae6f0242e7": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "c0f94686-8657-478a-aa72-cdae6f0242e7",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_05",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1903.99px",
+					"name": "05",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/05",
+					"top": "197.956px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"c88d8d79-6b05-4349-b909-fdec26c211a6": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "c88d8d79-6b05-4349-b909-fdec26c211a6",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "892.203px",
+					"name": "Eye Crow 8",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#00E5FF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "394.604px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"cf2961cc-25fb-4faf-98b3-08b8b36fc578": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "cf2961cc-25fb-4faf-98b3-08b8b36fc578",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "788.557px",
+					"name": "Eye Crow 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "506.073px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"cf4205aa-bfea-4f6e-bb43-b80390c2726c": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "cf4205aa-bfea-4f6e-bb43-b80390c2726c",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1702px",
+					"name": "Lupilisk Whelp 10",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#F032E6",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "201px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"cff9bd69-8601-4706-b352-9ca389564b14": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "cff9bd69-8601-4706-b352-9ca389564b14",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "563.066px",
+					"name": "Lupilisk Whelp 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "2448.09px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"e34d715e-fc69-4ced-b794-bd738dd55c89": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "e34d715e-fc69-4ced-b794-bd738dd55c89",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "804.202px",
+					"name": "Eye Crow 12",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#800000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "144.289px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"e80d8780-c8f1-4d2a-a3e0-1433b16c6b49": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "e80d8780-c8f1-4d2a-a3e0-1433b16c6b49",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "413.135px",
+					"name": "Lupilisk Whelp 4",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "2812.94px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"eb50e7b6-745a-41a0-a45c-8296e2f2df4d": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "eb50e7b6-745a-41a0-a45c-8296e2f2df4d",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "926.426px",
+					"name": "Eye Crow 10",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#F032E6",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "223.49px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"eb621d47-ba34-4a6b-b369-1a4fd88d9534": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "eb621d47-ba34-4a6b-b369-1a4fd88d9534",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "729.889px",
+					"name": "Eye Crow",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "128.644px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"ed05f375-db3a-49f0-8715-9e07a5f6d5fe": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "ed05f375-db3a-49f0-8715-9e07a5f6d5fe",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_02",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "735.954px",
+					"name": "02",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#600060",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/02",
+					"top": "2571.41px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"ee8f7e49-f41f-4f38-94bb-ef9715cc8749": {
+					"disablestat": false,
+					"gridSquares": 0.9966777408637875,
+					"custom_conditions": [],
+					"hp": 33,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "ee8f7e49-f41f-4f38-94bb-ef9715cc8749",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037126,
+					"square": false,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "844.617px",
+					"name": "Lupilisk Whelp 5",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 33,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Lupilisk Whelp",
+					"top": "2721.31px",
+					"hidehpbar": false,
+					"stat": 4037126,
+					"hitPointInfo": {
+						"maximum": 33,
+						"current": 33,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037126,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"face70cb-21f1-42f2-a891-6a646e423c17": {
+					"disablestat": false,
+					"gridSquares": 0.49833887043189373,
+					"custom_conditions": [],
+					"hp": 2,
+					"armorClass": 12,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "face70cb-21f1-42f2-a891-6a646e423c17",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "0"
+					},
+					"itemId": 4037106,
+					"square": true,
+					"healthauratype": "none",
+					"size": 50,
+					"left": "914.692px",
+					"name": "Eye Crow 9",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 2,
+					"itemType": "monster",
+					"color": "#000000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 2,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Eye Crow",
+					"top": "303.67px",
+					"hidehpbar": false,
+					"stat": 4037106,
+					"hitPointInfo": {
+						"maximum": 2,
+						"current": 2,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037106,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				}
 			},
-			"0c2cd0d1-441a-48d4-a34a-6d6fb6b61ef3": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 52,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
+			"darkness_filter": "100",
+			"grid_line_width": "0.5",
+			"grid_subdivided": "0",
+			"scale_factor": "1",
+			"offsetx": "96.33333333333339",
+			"dm_map_usable": "0",
+			"offsety": "1",
+			"dm_map_is_video": "0",
+			"grid": "0",
+			"scale_check": true,
+			
+			"player_map_is_video": "0",
+			"hpps": "100.33333333333333",
+			"disableSceneVision": "0",
+			"grid_color": "rgba(0, 0, 0, 0.5)",
+			"snap": "1",
+			"notes": {
+				"360c179f-93fb-4cea-b4d3-6ed2a8b697e2": {
+					"title": "! - Exclamation Mark",
+					"text": "<h1 id=\"BoulderwoodPathConclusion\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"c688045f-9259-46cb-817e-4ef7580b3dca\">Conclusion</h1>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Characters who unseal and open the scroll cases find that the treaty was written, signed, and then cut vertically, meaning that only someone who has all three pieces can truly understand all the treaty&rsquo;s articulations and stipulations.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Characters who put the treaty together and read it find that it is exactly what the western regent said it was: a renewal of a treaty between the western and eastern regions.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">It is up to the characters what to do with it.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Taking it back to the western regent is a halfway measure but taking it to the eastern regent may be a gamble (after all, what if the eastern regent is responsible for the attack on the courier?).</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">In any case, opening the seals should diminish (but not negate) the reward.</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">This quest ends with more questions than answers: were the gnolls directed to the courier&rsquo;s path, or were they merely a wandering pack?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Were they after the characters? The treaty?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Who do the eye crows ultimately report to, and why were they whispering &ldquo;meddlers&rdquo;?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">How did so many lupilisks take up residence so quickly in an area that had been cleared of dangers sufficiently for the courier to think this route was safe?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Who doesn&rsquo;t want this peace treaty to be re-ratified?</h3>",
+					"plain": "ConclusionCharacters who unseal and open the scroll cases find that the treaty was written, signed, and then cut vertically, meaning that only someone who has all three pieces can truly understand all the treaty’s articulations and stipulations. Characters who put the treaty together and read it find that it is exactly what the western regent said it was: a renewal of a treaty between the western and eastern regions. It is up to the characters what to do with it. Taking it back to the western regent is a halfway measure but taking it to the eastern regent may be a gamble (after all, what if the eastern regent is responsible for the attack on the courier?). In any case, opening the seals should diminish (but not negate) the reward.This quest ends with more questions than answers: were the gnolls directed to the courier’s path, or were they merely a wandering pack? Were they after the characters? The treaty? Who do the eye crows ultimately report to, and why were they whispering “meddlers”? How did so many lupilisks take up residence so quickly in an area that had been cleared of dangers sufficiently for the courier to think this route was safe? Who doesn’t want this peace treaty to be re-ratified?",
+					"player": false,
+					"statBlock": false
 				},
-				"id": "0c2cd0d1-441a-48d4-a34a-6d6fb6b61ef3",
-				"imgsrc": "https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
+				"361b6cee-1a0f-4190-9b47-2f90ba250b9f": {
+					"title": "01",
+					"text": "<h3 id=\"1ForestPath\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"14e4e94b-551a-4dca-8b8a-5f6aa2284980\">&nbsp;Forest Path</h3>\n<aside class=\"text--quote-box\">\n<p>After hours of trudging down this dark forest path, you find yourself staring down at the statue of a horse that&rsquo;s been tipped over onto its side in the middle of the road. Strangely, it&rsquo;s missing a leg and tail, but the missing pieces aren&rsquo;t nearby.</p>\n</aside>\n<p data-content-chunk-id=\"b3ba8545-7e85-4fa4-8b96-6847e86188dc\"><span style=\"font-size: 12pt;\">One of the two cart horses from the courier&rsquo;s wagon was turned to stone when the lupilisks attacked. They ate its foreleg and tail, leaving the rest for later. The rest of the wagon, along with the other horse, courier, and two guards made it to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"00364465-270a-4fbf-8dde-918dc9fab8c8\">area 3</a>&nbsp;before succumbing.</span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\"><strong><em>Stone Horse.</em></strong>&nbsp;Characters who investigate the horse with a successful DC 12 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check discover that the statue is of impeccable workmanship, displaying the animal rearing back. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">It even has bridles and a broken yoke carved with symbols of the western regent. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">Those who suspect the horse was turned to stone (rather than being an artificial statue) can attempt a DC 15 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Arcana\" data-tooltip-href=\"//www.dndbeyond.com/skills/6-tooltip?disable-webm=1&amp;disable-webm=1\">Arcana</a>). </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">A success recalls stories of fantastic fiends called&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisks</a>&nbsp;whose venom&mdash;which grows stronger as the creature ages&mdash;petrifies its prey. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">Characters who succeed by 5 or more also recall that lupilisks tend to hunt in packs and are often led by the oldest and most powerful among them.</span></p>\n<p data-content-chunk-id=\"abcf04ec-25e9-49bd-b1de-a57225850a69\"><span style=\"font-size: 12pt;\"><strong><em>Path.</em></strong>&nbsp;Characters who succeed at a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Survival\" data-tooltip-href=\"//www.dndbeyond.com/skills/15-tooltip?disable-webm=1&amp;disable-webm=1\">Survival</a>) check can pick out a set of wagon wheel tracks that indicate the wagon picked up speed here. </span></p>\n<p data-content-chunk-id=\"abcf04ec-25e9-49bd-b1de-a57225850a69\"><span style=\"font-size: 12pt;\">Those who succeed by 5 or more know that the speed increase was uncontrolled and unsafe.</span></p>",
+					"plain": " Forest PathAfter hours of trudging down this dark forest path, you find yourself staring down at the statue of a horse that’s been tipped over onto its side in the middle of the road. Strangely, it’s missing a leg and tail, but the missing pieces aren’t nearby.One of the two cart horses from the courier’s wagon was turned to stone when the lupilisks attacked. They ate its foreleg and tail, leaving the rest for later. The rest of the wagon, along with the other horse, courier, and two guards made it to area 3 before succumbing.Stone Horse. Characters who investigate the horse with a successful DC 12 Intelligence (Investigation) check discover that the statue is of impeccable workmanship, displaying the animal rearing back. It even has bridles and a broken yoke carved with symbols of the western regent. Those who suspect the horse was turned to stone (rather than being an artificial statue) can attempt a DC 15 Intelligence (Arcana). A success recalls stories of fantastic fiends called lupilisks whose venom—which grows stronger as the creature ages—petrifies its prey. Characters who succeed by 5 or more also recall that lupilisks tend to hunt in packs and are often led by the oldest and most powerful among them.Path. Characters who succeed at a DC 15 Wisdom (Survival) check can pick out a set of wagon wheel tracks that indicate the wagon picked up speed here. Those who succeed by 5 or more know that the speed increase was uncontrolled and unsafe.",
+					"player": false,
+					"statBlock": false
 				},
-				"aura2": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
+				"42933a82-310f-46bc-aa93-db88bbd4e82c": {
+					"title": "! - Exclamation Mark",
+					"text": "<h2 data-content-chunk-id=\"daaba332-fb22-4e79-b30a-28391483c5c0\">The characters arrive on the road from the west at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#1ForestPath\" data-content-chunk-id=\"6f095ce9-b15b-41f6-a594-88da9c643876\">area 1</a>. This deep in the Boulderwood, the tree canopy is very thick. The rocky outcroppings here have led to fewer taller, stronger trees, so the canopy is still all encompassing but light does pass through.</h2>\n<h2 data-content-chunk-id=\"44680ca4-2f7d-4d4d-aa87-a7b78ea20137\">The lupilisks stumbled across a great bounty with the attack on the courier. Between the horses, the courier, and the courier&rsquo;s guards, the entire pack has been eating well for days, supplemented with the occasional stray forest creature. As such, most of the lupilisks are lazing in their respective nests and hangouts.</h2>\n<h2 data-content-chunk-id=\"c5f705c2-ea7c-4429-8223-2194e95dcf0d\">The eye crows in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#6AncientAltar\" data-content-chunk-id=\"5b309e39-e0a6-4797-bfb8-26ed20336e64\">area 6</a>&nbsp;have peers all around the lair, watching to ensure the treaty pieces are not recovered. Characters with a passive Perception of 17 or higher notice the unusual number of birds watching them as they travel the lair, as do any characters who actively search the trees and succeed on a DC 17 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check.</h2>\n<h2 data-content-chunk-id=\"1ad6ed1d-d3b9-4630-bc44-66ed1fd8a59b\">When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037088-beast-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037088-tooltip?disable-webm=1&amp;disable-webm=1\">beast gnolls</a>*, two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037166-venomous-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037166-tooltip?disable-webm=1&amp;disable-webm=1\">venomous gnolls</a>*, and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037112-gnoll-brute\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037112-tooltip?disable-webm=1&amp;disable-webm=1\">gnoll brutes</a>*) arrives at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"62b9f4ed-e0fb-45a7-b96e-43c0b25e6d39\">area 3</a>, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven&rsquo;t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they&rsquo;ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word &ldquo;blessed&rdquo; inscribed in elegant Celestial worth 250 gp.</h2>",
+					"plain": "The characters arrive on the road from the west at area 1. This deep in the Boulderwood, the tree canopy is very thick. The rocky outcroppings here have led to fewer taller, stronger trees, so the canopy is still all encompassing but light does pass through.The lupilisks stumbled across a great bounty with the attack on the courier. Between the horses, the courier, and the courier’s guards, the entire pack has been eating well for days, supplemented with the occasional stray forest creature. As such, most of the lupilisks are lazing in their respective nests and hangouts.The eye crows in area 6 have peers all around the lair, watching to ensure the treaty pieces are not recovered. Characters with a passive Perception of 17 or higher notice the unusual number of birds watching them as they travel the lair, as do any characters who actively search the trees and succeed on a DC 17 Wisdom (Perception) check.When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four beast gnolls*, two venomous gnolls*, and two gnoll brutes*) arrives at area 3, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven’t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they’ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word “blessed” inscribed in elegant Celestial worth 250 gp.",
+					"player": false,
+					"statBlock": false
 				},
-				"aura1": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
+				"449bc66b-48af-4ff7-a772-1505461e9cb2": {
+					"title": "03",
+					"text": "<h3 id=\"3RuinedWagon\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"cd770100-11a9-4997-b6bb-5fbff25402bf\">3. Ruined Wagon</h3>\n<aside class=\"text--quote-box\">\n<p>A capsized wagon with a broken wheel blocks the path. You see rocks scattered on the ground and the wagon bearing the emblems of a trading house of the regent's seal.</p>\n</aside>\n<p data-content-chunk-id=\"77dea469-1c65-4bd2-bbe3-4e982e1f2d40\"><span style=\"font-size: 12pt;\">A cursory search confirms that this is the missing courier&rsquo;s wagon, bearing the emblems of a trading house instead of the regent&rsquo;s seal to avoid suspicion. </span></p>\n<p data-content-chunk-id=\"77dea469-1c65-4bd2-bbe3-4e982e1f2d40\"><span style=\"font-size: 12pt;\">Flight of any kind is a great way to stay out of reach of the lupilisks; however, staying airborne or sticking to the treetops for too long draws the attention of two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037157-sky-drake\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037157-tooltip?disable-webm=1&amp;disable-webm=1\">sky drakes</a>*.</span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\"><strong><em>Wagon.</em></strong>&nbsp;To establish the courier&rsquo;s cover, she was given several crates filled with jars of flour. </span><span style=\"font-size: 12pt;\">The wreck of the wagon has broken most of the jars, and the crates are leaking flour. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">A successful DC 14 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Survival\" data-tooltip-href=\"//www.dndbeyond.com/skills/15-tooltip?disable-webm=1&amp;disable-webm=1\">Survival</a>&nbsp;or&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check reveals that the wagon capsized after being chased by at least ten quadrupedal creatures. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">A successful DC 14 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check reveals that some of the rocks on the road are not rocks at all, but pieces of another horse statue. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">Succeeding at either of these checks, or spending 10 minutes searching, reveals no lockbox or other suitable safe place for the treaty; the treaty pieces are not here and were likely carried by the courier or her guards.</span></p>",
+					"plain": "3. Ruined WagonA capsized wagon with a broken wheel blocks the path. You see rocks scattered on the ground and the wagon bearing the emblems of a trading house of the regent's seal.A cursory search confirms that this is the missing courier’s wagon, bearing the emblems of a trading house instead of the regent’s seal to avoid suspicion. Flight of any kind is a great way to stay out of reach of the lupilisks; however, staying airborne or sticking to the treetops for too long draws the attention of two sky drakes*.Wagon. To establish the courier’s cover, she was given several crates filled with jars of flour. The wreck of the wagon has broken most of the jars, and the crates are leaking flour. A successful DC 14 Wisdom (Survival or Perception) check reveals that the wagon capsized after being chased by at least ten quadrupedal creatures. A successful DC 14 Intelligence (Investigation) check reveals that some of the rocks on the road are not rocks at all, but pieces of another horse statue. Succeeding at either of these checks, or spending 10 minutes searching, reveals no lockbox or other suitable safe place for the treaty; the treaty pieces are not here and were likely carried by the courier or her guards.",
+					"player": false,
+					"statBlock": false
 				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
+				"4c0d8af4-f44f-45ac-ade4-311129aee901": {
+					"title": "06",
+					"text": "<h3 id=\"6AncientAltar\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"6287b942-dbe2-430b-8945-550cf811132a\">6. Ancient Altar</h3>\n<aside class=\"text--quote-box\">\n<p>Atop this knoll rests a large worked-stone altar covered in ivy and moss. The unnerving sound of whispering seems to be all around you.\\</p>\n</aside>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">The altar&rsquo;s original purpose is long lost, and the gods who were worshipped here long gone. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">However, it is a beacon to a murder of&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037106-eye-crow\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037106-tooltip?disable-webm=1&amp;disable-webm=1\">eye crows</a>&nbsp;that watches the characters. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">If the characters come here before finding any of the treaty scroll cases, the dozens of eye crows are in the trees all around the altar when they arrive, whispering. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">A DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Insight\" data-tooltip-href=\"//www.dndbeyond.com/skills/12-tooltip?disable-webm=1&amp;disable-webm=1\">Insight</a>) check determines that the birds are the source of the whispering sound.</span></p>\n<p data-content-chunk-id=\"008504b3-0fc3-44d1-80c0-ed2ecd234a52\"><span style=\"font-size: 12pt;\"><strong><em>Climbing.</em></strong>&nbsp;Climbing or descending the gentle slope on the western side of the knoll does not require a check but is considered&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. To ascend or descend the steeper southeast side of the hillock requires a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check. The knoll&rsquo;s crest is 30 feet above the forest floor.</span></p>\n<p data-content-chunk-id=\"6b0fbe5f-ac87-498e-965c-1b9810b135e7\"><span style=\"font-size: 12pt;\"><strong><em>Eyes on the Altar.</em></strong>&nbsp;If the characters arrive after collecting any or all the treaty scroll cases, a group of 12&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037106-eye-crow\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037106-tooltip?disable-webm=1&amp;disable-webm=1\">eye crows</a>* fly onto the altar and stare at the characters. Characters who approach the 12 swear they hear the word &ldquo;meddler&rdquo; being whispered by the birds&mdash;but each character hears it in their native tongue. Attacking or moving threateningly towards the eye crows causes them to scatter to the trees (or further if pursued). However, if only a single character is present at the altar, the 12 attack, trying to pluck out the characters&rsquo; eyes.</span></p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\"><span style=\"font-size: 12pt;\">Characters who can talk to animals find that these crows have little to say to them; if compelled, the crows can reveal that they&rsquo;re watching to see if anyone takes the &ldquo;metal tubes&rdquo; (scroll cases) and who it is that takes them. They can describe a woman falconer who feeds them and trains them and to whom they deliver this information.</span></p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\">&nbsp;</p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\"><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-001.eye-crow.png\" alt=\"\" width=\"1700\" height=\"1791\" /></p>",
+					"plain": "6. Ancient AltarAtop this knoll rests a large worked-stone altar covered in ivy and moss. The unnerving sound of whispering seems to be all around you.\\The altar’s original purpose is long lost, and the gods who were worshipped here long gone. However, it is a beacon to a murder of eye crows that watches the characters. If the characters come here before finding any of the treaty scroll cases, the dozens of eye crows are in the trees all around the altar when they arrive, whispering. A DC 10 Wisdom (Insight) check determines that the birds are the source of the whispering sound.Climbing. Climbing or descending the gentle slope on the western side of the knoll does not require a check but is considered difficult terrain. To ascend or descend the steeper southeast side of the hillock requires a successful DC 15 Strength (Athletics) check. The knoll’s crest is 30 feet above the forest floor.Eyes on the Altar. If the characters arrive after collecting any or all the treaty scroll cases, a group of 12 eye crows* fly onto the altar and stare at the characters. Characters who approach the 12 swear they hear the word “meddler” being whispered by the birds—but each character hears it in their native tongue. Attacking or moving threateningly towards the eye crows causes them to scatter to the trees (or further if pursued). However, if only a single character is present at the altar, the 12 attack, trying to pluck out the characters’ eyes.Characters who can talk to animals find that these crows have little to say to them; if compelled, the crows can reveal that they’re watching to see if anyone takes the “metal tubes” (scroll cases) and who it is that takes them. They can describe a woman falconer who feeds them and trains them and to whom they deliver this information.",
+					"player": false,
+					"statBlock": false
 				},
-				"itemId": 4037112,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2785px",
-				"name": "Gnoll Brute",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#404000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 52,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Gnoll Brute",
-				"top": "2351px",
-				"hidehpbar": false,
-				"stat": 4037112,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 52,
-					"current": 52,
-					"temp": 0
+				"5e4bd087-6e50-494a-9f0c-8d28a3b7daa1": {
+					"title": "04",
+					"text": "<h3 id=\"4ElderMount\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"a9579128-0bfa-40d2-be9c-8975b001cdcc\">4. Elder Mount</h3>\n<aside class=\"text--quote-box\">\n<p>From this high vantage point, you can see down the path to where you first encountered the stone horse and began your investigation. A rocky projection juts up from this hillock, blocking your view of the rest of the path.</p>\n</aside>\n<p data-content-chunk-id=\"6397b7cf-73bf-41f3-8d50-825d365a3baa\"><span style=\"font-size: 12pt;\">A&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037125-lupilisk-elder\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037125-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk elder</a>* and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>* are resting here and attack the characters on sight. Loud fighting here draws the creatures from area 5 into the fight after 1d3 + 1 rounds.</span></p>\n<p data-content-chunk-id=\"1dee66b4-8033-41f6-bc50-27d17e66d9de\"><span style=\"font-size: 12pt;\"><strong><em>Climbing.</em></strong>&nbsp;Climbing or descending the gentle slope on the eastern side of the hillock does not require a check but is considered&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. To ascend or descend the steeper three sides of the hillock requires a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check. The hillock is 30 feet above the forest floor.</span></p>\n<p data-content-chunk-id=\"f1505bc7-c345-46c5-a894-932205574b2f\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Near a petrified boot lies a necklace (an&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4569-amulet-of-proof-against-detection-and-location\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4569-tooltip?disable-webm=1&amp;disable-webm=1\">amulet of proof against detection and location</a>) and the second piece of the treaty in a scroll case. This is the final resting place of the courier.</span></p>",
+					"plain": "4. Elder MountFrom this high vantage point, you can see down the path to where you first encountered the stone horse and began your investigation. A rocky projection juts up from this hillock, blocking your view of the rest of the path.A lupilisk elder* and two lupilisk whelps* are resting here and attack the characters on sight. Loud fighting here draws the creatures from area 5 into the fight after 1d3 + 1 rounds.Climbing. Climbing or descending the gentle slope on the eastern side of the hillock does not require a check but is considered difficult terrain. To ascend or descend the steeper three sides of the hillock requires a successful DC 15 Strength (Athletics) check. The hillock is 30 feet above the forest floor.Treasure. Near a petrified boot lies a necklace (an amulet of proof against detection and location) and the second piece of the treaty in a scroll case. This is the final resting place of the courier.",
+					"player": false,
+					"statBlock": false
 				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037112,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
+				"ab548635-a220-4028-acf3-bdd3fc7d66e0": {
+					"title": "! - Exclamation Mark",
+					"text": "<h3>When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037088-beast-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037088-tooltip?disable-webm=1&amp;disable-webm=1\">beast gnolls</a>*, two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037166-venomous-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037166-tooltip?disable-webm=1&amp;disable-webm=1\">venomous gnolls</a>*, and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037112-gnoll-brute\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037112-tooltip?disable-webm=1&amp;disable-webm=1\">gnoll brutes</a>*) arrives at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"62b9f4ed-e0fb-45a7-b96e-43c0b25e6d39\">area 3</a>, traveling the road toward area 1.</h3>\n<h3>They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven&rsquo;t gotten into unless stopped by the characters.</h3>\n<h3>The gnolls carry their plunder from other travelers and adventurers they&rsquo;ve killed.</h3>\n<h3>The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word &ldquo;blessed&rdquo; inscribed in elegant Celestial worth 250 gp.</h3>",
+					"plain": "When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four beast gnolls*, two venomous gnolls*, and two gnoll brutes*) arrives at area 3, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven’t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they’ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word “blessed” inscribed in elegant Celestial worth 250 gp.",
+					"player": false,
+					"statBlock": false
+				},
+				"c0f94686-8657-478a-aa72-cdae6f0242e7": {
+					"title": "05",
+					"text": "<h3 id=\"5HillsideNest\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"af225a79-38dd-47e8-9465-fb5edd2f845b\">5. Hillside Nest</h3>\n<aside class=\"text--quote-box\">\n<p>The detritus of a large animal haunch is nestled under a large tree in the lee of this hillock.</p>\n</aside>\n<p data-content-chunk-id=\"680a10be-f08e-4f99-ae13-6854d466ef84\"><span style=\"font-size: 12pt;\">This is the original and main nest of the lupilisks in the area: two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisks</a>* and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>* are here. All four defend the nest to the death. Loud fighting here draws the creatures from area 4 into the fight after 1d3 + 1 rounds.</span></p>\n<p data-content-chunk-id=\"d9dafeae-5ca2-44f6-87d7-313561dbe769\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Searching the nest for treasure yields the third metal scroll case containing the third part of the treaty. A successful DC 16 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check also yields a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4724-ring-of-jumping\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4724-tooltip?disable-webm=1&amp;disable-webm=1\">ring of jumping</a>&nbsp;that was hidden in the filth.</span></p>",
+					"plain": "5. Hillside NestThe detritus of a large animal haunch is nestled under a large tree in the lee of this hillock.This is the original and main nest of the lupilisks in the area: two lupilisks* and two lupilisk whelps* are here. All four defend the nest to the death. Loud fighting here draws the creatures from area 4 into the fight after 1d3 + 1 rounds.Treasure. Searching the nest for treasure yields the third metal scroll case containing the third part of the treaty. A successful DC 16 Intelligence (Investigation) check also yields a ring of jumping that was hidden in the filth.",
+					"player": false,
+					"statBlock": false
+				},
+				"ed05f375-db3a-49f0-8715-9e07a5f6d5fe": {
+					"title": "02",
+					"text": "<h3 id=\"2WateringHole\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"6cf5a72c-f37d-42cc-8b0e-21be1ef26b9b\">2. Watering Hole</h3>\n<aside class=\"text--quote-box\">\n<p>Past the rocks, the air here is slightly warmer thanks to the break in the trees afforded by the pool in this swale.</p>\n</aside>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">Six&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>*, a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk</a>*, and a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037125-lupilisk-elder\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037125-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk elder</a>* are here: three whelps are curled up napping while the others are drinking at the pool. </span></p>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">The lupilisk elder was injured in the fight against the courier&rsquo;s group and is at half its hit points. </span></p>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">Even with the elder&rsquo;s weakened condition, this can be a very difficult encounter!</span></p>\n<p data-content-chunk-id=\"53710210-cf0d-41b8-86ce-36306d93da41\"><span style=\"font-size: 12pt;\"><strong><em>Rocky Area.</em></strong>&nbsp;The raised area that separates the pool&rsquo;s surroundings from the forest path is&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. Characters can use this to their advantage to slow the lupilisks!</span></p>\n<p data-content-chunk-id=\"ba316569-b789-493d-8f84-1f391d31484a\"><span style=\"font-size: 12pt;\"><strong><em>Pool.</em></strong>&nbsp;The water is cool and clean to drink. It is 10 feet deep at its deepest point.</span></p>\n<p data-content-chunk-id=\"7ec245da-6b39-4df0-9086-36263e932e34\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;The napping whelps had just finished a stony meal. </span></p>\n<p data-content-chunk-id=\"7ec245da-6b39-4df0-9086-36263e932e34\"><span style=\"font-size: 12pt;\">A stone hand and a metal scroll case (one of the three pieces of the treaty) are all that remain of this courier guard.</span></p>\n<figure id=\"imgthelupilisk\" class=\"compendium-art compendium-art-center Misc--Dropshadow\"><a class=\"ddb-lightbox-outer compendium-image-center\" href=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-006.lupilisk-elder.jpg\" data-lightbox=\"1\" data-title=\"\"><img class=\"ddb-lightbox-inner compendium-center-banner-img\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-006.lupilisk-elder.jpg\" alt=\"\" /></a></figure>",
+					"plain": "2. Watering HolePast the rocks, the air here is slightly warmer thanks to the break in the trees afforded by the pool in this swale.Six lupilisk whelps*, a lupilisk*, and a lupilisk elder* are here: three whelps are curled up napping while the others are drinking at the pool. The lupilisk elder was injured in the fight against the courier’s group and is at half its hit points. Even with the elder’s weakened condition, this can be a very difficult encounter!Rocky Area. The raised area that separates the pool’s surroundings from the forest path is difficult terrain. Characters can use this to their advantage to slow the lupilisks!Pool. The water is cool and clean to drink. It is 10 feet deep at its deepest point.Treasure. The napping whelps had just finished a stony meal. A stone hand and a metal scroll case (one of the three pieces of the treaty) are all that remain of this courier guard.",
+					"player": false,
+					"statBlock": false
+				}
 			},
-			"17ca7c3b-00ee-4b13-b462-456569eb293c": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 85,
-				"armorClass": 14,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "17ca7c3b-00ee-4b13-b462-456569eb293c",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/718/638368832438105607.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037157,
-				"square": true,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "2296.13px",
-				"name": "Sky Drake",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#808080",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 85,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Sky Drake",
-				"top": "2107.66px",
-				"hidehpbar": false,
-				"stat": 4037157,
-				"hitPointInfo": {
-					"maximum": 85,
-					"current": 85,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037157,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"21b82e66-9e31-4609-ad4d-4869f8c103f7": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "21b82e66-9e31-4609-ad4d-4869f8c103f7",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "488.374px",
-				"name": "Eye Crow 4",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#FFD433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "209.801px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"32747cdf-1b21-4089-ad50-4473081a0f5e": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 97,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "32747cdf-1b21-4089-ad50-4473081a0f5e",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037125,
-				"square": false,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "2309.97px",
-				"name": "Lupilisk Elder 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 97,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Elder",
-				"top": "1094.3px",
-				"hidehpbar": false,
-				"stat": 4037125,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 97,
-					"current": 97,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037125,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"360c179f-93fb-4cea-b4d3-6ed2a8b697e2": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Letters",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "360c179f-93fb-4cea-b4d3-6ed2a8b697e2",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 60
-				},
-				"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "97px",
-				"name": "! - Exclamation Mark",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#E0E0E0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
-				"top": "1201px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"361b6cee-1a0f-4190-9b47-2f90ba250b9f": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "361b6cee-1a0f-4190-9b47-2f90ba250b9f",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_01",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "298px",
-				"name": "01",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#E0E0E0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/01",
-				"top": "1401px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"36a2bfeb-4b25-454c-8d33-a7048b2171ac": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 9,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "36a2bfeb-4b25-454c-8d33-a7048b2171ac",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037088,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2799px",
-				"name": "Beast Gnoll 4",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FFD433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 9,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Beast Gnoll",
-				"top": "2094px",
-				"hidehpbar": false,
-				"stat": 4037088,
-				"hitPointInfo": {
-					"maximum": 9,
-					"current": 9,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037088,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"38d758a6-d8d8-4cfe-985e-42e58294d25f": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "38d758a6-d8d8-4cfe-985e-42e58294d25f",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "638.954px",
-				"name": "Eye Crow 7",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#EC8AFF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "154.067px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"3f04fc7f-9115-407c-85e8-796a34e047d1": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "3f04fc7f-9115-407c-85e8-796a34e047d1",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "444.787px",
-				"name": "Lupilisk Whelp",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#006060",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "2459.75px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"42933a82-310f-46bc-aa93-db88bbd4e82c": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Letters",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "42933a82-310f-46bc-aa93-db88bbd4e82c",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 60
-				},
-				"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "-3px",
-				"name": "! - Exclamation Mark",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#F032E6",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
-				"top": "1201px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"449bc66b-48af-4ff7-a772-1505461e9cb2": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "449bc66b-48af-4ff7-a772-1505461e9cb2",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_03",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "2404px",
-				"name": "03",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#00A000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/03",
-				"top": "2001px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"4c0d8af4-f44f-45ac-ade4-311129aee901": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "4c0d8af4-f44f-45ac-ade4-311129aee901",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_06",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "601.03px",
-				"name": "06",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#008000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/06",
-				"top": "219.366px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"55eec42b-c2b0-4fdd-98ad-48cd16ae817f": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 9,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "55eec42b-c2b0-4fdd-98ad-48cd16ae817f",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037088,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2589px",
-				"name": "Beast Gnoll 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 9,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Beast Gnoll",
-				"top": "2158px",
-				"hidehpbar": false,
-				"stat": 4037088,
-				"hitPointInfo": {
-					"maximum": 9,
-					"current": 9,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037088,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"5a01ea4a-d156-4e49-99cf-ab3f67299af0": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 60,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "5a01ea4a-d156-4e49-99cf-ab3f67299af0",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037127,
-				"square": false,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "1903px",
-				"name": "Lupilisk 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 60,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk",
-				"top": "1px",
-				"hidehpbar": false,
-				"stat": 4037127,
-				"hitPointInfo": {
-					"maximum": 60,
-					"current": 60,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037127,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"5e4bd087-6e50-494a-9f0c-8d28a3b7daa1": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "5e4bd087-6e50-494a-9f0c-8d28a3b7daa1",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_04",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "2404px",
-				"name": "04",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#00E5FF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/04",
-				"top": "1001px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"674d2c9c-4427-4b88-9933-789e28b3209b": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 45,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "674d2c9c-4427-4b88-9933-789e28b3209b",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037125,
-				"square": false,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "1634.72px",
-				"name": "Lupilisk Elder",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#600000",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 97,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Elder",
-				"top": "2442.64px",
-				"hidehpbar": false,
-				"stat": 4037125,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/672/636747837699453839.jpeg",
-					"https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 97,
-					"current": 45,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037125,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"6798521a-ac79-4be3-9079-3189a3021875": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 9,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "6798521a-ac79-4be3-9079-3189a3021875",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037088,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2691px",
-				"name": "Beast Gnoll",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#000000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 9,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Beast Gnoll",
-				"top": "2005px",
-				"hidehpbar": false,
-				"stat": 4037088,
-				"hitPointInfo": {
-					"maximum": 9,
-					"current": 9,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037088,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"74983780-ffe9-48b7-ba8f-764177a96dba": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "74983780-ffe9-48b7-ba8f-764177a96dba",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "879.492px",
-				"name": "Eye Crow 11",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#911EB4",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "145.267px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"8203cd61-156a-4341-ad07-3426b9a6ce4b": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 9,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "8203cd61-156a-4341-ad07-3426b9a6ce4b",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/609/638368832252768853.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037088,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2685px",
-				"name": "Beast Gnoll 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 9,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Beast Gnoll",
-				"top": "2313px",
-				"hidehpbar": false,
-				"stat": 4037088,
-				"hitPointInfo": {
-					"maximum": 9,
-					"current": 9,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037088,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"9004d2b9-c8ce-4f23-ad3b-c6e9bb702b41": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 52,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "9004d2b9-c8ce-4f23-ad3b-c6e9bb702b41",
-				"imgsrc": "https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037112,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2900px",
-				"name": "Gnoll Brute 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 52,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Gnoll Brute",
-				"top": "2204px",
-				"hidehpbar": false,
-				"stat": 4037112,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/12734/879/637357081645061723.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 52,
-					"current": 52,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037112,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"96a19377-4d8f-475c-a68d-f6cc33ec6317": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "96a19377-4d8f-475c-a68d-f6cc33ec6317",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "710.333px",
-				"name": "Eye Crow 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "535.407px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"97f0f09c-01fa-41da-85de-3d84d7d969ab": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "97f0f09c-01fa-41da-85de-3d84d7d969ab",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2103px",
-				"name": "Lupilisk Whelp 9",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#000000",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "301px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"a432b913-babd-4bc3-9b5e-f90dcb8675cf": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "a432b913-babd-4bc3-9b5e-f90dcb8675cf",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2505.63px",
-				"name": "Lupilisk Whelp 8",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#00E5FF",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "1082.16px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"a9d18e50-d142-46f1-abd1-d6f84e7524f3": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 60,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "a9d18e50-d142-46f1-abd1-d6f84e7524f3",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037127,
-				"square": false,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "1501px",
-				"name": "Lupilisk 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 60,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk",
-				"top": "201px",
-				"hidehpbar": false,
-				"stat": 4037127,
-				"hitPointInfo": {
-					"maximum": 60,
-					"current": 60,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037127,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"ab548635-a220-4028-acf3-bdd3fc7d66e0": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Letters",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "ab548635-a220-4028-acf3-bdd3fc7d66e0",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 60
-				},
-				"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2806px",
-				"name": "! - Exclamation Mark",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#00E000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
-				"top": "2001px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"b33c2e99-be38-42b4-91df-81dc4a458e0d": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "b33c2e99-be38-42b4-91df-81dc4a458e0d",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "551.931px",
-				"name": "Eye Crow 5",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#884DFF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "172.645px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"b583ccb0-85ab-4176-be1a-dbda3cd516d9": {
-				"disablestat": false,
-				"gridSquares": 1.993355481727575,
-				"custom_conditions": [],
-				"hp": 60,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "b583ccb0-85ab-4176-be1a-dbda3cd516d9",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/676/638368832368996425.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037127,
-				"square": false,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "1064.48px",
-				"name": "Lupilisk",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#006000",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 60,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk",
-				"top": "2448.06px",
-				"hidehpbar": false,
-				"stat": 4037127,
-				"hitPointInfo": {
-					"maximum": 60,
-					"current": 60,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037127,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 9,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"b7afa80e-93b4-472b-84fd-164503293293": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "b7afa80e-93b4-472b-84fd-164503293293",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2212.39px",
-				"name": "Lupilisk Whelp 7",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#EC8AFF",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "1167.61px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"bbfe7759-d706-4d19-9cf1-1c1721f64132": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "bbfe7759-d706-4d19-9cf1-1c1721f64132",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "832.558px",
-				"name": "Eye Crow 6",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#5F0404",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "465.983px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"bc0d0919-f872-4d94-8515-98f884a0a60a": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 13,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "bc0d0919-f872-4d94-8515-98f884a0a60a",
-				"imgsrc": "https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 255, 100, 0.5)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037166,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "2693px",
-				"name": "Venomous Gnoll 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Venomous Gnoll",
-				"top": "2194px",
-				"hidehpbar": false,
-				"stat": 4037166,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/9/678/636330376242104729.jpeg"
-				],
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037166,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"c0f94686-8657-478a-aa72-cdae6f0242e7": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "c0f94686-8657-478a-aa72-cdae6f0242e7",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_05",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1903.99px",
-				"name": "05",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#5F0404",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/05",
-				"top": "197.956px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"c88d8d79-6b05-4349-b909-fdec26c211a6": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "c88d8d79-6b05-4349-b909-fdec26c211a6",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "892.203px",
-				"name": "Eye Crow 8",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#00E5FF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "394.604px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"cf2961cc-25fb-4faf-98b3-08b8b36fc578": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "cf2961cc-25fb-4faf-98b3-08b8b36fc578",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "788.557px",
-				"name": "Eye Crow 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "506.073px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"cf4205aa-bfea-4f6e-bb43-b80390c2726c": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "cf4205aa-bfea-4f6e-bb43-b80390c2726c",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1702px",
-				"name": "Lupilisk Whelp 10",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#F032E6",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "201px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"cff9bd69-8601-4706-b352-9ca389564b14": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "cff9bd69-8601-4706-b352-9ca389564b14",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "563.066px",
-				"name": "Lupilisk Whelp 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "2448.09px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"e34d715e-fc69-4ced-b794-bd738dd55c89": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "e34d715e-fc69-4ced-b794-bd738dd55c89",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "804.202px",
-				"name": "Eye Crow 12",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#800000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "144.289px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"e80d8780-c8f1-4d2a-a3e0-1433b16c6b49": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "e80d8780-c8f1-4d2a-a3e0-1433b16c6b49",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "413.135px",
-				"name": "Lupilisk Whelp 4",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FFD433",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "2812.94px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"eb50e7b6-745a-41a0-a45c-8296e2f2df4d": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "eb50e7b6-745a-41a0-a45c-8296e2f2df4d",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "926.426px",
-				"name": "Eye Crow 10",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#F032E6",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "223.49px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"eb621d47-ba34-4a6b-b369-1a4fd88d9534": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "eb621d47-ba34-4a6b-b369-1a4fd88d9534",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "729.889px",
-				"name": "Eye Crow",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#5F0404",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "128.644px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"ed05f375-db3a-49f0-8715-9e07a5f6d5fe": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "ed05f375-db3a-49f0-8715-9e07a5f6d5fe",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_02",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "735.954px",
-				"name": "02",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#600060",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/02",
-				"top": "2571.41px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"ee8f7e49-f41f-4f38-94bb-ef9715cc8749": {
-				"disablestat": false,
-				"gridSquares": 0.9966777408637875,
-				"custom_conditions": [],
-				"hp": 33,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "ee8f7e49-f41f-4f38-94bb-ef9715cc8749",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/674/638368832365719890.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037126,
-				"square": false,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "844.617px",
-				"name": "Lupilisk Whelp 5",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#884DFF",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 33,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Lupilisk Whelp",
-				"top": "2721.31px",
-				"hidehpbar": false,
-				"stat": 4037126,
-				"hitPointInfo": {
-					"maximum": 33,
-					"current": 33,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037126,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"face70cb-21f1-42f2-a891-6a646e423c17": {
-				"disablestat": false,
-				"gridSquares": 0.49833887043189373,
-				"custom_conditions": [],
-				"hp": 2,
-				"armorClass": 12,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "face70cb-21f1-42f2-a891-6a646e423c17",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/641/638368832306900496.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "0"
-				},
-				"itemId": 4037106,
-				"square": true,
-				"healthauratype": "none",
-				"size": 50,
-				"left": "914.692px",
-				"name": "Eye Crow 9",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 2,
-				"itemType": "monster",
-				"color": "#000000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 2,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Eye Crow",
-				"top": "303.67px",
-				"hidehpbar": false,
-				"stat": 4037106,
-				"hitPointInfo": {
-					"maximum": 2,
-					"current": 2,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037106,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			}
 		},
-		"darkness_filter": "100",
-		"grid_line_width": "0.5",
-		"grid_subdivided": "0",
-		"scale_factor": "1",
-		"offsetx": "96.33333333333339",
-		"dm_map_usable": "0",
-		"offsety": "1",
-		"dm_map_is_video": "0",
-		"grid": "0",
-		"scale_check": true,
-		
-		"player_map_is_video": "0",
-		"hpps": "100.33333333333333",
-		"disableSceneVision": "0",
-		"grid_color": "rgba(0, 0, 0, 0.5)",
-		"snap": "1",
-		"notes": {
-			"360c179f-93fb-4cea-b4d3-6ed2a8b697e2": {
-				"title": "! - Exclamation Mark",
-				"text": "<h1 id=\"BoulderwoodPathConclusion\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"c688045f-9259-46cb-817e-4ef7580b3dca\">Conclusion</h1>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Characters who unseal and open the scroll cases find that the treaty was written, signed, and then cut vertically, meaning that only someone who has all three pieces can truly understand all the treaty&rsquo;s articulations and stipulations.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Characters who put the treaty together and read it find that it is exactly what the western regent said it was: a renewal of a treaty between the western and eastern regions.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">It is up to the characters what to do with it.</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">Taking it back to the western regent is a halfway measure but taking it to the eastern regent may be a gamble (after all, what if the eastern regent is responsible for the attack on the courier?).</h3>\n<h3 data-content-chunk-id=\"2665dab7-8b30-454a-a528-e1d47e39abe1\">In any case, opening the seals should diminish (but not negate) the reward.</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">This quest ends with more questions than answers: were the gnolls directed to the courier&rsquo;s path, or were they merely a wandering pack?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Were they after the characters? The treaty?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Who do the eye crows ultimately report to, and why were they whispering &ldquo;meddlers&rdquo;?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">How did so many lupilisks take up residence so quickly in an area that had been cleared of dangers sufficiently for the courier to think this route was safe?</h3>\n<h3 data-content-chunk-id=\"86c0e5ef-ab65-4466-bc66-38162c88e5e2\">Who doesn&rsquo;t want this peace treaty to be re-ratified?</h3>",
-				"plain": "ConclusionCharacters who unseal and open the scroll cases find that the treaty was written, signed, and then cut vertically, meaning that only someone who has all three pieces can truly understand all the treaty’s articulations and stipulations. Characters who put the treaty together and read it find that it is exactly what the western regent said it was: a renewal of a treaty between the western and eastern regions. It is up to the characters what to do with it. Taking it back to the western regent is a halfway measure but taking it to the eastern regent may be a gamble (after all, what if the eastern regent is responsible for the attack on the courier?). In any case, opening the seals should diminish (but not negate) the reward.This quest ends with more questions than answers: were the gnolls directed to the courier’s path, or were they merely a wandering pack? Were they after the characters? The treaty? Who do the eye crows ultimately report to, and why were they whispering “meddlers”? How did so many lupilisks take up residence so quickly in an area that had been cleared of dangers sufficiently for the courier to think this route was safe? Who doesn’t want this peace treaty to be re-ratified?",
-				"player": false,
-				"statBlock": false
-			},
-			"361b6cee-1a0f-4190-9b47-2f90ba250b9f": {
-				"title": "01",
-				"text": "<h3 id=\"1ForestPath\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"14e4e94b-551a-4dca-8b8a-5f6aa2284980\">&nbsp;Forest Path</h3>\n<aside class=\"text--quote-box\">\n<p>After hours of trudging down this dark forest path, you find yourself staring down at the statue of a horse that&rsquo;s been tipped over onto its side in the middle of the road. Strangely, it&rsquo;s missing a leg and tail, but the missing pieces aren&rsquo;t nearby.</p>\n</aside>\n<p data-content-chunk-id=\"b3ba8545-7e85-4fa4-8b96-6847e86188dc\"><span style=\"font-size: 12pt;\">One of the two cart horses from the courier&rsquo;s wagon was turned to stone when the lupilisks attacked. They ate its foreleg and tail, leaving the rest for later. The rest of the wagon, along with the other horse, courier, and two guards made it to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"00364465-270a-4fbf-8dde-918dc9fab8c8\">area 3</a>&nbsp;before succumbing.</span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\"><strong><em>Stone Horse.</em></strong>&nbsp;Characters who investigate the horse with a successful DC 12 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check discover that the statue is of impeccable workmanship, displaying the animal rearing back. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">It even has bridles and a broken yoke carved with symbols of the western regent. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">Those who suspect the horse was turned to stone (rather than being an artificial statue) can attempt a DC 15 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Arcana\" data-tooltip-href=\"//www.dndbeyond.com/skills/6-tooltip?disable-webm=1&amp;disable-webm=1\">Arcana</a>). </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">A success recalls stories of fantastic fiends called&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisks</a>&nbsp;whose venom&mdash;which grows stronger as the creature ages&mdash;petrifies its prey. </span></p>\n<p data-content-chunk-id=\"ad617572-599d-4aa1-8044-e41475701659\"><span style=\"font-size: 12pt;\">Characters who succeed by 5 or more also recall that lupilisks tend to hunt in packs and are often led by the oldest and most powerful among them.</span></p>\n<p data-content-chunk-id=\"abcf04ec-25e9-49bd-b1de-a57225850a69\"><span style=\"font-size: 12pt;\"><strong><em>Path.</em></strong>&nbsp;Characters who succeed at a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Survival\" data-tooltip-href=\"//www.dndbeyond.com/skills/15-tooltip?disable-webm=1&amp;disable-webm=1\">Survival</a>) check can pick out a set of wagon wheel tracks that indicate the wagon picked up speed here. </span></p>\n<p data-content-chunk-id=\"abcf04ec-25e9-49bd-b1de-a57225850a69\"><span style=\"font-size: 12pt;\">Those who succeed by 5 or more know that the speed increase was uncontrolled and unsafe.</span></p>",
-				"plain": " Forest PathAfter hours of trudging down this dark forest path, you find yourself staring down at the statue of a horse that’s been tipped over onto its side in the middle of the road. Strangely, it’s missing a leg and tail, but the missing pieces aren’t nearby.One of the two cart horses from the courier’s wagon was turned to stone when the lupilisks attacked. They ate its foreleg and tail, leaving the rest for later. The rest of the wagon, along with the other horse, courier, and two guards made it to area 3 before succumbing.Stone Horse. Characters who investigate the horse with a successful DC 12 Intelligence (Investigation) check discover that the statue is of impeccable workmanship, displaying the animal rearing back. It even has bridles and a broken yoke carved with symbols of the western regent. Those who suspect the horse was turned to stone (rather than being an artificial statue) can attempt a DC 15 Intelligence (Arcana). A success recalls stories of fantastic fiends called lupilisks whose venom—which grows stronger as the creature ages—petrifies its prey. Characters who succeed by 5 or more also recall that lupilisks tend to hunt in packs and are often led by the oldest and most powerful among them.Path. Characters who succeed at a DC 15 Wisdom (Survival) check can pick out a set of wagon wheel tracks that indicate the wagon picked up speed here. Those who succeed by 5 or more know that the speed increase was uncontrolled and unsafe.",
-				"player": false,
-				"statBlock": false
-			},
-			"42933a82-310f-46bc-aa93-db88bbd4e82c": {
-				"title": "! - Exclamation Mark",
-				"text": "<h2 data-content-chunk-id=\"daaba332-fb22-4e79-b30a-28391483c5c0\">The characters arrive on the road from the west at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#1ForestPath\" data-content-chunk-id=\"6f095ce9-b15b-41f6-a594-88da9c643876\">area 1</a>. This deep in the Boulderwood, the tree canopy is very thick. The rocky outcroppings here have led to fewer taller, stronger trees, so the canopy is still all encompassing but light does pass through.</h2>\n<h2 data-content-chunk-id=\"44680ca4-2f7d-4d4d-aa87-a7b78ea20137\">The lupilisks stumbled across a great bounty with the attack on the courier. Between the horses, the courier, and the courier&rsquo;s guards, the entire pack has been eating well for days, supplemented with the occasional stray forest creature. As such, most of the lupilisks are lazing in their respective nests and hangouts.</h2>\n<h2 data-content-chunk-id=\"c5f705c2-ea7c-4429-8223-2194e95dcf0d\">The eye crows in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#6AncientAltar\" data-content-chunk-id=\"5b309e39-e0a6-4797-bfb8-26ed20336e64\">area 6</a>&nbsp;have peers all around the lair, watching to ensure the treaty pieces are not recovered. Characters with a passive Perception of 17 or higher notice the unusual number of birds watching them as they travel the lair, as do any characters who actively search the trees and succeed on a DC 17 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check.</h2>\n<h2 data-content-chunk-id=\"1ad6ed1d-d3b9-4630-bc44-66ed1fd8a59b\">When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037088-beast-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037088-tooltip?disable-webm=1&amp;disable-webm=1\">beast gnolls</a>*, two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037166-venomous-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037166-tooltip?disable-webm=1&amp;disable-webm=1\">venomous gnolls</a>*, and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037112-gnoll-brute\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037112-tooltip?disable-webm=1&amp;disable-webm=1\">gnoll brutes</a>*) arrives at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"62b9f4ed-e0fb-45a7-b96e-43c0b25e6d39\">area 3</a>, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven&rsquo;t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they&rsquo;ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word &ldquo;blessed&rdquo; inscribed in elegant Celestial worth 250 gp.</h2>",
-				"plain": "The characters arrive on the road from the west at area 1. This deep in the Boulderwood, the tree canopy is very thick. The rocky outcroppings here have led to fewer taller, stronger trees, so the canopy is still all encompassing but light does pass through.The lupilisks stumbled across a great bounty with the attack on the courier. Between the horses, the courier, and the courier’s guards, the entire pack has been eating well for days, supplemented with the occasional stray forest creature. As such, most of the lupilisks are lazing in their respective nests and hangouts.The eye crows in area 6 have peers all around the lair, watching to ensure the treaty pieces are not recovered. Characters with a passive Perception of 17 or higher notice the unusual number of birds watching them as they travel the lair, as do any characters who actively search the trees and succeed on a DC 17 Wisdom (Perception) check.When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four beast gnolls*, two venomous gnolls*, and two gnoll brutes*) arrives at area 3, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven’t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they’ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word “blessed” inscribed in elegant Celestial worth 250 gp.",
-				"player": false,
-				"statBlock": false
-			},
-			"449bc66b-48af-4ff7-a772-1505461e9cb2": {
-				"title": "03",
-				"text": "<h3 id=\"3RuinedWagon\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"cd770100-11a9-4997-b6bb-5fbff25402bf\">3. Ruined Wagon</h3>\n<aside class=\"text--quote-box\">\n<p>A capsized wagon with a broken wheel blocks the path. You see rocks scattered on the ground and the wagon bearing the emblems of a trading house of the regent's seal.</p>\n</aside>\n<p data-content-chunk-id=\"77dea469-1c65-4bd2-bbe3-4e982e1f2d40\"><span style=\"font-size: 12pt;\">A cursory search confirms that this is the missing courier&rsquo;s wagon, bearing the emblems of a trading house instead of the regent&rsquo;s seal to avoid suspicion. </span></p>\n<p data-content-chunk-id=\"77dea469-1c65-4bd2-bbe3-4e982e1f2d40\"><span style=\"font-size: 12pt;\">Flight of any kind is a great way to stay out of reach of the lupilisks; however, staying airborne or sticking to the treetops for too long draws the attention of two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037157-sky-drake\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037157-tooltip?disable-webm=1&amp;disable-webm=1\">sky drakes</a>*.</span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\"><strong><em>Wagon.</em></strong>&nbsp;To establish the courier&rsquo;s cover, she was given several crates filled with jars of flour. </span><span style=\"font-size: 12pt;\">The wreck of the wagon has broken most of the jars, and the crates are leaking flour. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">A successful DC 14 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Survival\" data-tooltip-href=\"//www.dndbeyond.com/skills/15-tooltip?disable-webm=1&amp;disable-webm=1\">Survival</a>&nbsp;or&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check reveals that the wagon capsized after being chased by at least ten quadrupedal creatures. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">A successful DC 14 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check reveals that some of the rocks on the road are not rocks at all, but pieces of another horse statue. </span></p>\n<p data-content-chunk-id=\"697a4be0-6e31-49b1-9c01-050f5d03172c\"><span style=\"font-size: 12pt;\">Succeeding at either of these checks, or spending 10 minutes searching, reveals no lockbox or other suitable safe place for the treaty; the treaty pieces are not here and were likely carried by the courier or her guards.</span></p>",
-				"plain": "3. Ruined WagonA capsized wagon with a broken wheel blocks the path. You see rocks scattered on the ground and the wagon bearing the emblems of a trading house of the regent's seal.A cursory search confirms that this is the missing courier’s wagon, bearing the emblems of a trading house instead of the regent’s seal to avoid suspicion. Flight of any kind is a great way to stay out of reach of the lupilisks; however, staying airborne or sticking to the treetops for too long draws the attention of two sky drakes*.Wagon. To establish the courier’s cover, she was given several crates filled with jars of flour. The wreck of the wagon has broken most of the jars, and the crates are leaking flour. A successful DC 14 Wisdom (Survival or Perception) check reveals that the wagon capsized after being chased by at least ten quadrupedal creatures. A successful DC 14 Intelligence (Investigation) check reveals that some of the rocks on the road are not rocks at all, but pieces of another horse statue. Succeeding at either of these checks, or spending 10 minutes searching, reveals no lockbox or other suitable safe place for the treaty; the treaty pieces are not here and were likely carried by the courier or her guards.",
-				"player": false,
-				"statBlock": false
-			},
-			"4c0d8af4-f44f-45ac-ade4-311129aee901": {
-				"title": "06",
-				"text": "<h3 id=\"6AncientAltar\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"6287b942-dbe2-430b-8945-550cf811132a\">6. Ancient Altar</h3>\n<aside class=\"text--quote-box\">\n<p>Atop this knoll rests a large worked-stone altar covered in ivy and moss. The unnerving sound of whispering seems to be all around you.\\</p>\n</aside>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">The altar&rsquo;s original purpose is long lost, and the gods who were worshipped here long gone. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">However, it is a beacon to a murder of&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037106-eye-crow\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037106-tooltip?disable-webm=1&amp;disable-webm=1\">eye crows</a>&nbsp;that watches the characters. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">If the characters come here before finding any of the treaty scroll cases, the dozens of eye crows are in the trees all around the altar when they arrive, whispering. </span></p>\n<p data-content-chunk-id=\"02250fb3-6838-46e6-bf40-2f3a5f89748a\"><span style=\"font-size: 12pt;\">A DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Insight\" data-tooltip-href=\"//www.dndbeyond.com/skills/12-tooltip?disable-webm=1&amp;disable-webm=1\">Insight</a>) check determines that the birds are the source of the whispering sound.</span></p>\n<p data-content-chunk-id=\"008504b3-0fc3-44d1-80c0-ed2ecd234a52\"><span style=\"font-size: 12pt;\"><strong><em>Climbing.</em></strong>&nbsp;Climbing or descending the gentle slope on the western side of the knoll does not require a check but is considered&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. To ascend or descend the steeper southeast side of the hillock requires a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check. The knoll&rsquo;s crest is 30 feet above the forest floor.</span></p>\n<p data-content-chunk-id=\"6b0fbe5f-ac87-498e-965c-1b9810b135e7\"><span style=\"font-size: 12pt;\"><strong><em>Eyes on the Altar.</em></strong>&nbsp;If the characters arrive after collecting any or all the treaty scroll cases, a group of 12&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037106-eye-crow\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037106-tooltip?disable-webm=1&amp;disable-webm=1\">eye crows</a>* fly onto the altar and stare at the characters. Characters who approach the 12 swear they hear the word &ldquo;meddler&rdquo; being whispered by the birds&mdash;but each character hears it in their native tongue. Attacking or moving threateningly towards the eye crows causes them to scatter to the trees (or further if pursued). However, if only a single character is present at the altar, the 12 attack, trying to pluck out the characters&rsquo; eyes.</span></p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\"><span style=\"font-size: 12pt;\">Characters who can talk to animals find that these crows have little to say to them; if compelled, the crows can reveal that they&rsquo;re watching to see if anyone takes the &ldquo;metal tubes&rdquo; (scroll cases) and who it is that takes them. They can describe a woman falconer who feeds them and trains them and to whom they deliver this information.</span></p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\">&nbsp;</p>\n<p data-content-chunk-id=\"618f6c44-f68f-4a39-b77a-212a18e651bb\"><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-001.eye-crow.png\" alt=\"\" width=\"1700\" height=\"1791\" /></p>",
-				"plain": "6. Ancient AltarAtop this knoll rests a large worked-stone altar covered in ivy and moss. The unnerving sound of whispering seems to be all around you.\\The altar’s original purpose is long lost, and the gods who were worshipped here long gone. However, it is a beacon to a murder of eye crows that watches the characters. If the characters come here before finding any of the treaty scroll cases, the dozens of eye crows are in the trees all around the altar when they arrive, whispering. A DC 10 Wisdom (Insight) check determines that the birds are the source of the whispering sound.Climbing. Climbing or descending the gentle slope on the western side of the knoll does not require a check but is considered difficult terrain. To ascend or descend the steeper southeast side of the hillock requires a successful DC 15 Strength (Athletics) check. The knoll’s crest is 30 feet above the forest floor.Eyes on the Altar. If the characters arrive after collecting any or all the treaty scroll cases, a group of 12 eye crows* fly onto the altar and stare at the characters. Characters who approach the 12 swear they hear the word “meddler” being whispered by the birds—but each character hears it in their native tongue. Attacking or moving threateningly towards the eye crows causes them to scatter to the trees (or further if pursued). However, if only a single character is present at the altar, the 12 attack, trying to pluck out the characters’ eyes.Characters who can talk to animals find that these crows have little to say to them; if compelled, the crows can reveal that they’re watching to see if anyone takes the “metal tubes” (scroll cases) and who it is that takes them. They can describe a woman falconer who feeds them and trains them and to whom they deliver this information.",
-				"player": false,
-				"statBlock": false
-			},
-			"5e4bd087-6e50-494a-9f0c-8d28a3b7daa1": {
-				"title": "04",
-				"text": "<h3 id=\"4ElderMount\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"a9579128-0bfa-40d2-be9c-8975b001cdcc\">4. Elder Mount</h3>\n<aside class=\"text--quote-box\">\n<p>From this high vantage point, you can see down the path to where you first encountered the stone horse and began your investigation. A rocky projection juts up from this hillock, blocking your view of the rest of the path.</p>\n</aside>\n<p data-content-chunk-id=\"6397b7cf-73bf-41f3-8d50-825d365a3baa\"><span style=\"font-size: 12pt;\">A&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037125-lupilisk-elder\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037125-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk elder</a>* and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>* are resting here and attack the characters on sight. Loud fighting here draws the creatures from area 5 into the fight after 1d3 + 1 rounds.</span></p>\n<p data-content-chunk-id=\"1dee66b4-8033-41f6-bc50-27d17e66d9de\"><span style=\"font-size: 12pt;\"><strong><em>Climbing.</em></strong>&nbsp;Climbing or descending the gentle slope on the eastern side of the hillock does not require a check but is considered&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. To ascend or descend the steeper three sides of the hillock requires a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check. The hillock is 30 feet above the forest floor.</span></p>\n<p data-content-chunk-id=\"f1505bc7-c345-46c5-a894-932205574b2f\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Near a petrified boot lies a necklace (an&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4569-amulet-of-proof-against-detection-and-location\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4569-tooltip?disable-webm=1&amp;disable-webm=1\">amulet of proof against detection and location</a>) and the second piece of the treaty in a scroll case. This is the final resting place of the courier.</span></p>",
-				"plain": "4. Elder MountFrom this high vantage point, you can see down the path to where you first encountered the stone horse and began your investigation. A rocky projection juts up from this hillock, blocking your view of the rest of the path.A lupilisk elder* and two lupilisk whelps* are resting here and attack the characters on sight. Loud fighting here draws the creatures from area 5 into the fight after 1d3 + 1 rounds.Climbing. Climbing or descending the gentle slope on the eastern side of the hillock does not require a check but is considered difficult terrain. To ascend or descend the steeper three sides of the hillock requires a successful DC 15 Strength (Athletics) check. The hillock is 30 feet above the forest floor.Treasure. Near a petrified boot lies a necklace (an amulet of proof against detection and location) and the second piece of the treaty in a scroll case. This is the final resting place of the courier.",
-				"player": false,
-				"statBlock": false
-			},
-			"ab548635-a220-4028-acf3-bdd3fc7d66e0": {
-				"title": "! - Exclamation Mark",
-				"text": "<h3>When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037088-beast-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037088-tooltip?disable-webm=1&amp;disable-webm=1\">beast gnolls</a>*, two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037166-venomous-gnoll\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037166-tooltip?disable-webm=1&amp;disable-webm=1\">venomous gnolls</a>*, and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037112-gnoll-brute\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037112-tooltip?disable-webm=1&amp;disable-webm=1\">gnoll brutes</a>*) arrives at&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/boulderwood-path#3RuinedWagon\" data-content-chunk-id=\"62b9f4ed-e0fb-45a7-b96e-43c0b25e6d39\">area 3</a>, traveling the road toward area 1.</h3>\n<h3>They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven&rsquo;t gotten into unless stopped by the characters.</h3>\n<h3>The gnolls carry their plunder from other travelers and adventurers they&rsquo;ve killed.</h3>\n<h3>The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word &ldquo;blessed&rdquo; inscribed in elegant Celestial worth 250 gp.</h3>",
-				"plain": "When the characters have investigated any two of the areas and are on their way to a third, a pack of gnolls (four beast gnolls*, two venomous gnolls*, and two gnoll brutes*) arrives at area 3, traveling the road toward area 1. They make a ruckus, destroying the ruined cart and devouring the rations and supplies the forest animals haven’t gotten into unless stopped by the characters. The gnolls carry their plunder from other travelers and adventurers they’ve killed. The treasure they carry includes 147 gp of random items and coins, as well as a bronze coronet with the word “blessed” inscribed in elegant Celestial worth 250 gp.",
-				"player": false,
-				"statBlock": false
-			},
-			"c0f94686-8657-478a-aa72-cdae6f0242e7": {
-				"title": "05",
-				"text": "<h3 id=\"5HillsideNest\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"af225a79-38dd-47e8-9465-fb5edd2f845b\">5. Hillside Nest</h3>\n<aside class=\"text--quote-box\">\n<p>The detritus of a large animal haunch is nestled under a large tree in the lee of this hillock.</p>\n</aside>\n<p data-content-chunk-id=\"680a10be-f08e-4f99-ae13-6854d466ef84\"><span style=\"font-size: 12pt;\">This is the original and main nest of the lupilisks in the area: two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisks</a>* and two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>* are here. All four defend the nest to the death. Loud fighting here draws the creatures from area 4 into the fight after 1d3 + 1 rounds.</span></p>\n<p data-content-chunk-id=\"d9dafeae-5ca2-44f6-87d7-313561dbe769\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Searching the nest for treasure yields the third metal scroll case containing the third part of the treaty. A successful DC 16 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Investigation\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check also yields a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4724-ring-of-jumping\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4724-tooltip?disable-webm=1&amp;disable-webm=1\">ring of jumping</a>&nbsp;that was hidden in the filth.</span></p>",
-				"plain": "5. Hillside NestThe detritus of a large animal haunch is nestled under a large tree in the lee of this hillock.This is the original and main nest of the lupilisks in the area: two lupilisks* and two lupilisk whelps* are here. All four defend the nest to the death. Loud fighting here draws the creatures from area 4 into the fight after 1d3 + 1 rounds.Treasure. Searching the nest for treasure yields the third metal scroll case containing the third part of the treaty. A successful DC 16 Intelligence (Investigation) check also yields a ring of jumping that was hidden in the filth.",
-				"player": false,
-				"statBlock": false
-			},
-			"ed05f375-db3a-49f0-8715-9e07a5f6d5fe": {
-				"title": "02",
-				"text": "<h3 id=\"2WateringHole\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"6cf5a72c-f37d-42cc-8b0e-21be1ef26b9b\">2. Watering Hole</h3>\n<aside class=\"text--quote-box\">\n<p>Past the rocks, the air here is slightly warmer thanks to the break in the trees afforded by the pool in this swale.</p>\n</aside>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">Six&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037126-lupilisk-whelp\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037126-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk whelps</a>*, a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037127-lupilisk\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037127-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk</a>*, and a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037125-lupilisk-elder\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037125-tooltip?disable-webm=1&amp;disable-webm=1\">lupilisk elder</a>* are here: three whelps are curled up napping while the others are drinking at the pool. </span></p>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">The lupilisk elder was injured in the fight against the courier&rsquo;s group and is at half its hit points. </span></p>\n<p data-content-chunk-id=\"4535e4bd-4ba8-4560-9d52-d2c59eb172b3\"><span style=\"font-size: 12pt;\">Even with the elder&rsquo;s weakened condition, this can be a very difficult encounter!</span></p>\n<p data-content-chunk-id=\"53710210-cf0d-41b8-86ce-36306d93da41\"><span style=\"font-size: 12pt;\"><strong><em>Rocky Area.</em></strong>&nbsp;The raised area that separates the pool&rsquo;s surroundings from the forest path is&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>. Characters can use this to their advantage to slow the lupilisks!</span></p>\n<p data-content-chunk-id=\"ba316569-b789-493d-8f84-1f391d31484a\"><span style=\"font-size: 12pt;\"><strong><em>Pool.</em></strong>&nbsp;The water is cool and clean to drink. It is 10 feet deep at its deepest point.</span></p>\n<p data-content-chunk-id=\"7ec245da-6b39-4df0-9086-36263e932e34\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;The napping whelps had just finished a stony meal. </span></p>\n<p data-content-chunk-id=\"7ec245da-6b39-4df0-9086-36263e932e34\"><span style=\"font-size: 12pt;\">A stone hand and a metal scroll case (one of the three pieces of the treaty) are all that remain of this courier guard.</span></p>\n<figure id=\"imgthelupilisk\" class=\"compendium-art compendium-art-center Misc--Dropshadow\"><a class=\"ddb-lightbox-outer compendium-image-center\" href=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-006.lupilisk-elder.jpg\" data-lightbox=\"1\" data-title=\"\"><img class=\"ddb-lightbox-inner compendium-center-banner-img\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/06-006.lupilisk-elder.jpg\" alt=\"\" /></a></figure>",
-				"plain": "2. Watering HolePast the rocks, the air here is slightly warmer thanks to the break in the trees afforded by the pool in this swale.Six lupilisk whelps*, a lupilisk*, and a lupilisk elder* are here: three whelps are curled up napping while the others are drinking at the pool. The lupilisk elder was injured in the fight against the courier’s group and is at half its hit points. Even with the elder’s weakened condition, this can be a very difficult encounter!Rocky Area. The raised area that separates the pool’s surroundings from the forest path is difficult terrain. Characters can use this to their advantage to slow the lupilisks!Pool. The water is cool and clean to drink. It is 10 feet deep at its deepest point.Treasure. The napping whelps had just finished a stony meal. A stone hand and a metal scroll case (one of the three pieces of the treaty) are all that remain of this courier guard.",
-				"player": false,
-				"statBlock": false
-			}
-		},
-	},
-	"loe/gloomrock-caverns/Map501gloomrockcaverns": {
-		"itemType": "scene",
-		
-		"reveals": [
-			[
-				0,
-				0,
-				0,
-				0,
-				2,
-				0,
-				1
-			]
-		],
-		"gridStrokeNumberInput": "0.5",
-		"scale": 100,
-		"vpps": "100",
-		"darkness_filter_number": "100",
-		"title": "Map: Gloomrock Caverns ",
-		"fog_of_war": "1",
-		
-		"upsq": "ft",
-		"folderPath": "/Gloomrock Caverns",
-		"scaleX": 1,
-		"scaleY": 1,
-		"playlist": "0",
-		"gridType": "1",
-		"drawings": [
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				165,
-				563,
-				251,
-				392,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				-17,
-				2000,
-				78,
-				1995,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				78,
-				1995,
-				130,
-				2035,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				130,
-				2035,
-				213,
-				2156,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				213,
-				2156,
-				277,
-				2198,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				277,
-				2198,
-				423,
-				2215,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				423,
-				2215,
-				504,
-				2170,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				504,
-				2170,
-				532,
-				2111,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				532,
-				2111,
-				499,
-				1979,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				499,
-				1979,
-				374,
-				1797,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				374,
-				1797,
-				191,
-				1555,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				191,
-				1555,
-				121,
-				1454,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				121,
-				1454,
-				85,
-				1338,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				85,
-				1338,
-				90,
-				938,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				90,
-				938,
-				106,
-				733,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				106,
-				733,
-				165,
-				563,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				241,
-				402,
-				374,
-				232,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				374,
-				232,
-				501,
-				118,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				501,
-				118,
-				610,
-				92,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				610,
-				92,
-				851,
-				69,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				851,
-				69,
-				1116,
-				73,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1116,
-				73,
-				1355,
-				154,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1355,
-				154,
-				1520,
-				300,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1520,
-				300,
-				1719,
-				570,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1719,
-				570,
-				1737,
-				794,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1737,
-				794,
-				1726,
-				1378,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1726,
-				1378,
-				1648,
-				1560,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1648,
-				1560,
-				1581,
-				1702,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1581,
-				1702,
-				1430,
-				1823,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1430,
-				1823,
-				1402,
-				1891,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1402,
-				1891,
-				1397,
-				1967,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1397,
-				1967,
-				1506,
-				2130,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1506,
-				2130,
-				1525,
-				2165,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1525,
-				2165,
-				1553,
-				2125,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1553,
-				2125,
-				1492,
-				2038,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1492,
-				2038,
-				1456,
-				1969,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1456,
-				1969,
-				1548,
-				1773,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1548,
-				1773,
-				1655,
-				1662,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1655,
-				1662,
-				1723,
-				1470,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1723,
-				1470,
-				1806,
-				1461,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1806,
-				1461,
-				1877,
-				1678,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1877,
-				1678,
-				2005,
-				1851,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2005,
-				1851,
-				2028,
-				1941,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2028,
-				1941,
-				2064,
-				2014,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2064,
-				2014,
-				2099,
-				2102,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2099,
-				2102,
-				2099,
-				2149,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2099,
-				2149,
-				2002,
-				2217,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2002,
-				2217,
-				1912,
-				2253,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1912,
-				2253,
-				1851,
-				2274,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1851,
-				2274,
-				1846,
-				2293,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1846,
-				2293,
-				1924,
-				2347,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1924,
-				2347,
-				2002,
-				2276,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2002,
-				2276,
-				2125,
-				2262,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2125,
-				2262,
-				2163,
-				2220,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2163,
-				2220,
-				2165,
-				2050,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2165,
-				2050,
-				2059,
-				1877,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2059,
-				1877,
-				2038,
-				1823,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2038,
-				1823,
-				1943,
-				1704,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1943,
-				1704,
-				1875,
-				1532,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1875,
-				1532,
-				1830,
-				1355,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1830,
-				1355,
-				1827,
-				891,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1827,
-				891,
-				1832,
-				657,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1832,
-				657,
-				1953,
-				520,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1953,
-				520,
-				2220,
-				385,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2220,
-				385,
-				2454,
-				385,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2454,
-				385,
-				2652,
-				468,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2652,
-				468,
-				2797,
-				624,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2797,
-				624,
-				2908,
-				905,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2908,
-				905,
-				2924,
-				1331,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2924,
-				1331,
-				2922,
-				1511,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2922,
-				1511,
-				2901,
-				1645,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2901,
-				1645,
-				2891,
-				2040,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2891,
-				2040,
-				2823,
-				2340,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2823,
-				2340,
-				2709,
-				2586,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2709,
-				2586,
-				2579,
-				2740,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2579,
-				2740,
-				2414,
-				2768,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2414,
-				2768,
-				2324,
-				2763,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2324,
-				2763,
-				2236,
-				2714,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2236,
-				2714,
-				2042,
-				2485,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2042,
-				2485,
-				1825,
-				2551,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1825,
-				2551,
-				1730,
-				2570,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1730,
-				2570,
-				1719,
-				2745,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1719,
-				2745,
-				1586,
-				2908,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1586,
-				2908,
-				1385,
-				2964,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1385,
-				2964,
-				1080,
-				2967,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1080,
-				2967,
-				858,
-				2924,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				858,
-				2924,
-				764,
-				2815,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				957,
-				2404,
-				1028,
-				2447,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1028,
-				2447,
-				1125,
-				2548,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1125,
-				2548,
-				1217,
-				2529,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1217,
-				2529,
-				1300,
-				2461,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1849,
-				2281,
-				1849,
-				2281,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1851,
-				2286,
-				1849,
-				2281,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1529,
-				2158,
-				1519.1052631578948,
-				2172,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1300,
-				2461,
-				1320.6470588235295,
-				2435,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				938,
-				2310,
-				953,
-				2406,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1317,
-				2440,
-				1243,
-				2390,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1243,
-				2390,
-				1102,
-				2198,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1102,
-				2198,
-				1040,
-				2033,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1040,
-				2033,
-				1035,
-				1808,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1035,
-				1808,
-				1083,
-				1657,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1083,
-				1657,
-				1357,
-				1362,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1357,
-				1362,
-				1440,
-				1121,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1440,
-				1121,
-				1435,
-				740,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1435,
-				740,
-				1381,
-				702,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1381,
-				702,
-				1321,
-				712,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1321,
-				712,
-				1265,
-				806,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1265,
-				806,
-				1260,
-				969,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1260,
-				969,
-				1182,
-				1163,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1182,
-				1163,
-				1040,
-				1260,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1040,
-				1260,
-				839,
-				1253,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				839,
-				1253,
-				678,
-				1113,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				678,
-				1113,
-				610,
-				998,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				610,
-				998,
-				584,
-				747,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				584,
-				747,
-				522,
-				695,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				522,
-				695,
-				452,
-				716,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				452,
-				716,
-				423,
-				839,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				423,
-				839,
-				355,
-				1092,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				355,
-				1092,
-				357,
-				1149,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				357,
-				1149,
-				482,
-				1338,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				482,
-				1338,
-				629,
-				1593,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				629,
-				1593,
-				778,
-				1768,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				778,
-				1768,
-				879,
-				1950,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				879,
-				1950,
-				938,
-				2310,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				92,
-				2655,
-				-26,
-				2485,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				771,
-				2815,
-				662,
-				2875,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				662,
-				2875,
-				530,
-				2912,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				530,
-				2912,
-				402,
-				2912,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				402,
-				2912,
-				222,
-				2780,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				222,
-				2780,
-				92,
-				2655,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2336,
-				2350,
-				2347,
-				2281,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2347,
-				2286,
-				2359,
-				2111,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2359,
-				2111,
-				2364,
-				1922,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2364,
-				1922,
-				2333,
-				1801,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2333,
-				1801,
-				2265,
-				1641,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2265,
-				1641,
-				2258,
-				1461,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2258,
-				1461,
-				2293,
-				1385,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2293,
-				1385,
-				2371,
-				1340,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2371,
-				1340,
-				2487,
-				1362,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2487,
-				1362,
-				2581,
-				1475,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2581,
-				1475,
-				2667,
-				1846,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2667,
-				1846,
-				2667,
-				2111,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2667,
-				2111,
-				2622,
-				2314,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2622,
-				2314,
-				2511,
-				2494,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2511,
-				2494,
-				2466,
-				2541,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2466,
-				2541,
-				2376,
-				2565,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2376,
-				2565,
-				2274,
-				2503,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2274,
-				2503,
-				2260,
-				2409,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2260,
-				2409,
-				2336,
-				2350,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				764,
-				2815,
-				782.6666666666666,
-				2799,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				957,
-				2404,
-				942.2564102564103,
-				2454,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(255, 255, 0, 1)",
-				782.6666666666666,
-				2799,
-				942.2564102564103,
-				2454,
-				12,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1180,
-				706,
-				1302,
-				745,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				591,
-				779,
-				776,
-				681,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				776,
-				681,
-				944,
-				652,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				944,
-				652,
-				1053,
-				688,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1053,
-				688,
-				1180,
-				706,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1540,
-				2146,
-				1540,
-				2146,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1704,
-				2205,
-				1854,
-				2295,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1537,
-				2137,
-				1704,
-				2205,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1638,
-				2565,
-				1733,
-				2572,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1309,
-				2449,
-				1370,
-				2515,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1370,
-				2515,
-				1535,
-				2567,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				1535,
-				2567,
-				1638,
-				2565,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2047,
-				2493,
-				2047,
-				2493,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2045,
-				2486,
-				2047,
-				2485.3302325581394,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2260,
-				2414,
-				2251,
-				2417.013953488372,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2240,
-				2464,
-				2258,
-				2411,
-				6,
-				1
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2073,
-				2526,
-				2146,
-				2523,
-				6,
-				1,
-				false
-			],
-			[
-				"line",
-				"wall",
-				"rgba(0, 255, 0, 1)",
-				2146,
-				2523,
-				2240,
-				2464,
-				6,
-				1,
-				false
-			]
-		],
-		"fpsq": "5",
-		"tokens": {
-			"17a831ec-7ca8-4869-a117-8760abb0cb90": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
+		"loe/gloomrock-caverns/Map501gloomrockcaverns": {
+			"itemType": "scene",
+			
+			"reveals": [
+				[
+					0,
+					0,
+					0,
+					0,
+					2,
+					0,
+					1
+				]
+			],
+			"gridStrokeNumberInput": "0.5",
+			"scale": 100,
+			"vpps": "100",
+			"darkness_filter_number": "100",
+			"title": "Map: Gloomrock Caverns ",
+			"fog_of_war": "1",
+			
+			"upsq": "ft",
+			"folderPath": "/Gloomrock Caverns",
+			"scaleX": 1,
+			"scaleY": 1,
+			"playlist": "0",
+			"gridType": "1",
+			"drawings": [
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					165,
+					563,
+					251,
+					392,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					-17,
+					2000,
+					78,
+					1995,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					78,
+					1995,
+					130,
+					2035,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					130,
+					2035,
+					213,
+					2156,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					213,
+					2156,
+					277,
+					2198,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					277,
+					2198,
+					423,
+					2215,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					423,
+					2215,
+					504,
+					2170,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					504,
+					2170,
+					532,
+					2111,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					532,
+					2111,
+					499,
+					1979,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					499,
+					1979,
+					374,
+					1797,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					374,
+					1797,
+					191,
+					1555,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					191,
+					1555,
+					121,
+					1454,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					121,
+					1454,
+					85,
+					1338,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					85,
+					1338,
+					90,
+					938,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					90,
+					938,
+					106,
+					733,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					106,
+					733,
+					165,
+					563,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					241,
+					402,
+					374,
+					232,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					374,
+					232,
+					501,
+					118,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					501,
+					118,
+					610,
+					92,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					610,
+					92,
+					851,
+					69,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					851,
+					69,
+					1116,
+					73,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1116,
+					73,
+					1355,
+					154,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1355,
+					154,
+					1520,
+					300,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1520,
+					300,
+					1719,
+					570,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1719,
+					570,
+					1737,
+					794,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1737,
+					794,
+					1726,
+					1378,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1726,
+					1378,
+					1648,
+					1560,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1648,
+					1560,
+					1581,
+					1702,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1581,
+					1702,
+					1430,
+					1823,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1430,
+					1823,
+					1402,
+					1891,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1402,
+					1891,
+					1397,
+					1967,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1397,
+					1967,
+					1506,
+					2130,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1506,
+					2130,
+					1525,
+					2165,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1525,
+					2165,
+					1553,
+					2125,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1553,
+					2125,
+					1492,
+					2038,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1492,
+					2038,
+					1456,
+					1969,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1456,
+					1969,
+					1548,
+					1773,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1548,
+					1773,
+					1655,
+					1662,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1655,
+					1662,
+					1723,
+					1470,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1723,
+					1470,
+					1806,
+					1461,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1806,
+					1461,
+					1877,
+					1678,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1877,
+					1678,
+					2005,
+					1851,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2005,
+					1851,
+					2028,
+					1941,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2028,
+					1941,
+					2064,
+					2014,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2064,
+					2014,
+					2099,
+					2102,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2099,
+					2102,
+					2099,
+					2149,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2099,
+					2149,
+					2002,
+					2217,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2002,
+					2217,
+					1912,
+					2253,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1912,
+					2253,
+					1851,
+					2274,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1851,
+					2274,
+					1846,
+					2293,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1846,
+					2293,
+					1924,
+					2347,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1924,
+					2347,
+					2002,
+					2276,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2002,
+					2276,
+					2125,
+					2262,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2125,
+					2262,
+					2163,
+					2220,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2163,
+					2220,
+					2165,
+					2050,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2165,
+					2050,
+					2059,
+					1877,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2059,
+					1877,
+					2038,
+					1823,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2038,
+					1823,
+					1943,
+					1704,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1943,
+					1704,
+					1875,
+					1532,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1875,
+					1532,
+					1830,
+					1355,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1830,
+					1355,
+					1827,
+					891,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1827,
+					891,
+					1832,
+					657,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1832,
+					657,
+					1953,
+					520,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1953,
+					520,
+					2220,
+					385,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2220,
+					385,
+					2454,
+					385,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2454,
+					385,
+					2652,
+					468,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2652,
+					468,
+					2797,
+					624,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2797,
+					624,
+					2908,
+					905,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2908,
+					905,
+					2924,
+					1331,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2924,
+					1331,
+					2922,
+					1511,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2922,
+					1511,
+					2901,
+					1645,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2901,
+					1645,
+					2891,
+					2040,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2891,
+					2040,
+					2823,
+					2340,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2823,
+					2340,
+					2709,
+					2586,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2709,
+					2586,
+					2579,
+					2740,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2579,
+					2740,
+					2414,
+					2768,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2414,
+					2768,
+					2324,
+					2763,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2324,
+					2763,
+					2236,
+					2714,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2236,
+					2714,
+					2042,
+					2485,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2042,
+					2485,
+					1825,
+					2551,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1825,
+					2551,
+					1730,
+					2570,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1730,
+					2570,
+					1719,
+					2745,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1719,
+					2745,
+					1586,
+					2908,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1586,
+					2908,
+					1385,
+					2964,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1385,
+					2964,
+					1080,
+					2967,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1080,
+					2967,
+					858,
+					2924,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					858,
+					2924,
+					764,
+					2815,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					957,
+					2404,
+					1028,
+					2447,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1028,
+					2447,
+					1125,
+					2548,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1125,
+					2548,
+					1217,
+					2529,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1217,
+					2529,
+					1300,
+					2461,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1849,
+					2281,
+					1849,
+					2281,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1851,
+					2286,
+					1849,
+					2281,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1529,
+					2158,
+					1519.1052631578948,
+					2172,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1300,
+					2461,
+					1320.6470588235295,
+					2435,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					938,
+					2310,
+					953,
+					2406,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1317,
+					2440,
+					1243,
+					2390,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1243,
+					2390,
+					1102,
+					2198,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1102,
+					2198,
+					1040,
+					2033,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1040,
+					2033,
+					1035,
+					1808,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1035,
+					1808,
+					1083,
+					1657,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1083,
+					1657,
+					1357,
+					1362,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1357,
+					1362,
+					1440,
+					1121,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1440,
+					1121,
+					1435,
+					740,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1435,
+					740,
+					1381,
+					702,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1381,
+					702,
+					1321,
+					712,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1321,
+					712,
+					1265,
+					806,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1265,
+					806,
+					1260,
+					969,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1260,
+					969,
+					1182,
+					1163,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1182,
+					1163,
+					1040,
+					1260,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1040,
+					1260,
+					839,
+					1253,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					839,
+					1253,
+					678,
+					1113,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					678,
+					1113,
+					610,
+					998,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					610,
+					998,
+					584,
+					747,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					584,
+					747,
+					522,
+					695,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					522,
+					695,
+					452,
+					716,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					452,
+					716,
+					423,
+					839,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					423,
+					839,
+					355,
+					1092,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					355,
+					1092,
+					357,
+					1149,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					357,
+					1149,
+					482,
+					1338,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					482,
+					1338,
+					629,
+					1593,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					629,
+					1593,
+					778,
+					1768,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					778,
+					1768,
+					879,
+					1950,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					879,
+					1950,
+					938,
+					2310,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					92,
+					2655,
+					-26,
+					2485,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					771,
+					2815,
+					662,
+					2875,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					662,
+					2875,
+					530,
+					2912,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					530,
+					2912,
+					402,
+					2912,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					402,
+					2912,
+					222,
+					2780,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					222,
+					2780,
+					92,
+					2655,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2336,
+					2350,
+					2347,
+					2281,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2347,
+					2286,
+					2359,
+					2111,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2359,
+					2111,
+					2364,
+					1922,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2364,
+					1922,
+					2333,
+					1801,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2333,
+					1801,
+					2265,
+					1641,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2265,
+					1641,
+					2258,
+					1461,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2258,
+					1461,
+					2293,
+					1385,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2293,
+					1385,
+					2371,
+					1340,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2371,
+					1340,
+					2487,
+					1362,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2487,
+					1362,
+					2581,
+					1475,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2581,
+					1475,
+					2667,
+					1846,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2667,
+					1846,
+					2667,
+					2111,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2667,
+					2111,
+					2622,
+					2314,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2622,
+					2314,
+					2511,
+					2494,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2511,
+					2494,
+					2466,
+					2541,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2466,
+					2541,
+					2376,
+					2565,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2376,
+					2565,
+					2274,
+					2503,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2274,
+					2503,
+					2260,
+					2409,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2260,
+					2409,
+					2336,
+					2350,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					764,
+					2815,
+					782.6666666666666,
+					2799,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					957,
+					2404,
+					942.2564102564103,
+					2454,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					782.6666666666666,
+					2799,
+					942.2564102564103,
+					2454,
+					12,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1180,
+					706,
+					1302,
+					745,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					591,
+					779,
+					776,
+					681,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					776,
+					681,
+					944,
+					652,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					944,
+					652,
+					1053,
+					688,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1053,
+					688,
+					1180,
+					706,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1540,
+					2146,
+					1540,
+					2146,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1704,
+					2205,
+					1854,
+					2295,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1537,
+					2137,
+					1704,
+					2205,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1638,
+					2565,
+					1733,
+					2572,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1309,
+					2449,
+					1370,
+					2515,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1370,
+					2515,
+					1535,
+					2567,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1535,
+					2567,
+					1638,
+					2565,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2047,
+					2493,
+					2047,
+					2493,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2045,
+					2486,
+					2047,
+					2485.3302325581394,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2260,
+					2414,
+					2251,
+					2417.013953488372,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2240,
+					2464,
+					2258,
+					2411,
+					6,
+					1
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2073,
+					2526,
+					2146,
+					2523,
+					6,
+					1,
+					false
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2146,
+					2523,
+					2240,
+					2464,
+					6,
+					1,
+					false
+				]
+			],
+			"fpsq": "5",
+			"tokens": {
+				"17a831ec-7ca8-4869-a117-8760abb0cb90": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "17a831ec-7ca8-4869-a117-8760abb0cb90",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_06",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1102px",
+					"name": "06",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#E0E0E0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/06",
+					"top": "2101px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
 				},
-				"id": "17a831ec-7ca8-4869-a117-8760abb0cb90",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
+				"29fa6eb0-2520-41a7-9139-bc0ca3ca8ddf": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 58,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "29fa6eb0-2520-41a7-9139-bc0ca3ca8ddf",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037147,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1700.46px",
+					"name": "Sea Drake 4",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 58,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Sea Drake",
+					"top": "1602.08px",
+					"hidehpbar": false,
+					"stat": 4037147,
+					"hitPointInfo": {
+						"maximum": 58,
+						"current": 58,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037147,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
+				"2f266ab5-1c7b-4429-a990-3011c3a0a50d": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "2f266ab5-1c7b-4429-a990-3011c3a0a50d",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_04",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "602.445px",
+					"name": "04",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#002000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/04",
+					"top": "1806.87px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
 				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
+				"35548606-c239-40e6-b9c5-908b0252dc40": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "35548606-c239-40e6-b9c5-908b0252dc40",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_08",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "2547.97px",
+					"name": "08",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/08",
+					"top": "2525.51px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
 				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_06",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
+				"38a44c85-27dc-454c-982a-a0ef986299b8": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 58,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "38a44c85-27dc-454c-982a-a0ef986299b8",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037147,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1803.68px",
+					"name": "Sea Drake 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 58,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Sea Drake",
+					"top": "1780.57px",
+					"hidehpbar": false,
+					"stat": 4037147,
+					"hitPointInfo": {
+						"maximum": 58,
+						"current": 58,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037147,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1102px",
-				"name": "06",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#E0E0E0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/06",
-				"top": "2101px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
+				"3b54592d-2a1f-4340-8379-41662b6b2aa1": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "3b54592d-2a1f-4340-8379-41662b6b2aa1",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_01",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "217.124px",
+					"name": "01",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#00C0C0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/01",
+					"top": "2334.03px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
 				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"29fa6eb0-2520-41a7-9139-bc0ca3ca8ddf": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 58,
-				"armorClass": 14,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
+				"5045db71-9fef-44b8-852a-f1b81d1cc945": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "5045db71-9fef-44b8-852a-f1b81d1cc945",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_03",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1897.57px",
+					"name": "03",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#0000A0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/03",
+					"top": "1910.85px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
 				},
-				"id": "29fa6eb0-2520-41a7-9139-bc0ca3ca8ddf",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
+				"547c00ed-e526-41af-a72c-5e83b53601b7": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "547c00ed-e526-41af-a72c-5e83b53601b7",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1322.69px",
+					"name": "Grimlock 6",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2587.98px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
+				"582a73e7-2c2a-4b26-a532-40e15a687bc4": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "582a73e7-2c2a-4b26-a532-40e15a687bc4",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1466.73px",
+					"name": "Grimlock 5",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2615.31px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037147,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1700.46px",
-				"name": "Sea Drake 4",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FFD433",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 58,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Sea Drake",
-				"top": "1602.08px",
-				"hidehpbar": false,
-				"stat": 4037147,
-				"hitPointInfo": {
-					"maximum": 58,
-					"current": 58,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037147,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"2f266ab5-1c7b-4429-a990-3011c3a0a50d": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "2f266ab5-1c7b-4429-a990-3011c3a0a50d",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_04",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "602.445px",
-				"name": "04",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#002000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/04",
-				"top": "1806.87px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"35548606-c239-40e6-b9c5-908b0252dc40": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "35548606-c239-40e6-b9c5-908b0252dc40",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_08",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "2547.97px",
-				"name": "08",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/08",
-				"top": "2525.51px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"38a44c85-27dc-454c-982a-a0ef986299b8": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 58,
-				"armorClass": 14,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "38a44c85-27dc-454c-982a-a0ef986299b8",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037147,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1803.68px",
-				"name": "Sea Drake 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 58,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Sea Drake",
-				"top": "1780.57px",
-				"hidehpbar": false,
-				"stat": 4037147,
-				"hitPointInfo": {
-					"maximum": 58,
-					"current": 58,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037147,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"3b54592d-2a1f-4340-8379-41662b6b2aa1": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "3b54592d-2a1f-4340-8379-41662b6b2aa1",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_01",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "217.124px",
-				"name": "01",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#00C0C0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/01",
-				"top": "2334.03px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"5045db71-9fef-44b8-852a-f1b81d1cc945": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "5045db71-9fef-44b8-852a-f1b81d1cc945",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_03",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1897.57px",
-				"name": "03",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#0000A0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/03",
-				"top": "1910.85px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"547c00ed-e526-41af-a72c-5e83b53601b7": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "547c00ed-e526-41af-a72c-5e83b53601b7",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1322.69px",
-				"name": "Grimlock 6",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#5F0404",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2587.98px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"582a73e7-2c2a-4b26-a532-40e15a687bc4": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "582a73e7-2c2a-4b26-a532-40e15a687bc4",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1466.73px",
-				"name": "Grimlock 5",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#884DFF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2615.31px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"6cfbccb2-2829-4777-bd5b-16d6d20e670a": {
-				"color": "#202020",
-				"hidden": true,
-				"disablestat": false,
-				"hidestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"top": "2282.39px",
-				"armorClass": 0,
-				"hidehpbar": false,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "6cfbccb2-2829-4777-bd5b-16d6d20e670a",
-				"imgsrc": "chrome-extension://ipcjcbhpofedihcloggaichibomadlei/assets/icons/speaker.svg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"tokenBaseStyleSelect": "default",
-				"audioChannel": {
-					"volume": 0.5,
-					"attenuate": true,
-					"paused": false,
-					"tokenVolume": {},
-					"src": "https://www.dropbox.com/scl/fi/wprws3gwosnovhup9o7u4/the-sound-of-a-stream-a-spring-stream-the-sound-of-water-109237.mp3?rlkey=drgf644n4l9dak2jv4hm55u70&dl=0",
-					"loop": true,
-					"audioId": "fd1bdb39-cc16-42f3-ad75-0fa0e6766907",
+				"6cfbccb2-2829-4777-bd5b-16d6d20e670a": {
+					"color": "#202020",
+					"hidden": true,
+					"disablestat": false,
+					"hidestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"top": "2282.39px",
+					"armorClass": 0,
+					"hidehpbar": false,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "6cfbccb2-2829-4777-bd5b-16d6d20e670a",
+					"imgsrc": "chrome-extension://ipcjcbhpofedihcloggaichibomadlei/assets/icons/speaker.svg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"tokenBaseStyleSelect": "default",
+					"audioChannel": {
+						"volume": 0.5,
+						"attenuate": true,
+						"paused": false,
+						"tokenVolume": {},
+						"src": "https://www.dropbox.com/scl/fi/wprws3gwosnovhup9o7u4/the-sound-of-a-stream-a-spring-stream-the-sound-of-water-109237.mp3?rlkey=drgf644n4l9dak2jv4hm55u70&dl=0",
+						"loop": true,
+						"audioId": "fd1bdb39-cc16-42f3-ad75-0fa0e6766907",
+						"name": "water",
+						"range": "50",
+						"wallsBlocked": false,
+						"token": "6cfbccb2-2829-4777-bd5b-16d6d20e670a"
+					},
+					"scaleCreated": 1.5151515151515151,
+					"square": true,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1613.28px",
 					"name": "water",
-					"range": "50",
-					"wallsBlocked": false,
-					"token": "6cfbccb2-2829-4777-bd5b-16d6d20e670a"
+					"zindexdiff": 17,
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"disableaura": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"revealInFog": false
 				},
-				"scaleCreated": 1.5151515151515151,
-				"square": true,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
+				"700447d7-5b28-4367-92f0-ad651104fe45": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 45,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "700447d7-5b28-4367-92f0-ad651104fe45",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037114,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1011.07px",
+					"name": "Horror Flit Hunter 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 45,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Horror Flit Hunter",
+					"top": "1003.43px",
+					"hidehpbar": false,
+					"stat": 4037114,
+					"hitPointInfo": {
+						"maximum": 45,
+						"current": 45,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037114,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
 				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1613.28px",
-				"name": "water",
-				"zindexdiff": 17,
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"disableaura": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"revealInFog": false
+				"93101abd-814a-4369-9331-e88f84bb6233": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "93101abd-814a-4369-9331-e88f84bb6233",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "803px",
+					"name": "Grimlock 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2301px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a6e30d6e-83aa-452f-9928-f55b569f133e": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "a6e30d6e-83aa-452f-9928-f55b569f133e",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1407px",
+					"name": "Grimlock 7",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2487px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"da3f5e78-7213-4a3c-a971-35bca0af64e8": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "da3f5e78-7213-4a3c-a971-35bca0af64e8",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1384.11px",
+					"name": "Grimlock 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2714.48px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"dc6c1b57-88d3-4bca-ae9a-f7b6e2f0ad92": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 45,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "dc6c1b57-88d3-4bca-ae9a-f7b6e2f0ad92",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037114,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "786.966px",
+					"name": "Horror Flit Hunter 3",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#1E50DC",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 45,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Horror Flit Hunter",
+					"top": "998.328px",
+					"hidehpbar": false,
+					"stat": 4037114,
+					"hitPointInfo": {
+						"maximum": 45,
+						"current": 45,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037114,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"ddef5b6b-3c46-49a6-ac89-9df10e3e3015": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 58,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "ddef5b6b-3c46-49a6-ac89-9df10e3e3015",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037147,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1592.94px",
+					"name": "Sea Drake 2",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 58,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Sea Drake",
+					"top": "1809.6px",
+					"hidehpbar": false,
+					"stat": 4037147,
+					"hitPointInfo": {
+						"maximum": 58,
+						"current": 58,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037147,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"e5d461bc-aa6f-45bd-ab83-305ff619df5e": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "e5d461bc-aa6f-45bd-ab83-305ff619df5e",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_02",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1108.33px",
+					"name": "02",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#600000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/02",
+					"top": "2643.71px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"e7c1643f-b9fe-4962-9508-81725a56719c": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 45,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "e7c1643f-b9fe-4962-9508-81725a56719c",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037114,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "908.092px",
+					"name": "Horror Flit Hunter",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 45,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Horror Flit Hunter",
+					"top": "1101.16px",
+					"hidehpbar": false,
+					"stat": 4037114,
+					"hitPointInfo": {
+						"maximum": 45,
+						"current": 45,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037114,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f1538510-c5c0-45fe-b01c-a6533959a8e6": {
+					"auraVisible": false,
+					"disablestat": false,
+					"gridSquares": 2.0066889632107023,
+					"custom_conditions": [],
+					"hp": 114,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "f1538510-c5c0-45fe-b01c-a6533959a8e6",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/623/638368832276012904.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(0, 0, 0, 0.803)",
+						"feet": "30"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"animation": {
+						"aura": "flicker-fx"
+					},
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "240"
+					},
+					"itemId": 4037097,
+					"square": true,
+					"healthauratype": "none",
+					"size": 200,
+					"left": "2410.27px",
+					"name": "Dawndrinker",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#00E000",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 114,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Dawndrinker",
+					"top": "496.265px",
+					"hidehpbar": false,
+					"stat": 4037097,
+					"hitPointInfo": {
+						"maximum": 114,
+						"current": 114,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037097,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f159ec01-d2c0-4ef5-8563-5e8374d68352": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 58,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "f159ec01-d2c0-4ef5-8563-5e8374d68352",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "noConstraint",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037147,
+					"square": true,
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1694.01px",
+					"name": "Sea Drake",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#00C000",
+					"hidestat": false,
+					"hidden": true,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"max_hp": 58,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Sea Drake",
+					"top": "1990.24px",
+					"hidehpbar": false,
+					"stat": 4037147,
+					"hitPointInfo": {
+						"maximum": 58,
+						"current": 58,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037147,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f6555b8b-b5f8-4021-9c5c-e66cb3b8801f": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "f6555b8b-b5f8-4021-9c5c-e66cb3b8801f",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_07",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "2102.1px",
+					"name": "07",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#000040",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/07",
+					"top": "1278.83px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"f7bd510b-264b-4388-9fc8-8ba67eda24e8": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "f7bd510b-264b-4388-9fc8-8ba67eda24e8",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "802.158px",
+					"name": "Grimlock",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#00C0C0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2414.85px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f832e010-af67-4282-8e4a-aae4ba60e14c": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "f832e010-af67-4282-8e4a-aae4ba60e14c",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": "_AboveVTT_Tokens_Numbers_05",
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": 60
+					},
+					"healthauratype": "aura",
+					"size": 100,
+					"left": "1085.44px",
+					"name": "05",
+					"defaultmaxhptype": "average",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#0000E0",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/AboveVTT Tokens/Numbers/05",
+					"top": "883.224px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"zindexdiff": 17,
+					"disableaura": false,
+					"revealInFog": false
+				},
+				"fea8d170-6e5a-4d21-9178-c36fb82f0486": {
+					"disablestat": false,
+					"gridSquares": 1.0033444816053512,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 11,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "fea8d170-6e5a-4d21-9178-c36fb82f0486",
+					"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"itemId": 16914,
+					"square": false,
+					"vision": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "30"
+					},
+					"healthauratype": "none",
+					"size": 100,
+					"left": "1242.11px",
+					"name": "Grimlock 7",
+					"defaultmaxhptype": "average",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": false,
+					"listItemPath": "/Monsters/Grimlock",
+					"top": "2664.36px",
+					"hidehpbar": false,
+					"stat": 16914,
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "none",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16914,
+					"scaleCreated": 1.5151515151515151,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				}
 			},
-			"700447d7-5b28-4367-92f0-ad651104fe45": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 45,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
+			"darkness_filter": "100",
+			"grid_line_width": "0.5",
+			"grid_subdivided": "0",
+			"scale_factor": "1",
+			"offsetx": "5.333333333333272",
+			"dm_map_usable": "0",
+			"offsety": "1",
+			"dm_map_is_video": "0",
+			"grid": "0",
+			"scale_check": true,
+			
+			"player_map_is_video": "0",
+			"hpps": "99.66666666666667",
+			"disableSceneVision": "0",
+			"grid_color": "rgba(0, 0, 0, 0.5)",
+			"snap": "0",
+			"notes": {
+				"17a831ec-7ca8-4869-a117-8760abb0cb90": {
+					"title": "06",
+					"text": "<h3 id=\"6UnsteadyStalagmites\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"34e93d8e-28f5-437b-a902-c153c9adee30\">6. Unsteady Stalagmites</h3>\n<aside class=\"text--quote-box\">\n<p>The passage opens wider here, but the ceiling drops to a comparatively claustrophobic ten or twelve feet overhead. Stalagmites and stalactites make this stone forest resemble an enormous gaping, crooked-toothed maw. The steady plip of water dripping from the ceiling and splashing on the floor is nearly constant in this damp cavern, muffled only by the plentiful fungi that cover much of the floor and stalagmites.</p>\n</aside>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">There are no monstrous dangers here, but a significant section of the floor that crosses over the waterway in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#2GrimlockIsland\" data-content-chunk-id=\"d2b27c6f-3368-4348-9478-d31b869e5829\">areas 2</a>&nbsp;and&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#3DrakeLake\" data-content-chunk-id=\"dfc38a63-3a4e-4ec5-aa99-b908e84e386d\">3</a>&nbsp;has grown unstable from all the water draining through the floor. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Creatures with blindsense automatically detect the weakened floor and can go around it. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Hugging the west wall of the tunnel (roughly a 10-foot walkway in the section over the water below) is safe and stable. The rest of the passage in the section over the water below is fragile. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Characters with a passive Perception of 16 or higher notice this just before stepping on it; otherwise, succeeding on a DC 15 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Nature\" data-tooltip-href=\"//www.dndbeyond.com/skills/9-tooltip?disable-webm=1&amp;disable-webm=1\">Nature</a>) or DC 20 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check is needed to notice the weak floor.</span></p>\n<p data-content-chunk-id=\"86606b74-b98f-48e1-9c55-21b713f3a9e0\"><span style=\"font-size: 12pt;\">Beyond the faulty floor, the passage narrows in width, but the height of the passage rises to more than thirty feet. </span></p>\n<p data-content-chunk-id=\"86606b74-b98f-48e1-9c55-21b713f3a9e0\"><span style=\"font-size: 12pt;\">It is here that the dawndrinker&rsquo;s abilities begin to extinguish magical light sources. If the characters still have a way to perceive it, they notice the passage branching off and leading to area 8. (See&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#8SlopedTunnel\" data-content-chunk-id=\"8a09d535-5bb1-4369-a61d-9ea0e33fd081\">area 8</a>&nbsp;for access details.)</span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\"><strong><em>Fungi.</em></strong>&nbsp;The characters may be wary of the fungi, but it&rsquo;s harmless and edible. </span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\">When the dawndrinker is not around, they are luminescent, but their light is one of the first things the dawndrinker consumed!</span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\"> A successful DC 10 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Nature\" data-tooltip-href=\"//www.dndbeyond.com/skills/9-tooltip?disable-webm=1&amp;disable-webm=1\">Nature</a>) check tells a character that this fungi should be glowing, but isn&rsquo;t, for some reason that must be magical.</span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\"><strong><em>Floor Collapse.</em></strong>&nbsp;If two or more characters walk over the faulty section, it collapses. </span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\">Characters who succeed at a DC 18 Dexterity saving throw grab the stable sides as the floor gives way and stay in area 6. </span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\">Those who fail take 10 (3d6) bludgeoning damage from the floor debris as it crashes into the water around them. (These characters fall 30 feet into the water below, putting them between&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#2GrimlockIsland\" data-content-chunk-id=\"22763212-5270-498d-a2ab-69e36a5d6b7b\">areas 2</a>&nbsp;and&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#3DrakeLake\" data-content-chunk-id=\"9725cd59-bbea-41c3-974c-91b6c5dfc6a3\">3</a>.)</span></p>",
+					"plain": "6. Unsteady StalagmitesThe passage opens wider here, but the ceiling drops to a comparatively claustrophobic ten or twelve feet overhead. Stalagmites and stalactites make this stone forest resemble an enormous gaping, crooked-toothed maw. The steady plip of water dripping from the ceiling and splashing on the floor is nearly constant in this damp cavern, muffled only by the plentiful fungi that cover much of the floor and stalagmites.There are no monstrous dangers here, but a significant section of the floor that crosses over the waterway in areas 2 and 3 has grown unstable from all the water draining through the floor. Creatures with blindsense automatically detect the weakened floor and can go around it. Hugging the west wall of the tunnel (roughly a 10-foot walkway in the section over the water below) is safe and stable. The rest of the passage in the section over the water below is fragile. Characters with a passive Perception of 16 or higher notice this just before stepping on it; otherwise, succeeding on a DC 15 Intelligence (Nature) or DC 20 Wisdom (Perception) check is needed to notice the weak floor.Beyond the faulty floor, the passage narrows in width, but the height of the passage rises to more than thirty feet. It is here that the dawndrinker’s abilities begin to extinguish magical light sources. If the characters still have a way to perceive it, they notice the passage branching off and leading to area 8. (See area 8 for access details.)Fungi. The characters may be wary of the fungi, but it’s harmless and edible. When the dawndrinker is not around, they are luminescent, but their light is one of the first things the dawndrinker consumed! A successful DC 10 Intelligence (Nature) check tells a character that this fungi should be glowing, but isn’t, for some reason that must be magical.Floor Collapse. If two or more characters walk over the faulty section, it collapses. Characters who succeed at a DC 18 Dexterity saving throw grab the stable sides as the floor gives way and stay in area 6. Those who fail take 10 (3d6) bludgeoning damage from the floor debris as it crashes into the water around them. (These characters fall 30 feet into the water below, putting them between areas 2 and 3.)",
+					"player": false,
+					"statBlock": false
 				},
-				"id": "700447d7-5b28-4367-92f0-ad651104fe45",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
+				"2f266ab5-1c7b-4429-a990-3011c3a0a50d": {
+					"title": "04",
+					"text": "<h3 id=\"4SlowRise\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"3b28ab6b-6014-4db8-b43a-548fd3b006ed\">Slow Rise</h3>\n<aside class=\"text--quote-box\">\n<p>There is a 20-foot climb down behind you. Ahead of you, a passage opens and meanders away into the darkness.</p>\n</aside>\n<p data-content-chunk-id=\"287a1d23-98a7-449d-9da1-298a9a2c921d\"><span style=\"font-size: 12pt;\">The walls here are high compared to the rest of the cavern&mdash;likely beyond the range of any light sources the characters are carrying (though they may get creative). </span></p>\n<p data-content-chunk-id=\"287a1d23-98a7-449d-9da1-298a9a2c921d\"><span style=\"font-size: 12pt;\">The slope rises five feet by the time it reaches the base of area 5, then another five feet as it encounters the first of the stalagmites and stalactites in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#6UnsteadyStalagmites\" data-content-chunk-id=\"d0e7bc4c-d60c-4a32-9300-f39d8b7cf082\">area 6</a>.</span></p>\n<p data-content-chunk-id=\"16bd7b22-1ad4-4eaf-aad5-dbb63ba7b540\"><span style=\"font-size: 12pt;\">Unless the characters are entirely silent, they draw the attention of the horror flits in area 5 when they pass by.</span></p>\n<p data-content-chunk-id=\"16bd7b22-1ad4-4eaf-aad5-dbb63ba7b540\"><span style=\"font-size: 12pt;\"> Those with a passive Perception of 15 or higher (or who succeed at an active DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check) note that bat guano, a common occurrence in caves, is thicker and more common here than it has been in the rest of the cavern.</span></p>\n<p data-content-chunk-id=\"90c5e843-02e3-48e9-b087-a51ffeece561\"><span style=\"font-size: 12pt;\"><strong><em>Scale the Wall.</em></strong>&nbsp;Characters who want to scale the 40-foot-tall wall to get to area 5 can do so with successful DC 13 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) checks.</span></p>",
+					"plain": "Slow RiseThere is a 20-foot climb down behind you. Ahead of you, a passage opens and meanders away into the darkness.The walls here are high compared to the rest of the cavern—likely beyond the range of any light sources the characters are carrying (though they may get creative). The slope rises five feet by the time it reaches the base of area 5, then another five feet as it encounters the first of the stalagmites and stalactites in area 6.Unless the characters are entirely silent, they draw the attention of the horror flits in area 5 when they pass by. Those with a passive Perception of 15 or higher (or who succeed at an active DC 15 Wisdom (Perception) check) note that bat guano, a common occurrence in caves, is thicker and more common here than it has been in the rest of the cavern.Scale the Wall. Characters who want to scale the 40-foot-tall wall to get to area 5 can do so with successful DC 13 Strength (Athletics) checks.",
+					"player": false,
+					"statBlock": false
 				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
+				"35548606-c239-40e6-b9c5-908b0252dc40": {
+					"title": "08",
+					"text": "<h3 id=\"8SlopedTunnel\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"5eb26e49-a93b-4005-9b34-056df52e412c\">8. Sloped Tunnel</h3>\n<aside class=\"text--quote-box\">\n<p>This narrow tunnel is sloped steeply.</p>\n</aside>\n<p data-content-chunk-id=\"f43f65c2-596e-40e9-96d8-d9dffc458ac5\"><span style=\"font-size: 12pt;\">At the crook of the passage is the remains of the only other adventurer to get this far in search of the dawndrinker: a dragonborn paladin of Miklas. </span></p>\n<p data-content-chunk-id=\"f43f65c2-596e-40e9-96d8-d9dffc458ac5\"><span style=\"font-size: 12pt;\">Her sword broke in the fight, and she tried to retreat here, but the dawndrinker followed and slew her.</span></p>\n<p data-content-chunk-id=\"0e64b6a3-9267-4a21-b4c9-be54339a911a\"><span style=\"font-size: 12pt;\">Climbing up to this passage from&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#6UnsteadyStalagmites\" data-content-chunk-id=\"713a26ad-2ef2-4421-a42c-8733d57b3786\">area 6</a>&nbsp;(or back down to area 6 from this passage) requires succeeding at a DC 12 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check.</span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\"><strong><em>Miklas&rsquo;s Gear.</em></strong>&nbsp;The dragonborn corpse wears its suit of&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/plate\" data-tooltip-href=\"//www.dndbeyond.com/armor/18-tooltip?disable-webm=1&amp;disable-webm=1\">plate mail</a>&nbsp;armor and&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/shield\" data-tooltip-href=\"//www.dndbeyond.com/armor/8-tooltip?disable-webm=1&amp;disable-webm=1\">shield</a>. </span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\">Her rations are spoiled, but her backpack still holds 18 gp, 3 moonstones (each worth 25 gp) and a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5418-spell-scroll\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5418-tooltip?disable-webm=1&amp;disable-webm=1\">spell scroll</a>&nbsp;of&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/daylight\" data-tooltip-href=\"//www.dndbeyond.com/spells/2060-tooltip?disable-webm=1&amp;disable-webm=1\">daylight</a>. </span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\">There are also three empty vials, as well as an intact one holding a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5133-potion-of-healing-greater\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5133-tooltip?disable-webm=1&amp;disable-webm=1\">potion of greater healing</a>.</span></p>\n<aside class=\"text--lore-notes\"></aside>",
+					"plain": "8. Sloped TunnelThis narrow tunnel is sloped steeply.At the crook of the passage is the remains of the only other adventurer to get this far in search of the dawndrinker: a dragonborn paladin of Miklas. Her sword broke in the fight, and she tried to retreat here, but the dawndrinker followed and slew her.Climbing up to this passage from area 6 (or back down to area 6 from this passage) requires succeeding at a DC 12 Strength (Athletics) check.Miklas’s Gear. The dragonborn corpse wears its suit of plate mail armor and shield. Her rations are spoiled, but her backpack still holds 18 gp, 3 moonstones (each worth 25 gp) and a spell scroll of daylight. There are also three empty vials, as well as an intact one holding a potion of greater healing.",
+					"player": false,
+					"statBlock": false
 				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
+				"3b54592d-2a1f-4340-8379-41662b6b2aa1": {
+					"title": "01",
+					"text": "<h3 id=\"1CavernsEntrance\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"10b171fb-da07-4820-bb02-32674b013ba4\">1. Caverns Entrance</h3>\n<aside class=\"text--quote-box\">\n<p>After hundreds of feet of trudging downward in the dark and uniform tunnel, the cavern opens a bit. The height of the ceiling triples and the stale smell of raw fish and manure interrupts your journey.</p>\n</aside>\n<p data-content-chunk-id=\"510c9761-e049-4349-a26d-82e4f05a4836\"><span style=\"font-size: 12pt;\">Unless the characters are extremely careful and stealthy the entire length of the corridor, the two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16914-grimlock\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16914-tooltip?disable-webm=1&amp;disable-webm=1\">grimlocks</a>, who have climbed up from their island to eat some captured fish, are aware that there are intruders. </span></p>\n<p data-content-chunk-id=\"510c9761-e049-4349-a26d-82e4f05a4836\"><span style=\"font-size: 12pt;\">They attempt to hide and, if spotted, dive down into area 2 to fetch the other grimlocks as reinforcements. Smart characters would normally find this as easy as shooting fish in a barrel, but in the advanced darkness it may not be so easy!</span></p>\n<p data-content-chunk-id=\"5da25d84-978c-4bc0-85b3-72c5dcccebe0\"><span style=\"font-size: 12pt;\"><strong><em>Rough Ascent.</em></strong>&nbsp;Hidden 25 feet up on the northeast wall is a large opening to another tunnel (<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#4SlowRise\" data-content-chunk-id=\"77eeeed7-660d-40a9-aa47-4b53b06cef5a\">area 4</a>). </span></p>\n<p data-content-chunk-id=\"5da25d84-978c-4bc0-85b3-72c5dcccebe0\"><span style=\"font-size: 12pt;\">From ground level, it is difficult to see. Characters who succeed on a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check (and have light sufficient to see it) notice it. The stones on the wall are jagged and easy to climb unless the characters are in combat. In combat, characters must succeed on a DC 10 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check to advance up the wall.</span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\"><strong><em>Smooth Descent.</em></strong>&nbsp;Characters without sufficient light sources who are moving too quickly may pitch themselves over the 25-foot drop and into the water below. </span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\">The wall here is wet, requiring a DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check to successfully scale without the help of a rope. </span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\">Characters who climb up from the water in area 2 and reach the top automatically notice the handholds the grimlocks made leading to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#4SlowRise\" data-content-chunk-id=\"1e530f1b-f1b6-4947-90f1-deb8bb9b3543\">area 4</a>.</span></p>",
+					"plain": "1. Caverns EntranceAfter hundreds of feet of trudging downward in the dark and uniform tunnel, the cavern opens a bit. The height of the ceiling triples and the stale smell of raw fish and manure interrupts your journey.Unless the characters are extremely careful and stealthy the entire length of the corridor, the two grimlocks, who have climbed up from their island to eat some captured fish, are aware that there are intruders. They attempt to hide and, if spotted, dive down into area 2 to fetch the other grimlocks as reinforcements. Smart characters would normally find this as easy as shooting fish in a barrel, but in the advanced darkness it may not be so easy!Rough Ascent. Hidden 25 feet up on the northeast wall is a large opening to another tunnel (area 4). From ground level, it is difficult to see. Characters who succeed on a DC 15 Wisdom (Perception) check (and have light sufficient to see it) notice it. The stones on the wall are jagged and easy to climb unless the characters are in combat. In combat, characters must succeed on a DC 10 Strength (Athletics) check to advance up the wall.Smooth Descent. Characters without sufficient light sources who are moving too quickly may pitch themselves over the 25-foot drop and into the water below. The wall here is wet, requiring a DC 15 Strength (Athletics) check to successfully scale without the help of a rope. Characters who climb up from the water in area 2 and reach the top automatically notice the handholds the grimlocks made leading to area 4.",
+					"player": false,
+					"statBlock": false
 				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
+				"5045db71-9fef-44b8-852a-f1b81d1cc945": {
+					"title": "03",
+					"text": "<h3 id=\"3DrakeLake\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"42032653-b256-41bd-b990-5ddfb48189e9\">Drake Lake</h3>\n<aside class=\"text--quote-box\">\n<p>The water is eerily still and frigid here. The only way in or out of this domed chamber is through the waterway back to the small island.</p>\n</aside>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">Four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037147-sea-drake\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037147-tooltip?disable-webm=1&amp;disable-webm=1\">sea drakes</a>* make their home in this tiny freshwater lake. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">They spar with the grimlocks, occasionally catching them and just as often getting caught themselves. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">They attack any humanoids (including the characters and grimlocks) who enter their lair. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">The sea drakes pursue enemies back to the small island but ignore targets that escape onto land or who climb the wall back to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#1CavernsEntrance\" data-content-chunk-id=\"12fa43c9-15cd-45fe-baa3-66a55bf39c80\">area 1</a>.</span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\"><strong><em>Buried Treasure.</em></strong>&nbsp;One previous, tentative expedition to deal with the dawndrinker was fated to end here. </span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\">Two skeletons sit at the bottom of the lake, twenty feet below the surface. </span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\">While most of their gear is waterlogged, rusted, and worthless, a pristine&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5227-flail-1\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5227-tooltip?disable-webm=1&amp;disable-webm=1\">+1 flail</a>&nbsp;sits with the bones.</span></p>",
+					"plain": "Drake LakeThe water is eerily still and frigid here. The only way in or out of this domed chamber is through the waterway back to the small island.Four sea drakes* make their home in this tiny freshwater lake. They spar with the grimlocks, occasionally catching them and just as often getting caught themselves. They attack any humanoids (including the characters and grimlocks) who enter their lair. The sea drakes pursue enemies back to the small island but ignore targets that escape onto land or who climb the wall back to area 1.Buried Treasure. One previous, tentative expedition to deal with the dawndrinker was fated to end here. Two skeletons sit at the bottom of the lake, twenty feet below the surface. While most of their gear is waterlogged, rusted, and worthless, a pristine +1 flail sits with the bones.",
+					"player": false,
+					"statBlock": false
 				},
-				"itemId": 4037114,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1011.07px",
-				"name": "Horror Flit Hunter 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 3,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 45,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Horror Flit Hunter",
-				"top": "1003.43px",
-				"hidehpbar": false,
-				"stat": 4037114,
-				"hitPointInfo": {
-					"maximum": 45,
-					"current": 45,
-					"temp": 0
+				"e5d461bc-aa6f-45bd-ab83-305ff619df5e": {
+					"title": "02",
+					"text": "<h3 id=\"2GrimlockIsland\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"b263d1f6-244f-4390-8186-40a3aed0b193\">2. Grimlock Island</h3>\n<aside class=\"text--quote-box\">\n<p>A small island rises out of the cool, languid water. To the west, the cave moves sharply up. To the east, it narrows and follows the water down into another cavern.</p>\n</aside>\n<p data-content-chunk-id=\"ea775980-fd04-4513-b018-e451f011d260\"><span style=\"font-size: 12pt;\">In addition to the two in area 1, six more&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16914-grimlock\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16914-tooltip?disable-webm=1&amp;disable-webm=1\">grimlocks</a>&nbsp;fish and swim on and around the island here. If they fight and begin to lose, they make a break to the east, hoping to lure their foes into the path of the sea drakes that live in the pool in area 3.</span></p>\n<p data-content-chunk-id=\"1e2c151e-0c6c-489a-8c10-db8f72b26b61\"><span style=\"font-size: 12pt;\"><strong><em>Garbage Island.</em></strong>&nbsp;The small island is covered in the detritus of sightless living. Beneath the filth and bones are the remains of a spelunker the grimlocks killed, who carried a&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/climbers-kit\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/37-tooltip?disable-webm=1&amp;disable-webm=1\">climber&rsquo;s kit</a>&nbsp;and&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/rope-silk-50-feet\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/78-tooltip?disable-webm=1&amp;disable-webm=1\">50 feet of silk rope</a>.</span></p>",
+					"plain": "2. Grimlock IslandA small island rises out of the cool, languid water. To the west, the cave moves sharply up. To the east, it narrows and follows the water down into another cavern.In addition to the two in area 1, six more grimlocks fish and swim on and around the island here. If they fight and begin to lose, they make a break to the east, hoping to lure their foes into the path of the sea drakes that live in the pool in area 3.Garbage Island. The small island is covered in the detritus of sightless living. Beneath the filth and bones are the remains of a spelunker the grimlocks killed, who carried a climber’s kit and 50 feet of silk rope.",
+					"player": false,
+					"statBlock": false
 				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037114,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
+				"f6555b8b-b5f8-4021-9c5c-e66cb3b8801f": {
+					"title": "07",
+					"text": "<h3 id=\"7DawndrinkerGlimmercave\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"e1e189d3-c60e-4760-b30f-2879dad64c47\">7. Dawndrinker Glimmercave</h3>\n<aside class=\"text--quote-box\">\n<p>The sounds of water trickling into the cavern echo faintly and persistently, giving you the impression of a grand space.</p>\n</aside>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">The steep cliff from area 6 requires successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) checks to navigate. </span></p>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">A small pool of water has collected on the west wall. </span></p>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">The passage to area 8 is gradual.<br /><br /></span><span style=\"font-size: 12pt;\">The dawndrinker lairs here. Its blindsense means that it&rsquo;s aware of characters whether they fly, climb, or fall into the cavern. It uses hit-and-run tactics to claw each one to death as quickly as possible, prioritizing those with light sources first.</span></p>\n<p data-content-chunk-id=\"bdd545ee-e61b-4dde-bc9c-df490b0b4060\"><span style=\"font-size: 12pt;\"><strong><em>Pool.</em></strong>&nbsp;The pool of water is not deep&mdash;only a few feet&mdash;but it&rsquo;s large enough that smart characters may retreat into it to both slow the dawndrinker&rsquo;s movement (wading counts as&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>) and to hear the dawndrinker&rsquo;s approach before it strikes.</span></p>\n<p data-content-chunk-id=\"d76a703a-c136-4009-b69f-9d40a8da48a1\"><span style=\"font-size: 12pt;\"><strong><em>Retreat Up.</em></strong>&nbsp;Characters may think to climb away from the dawndrinker. In such a case, it uses the passage to area 8 to get the jump on the characters from behind.</span></p>\n<p data-content-chunk-id=\"4bc6e8b4-a531-4eb8-b112-e50fc27b5c4d\"><span style=\"font-size: 12pt;\"><strong><em>Retreat East.</em></strong>&nbsp;Characters may discover that the passage to area 8 narrows considerably&mdash;and that retreating into it might force the dawndrinker to attack head on. Depending on the characters&rsquo; abilities, this may be a useful way to contain the dawndrinker&rsquo;s strengths and force it to face only the character with the best AC at any given time!<br /><br /><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/05-002.dawndrinker.png\" alt=\"\" width=\"850\" height=\"1309\" /><br /></span></p>",
+					"plain": "7. Dawndrinker GlimmercaveThe sounds of water trickling into the cavern echo faintly and persistently, giving you the impression of a grand space.The steep cliff from area 6 requires successful DC 15 Strength (Athletics) checks to navigate. A small pool of water has collected on the west wall. The passage to area 8 is gradual.The dawndrinker lairs here. Its blindsense means that it’s aware of characters whether they fly, climb, or fall into the cavern. It uses hit-and-run tactics to claw each one to death as quickly as possible, prioritizing those with light sources first.Pool. The pool of water is not deep—only a few feet—but it’s large enough that smart characters may retreat into it to both slow the dawndrinker’s movement (wading counts as difficult terrain) and to hear the dawndrinker’s approach before it strikes.Retreat Up. Characters may think to climb away from the dawndrinker. In such a case, it uses the passage to area 8 to get the jump on the characters from behind.Retreat East. Characters may discover that the passage to area 8 narrows considerably—and that retreating into it might force the dawndrinker to attack head on. Depending on the characters’ abilities, this may be a useful way to contain the dawndrinker’s strengths and force it to face only the character with the best AC at any given time!",
+					"player": false,
+					"statBlock": false
+				},
+				"f832e010-af67-4282-8e4a-aae4ba60e14c": {
+					"title": "05",
+					"text": "<h3 id=\"5HorrorFlitNest\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"c062745a-ba32-4425-bb44-ecd9a52bf366\">5. Horror Flit Nest</h3>\n<aside class=\"text--quote-box\">\n<p>The bones of countless fish and small game are nested among clear signs of larger kills.</p>\n</aside>\n<p data-content-chunk-id=\"e0ebb385-1d47-463a-94c3-5141ac7e77c5\"><span style=\"font-size: 12pt;\">Three&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037114-horror-flit-hunter\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037114-tooltip?disable-webm=1&amp;disable-webm=1\">horror flit hunters</a>* here have gotten by on the natives of the caverns, including poaching the occasional explorer and grimlock, after they feasted on bats that once made their home in the caverns. </span></p>\n<p data-content-chunk-id=\"e0ebb385-1d47-463a-94c3-5141ac7e77c5\"><span style=\"font-size: 12pt;\">The dead bats are the source of the guano in area 4.</span></p>\n<p data-content-chunk-id=\"2935a13f-4dcb-4591-bf11-d4f336a8b98f\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Characters who seek out the horror flits&rsquo; nest discover several spiked bone clubs (from grimlock meals) along with a belt pouch containing a handful of pearls (worth 250 gp total), assorted loose coins totaling 82 sp and 57 cp, and a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5418-spell-scroll\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5418-tooltip?disable-webm=1&amp;disable-webm=1\">spell scroll</a>&nbsp;of&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/burning-hands\" data-tooltip-href=\"//www.dndbeyond.com/spells/2021-tooltip?disable-webm=1&amp;disable-webm=1\">burning hands</a>.</span></p>\n<p data-content-chunk-id=\"2935a13f-4dcb-4591-bf11-d4f336a8b98f\"><span style=\"font-size: 12pt;\"><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/05-001.horror-flits-r.png\" alt=\"\" width=\"1700\" height=\"1764\" /></span></p>",
+					"plain": "5. Horror Flit NestThe bones of countless fish and small game are nested among clear signs of larger kills.Three horror flit hunters* here have gotten by on the natives of the caverns, including poaching the occasional explorer and grimlock, after they feasted on bats that once made their home in the caverns. The dead bats are the source of the guano in area 4.Treasure. Characters who seek out the horror flits’ nest discover several spiked bone clubs (from grimlock meals) along with a belt pouch containing a handful of pearls (worth 250 gp total), assorted loose coins totaling 82 sp and 57 cp, and a spell scroll of burning hands.",
+					"player": false,
+					"statBlock": false
+				}
 			},
-			"93101abd-814a-4369-9331-e88f84bb6233": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "93101abd-814a-4369-9331-e88f84bb6233",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "803px",
-				"name": "Grimlock 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2301px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"a6e30d6e-83aa-452f-9928-f55b569f133e": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "a6e30d6e-83aa-452f-9928-f55b569f133e",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1407px",
-				"name": "Grimlock 7",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#EC8AFF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2487px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"da3f5e78-7213-4a3c-a971-35bca0af64e8": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "da3f5e78-7213-4a3c-a971-35bca0af64e8",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1384.11px",
-				"name": "Grimlock 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2714.48px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"dc6c1b57-88d3-4bca-ae9a-f7b6e2f0ad92": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 45,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "dc6c1b57-88d3-4bca-ae9a-f7b6e2f0ad92",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037114,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "786.966px",
-				"name": "Horror Flit Hunter 3",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 3,
-				"itemType": "monster",
-				"color": "#1E50DC",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 45,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Horror Flit Hunter",
-				"top": "998.328px",
-				"hidehpbar": false,
-				"stat": 4037114,
-				"hitPointInfo": {
-					"maximum": 45,
-					"current": 45,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037114,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"ddef5b6b-3c46-49a6-ac89-9df10e3e3015": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 58,
-				"armorClass": 14,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "ddef5b6b-3c46-49a6-ac89-9df10e3e3015",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037147,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1592.94px",
-				"name": "Sea Drake 2",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#FF7433",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 58,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Sea Drake",
-				"top": "1809.6px",
-				"hidehpbar": false,
-				"stat": 4037147,
-				"hitPointInfo": {
-					"maximum": 58,
-					"current": 58,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037147,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"e5d461bc-aa6f-45bd-ab83-305ff619df5e": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "e5d461bc-aa6f-45bd-ab83-305ff619df5e",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_02",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1108.33px",
-				"name": "02",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#600000",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/02",
-				"top": "2643.71px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"e7c1643f-b9fe-4962-9508-81725a56719c": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 45,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "e7c1643f-b9fe-4962-9508-81725a56719c",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/655/638368832330729441.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "60"
-				},
-				"itemId": 4037114,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "908.092px",
-				"name": "Horror Flit Hunter",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 3,
-				"itemType": "monster",
-				"color": "#FFD433",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 45,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Horror Flit Hunter",
-				"top": "1101.16px",
-				"hidehpbar": false,
-				"stat": 4037114,
-				"hitPointInfo": {
-					"maximum": 45,
-					"current": 45,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037114,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"f1538510-c5c0-45fe-b01c-a6533959a8e6": {
-				"auraVisible": false,
-				"disablestat": false,
-				"gridSquares": 2.0066889632107023,
-				"custom_conditions": [],
-				"hp": 114,
-				"armorClass": 15,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "f1538510-c5c0-45fe-b01c-a6533959a8e6",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/623/638368832276012904.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(0, 0, 0, 0.803)",
-					"feet": "30"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"animation": {
-					"aura": "flicker-fx"
-				},
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "240"
-				},
-				"itemId": 4037097,
-				"square": true,
-				"healthauratype": "none",
-				"size": 200,
-				"left": "2410.27px",
-				"name": "Dawndrinker",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 5,
-				"itemType": "monster",
-				"color": "#00E000",
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 114,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Dawndrinker",
-				"top": "496.265px",
-				"hidehpbar": false,
-				"stat": 4037097,
-				"hitPointInfo": {
-					"maximum": 114,
-					"current": 114,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037097,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 8,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"f159ec01-d2c0-4ef5-8563-5e8374d68352": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 58,
-				"armorClass": 14,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": 0
-				},
-				"id": "f159ec01-d2c0-4ef5-8563-5e8374d68352",
-				"imgsrc": "https://www.dndbeyond.com/avatars/38378/701/638368832410806196.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": 0
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "noConstraint",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"vision": {
-					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
-					"feet": "120"
-				},
-				"itemId": 4037147,
-				"square": true,
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1694.01px",
-				"name": "Sea Drake",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#00C000",
-				"hidestat": false,
-				"hidden": true,
-				"videoToken": false,
-				"legacyaspectratio": false,
-				"max_hp": 58,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Sea Drake",
-				"top": "1990.24px",
-				"hidehpbar": false,
-				"stat": 4037147,
-				"hitPointInfo": {
-					"maximum": 58,
-					"current": 58,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 4037147,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"f6555b8b-b5f8-4021-9c5c-e66cb3b8801f": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "f6555b8b-b5f8-4021-9c5c-e66cb3b8801f",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_07",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "2102.1px",
-				"name": "07",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#000040",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/07",
-				"top": "1278.83px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"f7bd510b-264b-4388-9fc8-8ba67eda24e8": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "f7bd510b-264b-4388-9fc8-8ba67eda24e8",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "802.158px",
-				"name": "Grimlock",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#00C0C0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2414.85px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			},
-			"f832e010-af67-4282-8e4a-aae4ba60e14c": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 0,
-				"folderPath": "/Numbers",
-				"armorClass": 0,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "f832e010-af67-4282-8e4a-aae4ba60e14c",
-				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": "_AboveVTT_Tokens_Numbers_05",
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": 60
-				},
-				"healthauratype": "aura",
-				"size": 100,
-				"left": "1085.44px",
-				"name": "05",
-				"defaultmaxhptype": "average",
-				"disableborder": true,
-				"auraislight": false,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"itemType": "builtinToken",
-				"color": "#0000E0",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 0,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/AboveVTT Tokens/Numbers/05",
-				"top": "883.224px",
-				"hidehpbar": false,
-				"hitPointInfo": {
-					"maximum": 0,
-					"current": 0,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"scaleCreated": 1.5151515151515151,
-				"tokenSize": 1,
-				"zindexdiff": 17,
-				"disableaura": false,
-				"revealInFog": false
-			},
-			"fea8d170-6e5a-4d21-9178-c36fb82f0486": {
-				"disablestat": false,
-				"gridSquares": 1.0033444816053512,
-				"custom_conditions": [],
-				"hp": 11,
-				"armorClass": 11,
-				"light1": {
-					"color": "rgba(255, 255, 255, 1)",
-					"feet": "0"
-				},
-				"id": "fea8d170-6e5a-4d21-9178-c36fb82f0486",
-				"imgsrc": "https://www.dndbeyond.com/avatars/0/374/636252780049181458.jpeg",
-				"locked": false,
-				"light2": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "0"
-				},
-				"aura2": {
-					"color": "rgba(255, 255, 0, 0.1)",
-					"feet": "0"
-				},
-				"aura1": {
-					"color": "rgba(255, 129, 0, 0.3)",
-					"feet": "0"
-				},
-				"tokenStyleSelect": "circle",
-				"revealname": false,
-				"tokenBaseStyleSelect": "default",
-				"itemId": 16914,
-				"square": false,
-				"vision": {
-					"color": "rgba(142, 142, 142, 1)",
-					"feet": "30"
-				},
-				"healthauratype": "none",
-				"size": 100,
-				"left": "1242.11px",
-				"name": "Grimlock 7",
-				"defaultmaxhptype": "average",
-				"disableborder": false,
-				"auraislight": true,
-				"conditions": [],
-				"enablepercenthpbar": false,
-				"sizeId": 4,
-				"itemType": "monster",
-				"color": "#EC8AFF",
-				"hidden": true,
-				"hidestat": false,
-				"videoToken": false,
-				"legacyaspectratio": true,
-				"max_hp": 11,
-				"alwaysshowname": false,
-				"restrictPlayerMove": false,
-				"listItemPath": "/Monsters/Grimlock",
-				"top": "2664.36px",
-				"hidehpbar": false,
-				"stat": 16914,
-				"hitPointInfo": {
-					"maximum": 11,
-					"current": 11,
-					"temp": 0
-				},
-				"lockRestrictDrop": "none",
-				"underDarkness": false,
-				"player_owned": false,
-				"monster": 16914,
-				"scaleCreated": 1.5151515151515151,
-				"zindexdiff": 17,
-				"disableaura": true,
-				"revealInFog": false
-			}
 		},
-		"darkness_filter": "100",
-		"grid_line_width": "0.5",
-		"grid_subdivided": "0",
-		"scale_factor": "1",
-		"offsetx": "5.333333333333272",
-		"dm_map_usable": "0",
-		"offsety": "1",
-		"dm_map_is_video": "0",
-		"grid": "0",
-		"scale_check": true,
-		
-		"player_map_is_video": "0",
-		"hpps": "99.66666666666667",
-		"disableSceneVision": "0",
-		"grid_color": "rgba(0, 0, 0, 0.5)",
-		"snap": "0",
-		"notes": {
-			"17a831ec-7ca8-4869-a117-8760abb0cb90": {
-				"title": "06",
-				"text": "<h3 id=\"6UnsteadyStalagmites\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"34e93d8e-28f5-437b-a902-c153c9adee30\">6. Unsteady Stalagmites</h3>\n<aside class=\"text--quote-box\">\n<p>The passage opens wider here, but the ceiling drops to a comparatively claustrophobic ten or twelve feet overhead. Stalagmites and stalactites make this stone forest resemble an enormous gaping, crooked-toothed maw. The steady plip of water dripping from the ceiling and splashing on the floor is nearly constant in this damp cavern, muffled only by the plentiful fungi that cover much of the floor and stalagmites.</p>\n</aside>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">There are no monstrous dangers here, but a significant section of the floor that crosses over the waterway in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#2GrimlockIsland\" data-content-chunk-id=\"d2b27c6f-3368-4348-9478-d31b869e5829\">areas 2</a>&nbsp;and&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#3DrakeLake\" data-content-chunk-id=\"dfc38a63-3a4e-4ec5-aa99-b908e84e386d\">3</a>&nbsp;has grown unstable from all the water draining through the floor. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Creatures with blindsense automatically detect the weakened floor and can go around it. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Hugging the west wall of the tunnel (roughly a 10-foot walkway in the section over the water below) is safe and stable. The rest of the passage in the section over the water below is fragile. </span></p>\n<p data-content-chunk-id=\"379ce62c-7f67-4dd8-9f1d-333c4b98a296\"><span style=\"font-size: 12pt;\">Characters with a passive Perception of 16 or higher notice this just before stepping on it; otherwise, succeeding on a DC 15 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Nature\" data-tooltip-href=\"//www.dndbeyond.com/skills/9-tooltip?disable-webm=1&amp;disable-webm=1\">Nature</a>) or DC 20 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check is needed to notice the weak floor.</span></p>\n<p data-content-chunk-id=\"86606b74-b98f-48e1-9c55-21b713f3a9e0\"><span style=\"font-size: 12pt;\">Beyond the faulty floor, the passage narrows in width, but the height of the passage rises to more than thirty feet. </span></p>\n<p data-content-chunk-id=\"86606b74-b98f-48e1-9c55-21b713f3a9e0\"><span style=\"font-size: 12pt;\">It is here that the dawndrinker&rsquo;s abilities begin to extinguish magical light sources. If the characters still have a way to perceive it, they notice the passage branching off and leading to area 8. (See&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#8SlopedTunnel\" data-content-chunk-id=\"8a09d535-5bb1-4369-a61d-9ea0e33fd081\">area 8</a>&nbsp;for access details.)</span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\"><strong><em>Fungi.</em></strong>&nbsp;The characters may be wary of the fungi, but it&rsquo;s harmless and edible. </span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\">When the dawndrinker is not around, they are luminescent, but their light is one of the first things the dawndrinker consumed!</span></p>\n<p data-content-chunk-id=\"f9b07ef6-2d12-4399-96b8-be4394d60fd2\"><span style=\"font-size: 12pt;\"> A successful DC 10 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Nature\" data-tooltip-href=\"//www.dndbeyond.com/skills/9-tooltip?disable-webm=1&amp;disable-webm=1\">Nature</a>) check tells a character that this fungi should be glowing, but isn&rsquo;t, for some reason that must be magical.</span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\"><strong><em>Floor Collapse.</em></strong>&nbsp;If two or more characters walk over the faulty section, it collapses. </span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\">Characters who succeed at a DC 18 Dexterity saving throw grab the stable sides as the floor gives way and stay in area 6. </span></p>\n<p data-content-chunk-id=\"802c61e3-8697-4310-8bfd-5be0c317a52d\"><span style=\"font-size: 12pt;\">Those who fail take 10 (3d6) bludgeoning damage from the floor debris as it crashes into the water around them. (These characters fall 30 feet into the water below, putting them between&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#2GrimlockIsland\" data-content-chunk-id=\"22763212-5270-498d-a2ab-69e36a5d6b7b\">areas 2</a>&nbsp;and&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#3DrakeLake\" data-content-chunk-id=\"9725cd59-bbea-41c3-974c-91b6c5dfc6a3\">3</a>.)</span></p>",
-				"plain": "6. Unsteady StalagmitesThe passage opens wider here, but the ceiling drops to a comparatively claustrophobic ten or twelve feet overhead. Stalagmites and stalactites make this stone forest resemble an enormous gaping, crooked-toothed maw. The steady plip of water dripping from the ceiling and splashing on the floor is nearly constant in this damp cavern, muffled only by the plentiful fungi that cover much of the floor and stalagmites.There are no monstrous dangers here, but a significant section of the floor that crosses over the waterway in areas 2 and 3 has grown unstable from all the water draining through the floor. Creatures with blindsense automatically detect the weakened floor and can go around it. Hugging the west wall of the tunnel (roughly a 10-foot walkway in the section over the water below) is safe and stable. The rest of the passage in the section over the water below is fragile. Characters with a passive Perception of 16 or higher notice this just before stepping on it; otherwise, succeeding on a DC 15 Intelligence (Nature) or DC 20 Wisdom (Perception) check is needed to notice the weak floor.Beyond the faulty floor, the passage narrows in width, but the height of the passage rises to more than thirty feet. It is here that the dawndrinker’s abilities begin to extinguish magical light sources. If the characters still have a way to perceive it, they notice the passage branching off and leading to area 8. (See area 8 for access details.)Fungi. The characters may be wary of the fungi, but it’s harmless and edible. When the dawndrinker is not around, they are luminescent, but their light is one of the first things the dawndrinker consumed! A successful DC 10 Intelligence (Nature) check tells a character that this fungi should be glowing, but isn’t, for some reason that must be magical.Floor Collapse. If two or more characters walk over the faulty section, it collapses. Characters who succeed at a DC 18 Dexterity saving throw grab the stable sides as the floor gives way and stay in area 6. Those who fail take 10 (3d6) bludgeoning damage from the floor debris as it crashes into the water around them. (These characters fall 30 feet into the water below, putting them between areas 2 and 3.)",
-				"player": false,
-				"statBlock": false
+		"dnd/loe/mayhem-at-the-crossroads/Map1801mayhemcrossroads": {
+			"reveals": [
+				[
+					0,
+					0,
+					0,
+					0,
+					2,
+					0,
+					1
+				]
+			],
+			"vpps": "100",
+			"title": "Map : Mayhem Crossroads ",
+			"drawings": [
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					402,
+					398,
+					801,
+					398,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					199,
+					500,
+					199,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					900,
+					500,
+					900,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					599,
+					498,
+					601,
+					798,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					1999,
+					1201,
+					1999,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2899,
+					1201,
+					2899,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1402,
+					2300,
+					1200,
+					2299,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2599,
+					1203,
+					2600,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					526,
+					2863,
+					529,
+					2882,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					528,
+					2875,
+					1007,
+					2856,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1201,
+					1999,
+					1201,
+					2048,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1201,
+					2130,
+					1201,
+					2048,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1401,
+					2472,
+					1401,
+					2410,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2899,
+					1401,
+					2830,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1401,
+					2830,
+					1401,
+					2749,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					988,
+					2223,
+					967,
+					2223.9092783505153,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1201,
+					2899,
+					1201,
+					2789,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1201,
+					2789,
+					1201,
+					2713,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1201,
+					2713,
+					1201,
+					2484,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1201,
+					2484,
+					1201,
+					2398,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1201,
+					2130,
+					1201,
+					2169,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1201,
+					2398,
+					1201,
+					2242,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1201,
+					2242,
+					1201,
+					2169,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					1999,
+					1401,
+					2111,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2410,
+					1401,
+					2183,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1401,
+					2183,
+					1401,
+					2111,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2749,
+					1401,
+					2708,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1401,
+					2708,
+					1401,
+					2654,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2472,
+					1401,
+					2499,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1401,
+					2654,
+					1401,
+					2543,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1401,
+					2543,
+					1401,
+					2499,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					984,
+					2030,
+					988,
+					2017,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1040,
+					1704,
+					754,
+					1657,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					754,
+					1657,
+					700,
+					1992,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					177,
+					1531,
+					199,
+					1533,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					569,
+					1518,
+					581,
+					1986,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					185,
+					1533,
+					248,
+					1530.5390625,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					569,
+					1518,
+					330,
+					1527.3359375,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					248,
+					1530.5390625,
+					330,
+					1527.3359375,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					177,
+					1531,
+					186.56289978678038,
+					1830,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					192,
+					2000,
+					188.6417910447761,
+					1895,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					188.6417910447761,
+					1895,
+					186.56289978678038,
+					1830,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					192,
+					2000,
+					267,
+					1997.3007712082263,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					267,
+					1997.3007712082263,
+					344,
+					1994.5295629820052,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					344,
+					1994.5295629820052,
+					439,
+					1991.1105398457585,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					581,
+					1986,
+					513,
+					1988.4473007712083,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					439,
+					1991.1105398457585,
+					513,
+					1988.4473007712083,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					700,
+					1992,
+					747,
+					1998.2887323943662,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					984,
+					2030,
+					810,
+					2006.718309859155,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					747,
+					1998.2887323943662,
+					810,
+					2006.718309859155,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					985,
+					2024,
+					992.5625,
+					1980,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					992.5625,
+					1980,
+					1006.3125,
+					1900,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1040,
+					1704,
+					1030.890625,
+					1757,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1006.3125,
+					1900,
+					1017.828125,
+					1833,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1017.828125,
+					1833,
+					1030.890625,
+					1757,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					469,
+					798,
+					541,
+					798,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					454,
+					500,
+					514,
+					500,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					199,
+					500,
+					281,
+					500,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					454,
+					500,
+					342,
+					500,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					281,
+					500,
+					342,
+					500,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					514,
+					500,
+					713,
+					500,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					900,
+					500,
+					791,
+					500,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					713,
+					500,
+					791,
+					500,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					541,
+					798,
+					641,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					641,
+					798,
+					704,
+					798,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					199,
+					798,
+					301,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					469,
+					798,
+					398,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					301,
+					798,
+					398,
+					798,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					704,
+					798,
+					752,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					900,
+					798,
+					848,
+					798,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					596,
+					281,
+					601,
+					100,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					402,
+					99,
+					460,
+					99,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					460,
+					99,
+					536,
+					99,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					536,
+					99,
+					658,
+					99,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					801,
+					99,
+					735,
+					99,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					658,
+					99,
+					735,
+					99,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					801,
+					99,
+					801,
+					150,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					801,
+					220.99999999999997,
+					801,
+					150,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					402,
+					99,
+					402,
+					212,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					402,
+					398,
+					402,
+					289,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					402,
+					289,
+					402,
+					212,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					801,
+					220.99999999999997,
+					801,
+					295,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					801,
+					398,
+					801,
+					381,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					801,
+					381,
+					801,
+					295,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1896,
+					592,
+					1933,
+					207,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1431,
+					170,
+					1399,
+					544,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1416,
+					324,
+					1747,
+					353.6123260437376,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1919,
+					369,
+					1842,
+					362.1113320079523,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1747,
+					353.6123260437376,
+					1842,
+					362.1113320079523,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1896,
+					592,
+					1768,
+					579.6378269617707,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1693,
+					572.3943661971831,
+					1768,
+					579.6378269617707,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1399,
+					544,
+					1453,
+					549.2152917505031,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1693,
+					572.3943661971831,
+					1550,
+					558.5835010060363,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1453,
+					549.2152917505031,
+					1550,
+					558.5835010060363,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1431,
+					170,
+					1512,
+					175.97011952191235,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1512,
+					175.97011952191235,
+					1596,
+					182.1613545816733,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1596,
+					182.1613545816733,
+					1771,
+					195.0597609561753,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1933,
+					207,
+					1842,
+					200.29282868525897,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1771,
+					195.0597609561753,
+					1842,
+					200.29282868525897,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2295,
+					243,
+					2046,
+					219,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2046,
+					219,
+					2040.0631578947368,
+					266,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1998,
+					599,
+					2031.8526315789475,
+					331,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2031.8526315789475,
+					331,
+					2040.0631578947368,
+					266,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2296,
+					242,
+					2291.0833333333335,
+					301,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2264,
+					626,
+					2286.25,
+					359,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2286.25,
+					359,
+					2291.0833333333335,
+					301,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1998,
+					599,
+					2048,
+					604.0751879699249,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2048,
+					604.0751879699249,
+					2112,
+					610.5714285714286,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2112,
+					610.5714285714286,
+					2158,
+					615.2406015037594,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2264,
+					626,
+					2249,
+					624.4774436090225,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2158,
+					615.2406015037594,
+					2249,
+					624.4774436090225,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2162,
+					410,
+					2022,
+					394,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2466,
+					621,
+					2447,
+					597,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2447,
+					597,
+					2412,
+					525,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2412,
+					525,
+					2401,
+					442,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2401,
+					442,
+					2412,
+					370,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2412,
+					370,
+					2450,
+					301,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2450,
+					301,
+					2516,
+					240,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2516,
+					240,
+					2585,
+					207,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2585,
+					207,
+					2669,
+					198,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2669,
+					198,
+					2742,
+					215,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2742,
+					215,
+					2812,
+					257,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2812,
+					257,
+					2864,
+					315,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2864,
+					315,
+					2898,
+					405,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2898,
+					405,
+					2900,
+					476,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2900,
+					476,
+					2873,
+					539,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2873,
+					539,
+					2828,
+					612,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2584,
+					689,
+					2550,
+					683,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2462,
+					619,
+					2481,
+					622,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2473,
+					619,
+					2484,
+					628.1428571428571,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2550,
+					683,
+					2539,
+					673.8571428571429,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2484,
+					628.1428571428571,
+					2539,
+					673.8571428571429,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2695,
+					694,
+					2584,
+					689,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2828,
+					612,
+					2794,
+					658.2777777777778,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2695,
+					694,
+					2706.757575757576,
+					690,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2706.757575757576,
+					690,
+					2794,
+					658.2777777777778,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2159,
+					1487,
+					2324,
+					1498.6929133858268,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2540,
+					1514,
+					2523,
+					1512.7952755905512,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2683,
+					1517,
+					2523,
+					1512.121951219512,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2324,
+					1498.6929133858268,
+					2523,
+					1512.7952755905512,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2324,
+					1498.6929133858268,
+					2523,
+					1512.121951219512,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2194,
+					799,
+					2164.595930232558,
+					1377,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2159,
+					1487,
+					2160.780523255814,
+					1452,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2160.780523255814,
+					1452,
+					2164.595930232558,
+					1377,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2683,
+					1517,
+					2685.8718703976438,
+					1467,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2685.8718703976438,
+					1467,
+					2689.662739322533,
+					1401,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2194,
+					799,
+					2275,
+					804.9829545454545,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2275,
+					804.9829545454545,
+					2360,
+					811.2613636363636,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2360,
+					811.2613636363636,
+					2525,
+					823.4488636363636,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2722,
+					838,
+					2606,
+					829.4318181818181,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2525,
+					823.4488636363636,
+					2606,
+					829.4318181818181,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2722,
+					838,
+					2704.022091310751,
+					1151,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2689.662739322533,
+					1401,
+					2700.2312223858617,
+					1217,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2700.2312223858617,
+					1217,
+					2704.022091310751,
+					1151,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2715,
+					1069,
+					2303,
+					1050,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2174,
+					1163,
+					2216,
+					1126.2093023255813,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2303,
+					1050,
+					2291,
+					1060.5116279069769,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2216,
+					1126.2093023255813,
+					2291,
+					1060.5116279069769,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1958,
+					1018,
+					2001,
+					1021,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2194,
+					803,
+					2051,
+					791,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1962,
+					862,
+					1958,
+					1018,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2080,
+					1024,
+					2186,
+					1035,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2051,
+					791,
+					2034,
+					804.561797752809,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1962,
+					862,
+					1973.281690140845,
+					853,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1973.281690140845,
+					853,
+					2034,
+					804.561797752809,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1783,
+					2332,
+					1803,
+					2802,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1920,
+					2558,
+					1930,
+					2797,
+					6,
+					1,
+					null,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1794,
+					2561,
+					1806,
+					2560.714285714286,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1920,
+					2558,
+					1899,
+					2558.5,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1806,
+					2560.714285714286,
+					1899,
+					2558.5,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1920,
+					2558,
+					1991,
+					2555.418181818182,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2195,
+					2548,
+					2098,
+					2551.5272727272727,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1991,
+					2555.418181818182,
+					2098,
+					2551.5272727272727,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1783,
+					2332,
+					1994,
+					2320.5945945945946,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2190,
+					2310,
+					2095,
+					2315.135135135135,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					1994,
+					2320.5945945945946,
+					2095,
+					2315.135135135135,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2207,
+					2795,
+					2086,
+					2797.0965346534654,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2021,
+					2798.2227722772277,
+					2086,
+					2797.0965346534654,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1803,
+					2802,
+					1832,
+					2801.4975247524753,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2021,
+					2798.2227722772277,
+					1903,
+					2800.267326732673,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					1832,
+					2801.4975247524753,
+					1903,
+					2800.267326732673,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2207,
+					2795,
+					2203.1608247422682,
+					2697,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2203.1608247422682,
+					2697,
+					2201.241237113402,
+					2648,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2188,
+					2310,
+					2191.8391752577318,
+					2408,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2201.241237113402,
+					2648,
+					2193.915463917526,
+					2461,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2193.915463917526,
+					2461,
+					2191.8391752577318,
+					2408,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2299,
+					2301,
+					2300,
+					2690,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2499,
+					2300,
+					2498.2179487179487,
+					2361,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2494,
+					2690,
+					2497.346153846154,
+					2429,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2497.346153846154,
+					2429,
+					2498.2179487179487,
+					2361,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2300,
+					2690,
+					2367,
+					2690,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2494,
+					2690,
+					2427,
+					2690,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2367,
+					2690,
+					2427,
+					2690,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2299,
+					2301,
+					2341,
+					2301.206896551724,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2502,
+					2302,
+					2448,
+					2301.733990147783,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2341,
+					2301.206896551724,
+					2448,
+					2301.733990147783,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2299,
+					2498,
+					2343,
+					2498.223350253807,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2496,
+					2499,
+					2448,
+					2498.756345177665,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2343,
+					2498.223350253807,
+					2448,
+					2498.756345177665,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2628,
+					2327,
+					2591,
+					2795,
+					6,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2628,
+					2327,
+					2725,
+					2334.773519163763,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2915,
+					2350,
+					2817,
+					2342.1463414634145,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2725,
+					2334.773519163763,
+					2817,
+					2342.1463414634145,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2606,
+					2606,
+					2652,
+					2610.63309352518,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2884,
+					2634,
+					2743,
+					2619.798561151079,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 100, 255, 1)",
+					2652,
+					2610.63309352518,
+					2743,
+					2619.798561151079,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2591,
+					2795,
+					2690,
+					2804.0328467153286,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2865,
+					2820,
+					2752,
+					2809.689781021898,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2690,
+					2804.0328467153286,
+					2752,
+					2809.689781021898,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2865,
+					2820,
+					2873.033826638478,
+					2744,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2873.033826638478,
+					2744,
+					2878.3192389006344,
+					2694,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2915,
+					2347,
+					2902.632135306554,
+					2464,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					2878.3192389006344,
+					2694,
+					2895.972515856237,
+					2527,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(255, 255, 0, 1)",
+					2895.972515856237,
+					2527,
+					2902.632135306554,
+					2464,
+					12,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					184,
+					2252,
+					181,
+					2250,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					503,
+					2242,
+					184,
+					2252,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					23,
+					2290,
+					179,
+					2250,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					532,
+					2873,
+					60,
+					2900,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					60,
+					2900,
+					45,
+					2717,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(50, 255, 255, 1)",
+					45,
+					2717,
+					23,
+					2290,
+					12,
+					1,
+					true,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(150, 50, 150, 1)",
+					772,
+					2232,
+					967,
+					2223,
+					12,
+					1,
+					0
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					503,
+					2244,
+					592,
+					2240.1463917525775,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					772,
+					2232.352577319588,
+					675,
+					2236.5525773195877,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(150, 50, 150, 1)",
+					582,
+					2235,
+					684,
+					2235,
+					12,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					503,
+					2244,
+					505.08759124087595,
+					2310,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					516,
+					2655,
+					507.08029197080293,
+					2373,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					988,
+					2223,
+					989.8396226415094,
+					2301,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(0, 255, 0, 1)",
+					1003,
+					2859,
+					991.1132075471697,
+					2355,
+					6,
+					1,
+					0,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(150, 50, 150, 1)",
+					504,
+					2304,
+					510,
+					2388,
+					12,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"line",
+					"wall",
+					"rgba(150, 50, 150, 1)",
+					981,
+					2294,
+					990,
+					2366,
+					12,
+					1,
+					false,
+					"",
+					""
+				],
+				[
+					"rect",
+					"light",
+					"rgba(255, 255, 255, 1)",
+					1253,
+					112,
+					0,
+					0,
+					"99.93333333333332",
+					1
+				],
+				[
+					"rect",
+					"light",
+					true,
+					3166,
+					-146,
+					-3938,
+					3441,
+					"99.93333333333332",
+					1
+				]
+			],
+			"tokens": {
+				"057062ba-44e6-40f6-b6b3-5ad71e150c09": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "057062ba-44e6-40f6-b6b3-5ad71e150c09",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Numbers_01",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1801px",
+					"name": "01",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Numbers/01",
+					"top": "1594px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"0b978af5-789c-4359-b987-a2fbba1145ce": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "0b978af5-789c-4359-b987-a2fbba1145ce",
+					"imgsrc": "https://www.dndbeyond.com/avatars/12746/433/637357526338055906.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2598px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(243.98400000000004, 188.10235194400002, 54.01805760000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "897px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"0bea781d-a1ef-4766-a086-acd2c30a8169": {
+					"disablestat": false,
+					"gridSquares": 3.0020013342228156,
+					"custom_conditions": [],
+					"hp": 238,
+					"armorClass": 19,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "0bea781d-a1ef-4766-a086-acd2c30a8169",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/617/638368832266184918.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037092,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 300,
+					"left": "1215px",
+					"name": "Caprathorn",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 6,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 238,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Caprathorn",
+					"top": "1181px",
+					"hidehpbar": false,
+					"stat": 4037092,
+					"hitPointInfo": {
+						"maximum": 238,
+						"current": 238,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037092,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 6,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"15f53102-bbd4-40f5-8b86-4127f69d8a20": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 22,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "15f53102-bbd4-40f5-8b86-4127f69d8a20",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1188px",
+					"name": "Thornlamm 10",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#911EB4",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 22,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1118px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 22,
+						"current": 22,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"1baafb10-19e9-4e1d-b865-86515868d6bd": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 95,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "1baafb10-19e9-4e1d-b865-86515868d6bd",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "184px",
+					"name": "Lesser Avarice Seraph 8",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#000000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 95,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2500px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 95,
+						"current": 95,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"209be576-3351-4368-817e-8747d4e8ae58": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "209be576-3351-4368-817e-8747d4e8ae58",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/184/636377836834995016.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2308px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(243.98400000000004, 188.10235194400002, 54.01805760000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1042px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"2160780523255814145221645959302325581377d30cf46c-38aa-4fb4-9356-ea30bd9b3a10": {
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"color": "#008080",
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"custom_conditions": [],
+					"type": "door",
+					"scaleCreated": 1.5151515151515151,
+					"vision": {
+						"color": "rgba(0, 0, 0, 0)",
+						"feet": 0
+					},
+					"top": "1389px",
+					"size": 50,
+					"armorClass": 0,
+					"left": "2137px",
+					"name": "",
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "2160780523255814145221645959302325581377d30cf46c-38aa-4fb4-9356-ea30bd9b3a10",
+					"auraislight": true,
+					"conditions": [],
+					"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					}
+				},
+				"29d0baba-fb82-4dd9-89bb-0bd66ca8bdd5": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 98,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "29d0baba-fb82-4dd9-89bb-0bd66ca8bdd5",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "305px",
+					"name": "Lesser Avarice Seraph 7",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#00E5FF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 98,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2501px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 98,
+						"current": 98,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"2a7cb5ff-6604-47a3-a509-bf4c8e0eebe3": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 24,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "2a7cb5ff-6604-47a3-a509-bf4c8e0eebe3",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1516px",
+					"name": "Thornlamm 3",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 24,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1418px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 24,
+						"current": 24,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"2e31ac7a-027a-4a93-bd02-992af79730d6": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 22,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "2e31ac7a-027a-4a93-bd02-992af79730d6",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1508px",
+					"name": "Thornlamm 11",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#800000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 22,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1187px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 22,
+						"current": 22,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"392e2fb8-31ea-4067-9e44-72a7ad6e4904": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Letters",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "392e2fb8-31ea-4067-9e44-72a7ad6e4904",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1497px",
+					"name": "! - Exclamation Mark 2",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+					"top": "1514px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"43aea46a-a70e-4059-9a39-7810b2057001": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "43aea46a-a70e-4059-9a39-7810b2057001",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/225/636377843761000977.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2489px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "#0000C0",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1344px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"454500514500d30cf46c-38aa-4fb4-9356-ea30bd9b3a10": {
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"color": "#FFD433",
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"custom_conditions": [],
+					"type": "door",
+					"scaleCreated": 1.5151515151515151,
+					"vision": {
+						"color": "rgba(0, 0, 0, 0)",
+						"feet": 0
+					},
+					"top": "475px",
+					"size": 50,
+					"armorClass": 0,
+					"left": "459px",
+					"name": "",
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "454500514500d30cf46c-38aa-4fb4-9356-ea30bd9b3a10",
+					"auraislight": true,
+					"conditions": [],
+					"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					}
+				},
+				"46eb7b57-097a-4830-a346-e7131963ee1c": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "46eb7b57-097a-4830-a346-e7131963ee1c",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Numbers_04",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2008px",
+					"name": "04",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Numbers/04",
+					"top": "2387px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"55961ef0-090c-433b-988d-35e4c444d594": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 18,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "55961ef0-090c-433b-988d-35e4c444d594",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1601px",
+					"name": "Thornlamm 2",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 18,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1314px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 18,
+						"current": 18,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"5e1845b9-82cb-4cb7-a9a9-83d88d53effa": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 18,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "5e1845b9-82cb-4cb7-a9a9-83d88d53effa",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1313px",
+					"name": "Thornlamm 6",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 18,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1509px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 18,
+						"current": 18,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"704c2f17-6ed8-446d-bc56-b6063252f54d": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "704c2f17-6ed8-446d-bc56-b6063252f54d",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/175/636377833949480548.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2399px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "#00E5FF",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1197px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"772223235257731958896722239092783505153d30cf46c-38aa-4fb4-9356-ea30bd9b3a10": {
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"color": "#008000",
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"custom_conditions": [],
+					"type": "door",
+					"scaleCreated": 1.5151515151515151,
+					"vision": {
+						"color": "rgba(0, 0, 0, 0)",
+						"feet": 0
+					},
+					"top": "2203px",
+					"size": 50,
+					"armorClass": 0,
+					"left": "843.9999999999999px",
+					"name": "",
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "772223235257731958896722239092783505153d30cf46c-38aa-4fb4-9356-ea30bd9b3a10",
+					"auraislight": true,
+					"conditions": [],
+					"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+					"light2": {
+						"color": "rgba(142, 142, 142, 1)",
+						"feet": "0"
+					}
+				},
+				"7781031b-4862-4a36-a169-f1e90054d7dd": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 112,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "7781031b-4862-4a36-a169-f1e90054d7dd",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "619px",
+					"name": "Lesser Avarice Seraph 4",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 112,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2424px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 112,
+						"current": 112,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"86df837b-f7bc-486a-9198-04fc7b15c1c1": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "86df837b-f7bc-486a-9198-04fc7b15c1c1",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Numbers_05",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "736px",
+					"name": "05",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Numbers/05",
+					"top": "2268px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"8773f3b7-59a0-448f-adb3-35c3c8a40ffd": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 12,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "8773f3b7-59a0-448f-adb3-35c3c8a40ffd",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1180px",
+					"name": "Thornlamm 4",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 12,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1501px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 12,
+						"current": 12,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"8a70f554-62a0-4dc7-b104-034679859d48": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 18,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "8a70f554-62a0-4dc7-b104-034679859d48",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1084px",
+					"name": "Thornlamm 7",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#00E5FF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 18,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1308px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 18,
+						"current": 18,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"92db788c-988f-42e0-b3bc-6ab30785925c": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "92db788c-988f-42e0-b3bc-6ab30785925c",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/212/636377840850178381.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2498px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(106.01495721630002, 167.99399999999997, 79.00757820000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1198px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"97d92d72-0d18-4b70-a970-be87ccd04b5e": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 11,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "97d92d72-0d18-4b70-a970-be87ccd04b5e",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/206/636377840142917038.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"itemId": 16966,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1671px",
+					"name": "Evi",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 11,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Noble",
+					"top": "359px",
+					"hidehpbar": false,
+					"stat": 16966,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/0/276/636252769860656821.jpeg",
+						"https://www.dndbeyond.com/avatars/17/206/636377840142917038.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp"
+					],
+					"hitPointInfo": {
+						"maximum": 11,
+						"current": 11,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16966,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a0622d42-3a7b-4572-9239-b7044b263440": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a0622d42-3a7b-4572-9239-b7044b263440",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/178/636377835492897814.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2299px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "#C0C0C0",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1340px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a2bf14b2-1cef-49a6-a600-2c5e7ddc56f0": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 112,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "a2bf14b2-1cef-49a6-a600-2c5e7ddc56f0",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "815px",
+					"name": "Lesser Avarice Seraph 2",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FF7433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 112,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2538px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 112,
+						"current": 112,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a2d2f6c9-7d6b-4f6b-9dd4-613e6b8f19aa": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a2d2f6c9-7d6b-4f6b-9dd4-613e6b8f19aa",
+					"imgsrc": "https://www.dndbeyond.com/avatars/10845/648/637266684910216543.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2183px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(243.98400000000004, 188.10235194400002, 54.01805760000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1212px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a3febd94-a341-4bc6-b698-8e97665151bd": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 17,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a3febd94-a341-4bc6-b698-8e97665151bd",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1490px",
+					"name": "Thornlamm 9",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#F032E6",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 17,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1302px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 17,
+						"current": 17,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"a66e9efa-487e-44a1-9c22-672aa21b8432": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 206,
+					"armorClass": 17,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "a66e9efa-487e-44a1-9c22-672aa21b8432",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/170/636377831239912223.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"abilityTracker": {
+						"identify": 3,
+						"suggestion": 3
+					},
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037086,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1491px",
+					"name": "Rusk",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 206,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Avarice Seraph",
+					"top": "326px",
+					"hidehpbar": false,
+					"stat": 4037086,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/38378/605/638368832244345190.png",
+						"https://www.dndbeyond.com/avatars/17/170/636377831239912223.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp"
+					],
+					"hitPointInfo": {
+						"maximum": 206,
+						"current": 206,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037086,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"aca939f6-0e8e-46b5-8f3c-42df4c4d1613": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 13,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "aca939f6-0e8e-46b5-8f3c-42df4c4d1613",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1095px",
+					"name": "Thornlamm 5",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 13,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1407px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 13,
+						"current": 13,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"ad8bfaed-1fde-4dcc-89bc-24b2dac032a1": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "ad8bfaed-1fde-4dcc-89bc-24b2dac032a1",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Numbers_02",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1478px",
+					"name": "02",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Numbers/02",
+					"top": "397px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b072aea1-cba4-4194-9358-eb130795f660": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 119,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "b072aea1-cba4-4194-9358-eb130795f660",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "281px",
+					"name": "Lesser Avarice Seraph 5",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 119,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2602px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 119,
+						"current": 119,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b24dc8e1-3365-4640-9f00-3e4c51f384c6": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "b24dc8e1-3365-4640-9f00-3e4c51f384c6",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/171/636377831882950286.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1817px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "#600000",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "2391px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"b506deee-5cee-4373-b732-30747bd276b6": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 19,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "b506deee-5cee-4373-b732-30747bd276b6",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1387px",
+					"name": "Thornlamm* Capras horns",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 19,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1119px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 19,
+						"current": 19,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"c1c27e42-bf68-4e7a-aec3-734616dfc5f2": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 15,
+					"armorClass": 14,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "c1c27e42-bf68-4e7a-aec3-734616dfc5f2",
+					"imgsrc": "https://www.dndbeyond.com/avatars/4675/679/636747837952193011.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "60"
+					},
+					"itemId": 4037164,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "1099px",
+					"name": "Thornlamm 8",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 3,
+					"itemType": "monster",
+					"color": "#000000",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 15,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Thornlamm",
+					"top": "1211px",
+					"hidehpbar": false,
+					"stat": 4037164,
+					"hitPointInfo": {
+						"maximum": 15,
+						"current": 15,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037164,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"c601f337-51c1-4ca4-ab92-ad0d92aa198c": {
+					"disablestat": false,
+					"gridSquares": 3.0020013342228156,
+					"custom_conditions": [],
+					"hp": 215,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "c601f337-51c1-4ca4-ab92-ad0d92aa198c",
+					"imgsrc": "https://www.dndbeyond.com/avatars/38378/650/638368832321462364.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037111,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 300,
+					"left": "1865px",
+					"name": "Gluttony Seraph",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 6,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 215,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Gluttony Seraph",
+					"top": "2560px",
+					"hidehpbar": false,
+					"stat": 4037111,
+					"hitPointInfo": {
+						"maximum": 215,
+						"current": 215,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037111,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 6,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"cbe95d17-71bd-47dd-ac3a-42aa4986af6e": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Numbers",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "cbe95d17-71bd-47dd-ac3a-42aa4986af6e",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Numbers_03",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2676px",
+					"name": "03",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Numbers/03",
+					"top": "1099px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"cd125ce0-1eb6-4f16-9b4a-26dae32888e4": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 10,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "cd125ce0-1eb6-4f16-9b4a-26dae32888e4",
+					"imgsrc": "https://www.dndbeyond.com/avatars/9/40/636322707212916945.jpeg",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"itemId": 16966,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2217px",
+					"name": "Hemina",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "rgba(255, 216.9795, 102, 1)",
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 10,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Noble",
+					"top": "1112px",
+					"hidehpbar": false,
+					"stat": 16966,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/0/276/636252769860656821.jpeg",
+						"https://www.dndbeyond.com/avatars/9/40/636322707212916945.jpeg"
+					],
+					"hitPointInfo": {
+						"maximum": 10,
+						"current": 10,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 16966,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"d397b220-25a6-45cc-b5f7-52d943d2671b": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "d397b220-25a6-45cc-b5f7-52d943d2671b",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/304/636377869796580051.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2496px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(243.98400000000004, 188.10235194400002, 54.01805760000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "898px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"d4ca8079-00b7-486d-adea-755d688458d0": {
+					"disablestat": false,
+					"gridSquares": 2.0013342228152102,
+					"custom_conditions": [],
+					"hp": 113,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "d4ca8079-00b7-486d-adea-755d688458d0",
+					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037122,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 200,
+					"left": "1867.78px",
+					"name": "Lesser Gluttony Seraph 4",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#884DFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 113,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Gluttony Seraph",
+					"top": "569.184px",
+					"hidehpbar": false,
+					"stat": 4037122,
+					"alternativeImages": [
+						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+					],
+					"hitPointInfo": {
+						"maximum": 113,
+						"current": 113,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037122,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"d533a63b-ba48-4548-8aa1-94918bf33926": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "d533a63b-ba48-4548-8aa1-94918bf33926",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/204/636377839475886288.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2308px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "#FF7433",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1197px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"d8f2ac26-a559-4175-8e33-b3e4a5ff581e": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 108,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "d8f2ac26-a559-4175-8e33-b3e4a5ff581e",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "618px",
+					"name": "Lesser Avarice Seraph 3",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 108,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2523px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 108,
+						"current": 108,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"d9309bc1-4c19-49c2-ab43-a3466a5c2ec8": {
+					"disablestat": false,
+					"gridSquares": 2.0013342228152102,
+					"custom_conditions": [],
+					"hp": 124,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "d9309bc1-4c19-49c2-ab43-a3466a5c2ec8",
+					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037122,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 200,
+					"left": "2073.78px",
+					"name": "Lesser Gluttony Seraph",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 124,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Gluttony Seraph",
+					"top": "629.184px",
+					"hidehpbar": false,
+					"stat": 4037122,
+					"alternativeImages": [
+						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+					],
+					"hitPointInfo": {
+						"maximum": 124,
+						"current": 124,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037122,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"e3445695-ba11-4e92-b7c5-b2920d747a99": {
+					"disablestat": false,
+					"gridSquares": 2.0013342228152102,
+					"custom_conditions": [],
+					"hp": 113,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "e3445695-ba11-4e92-b7c5-b2920d747a99",
+					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037122,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 200,
+					"left": "1758.78px",
+					"name": "Lesser Gluttony Seraph 6",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 113,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Gluttony Seraph",
+					"top": "569.184px",
+					"hidehpbar": false,
+					"stat": 4037122,
+					"alternativeImages": [
+						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+					],
+					"hitPointInfo": {
+						"maximum": 113,
+						"current": 113,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037122,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"e43dc5ba-30fc-4cfa-9117-e9fae1af71cd": {
+					"disablestat": false,
+					"gridSquares": 2.0013342228152102,
+					"custom_conditions": [],
+					"hp": 106,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "e43dc5ba-30fc-4cfa-9117-e9fae1af71cd",
+					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"locked": false,
+					"abilityTracker": {
+						"createfoodandwater": 1,
+						"suggestion": 1
+					},
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037122,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 200,
+					"left": "2187px",
+					"name": "Lesser Gluttony Seraph 5",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#5F0404",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 106,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Gluttony Seraph",
+					"top": "585px",
+					"hidehpbar": false,
+					"stat": 4037122,
+					"alternativeImages": [
+						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+					],
+					"hitPointInfo": {
+						"maximum": 106,
+						"current": 106,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037122,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"eb27a70a-7b8b-43b3-8bc8-2edbb29c1076": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 105,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "eb27a70a-7b8b-43b3-8bc8-2edbb29c1076",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "195px",
+					"name": "Lesser Avarice Seraph 6",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#EC8AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"max_hp": 105,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2603px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 105,
+						"current": 105,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"ef391b73-55fd-476e-a2c2-6a7acfdfe64b": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "ef391b73-55fd-476e-a2c2-6a7acfdfe64b",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/185/636377836954914067.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2393px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(0, 0, 0, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "1343px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"efd916ee-ecf5-4db4-ad1d-517b822ac262": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/Letters",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "efd916ee-ecf5-4db4-ad1d-517b822ac262",
+					"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "903px",
+					"name": "! - Exclamation Mark",
+					"defaultmaxhptype": "roll",
+					"disableborder": true,
+					"auraislight": false,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "builtinToken",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+					"top": "201px",
+					"hidehpbar": false,
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"tokenSize": 1,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f232b581-d943-4378-8f00-b1305e65ac42": {
+					"disablestat": false,
+					"gridSquares": 2.0013342228152102,
+					"custom_conditions": [],
+					"hp": 120,
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "f232b581-d943-4378-8f00-b1305e65ac42",
+					"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037122,
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 200,
+					"left": "1948.78px",
+					"name": "Lesser Gluttony Seraph 3",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 5,
+					"itemType": "monster",
+					"color": "#FFD433",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 120,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Gluttony Seraph",
+					"top": "607.184px",
+					"hidehpbar": false,
+					"stat": 4037122,
+					"alternativeImages": [
+						"https://dl.dropboxusercontent.com/scl/fi/takui6mqe8oe59za6e3y5/natemoonlife_lesser_gluttony_seraph_dungeons__dragons_monster_a_07cf6e42-2971-4c99-98b6-2b5f0f052c3e-1.png?rlkey=m0a2k7vrdc94ubro55wmdhltp&dl=0"
+					],
+					"hitPointInfo": {
+						"maximum": 120,
+						"current": 120,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037122,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 8,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"f8ee2618-56c2-43f8-89d7-ed1079a72fe7": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"armorClass": 15,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": "0"
+					},
+					"id": "f8ee2618-56c2-43f8-89d7-ed1079a72fe7",
+					"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "0"
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 255, 100, 0.5)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "virtualMiniCircle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": "120"
+					},
+					"itemId": 4037121,
+					"square": true,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "807.0560686428894px",
+					"name": "Lesser Avarice Seraph",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"sizeId": 4,
+					"itemType": "monster",
+					"color": "#1A6AFF",
+					"hidden": true,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": false,
+					"mapElev": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/Monsters/Lesser Avarice Seraph",
+					"top": "2403.3094182889295px",
+					"hidehpbar": false,
+					"stat": 4037121,
+					"alternativeImages": [
+						"https://www.dndbeyond.com/avatars/thumbnails/38378/606/1000/1000/638368832245592975.png"
+					],
+					"hitPointInfo": {
+						"maximum": 106,
+						"current": 106,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"monster": 4037121,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				},
+				"fb5960c1-0931-4b40-8771-45bc2e33fdd2": {
+					"disablestat": false,
+					"gridSquares": 1.0006671114076051,
+					"custom_conditions": [],
+					"hp": 0,
+					"folderPath": "/",
+					"armorClass": 0,
+					"light1": {
+						"color": "rgba(255, 255, 255, 1)",
+						"feet": 0
+					},
+					"id": "fb5960c1-0931-4b40-8771-45bc2e33fdd2",
+					"imgsrc": "https://www.dndbeyond.com/avatars/17/215/636377841293013108.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
+					"locked": false,
+					"light2": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 0
+					},
+					"aura2": {
+						"color": "rgba(255, 255, 0, 0.1)",
+						"feet": "0"
+					},
+					"aura1": {
+						"color": "rgba(255, 129, 0, 0.3)",
+						"feet": "0"
+					},
+					"offset": {
+						"x": 0,
+						"y": 0
+					},
+					"tokenStyleSelect": "circle",
+					"revealname": false,
+					"tokenBaseStyleSelect": "default",
+					"vision": {
+						"color": "rgba(141.933, 141.933, 141.933, 1)",
+						"feet": 60
+					},
+					"itemId": "_DDB_Human",
+					"square": false,
+					"healthauratype": "none",
+					"placeType": "count",
+					"size": 100,
+					"left": "2217px",
+					"name": "Human",
+					"defaultmaxhptype": "roll",
+					"disableborder": false,
+					"auraislight": true,
+					"conditions": [],
+					"enablepercenthpbar": false,
+					"itemType": "ddbToken",
+					"color": "rgba(243.98400000000004, 188.10235194400002, 54.01805760000001, 1)",
+					"hidden": false,
+					"hidestat": false,
+					"videoToken": false,
+					"legacyaspectratio": true,
+					"mapElev": 0,
+					"max_hp": 0,
+					"alwaysshowname": false,
+					"restrictPlayerMove": true,
+					"listItemPath": "/DDB/Human",
+					"top": "879px",
+					"hidehpbar": false,
+					"alternativeImages": [],
+					"hitPointInfo": {
+						"maximum": 0,
+						"current": 0,
+						"temp": 0
+					},
+					"lockRestrictDrop": "restrict",
+					"underDarkness": false,
+					"player_owned": false,
+					"scaleCreated": 1.5151515151515151,
+					"maxAge": false,
+					"zindexdiff": 17,
+					"disableaura": true,
+					"revealInFog": false
+				}
 			},
-			"2f266ab5-1c7b-4429-a990-3011c3a0a50d": {
-				"title": "04",
-				"text": "<h3 id=\"4SlowRise\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"3b28ab6b-6014-4db8-b43a-548fd3b006ed\">Slow Rise</h3>\n<aside class=\"text--quote-box\">\n<p>There is a 20-foot climb down behind you. Ahead of you, a passage opens and meanders away into the darkness.</p>\n</aside>\n<p data-content-chunk-id=\"287a1d23-98a7-449d-9da1-298a9a2c921d\"><span style=\"font-size: 12pt;\">The walls here are high compared to the rest of the cavern&mdash;likely beyond the range of any light sources the characters are carrying (though they may get creative). </span></p>\n<p data-content-chunk-id=\"287a1d23-98a7-449d-9da1-298a9a2c921d\"><span style=\"font-size: 12pt;\">The slope rises five feet by the time it reaches the base of area 5, then another five feet as it encounters the first of the stalagmites and stalactites in&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#6UnsteadyStalagmites\" data-content-chunk-id=\"d0e7bc4c-d60c-4a32-9300-f39d8b7cf082\">area 6</a>.</span></p>\n<p data-content-chunk-id=\"16bd7b22-1ad4-4eaf-aad5-dbb63ba7b540\"><span style=\"font-size: 12pt;\">Unless the characters are entirely silent, they draw the attention of the horror flits in area 5 when they pass by.</span></p>\n<p data-content-chunk-id=\"16bd7b22-1ad4-4eaf-aad5-dbb63ba7b540\"><span style=\"font-size: 12pt;\"> Those with a passive Perception of 15 or higher (or who succeed at an active DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check) note that bat guano, a common occurrence in caves, is thicker and more common here than it has been in the rest of the cavern.</span></p>\n<p data-content-chunk-id=\"90c5e843-02e3-48e9-b087-a51ffeece561\"><span style=\"font-size: 12pt;\"><strong><em>Scale the Wall.</em></strong>&nbsp;Characters who want to scale the 40-foot-tall wall to get to area 5 can do so with successful DC 13 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) checks.</span></p>",
-				"plain": "Slow RiseThere is a 20-foot climb down behind you. Ahead of you, a passage opens and meanders away into the darkness.The walls here are high compared to the rest of the cavern—likely beyond the range of any light sources the characters are carrying (though they may get creative). The slope rises five feet by the time it reaches the base of area 5, then another five feet as it encounters the first of the stalagmites and stalactites in area 6.Unless the characters are entirely silent, they draw the attention of the horror flits in area 5 when they pass by. Those with a passive Perception of 15 or higher (or who succeed at an active DC 15 Wisdom (Perception) check) note that bat guano, a common occurrence in caves, is thicker and more common here than it has been in the rest of the cavern.Scale the Wall. Characters who want to scale the 40-foot-tall wall to get to area 5 can do so with successful DC 13 Strength (Athletics) checks.",
-				"player": false,
-				"statBlock": false
-			},
-			"35548606-c239-40e6-b9c5-908b0252dc40": {
-				"title": "08",
-				"text": "<h3 id=\"8SlopedTunnel\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"5eb26e49-a93b-4005-9b34-056df52e412c\">8. Sloped Tunnel</h3>\n<aside class=\"text--quote-box\">\n<p>This narrow tunnel is sloped steeply.</p>\n</aside>\n<p data-content-chunk-id=\"f43f65c2-596e-40e9-96d8-d9dffc458ac5\"><span style=\"font-size: 12pt;\">At the crook of the passage is the remains of the only other adventurer to get this far in search of the dawndrinker: a dragonborn paladin of Miklas. </span></p>\n<p data-content-chunk-id=\"f43f65c2-596e-40e9-96d8-d9dffc458ac5\"><span style=\"font-size: 12pt;\">Her sword broke in the fight, and she tried to retreat here, but the dawndrinker followed and slew her.</span></p>\n<p data-content-chunk-id=\"0e64b6a3-9267-4a21-b4c9-be54339a911a\"><span style=\"font-size: 12pt;\">Climbing up to this passage from&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#6UnsteadyStalagmites\" data-content-chunk-id=\"713a26ad-2ef2-4421-a42c-8733d57b3786\">area 6</a>&nbsp;(or back down to area 6 from this passage) requires succeeding at a DC 12 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check.</span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\"><strong><em>Miklas&rsquo;s Gear.</em></strong>&nbsp;The dragonborn corpse wears its suit of&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/plate\" data-tooltip-href=\"//www.dndbeyond.com/armor/18-tooltip?disable-webm=1&amp;disable-webm=1\">plate mail</a>&nbsp;armor and&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/shield\" data-tooltip-href=\"//www.dndbeyond.com/armor/8-tooltip?disable-webm=1&amp;disable-webm=1\">shield</a>. </span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\">Her rations are spoiled, but her backpack still holds 18 gp, 3 moonstones (each worth 25 gp) and a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5418-spell-scroll\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5418-tooltip?disable-webm=1&amp;disable-webm=1\">spell scroll</a>&nbsp;of&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/daylight\" data-tooltip-href=\"//www.dndbeyond.com/spells/2060-tooltip?disable-webm=1&amp;disable-webm=1\">daylight</a>. </span></p>\n<p data-content-chunk-id=\"139a29ea-f020-46dd-b22e-ba237cb7ea0f\"><span style=\"font-size: 12pt;\">There are also three empty vials, as well as an intact one holding a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5133-potion-of-healing-greater\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5133-tooltip?disable-webm=1&amp;disable-webm=1\">potion of greater healing</a>.</span></p>\n<aside class=\"text--lore-notes\"></aside>",
-				"plain": "8. Sloped TunnelThis narrow tunnel is sloped steeply.At the crook of the passage is the remains of the only other adventurer to get this far in search of the dawndrinker: a dragonborn paladin of Miklas. Her sword broke in the fight, and she tried to retreat here, but the dawndrinker followed and slew her.Climbing up to this passage from area 6 (or back down to area 6 from this passage) requires succeeding at a DC 12 Strength (Athletics) check.Miklas’s Gear. The dragonborn corpse wears its suit of plate mail armor and shield. Her rations are spoiled, but her backpack still holds 18 gp, 3 moonstones (each worth 25 gp) and a spell scroll of daylight. There are also three empty vials, as well as an intact one holding a potion of greater healing.",
-				"player": false,
-				"statBlock": false
-			},
-			"3b54592d-2a1f-4340-8379-41662b6b2aa1": {
-				"title": "01",
-				"text": "<h3 id=\"1CavernsEntrance\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"10b171fb-da07-4820-bb02-32674b013ba4\">1. Caverns Entrance</h3>\n<aside class=\"text--quote-box\">\n<p>After hundreds of feet of trudging downward in the dark and uniform tunnel, the cavern opens a bit. The height of the ceiling triples and the stale smell of raw fish and manure interrupts your journey.</p>\n</aside>\n<p data-content-chunk-id=\"510c9761-e049-4349-a26d-82e4f05a4836\"><span style=\"font-size: 12pt;\">Unless the characters are extremely careful and stealthy the entire length of the corridor, the two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16914-grimlock\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16914-tooltip?disable-webm=1&amp;disable-webm=1\">grimlocks</a>, who have climbed up from their island to eat some captured fish, are aware that there are intruders. </span></p>\n<p data-content-chunk-id=\"510c9761-e049-4349-a26d-82e4f05a4836\"><span style=\"font-size: 12pt;\">They attempt to hide and, if spotted, dive down into area 2 to fetch the other grimlocks as reinforcements. Smart characters would normally find this as easy as shooting fish in a barrel, but in the advanced darkness it may not be so easy!</span></p>\n<p data-content-chunk-id=\"5da25d84-978c-4bc0-85b3-72c5dcccebe0\"><span style=\"font-size: 12pt;\"><strong><em>Rough Ascent.</em></strong>&nbsp;Hidden 25 feet up on the northeast wall is a large opening to another tunnel (<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#4SlowRise\" data-content-chunk-id=\"77eeeed7-660d-40a9-aa47-4b53b06cef5a\">area 4</a>). </span></p>\n<p data-content-chunk-id=\"5da25d84-978c-4bc0-85b3-72c5dcccebe0\"><span style=\"font-size: 12pt;\">From ground level, it is difficult to see. Characters who succeed on a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Perception\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check (and have light sufficient to see it) notice it. The stones on the wall are jagged and easy to climb unless the characters are in combat. In combat, characters must succeed on a DC 10 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check to advance up the wall.</span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\"><strong><em>Smooth Descent.</em></strong>&nbsp;Characters without sufficient light sources who are moving too quickly may pitch themselves over the 25-foot drop and into the water below. </span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\">The wall here is wet, requiring a DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check to successfully scale without the help of a rope. </span></p>\n<p data-content-chunk-id=\"3c5efd54-4b5d-4ce8-9ad8-60096200c309\"><span style=\"font-size: 12pt;\">Characters who climb up from the water in area 2 and reach the top automatically notice the handholds the grimlocks made leading to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#4SlowRise\" data-content-chunk-id=\"1e530f1b-f1b6-4947-90f1-deb8bb9b3543\">area 4</a>.</span></p>",
-				"plain": "1. Caverns EntranceAfter hundreds of feet of trudging downward in the dark and uniform tunnel, the cavern opens a bit. The height of the ceiling triples and the stale smell of raw fish and manure interrupts your journey.Unless the characters are extremely careful and stealthy the entire length of the corridor, the two grimlocks, who have climbed up from their island to eat some captured fish, are aware that there are intruders. They attempt to hide and, if spotted, dive down into area 2 to fetch the other grimlocks as reinforcements. Smart characters would normally find this as easy as shooting fish in a barrel, but in the advanced darkness it may not be so easy!Rough Ascent. Hidden 25 feet up on the northeast wall is a large opening to another tunnel (area 4). From ground level, it is difficult to see. Characters who succeed on a DC 15 Wisdom (Perception) check (and have light sufficient to see it) notice it. The stones on the wall are jagged and easy to climb unless the characters are in combat. In combat, characters must succeed on a DC 10 Strength (Athletics) check to advance up the wall.Smooth Descent. Characters without sufficient light sources who are moving too quickly may pitch themselves over the 25-foot drop and into the water below. The wall here is wet, requiring a DC 15 Strength (Athletics) check to successfully scale without the help of a rope. Characters who climb up from the water in area 2 and reach the top automatically notice the handholds the grimlocks made leading to area 4.",
-				"player": false,
-				"statBlock": false
-			},
-			"5045db71-9fef-44b8-852a-f1b81d1cc945": {
-				"title": "03",
-				"text": "<h3 id=\"3DrakeLake\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"42032653-b256-41bd-b990-5ddfb48189e9\">Drake Lake</h3>\n<aside class=\"text--quote-box\">\n<p>The water is eerily still and frigid here. The only way in or out of this domed chamber is through the waterway back to the small island.</p>\n</aside>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">Four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037147-sea-drake\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037147-tooltip?disable-webm=1&amp;disable-webm=1\">sea drakes</a>* make their home in this tiny freshwater lake. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">They spar with the grimlocks, occasionally catching them and just as often getting caught themselves. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">They attack any humanoids (including the characters and grimlocks) who enter their lair. </span></p>\n<p data-content-chunk-id=\"2864b6af-ad89-473b-bfd8-f764c897eb9f\"><span style=\"font-size: 12pt;\">The sea drakes pursue enemies back to the small island but ignore targets that escape onto land or who climb the wall back to&nbsp;<a href=\"https://www.dndbeyond.com/sources/loe/gloomrock-caverns#1CavernsEntrance\" data-content-chunk-id=\"12fa43c9-15cd-45fe-baa3-66a55bf39c80\">area 1</a>.</span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\"><strong><em>Buried Treasure.</em></strong>&nbsp;One previous, tentative expedition to deal with the dawndrinker was fated to end here. </span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\">Two skeletons sit at the bottom of the lake, twenty feet below the surface. </span></p>\n<p data-content-chunk-id=\"bf51a92f-5b3c-429f-9df8-5f2a10b5d28b\"><span style=\"font-size: 12pt;\">While most of their gear is waterlogged, rusted, and worthless, a pristine&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5227-flail-1\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5227-tooltip?disable-webm=1&amp;disable-webm=1\">+1 flail</a>&nbsp;sits with the bones.</span></p>",
-				"plain": "Drake LakeThe water is eerily still and frigid here. The only way in or out of this domed chamber is through the waterway back to the small island.Four sea drakes* make their home in this tiny freshwater lake. They spar with the grimlocks, occasionally catching them and just as often getting caught themselves. They attack any humanoids (including the characters and grimlocks) who enter their lair. The sea drakes pursue enemies back to the small island but ignore targets that escape onto land or who climb the wall back to area 1.Buried Treasure. One previous, tentative expedition to deal with the dawndrinker was fated to end here. Two skeletons sit at the bottom of the lake, twenty feet below the surface. While most of their gear is waterlogged, rusted, and worthless, a pristine +1 flail sits with the bones.",
-				"player": false,
-				"statBlock": false
-			},
-			"e5d461bc-aa6f-45bd-ab83-305ff619df5e": {
-				"title": "02",
-				"text": "<h3 id=\"2GrimlockIsland\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"b263d1f6-244f-4390-8186-40a3aed0b193\">2. Grimlock Island</h3>\n<aside class=\"text--quote-box\">\n<p>A small island rises out of the cool, languid water. To the west, the cave moves sharply up. To the east, it narrows and follows the water down into another cavern.</p>\n</aside>\n<p data-content-chunk-id=\"ea775980-fd04-4513-b018-e451f011d260\"><span style=\"font-size: 12pt;\">In addition to the two in area 1, six more&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16914-grimlock\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16914-tooltip?disable-webm=1&amp;disable-webm=1\">grimlocks</a>&nbsp;fish and swim on and around the island here. If they fight and begin to lose, they make a break to the east, hoping to lure their foes into the path of the sea drakes that live in the pool in area 3.</span></p>\n<p data-content-chunk-id=\"1e2c151e-0c6c-489a-8c10-db8f72b26b61\"><span style=\"font-size: 12pt;\"><strong><em>Garbage Island.</em></strong>&nbsp;The small island is covered in the detritus of sightless living. Beneath the filth and bones are the remains of a spelunker the grimlocks killed, who carried a&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/climbers-kit\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/37-tooltip?disable-webm=1&amp;disable-webm=1\">climber&rsquo;s kit</a>&nbsp;and&nbsp;<a class=\"tooltip-hover item-tooltip\" href=\"https://www.dndbeyond.com/equipment/rope-silk-50-feet\" data-tooltip-href=\"//www.dndbeyond.com/adventuring-gear/78-tooltip?disable-webm=1&amp;disable-webm=1\">50 feet of silk rope</a>.</span></p>",
-				"plain": "2. Grimlock IslandA small island rises out of the cool, languid water. To the west, the cave moves sharply up. To the east, it narrows and follows the water down into another cavern.In addition to the two in area 1, six more grimlocks fish and swim on and around the island here. If they fight and begin to lose, they make a break to the east, hoping to lure their foes into the path of the sea drakes that live in the pool in area 3.Garbage Island. The small island is covered in the detritus of sightless living. Beneath the filth and bones are the remains of a spelunker the grimlocks killed, who carried a climber’s kit and 50 feet of silk rope.",
-				"player": false,
-				"statBlock": false
-			},
-			"f6555b8b-b5f8-4021-9c5c-e66cb3b8801f": {
-				"title": "07",
-				"text": "<h3 id=\"7DawndrinkerGlimmercave\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"e1e189d3-c60e-4760-b30f-2879dad64c47\">7. Dawndrinker Glimmercave</h3>\n<aside class=\"text--quote-box\">\n<p>The sounds of water trickling into the cavern echo faintly and persistently, giving you the impression of a grand space.</p>\n</aside>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">The steep cliff from area 6 requires successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/compendium/rules/basic-rules/using-ability-scores#Athletics\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) checks to navigate. </span></p>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">A small pool of water has collected on the west wall. </span></p>\n<p data-content-chunk-id=\"4f82829b-b54a-44da-8a1d-1c1c54fa9290\"><span style=\"font-size: 12pt;\">The passage to area 8 is gradual.<br /><br /></span><span style=\"font-size: 12pt;\">The dawndrinker lairs here. Its blindsense means that it&rsquo;s aware of characters whether they fly, climb, or fall into the cavern. It uses hit-and-run tactics to claw each one to death as quickly as possible, prioritizing those with light sources first.</span></p>\n<p data-content-chunk-id=\"bdd545ee-e61b-4dde-bc9c-df490b0b4060\"><span style=\"font-size: 12pt;\"><strong><em>Pool.</em></strong>&nbsp;The pool of water is not deep&mdash;only a few feet&mdash;but it&rsquo;s large enough that smart characters may retreat into it to both slow the dawndrinker&rsquo;s movement (wading counts as&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>) and to hear the dawndrinker&rsquo;s approach before it strikes.</span></p>\n<p data-content-chunk-id=\"d76a703a-c136-4009-b69f-9d40a8da48a1\"><span style=\"font-size: 12pt;\"><strong><em>Retreat Up.</em></strong>&nbsp;Characters may think to climb away from the dawndrinker. In such a case, it uses the passage to area 8 to get the jump on the characters from behind.</span></p>\n<p data-content-chunk-id=\"4bc6e8b4-a531-4eb8-b112-e50fc27b5c4d\"><span style=\"font-size: 12pt;\"><strong><em>Retreat East.</em></strong>&nbsp;Characters may discover that the passage to area 8 narrows considerably&mdash;and that retreating into it might force the dawndrinker to attack head on. Depending on the characters&rsquo; abilities, this may be a useful way to contain the dawndrinker&rsquo;s strengths and force it to face only the character with the best AC at any given time!<br /><br /><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/05-002.dawndrinker.png\" alt=\"\" width=\"850\" height=\"1309\" /><br /></span></p>",
-				"plain": "7. Dawndrinker GlimmercaveThe sounds of water trickling into the cavern echo faintly and persistently, giving you the impression of a grand space.The steep cliff from area 6 requires successful DC 15 Strength (Athletics) checks to navigate. A small pool of water has collected on the west wall. The passage to area 8 is gradual.The dawndrinker lairs here. Its blindsense means that it’s aware of characters whether they fly, climb, or fall into the cavern. It uses hit-and-run tactics to claw each one to death as quickly as possible, prioritizing those with light sources first.Pool. The pool of water is not deep—only a few feet—but it’s large enough that smart characters may retreat into it to both slow the dawndrinker’s movement (wading counts as difficult terrain) and to hear the dawndrinker’s approach before it strikes.Retreat Up. Characters may think to climb away from the dawndrinker. In such a case, it uses the passage to area 8 to get the jump on the characters from behind.Retreat East. Characters may discover that the passage to area 8 narrows considerably—and that retreating into it might force the dawndrinker to attack head on. Depending on the characters’ abilities, this may be a useful way to contain the dawndrinker’s strengths and force it to face only the character with the best AC at any given time!",
-				"player": false,
-				"statBlock": false
-			},
-			"f832e010-af67-4282-8e4a-aae4ba60e14c": {
-				"title": "05",
-				"text": "<h3 id=\"5HorrorFlitNest\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"c062745a-ba32-4425-bb44-ecd9a52bf366\">5. Horror Flit Nest</h3>\n<aside class=\"text--quote-box\">\n<p>The bones of countless fish and small game are nested among clear signs of larger kills.</p>\n</aside>\n<p data-content-chunk-id=\"e0ebb385-1d47-463a-94c3-5141ac7e77c5\"><span style=\"font-size: 12pt;\">Three&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037114-horror-flit-hunter\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037114-tooltip?disable-webm=1&amp;disable-webm=1\">horror flit hunters</a>* here have gotten by on the natives of the caverns, including poaching the occasional explorer and grimlock, after they feasted on bats that once made their home in the caverns. </span></p>\n<p data-content-chunk-id=\"e0ebb385-1d47-463a-94c3-5141ac7e77c5\"><span style=\"font-size: 12pt;\">The dead bats are the source of the guano in area 4.</span></p>\n<p data-content-chunk-id=\"2935a13f-4dcb-4591-bf11-d4f336a8b98f\"><span style=\"font-size: 12pt;\"><strong><em>Treasure.</em></strong>&nbsp;Characters who seek out the horror flits&rsquo; nest discover several spiked bone clubs (from grimlock meals) along with a belt pouch containing a handful of pearls (worth 250 gp total), assorted loose coins totaling 82 sp and 57 cp, and a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5418-spell-scroll\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5418-tooltip?disable-webm=1&amp;disable-webm=1\">spell scroll</a>&nbsp;of&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/burning-hands\" data-tooltip-href=\"//www.dndbeyond.com/spells/2021-tooltip?disable-webm=1&amp;disable-webm=1\">burning hands</a>.</span></p>\n<p data-content-chunk-id=\"2935a13f-4dcb-4591-bf11-d4f336a8b98f\"><span style=\"font-size: 12pt;\"><img class=\"magnify\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/05-001.horror-flits-r.png\" alt=\"\" width=\"1700\" height=\"1764\" /></span></p>",
-				"plain": "5. Horror Flit NestThe bones of countless fish and small game are nested among clear signs of larger kills.Three horror flit hunters* here have gotten by on the natives of the caverns, including poaching the occasional explorer and grimlock, after they feasted on bats that once made their home in the caverns. The dead bats are the source of the guano in area 4.Treasure. Characters who seek out the horror flits’ nest discover several spiked bone clubs (from grimlock meals) along with a belt pouch containing a handful of pearls (worth 250 gp total), assorted loose coins totaling 82 sp and 57 cp, and a spell scroll of burning hands.",
-				"player": false,
-				"statBlock": false
+			"darkness_filter": "100",
+			"offsetx": "0.8000000000001251",
+			"dm_map_usable": "1",
+			"offsety": "1",
+			"hpps": "99.93333333333332",
+			"notes": {
+				"057062ba-44e6-40f6-b6b3-5ad71e150c09": {
+					"title": "01",
+					"text": "<h3 id=\"1FlossMemorialStatue\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"934a33e5-0239-4718-a672-8d55270179a9\">1. Floss Memorial Statue</h3>\n<aside class=\"text--quote-box\">\n<p>At the center of town, where the two well-traveled trade routes meet, stands a marble statue depicting a smiling woman, her arms spread wide as if casting a blessing over the entire area. A gold plaque on the base of the statue reads, <em><strong>&ldquo;In Honor of Frannie Floss, Matron of Our Town, Honored by All Who Revere Home and Hearth.&rdquo;</strong></em> Unlit candles and small trinkets are placed on the statue and around its base.</p>\n</aside>\n<p data-content-chunk-id=\"3a56286f-939f-48ca-af85-5d90ce5ecd72\"><strong><em>Statue.</em></strong>&nbsp;The statue has been magically empowered by the disavowed seraphs Rusk and Yort to act as a beacon for the caprathorn.</p>\n<p data-content-chunk-id=\"3a56286f-939f-48ca-af85-5d90ce5ecd72\">A successful DC 25 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/6-tooltip?disable-webm=1&amp;disable-webm=1\">Arcana</a>) check recognizes the summoning power of the magic infusing the statue.</p>\n<p data-content-chunk-id=\"3a56286f-939f-48ca-af85-5d90ce5ecd72\">The magic of the statue cannot be dispelled with anything except a&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2303-wish\" data-tooltip-href=\"//www.dndbeyond.com/spells/2303-tooltip?disable-webm=1&amp;disable-webm=1\">wish</a>&nbsp;spell or powerful divine intervention.</p>\n<p data-content-chunk-id=\"3a56286f-939f-48ca-af85-5d90ce5ecd72\">&nbsp;</p>\n<p data-content-chunk-id=\"e1c952a0-7f29-4b4f-9249-42715d7d2156\">A success DC 20 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) reveals that none of the candles or trinkets have been lit or placed here in the last several days.</p>\n<p data-content-chunk-id=\"e1c952a0-7f29-4b4f-9249-42715d7d2156\">Obviously, those who generally leave offerings in memory of Frannie Floss have failed to do so for a while.</p>\n<p data-content-chunk-id=\"e1c952a0-7f29-4b4f-9249-42715d7d2156\">&nbsp;</p>\n<aside class=\"text--lore-notes\">\n<p>Rusk is attempting to charm Evi and gain a larger foothold in the hamlet.</p>\n</aside>",
+					"plain": "1. Floss Memorial StatueAt the center of town, where the two well-traveled trade routes meet, stands a marble statue depicting a smiling woman, her arms spread wide as if casting a blessing over the entire area. A gold plaque on the base of the statue reads, “In Honor of Frannie Floss, Matron of Our Town, Honored by All Who Revere Home and Hearth.” Unlit candles and small trinkets are placed on the statue and around its base.Statue. The statue has been magically empowered by the disavowed seraphs Rusk and Yort to act as a beacon for the caprathorn. A successful DC 25 Intelligence (Arcana) check recognizes the summoning power of the magic infusing the statue.The magic of the statue cannot be dispelled with anything except a wish spell or powerful divine intervention.A success DC 20 Intelligence (Investigation) reveals that none of the candles or trinkets have been lit or placed here in the last several days. Obviously, those who generally leave offerings in memory of Frannie Floss have failed to do so for a while.Rusk is attempting to charm Evi and gain a larger foothold in the hamlet.",
+					"player": false,
+					"statBlock": false
+				},
+				"392e2fb8-31ea-4067-9e44-72a7ad6e4904": {
+					"title": "! - Exclamation Mark 2",
+					"text": "<h3 id=\"TheCaprathorn\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"35400d4e-12b9-4d8d-9eee-37f6295ad32a\">The Caprathorn</h3>\n<p data-content-chunk-id=\"689bef26-257e-49c1-b88d-7cca05f1edc6\">At whatever point you are ready to have the caprathorn make its appearance, it charges into the center of town.</p>\n<aside class=\"text--quote-box\">\n<p>A huge goat-headed figure charges up the path toward the center of town. The four horns that adorn its head are covered with runes. Vines grow from the beast, and hanging from the ends of the vines are twisted-looking sheep. The lot are covered with blood.</p>\n</aside>\n<p data-content-chunk-id=\"d05d9bf0-b6f9-4938-b6ae-b976df05d401\">In addition to the&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037092-caprathorn\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037092-tooltip?disable-webm=1&amp;disable-webm=1\">caprathorn</a>*, nine&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037164-thornlamm\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037164-tooltip?disable-webm=1&amp;disable-webm=1\">thornlamms</a>* accompany their master. Driven to a frenzy by the call of the magic exuded by the statue, the caprathorn looks to kill anything within its line of sight.</p>\n<p data-content-chunk-id=\"e3f173fd-3565-48be-b237-8eb0e5ab1666\"><strong><em>Chaotic Battle.</em></strong>&nbsp;While the disavowed can summon the caprathorn, they cannot control it. This means that any battle involving all three sides (characters, disavowed, and caprathorn) can go in any direction. Many high-level groups could handle the battle even if the disavowed and caprathorn worked together, but regulating the action based on the success of the characters is highly recommended.</p>\n<h2 id=\"MayhemattheCrossroadsConclusion\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"81b82cba-b72e-4f47-a480-3bef96ba1cf1\">Conclusion</h2>\n<p data-content-chunk-id=\"6b17ee2f-5330-4d46-a658-46dea79a2575\">If the characters rescue the powerful figure being held in the stables before he is killed by his captors, that person rewards them with at least 1,000 gp worth of gems, coins, and other precious gifts&mdash;if the characters assist that person in getting home, of course.</p>\n<p data-content-chunk-id=\"8a0054c9-3884-43dc-82ec-3fef87391b4f\">If the characters rescue them but allow harm to come to them first, the reward is halved and the powerful figure acts much more stiffly around the characters, expecting that heroes of such power should have been able to mount a rescue more expertly than they did.</p>\n<p data-content-chunk-id=\"2a21e149-a3bb-47ff-a07e-b3a1fdef5d6d\">Regardless, the people of Floss&rsquo;s Cross are ecstatic that the characters not only eliminated the caprathorn, but also rooted out the corruption brought to the town by the disavowed. Being heroes of an area beloved by so many powerful people certainly could have its perks.</p>",
+					"plain": "The CaprathornAt whatever point you are ready to have the caprathorn make its appearance, it charges into the center of town.A huge goat-headed figure charges up the path toward the center of town. The four horns that adorn its head are covered with runes. Vines grow from the beast, and hanging from the ends of the vines are twisted-looking sheep. The lot are covered with blood.In addition to the caprathorn*, nine thornlamms* accompany their master. Driven to a frenzy by the call of the magic exuded by the statue, the caprathorn looks to kill anything within its line of sight.Chaotic Battle. While the disavowed can summon the caprathorn, they cannot control it. This means that any battle involving all three sides (characters, disavowed, and caprathorn) can go in any direction. Many high-level groups could handle the battle even if the disavowed and caprathorn worked together, but regulating the action based on the success of the characters is highly recommended.ConclusionIf the characters rescue the powerful figure being held in the stables before he is killed by his captors, that person rewards them with at least 1,000 gp worth of gems, coins, and other precious gifts—if the characters assist that person in getting home, of course.If the characters rescue them but allow harm to come to them first, the reward is halved and the powerful figure acts much more stiffly around the characters, expecting that heroes of such power should have been able to mount a rescue more expertly than they did.Regardless, the people of Floss’s Cross are ecstatic that the characters not only eliminated the caprathorn, but also rooted out the corruption brought to the town by the disavowed. Being heroes of an area beloved by so many powerful people certainly could have its perks.",
+					"player": false,
+					"statBlock": false
+				},
+				"46eb7b57-097a-4830-a346-e7131963ee1c": {
+					"title": "04",
+					"text": "<h3 id=\"4YortsResidence\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"fe05eaba-6b23-4615-95df-03051df65e0f\">4. Yort&rsquo;s Residence</h3>\n<aside class=\"text--quote-box\">\n<p>A rotund man in a silk robe startles at your intrusion. &ldquo;What&rsquo;s this all about,&rdquo; he blusters, as he falls out of his chair while reaching ineffectually for a dagger.</p>\n</aside>\n<p data-content-chunk-id=\"76c86dc9-7fd9-496b-8b68-aa4706316485\">Yort, a&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037111-gluttony-seraph\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037111-tooltip?disable-webm=1&amp;disable-webm=1\">gluttony seraph</a>*, uses magic to disguise himself as human, pretending to be a doddering fool.</p>\n<p data-content-chunk-id=\"76c86dc9-7fd9-496b-8b68-aa4706316485\">A successful DC 20 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/12-tooltip?disable-webm=1&amp;disable-webm=1\">Insight</a>) check alerts a character that this person is acting like a fool but is very much in control of the situation and feigning surprise.</p>\n<p data-content-chunk-id=\"76c86dc9-7fd9-496b-8b68-aa4706316485\">&nbsp;</p>\n<p data-content-chunk-id=\"d2ed6378-96d1-44f1-94f9-42aeb4eaa06e\"><strong><em>Ruse.</em></strong>&nbsp;Yort pretends to be a resident of the town, hiding out in his home.</p>\n<p data-content-chunk-id=\"d2ed6378-96d1-44f1-94f9-42aeb4eaa06e\">He knows better than to challenge the characters on his own, so he tries to get them to accompany him to an area where allies might help him.</p>\n<p data-content-chunk-id=\"d2ed6378-96d1-44f1-94f9-42aeb4eaa06e\">He also uses the statue to summon the caprathorn if the situation is dire.</p>",
+					"plain": "4. Yort’s ResidenceA rotund man in a silk robe startles at your intrusion. “What’s this all about,” he blusters, as he falls out of his chair while reaching ineffectually for a dagger.Yort, a gluttony seraph*, uses magic to disguise himself as human, pretending to be a doddering fool. A successful DC 20 Wisdom (Insight) check alerts a character that this person is acting like a fool but is very much in control of the situation and feigning surprise.Ruse. Yort pretends to be a resident of the town, hiding out in his home. He knows better than to challenge the characters on his own, so he tries to get them to accompany him to an area where allies might help him. He also uses the statue to summon the caprathorn if the situation is dire.",
+					"player": false,
+					"statBlock": false
+				},
+				"86df837b-f7bc-486a-9198-04fc7b15c1c1": {
+					"title": "05",
+					"text": "<h3 id=\"5Hostage\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"7b0b0bb3-566c-4a17-bc4d-818d64fbd6f1\">5. Hostage</h3>\n<p data-content-chunk-id=\"a345517f-4e9e-4b1d-ab1c-28338f845b26\">The doors and windows of this stable are boarded up, despite some structural damage. There are no locks to pick, but as this stable is not solidly built, a successful DC 20 Strength check can break open any door or window. If the characters gain access, they can see the situation.</p>\n<aside class=\"text--quote-box\">\n<p>Four large angelic figures, their red eyes glowing and beautiful faces wearing a sneer, stand over a bound figure within this very clean stable.</p>\n</aside>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">Eight&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037121-lesser-avarice-seraph\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037121-tooltip?disable-webm=1&amp;disable-webm=1\">lesser avarice seraphs</a>* occupy the stables.</p>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">Only four are in the stables at a time, as they take turns watching over the powerful figure, whom they have kidnapped and plan to hold for ransom.</p>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">The other four, however, are in the area and rush to help their associates if a battle breaks out.</p>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">Their instructions are to make sure that their prisoner does not escape, and that no one snoops around and sees them.</p>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">If a battle does begin, one of them rushes to retrieve Rusk.</p>\n<p data-content-chunk-id=\"cc5f26af-9fc9-4b51-af31-15edeb694da8\">&nbsp;</p>\n<p data-content-chunk-id=\"a01f37a6-6ee6-4a83-b5f1-c364ae609306\"><strong><em>Powerful Figure.</em></strong>&nbsp;This powerful figure can be an NPC from Etharis (if you are running a Grim Hollow campaign) or from your own world.</p>\n<p data-content-chunk-id=\"a01f37a6-6ee6-4a83-b5f1-c364ae609306\">They should have enough influence and power to make their survival something important to your campaign.</p>\n<p data-content-chunk-id=\"a38279b7-3a3d-4da4-b9c6-a33bb3280158\">If the battle is going badly for the seraphs&mdash;which it most assuredly will at this level of play&mdash;one of the seraphs threatens the NPC if they characters do not back away.</p>\n<p data-content-chunk-id=\"a38279b7-3a3d-4da4-b9c6-a33bb3280158\">At this level, hostage situations are generally not an issue for characters, as they have magical capabilities that can bring people back to life with very little problem.</p>\n<p data-content-chunk-id=\"a38279b7-3a3d-4da4-b9c6-a33bb3280158\">If you want the hostage situation to present a true challenge, have the NPC hostage admit to the players that because of a family curse, no magic can bring them back to life once they&rsquo;re dead.</p>",
+					"plain": "5. HostageThe doors and windows of this stable are boarded up, despite some structural damage. There are no locks to pick, but as this stable is not solidly built, a successful DC 20 Strength check can break open any door or window. If the characters gain access, they can see the situation.Four large angelic figures, their red eyes glowing and beautiful faces wearing a sneer, stand over a bound figure within this very clean stable.Eight lesser avarice seraphs* occupy the stables. Only four are in the stables at a time, as they take turns watching over the powerful figure, whom they have kidnapped and plan to hold for ransom. The other four, however, are in the area and rush to help their associates if a battle breaks out. Their instructions are to make sure that their prisoner does not escape, and that no one snoops around and sees them. If a battle does begin, one of them rushes to retrieve Rusk.Powerful Figure. This powerful figure can be an NPC from Etharis (if you are running a Grim Hollow campaign) or from your own world. They should have enough influence and power to make their survival something important to your campaign.If the battle is going badly for the seraphs—which it most assuredly will at this level of play—one of the seraphs threatens the NPC if they characters do not back away. At this level, hostage situations are generally not an issue for characters, as they have magical capabilities that can bring people back to life with very little problem. If you want the hostage situation to present a true challenge, have the NPC hostage admit to the players that because of a family curse, no magic can bring them back to life once they’re dead.",
+					"player": false,
+					"statBlock": false
+				},
+				"ad8bfaed-1fde-4dcc-89bc-24b2dac032a1": {
+					"title": "02",
+					"text": "<h3 id=\"2RusksResidence\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"105c8e9b-b80e-4619-8999-49f0827aea83\">2. Rusk&rsquo;s Residence</h3>\n<p data-content-chunk-id=\"b7460fa2-4a95-4a8a-a743-b5b5b9428ddc\">The doors and windows to this building have been shuttered and locked. The locks are not strong, easily defeated with a successful DC 10 Dexterity (Thieves&rsquo; Tools) check. Once inside, the characters can examine the interior.</p>\n<aside class=\"text--quote-box\">\n<p>This small dwelling is nicely appointed with fine furnishings. Two women sit sipping wine and chatting in front of a fire.</p>\n</aside>\n<p data-content-chunk-id=\"98723fce-fbb5-4874-80cf-24ae33e5c9eb\">Unless she is encountered elsewhere, Rusk (<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037086-avarice-seraph\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037086-tooltip?disable-webm=1&amp;disable-webm=1\">avarice seraph</a>*) is here talking with Evi (<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16966-noble\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16966-tooltip?disable-webm=1&amp;disable-webm=1\">noble</a>), the proprietor of the Sideways Wayside, an establishment elsewhere in Floss&rsquo;s Cross.</p>\n<p data-content-chunk-id=\"98723fce-fbb5-4874-80cf-24ae33e5c9eb\">Rusk is attempting to charm Evi and gain a larger foothold in the hamlet.</p>\n<p data-content-chunk-id=\"98723fce-fbb5-4874-80cf-24ae33e5c9eb\">&nbsp;</p>\n<p data-content-chunk-id=\"8d8564cf-67f9-44c6-8a8c-a65e99c62eea\">Rusk realizes that the adventurers are quite powerful, so she does her best to put them at ease and answer their questions.</p>\n<p data-content-chunk-id=\"8d8564cf-67f9-44c6-8a8c-a65e99c62eea\">She attempts to lie to them while still telling the truth.</p>\n<p data-content-chunk-id=\"8d8564cf-67f9-44c6-8a8c-a65e99c62eea\">Her plan is to lead them to a place where she can get the assistance of the other seraphs in town, or even call the caprathorn to take out the characters.</p>",
+					"plain": "2. Rusk’s ResidenceThe doors and windows to this building have been shuttered and locked. The locks are not strong, easily defeated with a successful DC 10 Dexterity (Thieves’ Tools) check. Once inside, the characters can examine the interior.This small dwelling is nicely appointed with fine furnishings. Two women sit sipping wine and chatting in front of a fire.Unless she is encountered elsewhere, Rusk (avarice seraph*) is here talking with Evi (noble), the proprietor of the Sideways Wayside, an establishment elsewhere in Floss’s Cross. Rusk is attempting to charm Evi and gain a larger foothold in the hamlet.Rusk realizes that the adventurers are quite powerful, so she does her best to put them at ease and answer their questions. She attempts to lie to them while still telling the truth. Her plan is to lead them to a place where she can get the assistance of the other seraphs in town, or even call the caprathorn to take out the characters.",
+					"player": false,
+					"statBlock": false
+				},
+				"b506deee-5cee-4373-b732-30747bd276b6": {
+					"title": "Thornlamm* Capras horns",
+					"text": "<p>kill if take 50 damage</p>\n<p>consume one as BA for 21 HP</p>\n<p>3 remaining</p>",
+					"plain": "kill if take 50 damageconsume one as BA for 21 HP3 remaining",
+					"player": false,
+					"statBlock": false
+				},
+				"cbe95d17-71bd-47dd-ac3a-42aa4986af6e": {
+					"title": "03",
+					"text": "<h3 id=\"3PrivateTavern\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"3c65980a-08d9-46ee-baaf-7d61cc2addf0\">3. Private Tavern</h3>\n<aside class=\"text--quote-box\">\n<p>This small tavern bustles with activity. An ogresh cook orders around several other workers and servers, preparing several plates of food. A party of six well-dressed diners sits at a table, sampling the delicious-smelling fare.</p>\n</aside>\n<p data-content-chunk-id=\"d64951e7-c0c1-4e37-aa9e-a852435595e3\">This private tavern caters to wealthy patrons looking for a unique meal cooked by a master chef residing in Floss&rsquo;s Cross.</p>\n<p data-content-chunk-id=\"d64951e7-c0c1-4e37-aa9e-a852435595e3\">The chef, an ogresh named Hemina (<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16966-noble\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16966-tooltip?disable-webm=1&amp;disable-webm=1\">noble</a>), has been under suggestion spells from Yort, the&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037111-gluttony-seraph\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037111-tooltip?disable-webm=1&amp;disable-webm=1\">gluttony seraph</a>*, for the past several days.</p>\n<p data-content-chunk-id=\"d64951e7-c0c1-4e37-aa9e-a852435595e3\">Under this magical compulsion, Hemina prepares and distributes food made with various herbs supplied by Yort, which have had magical effects on the people eating them.</p>\n<figure id=\"imgthegluttonyseraph\" class=\"compendium-art compendium-art-right\"><a class=\"ddb-lightbox-outer compendium-image-center\" href=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/18-004.gluttony-seraph.png\" data-lightbox=\"1\" data-title=\"\"><img class=\"ddb-lightbox-inner\" src=\"https://media.dndbeyond.com/compendium-images/loe/7bmJlZMhg4dtt7Xb/18-004.gluttony-seraph.png\" alt=\"\" width=\"400\" height=\"734\" /></a><figcaption>Gluttony Seraph</figcaption></figure>\n<p data-content-chunk-id=\"82b757ac-19ed-4203-a6fe-dc10fdccb015\">Hemina accepted the help supplied by Yort, in the form of seven&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/4037122-lesser-gluttony-seraph\" data-tooltip-href=\"//www.dndbeyond.com/monsters/4037122-tooltip?disable-webm=1&amp;disable-webm=1\">lesser gluttony seraphs</a>*, who are using magic to take the form of normal humanoids. A successful DC 20 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check pierces their magical disguises and reveals something unusual about them.</p>\n<p data-content-chunk-id=\"e3187673-8901-4308-86d9-8dba6ed7ce40\"><strong><em>Hemina.</em></strong>&nbsp;Between the magic and the innate charms of the disavowed, Hemina is muddled in her thinking. She strongly believes both Rusk and Yort are wonderful friends. Hemina remembers serving food to the powerful figure and their bodyguards, but she hasn&rsquo;t seen them in a few days. She assumes they, like many of the people in town, are staying hidden because of the threat of the caprathorn.</p>\n<p data-content-chunk-id=\"4f640dea-37d4-4e79-a401-c108b1c79942\"><strong><em>Diners.</em></strong>&nbsp;The dining party consists of six wealthy travelers (<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16966-noble\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16966-tooltip?disable-webm=1&amp;disable-webm=1\">nobles</a>) who couldn&rsquo;t turn down the chance to eat a meal at one of the premiere restaurants among the elite of Etharis. Unfortunately for them, the seraphs added poison to the meal, with the plan of killing them, stealing their coin and jewelry, and burning the bodies.</p>\n<p data-content-chunk-id=\"1c58c1ae-2bf4-4386-af7d-b9b85306fe13\">Not long after the characters enter the building, the diners start suffering the effects of the poison. If the characters attempt to help the diners, each needs a successful DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/13-tooltip?disable-webm=1&amp;disable-webm=1\">Medicine</a>) check to save them from dying. Magic that neutralizes poison also works. If the characters attempt to intercede, the seraphs attack them.</p>\n<p data-content-chunk-id=\"4e09e084-0d63-4ae9-b8ea-882019f3a8f2\"><strong><em>Pantry.</em></strong>&nbsp;If the characters search the pantry, they find many ingredients of a magical, rather than a culinary, nature. On a successful DC 20 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/6-tooltip?disable-webm=1&amp;disable-webm=1\">Arcana</a>&nbsp;or&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/9-tooltip?disable-webm=1&amp;disable-webm=1\">Nature</a>) check, someone knows these ingredients, if ingested in the correct amounts and combinations, could cause anything from lethargy to intense pain to incapacitation to death. These ingredients are rare, and an alchemist specializing in rare ingredients and components would pay 750 gp for them.</p>\n<p data-content-chunk-id=\"c7bd1608-d550-40e4-b203-484fa48ff9f4\"><strong><em>Rewards.</em></strong>&nbsp;If the characters can save all six of the diners, the wealthy patrons give each character a reward of 500 gp, and they promise to owe the characters a favor (which you can determine what it means).</p>",
+					"plain": "3. Private TavernThis small tavern bustles with activity. An ogresh cook orders around several other workers and servers, preparing several plates of food. A party of six well-dressed diners sits at a table, sampling the delicious-smelling fare.This private tavern caters to wealthy patrons looking for a unique meal cooked by a master chef residing in Floss’s Cross. The chef, an ogresh named Hemina (noble), has been under suggestion spells from Yort, the gluttony seraph*, for the past several days. Under this magical compulsion, Hemina prepares and distributes food made with various herbs supplied by Yort, which have had magical effects on the people eating them.Gluttony SeraphHemina accepted the help supplied by Yort, in the form of seven lesser gluttony seraphs*, who are using magic to take the form of normal humanoids. A successful DC 20 Wisdom (Perception) check pierces their magical disguises and reveals something unusual about them.Hemina. Between the magic and the innate charms of the disavowed, Hemina is muddled in her thinking. She strongly believes both Rusk and Yort are wonderful friends. Hemina remembers serving food to the powerful figure and their bodyguards, but she hasn’t seen them in a few days. She assumes they, like many of the people in town, are staying hidden because of the threat of the caprathorn.Diners. The dining party consists of six wealthy travelers (nobles) who couldn’t turn down the chance to eat a meal at one of the premiere restaurants among the elite of Etharis. Unfortunately for them, the seraphs added poison to the meal, with the plan of killing them, stealing their coin and jewelry, and burning the bodies.Not long after the characters enter the building, the diners start suffering the effects of the poison. If the characters attempt to help the diners, each needs a successful DC 10 Wisdom (Medicine) check to save them from dying. Magic that neutralizes poison also works. If the characters attempt to intercede, the seraphs attack them.Pantry. If the characters search the pantry, they find many ingredients of a magical, rather than a culinary, nature. On a successful DC 20 Intelligence (Arcana or Nature) check, someone knows these ingredients, if ingested in the correct amounts and combinations, could cause anything from lethargy to intense pain to incapacitation to death. These ingredients are rare, and an alchemist specializing in rare ingredients and components would pay 750 gp for them.Rewards. If the characters can save all six of the diners, the wealthy patrons give each character a reward of 500 gp, and they promise to owe the characters a favor (which you can determine what it means).",
+					"player": false,
+					"statBlock": false
+				},
+				"cd125ce0-1eb6-4f16-9b4a-26dae32888e4": {
+					"title": "Hemina",
+					"text": "<p><strong><em>Hemina.</em></strong>&nbsp;Between the magic and the innate charms of the disavowed, Hemina is muddled in her thinking. She strongly believes both Rusk and Yort are wonderful friends.</p>\n<p>Hemina remembers serving food to the powerful figure and their bodyguards, but she hasn&rsquo;t seen them in a few days.</p>\n<p>She assumes they, like many of the people in town, are staying hidden because of the threat of the caprathorn.</p>",
+					"plain": "Hemina. Between the magic and the innate charms of the disavowed, Hemina is muddled in her thinking. She strongly believes both Rusk and Yort are wonderful friends. Hemina remembers serving food to the powerful figure and their bodyguards, but she hasn’t seen them in a few days. She assumes they, like many of the people in town, are staying hidden because of the threat of the caprathorn.",
+					"player": false,
+					"statBlock": false
+				},
+				"efd916ee-ecf5-4db4-ad1d-517b822ac262": {
+					"title": "! - Exclamation Mark",
+					"text": "<h1 id=\"18MayhemattheCrossroads\" class=\"compendium-hr\" data-content-chunk-id=\"fa0b67d6-b181-4976-bffc-9e34f891f6d8\">18: Mayhem at the Crossroads</h1>\n<p data-content-chunk-id=\"415001b1-18fc-4c99-91cd-31db757ae9c0\"><em>By Shawn Merwin</em></p>\n<p data-content-chunk-id=\"46074dd7-4869-4735-b226-036c917e7b72\">Mayhem at the Crossroads is a caprathorn lair for four or five 18th-level characters.</p>\n<h2 id=\"MayhemattheCrossroadsBackground\" class=\"compendium-hr heading-anchor page-parse-exclude\" data-content-chunk-id=\"b2f12724-029f-48ef-81c9-b92fff5ce2ea\">Background</h2>\n<p data-content-chunk-id=\"1d6f2f82-68c1-437b-8752-b21b5b4752c6\">Floss&rsquo;s Cross was a prosperous hamlet set at the crossroads of two important trade routes. The people of Floss&rsquo;s Cross worked hard to provide the best food, drink, and services to the many travelers who passed through their village, and they grew accustomed to the prosperity that came with a respected reputation. The place earned a high standing among even the most powerful people in Etharis, making it a place where political, religious, social, and economic leaders would meet in secret to discuss, negotiate, barter, entreat, and strategize.</p>\n<p data-content-chunk-id=\"3d090b48-8f0c-46a2-a728-2b6b6fefc76c\">Unfortunately, the hamlet&rsquo;s success and reputation also drew some unwanted attention. An avarice seraph called Rusk and a gluttony seraph called Yort realized that by infiltrating the town, they might be able to corrupt some of the very powerful people who visited Floss&rsquo;s Cross regularly. The pair, along with their lesser disavowed minions, have turned the place into a ticking time bomb.</p>\n<p data-content-chunk-id=\"067f906b-361b-48c4-b385-feedc715aef9\">They found a way to attract a caprathorn to the area. The potential devastation a caprathorn might cause gives the pair of disavowed leverage over the rich and powerful visitors to the town, and it would certainly bring powerful people to deal with it. Ruck and Yort also hold a powerful hostage in town, and they plan to either kill or corrupt the heroes who come to investigate.</p>\n<h3 id=\"MayhemattheCrossroadsSettheHook\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"a203c798-1c75-41fa-aeaa-942130c286e3\">Set the Hook</h3>\n<p data-content-chunk-id=\"5fad456c-d96e-4231-8f53-4c442d463422\">A powerful figure in Etharis (or your own world) came to Floss&rsquo;s Cross. Neither they, their bodyguards, nor other members of their retinue have been heard from since they first arrived. The disappearance of such a powerful figure has many people worried. Worse yet, rumors that a dreadful minion of the Great Beast has been hunting in the area stoke those worries. The characters are asked to find out what happened to this powerful figure.</p>\n<h2 id=\"MayhemattheCrossroadsLairOverview\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"bf4fac6f-49f8-4f62-a01f-418d45275b87\">Lair Overview</h2>\n<p data-content-chunk-id=\"db8b6d42-ef97-48f8-ae98-06e74467a8c0\">The provided map shows only the center of the hamlet of Floss&rsquo;s Cross. Other shops, businesses, taverns, and inns rest outside of the hamlet&rsquo;s center. However, all the danger and duplicity the characters find in Floss&rsquo;s Cross radiate out from this central area. Any building on the map that&rsquo;s not numbered is an empty residence&mdash;either fled by its normal occupants, or a building for rent that currently has no tenants. (Adding more interesting elements or enemies to those areas is recommended if you want to lengthen or increase the difficulty of the lair.)</p>\n<p data-content-chunk-id=\"76484a60-8533-4c41-ac5c-b63091656104\">The center of town has been attacked by the caprathorn once already, leaving some damage to the area. The population of the hamlet has locked themselves in their homes and businesses, waiting for the caprathorn to attack again. The people of the town are unaware that anything untoward is happening in and around the town square&mdash;at least in regards to the disavowed taking over and taking a hostage. They&rsquo;ve been told to remain in their homes because of the threat of the caprathorn, but they think the problem is being handled.</p>\n<p data-content-chunk-id=\"7e1d8717-eb1f-45fa-9222-90a29c0222c7\">The caprathorn and its minions presently haunt the forested area outside the hamlet. The caprathorn does not approach town until the magic of the Floss Memorial statue (see Area 1) is activated by Rusk or Yort. The two disavowed do that as soon as it becomes clear that the characters are too powerful for them and their lesser seraph allies to handle.</p>",
+					"plain": "18: Mayhem at the CrossroadsBy Shawn MerwinMayhem at the Crossroads is a caprathorn lair for four or five 18th-level characters.BackgroundFloss’s Cross was a prosperous hamlet set at the crossroads of two important trade routes. The people of Floss’s Cross worked hard to provide the best food, drink, and services to the many travelers who passed through their village, and they grew accustomed to the prosperity that came with a respected reputation. The place earned a high standing among even the most powerful people in Etharis, making it a place where political, religious, social, and economic leaders would meet in secret to discuss, negotiate, barter, entreat, and strategize.Unfortunately, the hamlet’s success and reputation also drew some unwanted attention. An avarice seraph called Rusk and a gluttony seraph called Yort realized that by infiltrating the town, they might be able to corrupt some of the very powerful people who visited Floss’s Cross regularly. The pair, along with their lesser disavowed minions, have turned the place into a ticking time bomb.They found a way to attract a caprathorn to the area. The potential devastation a caprathorn might cause gives the pair of disavowed leverage over the rich and powerful visitors to the town, and it would certainly bring powerful people to deal with it. Ruck and Yort also hold a powerful hostage in town, and they plan to either kill or corrupt the heroes who come to investigate.Set the HookA powerful figure in Etharis (or your own world) came to Floss’s Cross. Neither they, their bodyguards, nor other members of their retinue have been heard from since they first arrived. The disappearance of such a powerful figure has many people worried. Worse yet, rumors that a dreadful minion of the Great Beast has been hunting in the area stoke those worries. The characters are asked to find out what happened to this powerful figure.Lair OverviewThe provided map shows only the center of the hamlet of Floss’s Cross. Other shops, businesses, taverns, and inns rest outside of the hamlet’s center. However, all the danger and duplicity the characters find in Floss’s Cross radiate out from this central area. Any building on the map that’s not numbered is an empty residence—either fled by its normal occupants, or a building for rent that currently has no tenants. (Adding more interesting elements or enemies to those areas is recommended if you want to lengthen or increase the difficulty of the lair.)The center of town has been attacked by the caprathorn once already, leaving some damage to the area. The population of the hamlet has locked themselves in their homes and businesses, waiting for the caprathorn to attack again. The people of the town are unaware that anything untoward is happening in and around the town square—at least in regards to the disavowed taking over and taking a hostage. They’ve been told to remain in their homes because of the threat of the caprathorn, but they think the problem is being handled.The caprathorn and its minions presently haunt the forested area outside the hamlet. The caprathorn does not approach town until the magic of the Floss Memorial statue (see Area 1) is activated by Rusk or Yort. The two disavowed do that as soon as it becomes clear that the characters are too powerful for them and their lesser seraph allies to handle.",
+					"player": false,
+					"statBlock": false
+				}
 			}
-		},
-	}
+		}
 	}
 }
