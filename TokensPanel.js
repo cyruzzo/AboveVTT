@@ -2924,7 +2924,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     function* addExampleToken(index) {
         
-        while(index < index+10 && index<alternativeImages.length-1){
+        while(index < index+10 && index<alternativeImages.length){
             setTimeout(function(){
                 let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
                 modalBody.append(tokenDiv);
