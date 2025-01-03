@@ -28,18 +28,18 @@ function parse_img(url) {
 		} else if (retval.trim().startsWith("data:")) {
 			console.warn("parse_img is removing a data url because those are not allowed"); 
 			retval = "";
-		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0 && retval.indexOf("thumbnail?id=") < 0) {
+		} else if (retval.includes("https://drive.google.com") && !retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
 			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
 			retval = parsed;
 			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
-		else if (retval.startsWith("https://drive.google.com") && (retval.indexOf("uc?id=") > -1 || retval.indexOf("thumbnail?id=") > -1)) {
-			const fileid = retval.split('=')[1].split('&')[0];
-			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
+		else if (retval.startsWith("https://drive.google.com") || (retval.includes("https://drive.usercontent.google.com")) && retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
+			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.matchAll(/id=([a-zA-Z0-9_-]+)/g).next().value[1] +'&sz=w3000';
 			retval = parsed;
-			return retval;
-		}
+			console.log("parse_img is converting", url, "to", retval);
+			return retval;		
+		} 
 		else if(retval.startsWith("https://www.googleapis.com/drive/v3/files/")){ // fix due to 1.5/1.6 beta 
 			const fileid = retval.split('files/')[1].split('?')[0];
 			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
