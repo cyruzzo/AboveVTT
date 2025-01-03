@@ -149,11 +149,12 @@ function inject_dm_join_button() {
   console.log("inject_dm_join_button");
 
   $(".ddb-campaigns-invite-container").append(`
-    <div class="above-vtt-warning-div" style="padding-top: 20px;">
+    <div class="above-vtt-warning-div" style="display: flex;flex-direction: column; align-items: center;justify-content: center; text-align: center;padding: 5px;border: 2px solid #c53131; border-radius: 4px;">
       <div class="above-vtt-warning-secondary-div">
-        <a class="above-vtt-warning-secondary-div" style="color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto; background-color: #fff; border: 2px solid #c53131; border-radius: 4px; padding: 10px 145px 30px 145px;">WARNING FOR ABOVEVTT!!!</a>
+        <a class="above-vtt-warning-secondary-div" style="color: #c53131; font-weight: 900; font-size: 16px; font-family: roboto;">WARNING FOR ABOVEVTT!!!</a>
       </div>
-      <a class="ddb-campaigns-warning-div" style="color: #333; padding-left: 15%">If you press 'RESET INVITE LINK' you will lose your cloud data!</a>
+      <a class="ddb-campaigns-warning-div" style="color: #333;">If you press 'RESET INVITE LINK' you will lose your cloud data!<br>Players will also have to visit/join from the campaign page at least once after reset to sync.</a>
+        
     </div>
   `);
 
