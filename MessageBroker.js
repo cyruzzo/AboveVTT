@@ -67,8 +67,7 @@ const debounceHandleInjected = mydebounce(() => {
 
 				if(newlihtml=="") {
 					li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
-				} else if (injection_data.dmonly && window.DM) { 
-				}
+				} 
 					
 				
 			 	li.html(newlihtml);
@@ -76,77 +75,6 @@ const debounceHandleInjected = mydebounce(() => {
 				add_journal_roll_buttons(li);
 				window.JOURNAL.add_journal_tooltip_targets(li);
 				add_stat_block_hover(li)
-				let newheight = li.find('>[class*="MessageContainer-Flex"]').height();
-				li.height(newheight);
-			
-				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
-				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
-				let img = li.find(".magnify");
-				for(let i=0; i<img.length; i++){
-					if($(img[i]).is('img')){
-						$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
-						img[i].onload = () => {
-							if (img[i].naturalWidth > 0) {
-								$(img[i]).css({
-									'display': 'block',
-									'width': '100%'
-								});
-								li.find('.chat-link').css('display', 'none');
-							}
-							$(img[i]).attr('href', img[i].src);
-							newheight = li.find('>[class*="MessageContainer-Flex"]').height();
-							li.height(newheight);
-						}
-						$(img[i]).off('error').on("error", function (e) {
-	            let el = $(e.target)
-	            let cur = el.attr("data-current-avatar-url");
-	            if(cur != undefined){
-	            	let nextUrl;
-		            if (cur === "largeAvatarUrl") {
-		                nextUrl = el.attr("data-large-avatar-url");
-		                try {
-		                    let parts = nextUrl.split("/");
-		                    parts[parts.length - 2] = "1000";
-		                    parts[parts.length - 3] = "1000";
-		                    nextUrl = parts.join("/");
-		                    el.attr("data-current-avatar-url", "hacky");
-		                } catch (error) {
-		                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
-		                    nextUrl = el.attr("data-avatar-url");
-		                    el.attr("data-current-avatar-url", "avatarUrl");
-		                }
-		            } else if (cur === "hacky") {
-		                nextUrl = el.attr("data-avatar-url");
-		                el.attr("data-current-avatar-url", "avatarUrl");
-		            } else if (cur === "avatarUrl") {
-		                nextUrl = el.attr("data-basic-avatar-url");
-		                el.attr("data-current-avatar-url", "basicAvatarUrl");
-		            } else {
-		                console.warn("imageHtml failed to load image", el, e);
-		                return;
-		            }
-		            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
-		            el.attr("src", nextUrl);
-		            el.attr("href", nextUrl);
-		          }            
-	        	});		
-					}
-					else if($(img[i]).is('video')){
-						$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
-							img[i].addEventListener('loadeddata', function() {
-						    	if(img[i].videoWidth > 0) {
-											$(img[i]).css({
-												'display': 'block',
-												'width': '100%'
-											});
-											li.find('.chat-link').css('display', 'none');
-										}
-										newheight = li.find('>[class*="MessageContainer-Flex"]').height();
-										li.height(newheight);
-						}, false);
-					}
-				}
-
 				let rollType = current.data.injected_data?.rollType?.toLowerCase();
 				let rollAction = current.data.injected_data?.rollTitle?.toLowerCase();
 				if(rollType != undefined && rollAction != 'initiative' && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
@@ -212,8 +140,79 @@ const debounceHandleInjected = mydebounce(() => {
 						damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
 					}
 					
-					$(this).find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+					li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+				}					
+				
+				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
+
+				let img = li.find(".magnify");
+				for(let i=0; i<img.length; i++){
+					if($(img[i]).is('img')){
+						$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
+						img[i].onload = () => {
+							if (img[i].naturalWidth > 0) {
+								$(img[i]).css({
+									'display': 'block',
+									'width': '100%'
+								});
+								li.find('.chat-link').css('display', 'none');
+							}
+							$(img[i]).attr('href', img[i].src);
+							newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+							li.height(newheight);
+						}
+						$(img[i]).off('error').on("error", function (e) {
+	            let el = $(e.target)
+	            let cur = el.attr("data-current-avatar-url");
+	            if(cur != undefined){
+	            	let nextUrl;
+		            if (cur === "largeAvatarUrl") {
+		                nextUrl = el.attr("data-large-avatar-url");
+		                try {
+		                    let parts = nextUrl.split("/");
+		                    parts[parts.length - 2] = "1000";
+		                    parts[parts.length - 3] = "1000";
+		                    nextUrl = parts.join("/");
+		                    el.attr("data-current-avatar-url", "hacky");
+		                } catch (error) {
+		                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
+		                    nextUrl = el.attr("data-avatar-url");
+		                    el.attr("data-current-avatar-url", "avatarUrl");
+		                }
+		            } else if (cur === "hacky") {
+		                nextUrl = el.attr("data-avatar-url");
+		                el.attr("data-current-avatar-url", "avatarUrl");
+		            } else if (cur === "avatarUrl") {
+		                nextUrl = el.attr("data-basic-avatar-url");
+		                el.attr("data-current-avatar-url", "basicAvatarUrl");
+		            } else {
+		                console.warn("imageHtml failed to load image", el, e);
+		                return;
+		            }
+		            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+		            el.attr("src", nextUrl);
+		            el.attr("href", nextUrl);
+		          }            
+	        	});		
+					}
+					else if($(img[i]).is('video')){
+						$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
+							img[i].addEventListener('loadeddata', function() {
+						    	if(img[i].videoWidth > 0) {
+											$(img[i]).css({
+												'display': 'block',
+												'width': '100%'
+											});
+											li.find('.chat-link').css('display', 'none');
+										}
+										newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+										li.height(newheight);
+						}, false);
+					}
 				}
+				let newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+				li.height(newheight);
 				
 
 				if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
