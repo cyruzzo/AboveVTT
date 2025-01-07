@@ -4157,7 +4157,7 @@ function setTokenLight (token, options) {
 		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
-		if(visionRadius != 0 || lightRadius != 0 || options.player_owned || options.share_vision == true || options.share_vision == window.myUser || is_player_id(options.id)){
+		if(visionRadius != 0 || totallight != 0 || options.player_owned || options.share_vision == true || options.share_vision == window.myUser || is_player_id(options.id)){
 			$("#light_container").prepend(lightElement);
 			if(clippath == undefined){
 				debounceLightChecks();
