@@ -6681,6 +6681,7 @@ input.max_hp[disabled]{
     overflow: visible;
     white-space: nowrap;
     transform: translate(-50%);
+    left: 50%;
 }
 
 .paused-indicator,
