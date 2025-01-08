@@ -125,7 +125,17 @@ class AboveApi {
     if (scenes.length === 0) {
       throw new Error(`AboveApi.migrateScenes received an empty list of scenes`);
     }
+    for(let i = 0; i<scenes.length; i++){
+      if(Array.isArray(scenes[i].tokens)){
+        let tokensObject = {}
+        for(let token in scenes[i].tokens){
 
+          let tokenId = scenes[i].tokens[token].id;
+          tokensObject[tokenId] = scenes[i].tokens[token];   
+        } 
+        scenes[i].tokens = tokensObject;
+      }
+    }
     // never upload data urls
     const sanitizedScenes = await normalize_scene_urls(scenes);
     console.log(`AboveApi.migrateScenes about to upload`, sanitizedScenes);
