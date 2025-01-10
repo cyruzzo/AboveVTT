@@ -336,24 +336,56 @@ function getRollData(rollButton){
     let roll = new rpgDiceRoller.DiceRoll(expression); 
     let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
     let modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
-  
-    if(rollType == 'damage' && (window.CHARACTER_AVTT_SETTINGS?.damageRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.damageRoll)))){
-        expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.damageRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.damageRoll}`;
+    
+    if(rollType == 'damage'){
+        if((window.CHARACTER_AVTT_SETTINGS?.damageRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.damageRoll))))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.damageRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.damageRoll}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                if(buffsDebuffs[window.rollBuffs[i]].dmg != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].dmg}`
+                }
+            }
+        }
         roll = new rpgDiceRoller.DiceRoll(expression); 
         modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
     }
-    else if((rollType == 'to hit' || rollType == 'attack') && (window.CHARACTER_AVTT_SETTINGS?.hitRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.hitRoll)))){
-        expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.hitRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.hitRoll}`;
+    else if(rollType == 'to hit' || rollType == 'attack'){
+        if(window.CHARACTER_AVTT_SETTINGS?.hitRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.hitRoll)))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.hitRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.hitRoll}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                if(buffsDebuffs[window.rollBuffs[i]].tohit != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].tohit}`
+                }
+            }
+        }
         roll = new rpgDiceRoller.DiceRoll(expression); 
         modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
     }
-    else if((rollType == 'check') && (window.CHARACTER_AVTT_SETTINGS?.checkRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.checkRoll)))){
-        expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.checkRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.checkRoll}`;
+    else if(rollType == 'check'){
+        if(window.CHARACTER_AVTT_SETTINGS?.checkRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.checkRoll)))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.checkRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.checkRoll}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                if(buffsDebuffs[window.rollBuffs[i]].check != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].check}`
+                }
+            }
+        }
         roll = new rpgDiceRoller.DiceRoll(expression); 
         modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
     }
-     else if((rollType == 'save') && (window.CHARACTER_AVTT_SETTINGS?.saveRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.saveRoll)))){
-        expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.saveRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.saveRoll}`;
+     else if(rollType == 'save'){
+        if(window.CHARACTER_AVTT_SETTINGS?.saveRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.saveRoll)))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.saveRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.saveRoll}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                if(buffsDebuffs[window.rollBuffs[i]].save != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].save}`
+                }
+            }
+        }
         roll = new rpgDiceRoller.DiceRoll(expression); 
         modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
     }
