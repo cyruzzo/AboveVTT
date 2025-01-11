@@ -2129,7 +2129,14 @@ class JournalManager{
 				 background-size: 100%, cover !important;
 			}
 			.stat-block-background:after,.stat-block-background:before {
-				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important 
+				 content: "";
+			     display: block;
+			     background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-bar-book.png) 50%;
+			     background-size: 100% 100%;
+			     height: 6px;
+			     position: absolute;
+			     left: -3px;
+			     right: -3px;
 			}
 			.block-torn-paper,.epigraph,.epigraph--with-author {
 				 overflow: auto;
