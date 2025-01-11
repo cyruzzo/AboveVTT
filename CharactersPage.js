@@ -93,6 +93,11 @@ const sendCharacterUpdateEvent = mydebounce(() => {
   }
 }, 1500);
 
+
+function getPB(){
+  return parseInt($(".ct-proficiency-bonus-box__value").text());
+}
+
 const buffsDebuffs = {
   "Bane": {
       "tohit": "-d4",
@@ -124,6 +129,29 @@ const buffsDebuffs = {
       "save": "0",
       "check": "0"
   },
+
+  "Magic Weapon": {
+    "multiOptions": {
+      "+1": {
+        "tohit": "+1",
+        "dmg": "+1",
+        "save": "0",
+        "check": "0"
+      },
+      "+2": {
+        "tohit": "+2",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "+3",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+    },
+  },
   "Hunter's Mark": {
       "tohit": "0",
       "dmg": "+d6",
@@ -133,6 +161,52 @@ const buffsDebuffs = {
   "Hex": {
       "tohit": "0",
       "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Hexblade's Curse": {
+      "tohit": "0",
+      "dmg": "+PB",
+      "save": "0",
+      "check": "0"
+  },
+  "Symbiotic Entity": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Elemental Cleaver": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Strike of the Giants": {
+    "multiOptions": {
+      "Cloud": {
+        "tohit": "0",
+        "dmg": "+1d4",
+        "save": "0",
+        "check": "0"
+      },
+      "Fire": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+      "Other": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+  },
+  "Gift of the Chromatic Dragon": {
+      "tohit": "0",
+      "dmg": "+d4",
       "save": "0",
       "check": "0"
   },
@@ -167,6 +241,7 @@ const buffsDebuffs = {
       "check": "0"
   }
 }
+
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
@@ -1124,6 +1199,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
 
+
       if($('#avtt-buff-options').length == 0){
         window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs')) || [];
         let avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
@@ -1145,24 +1221,53 @@ function observe_character_sheet_changes(documentToObserve) {
         })
        
         for(let i in buffsDebuffs){
-          const row = $(`<li><input type="checkbox" id='buff_${i}' data-buff='${i}'/><label for='buff_${i}'>${i}</label></li>`);
-          if(window.rollBuffs.includes(i))
-            row.find('input').prop('checked', true);
-          row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
-            if(typeof window.rollBuffs == 'undefined')
-              window.rollBuffs =[];
-            if($(this).is(':checked')){
-              window.rollBuffs.push(i)
+          if(buffsDebuffs[i]['multiOptions'] != undefined){
+            const row = $(`<li><select id='buff_${i}' data-buff='${i}'/><option value='0'></option></select><label for='buff_${i}'>${i}</label></li>`)
+            const select = row.find('select');
+            const currentSelected = window.rollBuffs.find(d => d.includes(i));
+
+            for(let j in buffsDebuffs[i]['multiOptions']){
+              const option = $(`<option value='${j}'>${j}</option>`);
+              select.append(option)
             }
-            else{
-             window.rollBuffs = window.rollBuffs.filter(d => d != i); 
+            if(currentSelected != undefined){
+              select.val(currentSelected[1])
             }
-            localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
-          })
-          avttBuffItems.append(row);
+            row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
+              if(typeof window.rollBuffs == 'undefined')
+                window.rollBuffs =[];
+              if($(this).val() != '0'){
+                window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+                window.rollBuffs.push([i, $(this).val()])
+              }
+              else{
+               window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+              }
+              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+            })
+            avttBuffItems.append(row);
+          }else{
+            const row = $(`<li><input type="checkbox" id='buff_${i}' data-buff='${i}'/><label for='buff_${i}'>${i}</label></li>`);
+            if(window.rollBuffs.includes(i))
+              row.find('input').prop('checked', true);
+            row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
+              if(typeof window.rollBuffs == 'undefined')
+                window.rollBuffs =[];
+              if($(this).is(':checked')){
+                window.rollBuffs.push(i)
+              }
+              else{
+               window.rollBuffs = window.rollBuffs.filter(d => d != i); 
+              }
+              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+            })
+            avttBuffItems.append(row);
+          }
+
         }
         $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
       }
+
       if($('#avtt-icon-roll-span').length == 0){
         let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px; width: 120px;">AVTT Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
         settings.off().on('click', function(){
@@ -1269,11 +1374,30 @@ function observe_character_sheet_changes(documentToObserve) {
           $('body').append(`
             <style id='advantageHover'>
 
+
+              ul.avttBuffItems select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                text-indent: 1px;
+                text-overflow: '';
+                margin-right: 5px;
+                border-color: #7d7d7d;
+                padding:0px;
+                width:16px;
+                height:16px;
+                border-radius:3px;
+                background: #fff !important;
+                color: #000 !important;
+                text-shadow: none !important;
+                font-weight: bold; 
+              }
+
               .dropdown-check-list {
                 display: inline-block;
                 position: absolute;
                 left: 130px;
                 font-size: 10px;
+                width: 200px;
               }
 
               .dropdown-check-list .clickHandle {
@@ -1283,7 +1407,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 padding: 0px 50px 0px 10px;
                 border: 1px solid #ccc;
                 border-radius: 5px 5px 0px 0px;
-                width: 166px;
+                width: 200px;
               }
 
               .dropdown-check-list .clickHandle:after {
@@ -1313,6 +1437,10 @@ function observe_character_sheet_changes(documentToObserve) {
                 border: 1px solid #ccc;
                 border-top: none;
                 border-radius: 0px 0px 5px 5px;
+                height: 300px;
+                overflow: auto;
+                scrollbar-width: thin;
+                width: 200px;
               }
 
               .dropdown-check-list ul.avttBuffItems li {  
@@ -1321,7 +1449,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 align-items: center;
                 justify-content: flex-start;
                 padding: 3px;
-                width: 160px;
               }
 
               .dropdown-check-list.visible .clickHandle {
