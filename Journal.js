@@ -2125,7 +2125,8 @@ class JournalManager{
 				 -moz-box-shadow: 0 5px 8px 0 #aaa;
 				 box-shadow: 0 5px 8px 0 #aaa;
 				 background-position: top!important;
-				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important 
+				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important; 
+				 background-size: cover;
 			}
 			.stat-block-background:after,.stat-block-background:before {
 				 background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important 
