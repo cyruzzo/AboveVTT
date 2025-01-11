@@ -1407,7 +1407,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 padding: 0px 50px 0px 10px;
                 border: 1px solid #ccc;
                 border-radius: 5px 5px 0px 0px;
-                width: 195px;
+                width: 200px;
               }
 
               .dropdown-check-list .clickHandle:after {
@@ -1440,6 +1440,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 height: 300px;
                 overflow: auto;
                 scrollbar-width: thin;
+                width: 200px;
               }
 
               .dropdown-check-list ul.avttBuffItems li {  
@@ -1448,7 +1449,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 align-items: center;
                 justify-content: flex-start;
                 padding: 3px;
-                width: 160px;
               }
 
               .dropdown-check-list.visible .clickHandle {
