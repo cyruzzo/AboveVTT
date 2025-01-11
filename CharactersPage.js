@@ -93,6 +93,153 @@ const sendCharacterUpdateEvent = mydebounce(() => {
   }
 }, 1500);
 
+function getPB(){
+  return parseInt($(".ct-proficiency-bonus-box__value").text());
+}
+const buffsDebuffs = {
+  "Bane": {
+      "tohit": "-d4",
+      "dmg": "0",
+      "save": "-d4",
+      "check": "0"
+  },
+  "Bless": {
+      "tohit": "+d4",
+      "dmg": "0",
+      "save": "+d4",
+      "check": "0"
+  },
+  "Guidance": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "+d4"
+  },
+  "Enlarge": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0"
+  },
+  "Reduce": {
+      "tohit": "0",
+      "dmg": "-d4",
+      "save": "0",
+      "check": "0"
+  },
+  "Magic Weapon": {
+    "multiOptions": {
+      "+1": {
+        "tohit": "+1",
+        "dmg": "+1",
+        "save": "0",
+        "check": "0"
+      },
+      "+2": {
+        "tohit": "+2",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "+3",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+    },
+  },
+  "Hunter's Mark": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Hex": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Hexblade's Curse": {
+      "tohit": "0",
+      "dmg": "+PB",
+      "save": "0",
+      "check": "0"
+  },
+  "Symbiotic Entity": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Elemental Cleaver": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0"
+  },
+  "Strike of the Giants": {
+    "multiOptions": {
+      "Cloud": {
+        "tohit": "0",
+        "dmg": "+1d4",
+        "save": "0",
+        "check": "0"
+      },
+      "Fire": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+      "Other": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+  },
+  "Gift of the Chromatic Dragon": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0"
+  },
+  "Divine Favor": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0"
+  },
+  "Crusader's Mantle": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0"
+  },
+  "Holy Weapon": {
+      "tohit": "0",
+      "dmg": "+2d8",
+      "save": "0",
+      "check": "0"
+  },
+  "Tenser's Transformation": {
+      "tohit": "0",
+      "dmg": "+2d12",
+      "save": "0",
+      "check": "0"
+  },
+  "Fount of Moonlight": {
+      "tohit": "0",
+      "dmg": "+2d6",
+      "save": "0",
+      "check": "0"
+  }
+}
+
+
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
     console.log("character_sheet_changed", changes);
@@ -1045,8 +1192,81 @@ function observe_character_sheet_changes(documentToObserve) {
         optionsContents.append(optionsInfo);
 
       }
+
+
+
+
+
+      if($('#avtt-buff-options').length == 0){
+        window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs')) || [];
+        let avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
+          <span class="clickHandle">Roll Buff/Debuffs</span>
+          <ul class="avttBuffItems">
+          </ul>
+        </div>`)
+        const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+        avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+          avttBuffSelect.toggleClass('visible')
+          if(avttBuffSelect.hasClass('visible')){
+            $(document).on('click.blurHandle', function(e){
+              if($(e.target).closest('#avtt-buff-options').length == 0){
+                avttBuffSelect.toggleClass('visible')
+                $(document).off('click.blurHandle');
+              }
+            })  
+          }
+        })
+       
+        for(let i in buffsDebuffs){
+          if(buffsDebuffs[i]['multiOptions'] != undefined){
+            const row = $(`<li><select id='buff_${i}' data-buff='${i}'/><option value='0'></option></select><label for='buff_${i}'>${i}</label></li>`)
+            const select = row.find('select');
+            const currentSelected = window.rollBuffs.find(d => d.includes(i));
+
+            for(let j in buffsDebuffs[i]['multiOptions']){
+              const option = $(`<option value='${j}'>${j}</option>`);
+              select.append(option)
+            }
+            if(currentSelected != undefined){
+              select.val(currentSelected[1])
+            }
+            row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
+              if(typeof window.rollBuffs == 'undefined')
+                window.rollBuffs =[];
+              if($(this).val() != '0'){
+                window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+                window.rollBuffs.push([i, $(this).val()])
+              }
+              else{
+               window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+              }
+              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+            })
+            avttBuffItems.append(row);
+          }else{
+            const row = $(`<li><input type="checkbox" id='buff_${i}' data-buff='${i}'/><label for='buff_${i}'>${i}</label></li>`);
+            if(window.rollBuffs.includes(i))
+              row.find('input').prop('checked', true);
+            row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
+              if(typeof window.rollBuffs == 'undefined')
+                window.rollBuffs =[];
+              if($(this).is(':checked')){
+                window.rollBuffs.push(i)
+              }
+              else{
+               window.rollBuffs = window.rollBuffs.filter(d => d != i); 
+              }
+              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+            })
+            avttBuffItems.append(row);
+          }
+
+        }
+        $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+      }
+
       if($('#avtt-icon-roll-span').length == 0){
-        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px; width: 120px;">AVTT Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
         settings.off().on('click', function(){
           $('#close-icon-roll-options').css('display', 'block');
           $('#icon-roll-options').css('display', 'block');
@@ -1150,6 +1370,103 @@ function observe_character_sheet_changes(documentToObserve) {
       if($(`style#advantageHover`).length == 0){
           $('body').append(`
             <style id='advantageHover'>
+
+              ul.avttBuffItems select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                text-indent: 1px;
+                text-overflow: '';
+                margin-right: 5px;
+                border-color: #7d7d7d;
+                padding:0px;
+                width:16px;
+                height:16px;
+                border-radius:3px;
+                background: #fff !important;
+                color: #000 !important;
+                text-shadow: none !important;
+                font-weight: bold; 
+              }
+
+              .dropdown-check-list {
+                display: inline-block;
+                position: absolute;
+                left: 130px;
+                font-size: 10px;
+                width: 200px;
+              }
+
+              .dropdown-check-list .clickHandle {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                padding: 0px 50px 0px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px 5px 0px 0px;
+                width: 195px;
+              }
+
+              .dropdown-check-list .clickHandle:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid black;
+                border-top: 2px solid black;
+                padding: 3px;
+                right: 10px;
+                top: 0px;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+              }
+
+              .dropdown-check-list .clickHandle:active:after {
+                right: 8px;
+                top: 21%;
+              }
+
+              .dropdown-check-list ul.avttBuffItems {
+                padding: 2px;
+                display: none;
+                margin: 0;
+                border: 1px solid #ccc;
+                border-top: none;
+                border-radius: 0px 0px 5px 5px;
+                height: 300px;
+                overflow: auto;
+                scrollbar-width: thin;
+              }
+
+              .dropdown-check-list ul.avttBuffItems li {  
+                list-style: none;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 3px;
+              }
+
+              .dropdown-check-list.visible .clickHandle {
+                color: #0094ff;
+              }
+              .dropdown-check-list .avttBuffItems {
+                display: none;
+              }
+              .dropdown-check-list.visible .avttBuffItems {
+                display: block;
+                position: absolute;
+                background: var(--theme-background-solid);
+                z-index: 200;
+              }
+              .avttBuffItems li input{
+                margin-right: 4px;
+                width: 16px;
+                height: 16px;
+              }
+            .avttBuffItems li label{
+                font-size:12px;
+              }
+
               div#icon-roll-options input,
               div#icon-roll-options select{
                   width: 140px;
