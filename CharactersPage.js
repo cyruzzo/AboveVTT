@@ -93,9 +93,11 @@ const sendCharacterUpdateEvent = mydebounce(() => {
   }
 }, 1500);
 
+
 function getPB(){
   return parseInt($(".ct-proficiency-bonus-box__value").text());
 }
+
 const buffsDebuffs = {
   "Bane": {
       "tohit": "-d4",
@@ -127,6 +129,7 @@ const buffsDebuffs = {
       "save": "0",
       "check": "0"
   },
+
   "Magic Weapon": {
     "multiOptions": {
       "+1": {
@@ -1371,6 +1374,7 @@ function observe_character_sheet_changes(documentToObserve) {
           $('body').append(`
             <style id='advantageHover'>
 
+
               ul.avttBuffItems select {
                 -webkit-appearance: none;
                 -moz-appearance: none;
@@ -1444,6 +1448,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 align-items: center;
                 justify-content: flex-start;
                 padding: 3px;
+                width: 160px;
               }
 
               .dropdown-check-list.visible .clickHandle {
@@ -1466,7 +1471,6 @@ function observe_character_sheet_changes(documentToObserve) {
             .avttBuffItems li label{
                 font-size:12px;
               }
-
               div#icon-roll-options input,
               div#icon-roll-options select{
                   width: 140px;
