@@ -1201,7 +1201,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
       if($('#avtt-buff-options').length == 0){
-        window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs')) || [];
+        window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
         let avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
           <span class="clickHandle">Roll Buff/Debuffs</span>
           <ul class="avttBuffItems">
@@ -1243,7 +1243,7 @@ function observe_character_sheet_changes(documentToObserve) {
               else{
                window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
               }
-              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+              localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
             })
             avttBuffItems.append(row);
           }else{
@@ -1259,7 +1259,7 @@ function observe_character_sheet_changes(documentToObserve) {
               else{
                window.rollBuffs = window.rollBuffs.filter(d => d != i); 
               }
-              localStorage.setItem('rollBuffs', JSON.stringify(window.rollBuffs));
+              localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
             })
             avttBuffItems.append(row);
           }
@@ -1387,11 +1387,13 @@ function observe_character_sheet_changes(documentToObserve) {
                 height:16px;
                 border-radius:3px;
                 background: #fff !important;
-                color: #000 !important;
+                color: var(--theme-contrast) !important;
                 text-shadow: none !important;
                 font-weight: bold; 
               }
-
+              .ct-character-sheet--dark-mode ul.avttBuffItems select{
+                background: #363636 !important;
+              }
               .dropdown-check-list {
                 display: inline-block;
                 position: absolute;
@@ -1413,8 +1415,8 @@ function observe_character_sheet_changes(documentToObserve) {
               .dropdown-check-list .clickHandle:after {
                 position: absolute;
                 content: "";
-                border-left: 2px solid black;
-                border-top: 2px solid black;
+                border-left: 2px solid var(--theme-contrast);
+                border-top: 2px solid var(--theme-contrast);
                 padding: 3px;
                 right: 10px;
                 top: 0px;
@@ -1425,10 +1427,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 transform: rotate(-135deg);
               }
 
-              .dropdown-check-list .clickHandle:active:after {
-                right: 8px;
-                top: 21%;
-              }
 
               .dropdown-check-list ul.avttBuffItems {
                 padding: 2px;
