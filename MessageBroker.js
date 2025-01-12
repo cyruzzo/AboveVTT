@@ -1570,22 +1570,26 @@ class MessageBroker {
 		let timestamp = d.toLocaleTimeString();
 		let datestamp = d.toLocaleDateString();
 
-		// hide message if PC doesn't speak this language
-		if (!window.DM && data.language != undefined) {
-			const knownLanguages = get_my_known_languages()
-			const messageLanguage = window.ddbConfigJson.languages.find(d => d.id == data.language)?.name;
-			if (!knownLanguages.includes(messageLanguage)) {
-				const container = $("<div>").html(data.text);
-				const elements = container.find("*").add(container);
-				const textNodes = elements.contents().not(elements);
-				textNodes.each(function () {
-					let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
-					$(document.createTextNode(newText)).insertBefore(this);
-					$(this).remove();
-				});
-				data.text = container.html();
-			}
+		// scramble message if PC doesn't speak this language
+		if(data.language != undefined) {
+				const knownLanguages = get_my_known_languages()
+				const messageLanguage = window.ddbConfigJson.languages.find(d => d.id == data.language)?.name;
+				if (!window.DM && !knownLanguages.includes(messageLanguage)) {
+					const container = $("<div>").html(data.text);
+					const elements = container.find("*").add(container);
+					const textNodes = elements.contents().not(elements);
+					textNodes.each(function () {
+						let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+						$(document.createTextNode(newText)).insertBefore(this);
+						$(this).remove();
+					});
+					data.text = container.html();
+				}
+				else if(messageLanguage != 'Common'){
+					data.text = $(data.text).prepend(`${messageLanguage}: `)[0].outerHTML;
+				}
 		}
+
 
 		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
 			return $(`
