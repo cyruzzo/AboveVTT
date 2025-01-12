@@ -1116,7 +1116,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 data.expression = data.expression.replaceAll(/^1d20/g, '2d20kh1')
               }
               else if(e.ctrlKey || e.metaKey){
-                data.expression = data.expression.replaceAll(/^1d20/g, '3d20k11')
+                data.expression = data.expression.replaceAll(/^1d20/g, '2d20kl1')
               }  
             }
             diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
