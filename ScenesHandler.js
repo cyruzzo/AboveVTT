@@ -774,7 +774,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			else {
 				//chapter, subchapter (eg icewind), chapter, handouts and maps (eg. Curse of Strahd)
 				iframe.contents().find("h3 > a, h3 ~ ul strong a, h4 > a, h3.adventure-chapter-header:contains('Appendices') ~ ul a").each(function(idx) {
-					let title = $(this).html();
+					let title = $(this).text();
 					let url = $(this).attr('href');
 					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 					self.sources[keyword].chapters[ch_keyword] = {
@@ -788,7 +788,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				iframe.contents().find("h3.adventure-chapter-header:contains('Map') ~ ul a").each(function(idx) {
 					if(!(/\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test($(this).attr('href'))))
 						return;
-					let title = $(this).html();
+					let title = $(this).text();
 					let url = $(this).attr('href');
 					let ch_keyword = url.replace('https://www.dndbeyond.com', '').replace('/sources/' + keyword + "/", '').replace('/sources/' + keyword.replace('dnd/', '') + "/", '')
 					self.sources[keyword].chapters[ch_keyword] = {

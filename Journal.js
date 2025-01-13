@@ -682,7 +682,7 @@ class JournalManager{
 			
 			for(let source in window.ddbConfigJson.sources){
 				const currentSource = window.ddbConfigJson.sources[source]
-				if(currentSource.sourceURL == '')
+				if(currentSource.sourceURL == '' || currentSource.name == 'HotDQ' || currentSource.name == 'RoT')
 					continue;
 				const sourcetitle = currentSource.description;
 				const sourceValue = currentSource.sourceURL.replaceAll(/sources\//gi, '');
