@@ -265,6 +265,12 @@ const buffsDebuffs = {
       "save": "0",
       "check": "0"
   },
+  "Radiant Strikes (Improved Divine Smite)": {
+      "tohit": "0",
+      "dmg": "+d8",
+      "save": "0",
+      "check": "0"
+  },
   "Crusader's Mantle": {
       "tohit": "0",
       "dmg": "+d4",
