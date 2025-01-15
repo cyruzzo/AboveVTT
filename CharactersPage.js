@@ -150,34 +150,6 @@ const buffsDebuffs = {
     "check": "0",
     "type": "feat"
   },
-  "Rage": {
-    "multiOptions": {
-      "+2": {
-        "tohit": "0",
-        "dmg": "+2",
-        "save": "0",
-        "check": "0"
-      },
-      "+3": {
-        "tohit": "0",
-        "dmg": "+3",
-        "save": "0",
-        "check": "0"
-      },
-      "+4": {
-        "tohit": "0",
-        "dmg": "+4",
-        "save": "0",
-        "check": "0"
-      },
-    },
-  },
-  "-5 to hit, +10 damage":  {
-      "tohit": "-5",
-      "dmg": "+10",
-      "save": "0",
-      "check": "0"
-  },
   "Guidance": {
       "tohit": "0",
       "dmg": "0",
@@ -304,28 +276,6 @@ const buffsDebuffs = {
     },
     "type": "class"
   },
-  "Emboldening Bond": {
-      "tohit": "+d4",
-      "dmg": "0",
-      "save": "+d4",
-      "check": "+d4"
-  },
-  "Divine Strike": {
-    "multiOptions": {
-      "1d8": {
-        "tohit": "0",
-        "dmg": "+1d8",
-        "save": "0",
-        "check": "0"
-      },
-      "2d8": {
-        "tohit": "0",
-        "dmg": "+2d8",
-        "save": "0",
-        "check": "0"
-      },
-    },
-  },
   "Divine Favor": {
       "tohit": "0",
       "dmg": "+d4",
@@ -339,12 +289,6 @@ const buffsDebuffs = {
     "save": "0",
     "check": "0",
     "type": "class"
-  },
-  "Radiant Strikes (Improved Divine Smite)": {
-      "tohit": "0",
-      "dmg": "+d8",
-      "save": "0",
-      "check": "0"
   },
   "Crusader's Mantle": {
       "tohit": "0",
@@ -1536,6 +1480,9 @@ function observe_character_sheet_changes(documentToObserve) {
               .ct-character-sheet--dark-mode ul.avttBuffItems select{
                 background: #363636 !important;
               }
+              .ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
+                  backdrop-filter:brightness(3);
+              }
               .dropdown-check-list {
                 display: inline-block;
                 position: absolute;
@@ -1568,8 +1515,6 @@ function observe_character_sheet_changes(documentToObserve) {
                 -webkit-transform: rotate(-135deg);
                 transform: rotate(-135deg);
               }
-
-
               .dropdown-check-list ul.avttBuffItems {
                 padding: 2px;
                 display: none;
@@ -1582,9 +1527,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 scrollbar-width: thin;
                 width: 200px;
               }
-
               .dropdown-check-list ul.avttBuffItems>ul.collapsed {
-                height: 20px;
+                height: 22px;
                 overflow: hidden;
               }
               .dropdown-check-list ul.avttBuffItems>ul>li {  
