@@ -2349,6 +2349,8 @@ async function duplicate_scene(sceneId) {
 		window.JOURNAL.persist();
 		aboveSceneData.tokens[newId] = aboveSceneData.tokens[token];
 		aboveSceneData.tokens[newId].id = newId;
+		if(aboveSceneData.tokens[newId]?.audioChannel != undefined)
+			aboveSceneData.tokens[newId].audioChannel.token = newId;
 		aboveSceneData.tokens = Object.fromEntries(Object.entries(aboveSceneData.tokens).filter(([k, v]) => k != token));
 	}
 
