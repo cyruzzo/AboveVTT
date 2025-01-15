@@ -111,6 +111,34 @@ const buffsDebuffs = {
       "save": "+d4",
       "check": "0"
   },
+  "Rage": {
+    "multiOptions": {
+      "+2": {
+        "tohit": "0",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "0",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+      "+4": {
+        "tohit": "0",
+        "dmg": "+4",
+        "save": "0",
+        "check": "0"
+      },
+    },
+  },
+  "-5 to hit, +10 damage":  {
+      "tohit": "-5",
+      "dmg": "+10",
+      "save": "0",
+      "check": "0"
+  },
   "Guidance": {
       "tohit": "0",
       "dmg": "0",
@@ -129,7 +157,6 @@ const buffsDebuffs = {
       "save": "0",
       "check": "0"
   },
-
   "Magic Weapon": {
     "multiOptions": {
       "+1": {
@@ -209,6 +236,28 @@ const buffsDebuffs = {
       "dmg": "+d4",
       "save": "0",
       "check": "0"
+  },
+  "Emboldening Bond": {
+      "tohit": "+d4",
+      "dmg": "0",
+      "save": "+d4",
+      "check": "+d4"
+  },
+  "Divine Strike": {
+    "multiOptions": {
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+1d8",
+        "save": "0",
+        "check": "0"
+      },
+      "2d8": {
+        "tohit": "0",
+        "dmg": "+2d8",
+        "save": "0",
+        "check": "0"
+      },
+    },
   },
   "Divine Favor": {
       "tohit": "0",
