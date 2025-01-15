@@ -103,13 +103,52 @@ const buffsDebuffs = {
       "tohit": "-d4",
       "dmg": "0",
       "save": "-d4",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Bless": {
       "tohit": "+d4",
       "dmg": "0",
       "save": "+d4",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
+  },
+  "Rage": {
+    "multiOptions": {
+      "+2": {
+        "tohit": "0",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "0",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+      "+4": {
+        "tohit": "0",
+        "dmg": "+4",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class"
+  },
+  "Elemental Cleaver": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "class"
+  },
+  "-5 to hit, +10 damage":  {
+    "tohit": "-5",
+    "dmg": "+10",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
   },
   "Rage": {
     "multiOptions": {
@@ -143,19 +182,22 @@ const buffsDebuffs = {
       "tohit": "0",
       "dmg": "0",
       "save": "0",
-      "check": "+d4"
+      "check": "+d4",
+      "type": "spell"
   },
   "Enlarge": {
       "tohit": "0",
       "dmg": "+d4",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Reduce": {
       "tohit": "0",
       "dmg": "-d4",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Magic Weapon": {
     "multiOptions": {
@@ -178,36 +220,35 @@ const buffsDebuffs = {
         "check": "0"
       },
     },
+    "type": "spell"
   },
   "Hunter's Mark": {
       "tohit": "0",
       "dmg": "+d6",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Hex": {
       "tohit": "0",
       "dmg": "+d6",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Hexblade's Curse": {
       "tohit": "0",
       "dmg": "+PB",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "class"
   },
   "Symbiotic Entity": {
       "tohit": "0",
       "dmg": "+d6",
       "save": "0",
-      "check": "0"
-  },
-  "Elemental Cleaver": {
-      "tohit": "0",
-      "dmg": "+d6",
-      "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "class"
   },
   "Strike of the Giants": {
     "multiOptions": {
@@ -230,12 +271,38 @@ const buffsDebuffs = {
         "check": "0"
       },
     },
+    "type": "feat"
   },
   "Gift of the Chromatic Dragon": {
-      "tohit": "0",
-      "dmg": "+d4",
-      "save": "0",
-      "check": "0"
+    "tohit": "0",
+    "dmg": "+d4",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
+  },
+  "Emboldening Bond": {
+    "tohit": "+d4",
+    "dmg": "0",
+    "save": "+d4",
+    "check": "+d4",
+    "type": "class"
+  },
+  "Divine Strike": {
+    "multiOptions": {
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+1d8",
+        "save": "0",
+        "check": "0"
+      },
+      "2d8": {
+        "tohit": "0",
+        "dmg": "+2d8",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class"
   },
   "Emboldening Bond": {
       "tohit": "+d4",
@@ -263,7 +330,15 @@ const buffsDebuffs = {
       "tohit": "0",
       "dmg": "+d4",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
+  },
+  "Radiant Strikes (Improved Divine Smite)": {
+    "tohit": "0",
+    "dmg": "+d8",
+    "save": "0",
+    "check": "0",
+    "type": "class"
   },
   "Radiant Strikes (Improved Divine Smite)": {
       "tohit": "0",
@@ -275,25 +350,29 @@ const buffsDebuffs = {
       "tohit": "0",
       "dmg": "+d4",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Holy Weapon": {
       "tohit": "0",
       "dmg": "+2d8",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Tenser's Transformation": {
       "tohit": "0",
       "dmg": "+2d12",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   },
   "Fount of Moonlight": {
       "tohit": "0",
       "dmg": "+2d6",
       "save": "0",
-      "check": "0"
+      "check": "0",
+      "type": "spell"
   }
 }
 
@@ -1260,6 +1339,9 @@ function observe_character_sheet_changes(documentToObserve) {
         let avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
           <span class="clickHandle">Roll Buff/Debuffs</span>
           <ul class="avttBuffItems">
+            <ul id='classBuffs'><li>Class</li></ul>
+            <ul id='spellBuffs'><li>Spells</li></ul>
+            <ul id='featBuffs'><li>Feats</li></ul>
           </ul>
         </div>`)
         const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
@@ -1274,8 +1356,13 @@ function observe_character_sheet_changes(documentToObserve) {
             })  
           }
         })
+        avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
+          if($(e.target).is('li:first-of-type'))
+            $(this).toggleClass('collapsed');
+        })
        
         for(let i in buffsDebuffs){
+          const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type}Buffs`);
           if(buffsDebuffs[i]['multiOptions'] != undefined){
             const row = $(`<li><select id='buff_${i}' data-buff='${i}'/><option value='0'></option></select><label for='buff_${i}'>${i}</label></li>`)
             const select = row.find('select');
@@ -1300,7 +1387,7 @@ function observe_character_sheet_changes(documentToObserve) {
               }
               localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
             })
-            avttBuffItems.append(row);
+            headerRow.append(row);
           }else{
             const row = $(`<li><input type="checkbox" id='buff_${i}' data-buff='${i}'/><label for='buff_${i}'>${i}</label></li>`);
             if(window.rollBuffs.includes(i))
@@ -1316,7 +1403,7 @@ function observe_character_sheet_changes(documentToObserve) {
               }
               localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
             })
-            avttBuffItems.append(row);
+            headerRow.append(row);
           }
 
         }
@@ -1496,14 +1583,24 @@ function observe_character_sheet_changes(documentToObserve) {
                 width: 200px;
               }
 
-              .dropdown-check-list ul.avttBuffItems li {  
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed {
+                height: 20px;
+                overflow: hidden;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li {  
                 list-style: none;
                 display: flex;
                 align-items: center;
                 justify-content: flex-start;
                 padding: 3px;
+                font-weight: normal;
+                margin-left:2px
               }
-
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type {
+                font-size: 12px;
+                font-weight: bold;
+                position: relative;
+              }
               .dropdown-check-list.visible .clickHandle {
                 color: #0094ff;
               }
@@ -1520,9 +1617,36 @@ function observe_character_sheet_changes(documentToObserve) {
                 margin-right: 4px;
                 width: 16px;
                 height: 16px;
+                min-width: 16px;
+                min-height: 16px;
               }
-            .avttBuffItems li label{
+              .avttBuffItems li label{
                 font-size:12px;
+                padding: 3px;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid var(--theme-contrast);
+                border-top: 2px solid var(--theme-contrast);
+                padding: 3px;
+                right: 3px;
+                top: 9px;
+                transform-origin:center;
+                -moz-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                -o-transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);       
+              }
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed>li:first-of-type:after {
+                top: 5px;
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
+                  backdrop-filter:brightness(0.9);
+                  border-radius:5px;
               }
               div#icon-roll-options input,
               div#icon-roll-options select{
