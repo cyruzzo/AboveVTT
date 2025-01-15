@@ -4875,8 +4875,10 @@ function paste_selected_tokens(x, y) {
 		let options = $.extend(true, {}, token.options);
 		let newId = token.isPlayer() ? id : uuid();
 		options.id = newId;
-		if(options.audioChannel != undefined)
+		if(options.audioChannel != undefined){
 			options.audioChannel.token = newId;
+			options.audioChannel.audioId = uuid();
+		}
 		// TODO: figure out the location under the cursor and paste there instead of doing center of view
 		options.init = token.isPlayer() ? options.init : undefined;
 		options.ct_show = token.isPlayer() ? options.ct_show : undefined;
