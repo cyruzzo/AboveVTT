@@ -342,11 +342,12 @@ function getRollData(rollButton){
             expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.damageRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.damageRoll.replace('PB', getPB())}`;
         if(typeof window.rollBuffs != 'undefined'){
             for(let i in window.rollBuffs){
-                if(Array.isArray(window.rollBuffs[i]) && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].dmg != '0'){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].dmg != '0'){
 
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].dmg.replace('PB', getPB())}`
                 }
-                else if(buffsDebuffs[window.rollBuffs[i]].dmg != '0'){
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].dmg != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].dmg.replace('PB', getPB())}`
                 }
             }
@@ -359,10 +360,11 @@ function getRollData(rollButton){
             expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.hitRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.hitRoll.replace('PB', getPB())}`;
         if(typeof window.rollBuffs != 'undefined'){
             for(let i in window.rollBuffs){
-                if(Array.isArray(window.rollBuffs[i]) && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].tohit != '0'){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].tohit != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].tohit.replace('PB', getPB())}`
                 }
-                else if(buffsDebuffs[window.rollBuffs[i]].tohit != '0'){
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].tohit != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].tohit.replace('PB', getPB())}`
                 }
             }
@@ -375,10 +377,11 @@ function getRollData(rollButton){
             expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.checkRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.checkRoll.replace('PB', getPB())}`;
         if(typeof window.rollBuffs != 'undefined'){
             for(let i in window.rollBuffs){
-                if(Array.isArray(window.rollBuffs[i]) && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].check != '0'){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].check != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].check.replace('PB', getPB())}`
                 }
-                else if(buffsDebuffs[window.rollBuffs[i]].check != '0'){
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].check != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].check.replace('PB', getPB())}`
                 }
             }
@@ -391,10 +394,11 @@ function getRollData(rollButton){
             expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.saveRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.saveRoll.replace('PB', getPB())}`;
         if(typeof window.rollBuffs != 'undefined'){
             for(let i in window.rollBuffs){
-                if(Array.isArray(window.rollBuffs[i]) && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].save != '0'){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].save != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].save.replace('PB', getPB())}`
                 }
-                else if(buffsDebuffs[window.rollBuffs[i]].save != '0'){
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].save != '0'){
                     expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].save.replace('PB', getPB())}`
                 }
             }
