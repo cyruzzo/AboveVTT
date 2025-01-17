@@ -134,14 +134,76 @@ const buffsDebuffs = {
         "check": "0"
       },
     },
-    "type": "class"
+    "type": "class",
+    "class": "barbarian",
   },
   "Elemental Cleaver": {
-      "tohit": "0",
-      "dmg": "+d6",
-      "save": "0",
-      "check": "0",
-      "type": "class"
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "2d6": {
+        "tohit": "0",
+        "dmg": "+2d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Call the Hunt": {
+    "tohit": "0",
+    "dmg": "+d6",
+    "save": "0",
+    "check": "0",
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Cosmic Omen":{
+    "multiOptions": {
+      "Weal": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+      "Woe": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+    },
+    "type": "class",
+    "class": "druid",
+  },
+  "Giant’s Might": {
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+d8",
+        "save": "0",
+        "check": "0"
+      },
+      "1d10": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "fighter",
   },
   "-5 to hit, +10 damage":  {
     "tohit": "-5",
@@ -213,14 +275,16 @@ const buffsDebuffs = {
       "dmg": "+PB",
       "save": "0",
       "check": "0",
-      "type": "class"
+      "type": "class",
+      "class": "warlock"
   },
   "Symbiotic Entity": {
       "tohit": "0",
       "dmg": "+d6",
       "save": "0",
       "check": "0",
-      "type": "class"
+      "type": "class",
+      "class": "druid"
   },
   "Strike of the Giants": {
     "multiOptions": {
@@ -257,7 +321,8 @@ const buffsDebuffs = {
     "dmg": "0",
     "save": "+d4",
     "check": "+d4",
-    "type": "class"
+    "type": "class",
+    "class": "cleric"
   },
   "Divine Strike": {
     "multiOptions": {
@@ -274,7 +339,8 @@ const buffsDebuffs = {
         "check": "0"
       },
     },
-    "type": "class"
+    "type": "class",
+    "class": "cleric"
   },
   "Divine Favor": {
       "tohit": "0",
@@ -288,7 +354,8 @@ const buffsDebuffs = {
     "dmg": "+d8",
     "save": "0",
     "check": "0",
-    "type": "class"
+    "type": "class",
+    "class": "paladin"
   },
   "Crusader's Mantle": {
       "tohit": "0",
@@ -842,7 +909,7 @@ function register_buff_row_context_menu() {
       let rowBuff = rowHtml.find('[data-buff]').attr('data-buff');
 
       menuItems["favorite"] = {
-        name: rollBuffFavorites.includes(rowBuff) ? "Remove From Favorites" : "Add to Favorites",
+        name: rollBuffFavorites.includes(rowBuff) ? "Remove From Favorites" : "Move to Favorites",
         callback: function(itemKey, opt, originalEvent) {
             if(rollBuffFavorites.includes(rowBuff)){
               rollBuffFavorites = rollBuffFavorites.filter(d=> d != rowBuff)
@@ -884,7 +951,20 @@ function rebuild_buffs(fullBuild = false){
       <span class="clickHandle">Roll Buff/Debuffs</span>
       <ul class="avttBuffItems">
         <ul id='favoriteBuffs'><li>Favorite</li></ul>
-        <ul id='classBuffs'><li>Class</li></ul>
+        <ul id='classBuffs'><li>Class</li>
+          <ul id='barbarianBuffs'><li>Barbarian</li></ul>
+          <ul id='bardBuffs'><li>Bard</li></ul>
+          <ul id='clericBuffs'><li>Cleric</li></ul>
+          <ul id='druidBuffs'><li>Druid</li></ul>
+          <ul id='fighterBuffs'><li>Fighter</li></ul>
+          <ul id='monkBuffs'><li>Monk</li></ul>
+          <ul id='paladinBuffs'><li>Paladin</li></ul>
+          <ul id='rangerBuffs'><li>Ranger</li></ul>
+          <ul id='rogueBuffs'><li>Rogue</li></ul>
+          <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
+          <ul id='warlockBuffs'><li>Warlock</li></ul>
+          <ul id='wizardBuffs'><li>Wizard</li></ul>
+        </ul>
         <ul id='spellBuffs'><li>Spells</li></ul>
         <ul id='featBuffs'><li>Feats</li></ul>
       </ul>
@@ -894,7 +974,20 @@ function rebuild_buffs(fullBuild = false){
     avttBuffSelect = $(`#avtt-buff-options`);
     avttBuffSelect.find('.avttBuffItems').html(`
       <ul id='favoriteBuffs'><li>Favorite</li></ul>
-      <ul id='classBuffs'><li>Class</li></ul>
+      <ul id='classBuffs'><li>Class</li>
+        <ul id='barbarianBuffs'><li>Barbarian</li></ul>
+        <ul id='bardBuffs'><li>Bard</li></ul>
+        <ul id='clericBuffs'><li>Cleric</li></ul>
+        <ul id='druidBuffs'><li>Druid</li></ul>
+        <ul id='fighterBuffs'><li>Fighter</li></ul>
+        <ul id='monkBuffs'><li>Monk</li></ul>
+        <ul id='paladinBuffs'><li>Paladin</li></ul>
+        <ul id='rangerBuffs'><li>Ranger</li></ul>
+        <ul id='rogueBuffs'><li>Rogue</li></ul>
+        <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
+        <ul id='warlockBuffs'><li>Warlock</li></ul>
+        <ul id='wizardBuffs'><li>Wizard</li></ul>
+      </ul>
       <ul id='spellBuffs'><li>Spells</li></ul>
       <ul id='featBuffs'><li>Feats</li></ul>
     `)
@@ -913,8 +1006,9 @@ function rebuild_buffs(fullBuild = false){
     }
   })
   avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
+    e.stopPropagation();
     if($(e.target).is('li:first-of-type'))
-      $(this).toggleClass('collapsed');
+      $(e.target).closest('ul').toggleClass('collapsed');
   })
   const sortedBuffs = Object.keys(buffsDebuffs).sort().reduce(
     (obj, key) => { 
@@ -924,7 +1018,7 @@ function rebuild_buffs(fullBuild = false){
     {}
   );
   for(let i in sortedBuffs){
-    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type}Buffs`);
+    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type}Buffs`);
     const replacedName = i.replace("'", '');
     const addToFavorite = rollBuffFavorites.includes(replacedName);
 
@@ -978,6 +1072,11 @@ function rebuild_buffs(fullBuild = false){
     }
 
   }
+  avttBuffItems.find(`ul>ul`).each(function(){
+    if($(this).find('li').length < 2)
+      $(this).hide();
+  })
+
   if(fullBuild)
     $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
   register_buff_row_context_menu();
@@ -1606,11 +1705,13 @@ function observe_character_sheet_changes(documentToObserve) {
                 scrollbar-width: thin;
                 width: 200px;
               }
-              .dropdown-check-list ul.avttBuffItems>ul.collapsed {
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed,
+              .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed {
                 height: 22px;
                 overflow: hidden;
               }
-              .dropdown-check-list ul.avttBuffItems>ul>li {  
+              .dropdown-check-list ul.avttBuffItems>ul>li,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li {  
                 list-style: none;
                 display: flex;
                 align-items: center;
@@ -1619,10 +1720,18 @@ function observe_character_sheet_changes(documentToObserve) {
                 font-weight: normal;
                 margin-left:2px
               }
-              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type {
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type {
                 font-size: 12px;
                 font-weight: bold;
                 position: relative;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type{
+                  font-size:10px;
+                  margin-left:5px;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li{
+                  margin-left: 7px;
               }
               .dropdown-check-list.visible .clickHandle {
                 color: #0094ff;
@@ -1647,7 +1756,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 font-size:12px;
                 padding: 3px;
               }
-              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:after {
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:after,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type:after {
                 position: absolute;
                 content: "";
                 border-left: 2px solid var(--theme-contrast);
@@ -1662,12 +1772,14 @@ function observe_character_sheet_changes(documentToObserve) {
                 -webkit-transform: rotate(45deg);
                 transform: rotate(45deg);       
               }
-              .dropdown-check-list ul.avttBuffItems>ul.collapsed>li:first-of-type:after {
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed>li:first-of-type:after,
+              .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed>li:first-of-type:after {
                 top: 5px;
                 -webkit-transform: rotate(-135deg);
                 transform: rotate(-135deg);
               }
-              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type:hover{
                   backdrop-filter:brightness(0.9);
                   border-radius:5px;
               }
