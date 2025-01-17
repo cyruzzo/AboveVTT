@@ -18,7 +18,8 @@ if (!isVttGamePage) {
 
     // load stylesheets
     [
-        "DiceContextMenu/DiceContextMenu.css"
+        "DiceContextMenu/DiceContextMenu.css",
+        "jquery.contextMenu.css"
     ].forEach(function(value, index, array) {
         let l = document.createElement('link');
         l.href = chrome.runtime.getURL(value);
@@ -30,6 +31,7 @@ if (!isVttGamePage) {
     window.scripts = [
         // External Dependencies
         { src: "jquery-3.6.0.min.js" },
+        { src: "jquery.contextMenu.js" },
         // AboveVTT Files
         { src: "DiceContextMenu/DiceContextMenu.js" },
         { src: "MonsterDice.js" },

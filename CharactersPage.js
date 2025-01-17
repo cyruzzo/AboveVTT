@@ -319,7 +319,8 @@ const buffsDebuffs = {
       "type": "spell"
   }
 }
-
+let rollBuffFavorites = [];
+let rollBuffContext = [];
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
@@ -830,7 +831,157 @@ function inject_dice_roll(element, clear=true) {
       }
   })
 }
+function register_buff_row_context_menu() {
+  $.contextMenu({
+    selector: ".dropdown-check-list li",
+    build: function(element, e) {
 
+      let menuItems = {};
+
+      let rowHtml = $(element);
+      let rowBuff = rowHtml.find('[data-buff]').attr('data-buff');
+
+      menuItems["favorite"] = {
+        name: rollBuffFavorites.includes(rowBuff) ? "Remove From Favorites" : "Add to Favorites",
+        callback: function(itemKey, opt, originalEvent) {
+            if(rollBuffFavorites.includes(rowBuff)){
+              rollBuffFavorites = rollBuffFavorites.filter(d=> d != rowBuff)
+            }
+            else{
+              rollBuffFavorites.push(rowBuff)
+            }
+            localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+            rebuild_buffs();
+
+        }
+      };
+      /**** To do: Allow select menus to be added to roll context menus for this to work. Checkbox inputs can just be added as list items ****/
+      /*
+      menuItems["addToContext"] = {
+        name: rollBuffContext.includes(rowBuff) ? "Remove from Roll Context Menu" : "Add to Roll Context Menu",
+        callback: function(itemKey, opt, originalEvent) {
+          if(rollBuffContext.includes(rowBuff)){
+            rollBuffContext = rollBuffContext.filter(d=> d != rowBuff)
+          }
+          else{
+            rollBuffContext.push(rowBuff)
+          }
+          rebuild_buffs();
+        }
+      };
+      */
+      return { items: menuItems };
+    }
+
+  })
+}
+function rebuild_buffs(fullBuild = false){
+  window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
+  rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
+  let avttBuffSelect;
+  if(fullBuild){
+    avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
+      <span class="clickHandle">Roll Buff/Debuffs</span>
+      <ul class="avttBuffItems">
+        <ul id='favoriteBuffs'><li>Favorite</li></ul>
+        <ul id='classBuffs'><li>Class</li></ul>
+        <ul id='spellBuffs'><li>Spells</li></ul>
+        <ul id='featBuffs'><li>Feats</li></ul>
+      </ul>
+    </div>`)
+  }
+  else{
+    avttBuffSelect = $(`#avtt-buff-options`);
+    avttBuffSelect.find('.avttBuffItems').html(`
+      <ul id='favoriteBuffs'><li>Favorite</li></ul>
+      <ul id='classBuffs'><li>Class</li></ul>
+      <ul id='spellBuffs'><li>Spells</li></ul>
+      <ul id='featBuffs'><li>Feats</li></ul>
+    `)
+  }
+
+  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+  avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+    avttBuffSelect.toggleClass('visible')
+    if(avttBuffSelect.hasClass('visible')){
+      $(document).on('click.blurHandle', function(e){
+        if($(e.target).closest('#avtt-buff-options, .context-menu-list').length == 0){
+          avttBuffSelect.toggleClass('visible')
+          $(document).off('click.blurHandle');
+        }
+      })  
+    }
+  })
+  avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
+    if($(e.target).is('li:first-of-type'))
+      $(this).toggleClass('collapsed');
+  })
+  const sortedBuffs = Object.keys(buffsDebuffs).sort().reduce(
+    (obj, key) => { 
+      obj[key] = buffsDebuffs[key]; 
+      return obj;
+    }, 
+    {}
+  );
+  for(let i in sortedBuffs){
+    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type}Buffs`);
+    const replacedName = i.replace("'", '');
+    const addToFavorite = rollBuffFavorites.includes(replacedName);
+
+    if(buffsDebuffs[i]['multiOptions'] != undefined){
+      const row = $(`<li><select id='buff_${replacedName}' data-buff='${replacedName}'/><option value='0'></option></select><label for='buff_${replacedName}'>${i}</label></li>`)
+      const select = row.find('select');
+      const currentSelected = window.rollBuffs.find(d => d.includes(i));
+
+      for(let j in buffsDebuffs[i]['multiOptions']){
+        const option = $(`<option value='${j}'>${j}</option>`);
+        select.append(option)
+      }
+      if(currentSelected != undefined){
+        select.val(currentSelected[1])
+      }
+      row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        if(typeof window.rollBuffs == 'undefined')
+          window.rollBuffs =[];
+        if($(this).val() != '0'){
+          window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+          window.rollBuffs.push([i, $(this).val()])
+        }
+        else{
+         window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+        }
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul#favoriteBuffs`).append(row);  
+      else    
+        headerRow.append(row);
+    }else{
+      const row = $(`<li><input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/><label for='buff_${replacedName}'>${i}</label></li>`);
+      if(window.rollBuffs.includes(i))
+        row.find('input').prop('checked', true);
+      row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        if(typeof window.rollBuffs == 'undefined')
+          window.rollBuffs =[];
+        if($(this).is(':checked')){
+          window.rollBuffs.push(i)
+        }
+        else{
+         window.rollBuffs = window.rollBuffs.filter(d => d != i); 
+        }
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul#favoriteBuffs`).append(row);
+      else   
+        headerRow.append(row);
+    }
+
+  }
+  if(fullBuild)
+    $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+  register_buff_row_context_menu();
+}
 /**
  * Observes character sheet changes and:
  *     injects Dice Roll buttons when a slash command is in item notes.
@@ -1279,79 +1430,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
       if($('#avtt-buff-options').length == 0){
-        window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
-        let avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
-          <span class="clickHandle">Roll Buff/Debuffs</span>
-          <ul class="avttBuffItems">
-            <ul id='classBuffs'><li>Class</li></ul>
-            <ul id='spellBuffs'><li>Spells</li></ul>
-            <ul id='featBuffs'><li>Feats</li></ul>
-          </ul>
-        </div>`)
-        const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
-        avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
-          avttBuffSelect.toggleClass('visible')
-          if(avttBuffSelect.hasClass('visible')){
-            $(document).on('click.blurHandle', function(e){
-              if($(e.target).closest('#avtt-buff-options').length == 0){
-                avttBuffSelect.toggleClass('visible')
-                $(document).off('click.blurHandle');
-              }
-            })  
-          }
-        })
-        avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
-          if($(e.target).is('li:first-of-type'))
-            $(this).toggleClass('collapsed');
-        })
-       
-        for(let i in buffsDebuffs){
-          const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type}Buffs`);
-          if(buffsDebuffs[i]['multiOptions'] != undefined){
-            const row = $(`<li><select id='buff_${i}' data-buff='${i}'/><option value='0'></option></select><label for='buff_${i}'>${i}</label></li>`)
-            const select = row.find('select');
-            const currentSelected = window.rollBuffs.find(d => d.includes(i));
-
-            for(let j in buffsDebuffs[i]['multiOptions']){
-              const option = $(`<option value='${j}'>${j}</option>`);
-              select.append(option)
-            }
-            if(currentSelected != undefined){
-              select.val(currentSelected[1])
-            }
-            row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
-              if(typeof window.rollBuffs == 'undefined')
-                window.rollBuffs =[];
-              if($(this).val() != '0'){
-                window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
-                window.rollBuffs.push([i, $(this).val()])
-              }
-              else{
-               window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
-              }
-              localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-            })
-            headerRow.append(row);
-          }else{
-            const row = $(`<li><input type="checkbox" id='buff_${i}' data-buff='${i}'/><label for='buff_${i}'>${i}</label></li>`);
-            if(window.rollBuffs.includes(i))
-              row.find('input').prop('checked', true);
-            row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
-              if(typeof window.rollBuffs == 'undefined')
-                window.rollBuffs =[];
-              if($(this).is(':checked')){
-                window.rollBuffs.push(i)
-              }
-              else{
-               window.rollBuffs = window.rollBuffs.filter(d => d != i); 
-              }
-              localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
-            })
-            headerRow.append(row);
-          }
-
-        }
-        $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+        rebuild_buffs(true);
       }
 
       if($('#avtt-icon-roll-span').length == 0){
