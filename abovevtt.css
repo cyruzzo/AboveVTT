@@ -7791,8 +7791,15 @@ button span.onedrive-btn-status{
     filter: blur(6px);
     transition: 0ms filter 200ms;
 }
-.ct-character-sheet__inner[style*='width: 570px'] #avtt-character-join-button{
+.ct-character-sheet__inner[style*='width: 620px'] #avtt-character-join-button{
   display:none;
+}
+.ct-character-sheet__inner[style*='width: 620px'] .ct-combat__summary-group--statuses {
+    max-width:380px;
+}
+.ct-character-sheet__inner[style*='width: 620px'] .ct-character-header-desktop,
+.ct-character-sheet__inner[style*='width: 620px'] .ct-subsections {
+    padding-right: 30px !important;
 }
 
 .body-rpgcampaign .ddb-campaigns-invite-primary:active {

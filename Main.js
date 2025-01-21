@@ -3820,7 +3820,7 @@ function resize_player_sheet_thin() {
 		return;
 	}
 
-	let sheetWidth = "570px";
+	let sheetWidth = "620px";
 	let subsectionWidth = "50%";
 	let inspirationLeft = "-184px";
 	let proficiencyLeft = "-480px";
@@ -3833,7 +3833,7 @@ function resize_player_sheet_thin() {
 	let skillsRight = "0px";
 	let restTop = "20px";
 	if (window.innerWidth < 1200) {
-		sheetWidth = "520px";
+		sheetWidth = "620px";
 		subsectionWidth = "45%";
 		inspirationLeft = "-124px";
 		proficiencyLeft = "-380px";
@@ -3863,8 +3863,8 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group--share").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 	$(".ct-character-header-desktop__group--builder").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 
-	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "110px" });
-	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "0px" });
+	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "130px" });
+	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "20px" });
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
@@ -4156,7 +4156,7 @@ function adjust_site_bar() {
 
 	let fullWidth = "100%";
 	if (!is_player_sheet_full_width()) {
-		let sheetWidth = window.innerWidth < 1200 ? 520 : 570;
+		let sheetWidth = 620;
 		let sidebarWidth = is_sidebar_visible() ? 340 : 0;
 		fullWidth = `${sheetWidth + sidebarWidth}px`;
 	}
