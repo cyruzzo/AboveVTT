@@ -155,6 +155,13 @@ const buffsDebuffs = {
     "type": "class",
     "class": "barbarian",
   },
+  "Great Weapon Master (2024)": {
+    "tohit": "0",
+    "dmg": "+PB",
+    "save": "0",
+    "check": "0",
+    "type": "feat",
+  },
   "Call the Hunt": {
     "tohit": "0",
     "dmg": "+d6",
@@ -624,10 +631,10 @@ function read_death_save_info(container = $(document)) {
 }
 
 function read_inspiration(container = $(document)) {
-  if (container.find(".ct-inspiration__status--active").length) {
+  if (container.find(".ct-inspiration__status--active, .ct-quick-info__inspiration svg.ddbc-inspiration-token-svg").length) {
     return true;
   }
-  if (container.find(".ct-status-summary-mobile__inspiration .ct-status-summary-mobile__button--active").length) {
+  if (container.find(".ct-status-summary-mobile__inspiration .ct-status-summary-mobile__button--active, [class*='styles_mobileWrapper'] [class*='styles_mobileButton'][role='checkbox'][aria-checked='true']").length) {
     return true
   }
   return false;
