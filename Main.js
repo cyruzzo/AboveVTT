@@ -1752,12 +1752,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
 
-	
-
-
 		let scripts = [
 		    // External Dependencies
 		    { src: "jquery-3.6.0.min.js" },
+		    { src: "jquery.contextMenu.js" },
 		    // AboveVTT Files
 		    { src: "DiceContextMenu/DiceContextMenu.js" },	   
 		    { src: "MonsterDice.js" },	
@@ -1793,6 +1791,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		
 		
 		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
+		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}jquery.contextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button,
