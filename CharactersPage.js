@@ -704,7 +704,9 @@ function convertToRPGRoller(){
         return;
       }
       e.stopImmediatePropagation();
-      
+      if(rollData.rollTitle == 'Initiative' && $(`[aria-label="Has advantage on initiative"]`).length){
+        rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
+      }
       window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
     });
 }
