@@ -160,7 +160,7 @@ class DiceContextMenu {
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
             s.row("Self", svg_self(), sendToText === "Self");
-            if (!window.DM && (window.CAMPAIGN_INFO.dmId != window.myUser || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)) {
+            if (!window.DM && window.CAMPAIGN_INFO && (window.CAMPAIGN_INFO.dmId != window.myUser || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)) {
                 s.row("Dungeon Master", svg_dm(), sendToText === "Dungeon Master");
             }
         })
