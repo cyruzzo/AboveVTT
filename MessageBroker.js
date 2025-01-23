@@ -2338,8 +2338,13 @@ class MessageBroker {
 				window.reconnectAttemptAbovews = 0;
 			}	
 			window.reconnectAttemptAbovews++;
+			if(get_avtt_setting_value('autoReconnect')){
+				this.loadAboveWS();	
+			}
+			else{
+				this.showDisconnectWarning();
+			}
 
-			this.showDisconnectWarning()
 		}
 	}
 }

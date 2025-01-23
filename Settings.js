@@ -462,6 +462,17 @@ function avtt_settings() {
 		],
 		defaultValue: false
 	})
+	settings.push(
+	{
+		name: "autoReconnect",
+		label: "Auto Reconnect",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects. It may cause desync or tokens to reset due to missing messages.` },
+			{ value: false, label: "Disabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects.  It may cause desync or tokens to reset due to missing messages.` }
+		],
+		defaultValue: false
+	})
 
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
@@ -728,7 +739,38 @@ function init_settings() {
 		switch (setting.type) {
 			case "toggle":
 				inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
-					set_avtt_setting_value(name, newValue);
+					if(name == 'autoReconnect' && newValue == true){
+
+					  let container = $("#above-vtt-error-message");
+					  let containerHTML = $(`
+					      <div id="above-vtt-error-message">
+					        <h2>Enabling Auto Reconnect</h2>
+					        <div id="error-message-details"><p>Warning: Enabling this setting may cause desync or tokens to reset for everyone due to missed messages on disconnect.</p><p>It is only recommended to enable this if your connection is unstable causing many disconnects</p></div>
+					        <div class="error-message-buttons">
+					  		  	<button id="enable-auto-button">Enable</button>
+					          <button id="cancel-auto-button">Cancel</button>
+					        </div>
+					      </div>
+					    `)
+					  if (container.length === 0) {
+					    container = containerHTML;
+					    $(document.body).append(container);
+					  }
+					  else {
+					    container.html(containerHTML);
+					  }
+					  $("#cancel-auto-button").on("click", function(){
+					  	$(`button.rc-switch[name='${name}']`).removeClass('rc-switch-checked');
+					  	container.remove();
+					  });
+					  $("#enable-auto-button").on("click", function(){
+					  	 set_avtt_setting_value(name, newValue);
+					  	 container.remove();	
+					  });
+					}
+					else{
+						set_avtt_setting_value(name, newValue);
+					}	
 				});
 				break;
 			case "dropdown":
