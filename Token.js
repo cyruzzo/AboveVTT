@@ -1520,7 +1520,7 @@ class Token {
 	}
 
 
-	build_conditions(parent) {
+	build_conditions(parent, singleRow = false) {
 		function badge_condition(condition, conditionContainer, conditionSymbolName) {
 			if(!isNaN(parseInt(condition.duration))) {
 				let expired = (parseInt(condition.duration) <= 0) ? "expired" : "";
@@ -1580,7 +1580,7 @@ class Token {
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
 				badge_condition(condition, conditionContainer, conditionSymbolName);
-				if (conditionCount >= 3) {
+				if (conditionCount >= 3 && !singleRow) {
 					moreCond.append(conditionContainer);
 				} else {
 					cond.append(conditionContainer);
@@ -2139,8 +2139,14 @@ class Token {
 
 
 				this.update_opacity(old);
-
 				this.build_conditions(old);
+				const combatRow = $(`#combat_area tr[data-target='${this.options.id}']`);
+				if(combatRow.length){
+					this.build_conditions($(`#combat_area tr[data-target='${this.options.id}']`), true);
+				}
+				
+
+				
 
 				if (this.selected) {
 					old.addClass("tokenselected");

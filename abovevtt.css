@@ -2180,6 +2180,58 @@ padding-top:10px;
     background: #e4c700;
 }
 
+#combat_area .condition-img {
+    background: #01ffff;
+}
+
+#combat_area .custom-condition.condition-img {
+    background: #F58231;
+}
+
+#combat_area .note-condition.condition-img {
+    background: #e4c700;
+}
+
+#combat_area .conditions {
+    display:flex;
+    position:absolute;
+    top: -3px !important;
+    height: 20px !important;
+    flex-wrap: nowrap;
+    left: calc(100% - 99px) !important;
+    align-items: center;
+    align-content: center;
+}
+
+#combat_area .conditions div img{
+    height:100% !important;
+    width:100% !important;
+    pointer-events:auto !important;  
+    position:relative;
+
+}
+#combat_area .conditions{
+    width: 100px !important;
+}
+#combat_area .conditions>div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 14px !important;
+    height: 14px !important;
+    margin-right:2px;
+    border-radius:5px;
+    border: 1px solid black;
+    align-content: center;
+    flex-wrap: nowrap;
+}
+#combat_area .conditions ~ .player-conditionstions {
+    display: none;
+}
+#note.condition-container{
+    pointer-events: auto;
+}
 #note.condition-container{
     pointer-events: auto;
 }
@@ -6462,7 +6514,7 @@ div#tokenOptionsContainer .remove-from-ct>button{
 }
 
 #combat_area td button{
-    margin: 0px 1px;
+    margin: -2px 1px
 }
 #site #combat_area tr td{
     padding-bottom: 4px;

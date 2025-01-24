@@ -698,7 +698,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		entry.css('display', 'none');
 	}
 	entry.addClass("CTToken");
-	
+	if(window.DM && !token.options.combatGroupToken){
+		token.build_conditions(entry, true);
+	}
 	if (typeof(token.options.ct_show) == 'undefined'){
 		if(token.options.hidden) {
 			token.options.ct_show = false;
