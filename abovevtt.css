@@ -7844,14 +7844,18 @@ button span.onedrive-btn-status{
     filter: blur(6px);
     transition: 0ms filter 200ms;
 }
-.ct-character-sheet__inner[style*='width: 620px'] #avtt-character-join-button{
+.ct-character-sheet__inner[style*='width: 620px'] #avtt-character-join-button,
+.ct-character-sheet__inner[style*='width: 550px'] #avtt-character-join-button{
   display:none;
 }
-.ct-character-sheet__inner[style*='width: 620px'] .ct-combat__summary-group--statuses {
+.ct-character-sheet__inner[style*='width: 620px'] .ct-combat__summary-group--statuses,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-combat__summary-group--statuses{
     max-width:380px;
 }
 .ct-character-sheet__inner[style*='width: 620px'] .ct-character-header-desktop,
-.ct-character-sheet__inner[style*='width: 620px'] .ct-subsections {
+.ct-character-sheet__inner[style*='width: 620px'] .ct-subsections,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-character-header-desktop,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-subsections {
     padding-right: 30px !important;
 }
 

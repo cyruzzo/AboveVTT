@@ -3833,7 +3833,7 @@ function resize_player_sheet_thin() {
 	let skillsRight = "0px";
 	let restTop = "20px";
 	if (window.innerWidth < 1200) {
-		sheetWidth = "620px";
+		sheetWidth = "550px";
 		subsectionWidth = "45%";
 		inspirationLeft = "-124px";
 		proficiencyLeft = "-380px";
@@ -4156,7 +4156,7 @@ function adjust_site_bar() {
 
 	let fullWidth = "100%";
 	if (!is_player_sheet_full_width()) {
-		let sheetWidth = 620;
+		let sheetWidth =  window.innerWidth < 1200 ? 550 : 620;
 		let sidebarWidth = is_sidebar_visible() ? 340 : 0;
 		fullWidth = `${sheetWidth + sidebarWidth}px`;
 	}
