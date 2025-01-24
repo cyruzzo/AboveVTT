@@ -711,7 +711,9 @@ function convertToRPGRoller(){
     });
 }
 
-
+const debounceObserverSetup = mydebounce(function(){
+  observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+}, 200);
 
 /** actions to take on the character sheet when AboveVTT is NOT running */
 async function init_character_sheet_page() {
@@ -741,6 +743,7 @@ async function init_character_sheet_page() {
   // observe window resizing and injeect our join/exit button if necessary
   window.addEventListener('resize', function(event) {
     inject_join_exit_abovevtt_button();
+    debounceObserverSetup();
   }); 
 
   if(!is_abovevtt_page()){
