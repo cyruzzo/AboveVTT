@@ -1715,7 +1715,7 @@ class Token {
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
 				badge_condition(this.options.custom_conditions[i], conditionContainer, conditionSymbolName);
-				if (conditionCount >= 3) {
+				if (conditionCount >= 3 && !singleRow) {
 					if (conditionSymbolName === "concentration") {
 						moreCond.prepend(conditionContainer);
 					} else {
@@ -1957,7 +1957,7 @@ class Token {
 				symbolImage.height(symbolSize + "px");
 				symbolImage.width(symbolSize + "px");
 				conditionContainer.append(symbolImage);
-				if (conditionCount >= 3) {
+				if (conditionCount >= 3 && !singleRow) {
 					moreCond.append(conditionContainer);
 				} else {
 					cond.append(conditionContainer);
