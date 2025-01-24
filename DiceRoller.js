@@ -304,7 +304,7 @@ function getRollData(rollButton){
     } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
       rollType = 'check';
       rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
-    } else if($(rollButton).parents(`[class*='initiative-box'],  .ct-combat-tablet__extra--initiative, .ct-combat__summary-group--initiative`).length > 0){
+    } else if($(rollButton).parents(`[class*='initiative-box'],  .ct-combat-tablet__extra--initiative, .ct-combat__summary-group--initiative`).length > 0 || $(rollButton).closest('[class*="styles_boxMobile"]').find('[class*="styles_labelMobile"]').text() == "Initiative"){
       rollTitle = 'Initiative';
       rollType = 'roll'
     } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
