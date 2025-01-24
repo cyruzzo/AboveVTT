@@ -1680,7 +1680,9 @@ function observe_character_sheet_changes(documentToObserve) {
                 font-size: 10px;
                 width: 200px;
               }
-
+              .ct-tablet-box__header ~ .dropdown-check-list {
+                left: unset;
+              }
               .dropdown-check-list .clickHandle {
                 position: relative;
                 cursor: pointer;
