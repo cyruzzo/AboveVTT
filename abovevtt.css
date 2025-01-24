@@ -2456,6 +2456,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .ct-sidebar__inner [class*='styles_gap']{
     border:none;
+    height:0px;
 }
 
 .avtt-sidebar-controls .tab-btn,
