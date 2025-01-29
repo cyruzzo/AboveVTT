@@ -274,7 +274,7 @@ function getRollData(rollButton){
     else if($(rollButton).hasClass('avtt-roll-button')){
       expression = `${$(rollButton).attr('data-exp')}${$(rollButton).attr('data-mod')}`
       rollTitle = $(rollButton).attr('data-actiontype');
-      rollType = $(rollButton).attr('data-rolltype');;
+      rollType = $(rollButton).attr('data-rolltype');
     }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
       let slashCommand = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command'))

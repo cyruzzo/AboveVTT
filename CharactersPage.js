@@ -563,6 +563,10 @@ function read_current_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current']`)
+  if(element.length){
+    return parseInt(element.text())
+  }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
   if (element.length) {
     return parseInt(element.text()) || 0;
@@ -587,6 +591,10 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary']`)
+  if(element.length){
+    return parseInt(element.text())
+  }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
   if (element.length) {
     return parseInt(element.text()) || 0;
@@ -603,6 +611,10 @@ function read_temp_hp(container = $(document)) {
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--max .ct-health-manager__health-item-value .ct-health-manager__health-max-current`)
+  if(element.length){
+    return parseInt(element.text())
+  }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max']`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -625,8 +637,8 @@ function read_death_save_info(container = $(document)) {
     };
   }
   return {
-    failCount: container.find('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
-    successCount: container.find('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
+    failCount: container.find('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active, [class*="styles_activeMark-fail"]').length || 0,
+    successCount: container.find('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active, [class*="styles_activeMark-success"]').length || 0
   };
 }
 
@@ -2011,7 +2023,8 @@ function observe_character_sheet_changes(documentToObserve) {
             if(
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
-              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
+              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
+              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
             ) {
               send_character_hp();
             } else if (mutationTarget.hasClass("ct-subsection--senses")) {
@@ -2028,15 +2041,17 @@ function observe_character_sheet_changes(documentToObserve) {
             if (mutationTarget.hasClass('ct-conditions-summary')) { // conditions update from sidebar
               const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
-            } else if(firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
-              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number`).text());
+            } else if((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]')){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit']`).text());
               send_character_hp(maxhp);
             }else if (
               ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
               (firstRemoved.hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
               (firstRemoved.hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
-              mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
+              mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
+              mutationTarget.hasClass('[class*="styles_mark"]') ||
+              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
             ) {
               send_character_hp();
             }
@@ -2074,7 +2089,8 @@ function observe_character_sheet_changes(documentToObserve) {
           case "characterData":
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
-                mutationParent.hasClass("ct-health-manager__health-item-value") 
+                mutationParent.hasClass("ct-health-manager__health-item-value") ||
+                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
               ) {
                 send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
