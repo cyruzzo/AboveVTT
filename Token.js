@@ -2140,10 +2140,13 @@ class Token {
 
 				this.update_opacity(old);
 				this.build_conditions(old);
-				const combatRow = $(`#combat_area tr[data-target='${this.options.id}']`);
-				if(combatRow.length){
-					this.build_conditions($(`#combat_area tr[data-target='${this.options.id}']`), true);
+				if(window.DM) {
+					const combatRow = $(`#combat_area tr[data-target='${this.options.id}']`);
+					if(combatRow.length){
+						this.build_conditions($(`#combat_area tr[data-target='${this.options.id}']`), true);
+					}
 				}
+
 				
 
 				
