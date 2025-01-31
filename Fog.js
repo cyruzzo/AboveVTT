@@ -5913,11 +5913,9 @@ function redraw_light(){
 			if($('#exploredCanvas').length == 0){
 				exploredCanvas =  document.createElement("canvas")
 				exploredCanvas.width = canvasWidth;
-				exploredCanvas.height = canvasHeight;
-
-				if(window.exploredCanvasContext == undefined){
-					window.exploredCanvasContext = exploredCanvas.getContext('2d');
-				}
+				exploredCanvas.height = canvasHeight;			
+				window.exploredCanvasContext = exploredCanvas.getContext('2d');
+				
 
 				window.exploredCanvasContext.globalCompositeOperation='source-over';
 				window.exploredCanvasContext.fillStyle = "black";
