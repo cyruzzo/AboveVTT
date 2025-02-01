@@ -1548,7 +1548,11 @@ class Token {
 				this.addCondition("Inspiration")
 			}
 		} else{
-			array_remove_index_by_value(this.options.custom_conditions, "Inspiration");
+			this.removeCondition("Inspiration");
+		}
+
+		if(this.isPlayer()){
+			this.options.conditions = find_pc_by_player_id(this.options.id).conditions
 		}
 		
 		const conditions = this.conditions;
