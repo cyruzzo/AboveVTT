@@ -1728,6 +1728,20 @@ class MessageBroker {
 			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
 			}, 300);
+			if(t.isPlayer()){
+				const pc = find_pc_by_player_id(data.id, false);
+		    let token = window.TOKEN_OBJECTS[data.id]     
+		    if (token && pc) {
+		      let currentImage = token.options.imgsrc;
+		      token.hp = pc.hitPointInfo.current;
+		      token.options = {
+		        ...token.options,
+		        ...pc,
+		        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
+		        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+		      };
+				}
+			}
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
