@@ -970,13 +970,13 @@ function update_pc_with_data(playerId, data) {
     ...data,
     lastSynchronized: Date.now()
   }
-  if (window.DM) {
-    if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
-      window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
-    }
-    debounce_pc_token_update();
+ 
+  if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+    window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
   }
+  debounce_pc_token_update();
 }
+
 
 const debounce_pc_token_update = mydebounce(() => {  
   window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
@@ -1011,8 +1011,9 @@ const debounce_pc_token_update = mydebounce(() => {
   });
   if (window.DM) {
     update_pc_token_rows();
-    window.PC_TOKENS_NEEDING_UPDATES = [];
   }
+  window.PC_TOKENS_NEEDING_UPDATES = [];
+  
 },50);
 
 function update_pc_with_api_call(playerId) {

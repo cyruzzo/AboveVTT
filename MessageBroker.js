@@ -1710,11 +1710,7 @@ class MessageBroker {
 
 		}	
 		else if(data.left){
-			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
-			
-			if (window.DM) {
-				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
-			}
+
 			let t = new Token(data);
 			if(isNaN(parseFloat(t.options.left)) || isNaN(parseInt(t.options.top))){ // prevent errors with NaN positioned tokens - delete them as catch all. 
 				t.options.deleteableByPlayers = true;

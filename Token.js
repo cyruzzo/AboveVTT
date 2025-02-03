@@ -1548,7 +1548,6 @@ class Token {
 				this.addCondition("Inspiration")
 			}
 		} else{
-
 			this.removeCondition("Inspiration");
 		}
 
