@@ -1543,7 +1543,7 @@ class Token {
 			cond_bar.width(symbolSize);
 			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
-		if (this.isPlayer() && (this.options.inspiration || find_pc_by_player_id(this.options.id).inspiration)){
+		if (this.isPlayer() && (this.options.inspiration || find_pc_by_player_id(this.options.id)?.inspiration, false)){
 			if (!this.hasCondition("Inspiration")){
 				this.addCondition("Inspiration")
 			}
@@ -1551,8 +1551,8 @@ class Token {
 			this.removeCondition("Inspiration");
 		}
 
-		if(this.isPlayer()){
-			this.options.conditions = find_pc_by_player_id(this.options.id).conditions
+		if(this.isPlayer() && find_pc_by_player_id(this.options.id, false)?.inspiration){
+			this.options.conditions = find_pc_by_player_id(this.options.id, false).conditions
 		}
 		
 		const conditions = this.conditions;

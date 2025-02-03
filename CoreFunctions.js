@@ -977,12 +977,12 @@ function update_pc_with_data(playerId, data) {
   debounce_pc_token_update();
 }
 
-const debounce_pc_token_update = mydebounce(() => {
-  
+
+const debounce_pc_token_update = mydebounce(() => {  
   window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
     const pc = find_pc_by_player_id(playerId, false);
     let token = window.TOKEN_OBJECTS[pc?.sheet];     
-    if (token) {
+    if (token && pc) {
       let currentImage = token.options.imgsrc;
       token.hp = pc.hitPointInfo.current;
       token.options = {
@@ -992,10 +992,10 @@ const debounce_pc_token_update = mydebounce(() => {
         id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
       };
       if (window.DM) {
-        token.place_sync_persist(); // not sure if this is overkill
+        token.place_sync_persist(); // update it on the server
       }
       else{
-        token.place();
+        token.place(); // update token for players even if dm isn't connected to websocket
       }
     }
     token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map

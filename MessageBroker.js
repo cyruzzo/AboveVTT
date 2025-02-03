@@ -1727,7 +1727,7 @@ class MessageBroker {
 			if(t.isPlayer()){
 				const pc = find_pc_by_player_id(data.id, false);
 		    let token = window.TOKEN_OBJECTS[data.id]     
-		    if (token) {
+		    if (token && pc) {
 		      let currentImage = token.options.imgsrc;
 		      token.hp = pc.hitPointInfo.current;
 		      token.options = {
