@@ -358,11 +358,13 @@ function load_external_script(scriptUrl) {
   return new Promise(function (resolve, reject) {
     let script = document.createElement('script');
     script.src = scriptUrl;
-    script.addEventListener('error', function () {
-      reject(console.warn(`Failed to load external script ${scriptUrl}`));
+    script.addEventListener('error', err => {
+      reject(err);
     });
     script.addEventListener('load', resolve);
     document.head.appendChild(script);
+  }).catch((err) => {
+    console.error(`Failed to load external script`, scriptUrl, err);
   })
 }
 
