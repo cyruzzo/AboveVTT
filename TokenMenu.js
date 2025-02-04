@@ -1811,7 +1811,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		create_light_presets_edit();		
 	})
 	wrapper.find('#editAnimations').off('click.editPresets').on('click.editPresets', function(){
-		create_animation_presets_edit();		
+		create_animation_presets_edit(true);		
 	})
 	wrapper.find('.daylight').off('click.editDaylight').on('click.editDaylight', function(){
 		$(this).toggleClass('active-daylight');
@@ -2014,7 +2014,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 					...token.options.animation,
 					light: preset,
 					customLightMask: undefined,
-					customLightRotate: undefined
+					customLightRotate: undefined,
+					customLightDarkvision: undefined
 
 				}
 			}
@@ -2023,7 +2024,8 @@ function build_token_light_inputs(tokenIds, door=false) {
 					...token.options.animation,
 					light: preset,
 					customLightMask: customPreset.mask,
-					customLightRotate: customPreset.rotate
+					customLightRotate: customPreset.rotate,
+					customLightDarkvision: customPreset.darkvision
 				}
 			}
 			
@@ -2290,7 +2292,7 @@ function create_light_presets_edit(){
 
 	adjust_create_import_edit_container(dialog, undefined, undefined, 975);
 }
-function create_animation_presets_edit(){
+function create_animation_presets_edit(isVision = false){
 	let dialog = $('#edit_preset_animation_dialog')
 
 	dialog.remove();
@@ -2302,43 +2304,47 @@ function create_animation_presets_edit(){
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
-	let animation_presets = $('<div id="animation_presets_properties"/>');
+	let animation_presets = $('<table id="animation_presets_properties"/>');
 	dialog.append(animation_presets);
 
 	let titleRow = $(`
-		<div class='animation_preset_title_row'>
-				<div>
-					<h3 style="margin-bottom:0px;">Name</h3>
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Transparency Mask</h3>			
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Rotate</h3>			
-				</div>
-			</div>
+		<tr class='animation_preset_title_row'>
+				<th>
+					Name
+				</th>
+				<th>
+					Transparency Mask		
+				</th>
+				<th>
+					Rotate	
+				</th>
+				${isVision ? `<th>
+					Apply to Darkvision			
+				</th>` : ``}
+			</tr>
 			`)
 	animation_presets.append(titleRow);
 	for(let i in window.ANIMATION_PRESETS){
 		
 
 		let row = $(`
-			<div class='animation_preset_row' data-index='${i}'>
-				<input class='animation_preset_title' value='${window.ANIMATION_PRESETS[i].name}'></input>
-				<input class='animation_preset_mask' placeholder='transparency mask url' value='${window.ANIMATION_PRESETS[i].mask}'></input>
-				<button name="rotate_button" type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].rotate === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button>
-				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
-			</div>
+			<tr class='animation_preset_row ${isVision ? `visionOptions` : ``}' data-index='${i}'>
+				<td><input class='animation_preset_title' value='${window.ANIMATION_PRESETS[i].name}'></input>
+				<td><input class='animation_preset_mask' placeholder='transparency mask url' value='${window.ANIMATION_PRESETS[i].mask}'></input></td>
+				<td><button name="rotate_button" data-id='rotate' type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].rotate === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button></td>
+				${isVision ? ` <td><button name="apply_darkvision" data-id='darkvision' type="button" role="switch" class="rc-switch ${(window.ANIMATION_PRESETS[i].darkvision === true) ? 'rc-switch-checked' : ''}"><span class="rc-switch-inner"></span></button></td>` : ''}
+				<td><div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div></td>
+			</tr>
 		`)
 
-		let input = row.find('button[name="rotate_button"]');
+	    let input = row.find('button[data-id]');
 
-	  input.click(function(clickEvent) {
-	  	let isChecked = $(clickEvent.currentTarget).hasClass("rc-switch-checked");
-	  	$(clickEvent.currentTarget).toggleClass("rc-switch-checked", !isChecked)
-	   	window.ANIMATION_PRESETS[i].rotate = !isChecked;
-	   	localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
-	  });
+		input.click(function(clickEvent) {
+		  	let isChecked = $(clickEvent.currentTarget).hasClass("rc-switch-checked");
+		  	$(clickEvent.currentTarget).toggleClass("rc-switch-checked", !isChecked)
+		   	window.ANIMATION_PRESETS[i][$(this).attr('data-id')] = !isChecked;
+		   	localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
+		});
 		row.find('input.animation_preset_title').off('change.name').on('change.name', function(){
 			window.ANIMATION_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
 			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
