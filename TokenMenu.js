@@ -2356,7 +2356,7 @@ function create_animation_presets_edit(isVision = false){
 		row.find('.removePreset').off('click.removePreset').on('click.removePreset', function(){
 			window.ANIMATION_PRESETS.splice(i, 1);
 			localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
-			create_animation_presets_edit();
+			create_animation_presets_edit(isVision);
 		})
 		
 		animation_presets.append(row);
@@ -2372,7 +2372,7 @@ function create_animation_presets_edit(isVision = false){
 			rotate: false,
 		});
 		localStorage.setItem('ANIMATION_PRESETS', JSON.stringify(window.ANIMATION_PRESETS));
-		create_animation_presets_edit();
+		create_animation_presets_edit(isVision);
 	});
 	animation_presets.append(addButton);
 
