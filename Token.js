@@ -4187,6 +4187,9 @@ function setTokenLight (token, options) {
 				else{
 					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-animation', '')
 				}
+				if(options.animation.customLightDarkvision != undefined){
+					token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").toggleClass('darkvision-animation', options.animation.customLightDarkvision)
+				}
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").attr('data-custom-animation', 'true')
 				token.parent().parent().find(".aura-element-container-clip[id='" + options.id +"']").css('--custom-mask-image', `url('${parse_img(options.animation.customLightMask)}')`)
 			}
