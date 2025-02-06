@@ -2800,16 +2800,31 @@ function build_source_book_chapter_import_section(sceneSet) {
 	let DDB_EXTRAS = get_ddb_extras();
 	let sceneData = [];
 
-	sceneSet.forEach(async scene => {
+	sceneSet.forEach(scene => {
 		if (scene.uuid in DDB_EXTRAS) {
 			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid]}
 		}
 		else if(scene.uuid.replace('dnd/', '') in DDB_EXTRAS){
 			scene = {...scene, ...DDB_EXTRAS[scene.uuid.replace('dnd/', '')]}
 		}
+
+		
 		sceneData.push(scene);
-		const sceneHtml = await build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+		const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 		sectionHtml.find("ul").append(sceneHtml);
+ 		
+
+ 		const uuidString = scene.uuid.replace('dnd/', '');
+ 		const regEx = new RegExp(`v[0-9]+\/${uuidString}`, "gi");
+		const otherVersions = Object.keys(get_ddb_extras()).filter(d=>d.match(regEx));
+		if(otherVersions.length > 0){
+			for(let i = 0; i<otherVersions.length; i++){
+				scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[otherVersions[i]]}
+				sceneData.push(scene);
+				const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
+				sectionHtml.find("ul").append(sceneHtml);
+			}
+		}
 	});
 
 	const import_chapter = $(`<div class='listing-card__callout-button import-button'>Import Chapter</button>`)
@@ -3029,8 +3044,8 @@ function build_recently_visited_scene_imports_item(recentlyVisited) {
 	return itemHtml;
 }
 
-async function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
-	const logoUrl = await parse_img(logo);
+function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
+	const logoUrl = parse_img(logo);
 	let description = scene.description || "";
 	let tags = scene.tags || [];
 	if (scene.drawings) {
@@ -3042,7 +3057,7 @@ async function build_tutorial_import_list_item(scene, logo, allowMagnific = true
 	}
 	if (scene.grid) tags.push("Grid Aligned");
 	if (scene.player_map_is_video && scene.player_map_is_video !== "0") tags.push("Video Map");
-	if (scene.tokens && Object.keys(scene.tokens).length > 0) tags.push("Tokens");
+	if (scene.tokens && Object.keys(scene.tokens).length > 0 && !tags.includes('2024 Tokens')) tags.push("Tokens");
 	if (scene.dm_map) tags.push("DM Map");
 	if (typeof description !== "string" || description.length === 0 && tags.length > 0) {
 		const tagString = tags
