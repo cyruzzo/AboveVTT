@@ -614,8 +614,8 @@ function showErrorMessage(error, ...extraInfo) {
   let container = $("#above-vtt-error-message");
   if(error.message.length > 300)
     error.message = error.message.substr(0, 300) + "...";
-  if (container.length === 0) {
-
+  if ($('#error-message-stack').length == 0) {
+    $("#above-vtt-error-message").remove();
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
@@ -652,8 +652,9 @@ function showErrorMessage(error, ...extraInfo) {
 function showDiceDisabledWarning(){
   window.diceWarning = 1;
   let container = $("#above-vtt-error-message");
-  let containerHTML = $(`
-      <div id="above-vtt-error-message">
+  container.remove();
+  container = $(`
+      <div id="above-vtt-error-message" class="small-error">
         <h2>DDB dice roller not detected</h2>
         <div id="error-message-details">Dice must be enabled on the character sheet for AboveVTT to function properly.</div>
         <div class="error-message-buttons">
@@ -661,19 +662,16 @@ function showDiceDisabledWarning(){
         </div>
       </div>
     `)
-  if (container.length === 0) {
-    container = containerHTML;
-    $(document.body).append(container);
-  }
-  else {
-    container.html(containerHTML);
-  }
+  
+  $(document.body).append(container);
+
   $("#close-error-button").on("click", removeError);
 }
 
 function showGoogleDriveWarning(){
   let container = $("#above-vtt-error-message");
-  let containerHTML = $(`
+  container.remove();
+  container = $(`
       <div id="above-vtt-error-message">
         <h2>Google Drive Issue</h2>
         <h3 id="error-message">Google has made changes</h3>
@@ -683,13 +681,9 @@ function showGoogleDriveWarning(){
         </div>
       </div>
     `)
-  if (container.length === 0) {
-    container = containerHTML;
-    $(document.body).append(container);
-  }
-  else {
-    container.html(containerHTML);
-  }
+  
+  $(document.body).append(container);
+
   $("#close-error-button").on("click", removeError);
 }
 
