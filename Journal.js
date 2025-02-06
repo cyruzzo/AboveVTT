@@ -1537,29 +1537,31 @@ class JournalManager{
             	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/:\s(?<!left:\s?)/g);
-                parts[1] = parts[1].split(/,\s(?![^(]*\))/gm);
-                for (let p in parts[1]) {
-                	parts[1][p] = parts[1][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
-                	let spellName = (parts[1][p].startsWith('<a')) ? $(parts[1][p]).text() : parts[1][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
+                let parts = input.split(/(:\s(?<!left:\s?)|:(?<!left:\s?)<\/strong>(\s)?)/g);
+                let i = parts.length - 1;
+                parts[i] = parts[i].split(/,\s(?![^(]*\))/gm);
+                for (let p in parts[i]) {
+                	parts[i][p] = parts[i][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
+                	let spellName = (parts[i][p].startsWith('<a')) ? $(parts[i][p]).text() : parts[i][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 
-                	if(parts[1][p].startsWith('<') || parts[1][p].startsWith('[spell]') ){
-						parts[1][p] = parts[1][p]
+                	if(parts[i][p].startsWith('<') || parts[i][p].startsWith('[spell]') ){
+						parts[i][p] = parts[i][p]
                             .replace(/^/gm, ``)
                             .replace(/( \(|(?<!\))$)/gm, '');
                 	}
-                   	else if(parts[1][p] && typeof parts[1][p] === 'string') {
-                        parts[1][p] = parts[1][p].split('<')[0]
+                   	else if(parts[i][p] && typeof parts[i][p] === 'string') {
+                        parts[i][p] = parts[i][p].split('<')[0]
                             .replace(/^/gm, `[spell]`)
                             .replace(/( \(|(?<!\))$)/gm, '[/spell]');
                     }
 
                     if(eachNumberFound){
-                    	parts[1][p] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${parts[1][p]}</span>`
+                    	parts[i][p] = `<span class="add-input each" data-number="${eachNumberFound}" data-spell="${spellName}">${parts[i][p]}</span>`
                     }
                 }
-                parts[1] = parts[1].join(', ');
-                input = parts.join(': ');
+
+                parts[i] = parts[i].join(', ');
+               	input = parts.join('');
                 if(slotsNumberFound){
                 	input = `<span class="add-input slots" data-number="${slotsNumberFound}" data-spell="${spellLevelFound}">${input}</span>`
                 }
