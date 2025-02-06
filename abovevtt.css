@@ -2781,9 +2781,7 @@ button.roll-button-mod.minus {
     top: 0;
     max-height: 100%;
     overflow: auto;
-    left: 0;
     right: 0;
-    margin: auto;
     width: 60%;
     min-width: 500px;
     font-size: 16px;
@@ -2791,8 +2789,20 @@ button.roll-button-mod.minus {
     border-radius: 5px;
     padding: 10px 50px;
     z-index: 1000000000000;
-    box-shadow: #5c7080 0px 8px 24px;
-    background: #f9f9f9;
+    box-shadow: 2px 2px 5px 0px #000000;
+    background: #ffffffcf;
+    backdrop-filter: blur(15px);
+    left: calc(50% - 160px);
+    transform:translateX(-50%);
+}
+#above-vtt-error-message.small-error{
+    width: 10%;
+    border-radius:15px;
+    top:10px;
+    padding:10px;
+}
+#above-vtt-error-message.small-error p{
+    margin:10px
 }
 #above-vtt-error-message .above-vtt-error-message-header {
     margin: 20px;

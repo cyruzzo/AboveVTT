@@ -2300,23 +2300,20 @@ class MessageBroker {
 
 	showDisconnectWarning(){
 	  let container = $("#above-vtt-error-message");
-	  let containerHTML = $(`
-	      <div id="above-vtt-error-message">
+	  container.remove();
+	  container = $(`
+	      <div id="above-vtt-error-message" class="small-error">
 	        <h2>You have Disconnected</h2>
-	        <div id="error-message-details"><p>You have disconnected from the AboveVTT websocket ${window.reconnectAttemptAbovews} times.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program. It may also happen if the tab was in the background too long</p></div>
+	        <div id="error-message-details"><p>You have disconnected from the AboveVTT websocket ${window.reconnectAttemptAbovews} times.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program. It may also happen if the tab was in the background too long</p><p>If disconnecting due to an unstable connection you can enable auto reconnect in settings. Note: Auto reconnect may cause tokens to reset or desync.</p></div>
 	        <div class="error-message-buttons">
 	  		  	<button id="reconnect-button">Reconnect</button>
 	          <button id="close-error-button">Exit</button>
 	        </div>
 	      </div>
 	    `)
-	  if (container.length === 0) {
-	    container = containerHTML;
-	    $(document.body).append(container);
-	  }
-	  else {
-	    container.html(containerHTML);
-	  }
+	  
+    $(document.body).append(container);
+
 	  $("#close-error-button").on("click", function(){
 	  	window.close();
 	  });

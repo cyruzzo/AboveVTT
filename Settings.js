@@ -742,8 +742,9 @@ function init_settings() {
 					if(name == 'autoReconnect' && newValue == true){
 
 					  let container = $("#above-vtt-error-message");
-					  let containerHTML = $(`
-					      <div id="above-vtt-error-message">
+					  container.remove();
+					  container = $(`
+					      <div id="above-vtt-error-message" class="small-error">
 					        <h2>Enabling Auto Reconnect</h2>
 					        <div id="error-message-details"><p>Warning: Enabling this setting may cause desync or tokens to reset for everyone due to missed messages on disconnect.</p><p>It is only recommended to enable this if your connection is unstable causing many disconnects</p></div>
 					        <div class="error-message-buttons">
@@ -752,13 +753,9 @@ function init_settings() {
 					        </div>
 					      </div>
 					    `)
-					  if (container.length === 0) {
-					    container = containerHTML;
-					    $(document.body).append(container);
-					  }
-					  else {
-					    container.html(containerHTML);
-					  }
+					 
+					  $(document.body).append(container);
+					 
 					  $("#cancel-auto-button").on("click", function(){
 					  	$(`button.rc-switch[name='${name}']`).removeClass('rc-switch-checked');
 					  	container.remove();
