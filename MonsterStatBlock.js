@@ -1174,10 +1174,12 @@ function display_tooltip(tooltipJson, container, clientY) {
         console.log("container", container)
         const tooltipHtmlString = tooltipJson.Tooltip;
 
+
         build_and_display_sidebar_flyout(clientY, function (flyout) {
             flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
             flyout.addClass("tooltip-flyout")
             const tooltipHtml = $(tooltipHtmlString);
+            add_journal_roll_buttons(tooltipHtml);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
             sendToGamelogButton.css({ "float": "right" });
