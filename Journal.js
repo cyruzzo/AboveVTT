@@ -1418,7 +1418,7 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
-        let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|\n|<strong>)/g);
         lines = lines.map((line, li) => {
             let input = line;
             input = input.replace(/&nbsp;/g,' ')
@@ -1544,12 +1544,7 @@ class JournalManager{
                 	parts[i][p] = parts[i][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
                 	let spellName = (parts[i][p].startsWith('<a')) ? $(parts[i][p]).text() : parts[i][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 
-                	if(parts[i][p].startsWith('<') || parts[i][p].startsWith('[spell]') ){
-						parts[i][p] = parts[i][p]
-                            .replace(/^/gm, ``)
-                            .replace(/( \(|(?<!\))$)/gm, '');
-                	}
-                   	else if(parts[i][p] && typeof parts[i][p] === 'string') {
+                   	if( !(parts[i][p].startsWith('<') || parts[i][p].startsWith('[spell]')) && parts[i][p] && typeof parts[i][p] === 'string') {
                         parts[i][p] = parts[i][p].split('<')[0]
                             .replace(/^/gm, `[spell]`)
                             .replace(/( \(|(?<!\))$)/gm, '[/spell]');

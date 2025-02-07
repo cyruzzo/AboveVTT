@@ -85,37 +85,78 @@ function scan_monster(target, stats, tokenId) {
  */
 function add_ability_tracker_inputs_on_each(target, tokenId){
 	const token = window.TOKEN_OBJECTS[tokenId];
-	target.find(".mon-stat-block__description-block-content > p").each(function() {
-		let currentElement = $(this).clone();
-		if (currentElement.find(".injected-input").length == 0) {
-			const matchForEachSlot = currentElement.text().match(/([0-9])\/Day each:/i)
-			if (matchForEachSlot){
-				let numberFound = parseInt(matchForEachSlot[1]);
-				$(this).children().each(function (indexInArray, valueOfElement) { 
-					let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
-					// token already has this ability tracked
-					if (token.options.abilityTracker?.[spellName] >= 0){
-						numberFound = token.options.abilityTracker[spellName]
-					}else{
-						token.track_ability(spellName, numberFound)
-					}
-					$(valueOfElement).after(
-						createCountTracker(
-							token,
-							spellName, 
-							numberFound,
-							 "",
-							 ""
+	if(target.find('.add-input').length)
+		return;
+	if(target.find('strong:first-of-type').text().match(/at will:|\/day each/gi)){
+		target.find('strong').each(function(){
+			let currentElement = $(this).nextUntil('strong').addBack();
+			if (currentElement.find(".injected-input").length == 0) {
+				const matchForEachSlot = currentElement.text().match(/([0-9])\/Day each:|([0-9])\/Day:/gi)
+
+				if (matchForEachSlot){
+					let numberFound = parseInt(matchForEachSlot[0]);
+					$(this).nextUntil('strong').each(function (indexInArray, valueOfElement) { 
+						let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
+						if(spellName == '')
+							return;
+						// token already has this ability tracked
+						if (token.options.abilityTracker?.[spellName] >= 0){
+							numberFound = token.options.abilityTracker[spellName]
+						}else{
+							token.track_ability(spellName, numberFound)
+						}
+						$(valueOfElement).after(
+							createCountTracker(
+								token,
+								spellName, 
+								numberFound,
+								 "",
+								 ""
+							)
 						)
-					)
-					spellName = null
-				});			
+						spellName = null
+					});			
+				}
+				
 			}
-			
-		}
-		// terminate the clones reference, overkill but rather be safe when it comes to memory
-		currentElement = null
-	});	
+			// terminate the clones reference, overkill but rather be safe when it comes to memory
+			currentElement = null
+		})
+	}
+	else{
+		target.find(".mon-stat-block__description-block-content > p").each(function() {
+			let currentElement = $(this).clone();
+			if (currentElement.find(".injected-input").length == 0) {
+				const matchForEachSlot = currentElement.text().match(/([0-9])\/Day each:/i)
+				if (matchForEachSlot){
+					let numberFound = parseInt(matchForEachSlot[1]);
+					$(this).children().each(function (indexInArray, valueOfElement) { 
+						let spellName = $(valueOfElement).clone().text().replace(/\s/g, "")
+						// token already has this ability tracked
+						if (token.options.abilityTracker?.[spellName] >= 0){
+							numberFound = token.options.abilityTracker[spellName]
+						}else{
+							token.track_ability(spellName, numberFound)
+						}
+						$(valueOfElement).after(
+							createCountTracker(
+								token,
+								spellName, 
+								numberFound,
+								 "",
+								 ""
+							)
+						)
+						spellName = null
+					});			
+				}
+				
+			}
+			// terminate the clones reference, overkill but rather be safe when it comes to memory
+			currentElement = null
+		});
+	}
+		
 }
 
 function rebuild_ability_trackers(target, tokenId){
@@ -161,6 +202,7 @@ function add_ability_tracker_inputs(target, tokenId) {
 	// However, it seems to work just fine if we append the input at the end instead of inline.
 
 	const processInput = function(element, regex, descriptionPostfix, includeMatchingDescription = true) {
+		
 		const foundMatches = element.clone().text().match(regex); // matches `(1 slot)`, `(4 slots)`, etc
 		if (foundMatches !== undefined && foundMatches != null && foundMatches.length > 1) {
 			let numberFound = parseInt(foundMatches[1]);
@@ -178,11 +220,15 @@ function add_ability_tracker_inputs(target, tokenId) {
 				element.append(input);
 			}
 		}
+		
 	}
 
 	// //Spell Slots, or technically anything with 'slot'... might be able to refine the regex a bit better...
 	target.find("p").each(function() {
 		let element = $(this);
+		if(element.find('strong').text().match(/at will|day each/gi) || element.find('.add-input').length)
+			return;
+
 		if ($(this).find(".injected-input").length === 0) {
 			processInput(element, /\(([0-9]) slots?\)/, "slots remaining")
 			processInput(element, /\(([0-9])\/Day\)/i, "remaining")
