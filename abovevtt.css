@@ -12104,7 +12104,7 @@ div#playlistFields {
     text-decoration: underline solid #1b9af0
 }
 
-@media print,(min-width: 768px) {
+@media print,(min-width: 1480px) {
     .mon-stat-block-2024 {
         -webkit-column-count:2;
         column-count: 2
