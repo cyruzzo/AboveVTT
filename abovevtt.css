@@ -12170,6 +12170,344 @@ div#playlistFields {
     gap: .625rem
 }
 
+:is(.tooltip) .stat-block {
+    --sb-monster-header-underline: #7a3c2f;
+    border: 1px solid #a7a3a0;
+    background-color: #FEFCEF;
+    padding: 10px;
+    position: relative;
+    background-repeat: no-repeat;
+    box-shadow: 0 5px 8px 0 var(--sb-stat-block-shadow,#AAA);
+    background-position: top;
+    background: var(--sb-stat-block-bg-override,#f6f3ee);
+    font-size: 16px;
+    line-height: 19.6px;
+    border-radius: 8px;
+    outline: 1px solid #a7a3a0;
+    outline-offset: -4px;
+    font-family: var(--sb-stat-block-font,Roboto,Helvetica,sans-serif);
+    -webkit-columns: 2 384px;
+    columns: 2 384px
+}
+
+:is(.tooltip) .stat-block:is(h2,h3,h4,h5) {
+    font-size: 22px;
+    font-family: "Roboto Condensed";
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-right: 8px;
+    -webkit-margin-after: 0;
+    margin-block-end:0}
+
+:is(.tooltip) .stat-block:is(h2,h3,h4,h5)::after {
+    content: "";
+    display: block;
+    width: 100%;
+    margin: 2px auto 8px;
+    height: 1px;
+    background: var(--sb-monster-header-underline,#7a3c2f);
+    -webkit-column-span: all;
+    column-span: all
+}
+
+:is(.tooltip) .stat-block p {
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 0
+}
+
+:is(.tooltip) .stat-block p+p {
+    margin-top: 10px
+}
+
+:is(.tooltip) .stat-block p:first-of-type {
+    margin-top: 0;
+    font-style: italic;
+    opacity: .7
+}
+
+:is(.tooltip) .stat-block p:first-of-type+p {
+    margin-top: 16px
+}
+
+:is(.tooltip) .stat-block:is(ol,ul,dl) {
+    margin-bottom: 0;
+    padding-top: 0
+}
+
+:is(.tooltip) .stat-block .monster-header {
+    padding-top: 4px;
+    letter-spacing: .35px;
+    font-weight: 500;
+    color: var(--sb-monster-header-color,#5b160c);
+    font-size: var(--sb-monster-trait-header-size,18px);
+    font-family: var(--sb-monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
+    border-bottom: 2px solid var(--sb-monster-header-underline,#7a3c2f)
+}
+
+:is(.tooltip) .stat-block .monster-header+p {
+    -webkit-column-break-before: avoid;
+    break-before: avoid
+}
+
+:is(.tooltip) .stat-block .stats {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 10px
+}
+
+:is(.tooltip) .stat-block .stats+p {
+    margin-top: 10px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves {
+    --sb-theme-table-row-color: transparent;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    line-height: 24px;
+    background: revert;
+    border: 0;
+    font-size: 16px;
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves.physical {
+    --sb-stats-score: #ede6d9;
+    --sb-stats-mods: #ded4cc;
+    --sb-stats-score-hover: #997f6d7d;
+    --sb-stats-mods-hover: #996d727d
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves.mental {
+    --sb-stats-score: #d8dad1;
+    --sb-stats-mods: #d0caca;
+    --sb-stats-score-hover: #6d8d997d;
+    --sb-stats-mods-hover: #756d997d
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead {
+    border: 0;
+    height: revert;
+    min-height: 45px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead tr {
+    height: revert;
+    min-height: 45px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead tr th {
+    padding: 5px 2px 0!important;
+    background: inherit;
+    color: inherit;
+    vertical-align: bottom;
+    border: 0;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 14px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody {
+    border: 0
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr {
+    background-color: var(--sb-theme-table-row-color,#fdfdfd);
+    color: var(--sb-theme-table-header-fg-color,#222)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover {
+    background-color: var(--sb-stats-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover *:nth-child(-n+3) {
+    background-color: var(--sb-stats-score-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover *:nth-child(n+3) {
+    background-color: var(--sb-stats-mods-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr *:nth-child(-n+3) {
+    background-color: var(--sb-stats-score)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr *:nth-child(n+3) {
+    background-color: var(--sb-stats-mods)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody th {
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 0;
+    padding-left: 6px;
+    font-size: 16px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody td {
+    min-width: revert;
+    padding: 5px 10px!important;
+    border: 0;
+    font-size: 16px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tr:is(th,td) {
+    transition: .3s
+}
+
+:is(.tooltip) .stat-block p:nth-of-type(2) strong+strong {
+    margin-left: 30px
+}
+
+.summoning-creatures-table,.compendium-left-aligned-table {
+    width: auto
+}
+
+.summoning-creatures-table td,.compendium-left-aligned-table td {
+    text-align: left!important;
+    padding: 8px 20px!important
+}
+
+.summoning-creatures-table td:nth-child(1),.compendium-left-aligned-table td:nth-child(1) {
+    vertical-align: middle!important;
+    padding: 8px 20px!important;
+    line-height: 1.4!important
+}
+
+.compendium-left-aligned-table {
+    width: 100%!important
+}
+
+.compendium-left-aligned-table th:nth-child(1) {
+    text-align: center!important;
+    width: 120px!important
+}
+
+.spell-level-column {
+    width: 5%
+}
+
+:is(.tooltip) th.table-column-width--10pct {
+    width: 10%
+}
+
+:is(.tooltip) th.table-column-width--15pct {
+    width: 15%
+}
+
+:is(.tooltip) th.table-column-width--20pct {
+    width: 20%
+}
+
+:is(.tooltip) .table-compendium tr>:is(th,td) {
+    padding: 8px 16px!important
+}
+
+:is(.tooltip) table.table-compendium>thead>tr {
+    background-color: var(--sb-table-header-bg-color,#FDFDFD)!important;
+    color: var(--sb-table-header-fg-color,#222)!important
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:nth-child(odd) {
+    background-color: var(--sb-table-row-bg-dark,#faf8f7)!important;
+    color: var(--sb-table-row-fg-dark,#222)
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:nth-child(even),:is(.tooltip) table.table-compendium tbody tr:nth-child(even) {
+    background-color: var(--sb-table-row-bg-light,#FDFDFD);
+    color: var(--sb-table-row-fg-light,#222)
+}
+
+:is(.tooltip) table thead th {
+    background: inherit;
+    color: inherit
+}
+
+:is(.tooltip) table.table-compendium tr {
+    transition: .3s
+}
+
+:is(.tooltip) table.table-compendium tr td {
+    vertical-align: middle
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:hover {
+    background-color: var(--sb-table-row-bg-hover,#e3f4eb)!important;
+    color: var(--sb-table-row-fg-hover,#222)
+}
+
+:is(.tooltip) table.table--weapons tr>:is(th,td):nth-child(odd) {
+    text-align: left!important
+}
+
+:is(.tooltip) table.table--equipment tr>:is(th,td):first-child {
+    width: 50%;
+    text-align: left!important
+}
+
+:is(.tooltip) .table--generic-dice tr>:is(th,td):first-child,:is(.tooltip) .table--generic-dice-first tr>:is(th,td):first-child,:is(.tooltip) .table--generic-dice-col2 tr>:is(th,td):nth-child(2),:is(.tooltip) .table--generic-dice-col3 tr>:is(th,td):nth-child(3),:is(.tooltip) .table--generic-dice-col4 tr>:is(th,td):nth-child(4),:is(.tooltip) .table--generic-dice-col5 tr>:is(th,td):nth-child(5),:is(.tooltip) .table--generic-dice-last tr>:is(th,td):last-child {
+    width: 12%;
+    font-weight: bold
+}
+
+:is(.tooltip) .table--generic-dice:is(th,td):nth-child(2) {
+    text-align: left
+}
+
+:is(.tooltip) .table--left-all tr>:is(th,td),:is(.tooltip) .table--left-first tr>:is(th,td):first-child,:is(.tooltip) .table--left-col2 tr>:is(th,td):nth-child(2),:is(.tooltip) .table--left-col3 tr>:is(th,td):nth-child(3),:is(.tooltip) .table--left-col4 tr>:is(th,td):nth-child(4),:is(.tooltip) .table--left-col5 tr>:is(th,td):nth-child(5),:is(.tooltip) .table--left-last tr>:is(th,td):last-child {
+    text-align: left
+}
+
+:is(.tooltip) table caption {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    font-family: Roboto,Helvetica,sans-serif;
+    line-height: 1.3
+}
+
+:is(.tooltip) table caption>:is(h2,h3,h4,h5) {
+    font-size: 16px!important;
+    font-weight: 700!important
+}
+
+:is(.tooltip) table caption>:is(h2,h3)::after {
+    content: none!important
+}
+
+:is(.tooltip) .table-compendium.table--sub-features thead th:first-of-type {
+    width: 15%
+}
+
+:is(.tooltip) .table-compendium.table--sub-features:is(thead,tbody) tr>:is(th,td):nth-child(2) {
+    text-align: left!important
+}
+
+:is(.tooltip) .table--features tr>:is(th,td):nth-child(3) {
+    padding-left: 10px!important;
+    text-align: left!important;
+    width: 20%
+}
+
+:is(.tooltip) .table--features tr>:is(th,td):is(:first-child,:nth-child(2),:nth-child(n+4)) {
+    padding-left: 5px 10px!important;
+    min-width: 0!important
+}
+
+:is(.tooltip) tbody th {
+    padding-left: 20px
+}
+
+:is(.tooltip) a.sourcebook {
+    font-style: italic
+}
 .stat-table {
     margin: 0 0 .5rem
 }
