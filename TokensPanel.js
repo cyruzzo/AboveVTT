@@ -3907,7 +3907,7 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
              <div class="tooltip tooltip-spell">
                <div class="tooltip-header">
                        <div class="tooltip-header-text">
-                           <div class="tooltip-header-title">${parts[parts.length-2].replace(/^([0-9]+)?\-/gi, '').replace('-', ' ')}</div>
+                           <div class="tooltip-header-title">${item.name}</div>
                        </div>
                        <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
                            ${type.replaceAll(/s$/gi, '').replace('-', ' ')}

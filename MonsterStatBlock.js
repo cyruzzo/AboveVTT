@@ -1137,7 +1137,7 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
-const fetch_tooltip = mydebounce(async (dataTooltipHref, callback) => {
+const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
@@ -1166,7 +1166,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, callback) => {
               <div class="tooltip tooltip-spell">
                 <div class="tooltip-header">
                         <div class="tooltip-header-text">
-                            <div class="tooltip-header-title">${parts[parts.length-2].replace(/^([0-9]+)?\-/gi, '').replace('-', ' ')}</div>
+                            <div class="tooltip-header-title">${name}</div>
                         </div>
                         <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
                             ${type.replaceAll(/s$/gi, '').replace('-', ' ')}
@@ -1302,10 +1302,10 @@ function add_stat_block_hover(statBlockContainer) {
     tooltip.hover(function (hoverEvent) {
         if (hoverEvent.type === "mouseenter") {
             let dataTooltipHref = $(hoverEvent.currentTarget).attr("data-moreinfo") ? $(hoverEvent.currentTarget).attr("data-moreinfo") : $(hoverEvent.currentTarget).attr("data-tooltip-href");
-           
+            let name = $(hoverEvent.currentTarget).text()
 
             if (typeof dataTooltipHref === "string") {
-                fetch_tooltip(dataTooltipHref, function (tooltipJson) {
+                fetch_tooltip(dataTooltipHref, name, function (tooltipJson) {
 
                     let container = $(hoverEvent.target).closest(".sidebar-flyout");
                     if(container.find('.tooltip-header').length === 0){
