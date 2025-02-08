@@ -3097,7 +3097,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     }
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
-    window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
+    window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, async function (response, errorType) {
         clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
@@ -3108,9 +3108,11 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
                 .map(monsterData => SidebarListItem.Monster(monsterData))
                 .sort(SidebarListItem.sortComparator);
             encounter_monster_items[clickedItem.encounterId] = monsterItems;
-            update_monster_item_cache(monsterItems); // let's cache these so we won't have to fetch them again if the user places them on the scene
-            inject_encounter_monsters();
-            callback(true);
+            update_monster_item_cache(monsterItems, function(){
+                inject_encounter_monsters();
+                callback(true);
+            }); // let's cache these so we won't have to fetch them again if the user places them on the scene
+            
         }
     });
 }
@@ -3838,7 +3840,7 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
         return;
     }
     console.log("fetch_and_cache_scene_monster_items calling fetch_monsters with ids: ", monsterIds);
-    fetch_monsters(monsterIds, function (response) {
+    fetch_monsters(monsterIds, async function (response) {
         if (response !== false) {
             update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
         }
@@ -3851,30 +3853,91 @@ const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
-                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
-            }
-            if (callback) {
-                callback(open5e);
+                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)), function(){callback(open5e)});
             }
         }, open5e);
-    }
+    }   
     else{
         const cachedIds = Object.keys(cached_monster_items);
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
-                update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
+                update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)), function(){callback()});
             }
-            if (callback) {
-                callback();
-            }
+ 
         });
     }
     
 });
 
-function update_monster_item_cache(newItems) {
-    newItems.forEach(item => cached_monster_items[item.monsterData.id] = item);
+function update_monster_item_cache(newItems, callback=()=>{}) {
+   
+   const promise = new Promise((resolve, reject) =>{
+        newItems.forEach(async (item, index, array) => {
+
+           
+            if (window.tooltipCache === undefined) {
+                window.tooltipCache = {};
+            }
+            const parts = item.monsterData.url.split("/");
+            const id = parseInt(parts[parts.length-1]);
+            const type = parts[parts.length-2];
+
+            const typeAndId = `${type}/${id}`;
+            const existingJson = window.tooltipCache[typeAndId];
+            if (existingJson !== undefined){
+                let initiative = $(window.tooltipCache[typeAndId].Tooltip)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+                if(initiative.length>0){
+                  initArray = initiative.trim().split(' ');
+                  const initMod = initArray[0];
+                  const initScore = initArray[1];
+                  item.monsterData.initiativeMod = initMod;
+                  item.monsterData.initiativeScore = initScore;
+                  console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
+                }
+
+                cached_monster_items[item.monsterData.id] = item 
+                return;
+            }
+            
+              
+            let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}/more-info`);
+
+            moreInfo = `
+             <div class="tooltip tooltip-spell">
+               <div class="tooltip-header">
+                       <div class="tooltip-header-text">
+                           <div class="tooltip-header-title">${parts[parts.length-2].replace(/^([0-9]+)?\-/gi, '').replace('-', ' ')}</div>
+                       </div>
+                       <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
+                           ${type.replaceAll(/s$/gi, '').replace('-', ' ')}
+                       </div>
+                   </div>
+             <div class="tooltip-body">
+                ${$(moreInfo).find('.more-info-body').html()}
+             </div>
+            </div>`
+
+            const toolTipJson = {Tooltip: moreInfo}
+            window.tooltipCache[typeAndId] = toolTipJson;
+
+            let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+                if(initiative.length>0){
+                initArray = initiative.trim().split(' ');
+                const initMod = initArray[0];
+                const initScore = initArray[1];
+                item.monsterData.initiativeMod = initMod;
+                item.monsterData.initiativeScore = initScore;
+                console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
+            }
+            cached_monster_items[item.monsterData.id] = item 
+            if(index === array.length-1) {
+              resolve();
+            }
+        });
+    });
+
+    promise.then(function(){callback()});
 }
 function update_open5e_item_cache(newItems) {
     newItems.forEach(item => {

@@ -216,6 +216,15 @@ function build_monster_stat_block(statBlock, token) {
                         ${statBlock.data.armorClassDescription}
                     </span>
                   </span>
+                  ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                  <span class="mon-stat-block__attribute-value">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        ${statBlock.data.initiativeScore}
+                    </span>
+                  </span>` : ''}         
                 </div>
                 <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                   <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -495,6 +504,15 @@ function build_monster_copy_stat_block(statBlock) {
                         ${statBlock.data.armorClassDescription}
                     </span>
                   </span>
+                  ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                  <span class="mon-stat-block__attribute-value">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        ${statBlock.data.initiativeScore}
+                    </span>
+                  </span>` : ''}  
                 </div>
                 <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                   <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>

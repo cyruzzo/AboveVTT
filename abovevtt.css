@@ -11934,6 +11934,292 @@ div#playlistFields {
     text-decoration: underline
 }
 
+
+.mon-stat-block-2024 {
+    background-image: none!important;
+    background: #f5f3ee!important;
+    border: 1px solid #afa47a;
+    outline: 1px solid #afa47a;
+    outline-offset: -0.25rem;
+    border-radius: .5rem
+}
+
+.mon-stat-block-2024 {
+    background: url("../images/mon-summary/stat-block-top-texture.png"),url("../images/mon-summary/paper-texture.png");
+    background-size: 100% auto;
+    background-position: top center;
+    background-repeat: no-repeat,repeat;
+    position: relative;
+    box-shadow: 0 0 5px #979AA4;
+    border: 1px solid #d4d0ce;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: "Scala Sans Offc",Roboto,Helvetica,sans-serif;
+    font-size: 15px
+}
+
+.mon-stat-block-2024::before,.mon-stat-block-2024::after {
+    content: "";
+    display: block;
+    background: url("../images/mon-summary/stat-bar-book.png") center;
+    background-size: 100% 100%;
+    height: 6px;
+    position: absolute;
+    left: -3px;
+    right: -3px
+}
+
+.mon-stat-block-2024::before {
+    top: -3px
+}
+
+.mon-stat-block-2024::after {
+    bottom: -3px
+}
+
+.mon-stat-block-2024__separator-img {
+    max-width: 100%;
+    min-height: 10px
+}
+
+.mon-stat-block-2024__header {
+    line-height: 1.1
+}
+
+.mon-stat-block-2024__name {
+    font-weight: bold;
+    font-size: 34px;
+    font-family: MrsEavesSmallCaps,Roboto,Helvetica,sans-serif;
+    color: #822000
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link {
+    color: #822000
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link:hover,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:visited,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:active {
+    color: #822000
+}
+
+.mon-stat-block-2024__meta {
+    font-style: italic;
+    margin-bottom: 15px
+}
+
+.mon-stat-block-2024__attribute,.mon-stat-block-2024__feature {
+    margin: 5px 0;
+    color: #822000;
+    line-height: 1.2
+}
+
+.mon-stat-block-2024__attribute-label,.mon-stat-block-2024__feature-label {
+    font-weight: bold
+}
+
+.mon-stat-block-2024__feature-label {
+    font-style: italic
+}
+
+.mon-stat-block-2024__stat-block .ability-block {
+    color: #822000;
+    margin: 0
+}
+
+.mon-stat-block-2024__tidbit {
+    margin: 5px 0;
+    color: #822000;
+    line-height: 1.2
+}
+
+.mon-stat-block-2024__tidbit-label {
+    font-weight: bold
+}
+
+.mon-stat-block-2024__tidbit-container {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex
+}
+
+.mon-stat-block-2024__tidbit-spacer {
+    width: 40px;
+    min-width: 10px
+}
+
+.mon-stat-block-2024__description-blocks {
+    margin-top: 20px
+}
+
+.mon-stat-block-2024__description-block-heading,.mon-stat-block-2024__description-block h3 {
+    border-bottom: 1px solid #822000;
+    color: #822000;
+    font-size: 24px;
+    font-weight: normal;
+    font-family: "Scala Sans Offc",Roboto,Helvetica,sans-serif;
+    line-height: 1.4;
+    margin-top: 20px;
+    margin-bottom: 15px
+}
+
+.mon-stat-block-2024__description-block p {
+    margin-bottom: 10px
+}
+
+.mon-stat-block-2024 .tooltip-hover {
+    font-weight: bold!important
+}
+
+.mon-stat-block-2024 .tooltip-hover,.mon-stat-block-2024 .tooltip-hover:hover,.mon-stat-block-2024 .tooltip-hover:focus,.mon-stat-block-2024 .tooltip-hover:active,.mon-stat-block-2024 .tooltip-hover:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #47D18C
+}
+
+.mon-stat-block-2024 .tooltip-hover.spell-tooltip,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:active,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #704cd9
+}
+
+.mon-stat-block-2024 .tooltip-hover.monster-tooltip,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:active,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #bc0f0f
+}
+
+.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:active,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #0f5cbc
+}
+
+.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:active,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #1b9af0
+}
+
+@media print,(min-width: 768px) {
+    .mon-stat-block-2024 {
+        -webkit-column-count:2;
+        column-count: 2
+    }
+}
+
+@media print {
+    .mon-stat-block-2024 {
+        box-shadow: none;
+        background: 0
+    }
+
+    .mon-stat-block-2024::before {
+        border-top: 6px solid #999
+    }
+
+    .mon-stat-block-2024::after {
+        border-bottom: 6px solid #999
+    }
+}
+
+.mon-stat-block-2024::before,.mon-stat-block-2024::after {
+    display: none
+}
+
+.mon-stat-block-2024__name {
+    border-bottom: .063rem solid #5b160c;
+    font-family: "Scala Sans Sc Offc",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 1.75rem;
+    -webkit-column-span: all;
+    column-span: all;
+    margin-bottom: .45rem
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:visited,.mon-stat-block-2024__attribute,.mon-stat-block-2024__tidbit,.mon-stat-block-2024__description-block-heading {
+    color: #5b160c
+}
+
+.mon-stat-block-2024__description-block-heading {
+    border-bottom: .063rem solid #5b160c;
+    font-size: 1.25rem;
+    font-family: "Scala Sans Sc Offc",Roboto,Helvetica,sans-serif;
+    font-weight: normal;
+    line-height: 1.4;
+    margin-top: 1.25rem;
+    margin-bottom: .938rem
+}
+
+.mon-stat-block-2024__meta {
+    color: #68747b;
+    margin-bottom: .938rem;
+    margin-top: .188rem
+}
+
+.mon-stat-block-2024__stats {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    gap: .625rem
+}
+
+.stat-table {
+    margin: 0 0 .5rem
+}
+
+.stat-table,.stat-table thead,.stat-table tr,.stat-table th,.stat-table tbody,.stat-table td {
+    border: 0
+}
+
+.stat-table td {
+    padding: .125rem .5rem
+}
+
+.stat-table thead tr th {
+    background: inherit;
+    color: #68747b!important;
+    font-weight: 400;
+    padding: .3125rem .125rem 0;
+    text-transform: uppercase;
+    font-family: Roboto,Helvetica,sans-serif;
+    font-size: .6875rem
+}
+
+.stat-table tbody tr {
+    border-top: .0625rem solid #fff;
+    border-bottom: .0625rem solid #fff;
+    color: #5b160c;
+    text-align: center;
+    font-size: .938rem
+}
+
+.stat-table tbody tr th {
+    padding: initial
+}
+
+.stat-table.physical tbody tr th,.stat-table.physical tbody tr td {
+    background: #ede6d9
+}
+
+.stat-table.mental tbody tr th,.stat-table.mental tbody tr td {
+    background: #d8dad1
+}
+
+.stat-table.physical td.modifier {
+    background: #ded4cc
+}
+
+.stat-table.mental td.modifier {
+    background: #d0caca
+}
+
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
