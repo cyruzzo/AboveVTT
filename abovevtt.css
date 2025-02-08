@@ -11106,6 +11106,833 @@ div#playlistFields {
 /***** END NEW STAT BLOCKS ****/
 
 
+/***** MORE INFO STYLES *****/
+        
+.ddb-statblock {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: -10px
+}
+
+.ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%;
+    padding: 10px
+}
+
+.scenes-panel-add-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding-right: 6px;
+    padding-left: 4px;
+    justify-content: space-between;
+    width: 100%;
+}
+@media(min-width: 475px) {
+    .ddb-statblock-item {
+        -webkit-flex:33.33333%;
+        -ms-flex: 33.33333%;
+        flex: 33.33333%
+    }
+}
+
+@media(min-width: 600px) {
+    .ddb-statblock-item {
+        -webkit-flex:25%;
+        -ms-flex: 25%;
+        flex: 25%
+    }
+}
+
+.ddb-statblock-item-label,.ddb-statblock-item-value {
+    color: #242527;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden
+}
+
+.ddb-statblock-item-label {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase
+}
+
+.ddb-statblock-item-value {
+    font-size: 16px
+}
+
+.ddb-statblock-spell .ddb-statblock-item-value {
+    text-overflow: initial;
+    white-space: initial;
+    overflow: initial
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item {
+    text-align: center
+}
+
+@media(min-width: 420px) {
+    .ddb-statblock-ability-scores .ddb-statblock-item {
+        -webkit-flex:33.33333%;
+        -ms-flex: 33.33333%;
+        flex: 33.33333%
+    }
+}
+
+@media(min-width: 740px) {
+    .ddb-statblock-ability-scores .ddb-statblock-item {
+        -webkit-flex:16.66667%;
+        -ms-flex: 16.66667%;
+        flex: 16.66667%
+    }
+}
+
+.ddb-top-result .ddb-statblock-ability-scores .ddb-statblock-item {
+    -webkit-flex: 33.33333%;
+    -ms-flex: 33.33333%;
+    flex: 33.33333%
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label::before {
+    content: '';
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    background-size: cover;
+    background-position: center
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.strength::before {
+    background-image: url("../images/icons/abilities/strength.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.dexterity::before {
+    background-image: url("../images/icons/abilities/dexterity.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.constitution::before {
+    background-image: url("../images/icons/abilities/constitution.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.charisma::before {
+    background-image: url("../images/icons/abilities/charisma.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.wisdom::before {
+    background-image: url("../images/icons/abilities/wisdom.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.intelligence::before {
+    background-image: url("../images/icons/abilities/intelligence.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-value .score,.ddb-statblock-ability-scores .ddb-statblock-item-value .modifier {
+    display: inline;
+    font-size: 20px
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-strength .score {
+    color: #bf2225
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-dexterity .score {
+    color: #41474d
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-constitution .score {
+    color: #79614c
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-intelligence .score {
+    color: #f96a3b
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-wisdom .score {
+    color: #879399
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-charisma .score {
+    color: #edb451
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item {
+    -webkit-flex: 1 1 50%;
+    -ms-flex: 1 1 50%;
+    flex: 1 1 50%
+}
+
+@media(min-width: 640px) {
+    .ddb-statblock-monster-stats .ddb-statblock-item {
+        -webkit-flex-basis:25%;
+        -ms-flex-preferred-size: 25%;
+        flex-basis: 25%
+    }
+}
+
+.ddb-top-result .ddb-statblock-monster-stats .ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-label {
+    text-align: center
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .primary,.ddb-statblock-monster-stats .ddb-statblock-item-value .secondary {
+    display: inline
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .primary {
+    font-size: 24px;
+    padding-right: 3px
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .secondary {
+    font-size: 12px;
+    font-weight: 500;
+    white-space: normal
+}
+
+.ddb-top-result .ddb-statblock-monster-info .ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%
+}
+
+.ddb-statblock-monster-info .ddb-statblock-item-value {
+    font-size: 14px;
+    text-overflow: initial;
+    white-space: initial;
+    overflow: initial
+}
+
+.tooltip-header-title{
+    text-transform: capitalize;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    background-color: #1b9af0
+}
+
+.line.height3 {
+    height: 3px
+}
+
+.line.height2 {
+    height: 2px
+}
+
+.line.marginBottom10 {
+    margin-bottom: 10px
+}
+
+.line.marginBottom20,.line.marginbottom20 {
+    margin-bottom: 20px
+}
+
+.line.marginBottom30 {
+    margin-bottom: 30px
+}
+
+.line.marginTop20 {
+    margin-top: 20px
+}
+
+.line.marginTop15 {
+    margin-top: 15px
+}
+
+.line.marginTop10 {
+    margin-top: 10px
+}
+
+.line.character {
+    background-color: #ee8600
+}
+
+.line.rule,.line.compendium {
+    background-color: #47D18C
+}
+
+.line.item,.line.magic-item,.line.gear {
+    background-color: #0f5cbc
+}
+
+.line.monster {
+    background-color: #bc0f0f
+}
+
+.line.spell {
+    background-color: #704cd9
+}
+
+.line.forum {
+    background-color: #979aa4
+}
+
+.line.grey {
+    background-color: #979AA4
+}
+
+.line.vehicle {
+    background-color: #4599E9
+}
+
+.line.muted {
+    background-color: #EDEAE8
+}
+
+
+ .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+    position: relative;
+    top: -10px;
+    background-color: #fff;
+    border-left: 1px solid #ECE9E9;
+    border-right: 1px solid #ECE9E9;
+    width: calc(100% - 2px);
+    margin: 0 auto;
+    padding: 20px 20px 0
+}
+
+@media(min-width: 1024px) {
+     .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+        width:calc(100% - 10px);
+        padding: 30px 26px 0
+    }
+}
+
+ .more-info-body-description,.RPGMonster-listing .more-info-body-description,.RPGMagicItem-listing .more-info-body-description,.ihomebrewable-listing .more-info-body-description,.RPGSpell-listing .more-info-body-description,.IGear-listing .more-info-body-description,.RPGFeat-listing .more-info-body-description,.RPGBackground-listing .more-info-body-description,.RPGSubclass-listing .more-info-body-description {
+    font-size: 14px;
+    line-height: 24px;
+    color: #242527
+}
+
+ .more-info-body-description table,.RPGMonster-listing .more-info-body-description table,.RPGMagicItem-listing .more-info-body-description table,.ihomebrewable-listing .more-info-body-description table,.RPGSpell-listing .more-info-body-description table,.IGear-listing .more-info-body-description table,.RPGFeat-listing .more-info-body-description table,.RPGBackground-listing .more-info-body-description table,.RPGSubclass-listing .more-info-body-description table {
+    border-collapse: collapse;
+    margin: 20px 0
+}
+
+ .more-info-body-description table.compendium-left-aligned-table th,.RPGMonster-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGMagicItem-listing .more-info-body-description table.compendium-left-aligned-table th,.ihomebrewable-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGSpell-listing .more-info-body-description table.compendium-left-aligned-table th,.IGear-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGFeat-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGBackground-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGSubclass-listing .more-info-body-description table.compendium-left-aligned-table th {
+    text-align: left
+}
+
+ .more-info-body-description table, .more-info-body-description table th, .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table,.RPGMonster-listing .more-info-body-description table th,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table,.RPGMagicItem-listing .more-info-body-description table th,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table,.ihomebrewable-listing .more-info-body-description table th,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table,.RPGSpell-listing .more-info-body-description table th,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table,.IGear-listing .more-info-body-description table th,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table,.RPGFeat-listing .more-info-body-description table th,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table,.RPGBackground-listing .more-info-body-description table th,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table,.RPGSubclass-listing .more-info-body-description table th,.RPGSubclass-listing .more-info-body-description table td {
+    border: 1px solid #edeae8
+}
+
+ .more-info-body-description table th, .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table th,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table th,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table th,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table th,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table th,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table th,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table th,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table th,.RPGSubclass-listing .more-info-body-description table td {
+    font-size: 14px
+}
+
+ .more-info-body-description table th.left-align, .more-info-body-description table td.left-align,.RPGMonster-listing .more-info-body-description table th.left-align,.RPGMonster-listing .more-info-body-description table td.left-align,.RPGMagicItem-listing .more-info-body-description table th.left-align,.RPGMagicItem-listing .more-info-body-description table td.left-align,.ihomebrewable-listing .more-info-body-description table th.left-align,.ihomebrewable-listing .more-info-body-description table td.left-align,.RPGSpell-listing .more-info-body-description table th.left-align,.RPGSpell-listing .more-info-body-description table td.left-align,.IGear-listing .more-info-body-description table th.left-align,.IGear-listing .more-info-body-description table td.left-align,.RPGFeat-listing .more-info-body-description table th.left-align,.RPGFeat-listing .more-info-body-description table td.left-align,.RPGBackground-listing .more-info-body-description table th.left-align,.RPGBackground-listing .more-info-body-description table td.left-align,.RPGSubclass-listing .more-info-body-description table th.left-align,.RPGSubclass-listing .more-info-body-description table td.left-align {
+    text-align: left!important
+}
+
+ .more-info-body-description table th.uppercase, .more-info-body-description table td.uppercase,.RPGMonster-listing .more-info-body-description table th.uppercase,.RPGMonster-listing .more-info-body-description table td.uppercase,.RPGMagicItem-listing .more-info-body-description table th.uppercase,.RPGMagicItem-listing .more-info-body-description table td.uppercase,.ihomebrewable-listing .more-info-body-description table th.uppercase,.ihomebrewable-listing .more-info-body-description table td.uppercase,.RPGSpell-listing .more-info-body-description table th.uppercase,.RPGSpell-listing .more-info-body-description table td.uppercase,.IGear-listing .more-info-body-description table th.uppercase,.IGear-listing .more-info-body-description table td.uppercase,.RPGFeat-listing .more-info-body-description table th.uppercase,.RPGFeat-listing .more-info-body-description table td.uppercase,.RPGBackground-listing .more-info-body-description table th.uppercase,.RPGBackground-listing .more-info-body-description table td.uppercase,.RPGSubclass-listing .more-info-body-description table th.uppercase,.RPGSubclass-listing .more-info-body-description table td.uppercase {
+    text-transform: uppercase!important
+}
+
+ .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table td {
+    text-align: center;
+    padding: 10px 20px;
+    overflow-wrap: break-word
+}
+
+ .more-info-body-description table td p,.RPGMonster-listing .more-info-body-description table td p,.RPGMagicItem-listing .more-info-body-description table td p,.ihomebrewable-listing .more-info-body-description table td p,.RPGSpell-listing .more-info-body-description table td p,.IGear-listing .more-info-body-description table td p,.RPGFeat-listing .more-info-body-description table td p,.RPGBackground-listing .more-info-body-description table td p,.RPGSubclass-listing .more-info-body-description table td p {
+    font-size: 14px
+}
+
+ .more-info-body-description table thead th,.RPGMonster-listing .more-info-body-description table thead th,.RPGMagicItem-listing .more-info-body-description table thead th,.ihomebrewable-listing .more-info-body-description table thead th,.RPGSpell-listing .more-info-body-description table thead th,.IGear-listing .more-info-body-description table thead th,.RPGFeat-listing .more-info-body-description table thead th,.RPGBackground-listing .more-info-body-description table thead th,.RPGSubclass-listing .more-info-body-description table thead th {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-bottom: 2px solid #d0cac5;
+    text-align: center;
+    background: #fff;
+    color: #242527
+}
+
+ .more-info-body-description table tbody tr,.RPGMonster-listing .more-info-body-description table tbody tr,.RPGMagicItem-listing .more-info-body-description table tbody tr,.ihomebrewable-listing .more-info-body-description table tbody tr,.RPGSpell-listing .more-info-body-description table tbody tr,.IGear-listing .more-info-body-description table tbody tr,.RPGFeat-listing .more-info-body-description table tbody tr,.RPGBackground-listing .more-info-body-description table tbody tr,.RPGSubclass-listing .more-info-body-description table tbody tr {
+    background: #fff
+}
+
+ .more-info-body-description table tbody tr td,.RPGMonster-listing .more-info-body-description table tbody tr td,.RPGMagicItem-listing .more-info-body-description table tbody tr td,.ihomebrewable-listing .more-info-body-description table tbody tr td,.RPGSpell-listing .more-info-body-description table tbody tr td,.IGear-listing .more-info-body-description table tbody tr td,.RPGFeat-listing .more-info-body-description table tbody tr td,.RPGBackground-listing .more-info-body-description table tbody tr td,.RPGSubclass-listing .more-info-body-description table tbody tr td {
+    min-width: 100px;
+    padding: 20px;
+    background: 0;
+    max-width: 400px
+}
+
+ .more-info-body-description table tbody tr td.left-align,.RPGMonster-listing .more-info-body-description table tbody tr td.left-align,.RPGMagicItem-listing .more-info-body-description table tbody tr td.left-align,.ihomebrewable-listing .more-info-body-description table tbody tr td.left-align,.RPGSpell-listing .more-info-body-description table tbody tr td.left-align,.IGear-listing .more-info-body-description table tbody tr td.left-align,.RPGFeat-listing .more-info-body-description table tbody tr td.left-align,.RPGBackground-listing .more-info-body-description table tbody tr td.left-align,.RPGSubclass-listing .more-info-body-description table tbody tr td.left-align {
+    text-align: left!important
+}
+
+ .more-info-body-description table tbody tr td.uppercase,.RPGMonster-listing .more-info-body-description table tbody tr td.uppercase,.RPGMagicItem-listing .more-info-body-description table tbody tr td.uppercase,.ihomebrewable-listing .more-info-body-description table tbody tr td.uppercase,.RPGSpell-listing .more-info-body-description table tbody tr td.uppercase,.IGear-listing .more-info-body-description table tbody tr td.uppercase,.RPGFeat-listing .more-info-body-description table tbody tr td.uppercase,.RPGBackground-listing .more-info-body-description table tbody tr td.uppercase,.RPGSubclass-listing .more-info-body-description table tbody tr td.uppercase {
+    text-transform: uppercase!important
+}
+
+ .more-info-body-description table tbody tr:nth-child(odd),.RPGMonster-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGMagicItem-listing .more-info-body-description table tbody tr:nth-child(odd),.ihomebrewable-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGSpell-listing .more-info-body-description table tbody tr:nth-child(odd),.IGear-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGFeat-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGBackground-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGSubclass-listing .more-info-body-description table tbody tr:nth-child(odd) {
+    background: #faf8f7
+}
+
+ .more-info-body-description ul,.RPGMonster-listing .more-info-body-description ul,.RPGMagicItem-listing .more-info-body-description ul,.ihomebrewable-listing .more-info-body-description ul,.RPGSpell-listing .more-info-body-description ul,.IGear-listing .more-info-body-description ul,.RPGFeat-listing .more-info-body-description ul,.RPGBackground-listing .more-info-body-description ul,.RPGSubclass-listing .more-info-body-description ul {
+    list-style: initial;
+    padding: 15px
+}
+
+ .more-info-body-description ol,.RPGMonster-listing .more-info-body-description ol,.RPGMagicItem-listing .more-info-body-description ol,.ihomebrewable-listing .more-info-body-description ol,.RPGSpell-listing .more-info-body-description ol,.IGear-listing .more-info-body-description ol,.RPGFeat-listing .more-info-body-description ol,.RPGBackground-listing .more-info-body-description ol,.RPGSubclass-listing .more-info-body-description ol {
+    list-style: decimal;
+    padding: 15px
+}
+
+ .more-info-body-description blockquote,.RPGMonster-listing .more-info-body-description blockquote,.RPGMagicItem-listing .more-info-body-description blockquote,.ihomebrewable-listing .more-info-body-description blockquote,.RPGSpell-listing .more-info-body-description blockquote,.IGear-listing .more-info-body-description blockquote,.RPGFeat-listing .more-info-body-description blockquote,.RPGBackground-listing .more-info-body-description blockquote,.RPGSubclass-listing .more-info-body-description blockquote {
+    font-size: 14px;
+    margin: 5px 0
+}
+
+ .more-info-body-description blockquote p,.RPGMonster-listing .more-info-body-description blockquote p,.RPGMagicItem-listing .more-info-body-description blockquote p,.ihomebrewable-listing .more-info-body-description blockquote p,.RPGSpell-listing .more-info-body-description blockquote p,.IGear-listing .more-info-body-description blockquote p,.RPGFeat-listing .more-info-body-description blockquote p,.RPGBackground-listing .more-info-body-description blockquote p,.RPGSubclass-listing .more-info-body-description blockquote p {
+    font-size: 14px
+}
+
+ .more-info-body-description h1, .more-info-body-description h2, .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h3 {
+    font-weight: normal
+}
+
+ .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h1 {
+    font-size: 32px
+}
+
+ .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h2 {
+    font-size: 26px
+}
+
+ .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h3 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5, .more-info-body-description h6,.RPGMonster-listing .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h6,.RPGMagicItem-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h6,.ihomebrewable-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h6,.RPGSpell-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h6,.IGear-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h6,.RPGFeat-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h6,.RPGBackground-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h6,.RPGSubclass-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h6 {
+    font-size: 18px
+}
+
+ .more-info-body-description a,.RPGMonster-listing .more-info-body-description a,.RPGMagicItem-listing .more-info-body-description a,.ihomebrewable-listing .more-info-body-description a,.RPGSpell-listing .more-info-body-description a,.IGear-listing .more-info-body-description a,.RPGFeat-listing .more-info-body-description a,.RPGBackground-listing .more-info-body-description a,.RPGSubclass-listing .more-info-body-description a {
+    text-decoration: none;
+    cursor: pointer
+}
+
+ .more-info-body-description a, .more-info-body-description a:hover, .more-info-body-description a:focus, .more-info-body-description a:active, .more-info-body-description a:visited,.RPGMonster-listing .more-info-body-description a,.RPGMonster-listing .more-info-body-description a:hover,.RPGMonster-listing .more-info-body-description a:focus,.RPGMonster-listing .more-info-body-description a:active,.RPGMonster-listing .more-info-body-description a:visited,.RPGMagicItem-listing .more-info-body-description a,.RPGMagicItem-listing .more-info-body-description a:hover,.RPGMagicItem-listing .more-info-body-description a:focus,.RPGMagicItem-listing .more-info-body-description a:active,.RPGMagicItem-listing .more-info-body-description a:visited,.ihomebrewable-listing .more-info-body-description a,.ihomebrewable-listing .more-info-body-description a:hover,.ihomebrewable-listing .more-info-body-description a:focus,.ihomebrewable-listing .more-info-body-description a:active,.ihomebrewable-listing .more-info-body-description a:visited,.RPGSpell-listing .more-info-body-description a,.RPGSpell-listing .more-info-body-description a:hover,.RPGSpell-listing .more-info-body-description a:focus,.RPGSpell-listing .more-info-body-description a:active,.RPGSpell-listing .more-info-body-description a:visited,.IGear-listing .more-info-body-description a,.IGear-listing .more-info-body-description a:hover,.IGear-listing .more-info-body-description a:focus,.IGear-listing .more-info-body-description a:active,.IGear-listing .more-info-body-description a:visited,.RPGFeat-listing .more-info-body-description a,.RPGFeat-listing .more-info-body-description a:hover,.RPGFeat-listing .more-info-body-description a:focus,.RPGFeat-listing .more-info-body-description a:active,.RPGFeat-listing .more-info-body-description a:visited,.RPGBackground-listing .more-info-body-description a,.RPGBackground-listing .more-info-body-description a:hover,.RPGBackground-listing .more-info-body-description a:focus,.RPGBackground-listing .more-info-body-description a:active,.RPGBackground-listing .more-info-body-description a:visited,.RPGSubclass-listing .more-info-body-description a,.RPGSubclass-listing .more-info-body-description a:hover,.RPGSubclass-listing .more-info-body-description a:focus,.RPGSubclass-listing .more-info-body-description a:active,.RPGSubclass-listing .more-info-body-description a:visited {
+    color: #47D18C
+}
+
+ .more-info-body-description h1, .more-info-body-description h2, .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h3 {
+    font-weight: normal
+}
+
+ .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h1 {
+    font-size: 32px
+}
+
+ .more-info-body-description h1::after,.RPGMonster-listing .more-info-body-description h1::after,.RPGMagicItem-listing .more-info-body-description h1::after,.ihomebrewable-listing .more-info-body-description h1::after,.RPGSpell-listing .more-info-body-description h1::after,.IGear-listing .more-info-body-description h1::after,.RPGFeat-listing .more-info-body-description h1::after,.RPGBackground-listing .more-info-body-description h1::after,.RPGSubclass-listing .more-info-body-description h1::after {
+    content: '';
+    width: 100%;
+    max-width: 1200px;
+    margin: 5px auto 20px;
+    height: 3px;
+    background-color: #1b9af0;
+    display: block
+}
+
+ .more-info-body-description h2::after, .more-info-body-description h3::after,.RPGMonster-listing .more-info-body-description h2::after,.RPGMonster-listing .more-info-body-description h3::after,.RPGMagicItem-listing .more-info-body-description h2::after,.RPGMagicItem-listing .more-info-body-description h3::after,.ihomebrewable-listing .more-info-body-description h2::after,.ihomebrewable-listing .more-info-body-description h3::after,.RPGSpell-listing .more-info-body-description h2::after,.RPGSpell-listing .more-info-body-description h3::after,.IGear-listing .more-info-body-description h2::after,.IGear-listing .more-info-body-description h3::after,.RPGFeat-listing .more-info-body-description h2::after,.RPGFeat-listing .more-info-body-description h3::after,.RPGBackground-listing .more-info-body-description h2::after,.RPGBackground-listing .more-info-body-description h3::after,.RPGSubclass-listing .more-info-body-description h2::after,.RPGSubclass-listing .more-info-body-description h3::after {
+    content: '';
+    width: 100%;
+    margin: 5px auto 20px;
+    height: 1px;
+    background-color: #1b9af0;
+    display: block
+}
+
+ .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h2 {
+    font-size: 26px
+}
+
+ .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h3 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5, .more-info-body-description h6,.RPGMonster-listing .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h6,.RPGMagicItem-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h6,.ihomebrewable-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h6,.RPGSpell-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h6,.IGear-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h6,.RPGFeat-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h6,.RPGBackground-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h6,.RPGSubclass-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h6 {
+    font-size: 18px
+}
+
+ .more-info-body-description-upper,.RPGMonster-listing .more-info-body-description-upper,.RPGMagicItem-listing .more-info-body-description-upper,.ihomebrewable-listing .more-info-body-description-upper,.RPGSpell-listing .more-info-body-description-upper,.IGear-listing .more-info-body-description-upper,.RPGFeat-listing .more-info-body-description-upper,.RPGBackground-listing .more-info-body-description-upper,.RPGSubclass-listing .more-info-body-description-upper {
+    font-style: italic;
+    font-size: 16px
+}
+
+ .more-info-body-description-lower,.RPGMonster-listing .more-info-body-description-lower,.RPGMagicItem-listing .more-info-body-description-lower,.ihomebrewable-listing .more-info-body-description-lower,.RPGSpell-listing .more-info-body-description-lower,.IGear-listing .more-info-body-description-lower,.RPGFeat-listing .more-info-body-description-lower,.RPGBackground-listing .more-info-body-description-lower,.RPGSubclass-listing .more-info-body-description-lower {
+    padding-top: 20px
+}
+
+ .more-info-body-description-lower .more-info-notes,.RPGMonster-listing .more-info-body-description-lower .more-info-notes,.RPGMagicItem-listing .more-info-body-description-lower .more-info-notes,.ihomebrewable-listing .more-info-body-description-lower .more-info-notes,.RPGSpell-listing .more-info-body-description-lower .more-info-notes,.IGear-listing .more-info-body-description-lower .more-info-notes,.RPGFeat-listing .more-info-body-description-lower .more-info-notes,.RPGBackground-listing .more-info-body-description-lower .more-info-notes,.RPGSubclass-listing .more-info-body-description-lower .more-info-notes {
+    font-style: italic
+}
+
+ .more-info-body-description h4,.RPGMonster-listing .more-info-body-description h4,.RPGMagicItem-listing .more-info-body-description h4,.ihomebrewable-listing .more-info-body-description h4,.RPGSpell-listing .more-info-body-description h4,.IGear-listing .more-info-body-description h4,.RPGFeat-listing .more-info-body-description h4,.RPGBackground-listing .more-info-body-description h4,.RPGSubclass-listing .more-info-body-description h4 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h5 {
+    font-size: 16px
+}
+
+ .more-info-monster .more-info-body-description h1::after, .more-info-monster .more-info-body-description h2::before, .more-info-monster .more-info-body-description h3::before,.RPGMonster-listing .more-info-monster .more-info-body-description h1::after,.RPGMonster-listing .more-info-monster .more-info-body-description h2::before,.RPGMonster-listing .more-info-monster .more-info-body-description h3::before,.RPGMagicItem-listing .more-info-monster .more-info-body-description h1::after,.RPGMagicItem-listing .more-info-monster .more-info-body-description h2::before,.RPGMagicItem-listing .more-info-monster .more-info-body-description h3::before,.ihomebrewable-listing .more-info-monster .more-info-body-description h1::after,.ihomebrewable-listing .more-info-monster .more-info-body-description h2::before,.ihomebrewable-listing .more-info-monster .more-info-body-description h3::before,.RPGSpell-listing .more-info-monster .more-info-body-description h1::after,.RPGSpell-listing .more-info-monster .more-info-body-description h2::before,.RPGSpell-listing .more-info-monster .more-info-body-description h3::before,.IGear-listing .more-info-monster .more-info-body-description h1::after,.IGear-listing .more-info-monster .more-info-body-description h2::before,.IGear-listing .more-info-monster .more-info-body-description h3::before,.RPGFeat-listing .more-info-monster .more-info-body-description h1::after,.RPGFeat-listing .more-info-monster .more-info-body-description h2::before,.RPGFeat-listing .more-info-monster .more-info-body-description h3::before,.RPGBackground-listing .more-info-monster .more-info-body-description h1::after,.RPGBackground-listing .more-info-monster .more-info-body-description h2::before,.RPGBackground-listing .more-info-monster .more-info-body-description h3::before,.RPGSubclass-listing .more-info-monster .more-info-body-description h1::after,.RPGSubclass-listing .more-info-monster .more-info-body-description h2::before,.RPGSubclass-listing .more-info-monster .more-info-body-description h3::before {
+    content: none
+}
+
+ .more-info-footer,.RPGMonster-listing .more-info-footer,.RPGMagicItem-listing .more-info-footer,.ihomebrewable-listing .more-info-footer,.RPGSpell-listing .more-info-footer,.IGear-listing .more-info-footer,.RPGFeat-listing .more-info-footer,.RPGBackground-listing .more-info-footer,.RPGSubclass-listing .more-info-footer {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-top: 20px
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer,.RPGMonster-listing .more-info-footer,.RPGMagicItem-listing .more-info-footer,.ihomebrewable-listing .more-info-footer,.RPGSpell-listing .more-info-footer,.IGear-listing .more-info-footer,.RPGFeat-listing .more-info-footer,.RPGBackground-listing .more-info-footer,.RPGSubclass-listing .more-info-footer {
+        -webkit-justify-content:flex-start;
+        -ms-flex-pack: start;
+        justify-content: flex-start
+    }
+}
+
+ .more-info-footer-details-button,.RPGMonster-listing .more-info-footer-details-button,.RPGMagicItem-listing .more-info-footer-details-button,.ihomebrewable-listing .more-info-footer-details-button,.RPGSpell-listing .more-info-footer-details-button,.IGear-listing .more-info-footer-details-button,.RPGFeat-listing .more-info-footer-details-button,.RPGBackground-listing .more-info-footer-details-button,.RPGSubclass-listing .more-info-footer-details-button {
+    margin: 0 auto;
+    padding: 10px 0;
+    -webkit-order: 1;
+    -ms-flex-order: 1;
+    order: 1
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button,.RPGMonster-listing .more-info-footer-details-button,.RPGMagicItem-listing .more-info-footer-details-button,.ihomebrewable-listing .more-info-footer-details-button,.RPGSpell-listing .more-info-footer-details-button,.IGear-listing .more-info-footer-details-button,.RPGFeat-listing .more-info-footer-details-button,.RPGBackground-listing .more-info-footer-details-button,.RPGSubclass-listing .more-info-footer-details-button {
+        -webkit-order:unset;
+        -ms-flex-order: unset;
+        order: unset;
+        margin-left: 0;
+        margin-right: 10px
+    }
+}
+
+ .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #ee8600;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover {
+    background: #ff9e22
+}
+
+ .more-info-footer-details-button .button-characters, .more-info-footer-details-button .button-characters:hover, .more-info-footer-details-button .button-characters:focus, .more-info-footer-details-button .button-characters:active, .more-info-footer-details-button .button-characters:visited,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:focus,.RPGMonster-listing .more-info-footer-details-button .button-characters:active,.RPGMonster-listing .more-info-footer-details-button .button-characters:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:active,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:visited,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:focus,.ihomebrewable-listing .more-info-footer-details-button .button-characters:active,.ihomebrewable-listing .more-info-footer-details-button .button-characters:visited,.RPGSpell-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:focus,.RPGSpell-listing .more-info-footer-details-button .button-characters:active,.RPGSpell-listing .more-info-footer-details-button .button-characters:visited,.IGear-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:focus,.IGear-listing .more-info-footer-details-button .button-characters:active,.IGear-listing .more-info-footer-details-button .button-characters:visited,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:focus,.RPGFeat-listing .more-info-footer-details-button .button-characters:active,.RPGFeat-listing .more-info-footer-details-button .button-characters:visited,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:focus,.RPGBackground-listing .more-info-footer-details-button .button-characters:active,.RPGBackground-listing .more-info-footer-details-button .button-characters:visited,.RPGSubclass-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:focus,.RPGSubclass-listing .more-info-footer-details-button .button-characters:active,.RPGSubclass-listing .more-info-footer-details-button .button-characters:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover {
+    transition: 100ms linear all;
+    background: #ff9e22
+}
+
+ .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #0f5cbc;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover {
+    background: #1373eb
+}
+
+ .more-info-footer-details-button .button-items, .more-info-footer-details-button .button-items:hover, .more-info-footer-details-button .button-items:focus, .more-info-footer-details-button .button-items:active, .more-info-footer-details-button .button-items:visited,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:focus,.RPGMonster-listing .more-info-footer-details-button .button-items:active,.RPGMonster-listing .more-info-footer-details-button .button-items:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-items:active,.RPGMagicItem-listing .more-info-footer-details-button .button-items:visited,.ihomebrewable-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:focus,.ihomebrewable-listing .more-info-footer-details-button .button-items:active,.ihomebrewable-listing .more-info-footer-details-button .button-items:visited,.RPGSpell-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:focus,.RPGSpell-listing .more-info-footer-details-button .button-items:active,.RPGSpell-listing .more-info-footer-details-button .button-items:visited,.IGear-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:focus,.IGear-listing .more-info-footer-details-button .button-items:active,.IGear-listing .more-info-footer-details-button .button-items:visited,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:focus,.RPGFeat-listing .more-info-footer-details-button .button-items:active,.RPGFeat-listing .more-info-footer-details-button .button-items:visited,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:focus,.RPGBackground-listing .more-info-footer-details-button .button-items:active,.RPGBackground-listing .more-info-footer-details-button .button-items:visited,.RPGSubclass-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:focus,.RPGSubclass-listing .more-info-footer-details-button .button-items:active,.RPGSubclass-listing .more-info-footer-details-button .button-items:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover {
+    transition: 100ms linear all;
+    background: #1373eb
+}
+
+ .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #704cd9;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover {
+    background: #9276e2
+}
+
+ .more-info-footer-details-button .button-spells, .more-info-footer-details-button .button-spells:hover, .more-info-footer-details-button .button-spells:focus, .more-info-footer-details-button .button-spells:active, .more-info-footer-details-button .button-spells:visited,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:focus,.RPGMonster-listing .more-info-footer-details-button .button-spells:active,.RPGMonster-listing .more-info-footer-details-button .button-spells:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:active,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:visited,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:focus,.ihomebrewable-listing .more-info-footer-details-button .button-spells:active,.ihomebrewable-listing .more-info-footer-details-button .button-spells:visited,.RPGSpell-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:focus,.RPGSpell-listing .more-info-footer-details-button .button-spells:active,.RPGSpell-listing .more-info-footer-details-button .button-spells:visited,.IGear-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:focus,.IGear-listing .more-info-footer-details-button .button-spells:active,.IGear-listing .more-info-footer-details-button .button-spells:visited,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:focus,.RPGFeat-listing .more-info-footer-details-button .button-spells:active,.RPGFeat-listing .more-info-footer-details-button .button-spells:visited,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:focus,.RPGBackground-listing .more-info-footer-details-button .button-spells:active,.RPGBackground-listing .more-info-footer-details-button .button-spells:visited,.RPGSubclass-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:focus,.RPGSubclass-listing .more-info-footer-details-button .button-spells:active,.RPGSubclass-listing .more-info-footer-details-button .button-spells:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover {
+    transition: 100ms linear all;
+    background: #9276e2
+}
+
+ .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #bc0f0f;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover {
+    background: #eb1313
+}
+
+ .more-info-footer-details-button .button-monsters, .more-info-footer-details-button .button-monsters:hover, .more-info-footer-details-button .button-monsters:focus, .more-info-footer-details-button .button-monsters:active, .more-info-footer-details-button .button-monsters:visited,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:focus,.RPGMonster-listing .more-info-footer-details-button .button-monsters:active,.RPGMonster-listing .more-info-footer-details-button .button-monsters:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:active,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:visited,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:focus,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:active,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:visited,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:focus,.RPGSpell-listing .more-info-footer-details-button .button-monsters:active,.RPGSpell-listing .more-info-footer-details-button .button-monsters:visited,.IGear-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:focus,.IGear-listing .more-info-footer-details-button .button-monsters:active,.IGear-listing .more-info-footer-details-button .button-monsters:visited,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:focus,.RPGFeat-listing .more-info-footer-details-button .button-monsters:active,.RPGFeat-listing .more-info-footer-details-button .button-monsters:visited,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:focus,.RPGBackground-listing .more-info-footer-details-button .button-monsters:active,.RPGBackground-listing .more-info-footer-details-button .button-monsters:visited,.RPGSubclass-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:focus,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:active,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover {
+    transition: 100ms linear all;
+    background: #eb1313
+}
+
+ .more-info-footer-tags,.RPGMonster-listing .more-info-footer-tags,.RPGMagicItem-listing .more-info-footer-tags,.ihomebrewable-listing .more-info-footer-tags,.RPGSpell-listing .more-info-footer-tags,.IGear-listing .more-info-footer-tags,.RPGFeat-listing .more-info-footer-tags,.RPGBackground-listing .more-info-footer-tags,.RPGSubclass-listing .more-info-footer-tags {
+    font-size: 12px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: baseline;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    margin: 0 10px;
+    padding: 10px 0;
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0
+}
+
+ .more-info-footer-tags .tag,.RPGMonster-listing .more-info-footer-tags .tag,.RPGMagicItem-listing .more-info-footer-tags .tag,.ihomebrewable-listing .more-info-footer-tags .tag,.RPGSpell-listing .more-info-footer-tags .tag,.IGear-listing .more-info-footer-tags .tag,.RPGFeat-listing .more-info-footer-tags .tag,.RPGBackground-listing .more-info-footer-tags .tag,.RPGSubclass-listing .more-info-footer-tags .tag {
+    border: 1px solid #cbc6c3;
+    background-color: #fff;
+    box-shadow: inset 0 0 4px 0 #dcd1c7;
+    padding: 4px 8px;
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: 0 2px
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-tags,.RPGMonster-listing .more-info-footer-tags,.RPGMagicItem-listing .more-info-footer-tags,.ihomebrewable-listing .more-info-footer-tags,.RPGSpell-listing .more-info-footer-tags,.IGear-listing .more-info-footer-tags,.RPGFeat-listing .more-info-footer-tags,.RPGBackground-listing .more-info-footer-tags,.RPGSubclass-listing .more-info-footer-tags {
+        margin-left:0
+    }
+}
+
+ .more-info-footer-classes,.RPGMonster-listing .more-info-footer-classes,.RPGMagicItem-listing .more-info-footer-classes,.ihomebrewable-listing .more-info-footer-classes,.RPGSpell-listing .more-info-footer-classes,.IGear-listing .more-info-footer-classes,.RPGFeat-listing .more-info-footer-classes,.RPGBackground-listing .more-info-footer-classes,.RPGSubclass-listing .more-info-footer-classes {
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0
+}
+
+ .more-info-footer-source,.RPGMonster-listing .more-info-footer-source,.RPGMagicItem-listing .more-info-footer-source,.ihomebrewable-listing .more-info-footer-source,.RPGSpell-listing .more-info-footer-source,.IGear-listing .more-info-footer-source,.RPGFeat-listing .more-info-footer-source,.RPGBackground-listing .more-info-footer-source,.RPGSubclass-listing .more-info-footer-source {
+    font-style: italic;
+    text-align: right;
+    min-width: 110px;
+    padding: 10px;
+    margin-left: auto
+}
+
+.body-rpgigear  .more-info-footer-source,.body-rpgigear .RPGMonster-listing .more-info-footer-source,.body-rpgigear .RPGMagicItem-listing .more-info-footer-source,.body-rpgigear .ihomebrewable-listing .more-info-footer-source,.body-rpgigear .RPGSpell-listing .more-info-footer-source,.body-rpgigear .IGear-listing .more-info-footer-source,.body-rpgigear .RPGFeat-listing .more-info-footer-source,.body-rpgigear .RPGBackground-listing .more-info-footer-source,.body-rpgigear .RPGSubclass-listing .more-info-footer-source {
+    display: none
+}
+
+ .more-info-footer-edit-button,.RPGMonster-listing .more-info-footer-edit-button,.RPGMagicItem-listing .more-info-footer-edit-button,.ihomebrewable-listing .more-info-footer-edit-button,.RPGSpell-listing .more-info-footer-edit-button,.IGear-listing .more-info-footer-edit-button,.RPGFeat-listing .more-info-footer-edit-button,.RPGBackground-listing .more-info-footer-edit-button,.RPGSubclass-listing .more-info-footer-edit-button {
+    position: absolute;
+    top: 0;
+    left: 0
+}
+
+ .more-info-footer-homebrew-actions,.RPGMonster-listing .more-info-footer-homebrew-actions,.RPGMagicItem-listing .more-info-footer-homebrew-actions,.ihomebrewable-listing .more-info-footer-homebrew-actions,.RPGSpell-listing .more-info-footer-homebrew-actions,.IGear-listing .more-info-footer-homebrew-actions,.RPGFeat-listing .more-info-footer-homebrew-actions,.RPGBackground-listing .more-info-footer-homebrew-actions,.RPGSubclass-listing .more-info-footer-homebrew-actions {
+    -webkit-order: 1;
+    -ms-flex-order: 1;
+    order: 1
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-homebrew-actions,.RPGMonster-listing .more-info-footer-homebrew-actions,.RPGMagicItem-listing .more-info-footer-homebrew-actions,.ihomebrewable-listing .more-info-footer-homebrew-actions,.RPGSpell-listing .more-info-footer-homebrew-actions,.IGear-listing .more-info-footer-homebrew-actions,.RPGFeat-listing .more-info-footer-homebrew-actions,.RPGBackground-listing .more-info-footer-homebrew-actions,.RPGSubclass-listing .more-info-footer-homebrew-actions {
+        -webkit-order:unset;
+        -ms-flex-order: unset;
+        order: unset;
+        margin-left: 0
+    }
+}
+
+ .more-info::after,.RPGMonster-listing .more-info::after,.RPGMagicItem-listing .more-info::after,.ihomebrewable-listing .more-info::after,.RPGSpell-listing .more-info::after,.IGear-listing .more-info::after,.RPGFeat-listing .more-info::after,.RPGBackground-listing .more-info::after,.RPGSubclass-listing .more-info::after {
+    content: '';
+    display: block;
+    height: 28px;
+    width: calc(100% + 40px);
+    border-bottom: 28px solid transparent;
+    border-image: url("../images/expanded-listing-item-bottom-border.png") 28 stretch;
+    position: relative;
+    top: 4px;
+    margin: 0 -20px
+}
+
+@media(min-width: 1024px) {
+     .more-info::after,.RPGMonster-listing .more-info::after,.RPGMagicItem-listing .more-info::after,.ihomebrewable-listing .more-info::after,.RPGSpell-listing .more-info::after,.IGear-listing .more-info::after,.RPGFeat-listing .more-info::after,.RPGBackground-listing .more-info::after,.RPGSubclass-listing .more-info::after {
+        width:calc(100% + 52px);
+        margin: 0 -26px
+    }
+}
+
+.more-info .treasure-link {
+    text-decoration: underline
+}
 
 /***** Icon UI *****/
 
@@ -11317,56 +12144,56 @@ div#playlistFields {
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
     font-weight: bold;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-Ita.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Ita.ttf") format("truetype");
     font-weight: normal;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("../fonts/ScalaSansScOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("../fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'MrsEavesSmallCaps';
-    src: url("../fonts/MrsEavesSmallCaps.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/MrsEavesSmallCaps.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: 'DearSarahPro';
-    src: url("../fonts/DearSarahPro.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/DearSarahPro.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }

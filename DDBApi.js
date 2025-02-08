@@ -56,6 +56,17 @@ class DDBApi {
     return await request.json();
   }
 
+  static async fetchHtmlWithToken(url, extraConfig = {}) {
+   const token = await DDBApi.#refreshToken();
+    const config = {...extraConfig,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    }
+    const request = await fetch(url, config).then(DDBApi.lookForErrors)
+    return await request.text();
+  }
+
     static async fetchJsonWithTokenOmitCred(url, extraConfig = {}) {
     const token = await DDBApi.#refreshToken();
     const config = {...extraConfig,
@@ -91,7 +102,10 @@ class DDBApi {
     return await fetch(url, config);
   }
 
-
+  static async fetchMoreInfo(url){
+    const response = await DDBApi.fetchHtmlWithToken(url);
+    return response;
+  }
 
   static async fetchCharacter(id) {
     if (typeof id !== "string" || id.length <= 1) {
@@ -185,6 +199,7 @@ class DDBApi {
     const response = await DDBApi.fetchJsonWithToken(url);
     return response.data;
   }
+
 
   static async fetchCampaignCharacters(campaignId) {
     // This is what the campaign page calls to fetch characters
