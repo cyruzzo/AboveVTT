@@ -82,19 +82,8 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	}
 	if(!open5e){
 		let uniqueMonsterIds = [...new Set(monsterIds)];
-		let queryParam = uniqueMonsterIds.map(id => `ids=${id}`).join("&");
-		console.log("fetch_monsters starting with ids", uniqueMonsterIds);
-		window.ajaxQueue.addDDBRequest({
-			url: `https://monster-service.dndbeyond.com/v1/Monster?${queryParam}`,
-			success: function (responseData) {
-				console.log(`fetch_monsters succeeded`);
-				callback(responseData.data);
-			},
-			error: function (errorMessage) {
-				console.warn("fetch_monsters failed", errorMessage);
-				callback(false, errorMessage?.responseJSON?.type);
-			}
-		})
+		const monsterData = await DDBApi.fetchMonsters(uniqueMonsterIds)
+		callback(monsterData);
 	}
 	else{
 		let uniqueMonsterIds = [...new Set(monsterIds)];
