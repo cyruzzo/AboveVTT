@@ -3901,7 +3901,9 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
             }
             
               
-            let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}/more-info`);
+            let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}`);
+            let tooltipBody = $(moreInfo).find('.more-info');
+            tooltipBody.find('script,[class*="homebrew"],footer,div.image,.detail-content>.line').remove();
 
             moreInfo = `
              <div class="tooltip tooltip-spell">
@@ -3914,7 +3916,7 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
                        </div>
                    </div>
              <div class="tooltip-body">
-                ${$(moreInfo).find('.more-info-body').html()}
+                ${tooltipBody.html()}
              </div>
             </div>`
 
