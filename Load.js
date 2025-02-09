@@ -1,6 +1,3 @@
-//decide what to load
-// 3 types: campaigns (all)
-//   
 const isVttGamePage = window.location.search.includes("abovevtt=true");
 const isPlainCharacterPage = !isVttGamePage && window.location.pathname.includes("/characters/");
 const isCampaignPage = window.location.pathname.includes("/campaigns/");
