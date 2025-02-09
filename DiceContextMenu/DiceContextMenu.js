@@ -19,26 +19,43 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     
     menu.sendToSection();
    
-    if (expression === "1d20" || /^1d20[+-]([0-9]+)/g.test(expression)) {
+    if (expression === "1d20" || /^1d20/g.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
         menu.section("ROLL WITH:", s => s
+            .row("Super Advantage", `${svg_advantage()}${svg_advantage()}`, false)
             .row("Advantage", svg_advantage(), false)
             .row("Flat (One Die)", svg_flat(), true)
             .row("Disadvantage", svg_disadvantage(), false)
+            .row("Super Disadvantage", `${svg_disadvantage()}${svg_disadvantage()}`, false)
+            .expressionRow('Roll: ', expression, function(newExpression){
+                expression = newExpression;
+            })
         )
     }
+    
+
+
     menu.onRollClick(dcm => {
 
         let rollWithIndex = dcm.checkedRowIndex(1);
 
         let diceRoll;
-        if (rollWithIndex === 0) { // advantage
-            diceRoll = new DiceRoll(`2d20kh1${modifierString}`);
-        } else if (rollWithIndex === 1) {
-            diceRoll = new DiceRoll(`1d20${modifierString}`);
-        } else if (rollWithIndex === 2) { // disadvantage
-            diceRoll = new DiceRoll(`2d20kl1${modifierString}`);
-        } else { // advantage/disadvantage options were not displayed. This will happen any time the expression is not 1d20
+        if (rollWithIndex === 0) { // super advantage
+            diceRoll = new DiceRoll(expression.replace(/^1d20/g, '3d20kh1'));
+        } 
+        else if (rollWithIndex === 1) { // advantage
+            diceRoll = new DiceRoll(expression.replace(/^1d20/g, '2d20kh1'));
+        } 
+        else if (rollWithIndex === 2) {
+            diceRoll = new DiceRoll(expression);
+        } 
+        else if (rollWithIndex === 3) { // disadvantage
+            diceRoll = new DiceRoll(expression.replace(/^1d20/g, '2d20kl1'));
+        } 
+        else if (rollWithIndex === 4) { // disadvantage
+            diceRoll = new DiceRoll(expression.replace(/^1d20/g, '3d20kl1'));
+        }
+        else { // advantage/disadvantage options were not displayed. This will happen any time the expression is not 1d20
             diceRoll = new DiceRoll(`${expression}${modifierString}`);
         }
 
@@ -68,7 +85,12 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
         
         menu.section("ROLL AS:", s => s
             .row("Crit Damage", "", false)
+            .row("Perfect Crit", "", false)
+            .row("Double Damage", "", false)
             .row("Flat Roll", "", true)
+            .expressionRow('Roll: ', diceExpression, function(newExpression){
+                diceExpression = newExpression;
+            })
         )
         menu.onRollClick(dcm => {
 
@@ -77,15 +99,30 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             let diceRoll;
             if (rollAsIndex === 0) {
                 // crit damage
-                let expressionParts = diceExpression.split("d");
-                let numberOfDice = parseInt(expressionParts[0]) * 2;
-                diceRoll = new DiceRoll(`${numberOfDice}d${expressionParts[1].split(/(?=[+-])|(?<=[+-])/g)[0]}${modifierString}`)
-            } else if (rollAsIndex === 1) {
-                // flat roll
+                diceExpression = diceExpression.replaceAll(/([\d]+)d/gi, function(m, m1){
+                    return `${parseInt(m1)*2}d`
+                })
+                diceRoll = new DiceRoll(diceExpression)
+            } 
+             else if (rollAsIndex === 1) {
+                // perfect crit damage
+                diceExpression = diceExpression.replaceAll(/([\d]+)d([\d]+)/gi, function(m, m1, m2){
+                    return `${m}+${parseInt(m1)*parseInt(m2)}`
+                })
+                diceRoll = new DiceRoll(diceExpression)
+            } 
+            else if (rollAsIndex === 2 ) {
+                // double damage
                 diceRoll = new DiceRoll(`${diceExpression}`);
-            } else { // not possible
-                console.warn("DiceContextMenu unexpectedly gave an invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
             }
+            else if (rollAsIndex === 3) {
+                // flat roll 
+                diceRoll = new DiceRoll(`${diceExpression}`);
+            }
+             else { // not possible
+                console.warn("DiceContextMenu unexpectedly gave an  invalid row index for section 1! rollAsIndex: ", rollAsIndex, ", dcm: ", dcm);
+            }
+
 
 
             diceRoll.sendToOverride = dcm.checkedRow(0)?.title?.replace(/\s+/g, "");
@@ -95,8 +132,10 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             diceRoll.avatarUrl = avatarUrl;
             diceRoll.entityType = entityType;
             diceRoll.entityId = entityId;
-           
-            window.diceRoller.roll(diceRoll, undefined, undefined, undefined, undefined, damageType);
+
+            const doubleDamage = rollAsIndex === 2 ? 3 : undefined;
+
+            window.diceRoller.roll(diceRoll, undefined, rollAsIndex == 2 ? 3 : undefined, undefined, undefined, damageType, doubleDamage);
             
         });
 
@@ -121,7 +160,7 @@ class DiceContextMenu {
         return this.section("SEND TO:", s => {
             s.row("Everyone", svg_everyone(), sendToText === "Everyone");
             s.row("Self", svg_self(), sendToText === "Self");
-            if (!window.DM && window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true) {
+            if (!window.DM && window.CAMPAIGN_INFO && (window.CAMPAIGN_INFO.dmId != window.myUser || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true)) {
                 s.row("Dungeon Master", svg_dm(), sendToText === "Dungeon Master");
             }
         })
@@ -212,6 +251,37 @@ class DiceContextMenuSection {
         this.rows.push(row);
         return this;
     }
+    expressionRow(rowTitle, expression, inputCallback=()=>{}){
+       
+        const row = {
+            build: function(){
+                let rowInput = $(`<input type='text' class='dcmExpressionRow' value='${expression}'></input>`);
+                rowInput.on('click', function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                rowInput.on("keypress change blur", function(e) {
+                    inputCallback($(this).val());
+                    if (e.key === "Enter") {      
+                        $('.dcm-roll-button').click();
+                    }
+                });
+                let rowHtml = $(`
+                    <div class="dcm-row" role="expression">
+                        <div class="dcm-row-icon dcm-row-title">
+                            <span>${rowTitle}</span>
+                        </div>
+                    </div>
+                `);
+                rowHtml.append(rowInput);
+                 return rowHtml;
+            }
+        }
+        this.rows.push(row);
+        return this;
+
+    }
+
     build() {
         let sectionHtml = $(`
             <ul class="dcm-section" data-index="${this.index}">

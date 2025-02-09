@@ -28,18 +28,18 @@ function parse_img(url) {
 		} else if (retval.trim().startsWith("data:")) {
 			console.warn("parse_img is removing a data url because those are not allowed"); 
 			retval = "";
-		} else if (retval.startsWith("https://drive.google.com") && retval.indexOf("uc?id=") < 0 && retval.indexOf("thumbnail?id=") < 0) {
+		} else if (retval.includes("https://drive.google.com") && !retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
 			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
 			retval = parsed;
 			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
-		else if (retval.startsWith("https://drive.google.com") && (retval.indexOf("uc?id=") > -1 || retval.indexOf("thumbnail?id=") > -1)) {
-			const fileid = retval.split('=')[1].split('&')[0];
-			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
+		else if (retval.startsWith("https://drive.google.com") || (retval.includes("https://drive.usercontent.google.com")) && retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
+			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.matchAll(/id=([a-zA-Z0-9_-]+)/g).next().value[1] +'&sz=w3000';
 			retval = parsed;
-			return retval;
-		}
+			console.log("parse_img is converting", url, "to", retval);
+			return retval;		
+		} 
 		else if(retval.startsWith("https://www.googleapis.com/drive/v3/files/")){ // fix due to 1.5/1.6 beta 
 			const fileid = retval.split('files/')[1].split('?')[0];
 			const parsed = 'https://drive.google.com/thumbnail?id=' + fileid +'&sz=w3000';
@@ -448,7 +448,7 @@ function remove_loading_overlay() {
  * @param {Function} callback trigged after map is loaded
  */
 async function load_scenemap(url, is_video = false, width = null, height = null, UVTTFile = false, callback = null) {
-
+	clearInterval(window.YTINTERVAL);
 	$("#scene_map_container").toggleClass('map-loading', true);
 
 	$("[id='scene_map']").remove();
@@ -476,7 +476,9 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			videoId: videoid,
 			playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0 },
 			events: {
-				'onStateChange': function(event) {  if (event.data == 0) window.YTPLAYER.seekTo(0); },
+				'onStateChange': function(event) {  
+					if (event.data == 0) window.YTPLAYER.seekTo(0); 
+				},
 				'onReady': function(e) { 
 					let ytvolume=window.MIXER?.state()?.animatedMap?.volume != undefined ? window.MIXER?.state()?.animatedMap?.volume : $("#youtube_volume").val();
 					if(ytvolume)
@@ -484,29 +486,22 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 					else
 						e.target.setVolume(25);
 					e.target.playVideo();
+
+	        const loopTime = window.YTPLAYER.playerInfo.duration - 0.15;
+
+	        window.YTINTERVAL = setInterval(function (){
+	          const current_time = window.YTPLAYER.getCurrentTime();
+	          if (current_time > loopTime) {
+	            	window.YTPLAYER.seekTo(0);
+								window.YTPLAYER.playVideo();
+	          }
+	        }, 10);
 				}			
 			}
 		});
 
 
-		let smooth = function() {
-			if (window.YTPLAYER.playerInfo.playerState != 1){ // Something went wrong. tries to reset
-				window.YTPLAYER.seekTo(0);
-				window.YTPLAYER.playVideo();
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
-				return;
-			}
-			remaining = window.YTPLAYER.playerInfo.duration - window.YTPLAYER.playerInfo.currentTime;
-			if (remaining < 2) { // We should be able to just skip on the last second
-				window.YTPLAYER.seekTo(0);
-				window.YTTIMEOUT = setTimeout(smooth, (window.YTPLAYER.playerInfo.duration - 1) * 1000);
-			}
-			else {
-				window.YTTIMEOUT = setTimeout(smooth, (remaining / 2 ) * 1000);
-			}
-		};
 
-		window.YTTIMEOUT = setTimeout(smooth, 5000);
 		callback();
 		$("#scene_map_container").toggleClass('map-loading', false);
 	}
@@ -1757,12 +1752,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.off("load").on("load", function(event) {
 		console.log("fixing up the character sheet");
 
-	
-
-
 		let scripts = [
 		    // External Dependencies
 		    { src: "jquery-3.6.0.min.js" },
+		    { src: "jquery.contextMenu.js" },
 		    // AboveVTT Files
 		    { src: "DiceContextMenu/DiceContextMenu.js" },	   
 		    { src: "MonsterDice.js" },	
@@ -1798,6 +1791,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		
 		
 		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}DiceContextMenu/DiceContextMenu.css" />`));
+		$(event.target).contents().find("head").append($(`<link type="text/css" rel="Stylesheet" href="${window.EXTENSION_PATH}jquery.contextMenu.css" />`));
 		$(event.target).contents().find("head").append(`
 			<style>
 			button.avtt-roll-button,
@@ -1873,27 +1867,10 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		console.log("removing headers");
 
 
-		// DICE STREAMING ?!?!
-		if(!window.DM){
-			let firstTime=false;
-			if(!window.MYMEDIASTREAM)
-				firstTime = true;
-			let diceRollPanel = $(event.target).contents().find(".dice-rolling-panel__container");
-			if (diceRollPanel.length > 0) {
-				window.MYMEDIASTREAM = diceRollPanel.get(0).captureStream(0);
-
-
-				if (window.JOINTHEDICESTREAM) {
-					// we should tear down and reconnect
-					for (let i in window.STREAMPEERS) {
-						console.log("replacing the track")
-						window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-					}
-				}
-
-			}
-
+		if (window.JOINTHEDICESTREAM) {
+			joinDiceRoom();
 		}
+
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
 
@@ -3843,7 +3820,7 @@ function resize_player_sheet_thin() {
 		return;
 	}
 
-	let sheetWidth = "570px";
+	let sheetWidth = "620px";
 	let subsectionWidth = "50%";
 	let inspirationLeft = "-184px";
 	let proficiencyLeft = "-480px";
@@ -3856,7 +3833,7 @@ function resize_player_sheet_thin() {
 	let skillsRight = "0px";
 	let restTop = "20px";
 	if (window.innerWidth < 1200) {
-		sheetWidth = "520px";
+		sheetWidth = "550px";
 		subsectionWidth = "45%";
 		inspirationLeft = "-124px";
 		proficiencyLeft = "-380px";
@@ -3886,8 +3863,8 @@ function resize_player_sheet_thin() {
 	$(".ct-character-header-desktop__group--share").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 	$(".ct-character-header-desktop__group--builder").css({"visibility": "hidden", "width": "0px", "height": "0px"});
 
-	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "110px" });
-	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "0px" });
+	$(".ct-character-header-desktop__group--short-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "130px" });
+	$(".ct-character-header-desktop__group--long-rest").css({ "position": "absolute", "left": "auto", "top": restTop, "right": "20px" });
 	$(".ct-character-header-desktop__group--short-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group--long-rest .ct-character-header-desktop__button").css({ "padding": "2px 10px", "margin": "0px" });
 	$(".ct-character-header-desktop__group-tidbits").css({ "width": "60%" });
@@ -4179,7 +4156,7 @@ function adjust_site_bar() {
 
 	let fullWidth = "100%";
 	if (!is_player_sheet_full_width()) {
-		let sheetWidth = window.innerWidth < 1200 ? 520 : 570;
+		let sheetWidth =  window.innerWidth < 1200 ? 550 : 620;
 		let sidebarWidth = is_sidebar_visible() ? 340 : 0;
 		fullWidth = `${sheetWidth + sidebarWidth}px`;
 	}

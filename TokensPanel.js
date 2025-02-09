@@ -638,7 +638,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
         appendTo: "body",
         zIndex: 100000,
         cursorAt: {top: 0, left: 0},
-        cancel: '.token-row-gear, .change-token-image-item',
+        cancel: '.token-row-gear, .change-token-image-item, #context-menu-layer',
         distance: 25,
         helper: function(event) {
             console.log("enable_draggable_token_creation helper");
@@ -2385,9 +2385,10 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     inputWrapper.append(opacityWrapper);
 
     // border color
-    if(listItem.isTypePC()){
+    if(listItem.isTypePC() && customization.tokenOptions.playerThemeBorder != false){
         customization.tokenOptions.color = color_from_pc_object(find_pc_by_player_id(listItem.id));
     }
+
     const color = customization.tokenOptions.color || random_token_color();
     const borderColorWrapper = build_token_border_color_input(color, function (newColor, eventType) {
         customization.setTokenOption("color", newColor);
@@ -2395,38 +2396,63 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         decorate_modal_images(sidebarPanel, listItem, placedToken);
     });
     borderColorWrapper.removeClass("border-color-wrapper"); // sets display:block!important; but we want to be able to hide this one
-    const specificBorderColorSetting = {
-        name: 'specificBorderColor',
-        label: 'Specify Border Color',
-        type: 'toggle',
-        options: [
-            { value: true, label: "Specific Color", description: "The token will use the specified color." },
-            { value: false, label: "Round", description: "The token will use a random border color." }
-        ],
-        defaultValue: false
-    };
-
-
-
 
     const specificBorderColorValue = (typeof customization.tokenOptions.color === "string" && customization.tokenOptions.color.length > 0);
+    if(listItem.isTypePC()){
+        const playerThemeColorSetting = {
+            name: 'playerThemeBorderColor',
+            label: 'Player Border Color',
+            type: 'dropdown',
+            options: [
+                { value: true, label: "Player Theme Color", description: "The token will use the player theme color." },
+                { value: false, label: "Custom Color", description: "The token will use a specified border color." }
+            ],
+            defaultValue: true
+        };
+        const borderColorDropdown = build_dropdown_input(playerThemeColorSetting, specificBorderColorValue, function (useSpecificColorKey, newValue) {
+            customization.setTokenOption("playerThemeBorder", newValue)
+            if (newValue == 'true') {
+                customization.setTokenOption("color", color_from_pc_object(find_pc_by_player_id(listItem.id)));
+                persist_token_customization(customization);
+                borderColorWrapper.hide();
+                redraw_settings_panel_token_examples(customization.tokenOptions);
+                decorate_modal_images(sidebarPanel, listItem, placedToken);
+            } else {
+                customization.setTokenOption("color", color);
+                persist_token_customization(customization);
+                borderColorWrapper.show();
+            }
+        });
+        inputWrapper.append(borderColorDropdown);
+    }
+    else{
+        const specificBorderColorSetting = {
+            name: 'specificBorderColor',
+            label: 'Specify Border Color',
+            type: 'toggle',
+            options: [
+                { value: true, label: "Specific Color", description: "The token will use the specified color." },
+                { value: false, label: "Round", description: "The token will use a random border color." }
+            ],
+            defaultValue: false
+        };
 
-    const borderColorToggle = build_toggle_input(specificBorderColorSetting, specificBorderColorValue, function (useSpecificColorKey, useSpecificColorValue) {
-        if (useSpecificColorValue === true) {
-            customization.setTokenOption("color", color);
-            persist_token_customization(customization);
-            borderColorWrapper.show();
-        } else {
-            customization.setTokenOption("color", undefined);
-            persist_token_customization(customization);
-            borderColorWrapper.hide();
-        }
-    });
-    if(!listItem.isTypePC()){
+        const borderColorToggle = build_toggle_input(specificBorderColorSetting, specificBorderColorValue, function (useSpecificColorKey, useSpecificColorValue) {
+            if (useSpecificColorValue === true) {
+                customization.setTokenOption("color", color);
+                persist_token_customization(customization);
+                borderColorWrapper.show();
+            } else {
+                customization.setTokenOption("color", undefined);
+                persist_token_customization(customization);
+                borderColorWrapper.hide();
+            }
+        });
         inputWrapper.append(borderColorToggle);
     }
+
     inputWrapper.append(borderColorWrapper);
-    if (!specificBorderColorValue) {
+    if (!specificBorderColorValue || (listItem.isTypePC() && customization.tokenOptions.playerThemeBorder != false)) {
         borderColorWrapper.hide();
     }
 
@@ -2896,19 +2922,35 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         })
     }
 
-
+    function* addExampleToken(index) {
+        
+        while(index < index+10 && index<alternativeImages.length){
+            setTimeout(function(){
+                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
+                modalBody.append(tokenDiv);
+                index++;
+            })
+            yield
+        }
+       
+    }
+    let buildToken = addExampleToken(0);
+    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', function(){
+        if (modalBody.scrollTop() + 500 >= 
+            modalBody[0].scrollHeight) { 
+            for(let i = 0; i<10; i++){
+                buildToken.next()
+            }
+        } 
+    });
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
-            setTimeout(function () {
-                // JS doesn't have threads, but setTimeout allows us to execute this inefficient block of code after the rest of the modal has finished drawing.
-                // This gives the appearance of a faster UI because the modal will display and then these images will pop in.
-                // most of the time, this isn't needed, but if there are a lot of images (like /DDBTokens/Human), this make a pretty decent impact.
-                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
-                modalBody.append(tokenDiv);
-            });
+            if(i<10){
+                buildToken.next();
+            }
         }
     }
 
@@ -3055,7 +3097,7 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
     }
     clickedItem.activelyFetchingMonsters = true;
     clickedRow.find(".sidebar-list-item-row-item").addClass("button-loading");
-    window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, function (response, errorType) {
+    window.EncounterHandler.fetch_encounter_monsters(clickedItem.encounterId, async function (response, errorType) {
         clickedItem.activelyFetchingMonsters = false;
         clickedRow.find(".sidebar-list-item-row-item").removeClass("button-loading");
         if (response === false) {
@@ -3066,9 +3108,11 @@ function fetch_and_inject_encounter_monsters(clickedRow, clickedItem, callback) 
                 .map(monsterData => SidebarListItem.Monster(monsterData))
                 .sort(SidebarListItem.sortComparator);
             encounter_monster_items[clickedItem.encounterId] = monsterItems;
-            update_monster_item_cache(monsterItems); // let's cache these so we won't have to fetch them again if the user places them on the scene
-            inject_encounter_monsters();
-            callback(true);
+            update_monster_item_cache(monsterItems, function(){
+                inject_encounter_monsters();
+                callback(true);
+            }); // let's cache these so we won't have to fetch them again if the user places them on the scene
+            
         }
     });
 }
@@ -3796,7 +3840,7 @@ const fetch_and_cache_scene_monster_items = mydebounce( () => {
         return;
     }
     console.log("fetch_and_cache_scene_monster_items calling fetch_monsters with ids: ", monsterIds);
-    fetch_monsters(monsterIds, function (response) {
+    fetch_monsters(monsterIds, async function (response) {
         if (response !== false) {
             update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
         }
@@ -3809,30 +3853,93 @@ const fetch_and_cache_monsters = mydebounce( (monsterIds, callback, open5e) => {
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
-                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
-            }
-            if (callback) {
-                callback(open5e);
+                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)), function(){callback(open5e)});
             }
         }, open5e);
-    }
+    }   
     else{
         const cachedIds = Object.keys(cached_monster_items);
         const monstersToFetch = monsterIds.filter(id => !cachedIds.includes(id) && id != 'customStat');
         fetch_monsters(monstersToFetch, function (response) {
             if (response !== false) {
-                update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)));
+                update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)), function(){callback()});
             }
-            if (callback) {
-                callback();
-            }
+ 
         });
     }
     
 });
 
-function update_monster_item_cache(newItems) {
-    newItems.forEach(item => cached_monster_items[item.monsterData.id] = item);
+function update_monster_item_cache(newItems, callback=()=>{}) {
+   
+   const promise = new Promise((resolve, reject) =>{
+        newItems.forEach(async (item, index, array) => {
+
+           
+            if (window.tooltipCache === undefined) {
+                window.tooltipCache = {};
+            }
+            const parts = item.monsterData.url.split("/");
+            const id = parseInt(parts[parts.length-1]);
+            const type = parts[parts.length-2];
+
+            const typeAndId = `${type}/${id}`;
+            const existingJson = window.tooltipCache[typeAndId];
+            if (existingJson !== undefined){
+                let initiative = $(window.tooltipCache[typeAndId].Tooltip)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+                if(initiative.length>0){
+                  initArray = initiative.trim().split(' ');
+                  const initMod = initArray[0];
+                  const initScore = initArray[1];
+                  item.monsterData.initiativeMod = initMod;
+                  item.monsterData.initiativeScore = initScore;
+                  console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
+                }
+
+                cached_monster_items[item.monsterData.id] = item 
+                return;
+            }
+            
+              
+            let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}`);
+            let tooltipBody = $(moreInfo).find('.more-info');
+            tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+            tooltipBody.find('.detail-content>.line:first-of-type').remove();
+            moreInfo = `
+             <div class="tooltip tooltip-spell">
+               <div class="tooltip-header">
+                       <div class="tooltip-header-text">
+                           <div class="tooltip-header-title">${item.name}</div>
+                       </div>
+                       <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
+                           ${type.replaceAll(/s$/gi, '').replace('-', ' ')}
+                       </div>
+                   </div>
+             <div class="tooltip-body">
+                ${tooltipBody.html()}
+             </div>
+            </div>`
+
+            const toolTipJson = {Tooltip: moreInfo}
+            window.tooltipCache[typeAndId] = toolTipJson;
+
+            let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+                if(initiative.length>0){
+                initArray = initiative.trim().split(' ');
+                const initMod = initArray[0];
+                const initScore = initArray[1];
+                item.monsterData.initiativeMod = initMod;
+                item.monsterData.initiativeScore = initScore;
+                console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
+            }
+            cached_monster_items[item.monsterData.id] = item 
+            if(index === array.length-1) {
+              resolve();
+            }
+        });
+    });
+
+    promise.then(function(){callback()});
 }
 function update_open5e_item_cache(newItems) {
     newItems.forEach(item => {

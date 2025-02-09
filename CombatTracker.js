@@ -698,7 +698,9 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		entry.css('display', 'none');
 	}
 	entry.addClass("CTToken");
-	
+	if(window.DM && !token.options.combatGroupToken){
+		token.build_conditions(entry, true);
+	}
 	if (typeof(token.options.ct_show) == 'undefined'){
 		if(token.options.hidden) {
 			token.options.ct_show = false;
@@ -803,7 +805,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 					window.all_token_objects[token.options.id].options.init = init.val()
 					window.all_token_objects[token.options.id].sync = mydebounce(function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', window.all_token_objects[token.options.id].options);
-					}, 10);
+					}, 300);
 				
 					token.options.init = init.val();
 					if(!!window.TOKEN_OBJECTS[token.options.id]){
@@ -1200,7 +1202,7 @@ function ct_load(data=null){
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 					window.all_token_objects[data[i]['data-target']].sync = mydebounce(function(e) {				
 						window.MB.sendMessage('custom/myVTT/token', this.options);
-					}, 10);
+					}, 300);
 				}
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))

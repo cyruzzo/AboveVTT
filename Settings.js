@@ -345,11 +345,11 @@ function avtt_settings() {
 		},
 		{
 			name: "dragLight",
-			label: "Update vision on token drag",
+			label: "Update vision during token move",
 			type: "toggle",
 			options: [
-				{ value: true, label: "Enable", description: `While dragging a token vision will update` },
-				{ value: false, label: "Disable", description: `Vision will only update on dropping the token` }
+				{ value: true, label: "Enable", description: `While move a token vision will update` },
+				{ value: false, label: "Disable", description: `Vision will only update on finishing it's movement` }
 			],
 			defaultValue: false
 		}
@@ -459,6 +459,17 @@ function avtt_settings() {
 		options: [
 			{ value: true, label: "Disabled", description: `Reduces movement by disabling some animations` },
 			{ value: false, label: "Enabled", description: `All animations will be enabled` }
+		],
+		defaultValue: false
+	})
+	settings.push(
+	{
+		name: "autoReconnect",
+		label: "Auto Reconnect",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects. It may cause desync or tokens to reset due to missing messages.` },
+			{ value: false, label: "Disabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects.  It may cause desync or tokens to reset due to missing messages.` }
 		],
 		defaultValue: false
 	})
@@ -728,7 +739,35 @@ function init_settings() {
 		switch (setting.type) {
 			case "toggle":
 				inputWrapper = build_toggle_input(setting, currentValue, function(name, newValue) {
-					set_avtt_setting_value(name, newValue);
+					if(name == 'autoReconnect' && newValue == true){
+
+					  let container = $("#above-vtt-error-message");
+					  container.remove();
+					  container = $(`
+					      <div id="above-vtt-error-message" class="small-error">
+					        <h2>Enabling Auto Reconnect</h2>
+					        <div id="error-message-details"><p>Warning: Enabling this setting may cause desync or tokens to reset for everyone due to missed messages on disconnect.</p><p>It is only recommended to enable this if your connection is unstable causing many disconnects</p></div>
+					        <div class="error-message-buttons">
+					  		  	<button id="enable-auto-button">Enable</button>
+					          <button id="cancel-auto-button">Cancel</button>
+					        </div>
+					      </div>
+					    `)
+					 
+					  $(document.body).append(container);
+					 
+					  $("#cancel-auto-button").on("click", function(){
+					  	$(`button.rc-switch[name='${name}']`).removeClass('rc-switch-checked');
+					  	container.remove();
+					  });
+					  $("#enable-auto-button").on("click", function(){
+					  	 set_avtt_setting_value(name, newValue);
+					  	 container.remove();	
+					  });
+					}
+					else{
+						set_avtt_setting_value(name, newValue);
+					}	
 				});
 				break;
 			case "dropdown":
@@ -1109,51 +1148,38 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 			$(this).off().on("click", function(){
 				if($(this).text() == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else if($(this).text() == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			});
 		});
 
 
-		// DICE STREAMING ?!?!
-		let diceRollPanel = $(".dice-rolling-panel__container");
-		if (diceRollPanel.length > 0) {
-			window.MYMEDIASTREAM = diceRollPanel[0].captureStream(30);
-		}
 		if (window.JOINTHEDICESTREAM) {
 
-			for (let i in window.STREAMPEERS) {
-				console.log("replacing the track")
-				window.STREAMPEERS[i].getSenders()[0].replaceTrack(window.MYMEDIASTREAM.getVideoTracks()[0]);
-			}
+			joinDiceRoom();
 			setTimeout(function(){
 				if(sendToText == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			}, 1000)
-			setTimeout(function(){
-				window.MB.sendMessage("custom/myVTT/wannaseemydicecollection", {
-					from: window.MYSTREAMID
-				})
-			}, 500);
 		}
 	}
 	else {
@@ -1163,7 +1189,7 @@ function update_dice_streaming_feature(enabled, sendToText=gamelog_send_to_text(
 		$("[id^='streamer-']").remove();
 		window.MB.sendMessage("custom/myVTT/turnoffsingledicestream", {
 			to: "everyone",
-			from: window.MYSTREAMID
+			from: diceplayer_id
 		})
 		for (let peer in window.STREAMPEERS) {
 			window.STREAMPEERS[peer].close();
@@ -1607,9 +1633,11 @@ function import_readfile() {
 			AboveApi.migrateScenes(window.gameId, DataFile.scenes)
 				.then(() => {
 					$(".import-loading-indicator .loading-status-indicator__subtext").addClass("complete");
-					$(".import-loading-indicator .loading-status-indicator__subtext").text("Import complete. Please rejoin AboveVTT");
-					alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
-					location.reload();
+					setTimeout(function(){
+						alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
+						location.reload();
+					}, 2000) // allow time for journal/token customization persist via indexedDB onsuccess.
+
 				})
 				.catch(error => {
 					showError(error, "cloud_migration failed");

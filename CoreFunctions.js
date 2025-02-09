@@ -614,8 +614,8 @@ function showErrorMessage(error, ...extraInfo) {
   let container = $("#above-vtt-error-message");
   if(error.message.length > 300)
     error.message = error.message.substr(0, 300) + "...";
-  if (container.length === 0) {
-
+  if ($('#error-message-stack').length == 0) {
+    $("#above-vtt-error-message").remove();
     const container = $(`
       <div id="above-vtt-error-message">
         <h2>An unexpected error occurred!</h2>
@@ -652,8 +652,9 @@ function showErrorMessage(error, ...extraInfo) {
 function showDiceDisabledWarning(){
   window.diceWarning = 1;
   let container = $("#above-vtt-error-message");
-  let containerHTML = $(`
-      <div id="above-vtt-error-message">
+  container.remove();
+  container = $(`
+      <div id="above-vtt-error-message" class="small-error">
         <h2>DDB dice roller not detected</h2>
         <div id="error-message-details">Dice must be enabled on the character sheet for AboveVTT to function properly.</div>
         <div class="error-message-buttons">
@@ -661,35 +662,28 @@ function showDiceDisabledWarning(){
         </div>
       </div>
     `)
-  if (container.length === 0) {
-    container = containerHTML;
-    $(document.body).append(container);
-  }
-  else {
-    container.html(containerHTML);
-  }
+  
+  $(document.body).append(container);
+
   $("#close-error-button").on("click", removeError);
 }
 
 function showGoogleDriveWarning(){
   let container = $("#above-vtt-error-message");
-  let containerHTML = $(`
+  container.remove();
+  container = $(`
       <div id="above-vtt-error-message">
         <h2>Google Drive Issue</h2>
         <h3 id="error-message">Google has made changes</h3>
-        <div id="error-message-details"><p>Google has made some changes to google drive links that may cause maps and other images/audio/video to no longer load. </p><p>They no longer support (it was never officially supported) google drive as a public host.</p> <p>We suggesting moving to other hosts such as dropbox, onedrive, imgur, or your prefered hosting solution.</p><p> For more information or help with other hosting options see our discord: <a href='https://discord.com/channels/815028457851191326/823177610149756958/1201995534038990909'>Google Drive Issue</a></p></div>
+        <div id="error-message-details"><p> If you moved/updated/reuploaded the file you may need a new link. It's possible the link is not shared publicly. If it does not come from 'share->copy link' on the site or the url does not have 'id=' in it it may be a link format we do not currently support. Feel free to reach out to us on discord if you find a different format.</p><p>Otherwise Google has made some changes to google drive links that may cause maps and other images/audio/video to no longer load. </p><p>They no longer support (it was never officially supported) google drive as a public host.</p> <p>We suggesting moving to other hosts such as dropbox, onedrive, imgur, or your prefered hosting solution.</p><p> For more information or help with other hosting options see our discord: <a href='https://discord.com/channels/815028457851191326/823177610149756958/1201995534038990909'>Google Drive Issue</a></p></div>
         <div class="error-message-buttons">
           <button id="close-error-button">Close</button>
         </div>
       </div>
     `)
-  if (container.length === 0) {
-    container = containerHTML;
-    $(document.body).append(container);
-  }
-  else {
-    container.html(containerHTML);
-  }
+  
+  $(document.body).append(container);
+
   $("#close-error-button").on("click", removeError);
 }
 
@@ -970,44 +964,50 @@ function update_pc_with_data(playerId, data) {
     ...data,
     lastSynchronized: Date.now()
   }
-  if (window.DM) {
-    if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
-      window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
-    }
-    debounce_pc_token_update();
+ 
+  if (!window.PC_TOKENS_NEEDING_UPDATES.includes(playerId)) {
+    window.PC_TOKENS_NEEDING_UPDATES.push(playerId);
   }
+  debounce_pc_token_update();
 }
 
-const debounce_pc_token_update = mydebounce(() => {
-  if (window.DM) {
-    window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
-      const pc = find_pc_by_player_id(playerId, false);
-      let token = window.TOKEN_OBJECTS[pc?.sheet];     
-      if (token) {
-        let currentImage = token.options.imgsrc;
-        token.hp = pc.hitPointInfo.current;
-        token.options = {
-          ...token.options,
-          ...pc,
-          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-        };
-        token.place_sync_persist(); // not sure if this is overkill
+
+const debounce_pc_token_update = mydebounce(() => {  
+  window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
+    const pc = find_pc_by_player_id(playerId, false);
+    let token = window.TOKEN_OBJECTS[pc?.sheet];     
+    if (token && pc) {
+      let currentImage = token.options.imgsrc;
+      token.hp = pc.hitPointInfo.current;
+      token.options = {
+        ...token.options,
+        ...pc,
+        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
+        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+      };
+      if (window.DM) {
+        token.place_sync_persist(); // update it on the server
       }
-      token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
-      if(token){
-        let currentImage = token.options.imgsrc;
-        token.options = {
-          ...token.options,
-          ...pc,
-          imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-          id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-        };
-      }     
-    });
+      else{
+        token.place(); // update token for players even if dm isn't connected to websocket
+      }
+    }
+    token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
+    if(token){
+      let currentImage = token.options.imgsrc;
+      token.options = {
+        ...token.options,
+        ...pc,
+        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
+        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+      };
+    }     
+  });
+  if (window.DM) {
     update_pc_token_rows();
-    window.PC_TOKENS_NEEDING_UPDATES = [];
   }
+  window.PC_TOKENS_NEEDING_UPDATES = [];
+  
 },50);
 
 function update_pc_with_api_call(playerId) {
@@ -1065,16 +1065,13 @@ async function harvest_game_id() {
   }
 
   if (is_characters_page()) {
-    const campaignSummaryButton = $(".ddbc-campaign-summary, [class*='styles_campaignSummary']");
-    if (campaignSummaryButton.length > 0) {
-      if ($(".ct-campaign-pane__name-link").length === 0) {
-        campaignSummaryButton.click(); // campaign sidebar is closed. open it
-      }
-      const fromLink = $(".ct-campaign-pane__name-link").attr("href")?.split("/")?.pop();
-      if (typeof fromLink === "string" && fromLink.length > 1) {
-        return fromLink;
-      }
+   
+    
+    const fromLink = $("[href^='/games/']").attr("href")?.split("/")?.pop();
+    if (typeof fromLink === "string" && fromLink.length > 1) {
+      return fromLink;
     }
+    
 
     // we didn't find it on the page so hit the DDB API, and try to pull it from there
     const characterId = window.location.pathname.split("/").pop();

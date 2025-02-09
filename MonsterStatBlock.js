@@ -216,6 +216,15 @@ function build_monster_stat_block(statBlock, token) {
                         ${statBlock.data.armorClassDescription}
                     </span>
                   </span>
+                  ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                  <span class="mon-stat-block__attribute-value">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        ${statBlock.data.initiativeScore}
+                    </span>
+                  </span>` : ''}         
                 </div>
                 <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                   <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -495,6 +504,15 @@ function build_monster_copy_stat_block(statBlock) {
                         ${statBlock.data.armorClassDescription}
                     </span>
                   </span>
+                  ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                  <span class="mon-stat-block__attribute-value">
+                    <span class="mon-stat-block__attribute-data-value">
+                        ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                    </span>
+                    <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                        ${statBlock.data.initiativeScore}
+                    </span>
+                  </span>` : ''}  
                 </div>
                 <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                   <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -1119,7 +1137,7 @@ const DAMAGE_ADJUSTMENT_TYPE_VULNERABILITIES = 3;
 
 const validRollTypes = ["to hit", "damage", "save", "check", "heal", undefined]; // undefined is in the list to allow clearing it
 
-const fetch_tooltip = mydebounce((dataTooltipHref, callback) => {
+const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
@@ -1127,41 +1145,84 @@ const fetch_tooltip = mydebounce((dataTooltipHref, callback) => {
             window.tooltipCache = {};
         }
         console.log("fetch_tooltip starting for ", dataTooltipHref);
+        if(!dataTooltipHref.includes('tooltip')){
+          const parts = dataTooltipHref.split("/");
+          const id = parseInt(parts[parts.length-1]);
+          const type = parts[parts.length-2];
 
-        const parts = dataTooltipHref.split("/");
-        const idIndex = parts.findIndex(p => p.includes("-tooltip"));
-        const id = parseInt(parts[idIndex]);
-        const type = parts[idIndex - 1];
-        const typeAndId = `${type}/${id}`;
+          const typeAndId = `${type}/${id}`;
+          const existingJson = window.tooltipCache[typeAndId];
+          if (existingJson !== undefined) {
+              console.log("fetch_tooltip existingJson", existingJson);
+              callback(existingJson);
+              return;
+          }
 
-        const existingJson = window.tooltipCache[typeAndId];
-        if (existingJson !== undefined) {
-            console.log("fetch_tooltip existingJson", existingJson);
-            callback(existingJson);
-            return;
+          let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
+  
+          let tooltipBody = $(moreInfo).find('.more-info');
+          tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+            tooltipBody.find('.detail-content>.line:first-of-type').remove();
+
+          moreInfo = `
+              <div class="tooltip tooltip-spell">
+                <div class="tooltip-header">
+                        <div class="tooltip-header-text">
+                            <div class="tooltip-header-title">${name}</div>
+                        </div>
+                        <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
+                            ${type.replaceAll(/s$/gi, '').replace('-', ' ')}
+                        </div>
+                    </div>
+              <div class="tooltip-body">
+                 ${tooltipBody.html()}
+              </div>
+          </div>`
+
+          const toolTipJson = {Tooltip: moreInfo}
+          window.tooltipCache[typeAndId] = toolTipJson;
+          callback(toolTipJson)
         }
+        else{
+          const parts = dataTooltipHref.split("/");
+          const idIndex = parts.findIndex(p => p.includes("-tooltip"));
+          const id = parseInt(parts[idIndex]);
+          const type = parts[idIndex - 1];
+          const typeAndId = `${type}/${id}`;
 
-        window.ajaxQueue.addRequest({
-            url: `https://www.dndbeyond.com/${typeAndId}/tooltip-json`,
-            beforeSend: function() {
-                // only make the call if we don't have it cached.
-                // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
-                const alreadyFetched = window.tooltipCache[typeAndId];
-                if (alreadyFetched) {
-                    callback(alreadyFetched);
-                    return false;
+          const existingJson = window.tooltipCache[typeAndId];
+          if (existingJson !== undefined) {
+              console.log("fetch_tooltip existingJson", existingJson);
+              callback(existingJson);
+              return;
+          }
+
+          
+            window.ajaxQueue.addRequest({
+                url: `https://www.dndbeyond.com/${typeAndId}/tooltip-json`,
+                beforeSend: function() {
+                    // only make the call if we don't have it cached.
+                    // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
+                    const alreadyFetched = window.tooltipCache[typeAndId];
+                    if (alreadyFetched) {
+                        callback(alreadyFetched);
+                        return false;
+                    }
+                    return true;
+                },
+                success: function (response) {
+                    console.log("fetch_tooltip success", response);
+                    window.tooltipCache[typeAndId] = response;
+                    callback(response);
+                },
+                error: function (error) {
+                    console.warn("fetch_tooltip error", error);
                 }
-                return true;
-            },
-            success: function (response) {
-                console.log("fetch_tooltip success", response);
-                window.tooltipCache[typeAndId] = response;
-                callback(response);
-            },
-            error: function (error) {
-                console.warn("fetch_tooltip error", error);
-            }
-        });
+            });
+          
+        }
+        
+        
     } catch(error) {
         console.warn("Failed to find tooltip info in", dataTooltipHref, error);
     }
@@ -1172,12 +1233,13 @@ function display_tooltip(tooltipJson, container, clientY) {
         remove_tooltip(0, false);
 
         console.log("container", container)
-        const tooltipHtmlString = tooltipJson.Tooltip;
+        const tooltipHtmlString = tooltipJson.Tooltip.replaceAll(/<script>[\S\s]+<\/script>/gi, '');
 
         build_and_display_sidebar_flyout(clientY, function (flyout) {
             flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
             flyout.addClass("tooltip-flyout")
             const tooltipHtml = $(tooltipHtmlString);
+            add_journal_roll_buttons(tooltipHtml);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
             sendToGamelogButton.css({ "float": "right" });
@@ -1241,9 +1303,11 @@ function add_stat_block_hover(statBlockContainer) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     tooltip.hover(function (hoverEvent) {
         if (hoverEvent.type === "mouseenter") {
-            const dataTooltipHref = $(hoverEvent.currentTarget).attr("data-tooltip-href");
+            let dataTooltipHref = $(hoverEvent.currentTarget).attr("data-moreinfo") ? $(hoverEvent.currentTarget).attr("data-moreinfo") : $(hoverEvent.currentTarget).attr("data-tooltip-href");
+            let name = $(hoverEvent.currentTarget).text()
+
             if (typeof dataTooltipHref === "string") {
-                fetch_tooltip(dataTooltipHref, function (tooltipJson) {
+                fetch_tooltip(dataTooltipHref, name, function (tooltipJson) {
 
                     let container = $(hoverEvent.target).closest(".sidebar-flyout");
                     if(container.find('.tooltip-header').length === 0){

@@ -93,6 +93,309 @@ const sendCharacterUpdateEvent = mydebounce(() => {
   }
 }, 1500);
 
+
+function getPB(){
+  return parseInt($(".ct-proficiency-bonus-box__value").text());
+}
+
+const buffsDebuffs = {
+  "Bane": {
+      "tohit": "-d4",
+      "dmg": "0",
+      "save": "-d4",
+      "check": "0",
+      "type": "spell"
+  },
+  "Bless": {
+      "tohit": "+d4",
+      "dmg": "0",
+      "save": "+d4",
+      "check": "0",
+      "type": "spell"
+  },
+  "Rage": {
+    "multiOptions": {
+      "+2": {
+        "tohit": "0",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "0",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+      "+4": {
+        "tohit": "0",
+        "dmg": "+4",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Elemental Cleaver": {
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "2d6": {
+        "tohit": "0",
+        "dmg": "+2d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Great Weapon Master (2024)": {
+    "tohit": "0",
+    "dmg": "+PB",
+    "save": "0",
+    "check": "0",
+    "type": "feat",
+  },
+  "Call the Hunt": {
+    "tohit": "0",
+    "dmg": "+d6",
+    "save": "0",
+    "check": "0",
+    "type": "class",
+    "class": "barbarian",
+  },
+  "Cosmic Omen":{
+    "multiOptions": {
+      "Weal": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+      "Woe": {
+        "tohit": "+d6",
+        "dmg": "0",
+        "save": "+d6",
+        "check": "+d6"
+      },
+    },
+    "type": "class",
+    "class": "druid",
+  },
+  "Giant’s Might": {
+    "multiOptions": {
+      "1d6": {
+        "tohit": "0",
+        "dmg": "+d6",
+        "save": "0",
+        "check": "0"
+      },
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+d8",
+        "save": "0",
+        "check": "0"
+      },
+      "1d10": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "fighter",
+  },
+  "-5 to hit, +10 damage":  {
+    "tohit": "-5",
+    "dmg": "+10",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
+  },
+  "Guidance": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "+d4",
+      "type": "spell"
+  },
+  "Enlarge": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Reduce": {
+      "tohit": "0",
+      "dmg": "-d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Magic Weapon": {
+    "multiOptions": {
+      "+1": {
+        "tohit": "+1",
+        "dmg": "+1",
+        "save": "0",
+        "check": "0"
+      },
+      "+2": {
+        "tohit": "+2",
+        "dmg": "+2",
+        "save": "0",
+        "check": "0"
+      },
+      "+3": {
+        "tohit": "+3",
+        "dmg": "+3",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "spell"
+  },
+  "Hunter's Mark": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Hex": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Hexblade's Curse": {
+      "tohit": "0",
+      "dmg": "+PB",
+      "save": "0",
+      "check": "0",
+      "type": "class",
+      "class": "warlock"
+  },
+  "Symbiotic Entity": {
+      "tohit": "0",
+      "dmg": "+d6",
+      "save": "0",
+      "check": "0",
+      "type": "class",
+      "class": "druid"
+  },
+  "Strike of the Giants": {
+    "multiOptions": {
+      "Cloud": {
+        "tohit": "0",
+        "dmg": "+1d4",
+        "save": "0",
+        "check": "0"
+      },
+      "Fire": {
+        "tohit": "0",
+        "dmg": "+1d10",
+        "save": "0",
+        "check": "0"
+      },
+      "Other": {
+        "tohit": "0",
+        "dmg": "+1d6",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "feat"
+  },
+  "Gift of the Chromatic Dragon": {
+    "tohit": "0",
+    "dmg": "+d4",
+    "save": "0",
+    "check": "0",
+    "type": "feat"
+  },
+  "Emboldening Bond": {
+    "tohit": "+d4",
+    "dmg": "0",
+    "save": "+d4",
+    "check": "+d4",
+    "type": "class",
+    "class": "cleric"
+  },
+  "Divine Strike": {
+    "multiOptions": {
+      "1d8": {
+        "tohit": "0",
+        "dmg": "+1d8",
+        "save": "0",
+        "check": "0"
+      },
+      "2d8": {
+        "tohit": "0",
+        "dmg": "+2d8",
+        "save": "0",
+        "check": "0"
+      },
+    },
+    "type": "class",
+    "class": "cleric"
+  },
+  "Divine Favor": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Radiant Strikes (Improved Divine Smite)": {
+    "tohit": "0",
+    "dmg": "+d8",
+    "save": "0",
+    "check": "0",
+    "type": "class",
+    "class": "paladin"
+  },
+  "Crusader's Mantle": {
+      "tohit": "0",
+      "dmg": "+d4",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Holy Weapon": {
+      "tohit": "0",
+      "dmg": "+2d8",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Tenser's Transformation": {
+      "tohit": "0",
+      "dmg": "+2d12",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  },
+  "Fount of Moonlight": {
+      "tohit": "0",
+      "dmg": "+2d6",
+      "save": "0",
+      "check": "0",
+      "type": "spell"
+  }
+}
+let rollBuffFavorites = [];
+let rollBuffContext = [];
+
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
     console.log("character_sheet_changed", changes);
@@ -260,6 +563,10 @@ function read_current_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current']`)
+  if(element.length){
+    return parseInt(element.text())
+  }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-current-label']`);
   if (element.length) {
     return parseInt(element.text()) || 0;
@@ -284,6 +591,10 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary']`)
+  if(element.length){
+    return parseInt(element.text())
+  }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
   if (element.length) {
     return parseInt(element.text()) || 0;
@@ -300,6 +611,10 @@ function read_temp_hp(container = $(document)) {
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--max .ct-health-manager__health-item-value .ct-health-manager__health-max-current`)
+  if(element.length){
+    return parseInt(element.text())
+  }
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max']`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -322,16 +637,16 @@ function read_death_save_info(container = $(document)) {
     };
   }
   return {
-    failCount: container.find('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active').length || 0,
-    successCount: container.find('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active').length || 0
+    failCount: container.find('.ct-health-summary__deathsaves--fail .ct-health-summary__deathsaves-mark--active, [class*="styles_activeMark-fail"]').length || 0,
+    successCount: container.find('.ct-health-summary__deathsaves--success .ct-health-summary__deathsaves-mark--active, [class*="styles_activeMark-success"]').length || 0
   };
 }
 
 function read_inspiration(container = $(document)) {
-  if (container.find(".ct-inspiration__status--active").length) {
+  if (container.find(".ct-inspiration__status--active, .ct-quick-info__inspiration svg.ddbc-inspiration-token-svg").length) {
     return true;
   }
-  if (container.find(".ct-status-summary-mobile__inspiration .ct-status-summary-mobile__button--active").length) {
+  if (container.find(".ct-status-summary-mobile__inspiration .ct-status-summary-mobile__button--active, [class*='styles_mobileWrapper'] [class*='styles_mobileButton'][role='checkbox'][aria-checked='true']").length) {
     return true
   }
   return false;
@@ -339,6 +654,7 @@ function read_inspiration(container = $(document)) {
 
 // Good canidate for service worker
 async function init_characters_pages(container = $(document)) {
+
   // this is injected on Main.js when avtt is running. Make sure we set it when avtt is not running
   if (typeof window.EXTENSION_PATH !== "string" || window.EXTENSION_PATH.length <= 1) {
     window.EXTENSION_PATH = container.find("#extensionpath").attr('data-path');
@@ -347,6 +663,100 @@ async function init_characters_pages(container = $(document)) {
   // it's ok to call both of these, because they will do any clean up they might need and then return early
   init_character_sheet_page();
   init_character_list_page_without_avtt();
+
+ 
+  
+}
+
+const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
+
+
+const debounceRemoveRPGRoller =  mydebounce(() => {
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
+    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
+    delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
+}, 20)
+
+
+function convertToRPGRoller(){
+
+    let urlSplit = window.location.href.split("/");
+    if(urlSplit.length > 0 && !is_abovevtt_page()) {
+      window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
+    }
+
+    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+          let rollData = {} 
+          if($(this).hasClass('avtt-roll-formula-button')){
+             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
+             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
+          }
+          else{
+             rollData = getRollData(this)
+          }
+
+          e.stopPropagation();
+          e.preventDefault();
+
+          
+          
+          if (rollData.rollType === "damage") {
+            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          } else {
+            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
+              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
+          }
+    })
+ 
+    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+      let rollData = {} 
+      rollData = getRollData(this);
+      if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
+        return;
+      }
+      e.stopImmediatePropagation();
+      if(rollData.rollTitle == 'Initiative' && $(`[aria-label="Has advantage on initiative"]`).length){
+        rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
+      }
+      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
+    });
+}
+
+const debounceObserverSetup = mydebounce(function(){
+  observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+}, 200);
+
+/** actions to take on the character sheet when AboveVTT is NOT running */
+async function init_character_sheet_page() {
+  if (!is_characters_page()) return;
+
+  // check for name and image
+  set_window_name_and_image(function() {
+    observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+    observe_non_sheet_changes($('body'));
+    inject_join_exit_abovevtt_button();
+    observe_character_theme_change();
+    observe_character_image_change();
+    $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
+      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
+      if(e.shiftKey){
+        $(target).toggleClass('advantageHover', true)
+      }
+      else if(e.ctrlKey || e.metaKey){
+        $(target).toggleClass('disadvantageHover', true)
+      }else{
+        $(target).toggleClass('advantageHover', false)
+        $(target).toggleClass('disadvantageHover', false)
+      }
+    });
+  });
+
+  // observe window resizing and injeect our join/exit button if necessary
+  window.addEventListener('resize', function(event) {
+    inject_join_exit_abovevtt_button();
+    debounceObserverSetup();
+  }); 
 
   if(!is_abovevtt_page()){
     tabCommunicationChannel.addEventListener ('message', (event) => {
@@ -382,8 +792,6 @@ async function init_characters_pages(container = $(document)) {
       if(event.data.msgType =='disableSendToTab' && window.self == window.top){
         window.sendToTab = undefined;
       }
-
-
     })
     tabCommunicationChannel.postMessage({
       msgType: 'isAboveOpen'
@@ -393,99 +801,19 @@ async function init_characters_pages(container = $(document)) {
     window.diceRoller = new DiceRoller(); 
     if(!window.ddbConfigJson)
       window.ddbConfigJson = await DDBApi.fetchConfigJson();
+
+    setTimeout(function(){    
+      harvest_game_id()                 // find our campaign id
+        .then(set_game_id)              // set it to window.gameId
+        .then(harvest_campaign_secret)  // find our join link
+        .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
+        .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
+        .then(async () => {
+          window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
+          window.myUser = $('#message-broker-client').attr('data-userid');
+        })
+    }, 5000)
   }
-}
-
-const debounceConvertToRPGRoller =  mydebounce(() => {convertToRPGRoller()}, 20)
-
-
-const debounceRemoveRPGRoller =  mydebounce(() => {
-    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-    $(`.integrated-dice__container:not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-    delete window.EXPERIMENTAL_SETTINGS['rpgRoller'];
-}, 20)
-
-
-function convertToRPGRoller(){
-    if(is_abovevtt_page() && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-      $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller')
-      $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-      return;
-    }
-    let urlSplit = window.location.href.split("/");
-    if(urlSplit.length > 0 && !is_abovevtt_page()) {
-      window.PLAYER_ID = urlSplit[urlSplit.length - 1].split('?')[0];
-    }
-
-    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
-          let rollData = {} 
-          if($(this).hasClass('avtt-roll-formula-button')){
-             rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
-             rollData.modifier = `${Math.sign(rollData.calculatedConstant) == 1 ? '+' : ''}${rollData.calculatedConstant}`
-          }
-          else{
-             rollData = getRollData(this)
-          }
-          if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-            return;
-          }
-          e.stopPropagation();
-          e.preventDefault();
-
-          
-          
-          if (rollData.rollType === "damage") {
-            damage_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
-              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-          } else {
-            standard_dice_context_menu(rollData.expression, rollData.modifier, rollData.rollTitle, rollData.rollType, window.PLAYER_NAME, window.PLAYER_IMG, undefined, undefined, rollData.damageType)
-              .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
-          }
-    })
- 
-    $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
-      let rollData = {} 
-      rollData = getRollData(this);
-      if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-        return;
-      }
-      e.stopImmediatePropagation();
-      
-      window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
-    });
-}
-
-
-
-/** actions to take on the character sheet when AboveVTT is NOT running */
-function init_character_sheet_page() {
-  if (!is_characters_page()) return;
-
-  // check for name and image
-  set_window_name_and_image(function() {
-    observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
-    observe_non_sheet_changes($(document));
-    inject_join_exit_abovevtt_button();
-    observe_character_theme_change();
-    observe_character_image_change();
-    $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
-      if(e.shiftKey){
-        $(target).toggleClass('advantageHover', true)
-      }
-      else if(e.ctrlKey || e.metaKey){
-        $(target).toggleClass('disadvantageHover', true)
-      }else{
-        $(target).toggleClass('advantageHover', false)
-        $(target).toggleClass('disadvantageHover', false)
-      }
-    });
-  });
-
-  // observe window resizing and injeect our join/exit button if necessary
-  window.addEventListener('resize', function(event) {
-    inject_join_exit_abovevtt_button();
-  }); 
 }
 
 /** actions to take on the characters list when AboveVTT is NOT running */
@@ -594,7 +922,189 @@ function inject_dice_roll(element, clear=true) {
       }
   })
 }
+function register_buff_row_context_menu() {
+  $.contextMenu({
+    selector: ".dropdown-check-list li",
+    build: function(element, e) {
 
+      let menuItems = {};
+
+      let rowHtml = $(element);
+      let rowBuff = rowHtml.find('[data-buff]').attr('data-buff');
+
+      menuItems["favorite"] = {
+        name: rollBuffFavorites.includes(rowBuff) ? "Remove From Favorites" : "Move to Favorites",
+        callback: function(itemKey, opt, originalEvent) {
+            if(rollBuffFavorites.includes(rowBuff)){
+              rollBuffFavorites = rollBuffFavorites.filter(d=> d != rowBuff)
+            }
+            else{
+              rollBuffFavorites.push(rowBuff)
+            }
+            localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+            rebuild_buffs();
+
+        }
+      };
+      /**** To do: Allow select menus to be added to roll context menus for this to work. Checkbox inputs can just be added as list items ****/
+      /*
+      menuItems["addToContext"] = {
+        name: rollBuffContext.includes(rowBuff) ? "Remove from Roll Context Menu" : "Add to Roll Context Menu",
+        callback: function(itemKey, opt, originalEvent) {
+          if(rollBuffContext.includes(rowBuff)){
+            rollBuffContext = rollBuffContext.filter(d=> d != rowBuff)
+          }
+          else{
+            rollBuffContext.push(rowBuff)
+          }
+          rebuild_buffs();
+        }
+      };
+      */
+      return { items: menuItems };
+    }
+
+  })
+}
+function rebuild_buffs(fullBuild = false){
+  window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
+  rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
+  let avttBuffSelect;
+  if(fullBuild){
+    avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
+      <span class="clickHandle">Roll Buff/Debuffs</span>
+      <ul class="avttBuffItems">
+        <ul id='favoriteBuffs'><li>Favorite</li></ul>
+        <ul id='classBuffs'><li>Class</li>
+          <ul id='barbarianBuffs'><li>Barbarian</li></ul>
+          <ul id='bardBuffs'><li>Bard</li></ul>
+          <ul id='clericBuffs'><li>Cleric</li></ul>
+          <ul id='druidBuffs'><li>Druid</li></ul>
+          <ul id='fighterBuffs'><li>Fighter</li></ul>
+          <ul id='monkBuffs'><li>Monk</li></ul>
+          <ul id='paladinBuffs'><li>Paladin</li></ul>
+          <ul id='rangerBuffs'><li>Ranger</li></ul>
+          <ul id='rogueBuffs'><li>Rogue</li></ul>
+          <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
+          <ul id='warlockBuffs'><li>Warlock</li></ul>
+          <ul id='wizardBuffs'><li>Wizard</li></ul>
+        </ul>
+        <ul id='spellBuffs'><li>Spells</li></ul>
+        <ul id='featBuffs'><li>Feats</li></ul>
+      </ul>
+    </div>`)
+  }
+  else{
+    avttBuffSelect = $(`#avtt-buff-options`);
+    avttBuffSelect.find('.avttBuffItems').html(`
+      <ul id='favoriteBuffs'><li>Favorite</li></ul>
+      <ul id='classBuffs'><li>Class</li>
+        <ul id='barbarianBuffs'><li>Barbarian</li></ul>
+        <ul id='bardBuffs'><li>Bard</li></ul>
+        <ul id='clericBuffs'><li>Cleric</li></ul>
+        <ul id='druidBuffs'><li>Druid</li></ul>
+        <ul id='fighterBuffs'><li>Fighter</li></ul>
+        <ul id='monkBuffs'><li>Monk</li></ul>
+        <ul id='paladinBuffs'><li>Paladin</li></ul>
+        <ul id='rangerBuffs'><li>Ranger</li></ul>
+        <ul id='rogueBuffs'><li>Rogue</li></ul>
+        <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
+        <ul id='warlockBuffs'><li>Warlock</li></ul>
+        <ul id='wizardBuffs'><li>Wizard</li></ul>
+      </ul>
+      <ul id='spellBuffs'><li>Spells</li></ul>
+      <ul id='featBuffs'><li>Feats</li></ul>
+    `)
+  }
+
+  const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
+  avttBuffSelect.off('click.clickHandle').on('click.clickHandle', '.clickHandle', function(){
+    avttBuffSelect.toggleClass('visible')
+    if(avttBuffSelect.hasClass('visible')){
+      $(document).on('click.blurHandle', function(e){
+        if($(e.target).closest('#avtt-buff-options, .context-menu-list').length == 0){
+          avttBuffSelect.toggleClass('visible')
+          $(document).off('click.blurHandle');
+        }
+      })  
+    }
+  })
+  avttBuffSelect.off('click.headers').on('click.headers', 'ul>ul', function(e){
+    e.stopPropagation();
+    if($(e.target).is('li:first-of-type'))
+      $(e.target).closest('ul').toggleClass('collapsed');
+  })
+  const sortedBuffs = Object.keys(buffsDebuffs).sort().reduce(
+    (obj, key) => { 
+      obj[key] = buffsDebuffs[key]; 
+      return obj;
+    }, 
+    {}
+  );
+  for(let i in sortedBuffs){
+    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type}Buffs`);
+    const replacedName = i.replace("'", '');
+    const addToFavorite = rollBuffFavorites.includes(replacedName);
+
+    if(buffsDebuffs[i]['multiOptions'] != undefined){
+      const row = $(`<li><select id='buff_${replacedName}' data-buff='${replacedName}'/><option value='0'></option></select><label for='buff_${replacedName}'>${i}</label></li>`)
+      const select = row.find('select');
+      const currentSelected = window.rollBuffs.find(d => d.includes(i));
+
+      for(let j in buffsDebuffs[i]['multiOptions']){
+        const option = $(`<option value='${j}'>${j}</option>`);
+        select.append(option)
+      }
+      if(currentSelected != undefined){
+        select.val(currentSelected[1])
+      }
+      row.find('select').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        if(typeof window.rollBuffs == 'undefined')
+          window.rollBuffs =[];
+        if($(this).val() != '0'){
+          window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+          window.rollBuffs.push([i, $(this).val()])
+        }
+        else{
+         window.rollBuffs = window.rollBuffs.filter(d => !d.includes(i)); 
+        }
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul#favoriteBuffs`).append(row);  
+      else    
+        headerRow.append(row);
+    }else{
+      const row = $(`<li><input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/><label for='buff_${replacedName}'>${i}</label></li>`);
+      if(window.rollBuffs.includes(i))
+        row.find('input').prop('checked', true);
+      row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
+        if(typeof window.rollBuffs == 'undefined')
+          window.rollBuffs =[];
+        if($(this).is(':checked')){
+          window.rollBuffs.push(i)
+        }
+        else{
+         window.rollBuffs = window.rollBuffs.filter(d => d != i); 
+        }
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      })
+      if(addToFavorite)
+        avttBuffItems.find(`ul#favoriteBuffs`).append(row);
+      else   
+        headerRow.append(row);
+    }
+
+  }
+  avttBuffItems.find(`ul>ul`).each(function(){
+    if($(this).find('li').length < 2)
+      $(this).hide();
+  })
+
+  if(fullBuild)
+    $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+  register_buff_row_context_menu();
+}
 /**
  * Observes character sheet changes and:
  *     injects Dice Roll buttons when a slash command is in item notes.
@@ -726,9 +1236,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
         let rollData = {} 
         rollData = getRollData(this);
-        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-          return;
-        }
+
         e.stopImmediatePropagation();
         
         window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType), undefined, undefined, undefined, undefined, rollData.damageType);
@@ -744,9 +1252,7 @@ function observe_character_sheet_changes(documentToObserve) {
         else{
            rollData = getRollData(this)
         }
-        if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
-          return;
-        }
+
         e.stopPropagation();
         e.preventDefault();
 
@@ -863,7 +1369,7 @@ function observe_character_sheet_changes(documentToObserve) {
     }
 
 
-    const spellDamageButtons = $(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
+    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
     if(spellDamageButtons.length > 0){
       $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
       spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
@@ -877,7 +1383,7 @@ function observe_character_sheet_changes(documentToObserve) {
     } 
 
 
-    const damageButtons = $(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
+    const damageButtons = documentToObserve.find(`.ddb-note-roll:not('.above-vtt-visited-damage'), .integrated-dice__container:not('.above-vtt-visited-damage')`)
     if(damageButtons.length > 0){
       $(damageButtons).addClass("above-vtt-visited-damage");
       damageButtons.off('click.damageType').on('click.damageType', function(e){
@@ -901,7 +1407,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         let settingOption = { 
             "versatile":{
-              label: "Versatile rolls",
+              label: "Icon Roll Versatile weapons",
               type: "dropdown",
               options: [
                 { value: "both", label: "Roll both damages", description: "Both 1 and 2 handed rolls will be rolled." },
@@ -911,7 +1417,7 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "both"
             },
             "crit":{
-              label: "Crit Type",
+              label: "Icon Roll Crit Type",
               type: "dropdown",
               options:[
                 { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
@@ -922,20 +1428,45 @@ function observe_character_sheet_changes(documentToObserve) {
               defaultValue: "0"
             },
             "critRange":{
-              label: "Crit Range",
+              label: "Icon Roll Crit Range",
               type: "input",
               inputType: 'number',
               max: '20',
               min: '1',
               step: '1',
               defaultValue: "20"
+            },
+            "hitRoll":{
+              label: "Added to Attacks",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "damageRoll":{
+              label: "Added to Damage",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "checkRoll":{
+              label: "Added to Ability Checks",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
+            },
+            "saveRoll":{
+              label: "Added to Saves",
+              type: "input",
+              inputType: "text",
+              defaultValue: ""
             }
         }
-        let options = $(`<div id='icon-roll-options' 
-          style= 'z-index: 100000;
+        let options = $(`<div id='icon-roll-options'  
+              style= 'z-index: 100000;
               width: 20%;
               height: 20%;
-              width: 300px;
+              width: 350px;
+              max-width: 80%;
               height: 300px;
               position: fixed;
               display: none;
@@ -944,12 +1475,13 @@ function observe_character_sheet_changes(documentToObserve) {
               transform: translate(-50%, -50%);
               background: var(--theme-background-solid);
               box-shadow: 0px 0px 4px var(--theme-contrast);
-              padding-right: 5px;
               border-radius: 15px;
               border: 1px solid var(--theme-contrast);
               color: var(--theme-contrast);
-            '>
-        </div>`)
+              overflow:hidden;'>  
+              </div>`)
+        let optionsContents = $(`<div style='overflow: auto; max-height:100%;'></div>`);
+        options.append(optionsContents);
         let closeOptions = $(`<div id='close-icon-roll-options' 
           style='z-index: 99999;
             height: 100%;
@@ -970,7 +1502,7 @@ function observe_character_sheet_changes(documentToObserve) {
               window.CHARACTER_AVTT_SETTINGS[i] = settingOption[i].defaultValue;
             }
            let wrapper = $(`
-             <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 10px 0px 10px 0px;align-items: center;' data-option-name="${i}">
+             <div id='${i}Setting' style='font-size: 14px;display:flex; margin: 5px 0px;align-items: center;' data-option-name="${i}">
                <div style="margin-right: 3px; margin-left: 10px; flex-grow: 1;font-weight: 700;font-size: 14px;">${settingOption[i].label}:</div>
              </div>
            `);
@@ -1003,25 +1535,34 @@ function observe_character_sheet_changes(documentToObserve) {
             
             wrapper.append(input);
 
-            options.append(wrapper)
+            optionsContents.append(wrapper)
         }
         let optionsInfo = $(`<div style='font-size: 11px; margin: 10px; align-items: flex-start; display: flex; flex-direction: column;'>
-         <div style='margin-bottom:5px;'>• These settings only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
+         <div style='margin-bottom:5px;'>• Settings mentioning 'Icon Rolls' only apply to rolls made with icons/cast buttons to the left of actions/spells.</div>
          <div style='margin-bottom:5px;'>• Perfect Crits is a normal roll + max roll on crit dice</div>
          <div style='margin-bottom:5px;'>• Double Damage Total is 2*(dice damage+mod)</div>
-         <div style='margin-bottom:5px;'>• Hold Shift/Ctrl to roll ADV/DIS respectively.</div>
-         <div style='margin-bottom:5px;'>• Hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
+         <div style='margin-bottom:5px;'>• For icon rolls hold Shift/Ctrl to roll ADV/DIS respectively.</div>
+         <div style='margin-bottom:5px;'>• For icon rolls hold Alt + Shift/Ctrl to roll Super ADV/DIS respectively</div>
           </div>`)
-        options.append(optionsInfo);
+        optionsContents.append(optionsInfo);
 
       }
+
+
+
+
+
+      if($('#avtt-buff-options').length == 0){
+        rebuild_buffs(true);
+      }
+
       if($('#avtt-icon-roll-span').length == 0){
-        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px;">AVTT Icon Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
+        let settings = $(`<span id='avtt-icon-roll-span' style="font-weight: 700;font-size: 11px; width: 120px;">AVTT Roll Settings <span style='font-size: 11px;'class="ddbc-manage-icon__icon "></span></span>`)
         settings.off().on('click', function(){
           $('#close-icon-roll-options').css('display', 'block');
           $('#icon-roll-options').css('display', 'block');
         }) 
-        $('.ct-primary-box__tab--actions .ct-actions h2').after(settings)
+        $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(settings)
       }
 
       $(attackIcons).addClass("above-vtt-visited");
@@ -1047,7 +1588,7 @@ function observe_character_sheet_changes(documentToObserve) {
       })
       attackIcons.off('click.multiroll contextmenu.multiroll').on('click.multiroll contextmenu.multiroll', function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         let versatileRoll = window.CHARACTER_AVTT_SETTINGS.versatile;
                      
         let rollButtons = $(this).parent().find(`.integrated-dice__container:not('.avtt-roll-formula-button'):not('.above-vtt-visited'):not('.above-vtt-dice-visited'):not('.above-aoe'), .integrated-dice__container.abovevtt-icon-roll`);
@@ -1073,27 +1614,23 @@ function observe_character_sheet_changes(documentToObserve) {
           let diceRoll;
 
           if(data.expression != undefined){
-            if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
-               if(e.altKey){
-                  if(e.shiftKey){
-                    diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-                   }
-                   else if(e.ctrlKey || e.metaKey){
-                    diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-                   }
-               }
-               else if(e.shiftKey){
-                diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
-               }
-               else if(e.ctrlKey || e.metaKey){
-                diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
-               }else{
-                diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-               }
+            if (/^1d20/g.test(data.expression)) {
+              if(e.altKey){
+                if(e.shiftKey){
+                  data.expression = data.expression.replaceAll(/^1d20/g, '3d20kh1')
+                 }
+                 else if(e.ctrlKey || e.metaKey){
+                  data.expression = data.expression.replaceAll(/^1d20/g, '3d20kl1')
+                 }
+              }
+              else if(e.shiftKey){
+                data.expression = data.expression.replaceAll(/^1d20/g, '2d20kh1')
+              }
+              else if(e.ctrlKey || e.metaKey){
+                data.expression = data.expression.replaceAll(/^1d20/g, '2d20kl1')
+              }  
             }
-            else{
-              diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType)
-            }
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
             if(damageTypeText == undefined && data.damageType != undefined)
               damageTypeText = data.damageType
             window.diceRoller.roll(diceRoll, true, window.CHARACTER_AVTT_SETTINGS.critRange ? window.CHARACTER_AVTT_SETTINGS.critRange : 20, window.CHARACTER_AVTT_SETTINGS.crit ? window.CHARACTER_AVTT_SETTINGS.crit : 2, spellSaveText, damageTypeText);
@@ -1124,6 +1661,159 @@ function observe_character_sheet_changes(documentToObserve) {
       if($(`style#advantageHover`).length == 0){
           $('body').append(`
             <style id='advantageHover'>
+
+
+              ul.avttBuffItems select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                text-indent: 1px;
+                text-overflow: '';
+                margin-right: 5px;
+                border-color: #7d7d7d;
+                padding:0px;
+                width:16px;
+                height:16px;
+                border-radius:3px;
+                background: #fff !important;
+                color: var(--theme-contrast) !important;
+                text-shadow: none !important;
+                font-weight: bold; 
+              }
+              .ct-character-sheet--dark-mode ul.avttBuffItems select{
+                background: #363636 !important;
+              }
+              .ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
+                  backdrop-filter:brightness(3);
+              }
+              .dropdown-check-list {
+                display: inline-block;
+                position: absolute;
+                left: 130px;
+                font-size: 10px;
+                width: 200px;
+              }
+              .ct-tablet-box__header ~ .dropdown-check-list {
+                left: unset;
+              }
+              .dropdown-check-list .clickHandle {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                padding: 0px 50px 0px 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px 5px 0px 0px;
+                width: 200px;
+              }
+
+              .dropdown-check-list .clickHandle:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid var(--theme-contrast);
+                border-top: 2px solid var(--theme-contrast);
+                padding: 3px;
+                right: 10px;
+                top: 0px;
+                -moz-transform: rotate(-135deg);
+                -ms-transform: rotate(-135deg);
+                -o-transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+              }
+              .dropdown-check-list ul.avttBuffItems {
+                padding: 2px;
+                display: none;
+                margin: 0;
+                border: 1px solid #ccc;
+                border-top: none;
+                border-radius: 0px 0px 5px 5px;
+                height: 300px;
+                overflow: auto;
+                scrollbar-width: thin;
+                width: 200px;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed,
+              .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed {
+                height: 22px;
+                overflow: hidden;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li {  
+                list-style: none;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 3px;
+                font-weight: normal;
+                margin-left:2px
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type {
+                font-size: 12px;
+                font-weight: bold;
+                position: relative;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type{
+                  font-size:10px;
+                  margin-left:5px;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li{
+                  margin-left: 7px;
+              }
+              .dropdown-check-list.visible .clickHandle {
+                color: #0094ff;
+              }
+              .dropdown-check-list .avttBuffItems {
+                display: none;
+              }
+              .dropdown-check-list.visible .avttBuffItems {
+                display: block;
+                position: absolute;
+                background: var(--theme-background-solid);
+                z-index: 200;
+              }
+              .avttBuffItems li input{
+                margin-right: 4px;
+                width: 16px;
+                height: 16px;
+                min-width: 16px;
+                min-height: 16px;
+              }
+              .avttBuffItems li label{
+                font-size:12px;
+                padding: 3px;
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:after,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type:after {
+                position: absolute;
+                content: "";
+                border-left: 2px solid var(--theme-contrast);
+                border-top: 2px solid var(--theme-contrast);
+                padding: 3px;
+                right: 3px;
+                top: 9px;
+                transform-origin:center;
+                -moz-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                -o-transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+                transform: rotate(45deg);       
+              }
+              .dropdown-check-list ul.avttBuffItems>ul.collapsed>li:first-of-type:after,
+              .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed>li:first-of-type:after {
+                top: 5px;
+                -webkit-transform: rotate(-135deg);
+                transform: rotate(-135deg);
+              }
+              .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover,
+              .dropdown-check-list ul.avttBuffItems>ul>ul>li:first-of-type:hover{
+                  backdrop-filter:brightness(0.9);
+                  border-radius:5px;
+              }
+              div#icon-roll-options input,
+              div#icon-roll-options select{
+                  width: 140px;
+                  max-width:50%
+              }
               menu[class*='styles_tabs']>li>button[class*='styles_tabButton']{
                   max-height: 26px;
               }
@@ -1252,7 +1942,7 @@ function observe_character_sheet_changes(documentToObserve) {
       }    
     }
 
-
+    debounceConvertToRPGRoller();
 
 
     
@@ -1261,24 +1951,6 @@ function observe_character_sheet_changes(documentToObserve) {
       try {
         let mutationTarget = $(mutation.target);
         const mutationParent = mutationTarget.parent();
-         mutation.addedNodes.forEach(function(added_node){
-          if($(added_node).hasClass('integrated-dice__container') || $(added_node).find('.integrated-dice__container')){
-            if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top){
-              debounceConvertToRPGRoller();
-            }
-            else{
-              $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller'); 
-              $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller') 
-            }         
-          }
-        })
-        if(mutationTarget[0].nodeName == 'BUTTON' && mutationTarget.attr('name') == 'rpgRoller'){
-          if((!is_abovevtt_page() && (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)) || window.EXPERIMENTAL_SETTINGS['rpgRoller'] == true || window.self != window.top)
-            debounceConvertToRPGRoller();
-          else
-            $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller');
-            $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller')
-        }
         
         if(is_abovevtt_page()){
           mutation.removedNodes.forEach(function(removed_node) {
@@ -1296,13 +1968,13 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
 
-        if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find('.ct-game-log-pane').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && mutationTarget.find("#castbutton").length == 0) {
+        if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find('.ct-game-log-pane').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && $("#castbutton").length == 0) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
           if(is_abovevtt_page() || (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)){
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
               inject_sidebar_send_to_gamelog_button(mutationTarget.children('div:first-of-type'));
             }else{
-              inject_sidebar_send_to_gamelog_button(mutationTarget.find('.ct-sidebar__inner [class*="styles_pane"]>[class*="styles_content"]>div:first-of-type'));
+              inject_sidebar_send_to_gamelog_button($('.ct-sidebar__inner [class*="styles_pane"]>[class*="styles_content"]>div:first-of-type'));
             }
             
           }
@@ -1351,7 +2023,8 @@ function observe_character_sheet_changes(documentToObserve) {
             if(
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
-              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark')
+              mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
+              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
             ) {
               send_character_hp();
             } else if (mutationTarget.hasClass("ct-subsection--senses")) {
@@ -1368,15 +2041,17 @@ function observe_character_sheet_changes(documentToObserve) {
             if (mutationTarget.hasClass('ct-conditions-summary')) { // conditions update from sidebar
               const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
-            } else if(firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
-              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number`).text());
+            } else if((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit']`).text());
               send_character_hp(maxhp);
             }else if (
               ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
               (firstRemoved.hasClass('ct-health-summary__hp-item-input') && mutationTarget.hasClass('ct-health-summary__hp-item-content')) ||
               (firstRemoved.hasClass('ct-health-summary__deathsaves-label') && mutationTarget.hasClass('ct-health-summary__hp-item')) ||
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
-              mutationTarget.hasClass('ct-health-summary__deathsaves-mark')
+              mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
+              mutationTarget.hasClass('[class*="styles_mark"]') ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.find("input[class*=styles_input]").length == 0)
             ) {
               send_character_hp();
             }
@@ -1414,7 +2089,8 @@ function observe_character_sheet_changes(documentToObserve) {
           case "characterData":
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
-                mutationParent.hasClass("ct-health-manager__health-item-value") 
+                mutationParent.hasClass("ct-health-manager__health-item-value") ||
+                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
               ) {
                 send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar
@@ -1456,10 +2132,11 @@ function observe_character_sheet_changes(documentToObserve) {
 }
 
 function observe_non_sheet_changes(documentToObserve) {
-  if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
-    return;
+
 
   window.non_sheet_observer = new MutationObserver(function(mutationList, observer) {
+    if(window.DRAGGING || (typeof arrowKeysHeld !== 'undefined' && (arrowKeysHeld[0] || arrowKeysHeld[1] || arrowKeysHeld[2] || arrowKeysHeld[3])))
+      return;
     mutationList.forEach(mutation => {
       try {
         let mutationTarget = $(mutation.target);
@@ -1486,7 +2163,8 @@ function observe_non_sheet_changes(documentToObserve) {
 
   for(let i = 0; i<documentToObserve.length; i++){
     const mutation_target = documentToObserve.get(i);
-    const mutation_config = { attributes: true, childList: true, characterData: true, subtree: true };
+    //observers changes to body direct children being removed/added
+    const mutation_config = { attributes: false, childList: true, characterData: false, subtree: false };
     window.non_sheet_observer.observe(mutation_target, mutation_config);
   }
 }

@@ -44,20 +44,23 @@ async function export_scene_import_data(){
 
 	DataFile = currentSceneData.data
 
-	for(tokenID in window.TOKEN_OBJECTS){
-		let statBlockID = window.TOKEN_OBJECTS[tokenID].options.statBlock
+
+	let tokensObject = {}
+	for(let token in DataFile[uuid].tokens){
+
+		let tokenId = DataFile[uuid].tokens[token].id;
+		let statBlockID = DataFile[uuid].tokens[token].statBlock
 		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
-			DataFile[currentSceneData.uuid].notes[statBlockID] = window.JOURNAL.notes[statBlockID];
+			DataFile[uuid].notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 		}
-		if(window.JOURNAL.notes[tokenID] != undefined){
-			if(DataFile[currentSceneData.uuid].notes == undefined)
-				DataFile[currentSceneData.uuid].notes = {};
-			DataFile[currentSceneData.uuid].notes[tokenID] = window.JOURNAL.notes[tokenID];
+		if(window.JOURNAL.notes[tokenId] != undefined){
+			if(DataFile[uuid].notes == undefined)
+				DataFile[uuid].notes = {};
+			DataFile[uuid].notes[tokenId] = window.JOURNAL.notes[tokenId];
 		}
-	}
-
-	
-
+		tokensObject[tokenId] = DataFile[uuid].tokens[token];		
+	}	
+	DataFile[uuid].tokens = tokensObject;
 
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
@@ -90,6 +93,7 @@ async function export_scene_data(){
 			delete data[i];
 		}
 	}
+
 	let dataObject = {}
 	dataObject[window.CURRENT_SCENE_DATA.uuid] = data;
 	return {'data': dataObject, 'uuid': window.CURRENT_SCENE_DATA.uuid};

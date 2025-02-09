@@ -2180,6 +2180,58 @@ padding-top:10px;
     background: #e4c700;
 }
 
+#combat_area .condition-img {
+    background: #01ffff;
+}
+
+#combat_area .custom-condition.condition-img {
+    background: #F58231;
+}
+
+#combat_area .note-condition.condition-img {
+    background: #e4c700;
+}
+
+#combat_area .conditions {
+    display:flex;
+    position:absolute;
+    top: -3px !important;
+    height: 20px !important;
+    flex-wrap: nowrap;
+    left: calc(100% - 99px) !important;
+    align-items: center;
+    align-content: center;
+}
+
+#combat_area .conditions div img{
+    height:100% !important;
+    width:100% !important;
+    pointer-events:auto !important;  
+    position:relative;
+
+}
+#combat_area .conditions{
+    width: 100px !important;
+}
+#combat_area .conditions>div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    width: 14px !important;
+    height: 14px !important;
+    margin-right:2px;
+    border-radius:5px;
+    border: 1px solid black;
+    align-content: center;
+    flex-wrap: nowrap;
+}
+#combat_area .conditions ~ .player-conditionstions {
+    display: none;
+}
+#note.condition-container{
+    pointer-events: auto;
+}
 #note.condition-container{
     pointer-events: auto;
 }
@@ -2317,6 +2369,37 @@ body>[class*='styles_mobileNav']>button{
     outline-offset: 0;
     filter: none;
 }
+[data-id^='/profile'] .hpbar:before {
+    opacity: 0;
+    pointer-events:none;
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: var(--font-size);
+    font-weight: bold;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    border-radius: 10%;
+    line-height: var(--font-size);
+    counter-reset: hp var(--base-hp) temp var(--temp-hp);
+    content: 'HP: ' counter(hp) '\aTemp: ' counter(temp);
+    z-index: 10000;
+    width: fit-content;
+    padding: 3px;
+    white-space: pre;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: opacity 0s 0s;
+}
+
+[data-id^='/profile'] .hpbar:hover:before {
+    opacity:1;
+    transition: opacity 200ms 400ms;
+}
 /* Classes for main buttons on campaign page */
 .above-vtt-content-div {
     display: inline-block;
@@ -2425,6 +2508,7 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 
 .ct-sidebar__inner [class*='styles_gap']{
     border:none;
+    height:0px;
 }
 
 .avtt-sidebar-controls .tab-btn,
@@ -2697,9 +2781,7 @@ button.roll-button-mod.minus {
     top: 0;
     max-height: 100%;
     overflow: auto;
-    left: 0;
     right: 0;
-    margin: auto;
     width: 60%;
     min-width: 500px;
     font-size: 16px;
@@ -2707,8 +2789,20 @@ button.roll-button-mod.minus {
     border-radius: 5px;
     padding: 10px 50px;
     z-index: 1000000000000;
-    box-shadow: #5c7080 0px 8px 24px;
-    background: #f9f9f9;
+    box-shadow: 2px 2px 5px 0px #000000;
+    background: #ffffffcf;
+    backdrop-filter: blur(15px);
+    left: calc(50% - 160px);
+    transform:translateX(-50%);
+}
+#above-vtt-error-message.small-error{
+    width: 10%;
+    border-radius:15px;
+    top:10px;
+    padding:10px;
+}
+#above-vtt-error-message.small-error p{
+    margin:10px
 }
 #above-vtt-error-message .above-vtt-error-message-header {
     margin: 20px;
@@ -2738,6 +2832,8 @@ button.roll-button-mod.minus {
     align-items: center;
     text-align: center;
     text-transform: uppercase;
+    z-index: 100;
+    position: relative;
 }
 #above-vtt-error-message .github-issue-workaround:before {
     content: "workaround available";
@@ -3054,6 +3150,13 @@ button.roll-button-mod.minus {
 #light_container{
     filter: blur(calc(3px / var(--scene-scale)));
 
+}
+.remote-dice-video{
+    display:none;
+}
+.aura-element-container-clip [id*='vision_'].notVisible,
+.door-button.notVisible{
+    visibility: hidden;
 }
 div#selectedTokensBorder {
     pointer-events: none;
@@ -4947,6 +5050,7 @@ button.block-send-to-game-log span {
 }
 #token-configuration-modal .sidebar-panel-body{
     min-height:300px;
+    max-height:500px;
 }
 #token-configuration-modal{
     height: unset;
@@ -6421,7 +6525,7 @@ div#tokenOptionsContainer .remove-from-ct>button{
 }
 
 #combat_area td button{
-    margin: 0px 1px;
+    margin: -2px 1px
 }
 #site #combat_area tr td{
     padding-bottom: 4px;
@@ -6640,6 +6744,7 @@ input.max_hp[disabled]{
     overflow: visible;
     white-space: nowrap;
     transform: translate(-50%);
+    left: 50%;
 }
 
 .paused-indicator,
@@ -6790,7 +6895,7 @@ input.max_hp[disabled]{
     border: inset 5px var(--token-border-color, #ffffff44);
 }
 [data-notatoken].token>.base{
-    border-width: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    border-width: calc(5px / var(--scene-scale));
 }
 
 .token>.base,
@@ -6798,10 +6903,8 @@ input.max_hp[disabled]{
     width: 90%;
     height: 90%;
     position: absolute;
-    top: 0;
-    left: 0;
-    margin: 5% 0 0 5%;
 }
+
 
 
 
@@ -6822,7 +6925,7 @@ input.max_hp[disabled]{
     left: -5px;
     right: -5px;
     bottom: -5px;
-    background: radial-gradient(transparent 45% 67%, #00000088 74% 94%);
+    background: radial-gradient(transparent 68%, #000000 72%);
     border-radius: 50%;
     z-index: 1;
     position: absolute;
@@ -6835,23 +6938,23 @@ input.max_hp[disabled]{
     bottom: -2px;
 }
 [data-notatoken] .base.circle:before{
-    top: calc(-5px / var(--scene-scale));
-    left: calc(-5px / var(--scene-scale));
-    right: calc(-5px / var(--scene-scale));
-    bottom: calc(-5px / var(--scene-scale));
+    top: min(-1px, calc(-4px / var(--scene-scale)));
+    left: min(-1px, calc(-4px / var(--scene-scale)));
+    right: min(-1px, calc(-4px / var(--scene-scale)));
+    bottom: min(-1px, calc(-4px / var(--scene-scale)));
 }
 [data-notatoken] .base.large-or-smaller-base.circle:before{
-    top: calc(-5px / var(--scene-scale));
-    left: calc(-5px / var(--scene-scale));
-    right: calc(-5px / var(--scene-scale));
-    bottom: calc(-5px / var(--scene-scale));
+    top: min(-1px, calc(-3px / var(--scene-scale)));
+    left: min(-1px, calc(-3px / var(--scene-scale)));
+    right: min(-1px, calc(-3px / var(--scene-scale)));
+    bottom: min(-1px, calc(-3px / var(--scene-scale)));
 }
 
 .token>.token-image{
-    --aura-width: max(2px, calc(3px / var(--window-zoom)));
+    --aura-width: max(2px, calc(2px / var(--window-zoom)));
     --zoom-border-width: max(calc(2px / var(--scene-scale)), calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 4px) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 button.dropboxChooser{
     padding-left: 18px !important;
@@ -6977,10 +7080,10 @@ button span.onedrive-btn-status{
     max-width: calc(var(--max-width) / var(--scene-scale)) !important;
 }
 #token_map_items .token[data-notatoken]>.token-image{
-    --aura-width: max(1px, calc(calc(4px / var(--window-zoom)) / var(--scene-scale)));
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(2px / var(--scene-scale)) / var(--window-zoom)));
     --zoom-border-width: max(1px, calc(calc(var(--token-border-width) * 1.5) / var(--window-zoom)));
     border: var(--zoom-border-width, 1px) solid var(--token-border-color, #ffffff44);
-    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 #VTT .token>.base~.token-image,
 #token-configuration-modal .token>.base~.token-image
@@ -7011,11 +7114,24 @@ button span.onedrive-btn-status{
     transition: max-height 0.2s linear, max-width 0.2s linear, min-height 0.2s linear, min-width 0.2s linear;
     min-height: 0px;
     min-width: 0px;
-    --aura-width: max(1px, calc(0.5px / var(--window-zoom)));
-    filter:  drop-shadow(#ffffff22 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-border-color) 0px 0px 0px) drop-shadow(var(--token-hp-aura-color) 0px 0px var(--aura-width)) drop-shadow(var(--token-hp-aura-color) 0px 0px 0px) drop-shadow(var(--token-temp-hp) 0px 0px var(--aura-width)) drop-shadow(var(--token-temp-hp) 0px 0px 0px);
+    --aura-width: max(1px, calc(1px / var(--window-zoom)));
+    filter:  drop-shadow(#ffffff22 0px 0px) 
+        drop-shadow(var(--token-border-color) 0 0 var(--aura-width)) 
+        drop-shadow(var(--token-border-color) 0 0) 
+        drop-shadow(var(--token-hp-aura-color) 0 0 var(--aura-width)) 
+        drop-shadow(var(--token-hp-aura-color) 0 0)  
+        drop-shadow(var(--token-hp-aura-color) 0 0)  
+        drop-shadow(var(--token-temp-hp) 0 0 var(--aura-width))
+        drop-shadow(var(--token-temp-hp) 0 0)
+        drop-shadow(var(--token-temp-hp) 0 0);
 }
+#VTT .token[data-notatoken]>.token-image.freeform, 
+#token-configuration-modal .token[data-notatoken]>.token-image.freeform{
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)))
+}
+
 .token[data-notatoken]>.token-image.freeform {
-    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(0.5px / var(--scene-scale)) / var(--window-zoom)));
+    --aura-width: max(calc(1px / var(--scene-scale)), calc(calc(1px / var(--scene-scale)) / var(--window-zoom)))
 }
 .token>.token-image:not(.preserve-aspect-ratio) {
     object-fit: cover;
@@ -7038,19 +7154,20 @@ button span.onedrive-btn-status{
     background-size: 30%;
     opacity: 1;
     --aura-width: max(5px, calc(5px / var(--window-zoom)));
-    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
+
 }
 [data-notatoken] .base:after{
-    --aura-width: max(calc(5px / var(--scene-scale)), calc(calc(5px / var(--scene-scale)) / var(--window-zoom)));
+    --aura-width:max(calc(5px / var(--scene-scale)), calc(calc(5px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 .base.large-or-smaller-base:after{
     --aura-width: max(2px, calc(2px / var(--window-zoom)));
-    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) var(--aura-width) var(--token-temp-hp);
+    box-shadow: inset 0 0 var(--aura-width) var(--aura-width) var(--token-hp-aura-color), inset 0 0 var(--aura-width) calc(var(--aura-width) * 2) var(--token-temp-hp);
 }
 
 [data-notatoken] .base.large-or-smaller-base:after{
-    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(2px / var(--window-zoom)) / var(--scene-scale)));
+    --aura-width: max(calc(2px / var(--scene-scale)), calc(calc(2px / var(--scene-scale)) / var(--window-zoom)));
 }
 
 
@@ -7395,26 +7512,28 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size:calc(98% - 7px);
+    --mask-size:calc(100% - 7px);
+    border-radius: 50%;
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
-    height: calc(100% + 5px / min(1, var(--window-zoom)));
-    width: calc(100% + 5px / min(1, var(--window-zoom)));
-    top: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    left: min(-2.5px, calc(-2.5px / var(--window-zoom)));
-    right: 0px;
+    height: 100%;
+    width: 100%;;
+    top: 0px;
+    left: 0px;
     background-color: #000;
-    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%) !important;
+    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
+                            var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+                            var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff var(--mask-size) 105%);
 }
+.VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    border-radius:0px;
+}
 
-.VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before{
-    --mask-size: calc(100% - 7px / min(1, var(--scene-scale)));
-    height: calc(100% + 7px / min(1, var(--scene-scale)));
-    width: calc(100% + 7px / min(1, var(--scene-scale)));
-    top: min(-3px, calc(-3px / min(1, var(--scene-scale))));
-    left: min(-3px, calc(-3px / min(1, var(--scene-scale))));
+.VTTToken[data-notatoken]:not(.freeform):not(.hasbase) .hpvisualbar:before,
+.VTTToken.underDarkness:not(.freeform):not(.hasbase) .hpvisualbar:before{
+    --mask-size: calc(100% - calc(7px / var(--scene-scale)));
 }
 
 .VTTToken.square:not(.freeform):not(.hasbase) .hpvisualbar:before {
@@ -7423,9 +7542,12 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken .base ~ .hpvisualbar:before {
+    border-radius:50%;
     background-size: 100%;
     background-color: transparent;
-    background-image: conic-gradient(transparent calc(100% - var(--hp-percentage)), var(--token-hpbar-aura-color) 0%, var(--token-hpbar-aura-color) 100%);
+    background-image: conic-gradient(transparent calc(100% - var(--total-percentage)), 
+                        var(--token-temp-hpbar) calc(100% - var(--total-percentage)) calc(100% - var(--hp-percentage)), 
+                        var(--token-hpbar-aura-color) calc(100% - var(--hp-percentage)) 100%) !important;
     clip-path: circle();
     -webkit-mask: radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
     mask:radial-gradient(45% 45% at center,transparent var(--mask-size),#fff 105%);
@@ -7434,8 +7556,9 @@ button span.onedrive-btn-status{
 }
 
 .VTTToken .base.square ~ .hpvisualbar:before {
+     border-radius:0px;
     --mask-size: calc(95% - 2px / var(--window-zoom));
-    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 100%), linear-gradient(to top, #0000 var(--mask-size), #000 100%), linear-gradient(to bottom, #0000 var(--mask-size), #000 100%), linear-gradient(to right, #0000 var(--mask-size), #000 100%);
+    -webkit-mask: linear-gradient(to left, #0000 var(--mask-size), #000 95%), linear-gradient(to top, #0000 var(--mask-size), #000 95%), linear-gradient(to bottom, #0000 var(--mask-size), #000 95%), linear-gradient(to right, #0000 var(--mask-size), #000 95%);
     clip-path: none;
 }
 
@@ -7449,10 +7572,10 @@ button span.onedrive-btn-status{
     bottom: 5px;
 }
 .VTTToken[data-notatoken] .base ~ .hpvisualbar:before {
-    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+   top: max(1px, calc(4px / var(--scene-scale)));
+   left: max(1px, calc(4px / var(--scene-scale)));
+   right: max(1px, calc(4px / var(--scene-scale)));
+   bottom: max(1px, calc(4px / var(--scene-scale)));
 }
 .VTTToken .base.large-or-smaller-base ~ .hpvisualbar:before {
     top: 2px;
@@ -7461,10 +7584,10 @@ button span.onedrive-btn-status{
     bottom: 2px;
 }
 .VTTToken[data-notatoken] .base.large-or-smaller-base ~ .hpvisualbar:before {
-    top: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    left: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    right: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
-    bottom: max(1px, calc(calc(1px / var(--window-zoom)) / 3));
+    top: max(1px, calc(2px / var(--scene-scale)));
+    left: max(1px, calc(2px / var(--scene-scale)));
+    right: max(1px, calc(2px / var(--scene-scale)));
+    bottom: max(1px, calc(2px / var(--scene-scale)));
 }
 .hpvisualbar{
     pointer-events: none;
@@ -7731,8 +7854,19 @@ button span.onedrive-btn-status{
     filter: blur(6px);
     transition: 0ms filter 200ms;
 }
-.ct-character-sheet__inner[style*='width: 570px'] #avtt-character-join-button{
+.ct-character-sheet__inner[style*='width: 620px'] #avtt-character-join-button,
+.ct-character-sheet__inner[style*='width: 550px'] #avtt-character-join-button{
   display:none;
+}
+.ct-character-sheet__inner[style*='width: 620px'] .ct-combat__summary-group--statuses,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-combat__summary-group--statuses{
+    max-width:380px;
+}
+.ct-character-sheet__inner[style*='width: 620px'] .ct-character-header-desktop,
+.ct-character-sheet__inner[style*='width: 620px'] .ct-subsections,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-character-header-desktop,
+.ct-character-sheet__inner[style*='width: 550px'] .ct-subsections {
+    padding-right: 30px !important;
 }
 
 .body-rpgcampaign .ddb-campaigns-invite-primary:active {
@@ -8757,12 +8891,20 @@ button.journal-view-button.journal-button {
     -moz-box-shadow: 0 5px 8px 0 #aaa;
     box-shadow: 0 5px 8px 0 #aaa;
     background-position: top!important;
-    background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important
+    background-image: url(https://media.dndbeyond.com/encounter-builder/static/media/stat-block-top-texture.70eb7c244ee206f35cc0.png),url(https://media.dndbeyond.com/encounter-builder/static/media/paper-texture.88243187e307464c5837.png) !important;
+    background-size: 100%, cover !important;
 }
 
 .note-text .stat-block-background:after,
 .note-text .stat-block-background:before {
-    background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important
+    content: "";
+    display: block;
+    background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-bar-book.png) 50%;
+    background-size: 100% 100%;
+    height: 6px;
+    position: absolute;
+    left: -3px;
+    right: -3px;
 }
 
 
@@ -9260,12 +9402,20 @@ button.journal-view-button.journal-button {
     -moz-box-shadow: 0 5px 8px 0 #aaa;
     box-shadow: 0 5px 8px 0 #aaa;
     background-position: top!important;
-    background-image: url(https://media-stg.dndbeyond.com/compendium-images/tcoe/0gqawlEa2tjXGxpc/mm_statbg_sm.jpg)!important
+    background-image: url(https://media.dndbeyond.com/encounter-builder/static/media/stat-block-top-texture.70eb7c244ee206f35cc0.png),url(https://media.dndbeyond.com/encounter-builder/static/media/paper-texture.88243187e307464c5837.png) !important;
+    background-size: 100%, cover !important;
 }
 
 .custom-stat-block .stat-block-background:after,
 .custom-stat-block .stat-block-background:before {
-    background-image: url(https://media-stg.dndbeyond.com/compendium-images/cm/c43LH2y2Gcaxb3V2/MMStatBar_lrg.png)!important
+    content: "";
+    display: block;
+    background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-bar-book.png) 50%;
+    background-size: 100% 100%;
+    height: 6px;
+    position: absolute;
+    left: -3px;
+    right: -3px;
 }
 
 
@@ -9420,12 +9570,14 @@ button.journal-view-button.journal-button {
     background-image: radial-gradient(var(--vision-color) calc(var(--vision-radius) * 0.9), #00000000 var(--vision-radius)) !important;
 }
 [data-custom-animation] .islight,
-.aura-element[data-custom-animation]{
+.aura-element[data-custom-animation],
+[data-custom-animation].darkvision-animation .darkvision{
  -webkit-mask-image: var(--custom-mask-image);
  -webkit-mask-size: contain;
 }
 [data-animation='aurafx-rotate'] .islight,
-.aura-element[data-animation='aurafx-rotate'][id*='aura_'] {
+.aura-element[data-animation='aurafx-rotate'][id*='aura_'],
+[data-animation='aurafx-rotate'].darkvision-animation .darkvision {
     animation: aurafx-rotate 40s infinite linear;
     transform: scale(var(--animation-scale)) rotate(calc(1deg * var(--animation-rotation, 0)));
 }
@@ -10123,16 +10275,6 @@ float: right;
     width: 45%;
     display:inline-block;
 }
-#light_presets_properties .light_preset_row,
-#animation_presets_properties .animation_preset_row,
-#aura_presets_properties .aura_preset_row  {
-    display: flex;
-    align-content: center;
-    align-items: center;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    margin: 10px 5px;
-}
 
 .light_preset_title,
 .animation_preset_title,
@@ -10145,38 +10287,13 @@ float: right;
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
     color: #000;
     padding: 4px;
-    width: 180px;
+    width: 100%;
     -webkit-transition: .2s linear border,0.2s linear box-shadow;
     -moz-transition: .2s linear border,0.2s linear box-shadow;
     transition: .2s linear border,0.2s linear box-shadow;
 }
-.animation_preset_mask{
-    width: 520px;
-}
-#light_presets_properties .light_preset_row>div,
-#animation_presets_properties .animation_preset_row>div,
-#aura_presets_properties .aura_preset_row>div{
-    color: #666;
-    font-size: 12px;
-    line-height: 100%;
-    display: inline-block;
-    text-align:center;
-    margin:0px 30px;
-}
-#light_presets_properties .light_preset_row>div>div,
-#animation_presets_properties .animation_preset_row>div>div,
-#aura_presets_properties .aura_preset_row>div>div{
-    color: #666;
-    font-size: 12px;
-    line-height: 100%;
-    margin:5px 0px;
-}
-#light_presets_properties .light_preset_row>div>h3,
-#animation_presets_properties .animation_preset_row>div>h3,
-#aura_presets_properties .aura_preset_row>div>h3{
-    color: #000;
-    font-size: 12px
-}
+
+
 div#addLightPreset,
 div.removePreset,
 div#addAnimationPreset,
@@ -10216,30 +10333,22 @@ div#addAuraPreset{
     width:20px;
     height:20px;
     margin:0px !important;
+    display:flex; 
+    top:-15px;
 }
 
-
-.light_preset_title_row,
-.animation_preset_title_row,
-.aura_preset_title_row  {
-    position: sticky;
-    top: 0px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    background: #f9f9f9 url(https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/background_texture.png) repeat !important;
-    z-index: 1;
-}
-.animation_preset_title_row,
-#animation_presets_properties .animation_preset_row{
-    justify-content: space-between;
+table#animation_presets_properties td .rc-switch {
+    left:50%;
+    translate: -50%
 }
 
-.light_preset_title_row>div>h3,
-.animation_preset_title_row>div>h3,
-.aura_preset_title_row>div>h3 {
-    font-size: 12px;
-    margin: 10px 75px; 
+table#animation_presets_properties th:nth-of-type(4),
+table#animation_presets_properties th:nth-of-type(3){
+   width:8%;
+}
+
+#animation_presets_properties{
+    margin:10px 0px;
 }
 #edit_preset_light_dialog,
 #edit_preset_animation_dialog,
@@ -10997,6 +11106,2118 @@ div#playlistFields {
 /***** END NEW STAT BLOCKS ****/
 
 
+/***** MORE INFO STYLES *****/
+        
+.ddb-statblock {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: -10px
+}
+
+.ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%;
+    padding: 10px
+}
+
+.scenes-panel-add-buttons-wrapper {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    padding-right: 6px;
+    padding-left: 4px;
+    justify-content: space-between;
+    width: 100%;
+}
+@media(min-width: 475px) {
+    .ddb-statblock-item {
+        -webkit-flex:33.33333%;
+        -ms-flex: 33.33333%;
+        flex: 33.33333%
+    }
+}
+
+@media(min-width: 600px) {
+    .ddb-statblock-item {
+        -webkit-flex:25%;
+        -ms-flex: 25%;
+        flex: 25%
+    }
+}
+
+.ddb-statblock-item-label,.ddb-statblock-item-value {
+    color: #242527;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden
+}
+
+.ddb-statblock-item-label {
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: uppercase
+}
+
+.ddb-statblock-item-value {
+    font-size: 16px
+}
+
+.ddb-statblock-spell .ddb-statblock-item-value {
+    text-overflow: initial;
+    white-space: initial;
+    overflow: initial
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item {
+    text-align: center
+}
+
+@media(min-width: 420px) {
+    .ddb-statblock-ability-scores .ddb-statblock-item {
+        -webkit-flex:33.33333%;
+        -ms-flex: 33.33333%;
+        flex: 33.33333%
+    }
+}
+
+@media(min-width: 740px) {
+    .ddb-statblock-ability-scores .ddb-statblock-item {
+        -webkit-flex:16.66667%;
+        -ms-flex: 16.66667%;
+        flex: 16.66667%
+    }
+}
+
+.ddb-top-result .ddb-statblock-ability-scores .ddb-statblock-item {
+    -webkit-flex: 33.33333%;
+    -ms-flex: 33.33333%;
+    flex: 33.33333%
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label::before {
+    content: '';
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    background-size: cover;
+    background-position: center
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.strength::before {
+    background-image: url("../images/icons/abilities/strength.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.dexterity::before {
+    background-image: url("../images/icons/abilities/dexterity.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.constitution::before {
+    background-image: url("../images/icons/abilities/constitution.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.charisma::before {
+    background-image: url("../images/icons/abilities/charisma.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.wisdom::before {
+    background-image: url("../images/icons/abilities/wisdom.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-label.intelligence::before {
+    background-image: url("../images/icons/abilities/intelligence.svg")
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-value .score,.ddb-statblock-ability-scores .ddb-statblock-item-value .modifier {
+    display: inline;
+    font-size: 20px
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-strength .score {
+    color: #bf2225
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-dexterity .score {
+    color: #41474d
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-constitution .score {
+    color: #79614c
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-intelligence .score {
+    color: #f96a3b
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-wisdom .score {
+    color: #879399
+}
+
+.ddb-statblock-ability-scores .ddb-statblock-item-charisma .score {
+    color: #edb451
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item {
+    -webkit-flex: 1 1 50%;
+    -ms-flex: 1 1 50%;
+    flex: 1 1 50%
+}
+
+@media(min-width: 640px) {
+    .ddb-statblock-monster-stats .ddb-statblock-item {
+        -webkit-flex-basis:25%;
+        -ms-flex-preferred-size: 25%;
+        flex-basis: 25%
+    }
+}
+
+.ddb-top-result .ddb-statblock-monster-stats .ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-label {
+    text-align: center
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .primary,.ddb-statblock-monster-stats .ddb-statblock-item-value .secondary {
+    display: inline
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .primary {
+    font-size: 24px;
+    padding-right: 3px
+}
+
+.ddb-statblock-monster-stats .ddb-statblock-item-value .secondary {
+    font-size: 12px;
+    font-weight: 500;
+    white-space: normal
+}
+
+.ddb-top-result .ddb-statblock-monster-info .ddb-statblock-item {
+    -webkit-flex: 50%;
+    -ms-flex: 50%;
+    flex: 50%
+}
+
+.ddb-statblock-monster-info .ddb-statblock-item-value {
+    font-size: 14px;
+    text-overflow: initial;
+    white-space: initial;
+    overflow: initial
+}
+
+.tooltip-header-title{
+    text-transform: capitalize;
+}
+
+.line {
+    width: 100%;
+    height: 1px;
+    background-color: #1b9af0
+}
+
+.line.height3 {
+    height: 3px
+}
+
+.line.height2 {
+    height: 2px
+}
+
+.line.marginBottom10 {
+    margin-bottom: 10px
+}
+
+.line.marginBottom20,.line.marginbottom20 {
+    margin-bottom: 20px
+}
+
+.line.marginBottom30 {
+    margin-bottom: 30px
+}
+
+.line.marginTop20 {
+    margin-top: 20px
+}
+
+.line.marginTop15 {
+    margin-top: 15px
+}
+
+.line.marginTop10 {
+    margin-top: 10px
+}
+
+.line.character {
+    background-color: #ee8600
+}
+
+.line.rule,.line.compendium {
+    background-color: #47D18C
+}
+
+.line.item,.line.magic-item,.line.gear {
+    background-color: #0f5cbc
+}
+
+.line.monster {
+    background-color: #bc0f0f
+}
+
+.line.spell {
+    background-color: #704cd9
+}
+
+.line.forum {
+    background-color: #979aa4
+}
+
+.line.grey {
+    background-color: #979AA4
+}
+
+.line.vehicle {
+    background-color: #4599E9
+}
+
+.line.muted {
+    background-color: #EDEAE8
+}
+
+
+ .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+    position: relative;
+    top: -10px;
+    background-color: #fff;
+    border-left: 1px solid #ECE9E9;
+    border-right: 1px solid #ECE9E9;
+    width: calc(100% - 2px);
+    margin: 0 auto;
+    padding: 20px 20px 0
+}
+
+@media(min-width: 1024px) {
+     .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+        width:calc(100% - 10px);
+        padding: 30px 26px 0
+    }
+}
+
+ .more-info-body-description,.RPGMonster-listing .more-info-body-description,.RPGMagicItem-listing .more-info-body-description,.ihomebrewable-listing .more-info-body-description,.RPGSpell-listing .more-info-body-description,.IGear-listing .more-info-body-description,.RPGFeat-listing .more-info-body-description,.RPGBackground-listing .more-info-body-description,.RPGSubclass-listing .more-info-body-description {
+    font-size: 14px;
+    line-height: 24px;
+    color: #242527
+}
+
+ .more-info-body-description table,.RPGMonster-listing .more-info-body-description table,.RPGMagicItem-listing .more-info-body-description table,.ihomebrewable-listing .more-info-body-description table,.RPGSpell-listing .more-info-body-description table,.IGear-listing .more-info-body-description table,.RPGFeat-listing .more-info-body-description table,.RPGBackground-listing .more-info-body-description table,.RPGSubclass-listing .more-info-body-description table {
+    border-collapse: collapse;
+    margin: 20px 0
+}
+
+ .more-info-body-description table.compendium-left-aligned-table th,.RPGMonster-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGMagicItem-listing .more-info-body-description table.compendium-left-aligned-table th,.ihomebrewable-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGSpell-listing .more-info-body-description table.compendium-left-aligned-table th,.IGear-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGFeat-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGBackground-listing .more-info-body-description table.compendium-left-aligned-table th,.RPGSubclass-listing .more-info-body-description table.compendium-left-aligned-table th {
+    text-align: left
+}
+
+ .more-info-body-description table, .more-info-body-description table th, .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table,.RPGMonster-listing .more-info-body-description table th,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table,.RPGMagicItem-listing .more-info-body-description table th,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table,.ihomebrewable-listing .more-info-body-description table th,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table,.RPGSpell-listing .more-info-body-description table th,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table,.IGear-listing .more-info-body-description table th,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table,.RPGFeat-listing .more-info-body-description table th,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table,.RPGBackground-listing .more-info-body-description table th,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table,.RPGSubclass-listing .more-info-body-description table th,.RPGSubclass-listing .more-info-body-description table td {
+    border: 1px solid #edeae8
+}
+
+ .more-info-body-description table th, .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table th,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table th,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table th,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table th,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table th,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table th,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table th,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table th,.RPGSubclass-listing .more-info-body-description table td {
+    font-size: 14px
+}
+
+ .more-info-body-description table th.left-align, .more-info-body-description table td.left-align,.RPGMonster-listing .more-info-body-description table th.left-align,.RPGMonster-listing .more-info-body-description table td.left-align,.RPGMagicItem-listing .more-info-body-description table th.left-align,.RPGMagicItem-listing .more-info-body-description table td.left-align,.ihomebrewable-listing .more-info-body-description table th.left-align,.ihomebrewable-listing .more-info-body-description table td.left-align,.RPGSpell-listing .more-info-body-description table th.left-align,.RPGSpell-listing .more-info-body-description table td.left-align,.IGear-listing .more-info-body-description table th.left-align,.IGear-listing .more-info-body-description table td.left-align,.RPGFeat-listing .more-info-body-description table th.left-align,.RPGFeat-listing .more-info-body-description table td.left-align,.RPGBackground-listing .more-info-body-description table th.left-align,.RPGBackground-listing .more-info-body-description table td.left-align,.RPGSubclass-listing .more-info-body-description table th.left-align,.RPGSubclass-listing .more-info-body-description table td.left-align {
+    text-align: left!important
+}
+
+ .more-info-body-description table th.uppercase, .more-info-body-description table td.uppercase,.RPGMonster-listing .more-info-body-description table th.uppercase,.RPGMonster-listing .more-info-body-description table td.uppercase,.RPGMagicItem-listing .more-info-body-description table th.uppercase,.RPGMagicItem-listing .more-info-body-description table td.uppercase,.ihomebrewable-listing .more-info-body-description table th.uppercase,.ihomebrewable-listing .more-info-body-description table td.uppercase,.RPGSpell-listing .more-info-body-description table th.uppercase,.RPGSpell-listing .more-info-body-description table td.uppercase,.IGear-listing .more-info-body-description table th.uppercase,.IGear-listing .more-info-body-description table td.uppercase,.RPGFeat-listing .more-info-body-description table th.uppercase,.RPGFeat-listing .more-info-body-description table td.uppercase,.RPGBackground-listing .more-info-body-description table th.uppercase,.RPGBackground-listing .more-info-body-description table td.uppercase,.RPGSubclass-listing .more-info-body-description table th.uppercase,.RPGSubclass-listing .more-info-body-description table td.uppercase {
+    text-transform: uppercase!important
+}
+
+ .more-info-body-description table td,.RPGMonster-listing .more-info-body-description table td,.RPGMagicItem-listing .more-info-body-description table td,.ihomebrewable-listing .more-info-body-description table td,.RPGSpell-listing .more-info-body-description table td,.IGear-listing .more-info-body-description table td,.RPGFeat-listing .more-info-body-description table td,.RPGBackground-listing .more-info-body-description table td,.RPGSubclass-listing .more-info-body-description table td {
+    text-align: center;
+    padding: 10px 20px;
+    overflow-wrap: break-word
+}
+
+ .more-info-body-description table td p,.RPGMonster-listing .more-info-body-description table td p,.RPGMagicItem-listing .more-info-body-description table td p,.ihomebrewable-listing .more-info-body-description table td p,.RPGSpell-listing .more-info-body-description table td p,.IGear-listing .more-info-body-description table td p,.RPGFeat-listing .more-info-body-description table td p,.RPGBackground-listing .more-info-body-description table td p,.RPGSubclass-listing .more-info-body-description table td p {
+    font-size: 14px
+}
+
+ .more-info-body-description table thead th,.RPGMonster-listing .more-info-body-description table thead th,.RPGMagicItem-listing .more-info-body-description table thead th,.ihomebrewable-listing .more-info-body-description table thead th,.RPGSpell-listing .more-info-body-description table thead th,.IGear-listing .more-info-body-description table thead th,.RPGFeat-listing .more-info-body-description table thead th,.RPGBackground-listing .more-info-body-description table thead th,.RPGSubclass-listing .more-info-body-description table thead th {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-bottom: 2px solid #d0cac5;
+    text-align: center;
+    background: #fff;
+    color: #242527
+}
+
+ .more-info-body-description table tbody tr,.RPGMonster-listing .more-info-body-description table tbody tr,.RPGMagicItem-listing .more-info-body-description table tbody tr,.ihomebrewable-listing .more-info-body-description table tbody tr,.RPGSpell-listing .more-info-body-description table tbody tr,.IGear-listing .more-info-body-description table tbody tr,.RPGFeat-listing .more-info-body-description table tbody tr,.RPGBackground-listing .more-info-body-description table tbody tr,.RPGSubclass-listing .more-info-body-description table tbody tr {
+    background: #fff
+}
+
+ .more-info-body-description table tbody tr td,.RPGMonster-listing .more-info-body-description table tbody tr td,.RPGMagicItem-listing .more-info-body-description table tbody tr td,.ihomebrewable-listing .more-info-body-description table tbody tr td,.RPGSpell-listing .more-info-body-description table tbody tr td,.IGear-listing .more-info-body-description table tbody tr td,.RPGFeat-listing .more-info-body-description table tbody tr td,.RPGBackground-listing .more-info-body-description table tbody tr td,.RPGSubclass-listing .more-info-body-description table tbody tr td {
+    min-width: 100px;
+    padding: 20px;
+    background: 0;
+    max-width: 400px
+}
+
+ .more-info-body-description table tbody tr td.left-align,.RPGMonster-listing .more-info-body-description table tbody tr td.left-align,.RPGMagicItem-listing .more-info-body-description table tbody tr td.left-align,.ihomebrewable-listing .more-info-body-description table tbody tr td.left-align,.RPGSpell-listing .more-info-body-description table tbody tr td.left-align,.IGear-listing .more-info-body-description table tbody tr td.left-align,.RPGFeat-listing .more-info-body-description table tbody tr td.left-align,.RPGBackground-listing .more-info-body-description table tbody tr td.left-align,.RPGSubclass-listing .more-info-body-description table tbody tr td.left-align {
+    text-align: left!important
+}
+
+ .more-info-body-description table tbody tr td.uppercase,.RPGMonster-listing .more-info-body-description table tbody tr td.uppercase,.RPGMagicItem-listing .more-info-body-description table tbody tr td.uppercase,.ihomebrewable-listing .more-info-body-description table tbody tr td.uppercase,.RPGSpell-listing .more-info-body-description table tbody tr td.uppercase,.IGear-listing .more-info-body-description table tbody tr td.uppercase,.RPGFeat-listing .more-info-body-description table tbody tr td.uppercase,.RPGBackground-listing .more-info-body-description table tbody tr td.uppercase,.RPGSubclass-listing .more-info-body-description table tbody tr td.uppercase {
+    text-transform: uppercase!important
+}
+
+ .more-info-body-description table tbody tr:nth-child(odd),.RPGMonster-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGMagicItem-listing .more-info-body-description table tbody tr:nth-child(odd),.ihomebrewable-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGSpell-listing .more-info-body-description table tbody tr:nth-child(odd),.IGear-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGFeat-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGBackground-listing .more-info-body-description table tbody tr:nth-child(odd),.RPGSubclass-listing .more-info-body-description table tbody tr:nth-child(odd) {
+    background: #faf8f7
+}
+
+ .more-info-body-description ul,.RPGMonster-listing .more-info-body-description ul,.RPGMagicItem-listing .more-info-body-description ul,.ihomebrewable-listing .more-info-body-description ul,.RPGSpell-listing .more-info-body-description ul,.IGear-listing .more-info-body-description ul,.RPGFeat-listing .more-info-body-description ul,.RPGBackground-listing .more-info-body-description ul,.RPGSubclass-listing .more-info-body-description ul {
+    list-style: initial;
+    padding: 15px
+}
+
+ .more-info-body-description ol,.RPGMonster-listing .more-info-body-description ol,.RPGMagicItem-listing .more-info-body-description ol,.ihomebrewable-listing .more-info-body-description ol,.RPGSpell-listing .more-info-body-description ol,.IGear-listing .more-info-body-description ol,.RPGFeat-listing .more-info-body-description ol,.RPGBackground-listing .more-info-body-description ol,.RPGSubclass-listing .more-info-body-description ol {
+    list-style: decimal;
+    padding: 15px
+}
+
+ .more-info-body-description blockquote,.RPGMonster-listing .more-info-body-description blockquote,.RPGMagicItem-listing .more-info-body-description blockquote,.ihomebrewable-listing .more-info-body-description blockquote,.RPGSpell-listing .more-info-body-description blockquote,.IGear-listing .more-info-body-description blockquote,.RPGFeat-listing .more-info-body-description blockquote,.RPGBackground-listing .more-info-body-description blockquote,.RPGSubclass-listing .more-info-body-description blockquote {
+    font-size: 14px;
+    margin: 5px 0
+}
+
+ .more-info-body-description blockquote p,.RPGMonster-listing .more-info-body-description blockquote p,.RPGMagicItem-listing .more-info-body-description blockquote p,.ihomebrewable-listing .more-info-body-description blockquote p,.RPGSpell-listing .more-info-body-description blockquote p,.IGear-listing .more-info-body-description blockquote p,.RPGFeat-listing .more-info-body-description blockquote p,.RPGBackground-listing .more-info-body-description blockquote p,.RPGSubclass-listing .more-info-body-description blockquote p {
+    font-size: 14px
+}
+
+ .more-info-body-description h1, .more-info-body-description h2, .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h3 {
+    font-weight: normal
+}
+
+ .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h1 {
+    font-size: 32px
+}
+
+ .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h2 {
+    font-size: 26px
+}
+
+ .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h3 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5, .more-info-body-description h6,.RPGMonster-listing .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h6,.RPGMagicItem-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h6,.ihomebrewable-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h6,.RPGSpell-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h6,.IGear-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h6,.RPGFeat-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h6,.RPGBackground-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h6,.RPGSubclass-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h6 {
+    font-size: 18px
+}
+
+ .more-info-body-description a,.RPGMonster-listing .more-info-body-description a,.RPGMagicItem-listing .more-info-body-description a,.ihomebrewable-listing .more-info-body-description a,.RPGSpell-listing .more-info-body-description a,.IGear-listing .more-info-body-description a,.RPGFeat-listing .more-info-body-description a,.RPGBackground-listing .more-info-body-description a,.RPGSubclass-listing .more-info-body-description a {
+    text-decoration: none;
+    cursor: pointer
+}
+
+ .more-info-body-description a, .more-info-body-description a:hover, .more-info-body-description a:focus, .more-info-body-description a:active, .more-info-body-description a:visited,.RPGMonster-listing .more-info-body-description a,.RPGMonster-listing .more-info-body-description a:hover,.RPGMonster-listing .more-info-body-description a:focus,.RPGMonster-listing .more-info-body-description a:active,.RPGMonster-listing .more-info-body-description a:visited,.RPGMagicItem-listing .more-info-body-description a,.RPGMagicItem-listing .more-info-body-description a:hover,.RPGMagicItem-listing .more-info-body-description a:focus,.RPGMagicItem-listing .more-info-body-description a:active,.RPGMagicItem-listing .more-info-body-description a:visited,.ihomebrewable-listing .more-info-body-description a,.ihomebrewable-listing .more-info-body-description a:hover,.ihomebrewable-listing .more-info-body-description a:focus,.ihomebrewable-listing .more-info-body-description a:active,.ihomebrewable-listing .more-info-body-description a:visited,.RPGSpell-listing .more-info-body-description a,.RPGSpell-listing .more-info-body-description a:hover,.RPGSpell-listing .more-info-body-description a:focus,.RPGSpell-listing .more-info-body-description a:active,.RPGSpell-listing .more-info-body-description a:visited,.IGear-listing .more-info-body-description a,.IGear-listing .more-info-body-description a:hover,.IGear-listing .more-info-body-description a:focus,.IGear-listing .more-info-body-description a:active,.IGear-listing .more-info-body-description a:visited,.RPGFeat-listing .more-info-body-description a,.RPGFeat-listing .more-info-body-description a:hover,.RPGFeat-listing .more-info-body-description a:focus,.RPGFeat-listing .more-info-body-description a:active,.RPGFeat-listing .more-info-body-description a:visited,.RPGBackground-listing .more-info-body-description a,.RPGBackground-listing .more-info-body-description a:hover,.RPGBackground-listing .more-info-body-description a:focus,.RPGBackground-listing .more-info-body-description a:active,.RPGBackground-listing .more-info-body-description a:visited,.RPGSubclass-listing .more-info-body-description a,.RPGSubclass-listing .more-info-body-description a:hover,.RPGSubclass-listing .more-info-body-description a:focus,.RPGSubclass-listing .more-info-body-description a:active,.RPGSubclass-listing .more-info-body-description a:visited {
+    color: #47D18C
+}
+
+ .more-info-body-description h1, .more-info-body-description h2, .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h3 {
+    font-weight: normal
+}
+
+ .more-info-body-description h1,.RPGMonster-listing .more-info-body-description h1,.RPGMagicItem-listing .more-info-body-description h1,.ihomebrewable-listing .more-info-body-description h1,.RPGSpell-listing .more-info-body-description h1,.IGear-listing .more-info-body-description h1,.RPGFeat-listing .more-info-body-description h1,.RPGBackground-listing .more-info-body-description h1,.RPGSubclass-listing .more-info-body-description h1 {
+    font-size: 32px
+}
+
+ .more-info-body-description h1::after,.RPGMonster-listing .more-info-body-description h1::after,.RPGMagicItem-listing .more-info-body-description h1::after,.ihomebrewable-listing .more-info-body-description h1::after,.RPGSpell-listing .more-info-body-description h1::after,.IGear-listing .more-info-body-description h1::after,.RPGFeat-listing .more-info-body-description h1::after,.RPGBackground-listing .more-info-body-description h1::after,.RPGSubclass-listing .more-info-body-description h1::after {
+    content: '';
+    width: 100%;
+    max-width: 1200px;
+    margin: 5px auto 20px;
+    height: 3px;
+    background-color: #1b9af0;
+    display: block
+}
+
+ .more-info-body-description h2::after, .more-info-body-description h3::after,.RPGMonster-listing .more-info-body-description h2::after,.RPGMonster-listing .more-info-body-description h3::after,.RPGMagicItem-listing .more-info-body-description h2::after,.RPGMagicItem-listing .more-info-body-description h3::after,.ihomebrewable-listing .more-info-body-description h2::after,.ihomebrewable-listing .more-info-body-description h3::after,.RPGSpell-listing .more-info-body-description h2::after,.RPGSpell-listing .more-info-body-description h3::after,.IGear-listing .more-info-body-description h2::after,.IGear-listing .more-info-body-description h3::after,.RPGFeat-listing .more-info-body-description h2::after,.RPGFeat-listing .more-info-body-description h3::after,.RPGBackground-listing .more-info-body-description h2::after,.RPGBackground-listing .more-info-body-description h3::after,.RPGSubclass-listing .more-info-body-description h2::after,.RPGSubclass-listing .more-info-body-description h3::after {
+    content: '';
+    width: 100%;
+    margin: 5px auto 20px;
+    height: 1px;
+    background-color: #1b9af0;
+    display: block
+}
+
+ .more-info-body-description h2,.RPGMonster-listing .more-info-body-description h2,.RPGMagicItem-listing .more-info-body-description h2,.ihomebrewable-listing .more-info-body-description h2,.RPGSpell-listing .more-info-body-description h2,.IGear-listing .more-info-body-description h2,.RPGFeat-listing .more-info-body-description h2,.RPGBackground-listing .more-info-body-description h2,.RPGSubclass-listing .more-info-body-description h2 {
+    font-size: 26px
+}
+
+ .more-info-body-description h3,.RPGMonster-listing .more-info-body-description h3,.RPGMagicItem-listing .more-info-body-description h3,.ihomebrewable-listing .more-info-body-description h3,.RPGSpell-listing .more-info-body-description h3,.IGear-listing .more-info-body-description h3,.RPGFeat-listing .more-info-body-description h3,.RPGBackground-listing .more-info-body-description h3,.RPGSubclass-listing .more-info-body-description h3 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5, .more-info-body-description h6,.RPGMonster-listing .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h6,.RPGMagicItem-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h6,.ihomebrewable-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h6,.RPGSpell-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h6,.IGear-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h6,.RPGFeat-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h6,.RPGBackground-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h6,.RPGSubclass-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h6 {
+    font-size: 18px
+}
+
+ .more-info-body-description-upper,.RPGMonster-listing .more-info-body-description-upper,.RPGMagicItem-listing .more-info-body-description-upper,.ihomebrewable-listing .more-info-body-description-upper,.RPGSpell-listing .more-info-body-description-upper,.IGear-listing .more-info-body-description-upper,.RPGFeat-listing .more-info-body-description-upper,.RPGBackground-listing .more-info-body-description-upper,.RPGSubclass-listing .more-info-body-description-upper {
+    font-style: italic;
+    font-size: 16px
+}
+
+ .more-info-body-description-lower,.RPGMonster-listing .more-info-body-description-lower,.RPGMagicItem-listing .more-info-body-description-lower,.ihomebrewable-listing .more-info-body-description-lower,.RPGSpell-listing .more-info-body-description-lower,.IGear-listing .more-info-body-description-lower,.RPGFeat-listing .more-info-body-description-lower,.RPGBackground-listing .more-info-body-description-lower,.RPGSubclass-listing .more-info-body-description-lower {
+    padding-top: 20px
+}
+
+ .more-info-body-description-lower .more-info-notes,.RPGMonster-listing .more-info-body-description-lower .more-info-notes,.RPGMagicItem-listing .more-info-body-description-lower .more-info-notes,.ihomebrewable-listing .more-info-body-description-lower .more-info-notes,.RPGSpell-listing .more-info-body-description-lower .more-info-notes,.IGear-listing .more-info-body-description-lower .more-info-notes,.RPGFeat-listing .more-info-body-description-lower .more-info-notes,.RPGBackground-listing .more-info-body-description-lower .more-info-notes,.RPGSubclass-listing .more-info-body-description-lower .more-info-notes {
+    font-style: italic
+}
+
+ .more-info-body-description h4,.RPGMonster-listing .more-info-body-description h4,.RPGMagicItem-listing .more-info-body-description h4,.ihomebrewable-listing .more-info-body-description h4,.RPGSpell-listing .more-info-body-description h4,.IGear-listing .more-info-body-description h4,.RPGFeat-listing .more-info-body-description h4,.RPGBackground-listing .more-info-body-description h4,.RPGSubclass-listing .more-info-body-description h4 {
+    font-size: 20px
+}
+
+ .more-info-body-description h5,.RPGMonster-listing .more-info-body-description h5,.RPGMagicItem-listing .more-info-body-description h5,.ihomebrewable-listing .more-info-body-description h5,.RPGSpell-listing .more-info-body-description h5,.IGear-listing .more-info-body-description h5,.RPGFeat-listing .more-info-body-description h5,.RPGBackground-listing .more-info-body-description h5,.RPGSubclass-listing .more-info-body-description h5 {
+    font-size: 16px
+}
+
+ .more-info-monster .more-info-body-description h1::after, .more-info-monster .more-info-body-description h2::before, .more-info-monster .more-info-body-description h3::before,.RPGMonster-listing .more-info-monster .more-info-body-description h1::after,.RPGMonster-listing .more-info-monster .more-info-body-description h2::before,.RPGMonster-listing .more-info-monster .more-info-body-description h3::before,.RPGMagicItem-listing .more-info-monster .more-info-body-description h1::after,.RPGMagicItem-listing .more-info-monster .more-info-body-description h2::before,.RPGMagicItem-listing .more-info-monster .more-info-body-description h3::before,.ihomebrewable-listing .more-info-monster .more-info-body-description h1::after,.ihomebrewable-listing .more-info-monster .more-info-body-description h2::before,.ihomebrewable-listing .more-info-monster .more-info-body-description h3::before,.RPGSpell-listing .more-info-monster .more-info-body-description h1::after,.RPGSpell-listing .more-info-monster .more-info-body-description h2::before,.RPGSpell-listing .more-info-monster .more-info-body-description h3::before,.IGear-listing .more-info-monster .more-info-body-description h1::after,.IGear-listing .more-info-monster .more-info-body-description h2::before,.IGear-listing .more-info-monster .more-info-body-description h3::before,.RPGFeat-listing .more-info-monster .more-info-body-description h1::after,.RPGFeat-listing .more-info-monster .more-info-body-description h2::before,.RPGFeat-listing .more-info-monster .more-info-body-description h3::before,.RPGBackground-listing .more-info-monster .more-info-body-description h1::after,.RPGBackground-listing .more-info-monster .more-info-body-description h2::before,.RPGBackground-listing .more-info-monster .more-info-body-description h3::before,.RPGSubclass-listing .more-info-monster .more-info-body-description h1::after,.RPGSubclass-listing .more-info-monster .more-info-body-description h2::before,.RPGSubclass-listing .more-info-monster .more-info-body-description h3::before {
+    content: none
+}
+
+ .more-info-footer,.RPGMonster-listing .more-info-footer,.RPGMagicItem-listing .more-info-footer,.ihomebrewable-listing .more-info-footer,.RPGSpell-listing .more-info-footer,.IGear-listing .more-info-footer,.RPGFeat-listing .more-info-footer,.RPGBackground-listing .more-info-footer,.RPGSubclass-listing .more-info-footer {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-top: 20px
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer,.RPGMonster-listing .more-info-footer,.RPGMagicItem-listing .more-info-footer,.ihomebrewable-listing .more-info-footer,.RPGSpell-listing .more-info-footer,.IGear-listing .more-info-footer,.RPGFeat-listing .more-info-footer,.RPGBackground-listing .more-info-footer,.RPGSubclass-listing .more-info-footer {
+        -webkit-justify-content:flex-start;
+        -ms-flex-pack: start;
+        justify-content: flex-start
+    }
+}
+
+ .more-info-footer-details-button,.RPGMonster-listing .more-info-footer-details-button,.RPGMagicItem-listing .more-info-footer-details-button,.ihomebrewable-listing .more-info-footer-details-button,.RPGSpell-listing .more-info-footer-details-button,.IGear-listing .more-info-footer-details-button,.RPGFeat-listing .more-info-footer-details-button,.RPGBackground-listing .more-info-footer-details-button,.RPGSubclass-listing .more-info-footer-details-button {
+    margin: 0 auto;
+    padding: 10px 0;
+    -webkit-order: 1;
+    -ms-flex-order: 1;
+    order: 1
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button,.RPGMonster-listing .more-info-footer-details-button,.RPGMagicItem-listing .more-info-footer-details-button,.ihomebrewable-listing .more-info-footer-details-button,.RPGSpell-listing .more-info-footer-details-button,.IGear-listing .more-info-footer-details-button,.RPGFeat-listing .more-info-footer-details-button,.RPGBackground-listing .more-info-footer-details-button,.RPGSubclass-listing .more-info-footer-details-button {
+        -webkit-order:unset;
+        -ms-flex-order: unset;
+        order: unset;
+        margin-left: 0;
+        margin-right: 10px
+    }
+}
+
+ .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #ee8600;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover {
+    background: #ff9e22
+}
+
+ .more-info-footer-details-button .button-characters, .more-info-footer-details-button .button-characters:hover, .more-info-footer-details-button .button-characters:focus, .more-info-footer-details-button .button-characters:active, .more-info-footer-details-button .button-characters:visited,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:focus,.RPGMonster-listing .more-info-footer-details-button .button-characters:active,.RPGMonster-listing .more-info-footer-details-button .button-characters:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:active,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:visited,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:focus,.ihomebrewable-listing .more-info-footer-details-button .button-characters:active,.ihomebrewable-listing .more-info-footer-details-button .button-characters:visited,.RPGSpell-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:focus,.RPGSpell-listing .more-info-footer-details-button .button-characters:active,.RPGSpell-listing .more-info-footer-details-button .button-characters:visited,.IGear-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:focus,.IGear-listing .more-info-footer-details-button .button-characters:active,.IGear-listing .more-info-footer-details-button .button-characters:visited,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:focus,.RPGFeat-listing .more-info-footer-details-button .button-characters:active,.RPGFeat-listing .more-info-footer-details-button .button-characters:visited,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:focus,.RPGBackground-listing .more-info-footer-details-button .button-characters:active,.RPGBackground-listing .more-info-footer-details-button .button-characters:visited,.RPGSubclass-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:focus,.RPGSubclass-listing .more-info-footer-details-button .button-characters:active,.RPGSubclass-listing .more-info-footer-details-button .button-characters:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-characters,.RPGMonster-listing .more-info-footer-details-button .button-characters,.RPGMagicItem-listing .more-info-footer-details-button .button-characters,.ihomebrewable-listing .more-info-footer-details-button .button-characters,.RPGSpell-listing .more-info-footer-details-button .button-characters,.IGear-listing .more-info-footer-details-button .button-characters,.RPGFeat-listing .more-info-footer-details-button .button-characters,.RPGBackground-listing .more-info-footer-details-button .button-characters,.RPGSubclass-listing .more-info-footer-details-button .button-characters {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-characters:hover,.RPGMonster-listing .more-info-footer-details-button .button-characters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-characters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-characters:hover,.RPGSpell-listing .more-info-footer-details-button .button-characters:hover,.IGear-listing .more-info-footer-details-button .button-characters:hover,.RPGFeat-listing .more-info-footer-details-button .button-characters:hover,.RPGBackground-listing .more-info-footer-details-button .button-characters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-characters:hover {
+    transition: 100ms linear all;
+    background: #ff9e22
+}
+
+ .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #0f5cbc;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover {
+    background: #1373eb
+}
+
+ .more-info-footer-details-button .button-items, .more-info-footer-details-button .button-items:hover, .more-info-footer-details-button .button-items:focus, .more-info-footer-details-button .button-items:active, .more-info-footer-details-button .button-items:visited,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:focus,.RPGMonster-listing .more-info-footer-details-button .button-items:active,.RPGMonster-listing .more-info-footer-details-button .button-items:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-items:active,.RPGMagicItem-listing .more-info-footer-details-button .button-items:visited,.ihomebrewable-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:focus,.ihomebrewable-listing .more-info-footer-details-button .button-items:active,.ihomebrewable-listing .more-info-footer-details-button .button-items:visited,.RPGSpell-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:focus,.RPGSpell-listing .more-info-footer-details-button .button-items:active,.RPGSpell-listing .more-info-footer-details-button .button-items:visited,.IGear-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:focus,.IGear-listing .more-info-footer-details-button .button-items:active,.IGear-listing .more-info-footer-details-button .button-items:visited,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:focus,.RPGFeat-listing .more-info-footer-details-button .button-items:active,.RPGFeat-listing .more-info-footer-details-button .button-items:visited,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:focus,.RPGBackground-listing .more-info-footer-details-button .button-items:active,.RPGBackground-listing .more-info-footer-details-button .button-items:visited,.RPGSubclass-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:focus,.RPGSubclass-listing .more-info-footer-details-button .button-items:active,.RPGSubclass-listing .more-info-footer-details-button .button-items:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-items,.RPGMonster-listing .more-info-footer-details-button .button-items,.RPGMagicItem-listing .more-info-footer-details-button .button-items,.ihomebrewable-listing .more-info-footer-details-button .button-items,.RPGSpell-listing .more-info-footer-details-button .button-items,.IGear-listing .more-info-footer-details-button .button-items,.RPGFeat-listing .more-info-footer-details-button .button-items,.RPGBackground-listing .more-info-footer-details-button .button-items,.RPGSubclass-listing .more-info-footer-details-button .button-items {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-items:hover,.RPGMonster-listing .more-info-footer-details-button .button-items:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-items:hover,.ihomebrewable-listing .more-info-footer-details-button .button-items:hover,.RPGSpell-listing .more-info-footer-details-button .button-items:hover,.IGear-listing .more-info-footer-details-button .button-items:hover,.RPGFeat-listing .more-info-footer-details-button .button-items:hover,.RPGBackground-listing .more-info-footer-details-button .button-items:hover,.RPGSubclass-listing .more-info-footer-details-button .button-items:hover {
+    transition: 100ms linear all;
+    background: #1373eb
+}
+
+ .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #704cd9;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover {
+    background: #9276e2
+}
+
+ .more-info-footer-details-button .button-spells, .more-info-footer-details-button .button-spells:hover, .more-info-footer-details-button .button-spells:focus, .more-info-footer-details-button .button-spells:active, .more-info-footer-details-button .button-spells:visited,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:focus,.RPGMonster-listing .more-info-footer-details-button .button-spells:active,.RPGMonster-listing .more-info-footer-details-button .button-spells:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:active,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:visited,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:focus,.ihomebrewable-listing .more-info-footer-details-button .button-spells:active,.ihomebrewable-listing .more-info-footer-details-button .button-spells:visited,.RPGSpell-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:focus,.RPGSpell-listing .more-info-footer-details-button .button-spells:active,.RPGSpell-listing .more-info-footer-details-button .button-spells:visited,.IGear-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:focus,.IGear-listing .more-info-footer-details-button .button-spells:active,.IGear-listing .more-info-footer-details-button .button-spells:visited,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:focus,.RPGFeat-listing .more-info-footer-details-button .button-spells:active,.RPGFeat-listing .more-info-footer-details-button .button-spells:visited,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:focus,.RPGBackground-listing .more-info-footer-details-button .button-spells:active,.RPGBackground-listing .more-info-footer-details-button .button-spells:visited,.RPGSubclass-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:focus,.RPGSubclass-listing .more-info-footer-details-button .button-spells:active,.RPGSubclass-listing .more-info-footer-details-button .button-spells:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-spells,.RPGMonster-listing .more-info-footer-details-button .button-spells,.RPGMagicItem-listing .more-info-footer-details-button .button-spells,.ihomebrewable-listing .more-info-footer-details-button .button-spells,.RPGSpell-listing .more-info-footer-details-button .button-spells,.IGear-listing .more-info-footer-details-button .button-spells,.RPGFeat-listing .more-info-footer-details-button .button-spells,.RPGBackground-listing .more-info-footer-details-button .button-spells,.RPGSubclass-listing .more-info-footer-details-button .button-spells {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-spells:hover,.RPGMonster-listing .more-info-footer-details-button .button-spells:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-spells:hover,.ihomebrewable-listing .more-info-footer-details-button .button-spells:hover,.RPGSpell-listing .more-info-footer-details-button .button-spells:hover,.IGear-listing .more-info-footer-details-button .button-spells:hover,.RPGFeat-listing .more-info-footer-details-button .button-spells:hover,.RPGBackground-listing .more-info-footer-details-button .button-spells:hover,.RPGSubclass-listing .more-info-footer-details-button .button-spells:hover {
+    transition: 100ms linear all;
+    background: #9276e2
+}
+
+ .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+    background: #bc0f0f;
+    height: 50px;
+    width: 100%;
+    max-width: 300px;
+    min-width: 250px;
+    box-shadow: none;
+    border: 0;
+    transition: 100ms linear all;
+    text-transform: uppercase;
+    text-shadow: none
+}
+
+ .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover {
+    background: #eb1313
+}
+
+ .more-info-footer-details-button .button-monsters, .more-info-footer-details-button .button-monsters:hover, .more-info-footer-details-button .button-monsters:focus, .more-info-footer-details-button .button-monsters:active, .more-info-footer-details-button .button-monsters:visited,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:focus,.RPGMonster-listing .more-info-footer-details-button .button-monsters:active,.RPGMonster-listing .more-info-footer-details-button .button-monsters:visited,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:focus,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:active,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:visited,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:focus,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:active,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:visited,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:focus,.RPGSpell-listing .more-info-footer-details-button .button-monsters:active,.RPGSpell-listing .more-info-footer-details-button .button-monsters:visited,.IGear-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:focus,.IGear-listing .more-info-footer-details-button .button-monsters:active,.IGear-listing .more-info-footer-details-button .button-monsters:visited,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:focus,.RPGFeat-listing .more-info-footer-details-button .button-monsters:active,.RPGFeat-listing .more-info-footer-details-button .button-monsters:visited,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:focus,.RPGBackground-listing .more-info-footer-details-button .button-monsters:active,.RPGBackground-listing .more-info-footer-details-button .button-monsters:visited,.RPGSubclass-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:focus,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:active,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:visited {
+    color: #fff
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-details-button .button-monsters,.RPGMonster-listing .more-info-footer-details-button .button-monsters,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters,.ihomebrewable-listing .more-info-footer-details-button .button-monsters,.RPGSpell-listing .more-info-footer-details-button .button-monsters,.IGear-listing .more-info-footer-details-button .button-monsters,.RPGFeat-listing .more-info-footer-details-button .button-monsters,.RPGBackground-listing .more-info-footer-details-button .button-monsters,.RPGSubclass-listing .more-info-footer-details-button .button-monsters {
+        height:35px;
+        font-size: 12px;
+        min-width: 180px
+    }
+}
+
+ .more-info-footer-details-button .button-monsters:hover,.RPGMonster-listing .more-info-footer-details-button .button-monsters:hover,.RPGMagicItem-listing .more-info-footer-details-button .button-monsters:hover,.ihomebrewable-listing .more-info-footer-details-button .button-monsters:hover,.RPGSpell-listing .more-info-footer-details-button .button-monsters:hover,.IGear-listing .more-info-footer-details-button .button-monsters:hover,.RPGFeat-listing .more-info-footer-details-button .button-monsters:hover,.RPGBackground-listing .more-info-footer-details-button .button-monsters:hover,.RPGSubclass-listing .more-info-footer-details-button .button-monsters:hover {
+    transition: 100ms linear all;
+    background: #eb1313
+}
+
+ .more-info-footer-tags,.RPGMonster-listing .more-info-footer-tags,.RPGMagicItem-listing .more-info-footer-tags,.ihomebrewable-listing .more-info-footer-tags,.RPGSpell-listing .more-info-footer-tags,.IGear-listing .more-info-footer-tags,.RPGFeat-listing .more-info-footer-tags,.RPGBackground-listing .more-info-footer-tags,.RPGSubclass-listing .more-info-footer-tags {
+    font-size: 12px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: baseline;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    margin: 0 10px;
+    padding: 10px 0;
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0
+}
+
+ .more-info-footer-tags .tag,.RPGMonster-listing .more-info-footer-tags .tag,.RPGMagicItem-listing .more-info-footer-tags .tag,.ihomebrewable-listing .more-info-footer-tags .tag,.RPGSpell-listing .more-info-footer-tags .tag,.IGear-listing .more-info-footer-tags .tag,.RPGFeat-listing .more-info-footer-tags .tag,.RPGBackground-listing .more-info-footer-tags .tag,.RPGSubclass-listing .more-info-footer-tags .tag {
+    border: 1px solid #cbc6c3;
+    background-color: #fff;
+    box-shadow: inset 0 0 4px 0 #dcd1c7;
+    padding: 4px 8px;
+    font-size: 9px;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: 0 2px
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-tags,.RPGMonster-listing .more-info-footer-tags,.RPGMagicItem-listing .more-info-footer-tags,.ihomebrewable-listing .more-info-footer-tags,.RPGSpell-listing .more-info-footer-tags,.IGear-listing .more-info-footer-tags,.RPGFeat-listing .more-info-footer-tags,.RPGBackground-listing .more-info-footer-tags,.RPGSubclass-listing .more-info-footer-tags {
+        margin-left:0
+    }
+}
+
+ .more-info-footer-classes,.RPGMonster-listing .more-info-footer-classes,.RPGMagicItem-listing .more-info-footer-classes,.ihomebrewable-listing .more-info-footer-classes,.RPGSpell-listing .more-info-footer-classes,.IGear-listing .more-info-footer-classes,.RPGFeat-listing .more-info-footer-classes,.RPGBackground-listing .more-info-footer-classes,.RPGSubclass-listing .more-info-footer-classes {
+    -webkit-order: 0;
+    -ms-flex-order: 0;
+    order: 0
+}
+
+ .more-info-footer-source,.RPGMonster-listing .more-info-footer-source,.RPGMagicItem-listing .more-info-footer-source,.ihomebrewable-listing .more-info-footer-source,.RPGSpell-listing .more-info-footer-source,.IGear-listing .more-info-footer-source,.RPGFeat-listing .more-info-footer-source,.RPGBackground-listing .more-info-footer-source,.RPGSubclass-listing .more-info-footer-source {
+    font-style: italic;
+    text-align: right;
+    min-width: 110px;
+    padding: 10px;
+    margin-left: auto
+}
+
+.body-rpgigear  .more-info-footer-source,.body-rpgigear .RPGMonster-listing .more-info-footer-source,.body-rpgigear .RPGMagicItem-listing .more-info-footer-source,.body-rpgigear .ihomebrewable-listing .more-info-footer-source,.body-rpgigear .RPGSpell-listing .more-info-footer-source,.body-rpgigear .IGear-listing .more-info-footer-source,.body-rpgigear .RPGFeat-listing .more-info-footer-source,.body-rpgigear .RPGBackground-listing .more-info-footer-source,.body-rpgigear .RPGSubclass-listing .more-info-footer-source {
+    display: none
+}
+
+ .more-info-footer-edit-button,.RPGMonster-listing .more-info-footer-edit-button,.RPGMagicItem-listing .more-info-footer-edit-button,.ihomebrewable-listing .more-info-footer-edit-button,.RPGSpell-listing .more-info-footer-edit-button,.IGear-listing .more-info-footer-edit-button,.RPGFeat-listing .more-info-footer-edit-button,.RPGBackground-listing .more-info-footer-edit-button,.RPGSubclass-listing .more-info-footer-edit-button {
+    position: absolute;
+    top: 0;
+    left: 0
+}
+
+ .more-info-footer-homebrew-actions,.RPGMonster-listing .more-info-footer-homebrew-actions,.RPGMagicItem-listing .more-info-footer-homebrew-actions,.ihomebrewable-listing .more-info-footer-homebrew-actions,.RPGSpell-listing .more-info-footer-homebrew-actions,.IGear-listing .more-info-footer-homebrew-actions,.RPGFeat-listing .more-info-footer-homebrew-actions,.RPGBackground-listing .more-info-footer-homebrew-actions,.RPGSubclass-listing .more-info-footer-homebrew-actions {
+    -webkit-order: 1;
+    -ms-flex-order: 1;
+    order: 1
+}
+
+@media(min-width: 1024px) {
+     .more-info-footer-homebrew-actions,.RPGMonster-listing .more-info-footer-homebrew-actions,.RPGMagicItem-listing .more-info-footer-homebrew-actions,.ihomebrewable-listing .more-info-footer-homebrew-actions,.RPGSpell-listing .more-info-footer-homebrew-actions,.IGear-listing .more-info-footer-homebrew-actions,.RPGFeat-listing .more-info-footer-homebrew-actions,.RPGBackground-listing .more-info-footer-homebrew-actions,.RPGSubclass-listing .more-info-footer-homebrew-actions {
+        -webkit-order:unset;
+        -ms-flex-order: unset;
+        order: unset;
+        margin-left: 0
+    }
+}
+
+ .more-info::after,.RPGMonster-listing .more-info::after,.RPGMagicItem-listing .more-info::after,.ihomebrewable-listing .more-info::after,.RPGSpell-listing .more-info::after,.IGear-listing .more-info::after,.RPGFeat-listing .more-info::after,.RPGBackground-listing .more-info::after,.RPGSubclass-listing .more-info::after {
+    content: '';
+    display: block;
+    height: 28px;
+    width: calc(100% + 40px);
+    border-bottom: 28px solid transparent;
+    border-image: url("../images/expanded-listing-item-bottom-border.png") 28 stretch;
+    position: relative;
+    top: 4px;
+    margin: 0 -20px
+}
+
+@media(min-width: 1024px) {
+     .more-info::after,.RPGMonster-listing .more-info::after,.RPGMagicItem-listing .more-info::after,.ihomebrewable-listing .more-info::after,.RPGSpell-listing .more-info::after,.IGear-listing .more-info::after,.RPGFeat-listing .more-info::after,.RPGBackground-listing .more-info::after,.RPGSubclass-listing .more-info::after {
+        width:calc(100% + 52px);
+        margin: 0 -26px
+    }
+}
+
+.more-info .treasure-link {
+    text-decoration: underline
+}
+
+
+.mon-stat-block-2024 {
+    background-image: none!important;
+    background: #f5f3ee!important;
+    border: 1px solid #afa47a;
+    outline: 1px solid #afa47a;
+    outline-offset: -0.25rem;
+    border-radius: .5rem
+}
+
+.mon-stat-block-2024 {
+    background: url("../images/mon-summary/stat-block-top-texture.png"),url("../images/mon-summary/paper-texture.png");
+    background-size: 100% auto;
+    background-position: top center;
+    background-repeat: no-repeat,repeat;
+    position: relative;
+    box-shadow: 0 0 5px #979AA4;
+    border: 1px solid #d4d0ce;
+    padding: 15px;
+    margin: 15px 0;
+    font-family: "Scala Sans Offc",Roboto,Helvetica,sans-serif;
+    font-size: 15px
+}
+
+.mon-stat-block-2024::before,.mon-stat-block-2024::after {
+    content: "";
+    display: block;
+    background: url("../images/mon-summary/stat-bar-book.png") center;
+    background-size: 100% 100%;
+    height: 6px;
+    position: absolute;
+    left: -3px;
+    right: -3px
+}
+
+.mon-stat-block-2024::before {
+    top: -3px
+}
+
+.mon-stat-block-2024::after {
+    bottom: -3px
+}
+
+.mon-stat-block-2024__separator-img {
+    max-width: 100%;
+    min-height: 10px
+}
+
+.mon-stat-block-2024__header {
+    line-height: 1.1
+}
+
+.mon-stat-block-2024__name {
+    font-weight: bold;
+    font-size: 34px;
+    font-family: MrsEavesSmallCaps,Roboto,Helvetica,sans-serif;
+    color: #822000
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link {
+    color: #822000
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link:hover,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:visited,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:active {
+    color: #822000
+}
+
+.mon-stat-block-2024__meta {
+    font-style: italic;
+    margin-bottom: 15px
+}
+
+.mon-stat-block-2024__attribute,.mon-stat-block-2024__feature {
+    margin: 5px 0;
+    color: #822000;
+    line-height: 1.2
+}
+
+.mon-stat-block-2024__attribute-label,.mon-stat-block-2024__feature-label {
+    font-weight: bold
+}
+
+.mon-stat-block-2024__feature-label {
+    font-style: italic
+}
+
+.mon-stat-block-2024__stat-block .ability-block {
+    color: #822000;
+    margin: 0
+}
+
+.mon-stat-block-2024__tidbit {
+    margin: 5px 0;
+    color: #822000;
+    line-height: 1.2
+}
+
+.mon-stat-block-2024__tidbit-label {
+    font-weight: bold
+}
+
+.mon-stat-block-2024__tidbit-container {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex
+}
+
+.mon-stat-block-2024__tidbit-spacer {
+    width: 40px;
+    min-width: 10px
+}
+
+.mon-stat-block-2024__description-blocks {
+    margin-top: 20px
+}
+
+.mon-stat-block-2024__description-block-heading,.mon-stat-block-2024__description-block h3 {
+    border-bottom: 1px solid #822000;
+    color: #822000;
+    font-size: 24px;
+    font-weight: normal;
+    font-family: "Scala Sans Offc",Roboto,Helvetica,sans-serif;
+    line-height: 1.4;
+    margin-top: 20px;
+    margin-bottom: 15px
+}
+
+.mon-stat-block-2024__description-block p {
+    margin-bottom: 10px
+}
+
+.mon-stat-block-2024 .tooltip-hover {
+    font-weight: bold!important
+}
+
+.mon-stat-block-2024 .tooltip-hover,.mon-stat-block-2024 .tooltip-hover:hover,.mon-stat-block-2024 .tooltip-hover:focus,.mon-stat-block-2024 .tooltip-hover:active,.mon-stat-block-2024 .tooltip-hover:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #47D18C
+}
+
+.mon-stat-block-2024 .tooltip-hover.spell-tooltip,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:active,.mon-stat-block-2024 .tooltip-hover.spell-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #704cd9
+}
+
+.mon-stat-block-2024 .tooltip-hover.monster-tooltip,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:active,.mon-stat-block-2024 .tooltip-hover.monster-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #bc0f0f
+}
+
+.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:active,.mon-stat-block-2024 .tooltip-hover.magic-item-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #0f5cbc
+}
+
+.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:hover,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:focus,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:active,.mon-stat-block-2024 .tooltip-hover.vehicles-tooltip:visited {
+    color: inherit!important;
+    font-weight: inherit!important;
+    text-decoration: underline;
+    text-decoration: underline solid #1b9af0
+}
+
+@media print,(min-width: 1480px) {
+    .mon-stat-block-2024 {
+        -webkit-column-count:2;
+        column-count: 2
+    }
+}
+
+@media print {
+    .mon-stat-block-2024 {
+        box-shadow: none;
+        background: 0
+    }
+
+    .mon-stat-block-2024::before {
+        border-top: 6px solid #999
+    }
+
+    .mon-stat-block-2024::after {
+        border-bottom: 6px solid #999
+    }
+}
+
+.mon-stat-block-2024::before,.mon-stat-block-2024::after {
+    display: none
+}
+
+.mon-stat-block-2024__name {
+    border-bottom: .063rem solid #5b160c;
+    font-family: "Scala Sans Sc Offc",Roboto,Helvetica,sans-serif;
+    font-weight: bold;
+    font-size: 1.75rem;
+    -webkit-column-span: all;
+    column-span: all;
+    margin-bottom: .45rem
+}
+
+.mon-stat-block-2024__name .mon-stat-block-2024__name-link,.mon-stat-block-2024__name .mon-stat-block-2024__name-link:visited,.mon-stat-block-2024__attribute,.mon-stat-block-2024__tidbit,.mon-stat-block-2024__description-block-heading {
+    color: #5b160c
+}
+
+.mon-stat-block-2024__description-block-heading {
+    border-bottom: .063rem solid #5b160c;
+    font-size: 1.25rem;
+    font-family: "Scala Sans Sc Offc",Roboto,Helvetica,sans-serif;
+    font-weight: normal;
+    line-height: 1.4;
+    margin-top: 1.25rem;
+    margin-bottom: .938rem
+}
+
+.mon-stat-block-2024__meta {
+    color: #68747b;
+    margin-bottom: .938rem;
+    margin-top: .188rem
+}
+
+.mon-stat-block-2024__stats {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    gap: .625rem
+}
+
+:is(.tooltip) .stat-block {
+    --sb-monster-header-underline: #7a3c2f;
+    border: 1px solid #a7a3a0;
+    background-color: #FEFCEF;
+    padding: 10px;
+    position: relative;
+    background-repeat: no-repeat;
+    box-shadow: 0 5px 8px 0 var(--sb-stat-block-shadow,#AAA);
+    background-position: top;
+    background: var(--sb-stat-block-bg-override,#f6f3ee);
+    font-size: 16px;
+    line-height: 19.6px;
+    border-radius: 8px;
+    outline: 1px solid #a7a3a0;
+    outline-offset: -4px;
+    font-family: var(--sb-stat-block-font,Roboto,Helvetica,sans-serif);
+    -webkit-columns: 2 384px;
+    columns: 2 384px
+}
+
+:is(.tooltip) .stat-block:is(h2,h3,h4,h5) {
+    font-size: 22px;
+    font-family: "Roboto Condensed";
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-right: 8px;
+    -webkit-margin-after: 0;
+    margin-block-end:0}
+
+:is(.tooltip) .stat-block:is(h2,h3,h4,h5)::after {
+    content: "";
+    display: block;
+    width: 100%;
+    margin: 2px auto 8px;
+    height: 1px;
+    background: var(--sb-monster-header-underline,#7a3c2f);
+    -webkit-column-span: all;
+    column-span: all
+}
+
+:is(.tooltip) .stat-block p {
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 0
+}
+
+:is(.tooltip) .stat-block p+p {
+    margin-top: 10px
+}
+
+:is(.tooltip) .stat-block p:first-of-type {
+    margin-top: 0;
+    font-style: italic;
+    opacity: .7
+}
+
+:is(.tooltip) .stat-block p:first-of-type+p {
+    margin-top: 16px
+}
+
+:is(.tooltip) .stat-block:is(ol,ul,dl) {
+    margin-bottom: 0;
+    padding-top: 0
+}
+
+:is(.tooltip) .stat-block .monster-header {
+    padding-top: 4px;
+    letter-spacing: .35px;
+    font-weight: 500;
+    color: var(--sb-monster-header-color,#5b160c);
+    font-size: var(--sb-monster-trait-header-size,18px);
+    font-family: var(--sb-monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
+    border-bottom: 2px solid var(--sb-monster-header-underline,#7a3c2f)
+}
+
+:is(.tooltip) .stat-block .monster-header+p {
+    -webkit-column-break-before: avoid;
+    break-before: avoid
+}
+
+:is(.tooltip) .stat-block .stats {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 10px
+}
+
+:is(.tooltip) .stat-block .stats+p {
+    margin-top: 10px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves {
+    --sb-theme-table-row-color: transparent;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    line-height: 24px;
+    background: revert;
+    border: 0;
+    font-size: 16px;
+    -webkit-column-break-inside: avoid;
+    break-inside: avoid
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves.physical {
+    --sb-stats-score: #ede6d9;
+    --sb-stats-mods: #ded4cc;
+    --sb-stats-score-hover: #997f6d7d;
+    --sb-stats-mods-hover: #996d727d
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves.mental {
+    --sb-stats-score: #d8dad1;
+    --sb-stats-mods: #d0caca;
+    --sb-stats-score-hover: #6d8d997d;
+    --sb-stats-mods-hover: #756d997d
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead {
+    border: 0;
+    height: revert;
+    min-height: 45px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead tr {
+    height: revert;
+    min-height: 45px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves thead tr th {
+    padding: 5px 2px 0!important;
+    background: inherit;
+    color: inherit;
+    vertical-align: bottom;
+    border: 0;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 14px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody {
+    border: 0
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr {
+    background-color: var(--sb-theme-table-row-color,#fdfdfd);
+    color: var(--sb-theme-table-header-fg-color,#222)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover {
+    background-color: var(--sb-stats-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover *:nth-child(-n+3) {
+    background-color: var(--sb-stats-score-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr:hover *:nth-child(n+3) {
+    background-color: var(--sb-stats-mods-hover)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr *:nth-child(-n+3) {
+    background-color: var(--sb-stats-score)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody tr *:nth-child(n+3) {
+    background-color: var(--sb-stats-mods)
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody th {
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 0;
+    padding-left: 6px;
+    font-size: 16px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tbody td {
+    min-width: revert;
+    padding: 5px 10px!important;
+    border: 0;
+    font-size: 16px
+}
+
+:is(.tooltip) .stat-block .stats table.abilities-saves tr:is(th,td) {
+    transition: .3s
+}
+
+:is(.tooltip) .stat-block p:nth-of-type(2) strong+strong {
+    margin-left: 30px
+}
+
+.summoning-creatures-table,.compendium-left-aligned-table {
+    width: auto
+}
+
+.summoning-creatures-table td,.compendium-left-aligned-table td {
+    text-align: left!important;
+    padding: 8px 20px!important
+}
+
+.summoning-creatures-table td:nth-child(1),.compendium-left-aligned-table td:nth-child(1) {
+    vertical-align: middle!important;
+    padding: 8px 20px!important;
+    line-height: 1.4!important
+}
+
+.compendium-left-aligned-table {
+    width: 100%!important
+}
+
+.compendium-left-aligned-table th:nth-child(1) {
+    text-align: center!important;
+    width: 120px!important
+}
+
+.spell-level-column {
+    width: 5%
+}
+
+:is(.tooltip) th.table-column-width--10pct {
+    width: 10%
+}
+
+:is(.tooltip) th.table-column-width--15pct {
+    width: 15%
+}
+
+:is(.tooltip) th.table-column-width--20pct {
+    width: 20%
+}
+
+:is(.tooltip) .table-compendium tr>:is(th,td) {
+    padding: 8px 16px!important
+}
+
+:is(.tooltip) table.table-compendium>thead>tr {
+    background-color: var(--sb-table-header-bg-color,#FDFDFD)!important;
+    color: var(--sb-table-header-fg-color,#222)!important
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:nth-child(odd) {
+    background-color: var(--sb-table-row-bg-dark,#faf8f7)!important;
+    color: var(--sb-table-row-fg-dark,#222)
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:nth-child(even),:is(.tooltip) table.table-compendium tbody tr:nth-child(even) {
+    background-color: var(--sb-table-row-bg-light,#FDFDFD);
+    color: var(--sb-table-row-fg-light,#222)
+}
+
+:is(.tooltip) table thead th {
+    background: inherit;
+    color: inherit
+}
+
+:is(.tooltip) table.table-compendium tr {
+    transition: .3s
+}
+
+:is(.tooltip) table.table-compendium tr td {
+    vertical-align: middle
+}
+
+:is(.tooltip) table.table-compendium>tbody>tr:hover {
+    background-color: var(--sb-table-row-bg-hover,#e3f4eb)!important;
+    color: var(--sb-table-row-fg-hover,#222)
+}
+
+:is(.tooltip) table.table--weapons tr>:is(th,td):nth-child(odd) {
+    text-align: left!important
+}
+
+:is(.tooltip) table.table--equipment tr>:is(th,td):first-child {
+    width: 50%;
+    text-align: left!important
+}
+
+:is(.tooltip) .table--generic-dice tr>:is(th,td):first-child,:is(.tooltip) .table--generic-dice-first tr>:is(th,td):first-child,:is(.tooltip) .table--generic-dice-col2 tr>:is(th,td):nth-child(2),:is(.tooltip) .table--generic-dice-col3 tr>:is(th,td):nth-child(3),:is(.tooltip) .table--generic-dice-col4 tr>:is(th,td):nth-child(4),:is(.tooltip) .table--generic-dice-col5 tr>:is(th,td):nth-child(5),:is(.tooltip) .table--generic-dice-last tr>:is(th,td):last-child {
+    width: 12%;
+    font-weight: bold
+}
+
+:is(.tooltip) .table--generic-dice:is(th,td):nth-child(2) {
+    text-align: left
+}
+
+:is(.tooltip) .table--left-all tr>:is(th,td),:is(.tooltip) .table--left-first tr>:is(th,td):first-child,:is(.tooltip) .table--left-col2 tr>:is(th,td):nth-child(2),:is(.tooltip) .table--left-col3 tr>:is(th,td):nth-child(3),:is(.tooltip) .table--left-col4 tr>:is(th,td):nth-child(4),:is(.tooltip) .table--left-col5 tr>:is(th,td):nth-child(5),:is(.tooltip) .table--left-last tr>:is(th,td):last-child {
+    text-align: left
+}
+
+:is(.tooltip) table caption {
+    text-align: left;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    font-family: Roboto,Helvetica,sans-serif;
+    line-height: 1.3
+}
+
+:is(.tooltip) table caption>:is(h2,h3,h4,h5) {
+    font-size: 16px!important;
+    font-weight: 700!important
+}
+
+:is(.tooltip) table caption>:is(h2,h3)::after {
+    content: none!important
+}
+
+:is(.tooltip) .table-compendium.table--sub-features thead th:first-of-type {
+    width: 15%
+}
+
+:is(.tooltip) .table-compendium.table--sub-features:is(thead,tbody) tr>:is(th,td):nth-child(2) {
+    text-align: left!important
+}
+
+:is(.tooltip) .table--features tr>:is(th,td):nth-child(3) {
+    padding-left: 10px!important;
+    text-align: left!important;
+    width: 20%
+}
+
+:is(.tooltip) .table--features tr>:is(th,td):is(:first-child,:nth-child(2),:nth-child(n+4)) {
+    padding-left: 5px 10px!important;
+    min-width: 0!important
+}
+
+:is(.tooltip) tbody th {
+    padding-left: 20px
+}
+
+:is(.tooltip) a.sourcebook {
+    font-style: italic
+}
+.stat-table {
+    margin: 0 0 .5rem
+}
+
+.stat-table,.stat-table thead,.stat-table tr,.stat-table th,.stat-table tbody,.stat-table td {
+    border: 0
+}
+
+.stat-table td {
+    padding: .125rem .5rem
+}
+
+.stat-table thead tr th {
+    background: inherit;
+    color: #68747b!important;
+    font-weight: 400;
+    padding: .3125rem .125rem 0;
+    text-transform: uppercase;
+    font-family: Roboto,Helvetica,sans-serif;
+    font-size: .6875rem
+}
+
+.stat-table tbody tr {
+    border-top: .0625rem solid #fff;
+    border-bottom: .0625rem solid #fff;
+    color: #5b160c;
+    text-align: center;
+    font-size: .938rem
+}
+
+.stat-table tbody tr th {
+    padding: initial
+}
+
+.stat-table.physical tbody tr th,.stat-table.physical tbody tr td {
+    background: #ede6d9
+}
+
+.stat-table.mental tbody tr th,.stat-table.mental tbody tr td {
+    background: #d8dad1
+}
+
+.stat-table.physical td.modifier {
+    background: #ded4cc
+}
+
+.stat-table.mental td.modifier {
+    background: #d0caca
+}
+
+
+.tooltip-body{
+        
+    .i-external-link,.i-hamburger,.i-concentration,.i-homebrew,.i-spell-melee,.i-spell-ranged,.i-favorite,.i-strength-save,.i-dexterity-save,.i-constitution-save,.i-charisma-save,.i-wisdom-save,.i-intelligence-save,.i-type-acid,.i-type-bludgeoning,.i-type-cold,.i-type-fire,.i-type-force,.i-type-lightning,.i-type-necrotic,.i-type-piercing,.i-type-poison,.i-type-psychic,.i-type-radiant,.i-type-slashing,.i-type-thunder,.i-condition-blinded,.i-condition-charmed,.i-condition-deafened,.i-condition-exhaustion,.i-condition-exhausted,.i-condition-frightened,.i-condition-grappled,.i-condition-incapacitated,.i-condition-invisible,.i-condition-paralyzed,.i-condition-petrified,.i-condition-poisoned,.i-condition-prone,.i-condition-restrained,.i-condition-stunned,.i-condition-unconscious,.i-condition-white-blinded,.i-condition-white-charmed,.i-condition-white-deafened,.i-condition-white-exhaustion,.i-condition-white-exhausted,.i-condition-white-frightened,.i-condition-white-grappled,.i-condition-white-incapacitated,.i-condition-white-invisible,.i-condition-white-paralyzed,.i-condition-white-petrified,.i-condition-white-poisoned,.i-condition-white-prone,.i-condition-white-restrained,.i-condition-white-stunned,.i-condition-white-unconscious,.i-aoe-cone,.i-aoe-cube,.i-aoe-cylinder,.i-aoe-emanation,.i-aoe-line,.i-aoe-sphere,.i-aoe-square,.i-artificer,.i-bard,.i-cleric,.i-druid,.i-paladin,.i-ranger,.i-sorcerer,.i-warlock,.i-wizard,.i-barbarian,.i-fighter,.i-monk,.i-rogue,.i-aberration,.i-beast,.i-celestial,.i-construct,.i-dragon,.i-elemental,.i-fey,.i-fiend,.i-giant,.i-humanoid,.i-monstrosity,.i-ooze,.i-plant,.i-undead,.i-ritual,.i-req-attunement,.i-legendary-monster,.i-checkmark,.i-partnered-content-small,.i-partnered-content-medium,.i-partnered-content-large,.i-copy,.i-download,.i-download-blue,.i-gift,.i-play-url,.i-radio-checked,.i-radio-empty,.i-radio-checked-light,.i-three-dots {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+        display: inline-block;
+        text-indent: -99999px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        vertical-align: middle
+    }
+
+    .i-external-link {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/external-link.svg);
+        width: 20px;
+        height: 20px
+    }
+
+    .i-hamburger {
+        position: relative;
+        margin-right: 13px
+    }
+
+    .i-hamburger::before {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        width: 100%;
+        height: 2px;
+        background: #979aa4;
+        box-shadow: 0 5px 0 0 #979aa4,0 10px 0 0 #979aa4
+    }
+
+    .i-concentration {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/core_mechanics/concentration.svg)
+    }
+
+    .rpgspell-listing .i-concentration {
+        margin-left: 3px
+    }
+
+    .i-homebrew {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/homebrew.svg);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 8px 8px;
+        background-color: #45cef7;
+        border-radius: 50%;
+        margin-right: 3px
+    }
+
+    .i-spell-melee {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attack_types/melee_spell.svg)
+    }
+
+    .i-spell-ranged {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attack_types/ranged_spell.svg)
+    }
+
+    .i-favorite {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/sprites/fav_star.svg);
+        background-position: 0 0;
+        background-size: cover;
+        height: 20px;
+        width: 20px
+    }
+
+    .i-favorite.joe-blow {
+        background-position: -20px 0
+    }
+
+    .i-strength-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/strength.svg)
+    }
+
+    .i-dexterity-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/dexterity.svg)
+    }
+
+    .i-constitution-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/constitution.svg)
+    }
+
+    .i-charisma-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/charisma.svg)
+    }
+
+    .i-wisdom-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/wisdom.svg)
+    }
+
+    .i-intelligence-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/intelligence.svg)
+    }
+
+    .i-type-acid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/acid.svg)
+    }
+
+    .i-type-bludgeoning {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/bludgeoning.svg)
+    }
+
+    .i-type-cold {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/cold.svg)
+    }
+
+    .i-type-fire {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/fire.svg)
+    }
+
+    .i-type-force {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/force.svg)
+    }
+
+    .i-type-lightning {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/lightning.svg)
+    }
+
+    .i-type-necrotic {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/necrotic.svg)
+    }
+
+    .i-type-piercing {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/piercing.svg)
+    }
+
+    .i-type-poison {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/poison.svg)
+    }
+
+    .i-type-psychic {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/psychic.svg)
+    }
+
+    .i-type-radiant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/radiant.svg)
+    }
+
+    .i-type-slashing {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/slashing.svg)
+    }
+
+    .i-type-thunder {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/thunder.svg)
+    }
+
+    .i-condition-blinded {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/blinded.svg)
+    }
+
+    .i-condition-charmed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/charmed.svg)
+    }
+
+    .i-condition-deafened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/deafened.svg)
+    }
+
+    .i-condition-exhaustion {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/exhaustion.svg)
+    }
+
+    .i-condition-exhausted {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/exhausted.svg)
+    }
+
+    .i-condition-frightened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/frightened.svg)
+    }
+
+    .i-condition-grappled {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/grappled.svg)
+    }
+
+    .i-condition-incapacitated {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/incapacitated.svg)
+    }
+
+    .i-condition-invisible {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/invisible.svg)
+    }
+
+    .i-condition-paralyzed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/paralyzed.svg)
+    }
+
+    .i-condition-petrified {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/petrified.svg)
+    }
+
+    .i-condition-poisoned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/poisoned.svg)
+    }
+
+    .i-condition-prone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/prone.svg)
+    }
+
+    .i-condition-restrained {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/restrained.svg)
+    }
+
+    .i-condition-stunned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/stunned.svg)
+    }
+
+    .i-condition-unconscious {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/unconscious.svg)
+    }
+
+    .i-condition-white-blinded {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/blinded.svg)
+    }
+
+    .i-condition-white-charmed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/charmed.svg)
+    }
+
+    .i-condition-white-deafened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/deafened.svg)
+    }
+
+    .i-condition-white-exhaustion {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/exhaustion.svg)
+    }
+
+    .i-condition-white-exhausted {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/exhausted.svg)
+    }
+
+    .i-condition-white-frightened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/frightened.svg)
+    }
+
+    .i-condition-white-grappled {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/grappled.svg)
+    }
+
+    .i-condition-white-incapacitated {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/incapacitated.svg)
+    }
+
+    .i-condition-white-invisible {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/invisible.svg)
+    }
+
+    .i-condition-white-paralyzed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/paralyzed.svg)
+    }
+
+    .i-condition-white-petrified {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/petrified.svg)
+    }
+
+    .i-condition-white-poisoned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/poisoned.svg)
+    }
+
+    .i-condition-white-prone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/prone.svg)
+    }
+
+    .i-condition-white-restrained {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/restrained.svg)
+    }
+
+    .i-condition-white-stunned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/stunned.svg)
+    }
+
+    .i-condition-white-unconscious {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/unconscious.svg)
+    }
+
+    .i-aoe-cone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cone.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-cube {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cube.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-cylinder {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cylinder.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-emanation {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/emanation.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-line {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/line.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-sphere {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/sphere.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-square {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/square.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-artificer {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/artificer_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-bard {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/bard_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-cleric {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/cleric_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-druid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/druid_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-paladin {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/paladin_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-ranger {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/ranger_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-sorcerer {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/sorcerer_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-warlock {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/warlock_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-wizard {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/wizard_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-barbarian {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/barbarian_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fighter {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/fighter_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-monk {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/monk_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-rogue {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/rogue_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-aberration {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/aberration_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-beast {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/beast_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-celestial {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/celestial_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-construct {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/construct_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-dragon {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/dragon_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-elemental {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/elemental_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fey {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/fey_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fiend {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/fiend_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-giant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/giant_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-humanoid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/humanoid_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-monstrosity {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/monstrosity_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-ooze {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/ooze_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-plant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/plant_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-undead {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/undead_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-aoe-square {
+        top: 2px;
+        left: 1px;
+        height: 13px;
+        width: 13px
+    }
+
+    .i-type-acid {
+        margin-right: 0;
+        width: 15px
+    }
+
+    .i-ritual,.i-req-attunement {
+        background-size: cover;
+        height: 12px;
+        width: 12px;
+        margin-left: 3px
+    }
+
+    .i-ritual {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/core_mechanics/ritual.svg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%
+    }
+
+    .i-req-attunement {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attunement.png)
+    }
+
+    .i-legendary-monster {
+        height: 12px;
+        width: 12px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/legendary-monster.svg);
+        margin-left: 3px
+    }
+
+    .body-rpgmonster-details .i-legendary-monster {
+        height: 16px;
+        width: 16px
+    }
+
+    .i-checkmark {
+        height: 20px;
+        width: 20px;
+        background-image: url("../images/icons/yes-no/check-black.svg");
+        background-size: cover
+    }
+
+    .i-partnered-content-small,.i-partnered-content-medium,.i-partnered-content-large {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-medium.svg);
+        background-size: contain
+    }
+
+    .i-partnered-content-small {
+        width: 12px;
+        height: 12px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-small.svg)
+    }
+
+    .i-partnered-content-medium {
+        width: 18px;
+        height: 18px
+    }
+
+    .i-partnered-content-large {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-large.svg)
+    }
+
+    .i-copy {
+        width: 18px;
+        height: 18px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/copy.svg);
+        background-size: contain
+    }
+
+    .i-download {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/download.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-download-blue {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/downloadblue.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-gift {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/gift.svg);
+        background-size: contain
+    }
+
+    .i-play-url {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/playurl.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-radio-checked,.i-radio-empty,.i-radio-checked-light {
+        height: 24px;
+        width: 24px;
+        background-size: contain
+    }
+
+    .i-radio-checked {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-checked.svg)
+    }
+
+    .i-radio-checked-light {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-checked-light.svg)
+    }
+
+    .i-radio-empty {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-empty.svg)
+    }
+
+    .i-three-dots {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/ellipsisv.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+}
+
+
 
 /***** Icon UI *****/
 
@@ -11126,6 +13347,13 @@ div#playlistFields {
     margin: 0px !important;
 }
 
+.mobileAVTTUI #projector_zoom_lock span:nth-of-type(1){
+    font-size: 16px !important;
+}
+.mobileAVTTUI #projector_zoom_lock span:nth-of-type(2){
+    font-size: 38px !important;
+}
+
 .mobileAVTTUI #zoom_buttons .ddbc-tab-options--layout-pill{
     width:30px !important;
     height:30px !important;
@@ -11201,56 +13429,56 @@ div#playlistFields {
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
     font-weight: bold;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("../fonts/ScalaSansOffc-Ita.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Ita.ttf") format("truetype");
     font-weight: normal;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("../fonts/ScalaSansScOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("../fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'MrsEavesSmallCaps';
-    src: url("../fonts/MrsEavesSmallCaps.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/MrsEavesSmallCaps.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: 'DearSarahPro';
-    src: url("../fonts/DearSarahPro.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com//fonts/DearSarahPro.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }

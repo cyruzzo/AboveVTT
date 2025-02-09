@@ -8,15 +8,33 @@ function mydebounce(func, timeout = 800){   // This had to be in both core and h
   };
 }
 
-function throttle(func, timeFrame = 800) {
-	let lastTime = 0;
-	return function (...args) {
-		let now = new Date();
-		if (now - lastTime >= timeFrame) {
-			func(...args);
-			lastTime = now;
-		}
-	};
+function throttle(func, wait, option = {leading: true, trailing: true}) {
+  let waiting = false;
+  let lastArgs = null;
+  return function wrapper(...args) {
+    if(!waiting) {
+      waiting = true;
+      const startWaitingPeriod = () => setTimeout(() => {
+        if(option.trailing && lastArgs) {
+          func.apply(this, lastArgs);
+          lastArgs = null;
+          startWaitingPeriod();
+        }
+        else {
+          waiting = false;
+        }
+      }, wait);
+      if(option.leading) {
+        func.apply(this, args);
+      } else {
+        lastArgs = args; // if not leading, treat like another any other function call during the waiting period
+      }
+      startWaitingPeriod();
+    }
+    else {
+      lastArgs = args; 
+    }
+  }
 }
 
 function clearFrame(){
@@ -49,8 +67,7 @@ const debounceHandleInjected = mydebounce(() => {
 
 				if(newlihtml=="") {
 					li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
-				} else if (injection_data.dmonly && window.DM) { 
-				}
+				} 
 					
 				
 			 	li.html(newlihtml);
@@ -58,73 +75,6 @@ const debounceHandleInjected = mydebounce(() => {
 				add_journal_roll_buttons(li);
 				window.JOURNAL.add_journal_tooltip_targets(li);
 				add_stat_block_hover(li)
-				let newheight = li.height();
-				li.height(newheight);
-			
-				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
-				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
-				let img = li.find(".magnify");
-				for(let i=0; i<img.length; i++){
-					if($(img[i]).is('img')){
-						$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
-						img[i].onload = () => {
-							if (img[i].naturalWidth > 0) {
-								$(img[i]).css({
-									'display': 'block',
-									'width': '100%'
-								});
-								li.find('.chat-link').css('display', 'none');
-							}
-							$(img[i]).attr('href', img[i].src);
-						}
-						$(img[i]).off('error').on("error", function (e) {
-	            let el = $(e.target)
-	            let cur = el.attr("data-current-avatar-url");
-	            if(cur != undefined){
-	            	let nextUrl;
-		            if (cur === "largeAvatarUrl") {
-		                nextUrl = el.attr("data-large-avatar-url");
-		                try {
-		                    let parts = nextUrl.split("/");
-		                    parts[parts.length - 2] = "1000";
-		                    parts[parts.length - 3] = "1000";
-		                    nextUrl = parts.join("/");
-		                    el.attr("data-current-avatar-url", "hacky");
-		                } catch (error) {
-		                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
-		                    nextUrl = el.attr("data-avatar-url");
-		                    el.attr("data-current-avatar-url", "avatarUrl");
-		                }
-		            } else if (cur === "hacky") {
-		                nextUrl = el.attr("data-avatar-url");
-		                el.attr("data-current-avatar-url", "avatarUrl");
-		            } else if (cur === "avatarUrl") {
-		                nextUrl = el.attr("data-basic-avatar-url");
-		                el.attr("data-current-avatar-url", "basicAvatarUrl");
-		            } else {
-		                console.warn("imageHtml failed to load image", el, e);
-		                return;
-		            }
-		            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
-		            el.attr("src", nextUrl);
-		            el.attr("href", nextUrl);
-		          }            
-	        	});		
-					}
-					else if($(img[i]).is('video')){
-						$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
-							img[i].addEventListener('loadeddata', function() {
-						    	if(img[i].videoWidth > 0) {
-											$(img[i]).css({
-												'display': 'block',
-												'width': '100%'
-											});
-											li.find('.chat-link').css('display', 'none');
-										}
-						}, false);
-					}
-				}
-
 				let rollType = current.data.injected_data?.rollType?.toLowerCase();
 				let rollAction = current.data.injected_data?.rollTitle?.toLowerCase();
 				if(rollType != undefined && rollAction != 'initiative' && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
@@ -190,8 +140,79 @@ const debounceHandleInjected = mydebounce(() => {
 						damageButtonContainer.append(damageButton, halfDamage, doubleDamage, healDamage);
 					}
 					
-					$(this).find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+					li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
+				}					
+				
+				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
+
+				let img = li.find(".magnify");
+				for(let i=0; i<img.length; i++){
+					if($(img[i]).is('img')){
+						$(img[i]).magnificPopup({type: 'image', closeOnContentClick: true });
+						img[i].onload = () => {
+							if (img[i].naturalWidth > 0) {
+								$(img[i]).css({
+									'display': 'block',
+									'width': '100%'
+								});
+								li.find('.chat-link').css('display', 'none');
+							}
+							$(img[i]).attr('href', img[i].src);
+							newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+							li.height(newheight);
+						}
+						$(img[i]).off('error').on("error", function (e) {
+	            let el = $(e.target)
+	            let cur = el.attr("data-current-avatar-url");
+	            if(cur != undefined){
+	            	let nextUrl;
+		            if (cur === "largeAvatarUrl") {
+		                nextUrl = el.attr("data-large-avatar-url");
+		                try {
+		                    let parts = nextUrl.split("/");
+		                    parts[parts.length - 2] = "1000";
+		                    parts[parts.length - 3] = "1000";
+		                    nextUrl = parts.join("/");
+		                    el.attr("data-current-avatar-url", "hacky");
+		                } catch (error) {
+		                    console.warn("imageHtml failed to hack the largeAvatarUrl", el, e);
+		                    nextUrl = el.attr("data-avatar-url");
+		                    el.attr("data-current-avatar-url", "avatarUrl");
+		                }
+		            } else if (cur === "hacky") {
+		                nextUrl = el.attr("data-avatar-url");
+		                el.attr("data-current-avatar-url", "avatarUrl");
+		            } else if (cur === "avatarUrl") {
+		                nextUrl = el.attr("data-basic-avatar-url");
+		                el.attr("data-current-avatar-url", "basicAvatarUrl");
+		            } else {
+		                console.warn("imageHtml failed to load image", el, e);
+		                return;
+		            }
+		            console.log("imageHtml failed to load image. Trying nextUrl", nextUrl, el, e);
+		            el.attr("src", nextUrl);
+		            el.attr("href", nextUrl);
+		          }            
+	        	});		
+					}
+					else if($(img[i]).is('video')){
+						$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
+							img[i].addEventListener('loadeddata', function() {
+						    	if(img[i].videoWidth > 0) {
+											$(img[i]).css({
+												'display': 'block',
+												'width': '100%'
+											});
+											li.find('.chat-link').css('display', 'none');
+										}
+										newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+										li.height(newheight);
+						}, false);
+					}
 				}
+				let newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+				li.height(newheight);
 				
 
 				if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
@@ -220,93 +241,7 @@ const debounceSendNote = mydebounce(function(id, note){
 
 const delayedClear = mydebounce(() => clearFrame());
 
-function hideVideo(streamerid) {
-		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", true);
-}
 
-function revealVideo(streamerid) {
-		$("#streamer-video-"+streamerid+", #streamer-canvas-"+streamerid).toggleClass("hidden", false);
-}
-
-function addVideo(stream,streamerid) {
-	$("#streamer-video-"+streamerid+" , #streamer-canvas-"+streamerid).remove();
-	let video = document.createElement("video");
-	video.setAttribute("class", "dicestream");
-	video.setAttribute("id","streamer-video-"+streamerid);
-	video.autoplay = true;
-	$(video).hide();
-	video.srcObject = stream;
-	document.body.appendChild(video);
-	video.play();
-	
-	
-	let dicecanvas=$(`<canvas width='${window.innerWidth}' height='${window.innerHeight}' class='streamer-canvas' />`);
-	dicecanvas.attr("id","streamer-canvas-"+streamerid);
-	//dicecanvas.css("opacity",0.5);
-	dicecanvas.css("position","fixed");
-	dicecanvas.css("top","50%");
-	dicecanvas.css("left","50%");
-	dicecanvas.css("transform","translate(-50%, -50%)");
-	dicecanvas.css("z-index",60000);
-	dicecanvas.css("touch-action","none");
-	dicecanvas.css("pointer-events","none");
-	dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)");
-	dicecanvas.css("clip-path", "inset(2px 2px 2px 2px)");
-	$("#site").append(dicecanvas);
-	
-	
-	window.MB.sendMessage("custom/myVTT/whatsyourdicerolldefault", {
-		to: streamerid,
-		from: window.MYSTREAMID
-	});
-	
-	let canvas=dicecanvas.get(0);
-	let ctx=canvas.getContext('2d');
-	let tmpcanvas = document.createElement("canvas");
-  video.addEventListener("resize", function(){
-  		let videoAspectRatio = video.videoWidth / video.videoHeight
-			if (video.videoWidth > video.videoHeight)
-			{
-				tmpcanvas.width = Math.min(video.videoWidth, window.innerWidth);
-				tmpcanvas.height = Math.min(video.videoHeight, window.innerWidth / videoAspectRatio);		
-			}
-			else {
-				tmpcanvas.width = Math.min(video.videoWidth, window.innerHeight / (1 / videoAspectRatio));
-				tmpcanvas.height = Math.min(video.videoHeight, window.innerHeight);		
-			}
-			dicecanvas.attr("width", tmpcanvas.width + "px");
-			dicecanvas.attr("height", tmpcanvas.height  + "px");
-			dicecanvas.css("height",tmpcanvas.height);
-			dicecanvas.css("width",tmpcanvas.width );
-  });
-
-	let updateCanvas=function(){
-		//resize canvas due to Chrome bug - this may be fixed in chrome later
-		resizeCanvasChromeBug()
-		
-		let tmpctx = tmpcanvas.getContext("2d");
-		window.requestAnimationFrame(updateCanvas);
-		tmpctx.drawImage(video, 0, 0, tmpcanvas.width, tmpcanvas.height);
-		if(tmpcanvas.width>0)
-		{
-			const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
-
-			for (let i = 0; i < frame.data.length; i += 4) {
-				const red = frame.data[i + 0];
-				const green = frame.data[i + 1];
-				const blue = frame.data[i + 2];
-				if ((red < 24) && (green < 24) && (blue < 24))
-					frame.data[i + 3] = 128;
-				if ((red < 8) && (green < 8) && (blue < 8))
-					frame.data[i + 3] = 0;
-				
-				
-			}
-			ctx.putImageData(frame,0,0);	
-		}
-	};
-	updateCanvas();
-}
 
 function resizeCanvasChromeBug(){
 	let diceRollCanvas = $(".dice-rolling-panel__container");
@@ -998,55 +933,45 @@ class MessageBroker {
 				}
 			}
 			
-			if(msg.eventType== "custom/myVTT/iceforyourgintonic"){
-				if( !window.JOINTHEDICESTREAM)
-					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
-					return;
-				setTimeout( () => {
-				let peer= window.STREAMPEERS[msg.data.from];
-				if(peer.remoteDescription!= null)
-					peer.addIceCandidate(msg.data.ice);
-				},500); // ritardalo un po'
-			}
+
 			if(msg.eventType == "custom/myVTT/whatsyourdicerolldefault"){
 				if( !window.JOINTHEDICESTREAM)
 					return;
-				if( (!window.MYSTREAMID)  || (msg.data.to!= window.MYSTREAMID) )
+				if( (!diceplayer_id)  || (msg.data.to!= diceplayer_id) )
 					return;
 				let sendToText = gamelog_send_to_text()	
 				if(sendToText == "Everyone") {
 					window.MB.sendMessage("custom/myVTT/revealmydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});		
 				}
 				else if(sendToText == "Dungeon Master"){
 					window.MB.sendMessage("custom/myVTT/showonlytodmdicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 				else{
 					window.MB.sendMessage("custom/myVTT/hidemydicestream",{
-						streamid: window.MYSTREAMID
+						streamid: diceplayer_id
 					});
 				}
 			}
 
 			if(msg.eventType == "custom/myVTT/turnoffsingledicestream"){
-				if(window.STREAMPEERS[msg.data.from] === undefined || (msg.data.to != "everyone" && msg.data.to != window.MYSTREAMID)){
+				let dicePeer = window.diceCurrentPeers.filter(d=> d.peer==msg.data.from)[0]
+				if(dicePeer === undefined || (msg.data.to != "everyone" && msg.data.to != diceplayer_id)){
 				 return;
 				}	
-					$("[id^='streamer-"+msg.data.from+"']").remove();
-					window.STREAMPEERS[msg.data.from].close();
-					delete window.STREAMPEERS[msg.data.from];
-					if(msg.data.to != "everyone"){
-						window.MB.inject_chat({
-	              player: window.PLAYER_NAME,
-	              img: window.PLAYER_IMG,
-	              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
-	              whisper: window.PLAYER_NAME
-	          });
-					}
+				$("[id^='streamer-"+msg.data.from+"']").remove();
+				dicePeer.close();
+				if(msg.data.to != "everyone"){
+					window.MB.inject_chat({
+              player: window.PLAYER_NAME,
+              img: window.PLAYER_IMG,
+              text: `<span class="flex-wrap-center-chat-message">One of your dice stream connections has failed/disconnected. Try reconnecting to the dice stream if this was not intentional.<br/><br/></div>`,
+              whisper: window.PLAYER_NAME
+          });
+				}
 			}
 
 			if(msg.eventType == "custom/myVTT/disabledicestream"){
@@ -1055,17 +980,17 @@ class MessageBroker {
 
 			if(msg.eventType == "custom/myVTT/showonlytodmdicestream"){
 				if(!window.DM){		
-					hideVideo(msg.data.streamid);
+					hideDiceVideo(msg.data.streamid);
 				}		
 				else{
-					revealVideo(msg.data.streamid);
+					revealDiceVideo(msg.data.streamid);
 				}
 			}
 			if(msg.eventType == "custom/myVTT/hidemydicestream"){
-					hideVideo(msg.data.streamid);
+					hideDiceVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/revealmydicestream"){
-					revealVideo(msg.data.streamid);
+					revealDiceVideo(msg.data.streamid);
 			}
 			if(msg.eventType == "custom/myVTT/enabledicestreamingfeature"){
 					enable_dice_streaming_feature(true);				
@@ -1548,7 +1473,7 @@ class MessageBroker {
               window.videoConnectedPeers.push(msg.data.id);
               setRemoteStream(stream, call.peer);   
               call.on('close', () => {
-                $(`video#${call.peer}`).remove();
+                $(`.video-meet-area video#${call.peer}`).remove();
             	})   
           })
           window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
@@ -1556,8 +1481,24 @@ class MessageBroker {
 				}
 			}
 			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
-					$(`video#${msg.data.id}`).remove();
+					$(`.video-meet-area video#${msg.data.id}`).remove();
 			}
+
+			if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
+				if(msg.data.id != diceplayer_id){
+					let call = window.diceVideoPeer.call(msg.data.id, window.MYMEDIASTREAM)
+          call.on('stream', (stream) => {
+              window.diceVideoConnectedPeers.push(msg.data.id);
+              setDiceRemoteStream(stream, call.peer);   
+              call.on('close', () => {
+                $(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
+            	})   
+          })
+          window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
+          window.diceCurrentPeers.push(call);
+				}
+			}
+
 
 		};
 
@@ -1629,22 +1570,26 @@ class MessageBroker {
 		let timestamp = d.toLocaleTimeString();
 		let datestamp = d.toLocaleDateString();
 
-		// hide message if PC doesn't speak this language
-		if (!window.DM && data.language != undefined) {
-			const knownLanguages = get_my_known_languages()
-			const messageLanguage = window.ddbConfigJson.languages.find(d => d.id == data.language)?.name;
-			if (!knownLanguages.includes(messageLanguage)) {
-				const container = $("<div>").html(data.text);
-				const elements = container.find("*").add(container);
-				const textNodes = elements.contents().not(elements);
-				textNodes.each(function () {
-					let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
-					$(document.createTextNode(newText)).insertBefore(this);
-					$(this).remove();
-				});
-				data.text = container.html();
-			}
+		// scramble message if PC doesn't speak this language
+		if(data.language != undefined) {
+				const knownLanguages = get_my_known_languages()
+				const messageLanguage = window.ddbConfigJson.languages.find(d => d.id == data.language)?.name;
+				if (!window.DM && !knownLanguages.includes(messageLanguage)) {
+					const container = $("<div>").html(data.text);
+					const elements = container.find("*").add(container);
+					const textNodes = elements.contents().not(elements);
+					textNodes.each(function () {
+						let newText = this.nodeValue.replaceAll(/[\w\d]/gi, (n) => String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+						$(document.createTextNode(newText)).insertBefore(this);
+						$(this).remove();
+					});
+					data.text = container.html();
+				}
+				else if(messageLanguage != 'Common'){
+					data.text = $(data.text).prepend(`${messageLanguage}: `)[0].outerHTML;
+				}
 		}
+
 
 		if (is_encounters_page() || is_characters_page() || is_campaign_page()) {
 			return $(`
@@ -1765,11 +1710,7 @@ class MessageBroker {
 
 		}	
 		else if(data.left){
-			// SOLO PLAYER. PUNTO UNICO DI CREAZIONE DEI TOKEN
-			
-			if (window.DM) {
-				console.log("ATTENZIONEEEEEEEEEEEEEEEEEEE ATTENZIONEEEEEEEEEEEEEEEEEEE");
-			}
+
 			let t = new Token(data);
 			if(isNaN(parseFloat(t.options.left)) || isNaN(parseInt(t.options.top))){ // prevent errors with NaN positioned tokens - delete them as catch all. 
 				t.options.deleteableByPlayers = true;
@@ -1782,7 +1723,21 @@ class MessageBroker {
 			}
 			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
 				window.MB.sendMessage('custom/myVTT/token', t.options);
-			}, 10);
+			}, 300);
+			if(t.isPlayer()){
+				const pc = find_pc_by_player_id(data.id, false);
+		    let token = window.TOKEN_OBJECTS[data.id]     
+		    if (token && pc) {
+		      let currentImage = token.options.imgsrc;
+		      token.hp = pc.hitPointInfo.current;
+		      token.options = {
+		        ...token.options,
+		        ...pc,
+		        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
+		        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+		      };
+				}
+			}
 			t.place();
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
@@ -1792,7 +1747,7 @@ class MessageBroker {
 		}
 }
 
-	async handleScene(msg) {
+	async handleScene(msg, forceRefresh=false) {
 		console.debug("handlescene", msg);
 		try{
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
@@ -1812,7 +1767,7 @@ class MessageBroker {
 																				
 			
 
-			if(isSameScaleAndMaps){
+			if(isSameScaleAndMaps && !forceRefresh){
 				let scaleFactor = window.CURRENT_SCENE_DATA.scale_factor;
 				let conversion = window.CURRENT_SCENE_DATA.conversion;
 
@@ -2047,6 +2002,8 @@ class MessageBroker {
 									if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
 										return;
 									}
+									if(forceRefresh)
+										delete window.all_token_objects[id]
 									await self.handleToken({
 										data: data.tokens[id],
 										loading: true,
@@ -2341,49 +2298,60 @@ class MessageBroker {
 		}
 	}
 
+	showDisconnectWarning(){
+	  let container = $("#above-vtt-error-message");
+	  container.remove();
+	  container = $(`
+	      <div id="above-vtt-error-message" class="small-error">
+	        <h2>You have Disconnected</h2>
+	        <div id="error-message-details"><p>You have disconnected from the AboveVTT websocket ${window.reconnectAttemptAbovews} times.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program. It may also happen if the tab was in the background too long</p><p>If disconnecting due to an unstable connection you can enable auto reconnect in settings. Note: Auto reconnect may cause tokens to reset or desync.</p></div>
+	        <div class="error-message-buttons">
+	  		  	<button id="reconnect-button">Reconnect</button>
+	          <button id="close-error-button">Exit</button>
+	        </div>
+	      </div>
+	    `)
+	  
+    $(document.body).append(container);
+
+	  $("#close-error-button").on("click", function(){
+	  	window.close();
+	  });
+	  $("#reconnect-button").on("click", function(){
+	  	window.MB.loadAboveWS(function(){ 
+	  		AboveApi.getScene(window.CURRENT_SCENE_DATA.id).then((response) => {
+	  			window.MB.handleScene(response, true);
+	  			setTimeout(
+	  				function(){
+	  					let msgdata = {
+	  							player: window.PLAYER_NAME,
+	  							img: window.PLAYER_IMG,
+	  							text: `${window.PLAYER_NAME} has reconnected.`
+	  					};
+
+	  					window.MB.inject_chat(msgdata);
+	  				}, 4000)
+	  			removeError();
+	  		}).catch((error) => {
+	  			console.error("Failed to download scene", error);
+	  		});
+  		}, true);	
+	  });
+	}
+
 	reconnectDisconnectedAboveWs(){
-		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS){
+		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS && $('#above-vtt-error-message').length == 0){
 			if(window.reconnectAttemptAbovews == undefined){
 				window.reconnectAttemptAbovews = 0;
-			}
-
-		
+			}	
 			window.reconnectAttemptAbovews++;
-			if(window.reconnectAttemptAbovews > 5)
-				return;
-
-			if(window.reconnectAttemptAbovews < 5){
-				let msgdata = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: "You have disconnected from the AboveVTT websocket. Attempting to reconnect!",
-					whisper: window.PLAYER_NAME
-				};
-				this.inject_chat(msgdata);	
-				this.loadAboveWS(function(){ 
-					setTimeout(
-						function(){
-							let msgdata = {
-									player: window.PLAYER_NAME,
-									img: window.PLAYER_IMG,
-									text: `${window.PLAYER_NAME} has reconnected.`
-							};
-
-							window.MB.inject_chat(msgdata);
-						}, 4000)
-					}
-				);
+			if(get_avtt_setting_value('autoReconnect')){
+				this.loadAboveWS();	
 			}
-			else {
-				let msgdata = {
-					player: window.PLAYER_NAME,
-					img: window.PLAYER_IMG,
-					text: `<span><p>You have disconnected from the AboveVTT websocket 5 times. It is likely you are experiencing connection issues. </p><p>Reconnect messages/forced reconnect will be disabled until refresh.</p><p>This could be caused by a VPN, anti-tracker, adblocker, firewall, school/work network settings, or other extention/program.</p></span>`,
-					whisper: window.PLAYER_NAME
-				};
-				this.inject_chat(msgdata);
+			else{
+				this.showDisconnectWarning();
 			}
-					
+
 		}
 	}
 }

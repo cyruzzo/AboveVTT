@@ -11,6 +11,9 @@ class StatHandler {
 		if (monsterid in this.cache) {
 			callback(self.cache[monsterid]);
 		}
+		else if(window.cached_monster_items[monsterid]){
+			callback({data: window.cached_monster_items[monsterid].monsterData})
+		}
 		else if(monsterid == 'open5e'){
 			if(open5eSlug in cached_open5e_items){
 				callback(cached_open5e_items[open5eSlug].monsterData)
@@ -25,21 +28,11 @@ class StatHandler {
 			}
 		}
 		else {
-			get_cobalt_token(function(token) {
-				$.ajax({
-					url: 'https://monster-service.dndbeyond.com/v1/Monster/' + monsterid,
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-					},
-					xhrFields: {
-						withCredentials: true
-					},
-					success: function(data) {
-						self.cache[monsterid] = data;
-						callback(data);
-					}
-				});
-			});
+			fetch_monsters([monsterid], async function (response) {
+		        if (response !== false) {
+		            update_monster_item_cache(response.map(m => SidebarListItem.Monster(m)), function(){callback({data: window.cached_monster_items[monsterid].monsterData})});    
+		        }
+		    });
 		}
 	}
 
@@ -70,7 +63,13 @@ class StatHandler {
 					else {
 						promises.push(new Promise((resolve, reject) => {
 							this.getStat(window.all_token_objects[i].options.monster, function(stat) {
-								modArray.push(Math.floor((stat.data.stats[1].value - 10) / 2.0));
+								if(stat.data.initiativeMod != undefined){
+									modArray.push(stat.data.initiativeMod.replace('+', ''));
+								}
+								else{
+									modArray.push(Math.floor((stat.data.stats[1].value - 10) / 2.0));
+								}
+								
 								statArray.push(stat.data.stats[1].value);	
 								resolve();
 							}, window.all_token_objects[i].options.itemId);
@@ -129,7 +128,13 @@ class StatHandler {
 		}
 		else{
 			this.getStat(monsterid, function(stat) {
-				let modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
+				let modifier;
+				if(stat.data.initiativeMod != undefined){
+					modifier = stat.data.initiativeMod.replace('+', '');
+				}
+				else{
+					modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
+				}	
 				let expression = dice + modifier;
 				let roll = new rpgDiceRoller.DiceRoll(expression);
 				console.log(expression + "->" + roll.total);

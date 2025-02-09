@@ -274,7 +274,7 @@ function getRollData(rollButton){
     else if($(rollButton).hasClass('avtt-roll-button')){
       expression = `${$(rollButton).attr('data-exp')}${$(rollButton).attr('data-mod')}`
       rollTitle = $(rollButton).attr('data-actiontype');
-      rollType = $(rollButton).attr('data-rolltype');;
+      rollType = $(rollButton).attr('data-rolltype');
     }
     if($(rollButton).hasClass('avtt-roll-formula-button')){
       let slashCommand = DiceRoll.fromSlashCommand($(rollButton).attr('data-slash-command'))
@@ -294,8 +294,6 @@ function getRollData(rollButton){
       }
     }
 
-    let roll = new rpgDiceRoller.DiceRoll(expression); 
-    let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
 
     if($(rollButton).parents(`[class*='saving-throws-summary']`).length > 0){
       rollType = 'save'
@@ -306,7 +304,7 @@ function getRollData(rollButton){
     } else if($(rollButton).parents(`[class*='skills__col']`).length > 0){
       rollType = 'check';
       rollTitle = $(rollButton).closest(`.ct-skills__item`).find('.ct-skills__col--skill').text();
-    } else if($(rollButton).parents(`[class*='initiative-box']`).length > 0 || $(rollButton).parents(`.ct-combat__summary-group--initiative`).length > 0){
+    } else if($(rollButton).parents(`[class*='initiative-box'],  .ct-combat-tablet__extra--initiative, .ct-combat__summary-group--initiative`).length > 0 || $(rollButton).closest('[class*="styles_boxMobile"]').find('[class*="styles_labelMobile"]').text() == "Initiative"){
       rollTitle = 'Initiative';
       rollType = 'roll'
     } else if($(rollButton).parents(`[class*='__damage']`).length > 0){
@@ -334,12 +332,90 @@ function getRollData(rollButton){
         rollTitle = $(rollButton).closest(`.ddbc-combat-action-attack-general`).find('.ddbc-action-name, [class*="styles_actionName"]').text();
       }
     }
-    const modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g, '')) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    
+    let roll = new rpgDiceRoller.DiceRoll(expression); 
+    let regExpression = new RegExp(`${expression.replace(/[+-]/g, '\\$&')}:\\s`);
+    let modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+
+    if(rollType == 'damage'){
+        if((window.CHARACTER_AVTT_SETTINGS?.damageRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.damageRoll.replace('PB', getPB())))))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.damageRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.damageRoll.replace('PB', getPB())}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].dmg != '0'){
+
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].dmg.replace('PB', getPB())}`
+                }
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].dmg != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].dmg.replace('PB', getPB())}`
+                }
+            }
+        }
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    else if(rollType == 'to hit' || rollType == 'attack'){
+        if(window.CHARACTER_AVTT_SETTINGS?.hitRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.hitRoll.replace('PB', getPB()))))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.hitRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.hitRoll.replace('PB', getPB())}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].tohit != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].tohit.replace('PB', getPB())}`
+                }
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].tohit != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].tohit.replace('PB', getPB())}`
+                }
+            }
+        }
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    else if(rollType == 'check'){
+        if(window.CHARACTER_AVTT_SETTINGS?.checkRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.checkRoll.replace('PB', getPB()))))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.checkRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.checkRoll.replace('PB', getPB())}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].check != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].check.replace('PB', getPB())}`
+                }
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].check != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].check.replace('PB', getPB())}`
+                }
+            }
+        }
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+     else if(rollType == 'save'){
+        if(window.CHARACTER_AVTT_SETTINGS?.saveRoll?.match(allDiceRegex) || !isNaN(parseInt(window.CHARACTER_AVTT_SETTINGS?.saveRoll.replace('PB', getPB()))))
+            expression = `${expression}${window.CHARACTER_AVTT_SETTINGS.saveRoll.match(/[+-]/g) ? '': '+'}${window.CHARACTER_AVTT_SETTINGS.saveRoll.replace('PB', getPB())}`;
+        if(typeof window.rollBuffs != 'undefined'){
+            for(let i in window.rollBuffs){
+                const isMultiOption = Array.isArray(window.rollBuffs[i]);
+                if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].save != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].save.replace('PB', getPB())}`
+                }
+                else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].save != '0'){
+                    expression = `${expression}${buffsDebuffs[window.rollBuffs[i]].save.replace('PB', getPB())}`
+                }
+            }
+        }
+        roll = new rpgDiceRoller.DiceRoll(expression); 
+        modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
+    }
+    
 
     const followingText = $(rollButton)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
 
-  
+
+
+
+    
+
     return {
       roll: roll,
       expression: expression,
@@ -365,6 +441,7 @@ class DiceRoller {
     #pendingCritType = undefined;
     #pendingSpellSave = undefined;
     #pendingDamageType = undefined;
+    #pendingCrit = undefined;
 
     /** @returns {boolean} true if a roll has been or will be initiated, and we're actively waiting for DDB messages to come in so we can parse them */
     get #waitingForRoll() {
@@ -394,6 +471,7 @@ class DiceRoller {
     setPendingDamageType(damageTypeText){
         this.#pendingDamageType = damageTypeText;
     }
+
     /// PUBLIC FUNCTIONS
     getDamageType(button){
       let damageTypeIcon = $(button).find(`.ddbc-damage__icon [class*='damage-type'][aria-label]`)  
@@ -419,7 +497,7 @@ class DiceRoller {
      * @param diceRoll {DiceRoll} the dice expression to parse and roll. EG: 1d20+4
      * @returns {boolean} whether or not dice were rolled
      */
-    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined, damageType = undefined) {
+    roll(diceRoll, multiroll = false, critRange = 20, critType = 2, spellSave = undefined, damageType = undefined, forceCritType = undefined) {
         try {
             if (diceRoll === undefined || diceRoll.expression === undefined || diceRoll.expression.length === 0) {
                 console.warn("DiceRoller.parseAndRoll received an invalid diceRoll object", diceRoll);
@@ -493,7 +571,7 @@ class DiceRoller {
                 let output = roll.output.replace(regExpression, '');
                 let total = roll.total;
                 let expression = diceRoll.expression;
-                if(this.#critAttackAction != undefined && critType == 3){
+                if((this.#critAttackAction != undefined && critType == 3) || forceCritType == 3){
                     doubleCrit = true;
                     total = total * 2;
                     const outputSplit = output.split(' = ')
@@ -619,6 +697,7 @@ class DiceRoller {
             this.#pendingCritType = critType;
             this.#pendingSpellSave = spellSave;
             this.#pendingDamageType = damageType;
+            this.#pendingCrit = forceCritType;
             this.clickDiceButtons(diceRoll);
             console.groupEnd();
             return true;
@@ -765,6 +844,7 @@ class DiceRoller {
         this.#pendingDiceRoll = undefined;
         this.#pendingSpellSave = undefined;
         this.#pendingDamageType = undefined;
+        this.#pendingCrit = undefined;
                 
     }
 
@@ -919,7 +999,7 @@ class DiceRoller {
 
                 // now that we've replaced all the dice expressions with their results, we need to execute the expression to get the final result
                 let calculatedTotal = eval(replacedExpression);
-                if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+                if((this.#critAttackAction != undefined && this.#pendingCritType == 3) || this.#pendingCrit == 3){
                     calculatedTotal = calculatedTotal * 2; 
                 }
                 console.log("pendingExpression: ", this.#pendingDiceRoll.expression, ", replacedExpression: ", replacedExpression, ", calculatedTotal:", calculatedTotal, ", replacedValues: ", replacedValues);
@@ -969,7 +1049,7 @@ class DiceRoller {
             ddbMessage.avttExpressionResult = this.#pendingDiceRoll.expressionResult;
             console.log("DiceRoll ddbMessage.avttExpression: ", ddbMessage.avttExpression);
         }
-        if(this.#critAttackAction != undefined && this.#pendingCritType == 3){
+        if((this.#critAttackAction != undefined && this.#pendingCritType == 3) || this.#pendingCrit == 3){
             ddbMessage.avttExpression = `2(${this.#pendingDiceRoll.expression})`;
             ddbMessage.avttExpressionResult = `2(${this.#pendingDiceRoll.expressionResult})`;
         }
