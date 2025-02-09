@@ -1161,7 +1161,8 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
   
           let tooltipBody = $(moreInfo).find('.more-info');
-          tooltipBody.find('script,[class*="homebrew"],footer,div.image,.detail-content>.line').remove();
+          tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+            tooltipBody.find('.detail-content>.line:first-of-type').remove();
 
           moreInfo = `
               <div class="tooltip tooltip-spell">
