@@ -12558,6 +12558,667 @@ div#playlistFields {
     background: #d0caca
 }
 
+
+.tooltip-body{
+        
+    .i-external-link,.i-hamburger,.i-concentration,.i-homebrew,.i-spell-melee,.i-spell-ranged,.i-favorite,.i-strength-save,.i-dexterity-save,.i-constitution-save,.i-charisma-save,.i-wisdom-save,.i-intelligence-save,.i-type-acid,.i-type-bludgeoning,.i-type-cold,.i-type-fire,.i-type-force,.i-type-lightning,.i-type-necrotic,.i-type-piercing,.i-type-poison,.i-type-psychic,.i-type-radiant,.i-type-slashing,.i-type-thunder,.i-condition-blinded,.i-condition-charmed,.i-condition-deafened,.i-condition-exhaustion,.i-condition-exhausted,.i-condition-frightened,.i-condition-grappled,.i-condition-incapacitated,.i-condition-invisible,.i-condition-paralyzed,.i-condition-petrified,.i-condition-poisoned,.i-condition-prone,.i-condition-restrained,.i-condition-stunned,.i-condition-unconscious,.i-condition-white-blinded,.i-condition-white-charmed,.i-condition-white-deafened,.i-condition-white-exhaustion,.i-condition-white-exhausted,.i-condition-white-frightened,.i-condition-white-grappled,.i-condition-white-incapacitated,.i-condition-white-invisible,.i-condition-white-paralyzed,.i-condition-white-petrified,.i-condition-white-poisoned,.i-condition-white-prone,.i-condition-white-restrained,.i-condition-white-stunned,.i-condition-white-unconscious,.i-aoe-cone,.i-aoe-cube,.i-aoe-cylinder,.i-aoe-emanation,.i-aoe-line,.i-aoe-sphere,.i-aoe-square,.i-artificer,.i-bard,.i-cleric,.i-druid,.i-paladin,.i-ranger,.i-sorcerer,.i-warlock,.i-wizard,.i-barbarian,.i-fighter,.i-monk,.i-rogue,.i-aberration,.i-beast,.i-celestial,.i-construct,.i-dragon,.i-elemental,.i-fey,.i-fiend,.i-giant,.i-humanoid,.i-monstrosity,.i-ooze,.i-plant,.i-undead,.i-ritual,.i-req-attunement,.i-legendary-monster,.i-checkmark,.i-partnered-content-small,.i-partnered-content-medium,.i-partnered-content-large,.i-copy,.i-download,.i-download-blue,.i-gift,.i-play-url,.i-radio-checked,.i-radio-empty,.i-radio-checked-light,.i-three-dots {
+        width: 16px;
+        height: 16px;
+        margin-right: 5px;
+        display: inline-block;
+        text-indent: -99999px;
+        background-position: center center;
+        background-repeat: no-repeat;
+        vertical-align: middle
+    }
+
+    .i-external-link {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/external-link.svg);
+        width: 20px;
+        height: 20px
+    }
+
+    .i-hamburger {
+        position: relative;
+        margin-right: 13px
+    }
+
+    .i-hamburger::before {
+        content: "";
+        position: absolute;
+        left: 4px;
+        top: 4px;
+        width: 100%;
+        height: 2px;
+        background: #979aa4;
+        box-shadow: 0 5px 0 0 #979aa4,0 10px 0 0 #979aa4
+    }
+
+    .i-concentration {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/core_mechanics/concentration.svg)
+    }
+
+    .rpgspell-listing .i-concentration {
+        margin-left: 3px
+    }
+
+    .i-homebrew {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/homebrew.svg);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 8px 8px;
+        background-color: #45cef7;
+        border-radius: 50%;
+        margin-right: 3px
+    }
+
+    .i-spell-melee {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attack_types/melee_spell.svg)
+    }
+
+    .i-spell-ranged {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attack_types/ranged_spell.svg)
+    }
+
+    .i-favorite {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/sprites/fav_star.svg);
+        background-position: 0 0;
+        background-size: cover;
+        height: 20px;
+        width: 20px
+    }
+
+    .i-favorite.joe-blow {
+        background-position: -20px 0
+    }
+
+    .i-strength-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/strength.svg)
+    }
+
+    .i-dexterity-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/dexterity.svg)
+    }
+
+    .i-constitution-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/constitution.svg)
+    }
+
+    .i-charisma-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/charisma.svg)
+    }
+
+    .i-wisdom-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/wisdom.svg)
+    }
+
+    .i-intelligence-save {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/abilities/intelligence.svg)
+    }
+
+    .i-type-acid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/acid.svg)
+    }
+
+    .i-type-bludgeoning {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/bludgeoning.svg)
+    }
+
+    .i-type-cold {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/cold.svg)
+    }
+
+    .i-type-fire {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/fire.svg)
+    }
+
+    .i-type-force {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/force.svg)
+    }
+
+    .i-type-lightning {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/lightning.svg)
+    }
+
+    .i-type-necrotic {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/necrotic.svg)
+    }
+
+    .i-type-piercing {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/piercing.svg)
+    }
+
+    .i-type-poison {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/poison.svg)
+    }
+
+    .i-type-psychic {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/psychic.svg)
+    }
+
+    .i-type-radiant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/radiant.svg)
+    }
+
+    .i-type-slashing {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/slashing.svg)
+    }
+
+    .i-type-thunder {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/damage_types/thunder.svg)
+    }
+
+    .i-condition-blinded {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/blinded.svg)
+    }
+
+    .i-condition-charmed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/charmed.svg)
+    }
+
+    .i-condition-deafened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/deafened.svg)
+    }
+
+    .i-condition-exhaustion {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/exhaustion.svg)
+    }
+
+    .i-condition-exhausted {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/exhausted.svg)
+    }
+
+    .i-condition-frightened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/frightened.svg)
+    }
+
+    .i-condition-grappled {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/grappled.svg)
+    }
+
+    .i-condition-incapacitated {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/incapacitated.svg)
+    }
+
+    .i-condition-invisible {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/invisible.svg)
+    }
+
+    .i-condition-paralyzed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/paralyzed.svg)
+    }
+
+    .i-condition-petrified {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/petrified.svg)
+    }
+
+    .i-condition-poisoned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/poisoned.svg)
+    }
+
+    .i-condition-prone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/prone.svg)
+    }
+
+    .i-condition-restrained {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/restrained.svg)
+    }
+
+    .i-condition-stunned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/stunned.svg)
+    }
+
+    .i-condition-unconscious {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/unconscious.svg)
+    }
+
+    .i-condition-white-blinded {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/blinded.svg)
+    }
+
+    .i-condition-white-charmed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/charmed.svg)
+    }
+
+    .i-condition-white-deafened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/deafened.svg)
+    }
+
+    .i-condition-white-exhaustion {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/exhaustion.svg)
+    }
+
+    .i-condition-white-exhausted {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/exhausted.svg)
+    }
+
+    .i-condition-white-frightened {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/frightened.svg)
+    }
+
+    .i-condition-white-grappled {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/grappled.svg)
+    }
+
+    .i-condition-white-incapacitated {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/incapacitated.svg)
+    }
+
+    .i-condition-white-invisible {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/invisible.svg)
+    }
+
+    .i-condition-white-paralyzed {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/paralyzed.svg)
+    }
+
+    .i-condition-white-petrified {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/petrified.svg)
+    }
+
+    .i-condition-white-poisoned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/poisoned.svg)
+    }
+
+    .i-condition-white-prone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/prone.svg)
+    }
+
+    .i-condition-white-restrained {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/restrained.svg)
+    }
+
+    .i-condition-white-stunned {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/stunned.svg)
+    }
+
+    .i-condition-white-unconscious {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/conditions/white/unconscious.svg)
+    }
+
+    .i-aoe-cone {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cone.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-cube {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cube.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-cylinder {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cylinder.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-emanation {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/emanation.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-line {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/line.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-sphere {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/sphere.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-aoe-square {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/square.svg);
+        position: relative;
+        top: 3px;
+        left: 1px;
+        margin-right: 3px
+    }
+
+    .i-artificer {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/artificer_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-bard {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/bard_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-cleric {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/cleric_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-druid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/druid_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-paladin {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/paladin_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-ranger {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/ranger_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-sorcerer {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/sorcerer_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-warlock {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/warlock_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-wizard {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/wizard_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-barbarian {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/barbarian_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fighter {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/fighter_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-monk {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/monk_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-rogue {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/classes/rogue_icon@2x.png);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-aberration {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/aberration_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-beast {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/beast_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-celestial {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/celestial_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-construct {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/construct_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-dragon {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/dragon_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-elemental {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/elemental_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fey {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/fey_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-fiend {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/fiend_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-giant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/giant_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-humanoid {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/humanoid_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-monstrosity {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/monstrosity_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-ooze {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/ooze_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-plant {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/plant_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-undead {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/monsters/undead_icon.jpg);
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-size: contain
+    }
+
+    .i-aoe-square {
+        top: 2px;
+        left: 1px;
+        height: 13px;
+        width: 13px
+    }
+
+    .i-type-acid {
+        margin-right: 0;
+        width: 15px
+    }
+
+    .i-ritual,.i-req-attunement {
+        background-size: cover;
+        height: 12px;
+        width: 12px;
+        margin-left: 3px
+    }
+
+    .i-ritual {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/core_mechanics/ritual.svg);
+        background-repeat: no-repeat;
+        background-size: 100% 100%
+    }
+
+    .i-req-attunement {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/attunement.png)
+    }
+
+    .i-legendary-monster {
+        height: 12px;
+        width: 12px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/legendary-monster.svg);
+        margin-left: 3px
+    }
+
+    .body-rpgmonster-details .i-legendary-monster {
+        height: 16px;
+        width: 16px
+    }
+
+    .i-checkmark {
+        height: 20px;
+        width: 20px;
+        background-image: url("../images/icons/yes-no/check-black.svg");
+        background-size: cover
+    }
+
+    .i-partnered-content-small,.i-partnered-content-medium,.i-partnered-content-large {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-medium.svg);
+        background-size: contain
+    }
+
+    .i-partnered-content-small {
+        width: 12px;
+        height: 12px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-small.svg)
+    }
+
+    .i-partnered-content-medium {
+        width: 18px;
+        height: 18px
+    }
+
+    .i-partnered-content-large {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/partnered-content-large.svg)
+    }
+
+    .i-copy {
+        width: 18px;
+        height: 18px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/copy.svg);
+        background-size: contain
+    }
+
+    .i-download {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/download.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-download-blue {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/downloadblue.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-gift {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/gift.svg);
+        background-size: contain
+    }
+
+    .i-play-url {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/playurl.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+    .i-radio-checked,.i-radio-empty,.i-radio-checked-light {
+        height: 24px;
+        width: 24px;
+        background-size: contain
+    }
+
+    .i-radio-checked {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-checked.svg)
+    }
+
+    .i-radio-checked-light {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-checked-light.svg)
+    }
+
+    .i-radio-empty {
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/yes-no/radio-empty.svg)
+    }
+
+    .i-three-dots {
+        width: 24px;
+        height: 24px;
+        background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/marketplace/store/ellipsisv.svg);
+        background-size: contain;
+        margin-right: 0
+    }
+
+}
+
+
+
 /***** Icon UI *****/
 
 .mobileAVTTUI #VTTWRAPPER ~ div.ddbc-tab-options--layout-pill>button, 
