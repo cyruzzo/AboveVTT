@@ -3861,7 +3861,9 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	   	}
 	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
 	   		window.SelectedTokenVision = false;
-	   	}
+	   	}	   	
+  		
+  	
   	}
 }
 
