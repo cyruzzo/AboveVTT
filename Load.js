@@ -16,10 +16,14 @@ if (isPlainCharacterPage) {
 	l.setAttribute("id", "extensionpath");
 	l.setAttribute("data-path", getExtURL("/"));
 	(document.body || document.documentElement).appendChild(l);
-	loadStyle = [ "DiceContextMenu/DiceContextMenu.css" ];
+	loadStyle = [
+		"DiceContextMenu/DiceContextMenu.css",
+		"jquery.contextMenu.css"
+	];
 	window.scripts = [
 		// External Dependencies
 		{ src: "jquery-3.6.0.min.js" },
+		{ src: "jquery.contextMenu.js" },		
 		// AboveVTT Files
 		{ src: "DiceContextMenu/DiceContextMenu.js" },
 		{ src: "MonsterDice.js" },
@@ -132,6 +136,7 @@ if (isPlainCharacterPage) {
 		{ src: "PeerManager.js" },
 		{ src: "PeerCommunication.js" },
 		{ src: "peerVideo.js"},
+		{ src: "peerDice.js"},		
 		{ src: "ajaxQueue/ajaxQueueIndex.js", type: "module" },
 		{ src: "DiceRoller.js" },
 		{ src: "Main.js" },
@@ -182,4 +187,5 @@ function injectScript() {
 	(document.head || document.documentElement).appendChild(s);
 }
 
-setTimeout(injectScript, 2000) // this timeout prevents DDB from thinking we are browsing as a bot by giving it enough time to run it's own loading before sending more requests.
+injectScript();
+
