@@ -1145,10 +1145,10 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             window.tooltipCache = {};
         }
         console.log("fetch_tooltip starting for ", dataTooltipHref);
-        if(dataTooltipHref.includes('more-info')){
+        if(!dataTooltipHref.includes('tooltip')){
           const parts = dataTooltipHref.split("/");
-          const id = parseInt(parts[parts.length-2]);
-          const type = parts[parts.length-3];
+          const id = parseInt(parts[parts.length-1]);
+          const type = parts[parts.length-2];
 
           const typeAndId = `${type}/${id}`;
           const existingJson = window.tooltipCache[typeAndId];
@@ -1160,7 +1160,8 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 
           let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
   
-          
+          let tooltipBody = $(moreInfo).find('.more-info');
+          tooltipBody.find('script,[class*="homebrew"],footer,div.image,.detail-content>.line').remove();
 
           moreInfo = `
               <div class="tooltip tooltip-spell">
@@ -1173,7 +1174,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
                         </div>
                     </div>
               <div class="tooltip-body">
-                 ${$(moreInfo).find('.more-info-body').html()}
+                 ${tooltipBody.html()}
               </div>
           </div>`
 
