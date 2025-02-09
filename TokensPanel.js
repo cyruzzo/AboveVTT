@@ -3903,8 +3903,8 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
               
             let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}`);
             let tooltipBody = $(moreInfo).find('.more-info');
-            tooltipBody.find('script,[class*="homebrew"],footer,div.image,.detail-content>.line').remove();
-
+            tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+            tooltipBody.find('.detail-content>.line:first-of-type').remove();
             moreInfo = `
              <div class="tooltip tooltip-spell">
                <div class="tooltip-header">
