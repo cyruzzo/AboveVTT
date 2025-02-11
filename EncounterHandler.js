@@ -82,8 +82,28 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	}
 	if(!open5e){
 		let uniqueMonsterIds = [...new Set(monsterIds)];
-		const monsterData = await DDBApi.fetchMonsters(uniqueMonsterIds)
-		callback(monsterData);
+		const monsterData = await DDBApi.fetchMonsters(uniqueMonsterIds);
+		let promises = [];
+
+		for(let i in monsterData){
+	       promises.push(new Promise(async (resolve, reject) => {
+   		       let moreInfo = await DDBApi.fetchMoreInfo(`${monsterData[i].url}`);
+   			   let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+   		       if(initiative.length>0){
+   		           initArray = initiative.trim().split(' ');
+   		           const initMod = initArray[0];
+   		           const initScore = initArray[1];
+   		           monsterData[i].initiativeMod = initMod;
+   		           monsterData[i].initiativeScore = initScore;
+   		       }
+   		       resolve();
+	       }))
+	       
+		}
+
+		Promise.all(promises).then(() => {
+			callback(monsterData);
+		});
 	}
 	else{
 		let uniqueMonsterIds = [...new Set(monsterIds)];
