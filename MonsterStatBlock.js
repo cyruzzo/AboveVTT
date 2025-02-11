@@ -1160,7 +1160,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
               callback(existingJson);
               return;
           }
-
+          window.tooltipCache[typeAndId] = {Tooltip: ``};
           let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
   
           let tooltipBody = $(moreInfo).find('.more-info');
