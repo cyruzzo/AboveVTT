@@ -3874,64 +3874,6 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
    
    const promise = new Promise((resolve, reject) =>{
         newItems.forEach(async (item, index, array) => {
-
-           
-            if (window.tooltipCache === undefined) {
-                window.tooltipCache = {};
-            }
-            const parts = item.monsterData.url.split("/");
-            const id = parseInt(parts[parts.length-1]);
-            const type = parts[parts.length-2];
-
-            const typeAndId = `${type}/${id}`;
-            const existingJson = window.tooltipCache[typeAndId];
-            if (existingJson !== undefined){
-                let initiative = $(window.tooltipCache[typeAndId].Tooltip)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
-                if(initiative.length>0){
-                  initArray = initiative.trim().split(' ');
-                  const initMod = initArray[0];
-                  const initScore = initArray[1];
-                  item.monsterData.initiativeMod = initMod;
-                  item.monsterData.initiativeScore = initScore;
-                  console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
-                }
-
-                cached_monster_items[item.monsterData.id] = item 
-                return;
-            }
-            
-              
-            let moreInfo = await DDBApi.fetchMoreInfo(`${item.monsterData.url}`);
-            let tooltipBody = $(moreInfo).find('.more-info');
-            tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
-            tooltipBody.find('.detail-content>.line:first-of-type').remove();
-            moreInfo = `
-             <div class="tooltip tooltip-spell">
-               <div class="tooltip-header">
-                       <div class="tooltip-header-text">
-                           <div class="tooltip-header-title">${item.name}</div>
-                       </div>
-                       <div class="tooltip-header-identifier tooltip-header-identifier-${type.replaceAll(/s$/gi, '')}">
-                           ${type.replaceAll(/s$/gi, '').replace('-', ' ')}
-                       </div>
-                   </div>
-             <div class="tooltip-body">
-                ${tooltipBody.html()}
-             </div>
-            </div>`
-
-            const toolTipJson = {Tooltip: moreInfo}
-            window.tooltipCache[typeAndId] = toolTipJson;
-
-            let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
-                if(initiative.length>0){
-                initArray = initiative.trim().split(' ');
-                const initMod = initArray[0];
-                const initScore = initArray[1];
-                item.monsterData.initiativeMod = initMod;
-                item.monsterData.initiativeScore = initScore;
-                console.log(`INITIATIVE: ${initMod} Score: ${initScore}`)
-            }
             cached_monster_items[item.monsterData.id] = item 
             if(index === array.length-1) {
               resolve();
@@ -3941,10 +3883,18 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
 
     promise.then(function(){callback()});
 }
-function update_open5e_item_cache(newItems) {
-    newItems.forEach(item => {
-        cached_open5e_items[item.monsterData.slug] = item
+function update_open5e_item_cache(newItems, callback=()=>{}) {
+   
+   const promise = new Promise((resolve, reject) =>{
+        newItems.forEach(async (item, index, array) => {
+            cached_open5e_items[item.monsterData.slug] = item
+            if(index === array.length-1) {
+              resolve();
+            }
+        });
     });
+
+    promise.then(function(){callback()});
 }
 function convert_open5e_monsterData(monsterData){
         monsterData.isHomebrew = true;
