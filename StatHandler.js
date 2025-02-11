@@ -21,9 +21,9 @@ class StatHandler {
 			else{
 		        fetch_monsters([open5eSlug], function (response) {
 		            if (response !== false) {
-		                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)));
+		                update_open5e_item_cache(response.map(m => SidebarListItem.open5eMonster(m)), function(){callback(cached_open5e_items[open5eSlug].monsterData)});
 		            }
-					callback(cached_open5e_items[open5eSlug].monsterData)
+					
 		        }, true);
 			}
 		}

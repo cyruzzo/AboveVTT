@@ -108,7 +108,8 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	else{
 		let uniqueMonsterIds = [...new Set(monsterIds)];
 		let queryParam = uniqueMonsterIds.map(id => `${id}`).join("%2C");
-		callback(await getGroupOpen5e(queryParam));	
+		let groupOpen5e = await getGroupOpen5e(queryParam);
+		callback(groupOpen5e);	
 	}
 }
 
