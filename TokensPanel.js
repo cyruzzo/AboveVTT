@@ -3883,10 +3883,18 @@ function update_monster_item_cache(newItems, callback=()=>{}) {
 
     promise.then(function(){callback()});
 }
-function update_open5e_item_cache(newItems) {
-    newItems.forEach(item => {
-        cached_open5e_items[item.monsterData.slug] = item
+function update_open5e_item_cache(newItems, callback=()=>{}) {
+   
+   const promise = new Promise((resolve, reject) =>{
+        newItems.forEach(async (item, index, array) => {
+            cached_open5e_items[item.monsterData.slug] = item
+            if(index === array.length-1) {
+              resolve();
+            }
+        });
     });
+
+    promise.then(function(){callback()});
 }
 function convert_open5e_monsterData(monsterData){
         monsterData.isHomebrew = true;
