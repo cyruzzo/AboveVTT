@@ -1020,10 +1020,9 @@ function build_draggable_monster_window() {
 	// check if the monster pane is not open
 	if (! $("#resizeDragMon").length) {
 		$("body").append(draggable_resizable_div)
-		draggable_resizable_div.append(build_combat_tracker_loading_indicator())
 		draggable_resizable_div.show("slow")
 	}
-
+	$("#resizeDragMon").append(build_combat_tracker_loading_indicator())
 	let container = $("<div id='resizeDragMon'/>");
 
 	if($("#site #resizeDragMon").length>0){
