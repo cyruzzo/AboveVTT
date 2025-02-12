@@ -312,6 +312,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
+    rollAction = (rollAction == '') ? $(this).closest('.mon-stat-block__attribute-value').prev().text().replace('.', '') : rollAction;
     let rollType = $(this).attr('data-rolltype')
     let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
     if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){

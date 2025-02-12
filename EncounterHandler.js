@@ -89,12 +89,20 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	       promises.push(new Promise(async (resolve, reject) => {
    		       let moreInfo = await DDBApi.fetchMoreInfo(`${monsterData[i].url}`);
    			   let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+   			   let treasure = $(moreInfo)?.find('.treasure-link').closest('.tags');
+   			   let treasureLinks = treasure.find('a');
+   			   treasureLinks.addClass('tooltip-hover');
+   			   treasureLinks.attr('data-moreinfo', function(){
+   			   	return this.href;
+   			   })
+   			   treasure = treasure.html();
    		       if(initiative.length>0){
    		           initArray = initiative.trim().split(' ');
    		           const initMod = initArray[0];
    		           const initScore = initArray[1];
    		           monsterData[i].initiativeMod = initMod;
    		           monsterData[i].initiativeScore = initScore;
+   		           monsterData[i].treasure = treasure;
    		       }
    		       resolve();
 	       }))

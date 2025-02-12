@@ -21,18 +21,18 @@ function scan_monster(target, stats, tokenId) {
 	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
 	function clickHandler(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", stats.data.id)
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", tokenId)
 	};
 
 	function rightClickHandler(contextmenuEvent) {
-		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", stats.data.id);
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", tokenId);
 	}
 
 	replace_ability_scores_with_avtt_rollers(target, ".ability-block__stat" ,".ability-block__heading", true)
 	replace_saves_skill_with_avtt_rollers(target, ".mon-stat-block__tidbit", ".mon-stat-block__tidbit-label", ".mon-stat-block__tidbit-data", true )
 
 	// replace all "to hit" and "damage" rolls
-	$(target).find(".mon-stat-block p").each(function() {
+	$(target).find(".mon-stat-block p, .stat-block p").each(function() {
 		if ($(this).find(".avtt-roll-button").length == 0) {
 				$($(this)).find("span[data-dicenotation]").each(function (){
 				// clone the element as if it came from an iframe these variables won't be freed from memory

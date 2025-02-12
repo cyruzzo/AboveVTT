@@ -219,7 +219,7 @@ function build_monster_stat_block(statBlock, token) {
                               ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                               <span class="mon-stat-block__attribute-value">
                                 <span class="mon-stat-block__attribute-data-value">
-                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Roll', 'Initiative', parenthesis = true) }
                                 </span>
                                 <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                     ${statBlock.data.initiativeScore}
@@ -457,6 +457,9 @@ function build_monster_stat_block(statBlock, token) {
                      
 
                       <footer>
+                          
+                          ${statBlock.data.treasure ? `<p>${statBlock.data.treasure}</p>` : ''}
+                          
                           ${statBlock.sourceBookHtml}
                       </footer>
                     </div>          
@@ -762,7 +765,6 @@ function build_monster_copy_stat_block(statBlock) {
     }
     if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
       return `
-        <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -1009,12 +1011,10 @@ function build_monster_copy_stat_block(statBlock) {
               </div>
             </section>
           </div>
-        </div>
       `
     }
     else{
       return `
-        <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -1050,7 +1050,7 @@ function build_monster_copy_stat_block(statBlock) {
                           ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                           <span class="mon-stat-block__attribute-value">
                             <span class="mon-stat-block__attribute-data-value">
-                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Roll', 'Initiative', parenthesis = true) }
                             </span>
                             <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                 ${statBlock.data.initiativeScore}
@@ -1260,7 +1260,6 @@ function build_monster_copy_stat_block(statBlock) {
               </div>
             </section>
           </div>
-        </div>
         `;
     }
 }
@@ -1693,7 +1692,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         console.log("fetch_tooltip starting for ", dataTooltipHref);
         if(!dataTooltipHref.includes('tooltip')){
           const parts = dataTooltipHref.split("/");
-          const id = parseInt(parts[parts.length-1]);
+          const id = dataTooltipHref.match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
           const type = parts[parts.length-2];
 
           const typeAndId = `${type}/${id}`;
@@ -1705,10 +1704,16 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           }
           window.tooltipCache[typeAndId] = {Tooltip: ``};
           let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
-  
           let tooltipBody = $(moreInfo).find('.more-info');
-          tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+          if(!tooltipBody.length && dataTooltipHref.match(/#.*$/gi)){
+           tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref.match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
+          }
+          else{
+            let tooltipBody = $(moreInfo).find('.more-info');
+            tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
             tooltipBody.find('.detail-content>.line:first-of-type').remove();
+          }
+          
 
           moreInfo = `
               <div class="tooltip tooltip-spell">
