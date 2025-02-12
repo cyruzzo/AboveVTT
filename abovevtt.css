@@ -2504,8 +2504,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #journal-panel .sidebar-panel-body>ul.folder-item-list{
     height: 100%;
 }
-.ct-sidebar__inner [class*='styles_pane'] [class*='styles_border']{
-    display: none;
+.ct-sidebar__inner [class*='styles_pane'] svg[class*='styles_border']{
+    display: none !important;
 }
 
 .ct-sidebar__inner [class*='styles_gap']{
