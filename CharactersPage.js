@@ -563,7 +563,7 @@ function read_current_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']>[class*='styles_item']:first-of-type button`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -591,9 +591,9 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']~[class*='styles_item'] button`)
   if(element.length){
-    return parseInt(element.text())
+    return parseInt(element.text()) || 0
   }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
   if (element.length) {
@@ -614,7 +614,7 @@ function read_max_hp(currentMaxValue = 0, container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']>[class*='styles_item']:nth-of-type(3) [class*='styles_number'] span`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -2042,7 +2042,7 @@ function observe_character_sheet_changes(documentToObserve) {
               const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
             } else if((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
-              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit']`).text());
+              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit'], [class*='styles_maxContainer']`).text());
               send_character_hp(maxhp);
             }else if (
               ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||
