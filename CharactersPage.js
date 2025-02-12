@@ -591,7 +591,7 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']~[class*='styles_item'] button`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], :is([class*='styles_hitPointsBox'], [styles='styles_pane']) [class*='styles_innerContainer']~[class*='styles_item'] button`)
   if(element.length){
     return parseInt(element.text()) || 0
   }
@@ -614,7 +614,7 @@ function read_max_hp(currentMaxValue = 0, container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']>[class*='styles_item']:nth-of-type(3) [class*='styles_number'] span`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max'], :is([class*='styles_hitPointsBox'], [styles='styles_pane']) [class*='styles_innerContainer']>[class*='styles_item']:nth-of-type(3) [class*='styles_number'] span`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -2024,7 +2024,8 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
               mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
-              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
+              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+              mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
             } else if (mutationTarget.hasClass("ct-subsection--senses")) {
@@ -2041,7 +2042,7 @@ function observe_character_sheet_changes(documentToObserve) {
             if (mutationTarget.hasClass('ct-conditions-summary')) { // conditions update from sidebar
               const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
-            } else if((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
+            } else if(!firstRemoved.is('div.ct-character-sheet-desktop') && ((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]').length)){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
               let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit'], [class*='styles_maxContainer']`).text());
               send_character_hp(maxhp);
             }else if (
@@ -2051,7 +2052,8 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
               mutationTarget.hasClass('[class*="styles_mark"]') ||
-              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.find("input[class*=styles_input]").length == 0)
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.find("input[class*=styles_input]").length == 0) ||
+              mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
             }
@@ -2090,7 +2092,8 @@ function observe_character_sheet_changes(documentToObserve) {
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
                 mutationParent.hasClass("ct-health-manager__health-item-value") ||
-                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0
+                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+                mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
               ) {
                 send_character_hp();          
               } else if (mutationParent.hasClass('ddbc-armor-class-box__value')) { // ac update from sidebar

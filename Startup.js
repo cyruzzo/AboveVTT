@@ -184,6 +184,7 @@ $(function() {
                   
           if(!window.DM){
             if(event.data.msgType == 'CharacterData'){
+              update_pc_with_data(event.data.characterId, event.data.pcData);
               window.MB.sendMessage("custom/myVTT/character-update", {
                 characterId: event.data.characterId,
                 pcData: event.data.pcData
