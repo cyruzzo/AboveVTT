@@ -1954,7 +1954,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         if(is_abovevtt_page()){
           mutation.removedNodes.forEach(function(removed_node) {
-            if($(removed_node).hasClass("ct-game-log-pane")) {
+            if($(removed_node).hasClass("ct-game-log-pane") || $(removed_node).is("[class*='styles_gameLogPane']")) {
               setTimeout(function() {
                 change_sidbar_tab($("#switch_gamelog"), true);
                 // deselect the gamelog tab since we're not technically showing the gamelog
@@ -1989,10 +1989,10 @@ function observe_character_sheet_changes(documentToObserve) {
             // console.log(`sidebar inserted: ${event.target.classList}`);
           if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
-            show_sidebar(false);
+            show_sidebar(false); 
           }
             
-          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane')) {
+          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane') || $(mutation.addedNodes[0]).is("[class*='styles_gameLogPane']")) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
