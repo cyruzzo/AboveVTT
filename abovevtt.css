@@ -11004,14 +11004,14 @@ div#playlistFields {
     margin-bottom: .938rem;
     margin-top: .188rem;
 }
-.stat-block :is(p, a.tooltip-hover, button, td, th){
+.stat-block :is(p, a.tooltip-hover, button, td, th, li){
     font-size:14px;
 }
 .stat-block .stats table tr td{
     text-align: center;
 }
 .stat-block .stats table.abilities-saves tbody td{   
-    padding: .125rem .5rem;
+    padding: .125rem .5rem !important;
 }
 .stat-block .stats+p {
     margin-top: 10px
