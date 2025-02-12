@@ -5762,18 +5762,6 @@ div#selectedTokensBorderRotationGrabberConnector,
 .ddbc-creature-block:after {
     bottom: -3px
 }
-.monster-details .more-info footer{
-    padding: 0px;
-    height: 20px;
-}
-
-.monster-details .more-info footer .source.monster-source {
-    font-size: inherit;
-    font-family: inherit;
-    font-style: inherit;
-    margin-top: 0px;
-    float:left;
-}
 .monster-details .more-info.details-more-info:after {
     display:none
 }
