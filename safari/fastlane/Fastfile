@@ -1,0 +1,27 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload iOS Safari extension to TestFlight"
+  lane :beta do
+    build_app(
+      scheme: "AboveVTT\ (iOS)",
+      project: "AboveVTT.xcodeproj",
+      export_method: "app-store",
+      output_directory: "build"
+    )
+    upload_to_testflight
+  end
+end
+
+platform :mac do
+  desc "Build and upload macOS Safari extension to TestFlight"
+  lane :beta do
+    build_app(
+      scheme: "AboveVTT\ (macOS)",
+      project: "AboveVTT.xcodeproj",
+      export_method: "app-store",
+      output_directory: "build"
+    )
+    upload_to_testflight
+  end
+end
