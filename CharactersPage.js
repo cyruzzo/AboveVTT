@@ -563,7 +563,7 @@ function read_current_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Current'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']>[class*='styles_item']:first-of-type button`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -591,9 +591,9 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']~[class*='styles_item'] button`)
   if(element.length){
-    return parseInt(element.text())
+    return parseInt(element.text()) || 0
   }
   element = container.find(`.ct-health-summary__hp-number[aria-labelledby*='ct-health-summary-temp-label']`)
   if (element.length) {
@@ -614,7 +614,7 @@ function read_max_hp(currentMaxValue = 0, container = $(document)) {
   if(element.length){
     return parseInt(element.text())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max']`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Max'], [class*='styles_hitPointsBox'] [class*='styles_innerContainer']>[class*='styles_item']:nth-of-type(3) [class*='styles_number'] span`)
   if(element.length){
     return parseInt(element.text())
   }
@@ -1954,7 +1954,7 @@ function observe_character_sheet_changes(documentToObserve) {
         
         if(is_abovevtt_page()){
           mutation.removedNodes.forEach(function(removed_node) {
-            if($(removed_node).hasClass("ct-game-log-pane")) {
+            if($(removed_node).hasClass("ct-game-log-pane") || $(removed_node).is("[class*='styles_gameLogPane']")) {
               setTimeout(function() {
                 change_sidbar_tab($("#switch_gamelog"), true);
                 // deselect the gamelog tab since we're not technically showing the gamelog
@@ -1968,7 +1968,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
 
 
-        if (mutationTarget.closest(".ct-game-log-pane").length == 0 && mutationTarget.find('.ct-game-log-pane').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && $("#castbutton").length == 0) {
+        if (mutationTarget.closest(".ct-game-log-pane, [class*='styles_gameLogPane']").length == 0 && mutationTarget.find('.ct-game-log-pane, [class*="styles_gameLogPane"]').length == 0 && mutationTarget.find(".ct-sidebar__header").length > 0 && mutationTarget.find(".ddbc-html-content").length > 0 && $("#castbutton").length == 0) {
           // we explicitly don't want this to happen in `.ct-game-log-pane` because otherwise it will happen to the injected gamelog messages that we're trying to send here
           if(is_abovevtt_page() || (window.sendToTab !== undefined || window.sendToTabRPGRoller !== undefined)){
             if(mutationTarget.hasClass('ct-sidebar__pane-content')){
@@ -1979,7 +1979,7 @@ function observe_character_sheet_changes(documentToObserve) {
             
           }
         }
-        else if(mutationTarget.closest(".ct-game-log-pane").length > 0){
+        else if(mutationTarget.closest(".ct-game-log-pane, [class*='styles_gameLogPane']").length > 0){
           $('#castbutton').remove();
         }
          
@@ -1989,10 +1989,10 @@ function observe_character_sheet_changes(documentToObserve) {
             // console.log(`sidebar inserted: ${event.target.classList}`);
           if (mutationTarget.is('.ct-sidebar__pane-content, .ct-sidebar__inner [class*="styles_content"]>div')){
              // The user clicked on something that shows details. Open the sidebar and show it
-            show_sidebar(false);
+            show_sidebar(false); 
           }
             
-          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane')) {
+          if ($(mutation.addedNodes[0]).hasClass('ct-sidebar__pane-default') || $(mutation.addedNodes[0]).hasClass('ct-reset-pane') || $(mutation.addedNodes[0]).is("[class*='styles_gameLogPane']")) {
             inject_chat_buttons();
             window.MB.reprocess_chat_message_history();
           }
@@ -2042,7 +2042,7 @@ function observe_character_sheet_changes(documentToObserve) {
               const conditionsSet = read_conditions(documentToObserve);
               character_sheet_changed({conditions: conditionsSet});
             } else if((firstRemoved.hasClass('ct-health-summary__hp-item') && firstRemoved.children('#ct-health-summary-max-label').length) || firstRemoved.find('[aria-label*="Hit Points Adjustment"]').length){ // this is to catch if the player just died look at the removed node to get value - to prevent 0/0 hp
-              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit']`).text());
+              let maxhp = parseInt(firstRemoved.find(`.ct-health-summary__hp-number, [aria-label*='Max Hit'], [class*='styles_maxContainer']`).text());
               send_character_hp(maxhp);
             }else if (
               ($(mutation.addedNodes[0]).hasClass('ct-health-summary__hp-number')) ||

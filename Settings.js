@@ -345,11 +345,11 @@ function avtt_settings() {
 		},
 		{
 			name: "dragLight",
-			label: "Update vision during token move",
+			label: "Vision check while token moves",
 			type: "toggle",
 			options: [
-				{ value: true, label: "Enable", description: `While move a token vision will update` },
-				{ value: false, label: "Disable", description: `Vision will only update on finishing it's movement` }
+				{ value: true, label: "Enable", description: `While moving a token vision will update` },
+				{ value: false, label: "Disable", description: `Vision will only update on drop of a token` }
 			],
 			defaultValue: false
 		}
@@ -470,6 +470,18 @@ function avtt_settings() {
 		options: [
 			{ value: true, label: "Enabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects. It may cause desync or tokens to reset due to missing messages.` },
 			{ value: false, label: "Disabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects.  It may cause desync or tokens to reset due to missing messages.` }
+		],
+		defaultValue: false
+	})
+	settings.push(
+	{
+		name: "statBlockStyle",
+		label: "Statblock Style",
+		type: "dropdown",
+		options: [
+			{ value: 0, label: "Auto detect", description: `Will auto detect 2014 vs 2024 and apply appropriate style` },
+			{ value: 1, label: "Always 2014", description: `Will always display in 2014 style` },
+			{ value: 2, label: "Always 2024", description: `Will always display in 2024 style` },
 		],
 		defaultValue: false
 	})

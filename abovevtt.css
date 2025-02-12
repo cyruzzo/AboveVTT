@@ -731,7 +731,7 @@ button .ddbc-tab-options__header-heading .menu-option{
     margin: 25px 0px 0px 0px;
 }
 
-.open5eMonster .detail-content>div:not(.mon-stat-block) {
+.open5eMonster .detail-content>div:not(.mon-stat-block):not(.nohide) {
     display:none !important;
 }
 a.ddbeb-button {
@@ -1284,7 +1284,9 @@ input {
 .avtt-stat-block-container .detail-content{
     width: 100%;
 }
-
+.container.avtt-stat-block-container .detail-content {
+    margin-top: 10px;
+}
 #sources-import-main-container {
     top: 86px;
     right: 390px;
@@ -2502,8 +2504,8 @@ body:not(.body-rpgcampaign-details) .sidebar__pane-content {
 #journal-panel .sidebar-panel-body>ul.folder-item-list{
     height: 100%;
 }
-.ct-sidebar__inner [class*='styles_pane'] [class*='styles_border']{
-    display: none;
+.ct-sidebar__inner [class*='styles_pane'] svg[class*='styles_border']{
+    display: none !important;
 }
 
 .ct-sidebar__inner [class*='styles_gap']{
@@ -10971,7 +10973,8 @@ div#playlistFields {
 
 .stat-block .stats {
     display: flex;
-    gap: 10px
+    gap: 10px;
+    flex-wrap: wrap;
 }
 .glc-game-log .stat-block .stats{
     flex-direction:column;
@@ -10986,6 +10989,30 @@ div#playlistFields {
 .ct-sidebar .glc-game-log .stat-block .stats table tbody tr:hover button.avtt-roll-button{
     background-color: #fff;
 }
+
+.stat-block .mon-stat-block__attribute-label,
+.stat-block .mon-stat-block__attribute-data-value,
+.stat-block .mon-stat-block__tidbits span,
+.stat-block .mon-stat-block__attribute-data-extra,
+.stat-block .mon-stat-block__meta
+{
+    font-size:14px;
+    color: #000;
+}
+.stat-block .mon-stat-block__meta{
+    color: #68747b;
+    margin-bottom: .938rem;
+    margin-top: .188rem;
+}
+.stat-block :is(p, a.tooltip-hover, button, td, th, li){
+    font-size:14px;
+}
+.stat-block .stats table tr td{
+    text-align: center;
+}
+.stat-block .stats table.abilities-saves tbody td{   
+    padding: .125rem .5rem !important;
+}
 .stat-block .stats+p {
     margin-top: 10px
 }
@@ -10997,9 +11024,13 @@ div#playlistFields {
     background: revert;
     border: none;
     font-size: 16px;
-    break-inside: avoid
+    break-inside: avoid;
+    border-collapse: collapse;
+    border-spacing: 0;  
 }
-
+.stat-block .stats table.abilities-saves{
+    width:unset;
+}
 .stat-block .stats table.abilities-saves.physical {
     --stats-score: #ede6d9;
     --stats-mods: #ded4cc;
@@ -11081,7 +11112,7 @@ div#playlistFields {
 }
 
 .stat-block .stats table.abilities-saves tr :is(th,td) {
-    transition: .3s
+    transition: background-color .3s
 }
 
 .stat-block p:nth-of-type(2) strong+strong {
@@ -12357,7 +12388,7 @@ div#playlistFields {
 }
 
 :is(.tooltip) .stat-block .stats table.abilities-saves tr:is(th,td) {
-    transition: .3s
+    transition: background-color .3s
 }
 
 :is(.tooltip) .stat-block p:nth-of-type(2) strong+strong {
@@ -12429,7 +12460,7 @@ div#playlistFields {
 }
 
 :is(.tooltip) table.table-compendium tr {
-    transition: .3s
+    transition: background-color .3s
 }
 
 :is(.tooltip) table.table-compendium tr td {
