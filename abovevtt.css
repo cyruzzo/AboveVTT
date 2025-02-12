@@ -11028,7 +11028,9 @@ div#playlistFields {
     border-collapse: collapse;
     border-spacing: 0;  
 }
-
+.stat-block .stats table.abilities-saves{
+    width:unset;
+}
 .stat-block .stats table.abilities-saves.physical {
     --stats-score: #ede6d9;
     --stats-mods: #ded4cc;
