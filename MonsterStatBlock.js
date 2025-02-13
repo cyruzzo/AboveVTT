@@ -319,6 +319,12 @@ function build_monster_stat_block(statBlock, token) {
                               </span>
                             </div>
                             <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                              <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                              <span class="mon-stat-block__tidbit-data">
+                                ${statBlock.gearHtml}
+                              </span>
+                            </div>
+                            <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
                               <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Damage Vulnerabilities</span>
                               <span class="mon-stat-block__tidbit-data">
                                 ${statBlock.damageVulnerabilitiesHtml}
@@ -601,6 +607,12 @@ function build_monster_stat_block(statBlock, token) {
                           <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                           <span class="mon-stat-block__tidbit-data">
                             ${statBlock.skillsHtml}
+                          </span>
+                        </div>
+                        <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                          <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                          <span class="mon-stat-block__tidbit-data">
+                            ${statBlock.gearHtml}
                           </span>
                         </div>
                         <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -898,6 +910,12 @@ function build_monster_copy_stat_block(statBlock) {
                               </span>
                             </div>
                             <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                              <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                              <span class="mon-stat-block__tidbit-data">
+                                ${statBlock.gearHtml}
+                              </span>
+                            </div>
+                            <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
                               <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Damage Vulnerabilities</span>
                               <span class="mon-stat-block__tidbit-data">
                                 ${statBlock.damageVulnerabilitiesHtml}
@@ -1142,6 +1160,12 @@ function build_monster_copy_stat_block(statBlock) {
                           <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                           <span class="mon-stat-block__tidbit-data">
                             ${statBlock.skillsHtml}
+                          </span>
+                        </div>
+                        <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                          <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                          <span class="mon-stat-block__tidbit-data">
+                            ${statBlock.gearHtml}
                           </span>
                         </div>
                         <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -1444,6 +1468,13 @@ class MonsterStatBlock {
                 return `${link} ${button}`;
             })
             .join(", ");
+    }
+
+    get gearHtml() {
+      if (!this.data.gear || this.data.gear.length === 0) {
+          return "<span class='hideme'></span>";
+      }
+      return this.data.gear
     }
 
     damageAdjustmentsHtml(damageAdjustmentType) {
