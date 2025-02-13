@@ -96,6 +96,7 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
    			   	return this.href;
    			   })
    			   treasure = treasure.html();
+   			   let gear = $(moreInfo)?.find('.mon-stat-block-2024__tidbit-label:contains("Gear")').siblings('.mon-stat-block-2024__tidbit-data').html();
    		       if(initiative.length>0){
    		           initArray = initiative.trim().split(' ');
    		           const initMod = initArray[0];
@@ -103,6 +104,7 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
    		           monsterData[i].initiativeMod = initMod;
    		           monsterData[i].initiativeScore = initScore;
    		           monsterData[i].treasure = treasure;
+   		           monsterData[i].gear = gear;
    		       }
    		       resolve();
 	       }))
