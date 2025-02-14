@@ -10929,13 +10929,13 @@ div#playlistFields {
     --compendium-p-top: 10px
 }
 
- .stat-block p:first-of-type {
+.stat-block p[class]:first-of-type {
     margin-top: 0;
     font-style: italic;
     opacity: .8
 }
 
-.stat-block p:first-of-type+p {
+.stat-block p[class]:first-of-type+p {
     --compendium-p-top: 16px
 }
 
@@ -12241,13 +12241,13 @@ div#playlistFields {
     margin-top: 10px
 }
 
-:is(.tooltip) .stat-block p:first-of-type {
+:is(.tooltip) .stat-block p[class]:first-of-type {
     margin-top: 0;
     font-style: italic;
     opacity: .7
 }
 
-:is(.tooltip) .stat-block p:first-of-type+p {
+:is(.tooltip) .stat-block p[class]:first-of-type+p {
     margin-top: 16px
 }
 
