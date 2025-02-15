@@ -4379,6 +4379,23 @@ h5.token-image-modal-footer-title:after {
 .sidebar-panel-footer-horizontal-wrapper .sidebar-panel-footer-button {
     margin: 0px 4px 0px 4px;
 }
+.avtt-settings-section{
+    margin-bottom: 15px;
+    padding:0px;
+}
+.avtt-settings-section h4:after{
+    margin-bottom:5px;
+}
+.avtt-settings-section h4.token-image-modal-footer-title {
+    font-size: 15px;
+}
+h3.no-bottom-margin-setting:after {
+    margin-bottom:0px;
+}
+
+h3.no-bottom-margin-setting ~ .sidebar-panel-header-explanation{
+    margin-bottom:20px;
+}
 .token-image-modal-footer-select-wrapper select {
     min-width: 35%;
     max-width: 35%;
