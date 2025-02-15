@@ -2158,7 +2158,7 @@ function get_snapped_coordinates(pointX, pointY) {
     const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
     const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
 
-    if (window.CURRENT_SCENE_DATA.gridType == "1") {
+    if (window.CURRENT_SCENE_DATA.gridType == "1" || typeof window.CURRENT_SCENE_DATA.gridType == "undefined") {
         // Square grid
         const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
         const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
