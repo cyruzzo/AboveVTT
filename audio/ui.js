@@ -381,6 +381,13 @@ function addTracks(filteredTracks, shuffle = false) {
         filteredTracks = shuffleArray(filteredTracks); // Random shuffle
     }
 
+    // Show confirmation if adding more than 50 tracks
+    if (filteredTracks.length > 50) {
+        if (!confirm(`You're about to add ${filteredTracks.length} tracks to the mixer. This may cause lag. Continue?`)) {
+            return;
+        }
+    }
+
     filteredTracks.forEach(track => {
         const channel = new Channel(track.name, track.src);
         channel.paused = true; // Add but don't auto-play
