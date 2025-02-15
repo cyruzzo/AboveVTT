@@ -99,26 +99,21 @@ class TrackLibrary extends Library {
                 let exactSearch = search.slice(1, -1).trim(); // Remove quotes
     
                 let filterArray = Array.from(tracks); // Convert jQuery object to array
-    
                 filterArray.forEach(item => {
                     let trackText = item?.textContent?.toLowerCase() || "";
                     let trackDataSrc = item?.dataset?.src || "";
-                
-                    let foundTrack = libraryTracks.find(([_, track]) =>
-                        track.name?.toLowerCase() === trackText || track.src === trackDataSrc
-                    );
-                
-                    let trackTags = foundTrack?.[1]?.tags || "";
+                    let trackTags = item?.dataset?.tags || ""; 
                 
                     if (trackText === exactSearch) {
                         $(item).toggleClass('hidden-track', false);
                     } else if (typeof trackTags === "string") {
-                        let tagArray = trackTags.split(", ").map(tag => tag.trim().toLowerCase()); // ✅ Correct split
+                        let tagArray = trackTags.split(", ").map(tag => tag.trim().toLowerCase()); 
                         if (tagArray.includes(exactSearch)) {
                             $(item).toggleClass('hidden-track', false);
                         }
                     }
                 });
+                
             } else {
                 // **DEFAULT MODE (OR logic, same as original behavior)**
                 let filterArray = search.split(" ");
