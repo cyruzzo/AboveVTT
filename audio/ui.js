@@ -275,18 +275,25 @@ function init_mixer() {
     let sequentialPlay = $('<button class="sequential-button"></button>');
     let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
     sequentialPlay.append(sequential_svg);
-    sequentialPlay.on('click', function(){
-        if(sequentialPlay.hasClass('pressed')){
-            sequentialPlay.toggleClass('pressed', false)
+    sequentialPlay.off().on("click", function() {
+        const icon = sequentialPlay.find(".material-symbols-outlined"); // Find the icon span
+    
+        // Cycle through: Off → Continuous → Shuffle → Off
+        if (!sequentialPlay.hasClass("pressed")) {
+            sequentialPlay.addClass("pressed");
+            sequentialPlay.attr("title", "Continuous Play");
+            // icon.text("repeat"); // Continuous Play icon
+        } else if (!sequentialPlay.hasClass("shuffle")) {
+            sequentialPlay.addClass("shuffle");
+            sequentialPlay.attr("title", "Shuffle Play");
+            icon.text("shuffle"); // Shuffle Play icon
+        } else {
+            sequentialPlay.removeClass("shuffle pressed");
+            sequentialPlay.attr("title", "Loop Off");
+            icon.text("format_list_numbered_rtl"); // Default icon
         }
-        else{
-
-            sequentialPlay.toggleClass('pressed', true)
-            let currentlyPlaying = $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing:not(:first)`)
-            if(currentlyPlaying.length>0){
-                currentlyPlaying.click();
-            }
-        }     
+    
+        console.log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
     // play/pause button
@@ -350,6 +357,19 @@ function init_mixer() {
     $('#master-volume').append(clear, sequentialPlay, playPause);
 }
 
+function shuffleArray(array) {
+    const seed = new Date().getTime(); // Get the current timestamp at shuffle time
+
+    function seededRandom(seed) {
+        return Math.sin(seed) * 10000 % 1; // Simple deterministic function
+    }
+
+    return array
+        .map(track => ({ track, sort: seededRandom(seed + Math.random()) })) // Use dynamic seed
+        .sort((a, b) => a.sort - b.sort) // Sort based on seeded value
+        .map(obj => obj.track); // Return only tracks
+}
+
 // Function to add filtered tracks to the Mixer
 function addTracks(filteredTracks, shuffle = false) {
     if (filteredTracks.length === 0) {
@@ -358,7 +378,7 @@ function addTracks(filteredTracks, shuffle = false) {
     }
 
     if (shuffle) {
-        filteredTracks = filteredTracks.sort(() => Math.random() - 0.5); // Random shuffle
+        filteredTracks = shuffleArray(filteredTracks); // Random shuffle
     }
 
     filteredTracks.forEach(track => {

@@ -649,14 +649,29 @@ class Mixer extends EventTarget {
                 $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
                 $(progress).css('width', '');
 
-                if($(`.sequential-button`).hasClass('pressed')){
-                    let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`)
-                    let nextTrack = $(currentTrack).nextAll('.audio-row[data-id]:not(.tokenTrack):first');
-                    if(nextTrack.length == 0){
-                        nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
+                if ($(`.sequential-button`).hasClass('pressed')) {
+                    let nextTrack;
+                    let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`);
+                
+                    if ($(`.sequential-button`).hasClass('shuffle')) {
+                        // Shuffle Mode: Pick a random track
+                        let tracks = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).toArray();
+                        let randomIndex;
+                        do {
+                            randomIndex = Math.floor(Math.random() * tracks.length);
+                        } while ($(tracks[randomIndex]).attr("data-id") === id); // Prevent immediate repeat
+                
+                        nextTrack = $(tracks[randomIndex]);
+                    } else {
+                        // Default: Play next track in sequence
+                        nextTrack = $(currentTrack).nextAll('.audio-row[data-id]:not(.tokenTrack):first');
+                        if (nextTrack.length == 0) {
+                            nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
+                        }
                     }
+                
                     nextTrack.find('.channel-play-pause-button').click();
-                }
+                }                
             }
         }
 
