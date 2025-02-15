@@ -102,17 +102,26 @@ class TrackLibrary extends Library {
                 filterArray.forEach(item => {
                     let trackText = item?.textContent?.toLowerCase() || "";
                     let trackDataSrc = item?.dataset?.src || "";
-                    let trackTags = item?.dataset?.tags || ""; 
+                
+                    let foundTrack = libraryTracks.find(([_, track]) =>
+                        track.name === item.textContent || track.src === item.dataset.src
+                    );
+                
+                    let trackTags = foundTrack?.[1]?.tags || []; 
+                
+                    console.log("Track Text:", trackText);
+                    console.log("Track Tags:", trackTags);
+                    console.log("Exact Search:", exactSearch);
                 
                     if (trackText === exactSearch) {
                         $(item).toggleClass('hidden-track', false);
-                    } else if (typeof trackTags === "string") {
-                        let tagArray = trackTags.split(", ").map(tag => tag.trim().toLowerCase()); 
-                        if (tagArray.includes(exactSearch)) {
+                    } else if (Array.isArray(trackTags)) { 
+                        if (trackTags.map(tag => tag.toLowerCase()).includes(exactSearch)) {
                             $(item).toggleClass('hidden-track', false);
                         }
                     }
                 });
+                
                 
             } else {
                 // **DEFAULT MODE (OR logic, same as original behavior)**
