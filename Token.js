@@ -41,7 +41,7 @@ const availableToAoe = [
 
 
 const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/8);
-const throttleTokenCheck = throttle(() => {requestAnimationFrame(do_check_token_visibility)}, 1000/4);
+const throttleTokenCheck = throttle(() => {requestAnimationFrame(()=>{do_check_token_visibility()})}, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
