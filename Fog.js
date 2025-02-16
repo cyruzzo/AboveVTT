@@ -710,7 +710,7 @@ async function check_token_visibility(){
 	}
 }
 
-function do_check_token_visibility() {
+function do_check_token_visibility(doorsOnly = false) {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
@@ -722,23 +722,6 @@ function do_check_token_visibility() {
 	}
 
 	let promises = [];
-
-	let fogContext = $('#fog_overlay')[0].getContext('2d');
-	let lightContext = window.lightInLos.getContext('2d');
-	let rayContext = $('#raycastingCanvas')[0].getContext('2d');
-	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
-
-	let truesightContext;
-
-	if(truesightAuraExists) 
-		truesightContext = window.truesightCanvas.getContext('2d');
-
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	
-	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-
-	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
-	
 	let hideIds = [];
 	let showTokenIds = [];
 	let showAuraIds = [];
@@ -746,49 +729,73 @@ function do_check_token_visibility() {
 	let hideDoors =[];
 	let dmSelectedTokens = [];
 
-	for (let id in window.TOKEN_OBJECTS) {
-		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
-			continue;
-		promises.push(new Promise(function(resolve) {
-			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
-			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			let tokenSelector = "div.token[data-id='" + id + "']";
+	let fogContext = $('#fog_overlay')[0].getContext('2d');
+	let lightContext = window.lightInLos.getContext('2d');
 
-			//Combining some and filter cut down about 140ms for average sized picture
-			
-			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
-			
-			const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	
+	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
-			
-			const dmSelected = window.DM && window.CURRENTLY_SELECTED_TOKENS.includes(id)
+	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+	
 
-			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+	if(!doorsOnly){
+		let rayContext = $('#raycastingCanvas')[0].getContext('2d');
+		const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
 
-			const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+		let truesightContext;
+
+		if(truesightAuraExists) 
+			truesightContext = window.truesightCanvas.getContext('2d');
 
 
-			let inTruesight = false;
-			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
-				inTruesight = is_token_under_truesight_aura(id, truesightContext);
-			}
 
-			if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected) || (hideInvisible && !inTruesight))) {
-				hideIds.push(tokenSelector, auraSelector)
-			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
-				showTokenIds.push(tokenSelector);
-				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
-					showAuraIds.push(auraSelector);
-			}else if(dmSelected){
-				dmSelectedTokens.push(tokenSelector);
-			}
-			
-			
-			resolve();
-		}));
+		for (let id in window.TOKEN_OBJECTS) {
+			if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
+				continue;
+			promises.push(new Promise(function(resolve) {
+				let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
+				let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+				let tokenSelector = "div.token[data-id='" + id + "']";
+
+				//Combining some and filter cut down about 140ms for average sized picture
+				
+				const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
+				
+				const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
+
+				const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
+				
+				const dmSelected = window.DM && window.CURRENTLY_SELECTED_TOKENS.includes(id)
+
+				const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+
+				const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+
+
+				let inTruesight = false;
+				if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
+					inTruesight = is_token_under_truesight_aura(id, truesightContext);
+				}
+
+				if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected) || (hideInvisible && !inTruesight))) {
+					hideIds.push(tokenSelector, auraSelector)
+				}
+				else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
+					showTokenIds.push(tokenSelector);
+					if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
+						showAuraIds.push(auraSelector);
+				}else if(dmSelected){
+					dmSelectedTokens.push(tokenSelector);
+				}
+				
+				
+				resolve();
+			}));
+		}
 	}
+	
+
 	let doors = $('.door-button');
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
@@ -810,6 +817,7 @@ function do_check_token_visibility() {
 
 	Promise.all(promises);
 	requestAnimationFrame(() => {
+		
 		hideIds = hideIds.join(',');
 		showTokenIds = showTokenIds.join(',');
 		showAuraIds = showAuraIds.join(',');	
@@ -819,6 +827,7 @@ function do_check_token_visibility() {
 		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
 		$(showAuraIds).show();
 		$(dmSelectedTokens).css({'display': 'flex'});
+		
 
 		hideDoors = hideDoors.join(',');
 		showDoors = showDoors.join(',');
@@ -1926,7 +1935,7 @@ function redraw_light_walls(clear=true){
 
 			door_note_icon(id);
 		}
-		do_check_token_visibility();
+		do_check_token_visibility(true);
 		
 
 		if((/rgba.*0\.5\)/g).test(color))
