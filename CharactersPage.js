@@ -835,7 +835,18 @@ function init_character_list_page_without_avtt() {
   }
   window.location_href_observer = new MutationObserver(function(mutationList, observer) {
     if (oldHref !== document.location.href) {
-      if (!is_characters_list_page()) {
+      if(is_characters_builder_page()){
+         window.oldHref = document.location.href;
+        if (window.location_href_observer) {
+          window.location_href_observer.disconnect();
+          delete window.location_href_observer;
+        }
+        $('#site-main').css({
+          'visibility':'',
+          'display': ''
+        });
+      }
+      else if (!is_characters_list_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
