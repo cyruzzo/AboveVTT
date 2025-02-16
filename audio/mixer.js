@@ -469,6 +469,19 @@ class Mixer extends EventTarget {
             state.channels[uuid()] = channel;
         }
 
+        this._write(state);  
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+    }
+    /**
+     * Add multiple channels to the mixer
+     * @param {Channel} channel
+     */
+    addMultiChannels(channelData = []) {
+        const state = this.state();
+        for(let i in channelData){
+            state.channels[uuid()] = channelData[i];
+        }
+
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }

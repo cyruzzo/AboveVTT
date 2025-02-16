@@ -357,6 +357,7 @@ function init_mixer() {
     $('#master-volume').append(clear, sequentialPlay, playPause);
 }
 
+
 function shuffleArray(array) {
     const seed = new Date().getTime(); // Get the current timestamp at shuffle time
 
@@ -382,20 +383,21 @@ function addTracks(filteredTracks, shuffle = false) {
     }
 
     // Show confirmation if adding more than 50 tracks
-    if (filteredTracks.length > 50) {
-        if (!confirm(`You're about to add ${filteredTracks.length} tracks to the mixer. This may cause lag. Continue?`)) {
-            return;
-        }
+    if (filteredTracks.length > 200) {
+        confirm(`You're about to add ${filteredTracks.length} tracks to the mixer. This message would be too large to send to players. Add fewer tracks.`)
+        return;
     }
-
+    let channelData = [];
     filteredTracks.forEach(track => {
         const channel = new Channel(track.name, track.src);
         channel.paused = true; // Add but don't auto-play
-        window.MIXER.addChannel(channel);
+        channelData.push(channel);
     });
+    window.MIXER.addMultiChannels(channelData);
 
     console.log(`Added ${filteredTracks.length} ${shuffle ? "shuffled " : ""}tracks to the Mixer.`);
 }
+
 
 function init_trackLibrary() {
     // header
@@ -450,8 +452,7 @@ function init_trackLibrary() {
 
     // Click handlers
     addTracksToMixer.on("click", function() {
-        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row")]
-            .filter(track => track.offsetParent !== null)
+        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row:not(.hidden-track)")]
             .map(track => ({
                 name: track.getAttribute("data-name"),
                 src: track.getAttribute("data-src"),
@@ -460,8 +461,7 @@ function init_trackLibrary() {
     });
 
     addShuffledToMixer.on("click", function() {
-        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row")]
-            .filter(track => track.offsetParent !== null)
+        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row:not(.hidden-track)")]
             .map(track => ({
                 name: track.getAttribute("data-name"),
                 src: track.getAttribute("data-src"),
