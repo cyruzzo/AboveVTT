@@ -291,47 +291,8 @@ function avtt_settings() {
 				{ value: true, label: "Always", description: `You will always see the splash screen on startup.` },
 				{ value: false, label: "Only When New", description: `You will only see the splash screen on startup after updating to a new version.` }
 			],
-			defaultValue: true
-		},
-		{
-			name: 'allowTokenMeasurement',
-			label: 'Measure while dragging tokens',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
-				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
-			],
-			defaultValue: false
-		},
-		{
-			name: 'streamDiceRolls',
-			label: 'Stream Dice Rolls',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Streaming", description: `When you roll DDB dice (to Everyone), all players who also enable this feature will see your rolls and you will see theirs. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
-				{ value: false, label: "Not Streaming", description: `When you enable this, DDB dice rolls will be visible to you and all other players who also enable this. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
-			],
-			defaultValue: false
-		},
-		{
-			name: 'iframeStatBlocks',
-			label: 'Fetch Monster Stat Blocks',
-			type: 'toggle',
-			options: [
-				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
-				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
-			],
-			defaultValue: false
-		},
-		{
-			name: "peerStreaming",
-			label: "Allow Streaming Cursor/Ruler",
-			type: "toggle",
-			options: [
-				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
-				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
-			],
-			defaultValue: false
+			defaultValue: true,
+			class: 'ui'
 		},
 		{
 			name: "iconUi",
@@ -341,7 +302,52 @@ function avtt_settings() {
 				{ value: true, label: "Enable", description: `` },
 				{ value: false, label: "Disable", description: `` }
 			],
-			defaultValue: false
+			defaultValue: false,
+			class: 'ui'
+		},
+		{
+			name: 'allowTokenMeasurement',
+			label: 'Measure while dragging tokens',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Measure", description: `When you drag a token, the distance dragged will automatically be measured. Dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` },
+				{ value: false, label: "Not Measuring", description: `Enable this to automatically measure the distance that you drag a token. When enabled, dropping the token and picking it back up will create a waypoint in the measurement. Clicking anywhere else, or dragging another token will stop the measurement.` }
+			],
+			defaultValue: false,
+			class: 'ui'
+		},
+		{
+			name: 'streamDiceRolls',
+			label: 'Stream Dice Rolls',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Streaming", description: `When you roll DDB dice (to Everyone), all players who also enable this feature will see your rolls and you will see theirs. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` },
+				{ value: false, label: "Not Streaming", description: `When you enable this, DDB dice rolls will be visible to you and all other players who also enable this. Disclaimer: the dice will start small then grow to normal size after a few rolls. They will be contained to the smaller of your window or the sending screen size.` }
+			],
+			defaultValue: false,
+			class: 'stream'
+		},
+		{
+			name: 'iframeStatBlocks',
+			label: 'Fetch Monster Stat Blocks',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
+				{ value: false, label: "Build Locally", description: `Monster stat blocks are currently being built locally by AboveVTT. Enabling this will fetch and load monster details pages rather than building stat blocks locally. Enabling this will impact performance and will use a lot more network data. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` }
+			],
+			defaultValue: false,
+			class: 'debug',
+		},
+		{
+			name: "peerStreaming",
+			label: "Allow Streaming Cursor/Ruler",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Allow", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` },
+				{ value: false, label: "Never", description: `If you are experiencing performance issues or if you have slow internet, you may want to disable this.` }
+			],
+			defaultValue: false,
+			class: 'stream'
 		},
 		{
 			name: "dragLight",
@@ -351,7 +357,8 @@ function avtt_settings() {
 				{ value: true, label: "Enable", description: `While moving a token vision will update` },
 				{ value: false, label: "Disable", description: `Vision will only update on drop of a token` }
 			],
-			defaultValue: false
+			defaultValue: false,
+			class: 'ui'
 		}
 	];
 
@@ -367,7 +374,8 @@ function avtt_settings() {
 					{ value: "none", label: "No One", description: `You will not see the cursor position of any player.` },
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' cursors during their turn in combat. You will not see cursors of any player that disables cursor/ruler streaming.` }
 				],
-				defaultValue: "all"
+				defaultValue: "all",
+				class: 'stream'
 			},
 			{
 				name: "receiveRulerFromPeers",
@@ -378,7 +386,8 @@ function avtt_settings() {
 					{ value: "none", label: "No One", description: `You will not see any token measurement or ruler measurement from any player.` },
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see players' token measurement and ruler measurement during their turn in combat. You will not see rulers of any player that disables cursor/ruler streaming.` }
 				],
-				defaultValue: "all"
+				defaultValue: "all",
+				class: 'stream'
 			},
 			{
 				name: "projector",
@@ -388,7 +397,8 @@ function avtt_settings() {
 					{ value: true, label: "Enable", description: `If you have another tab with the player view open it will receive your scroll and zoom events.` },
 					{ value: false, label: "Disable", description: `If you have another tab with the player view open it will not receive your scroll and zoom events.` }
 				],
-				defaultValue: false
+				defaultValue: false,
+				class: 'stream'
 			},
 			{
 				name: "disableCombatText",
@@ -398,7 +408,8 @@ function avtt_settings() {
 					{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
 					{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
 				],
-				defaultValue: false
+				defaultValue: false,
+				class: 'ui'
 			}
 		);
 	} else {
@@ -413,7 +424,8 @@ function avtt_settings() {
 					{ value: "dm", label: "DM Only", description: `You will only see the DM's cursor position. You will not see cursors of any player or DM that disables cursor/ruler streaming.` },
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see other players' cursors during their turn in combat. You will also see the DM's cursor position. You will not see cursors of any player or DM that disables cursor/ruler streaming.` }
 				],
-				defaultValue: "all"
+				defaultValue: "all",
+				class: 'stream'
 			},
 			{
 				name: "receiveRulerFromPeers",
@@ -425,7 +437,8 @@ function avtt_settings() {
 					{ value: "dm", label: "DM Only", description: `You will only see the DM's token or ruler measurement. You will not see rulers of any player or DM that disables cursor/ruler streaming.` },
 					{ value: "combatTurn", label: "Current Combat Turn", description: `You will only see other players' token measurement and ruler measurement during their turn in combat. You will also see the DM's token measurement and ruler tool. You will not see rulers of any player or DM that disables cursor/ruler streaming.` }
 				],
-				defaultValue: "all"
+				defaultValue: "all",
+				class: 'stream'
 			}
 		);
 	}
@@ -438,7 +451,8 @@ function avtt_settings() {
 			{ value: true, label: "RNG Dice", description: `Disables DDB dice and uses a random number generator` },
 			{ value: false, label: "DDB Dice", description: `Defaults to DDB dice` }
 		],
-		defaultValue: false
+		defaultValue: false,
+		class: 'performance'
 	})
 	settings.push(
 	{
@@ -446,10 +460,11 @@ function avtt_settings() {
 		label: "Disable capture of pc tab rolls",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Disabled", description: `Rolls will occur on the tab the button is clicked` },
-			{ value: false, label: "Enabled", description: `Rolls from other tabs will occur here` }
+			{ value: true, label: "Disabled", description: `By default AVTT captures data and rolls from player sheets in tabs and iframes.<p>It's only recommended to toggle this on when using player sheets in a tab in the same window of AboveVTT.</p><p>If the tab is in another window/monitor it's recommended for this to be toggled off.</p>` },
+			{ value: false, label: "Enabled", description: `By default AVTT captures data and rolls from player sheets in tabs and iframes.<p>It's only recommended to toggle this on when using player sheets in a tab in the same window of AboveVTT.</p><p>If the tab is in another window/monitor it's recommended for this to be toggled off.</p>` }
 		],
-		defaultValue: false
+		defaultValue: false,
+		class: 'ui'
 	})
 	settings.push(
 	{
@@ -460,7 +475,8 @@ function avtt_settings() {
 			{ value: true, label: "Disabled", description: `Reduces movement by disabling some animations` },
 			{ value: false, label: "Enabled", description: `All animations will be enabled` }
 		],
-		defaultValue: false
+		defaultValue: false,
+		class: 'performance'
 	})
 	settings.push(
 	{
@@ -471,7 +487,8 @@ function avtt_settings() {
 			{ value: true, label: "Enabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects. It may cause desync or tokens to reset due to missing messages.` },
 			{ value: false, label: "Disabled", description: `It is only recommended to use this setting if you have an unstable connection that is causing several disconnects.  It may cause desync or tokens to reset due to missing messages.` }
 		],
-		defaultValue: false
+		defaultValue: false,
+		class: 'debug'
 	})
 	settings.push(
 	{
@@ -483,7 +500,8 @@ function avtt_settings() {
 			{ value: 1, label: "Always 2014", description: `Will always display in 2014 style` },
 			{ value: 2, label: "Always 2024", description: `Will always display in 2024 style` },
 		],
-		defaultValue: false
+		defaultValue: false,
+		class: 'ui'
 	})
 
 
@@ -497,7 +515,8 @@ function avtt_settings() {
 				{ value: true, label: "Show", description: `This will show an error dialog for every error or warning log that AboveVTT encounters.` },
 				{ value: false, label: "Don't Show", description: `Only show an error dialog when AboveVTT explicitly coded for it.` }
 			],
-			defaultValue: false
+			defaultValue: false,
+			class: 'debug'
 		});
 	}
 
@@ -738,10 +757,14 @@ function init_settings() {
 	let experimental_features = avtt_settings();
 	body.append(`
 		<br />
-		<h3 class="token-image-modal-footer-title" >Above VTT Settings</h3>
-		<div class="sidebar-panel-header-explanation">These are settings for AboveVTT. Some of them are experimental, and some of them are temporary. These may change or go away at any time, so we recommend using the defaults values.<br><b>WARNING! Enabling these will affect performance!</b></div>
+		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >Above VTT Settings</h3>
+		<div class="sidebar-panel-header-explanation"><b>Enabling these can have an impact on performance.</b></div>
+		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4></div>
+		<div class='avtt-settings-section avtt-settings-stream'><h4 class="token-image-modal-footer-title">Streaming/P2P</h4></div>
+		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance</b></div></div>
+		<div class='avtt-settings-section avtt-settings-debug'><h4 class="token-image-modal-footer-title">Debugging</h4><div class="sidebar-panel-header-explanation"><b>These settings can be used to debug issues or as last resorts when defaults aren't working</b></div></div>
 	`);
-	for(let i = 0; i < experimental_features.length; i++) {
+	for(let i = 0; i < experimental_features.length; i++) {	
 		let setting = experimental_features[i];
 		if (setting.dmOnly === true && !window.DM) {
 			continue;
@@ -789,7 +812,7 @@ function init_settings() {
 				break;
 		}
 		if (inputWrapper) {
-			body.append(inputWrapper);
+			body.find(`.avtt-settings-${setting.class}`).append(inputWrapper);
 		}
 	}
 

@@ -2121,7 +2121,8 @@ async function redraw_scene_list(searchTerm) {
 					console.debug("appending folder item", item, folder);
 					folder.append(row);
 				} else {
-					console.warn("Could not find a folder to append folder item to", item);
+					$(`#scenesFolder`).append(row);
+					console.warn("Could not find a folder to append folder item to - appending to root folder", item);
 				}
 				resolve();
 			}))	
@@ -2159,7 +2160,8 @@ async function redraw_scene_list(searchTerm) {
 					console.debug("appending scene item", item, folder);
 					folder.append(row);
 				} else {
-					console.warn("Could not find a folder to append scene item to", item);
+					$(`#scenesFolder`).append(row);
+					console.warn("Could not find a folder to append scene item to - appending to root folder", item);
 				}
 				resolve();
 			}))
@@ -2832,6 +2834,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 	const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 
 	import_chapter.off('click.importChap').on('click.importChap', function(){
+		build_import_loading_indicator(`Importing Chapter`);
 		for(let i in sceneData){
 			sceneData[i] = {
 				...default_scene_data(),
@@ -2861,7 +2864,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 						for(let id in sceneData[i].notes){
 							window.JOURNAL.notes[id] = sceneData[i].notes[id];
 						}
-						delete importData.notes;
+						delete sceneData[i].notes;
 						
 					}
 				}
@@ -2872,8 +2875,10 @@ function build_source_book_chapter_import_section(sceneSet) {
 				$(`.scene-item[data-scene-id='${sceneData[0].id}'] .dm_scenes_button`).click();
 				$("#sources-import-main-container").remove();
 				expand_all_folders_up_to_id(sceneData[0].id);
+				$(`body>.import-loading-indicator`).remove();
 			})
 			.catch(error => {
+				$(`body>.import-loading-indicator`).remove();
 				showError(error, "Failed to import scene", importData);
 			});
 	})
@@ -3109,7 +3114,7 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 	listItem.find(".import-button").click(function(e) {
 		e.stopPropagation();
 		e.preventDefault();
-
+		build_import_loading_indicator(`Importing Scene`);
 		const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
 		const parentId = $(`#sources-import-main-container`).attr("data-parent-id");
 
@@ -3144,8 +3149,10 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 				$(`.scene-item[data-scene-id='${importData.id}'] .dm_scenes_button`).click();
 				$("#sources-import-main-container").remove();
 				expand_all_folders_up_to_id(importData.id);
+				$(`body>.import-loading-indicator`).remove();
 			})
 			.catch(error => {
+				$(`body>.import-loading-indicator`).remove();
 				showError(error, "Failed to import scene", importData);
 			});
 	});

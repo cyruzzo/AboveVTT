@@ -1205,8 +1205,12 @@ class MessageBroker {
 						for (let j=0; j<roll.diceNotation.set.length; j++){
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
 								let reduceCrit = 0;
-								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20)
+								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20){
                   reduceCrit = 20 - msg.data.critRange;
+								}
+                else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
+                	continue;
+                }
 								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
 									if(roll.rollKind == 'advantage'){
 										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){

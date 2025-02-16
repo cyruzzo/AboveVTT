@@ -275,18 +275,25 @@ function init_mixer() {
     let sequentialPlay = $('<button class="sequential-button"></button>');
     let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
     sequentialPlay.append(sequential_svg);
-    sequentialPlay.on('click', function(){
-        if(sequentialPlay.hasClass('pressed')){
-            sequentialPlay.toggleClass('pressed', false)
+    sequentialPlay.off().on("click", function() {
+        const icon = sequentialPlay.find(".material-symbols-outlined"); // Find the icon span
+    
+        // Cycle through: Off → Continuous → Shuffle → Off
+        if (!sequentialPlay.hasClass("pressed")) {
+            sequentialPlay.addClass("pressed");
+            sequentialPlay.attr("title", "Continuous Play");
+            // icon.text("repeat"); // Continuous Play icon
+        } else if (!sequentialPlay.hasClass("shuffle")) {
+            sequentialPlay.addClass("shuffle");
+            sequentialPlay.attr("title", "Shuffle Play");
+            icon.text("shuffle"); // Shuffle Play icon
+        } else {
+            sequentialPlay.removeClass("shuffle pressed");
+            sequentialPlay.attr("title", "Loop Off");
+            icon.text("format_list_numbered_rtl"); // Default icon
         }
-        else{
-
-            sequentialPlay.toggleClass('pressed', true)
-            let currentlyPlaying = $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing:not(:first)`)
-            if(currentlyPlaying.length>0){
-                currentlyPlaying.click();
-            }
-        }     
+    
+        console.log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
     // play/pause button
@@ -388,7 +395,6 @@ function addTracks(filteredTracks, shuffle = false) {
     });
     window.MIXER.addMultiChannels(channelData);
 
-
     console.log(`Added ${filteredTracks.length} ${shuffle ? "shuffled " : ""}tracks to the Mixer.`);
 }
 
@@ -440,7 +446,6 @@ function init_trackLibrary() {
     const okButton = $('<button class="add-track-ok-button">OK</button>');  
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
 
-
     // Mixer/ Track List QOL updates
     const addTracksToMixer = $(`<button id='addTrack'>Add Tracks to Mixer</button>`);
     const addShuffledToMixer = $('<button id="addShuffledToMixer">Add Shuffled</button>');
@@ -464,7 +469,6 @@ function init_trackLibrary() {
         addTracks(filteredTracks, true); // Enable shuffle
     });
     
-
 
     addTrack.off().on("click", function(){
         importTrackFields.css("height", "25px");
@@ -673,7 +677,7 @@ function init_trackLibrary() {
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br><b>Import</b>:  ", addTrack, dropBoxbutton, importCSV, importTrackFields, trackList);
 }
 
 function init() {
