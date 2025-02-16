@@ -118,7 +118,7 @@ class TrackLibrary extends Library {
                         let trackTags = foundTrack?.[1]?.tags || [];
     
                         return trackText === exactSearch || 
-                            (Array.isArray(trackTags) && trackTags.map(tag => tag.toLowerCase()).includes(exactSearch));
+                            (Array.isArray(trackTags) && trackTags.map(tag => tag.toLowerCase().trim()).includes(exactSearch));
                     });
                 });
     
