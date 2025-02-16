@@ -182,9 +182,9 @@ function build_monster_stat_block(statBlock, token) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
-
+    let statblockData = '';
     if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
-      return `
+      statblockData =  `
         <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
@@ -478,7 +478,7 @@ function build_monster_stat_block(statBlock, token) {
       `
     }
     else{
-      return `
+      statblockData =  `
         <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
@@ -768,15 +768,20 @@ function build_monster_stat_block(statBlock, token) {
         </div>
         `;
     }
-    
-    
+    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
+    $stat.find('.spell-tooltip').each((index, tooltip) =>{
+      $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+      $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+    })
+    return $stat[0].outerHTML;
 }
 function build_monster_copy_stat_block(statBlock) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
+    let statblockData = '';
     if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
-      return `
+      statblockData = `
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -1032,7 +1037,7 @@ function build_monster_copy_stat_block(statBlock) {
       `
     }
     else{
-      return `
+      statblockData = `
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -1286,6 +1291,13 @@ function build_monster_copy_stat_block(statBlock) {
           </div>
         `;
     }
+
+    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
+    $stat.find('.spell-tooltip').each((index, tooltip) =>{
+      $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+      $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+    })
+    return $stat[0].outerHTML;
 }
 class MonsterStatBlock {
     constructor(data) {

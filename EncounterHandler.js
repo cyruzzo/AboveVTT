@@ -106,6 +106,8 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
    		           monsterData[i].treasure = treasure;
    		           monsterData[i].gear = gear;
    		       }
+   		       let spellTooltips = $(moreInfo)?.find('[class*="mon-stat-block-2024"] .spell-tooltip')
+   		       monsterData[i].spellTooltips = spellTooltips;
    		       resolve();
 	       }))
 	       
