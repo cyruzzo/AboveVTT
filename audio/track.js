@@ -95,33 +95,35 @@ class TrackLibrary extends Library {
             let libraryTracks = [...this.map()]; // Cache library tracks
     
             if (search.startsWith('"') && search.endsWith('"')) {
-                // **EXACT MATCH MODE (search wrapped in quotes)**
-                let exactSearch = search.slice(1, -1).trim(); // Remove quotes
+                // **EXACT MATCH MODE (search wrapped in quotes), allows for multiple exact searches**
+                function extractExactTerms(query) {
+                    const matches = query.match(/"([^"]+)"/g);
+                    return matches ? matches.map(term => term.replace(/"/g, '')) : [query]; 
+                }
     
-                let filterArray = Array.from(tracks); // Convert jQuery object to array
-                filterArray.forEach(item => {
-                    let trackText = item?.textContent?.toLowerCase() || "";
-                    let trackDataSrc = item?.dataset?.src || "";
-                
-                    let foundTrack = libraryTracks.find(([_, track]) =>
-                        track.name === item.textContent || track.src === item.dataset.src
-                    );
-                
-                    let trackTags = foundTrack?.[1]?.tags || []; 
-                
-                    console.log("Track Text:", trackText);
-                    console.log("Track Tags:", trackTags);
-                    console.log("Exact Search:", exactSearch);
-                
-                    if (trackText === exactSearch) {
-                        $(item).toggleClass('hidden-track', false);
-                    } else if (Array.isArray(trackTags)) { 
-                        if (trackTags.map(tag => tag.toLowerCase()).includes(exactSearch)) {
-                            $(item).toggleClass('hidden-track', false);
-                        }
-                    }
+                let exactSearches = extractExactTerms(search);
+    
+                // Start with all tracks and progressively filter down
+                let filterArray = Array.from(tracks);
+    
+                exactSearches.forEach(exactSearch => {
+                    filterArray = filterArray.filter(item => {
+                        let trackText = item?.textContent?.toLowerCase() || "";
+                        let trackDataSrc = item?.dataset?.src || "";
+    
+                        let foundTrack = libraryTracks.find(([_, track]) =>
+                            track.name === item.textContent || track.src === item.dataset.src
+                        );
+    
+                        let trackTags = foundTrack?.[1]?.tags || [];
+    
+                        return trackText === exactSearch || 
+                            (Array.isArray(trackTags) && trackTags.map(tag => tag.toLowerCase()).includes(exactSearch));
+                    });
                 });
-                
+    
+                // Show only tracks that survived all filtering
+                $(filterArray).toggleClass('hidden-track', false);
                 
             } else {
                 // **DEFAULT MODE (OR logic, same as original behavior)**
@@ -138,7 +140,7 @@ class TrackLibrary extends Library {
         } else {
             tracks.toggleClass('hidden-track', false);
         }
-    }
+    }    
 
     /**
      *
