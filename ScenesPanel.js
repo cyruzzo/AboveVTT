@@ -2121,7 +2121,8 @@ async function redraw_scene_list(searchTerm) {
 					console.debug("appending folder item", item, folder);
 					folder.append(row);
 				} else {
-					console.warn("Could not find a folder to append folder item to", item);
+					$(`#scenesFolder`).append(row);
+					console.warn("Could not find a folder to append folder item to - appending to root folder", item);
 				}
 				resolve();
 			}))	
@@ -2159,7 +2160,8 @@ async function redraw_scene_list(searchTerm) {
 					console.debug("appending scene item", item, folder);
 					folder.append(row);
 				} else {
-					console.warn("Could not find a folder to append scene item to", item);
+					$(`#scenesFolder`).append(row);
+					console.warn("Could not find a folder to append scene item to - appending to root folder", item);
 				}
 				resolve();
 			}))
