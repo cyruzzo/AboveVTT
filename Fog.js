@@ -1926,7 +1926,7 @@ function redraw_light_walls(clear=true){
 
 			door_note_icon(id);
 		}
-	
+		do_check_token_visibility();
 		
 
 		if((/rgba.*0\.5\)/g).test(color))
