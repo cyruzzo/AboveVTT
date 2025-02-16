@@ -85,24 +85,61 @@ class TrackLibrary extends Library {
         }
     }
 
-    filterTrackLibrary(searchFilter = ''){
+    filterTrackLibrary(searchFilter = '') {
         let tracks = $('#track-list .audio-row');
-      
-                 
-        if(searchFilter != ''){
-            tracks.toggleClass('hidden-track', true);  
-            let filterArray = searchFilter.split(" ");
-            let regex = new RegExp( filterArray.join( "|" ), "i");
-            let libraryTracks = [...this.map()]; // do this here instead of using `this.find` to speed up the find below
-            tracks.filter(item => regex.test(tracks[item].textContent) || 
-                regex.test(libraryTracks.find(([_, track]) => track.name === tracks[item].textContent || track.src === tracks[item].dataset.src)[1].tags)
-            ).toggleClass('hidden-track', false);   
-        }
-        else{
+    
+        if (searchFilter.trim() !== '') {
+            tracks.toggleClass('hidden-track', true);
+    
+            let search = searchFilter.trim().toLowerCase();
+            let libraryTracks = [...this.map()]; // Cache library tracks
+    
+            if (search.startsWith('"') && search.endsWith('"')) {
+                // **EXACT MATCH MODE (search wrapped in quotes)**
+                let exactSearch = search.slice(1, -1).trim(); // Remove quotes
+    
+                let filterArray = Array.from(tracks); // Convert jQuery object to array
+                filterArray.forEach(item => {
+                    let trackText = item?.textContent?.toLowerCase() || "";
+                    let trackDataSrc = item?.dataset?.src || "";
+                
+                    let foundTrack = libraryTracks.find(([_, track]) =>
+                        track.name === item.textContent || track.src === item.dataset.src
+                    );
+                
+                    let trackTags = foundTrack?.[1]?.tags || []; 
+                
+                    console.log("Track Text:", trackText);
+                    console.log("Track Tags:", trackTags);
+                    console.log("Exact Search:", exactSearch);
+                
+                    if (trackText === exactSearch) {
+                        $(item).toggleClass('hidden-track', false);
+                    } else if (Array.isArray(trackTags)) { 
+                        if (trackTags.map(tag => tag.toLowerCase()).includes(exactSearch)) {
+                            $(item).toggleClass('hidden-track', false);
+                        }
+                    }
+                });
+                
+                
+            } else {
+                // **DEFAULT MODE (OR logic, same as original behavior)**
+                let filterArray = search.split(" ");
+                let regex = new RegExp(filterArray.join("|"), "i"); // OR logic (matches any word)
+    
+                tracks.filter(item =>
+                    regex.test(tracks[item].textContent) ||
+                    regex.test(libraryTracks.find(([_, track]) =>
+                        track.name === tracks[item].textContent || track.src === tracks[item].dataset.src
+                    )?.[1]?.tags || "")
+                ).toggleClass('hidden-track', false);
+            }
+        } else {
             tracks.toggleClass('hidden-track', false);
         }
-
     }
+
     /**
      *
      * @param {string} name
@@ -116,7 +153,7 @@ class TrackLibrary extends Library {
         this.delete(id);
     }
     addTrack(name, src, tags=[]){
-        const track = new Track(name, src);  
+        const track = new Track(name, src);
         track.tags = tags;
         this.create(track);
     }
