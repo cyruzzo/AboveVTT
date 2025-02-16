@@ -282,6 +282,10 @@ function init_mixer() {
         if (!sequentialPlay.hasClass("pressed")) {
             sequentialPlay.addClass("pressed");
             sequentialPlay.attr("title", "Continuous Play");
+            let currentlyPlaying = $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing:not(:first)`)
+            if(currentlyPlaying.length>0){
+                currentlyPlaying.click();
+            }
             // icon.text("repeat"); // Continuous Play icon
         } else if (!sequentialPlay.hasClass("shuffle")) {
             sequentialPlay.addClass("shuffle");
