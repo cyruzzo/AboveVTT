@@ -454,6 +454,12 @@ function is_characters_list_page() {
   return window.location.pathname.match(/\/characters(?!\/\d)/)?.[0] !== undefined;
 }
 
+/** @return {boolean} true if the current page url includes "/characters/[number]/builder"  */
+function is_characters_builder_page() {
+  return window.location.pathname.match(/\/characters\/[0-9]+\/builder/)?.[0] !== undefined;
+}
+
+
 /** @return {boolean} true if the current page url includes "/campaigns/"  */
 function is_campaign_page() {
   return window.location.pathname.includes("/campaigns/");
