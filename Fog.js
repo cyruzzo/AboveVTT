@@ -2169,8 +2169,8 @@ function get_snapped_coordinates(pointX, pointY) {
 
     if (window.CURRENT_SCENE_DATA.gridType == "1" || typeof window.CURRENT_SCENE_DATA.gridType == "undefined") {
         // Square grid
-        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
-        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
         pointX = Math.round((pointX-offsetX) / gridWidth) * gridWidth + offsetX;
         pointY = Math.round((pointY-offsetY) / gridHeight) * gridHeight + offsetY;
     } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
