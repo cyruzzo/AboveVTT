@@ -845,6 +845,11 @@ function init_character_list_page_without_avtt() {
           'visibility':'',
           'display': ''
         });
+        setTimeout(function(){
+          $(".builder-sections-sheet-icon").off().on("click", function(){
+            window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+          });
+        }, 1000)
       }
       else if (!is_characters_list_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);

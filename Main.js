@@ -2046,13 +2046,6 @@ function init_character_page_sidebar() {
 			}, 20)
 
 	});
-	$("a.ct-character-header-desktop__builder-link").on("click", function(){
-		setTimeout(function(){
-			$(".builder-sections-sheet-icon").off().on("click", function(){
-				window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
-			});
-		}, 1000)
-	});
 	$(".ct-character-header-info__content").on("click", function(){
 		setTimeout(function(){
 			$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
