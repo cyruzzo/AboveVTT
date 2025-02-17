@@ -287,7 +287,7 @@ $(target).find(outerSelector).each(function() {
 				// can only be saving throw or skills here, which is either save/check respectively
 				const rollType = label === "Saving Throws" ? "save" : "check"
 				// will be DEX/CON/ATHLETICS/PERCEPTION
-				const actionType = tidbit.trim().replace(/\s\S+$/, '')
+				const actionType = $($(tidbit)[0])?.is('a')? $(tidbit)[0].innerHTML : tidbit.trim().replace(/\s\S+$/, '')
 				// matches " +1 " or " + 1 "
 				const rollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])?/gi
 				
