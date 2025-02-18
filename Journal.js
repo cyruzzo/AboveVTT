@@ -1020,6 +1020,7 @@ class JournalManager{
 	
 	display_note(id, statBlock = false){
 		let self=this;
+		$(`div.note[data-id='${id}']`)?.dialog("close");
 		let note=$(`<div class='note' data-id='${id}'></div>`);
 		
 		note.attr('title',self.notes[id].title);
@@ -1680,6 +1681,7 @@ class JournalManager{
 	}
 
 	edit_note(id, statBlock = false){
+		$(`div.note[data-id='${id}']`)?.dialog("close");
 		this.close_all_notes();
 		let self=this;
 		
