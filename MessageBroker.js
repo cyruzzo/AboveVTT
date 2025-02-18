@@ -269,6 +269,8 @@ function addFloatingCombatText(id, damageValue, heal = false){
 class MessageBroker {
 
 	loadAboveWS(callback=null){
+		if(is_gamelog_popout())
+			return;
 		let self=this;
 		if (callback)
 			this.callbackAboveQueue.push(callback);
@@ -2293,6 +2295,8 @@ class MessageBroker {
 	}
 
 	sendAbovePing(){
+		if(is_gamelog_popout())
+			return;
 		let self = this;
 		if(this.abovews.readyState == this.abovews.OPEN){
 			this.abovews.send(JSON.stringify({action:"keepalive",eventType:"custom/myVTT/keepalive"}));
@@ -2344,6 +2348,8 @@ class MessageBroker {
 	}
 
 	reconnectDisconnectedAboveWs(){
+		if(is_gamelog_popout())
+			return;
 		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS && $('#above-vtt-error-message').length == 0){
 			if(window.reconnectAttemptAbovews == undefined){
 				window.reconnectAttemptAbovews = 0;
