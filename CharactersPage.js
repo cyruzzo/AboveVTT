@@ -408,28 +408,28 @@ function send_character_hp(maxhp) {
 
 
   let current, maximum, temp, deathsaves;
-
+  if(window.CurrentPcHp == undefined)
+    window.CurrentPcHp = {};
   if(maxhp > 0){ //the player just died and we are sending removed node max hp data
     current = 0;
     maximum = maxhp;
     temp = 0;
   }
   else{
-    current = read_current_hp(pc?.hitPointInfo.current);
-    maximum = read_max_hp(pc?.hitPointInfo?.maximum);
-    temp = read_temp_hp(pc?.hitPointInfo.temp);  
+    current = read_current_hp();
+    maximum = read_max_hp(window.CurrentPcHp?.hitPointInfo?.maximum);
+    temp = read_temp_hp();  
   }
   deathSaves = read_death_save_info();
-  if(window.tempCurrentPC == undefined)
-    window.tempCurrentPC = {};
+  
 
 
-  if(tempCurrentPC?.hitPointInfo?.current != current || 
-    tempCurrentPC?.hitPointInfo?.maximum != maximum || 
-    tempCurrentPC?.hitPointInfo?.temp != temp || 
-    tempCurrentPC?.deathSaveInfo?.successCount != deathSaves.successCount || 
-    tempCurrentPC?.deathSaveInfo?.failCount != deathSaves.failCount ){
-    tempCurrentPC = {
+  if(window.CurrentPcHp?.hitPointInfo?.current != current || 
+    window.CurrentPcHp?.hitPointInfo?.maximum != maximum || 
+    window.CurrentPcHp?.hitPointInfo?.temp != temp || 
+    window.CurrentPcHp?.deathSaveInfo?.successCount != deathSaves.successCount || 
+    window.CurrentPcHp?.deathSaveInfo?.failCount != deathSaves.failCount ){
+    window.CurrentPcHp = {
       hitPointInfo: {
         current: current,
         maximum: maximum,
@@ -438,8 +438,7 @@ function send_character_hp(maxhp) {
       deathSaveInfo:{
         successCount: deathSaves.successCount,
         failCount: deathSaves.failCount
-      },
-      ...pc
+      }
     }
     character_sheet_changed({
       hitPointInfo: {
@@ -2069,7 +2068,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
               mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
-              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 )||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span'))||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
@@ -2097,7 +2096,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
               mutationTarget.hasClass('[class*="styles_mark"]') ||
-              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 ) ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span')) ||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
@@ -2137,7 +2136,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
                 mutationParent.hasClass("ct-health-manager__health-item-value") ||
-                (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 ) ||
+                (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span')) ||
                 mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
               ) {
                 send_character_hp();          
