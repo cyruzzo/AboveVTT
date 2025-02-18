@@ -405,6 +405,8 @@ function character_sheet_changed(changes) {
 
 function send_character_hp(maxhp) {
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+
+
   let current, maximum, temp, deathsaves;
 
   if(maxhp > 0){ //the player just died and we are sending removed node max hp data
@@ -418,12 +420,27 @@ function send_character_hp(maxhp) {
     temp = read_temp_hp(pc?.hitPointInfo.temp);  
   }
   deathSaves = read_death_save_info();
+  if(window.tempCurrentPC == undefined)
+    window.tempCurrentPC = {};
 
-  if(pc?.hitPointInfo?.current != current || 
-    pc?.hitPointInfo?.maximum != maximum || 
-    pc?.hitPointInfo?.temp != temp || 
-    pc?.deathSaveInfo?.successCount != deathSaves.successCount || 
-    pc?.deathSaveInfo?.failCount != deathSaves.failCount ){
+
+  if(tempCurrentPC?.hitPointInfo?.current != current || 
+    tempCurrentPC?.hitPointInfo?.maximum != maximum || 
+    tempCurrentPC?.hitPointInfo?.temp != temp || 
+    tempCurrentPC?.deathSaveInfo?.successCount != deathSaves.successCount || 
+    tempCurrentPC?.deathSaveInfo?.failCount != deathSaves.failCount ){
+    tempCurrentPC = {
+      hitPointInfo: {
+        current: current,
+        maximum: maximum,
+        temp: temp
+      },
+      deathSaveInfo:{
+        successCount: deathSaves.successCount,
+        failCount: deathSaves.failCount
+      },
+      ...pc
+    }
     character_sheet_changed({
       hitPointInfo: {
         current: current,
@@ -565,7 +582,7 @@ function send_movement_speeds(container, speedManagePage) {
   }
 }
 
-function read_current_hp(currentHP, container = $(document)) {
+function read_current_hp(container = $(document)) {
  
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--cur .ct-health-manager__health-item-value`)
   if(element.length){
@@ -591,10 +608,10 @@ function read_current_hp(currentHP, container = $(document)) {
     }
     return hpValue;
   }
-  return currentHP;
+  return 0;
 }
 
-function read_temp_hp(currentTemp, container = $(document)) {
+function read_temp_hp(container = $(document)) {
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--temp .ct-health-manager__health-item-value input.ct-health-manager__input`)
   if(element.length){
     return parseInt(element.val())
@@ -614,7 +631,7 @@ function read_temp_hp(currentTemp, container = $(document)) {
     // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
     return 1;
   }
-  return currentTemp;
+  return 0;
 }
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
@@ -2052,7 +2069,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
               mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
-              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 )||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
@@ -2080,7 +2097,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
               mutationTarget.hasClass('[class*="styles_mark"]') ||
-              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.find("input[class*=styles_input]").length == 0) ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 ) ||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
@@ -2120,7 +2137,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
                 mutationParent.hasClass("ct-health-manager__health-item-value") ||
-                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+                (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 ) ||
                 mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
               ) {
                 send_character_hp();          
