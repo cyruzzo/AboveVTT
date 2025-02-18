@@ -110,7 +110,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	$("#tokenOptionsPopup").remove();
 	let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
-	tokenOptionsClickCloseDiv.off().on("click", function(){
+	tokenOptionsClickCloseDiv.off("click").on("click", function(){
 		$("#tokenOptionsPopup").remove();
 		$('.context-menu-list').trigger('contextmenu:hide')
 		tokenOptionsClickCloseDiv.remove();
@@ -118,6 +118,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		$("#tokenOptionsContainer .sp-container").remove();
 		$(`.context-menu-flyout`).remove(); 
 	});
+
+	tokenOptionsClickCloseDiv.off("contextmenu").on("contextmenu", function(e){
+		e.preventDefault();
+	})
 
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
