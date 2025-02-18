@@ -179,9 +179,12 @@ class DiceContextMenu {
                 </div>
 	        </div>
         `);
-        html.on("click", function (clickEvent) {
+        html.off('click').on("click", function (clickEvent) {
             $(".dcm-backdrop").remove();
         });
+        html.off('contextmenu').on('contextmenu', function(e) {
+            e.preventDefault();
+        })
         let sectionList = html.find("ul");
         this.sections.forEach(s => {
             let li = $(`<li></li>`);
