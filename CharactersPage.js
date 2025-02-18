@@ -405,24 +405,32 @@ function character_sheet_changed(changes) {
 
 function send_character_hp(maxhp) {
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+  let current, maximum, temp, deathsaves;
+
   if(maxhp > 0){ //the player just died and we are sending removed node max hp data
-    character_sheet_changed({
-      hitPointInfo: {
-        current: 0,
-        maximum: maxhp,
-        temp: 0
-      },
-      deathSaveInfo: read_death_save_info()
-    });
+    current = 0;
+    maximum = maxhp;
+    temp = 0;
   }
   else{
+    current = read_current_hp(pc?.hitPointInfo.current);
+    maximum = read_max_hp(pc?.hitPointInfo?.maximum);
+    temp = read_temp_hp(pc?.hitPointInfo.temp);  
+  }
+  deathSaves = read_death_save_info();
+
+  if(pc?.hitPointInfo?.current != current || 
+    pc?.hitPointInfo?.maximum != maximum || 
+    pc?.hitPointInfo?.temp != temp || 
+    pc?.deathSaveInfo?.successCount != deathSaves.successCount || 
+    pc?.deathSaveInfo?.failCount != deathSaves.failCount ){
     character_sheet_changed({
       hitPointInfo: {
-        current: read_current_hp(),
-        maximum: read_max_hp(pc?.hitPointInfo?.maximum),
-        temp: read_temp_hp()
+        current: current,
+        maximum: maximum,
+        temp: temp
       },
-      deathSaveInfo: read_death_save_info()
+      deathSaveInfo: deathSaves
     });
   }
 
@@ -557,7 +565,7 @@ function send_movement_speeds(container, speedManagePage) {
   }
 }
 
-function read_current_hp(container = $(document)) {
+function read_current_hp(currentHP, container = $(document)) {
  
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--cur .ct-health-manager__health-item-value`)
   if(element.length){
@@ -583,10 +591,10 @@ function read_current_hp(container = $(document)) {
     }
     return hpValue;
   }
-  return 0;
+  return currentHP;
 }
 
-function read_temp_hp(container = $(document)) {
+function read_temp_hp(currentTemp, container = $(document)) {
   let element = container.find(`.ct-health-manager__health-item.ct-health-manager__health-item--temp .ct-health-manager__health-item-value input.ct-health-manager__input`)
   if(element.length){
     return parseInt(element.val())
@@ -606,7 +614,7 @@ function read_temp_hp(container = $(document)) {
     // DDB doesn't display the temp value on mobile layouts so just set it to 1, so we can at least show that there is temp hp. See `read_current_hp` for the other side of this
     return 1;
   }
-  return 0;
+  return currentTemp;
 }
 
 function read_max_hp(currentMaxValue = 0, container = $(document)) {
