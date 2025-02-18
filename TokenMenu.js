@@ -201,7 +201,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
-					flyout.append(build_notes_flyout_menu(tokenIds));
+					flyout.append(build_notes_flyout_menu(tokenIds, flyout));
 				})
 			});
 			body.append(notesRow);
@@ -561,7 +561,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
-					flyout.append(build_notes_flyout_menu(tokenIds));
+					flyout.append(build_notes_flyout_menu(tokenIds, flyout));
 				})
 			});
 			body.append(notesRow);
@@ -1104,7 +1104,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
 				context_menu_flyout("notes-flyout", hoverEvent, function(flyout) {
-					flyout.append(build_notes_flyout_menu(tokenIds));
+					flyout.append(build_notes_flyout_menu(tokenIds, flyout));
 				})
 			});
 			body.append(notesRow);
@@ -2586,7 +2586,7 @@ function build_menu_stat_inputs(tokenIds) {
 
 
 
-function build_notes_flyout_menu(tokenIds) {
+function build_notes_flyout_menu(tokenIds, flyout) {
 	let tokens = tokenIds.map(id => window.TOKEN_OBJECTS[id]).filter(t => t !== undefined);
 	let body = $("<div></div>");
 	let id = tokenIds.length == 1 ? tokenIds[0] : tokens[0].options.id;
@@ -2608,6 +2608,7 @@ function build_notes_flyout_menu(tokenIds) {
 			body.append(viewNoteButton, noteLinkButton, editNoteButton, deleteNoteButton);	
 			viewNoteButton.off().on("click", function(){
 				window.JOURNAL.display_note(id);
+				$('#tokenOptionsClickCloseDiv').click();
 			});
 			noteLinkButton.off().on("click", function(){
 				let copyLink = `[note]${id};${window.JOURNAL.notes[id].title}[/note]`
@@ -2618,7 +2619,9 @@ function build_notes_flyout_menu(tokenIds) {
 					delete window.JOURNAL.notes[id];
 					window.JOURNAL.persist();
 					window.TOKEN_OBJECTS[id].place();	
-					build_notes_flyout_menu(tokenIds)		
+					body.remove();
+					if(flyout != undefined)
+						flyout.append(build_notes_flyout_menu(tokenIds, flyout))		
 				}
 			});
 		}
@@ -2635,8 +2638,8 @@ function build_notes_flyout_menu(tokenIds) {
 					plain: '',
 					player: false
 				}
-				build_notes_flyout_menu(tokenIds)
 			}
+			$('#tokenOptionsClickCloseDiv').click();
 			window.JOURNAL.edit_note(id);
 
 		});		
