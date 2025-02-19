@@ -5939,9 +5939,11 @@ function redraw_light(){
 					  	let img = new Image;
 
 						img.onload = function(){
-						  window.exploredCanvasContext.drawImage(img,0,0); 
-						  window.exploredCanvasContext.globalCompositeOperation='lighten';
-						  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+							requestAnimationFrame(function(){
+							  window.exploredCanvasContext.drawImage(img,0,0); 
+							  window.exploredCanvasContext.globalCompositeOperation='lighten';
+							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+							});
 						};
 						img.src = event.target.result.exploredData;
 					}
@@ -5951,9 +5953,10 @@ function redraw_light(){
 				if(window.exploredCanvasContext == undefined){
 					window.exploredCanvasContext = exploredCanvas.getContext('2d');
 				}
-				window.exploredCanvasContext.globalCompositeOperation='lighten';
-				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-
+				requestAnimationFrame(function(){
+					window.exploredCanvasContext.globalCompositeOperation='lighten';
+					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+				});
 				debounceStoreExplored(exploredCanvas);
 			}
 		

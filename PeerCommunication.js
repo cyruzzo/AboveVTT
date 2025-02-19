@@ -238,8 +238,6 @@ function disable_peer_manager() {
 
 /** when we receive catastrophic errors, we need to tear down and rebuild PeerManager */
 function rebuild_peerManager() {
-  console.warn("rebuild_peerManager is being ignored");
-  return;
   console.log("rebuild_peerManager starting");
   disable_peer_manager();
   window.PeerManager.tearDown();
