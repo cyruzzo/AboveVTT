@@ -1767,7 +1767,7 @@ padding-bottom: 5px;
     transition: none;
     visibility: visible;
     font-size: 12px;
-    bottom: -36px;
+    bottom: calc(-0.8 * var(--font-size-zoom));
     pointer-events: none;
     --positive-shadow: 1px;
     --negative-shadow: -1px;
