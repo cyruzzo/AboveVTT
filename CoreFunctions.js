@@ -1036,7 +1036,8 @@ function update_pc_with_api_call(playerId) {
       window.PC_NEEDS_API_CALL[playerId] = Date.now();
     }
   }
-  debounce_fetch_character_from_api();
+  if(Object.keys(window.PC_NEEDS_API_CALL).length > 0)
+    debounce_fetch_character_from_api();
 }
 
 const debounce_fetch_character_from_api = mydebounce(() => {

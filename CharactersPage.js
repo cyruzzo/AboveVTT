@@ -2151,6 +2151,10 @@ function observe_character_sheet_changes(documentToObserve) {
               ){
                 send_abilities();
               }
+              else  if (mutationTarget.closest('.ct-conditions-summary').length>0) { // conditions update from sidebar
+                const conditionsSet = read_conditions(documentToObserve);
+                character_sheet_changed({conditions: conditionsSet});
+              } 
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
