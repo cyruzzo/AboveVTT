@@ -1172,14 +1172,16 @@ function draw_wizarding_box() {
 	}
 
 }
-function ctxScale(canvasid){
+function ctxScale(canvasid, transform){
 	let canvas = document.getElementById(canvasid);
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
-	$(canvas).css({
-		'transform-origin': 'top left',
-		'transform': 'scale(var(--scene-scale))'
-	});
+	if(transform){
+		$(canvas).css({
+			'transform-origin': 'top left',
+			'transform': 'scale(var(--scene-scale))'
+		});
+	}
 }
 
 function reset_canvas(apply_zoom=true) {
@@ -1189,13 +1191,13 @@ function reset_canvas(apply_zoom=true) {
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
 
-	ctxScale('peer_overlay');
-	ctxScale('temp_overlay');
-	ctxScale('fog_overlay');
-	ctxScale('grid_overlay');	
-	ctxScale('draw_overlay');
-	ctxScale('walls_layer');
-	ctxScale('elev_overlay');
+	ctxScale('peer_overlay', true);
+	ctxScale('temp_overlay', true);
+	ctxScale('fog_overlay', true);
+	ctxScale('grid_overlay', true);	
+	ctxScale('draw_overlay', false);
+	ctxScale('walls_layer', true);
+	ctxScale('elev_overlay', true);
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
