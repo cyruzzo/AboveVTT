@@ -35,7 +35,7 @@ function init_sidebar_tabs() {
   sidebarContent.append(journalPanel.build());
   if (window.JOURNAL === undefined) {
     init_journal(find_game_id());
-  } else {
+  } else if(window.JOURNAL.chapters?.length > 0){
     window.JOURNAL.build_journal()
   }
 
