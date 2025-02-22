@@ -2072,8 +2072,6 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
-            } else if (mutationTarget.hasClass("ct-subsection--senses")) {
-              send_senses();
             } else if (mutationTarget.hasClass("ct-status-summary-mobile__button--interactive") && mutationTarget.text() === "Inspiration") {
               character_sheet_changed({inspiration: mutationTarget.hasClass("ct-status-summary-mobile__button--active")});
             } else if(mutationParent.find('[class*="ct-extras"]').length>0 && mutationParent.find('.add-monster-token-to-vtt').length==0){
@@ -2154,6 +2152,9 @@ function observe_character_sheet_changes(documentToObserve) {
               else  if (mutationTarget.closest('.ct-conditions-summary').length>0) { // conditions update from sidebar
                 const conditionsSet = read_conditions(documentToObserve);
                 character_sheet_changed({conditions: conditionsSet});
+              }
+              else if (mutationTarget.closest(".ct-subsection--senses").length>0) {
+                send_senses();
               } 
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
