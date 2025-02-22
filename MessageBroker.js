@@ -1874,10 +1874,21 @@ class MessageBroker {
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
-						data.map = await get_map_from_uvtt_file(data.player_map);
+						if(window.DM && data.dm_map && data.dm_map_usable){
+							data.map = await get_map_from_uvtt_file(data.map)
+						}
+						else{
+							data.map = await get_map_from_uvtt_file(data.player_map);
+						}			
 					}
 					catch{
-						data.UVTTFile = 0;
+						console.log('non-UVTT file found for map')
+						if(window.DM && data.dm_map && data.dm_map_usable){
+							data.map = data.dm_map;
+						}
+						else{
+							data.map = data.player_map;
+						}
 					}
 				}
 				else{
