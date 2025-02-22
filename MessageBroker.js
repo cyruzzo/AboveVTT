@@ -1919,7 +1919,7 @@ class MessageBroker {
 						data.is_video = data.player_map_is_video;
 					}
 
-					load_scenemap(data.dm_map && data.dm_map_usable && window.DM ?data.dm_map : data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
+					load_scenemap(data.map, data.is_video, data.width, data.height, data.UVTTFile, async function() {
 						console.group("load_scenemap callback")
 						if(!window.CURRENT_SCENE_DATA.scale_factor)
 							window.CURRENT_SCENE_DATA.scale_factor = 1;
