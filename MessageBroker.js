@@ -790,10 +790,13 @@ class MessageBroker {
 					
 					if(msg.data.id in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[msg.data.id].place();			
-					}				
-					if(msg.data.popup)
+					}			
+					const openNote = $(`.note[data-id='${msg.data.id}']`);	
+					if(msg.data.popup){
 						window.JOURNAL.display_note(msg.data.id);
-					const openNote = $(`.note[data-id='${msg.data.id}']`);
+					}else {
+						openNote.remove();
+					}
 					
 
 					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){

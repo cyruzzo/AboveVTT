@@ -1090,6 +1090,18 @@ class JournalManager{
 			});
 			
 			visibility_container.append(popup_btn);
+
+			let force_close_popup_btn=$("<button>Force Close by Players</button>")
+
+			force_close_popup_btn.click(function(){
+				window.MB.sendMessage('custom/myVTT/note',{
+						id: id,
+						note:self.notes[id],
+						popup: false,
+					});
+			});
+			
+			visibility_container.append(force_close_popup_btn);
 			
 			let edit_btn=$("<button>Edit</button>");
 			edit_btn.click(function(){
