@@ -74,9 +74,17 @@ class ChatObserver {
     }
 
     async #sendChatMessage(text) {
+        let player = window.PLAYER_NAME;
+        let image = window.PLAYER_IMG;
+        if(window.DM && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+            let id = window.CURRENTLY_SELECTED_TOKENS[0];
+            let firstToken = window.TOKEN_OBJECTS[id];
+            image = firstToken.options.imgsrc;
+            player = window.CURRENTLY_SELECTED_TOKENS.map(id => window.TOKEN_OBJECTS[id].options.name).join(", ");
+        }
         let data = {
-            player: window.PLAYER_NAME,
-            img: window.PLAYER_IMG,
+            player: player,
+            img: image,
             dmonly: false,
             language: $('#chat-language').val()
 
