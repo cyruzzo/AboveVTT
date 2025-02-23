@@ -791,10 +791,12 @@ class MessageBroker {
 					if(msg.data.id in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[msg.data.id].place();			
 					}			
-					const openNote = $(`.note[data-id='${msg.data.id}']`);	
-					if(msg.data.popup){
+					const openNote = $(`.note[data-id='${msg.data.id}']`);
+					// If the 'Open' button is clicked OR the note is already opened by a player and it is saved 
+					// by the DM, the note gets refreshed.
+					if (msg.data.popup == true || (msg.data.popup == undefined && openNote.length != 0)){
 						window.JOURNAL.display_note(msg.data.id);
-					}else {
+					} else if (msg.data.popup == false) {
 						openNote.remove();
 					}
 					
