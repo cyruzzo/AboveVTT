@@ -1020,101 +1020,96 @@ class JournalManager{
 	
 	display_note(id, statBlock = false){
 		let self=this;
-		$(`div.note[data-id='${id}']`)?.dialog("close");
-		let note=$(`<div class='note' data-id='${id}'></div>`);
+		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
 		
-		note.attr('title',self.notes[id].title);
-		if(window.DM){
-			let visibility_container=$("<div class='visibility-container'/>");
-
+		let note= noteAlreadyOpen ? $(`div.note[data-id='${id}']`) : $(`<div class='note' data-id='${id}'></div>`);
 		
+		if(!noteAlreadyOpen){
+			note.attr('title',self.notes[id].title);
+			if(window.DM){
+				let visibility_container=$("<div class='visibility-container'/>");
 
-			let toggle_container = $(`<div class='visibility-toggle-container'></div`)
-
-			let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
-			let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
-			visibility_row.append(visibility_toggle)
-			toggle_container.append(visibility_row);
-			visibility_toggle.change(function(){
-
-				window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
-				window.JOURNAL.build_journal();
-				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
-				toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
-				
 			
-			});
+
+				let toggle_container = $(`<div class='visibility-toggle-container'></div`)
+
+				let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
+				let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
+				visibility_row.append(visibility_toggle)
+				toggle_container.append(visibility_row);
+				visibility_toggle.change(function(){
+
+					window.JOURNAL.note_visibility(id,visibility_toggle.is(":checked"));
+					window.JOURNAL.build_journal();
+					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+					toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+					
+				
+				});
 
 
-			for(let i in window.playerUsers){
-				if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
-					let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
-					let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
-					
-					visibility_row.append(visibility_toggle)
+				for(let i in window.playerUsers){
+					if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+						let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+						let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+						
+						visibility_row.append(visibility_toggle)
 
-					visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
-					
-					visibility_toggle.change(function(){
-						let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
-						if(sharedUsers.length == 0)
-							sharedUsers = false;
-						window.JOURNAL.note_visibility(id,sharedUsers);
-						window.JOURNAL.build_journal();
-					});
-					
-					toggle_container.append(visibility_row);
+						visibility_toggle.prop("checked",(self.notes[id]?.player instanceof Array && self.notes[id]?.player.includes(`${window.playerUsers[i].userId}`)));
+						
+						visibility_toggle.change(function(){
+							let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
+							if(sharedUsers.length == 0)
+								sharedUsers = false;
+							window.JOURNAL.note_visibility(id,sharedUsers);
+							window.JOURNAL.build_journal();
+						});
+						
+						toggle_container.append(visibility_row);
+					}
 				}
-			}
-			
-			visibility_toggle.prop("checked",self.notes[id].player == true);
+
+				visibility_toggle.prop("checked",self.notes[id].player == true);
+					
+				if(visibility_toggle.is(":checked"))
+					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
+				else
+					toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
 				
-			if(visibility_toggle.is(":checked"))
-				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
-			else
-				toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
-			
-			
-			let shareWithPlayer = $("<button class='share-player-visibility'>Share with players</button>");
-			shareWithPlayer.append(toggle_container);
-			visibility_container.append(shareWithPlayer);
-			
-			let popup_btn=$("<button>Force Open by Players</button>");
-			
-			popup_btn.click(function(){
-				window.MB.sendMessage('custom/myVTT/note',{
-						id: id,
-						note:self.notes[id],
-						popup: true,
-					});
-			});
-			
-			visibility_container.append(popup_btn);
-
-			let force_close_popup_btn=$("<button>Force Closed by Players</button>")
-
-			force_close_popup_btn.click(function(){
-				window.MB.sendMessage('custom/myVTT/note',{
-						id: id,
-						note:self.notes[id],
-						popup: false,
-					});
-			});
-			
-			visibility_container.append(force_close_popup_btn);
-			
-			let edit_btn=$("<button>Edit</button>");
-			edit_btn.click(function(){
-				note.remove();
-				window.JOURNAL.edit_note(id, statBlock);
-			});
-			
-			visibility_container.append(edit_btn);
-			
-			note.append(visibility_container);
-			
+				
+				let shareWithPlayer = $("<button class='share-player-visibility'>Share with players</button>");
+				shareWithPlayer.append(toggle_container);
+				visibility_container.append(shareWithPlayer);
+				
+				let popup_btn=$("<button>Force Open by Players</button>");
+				
+				popup_btn.click(function(){
+					window.MB.sendMessage('custom/myVTT/note',{
+							id: id,
+							note:self.notes[id],
+							popup: true,
+						});
+				});
+				
+				visibility_container.append(popup_btn);
+				
+				let edit_btn=$("<button>Edit</button>");
+				edit_btn.click(function(){
+					note.remove();
+					window.JOURNAL.edit_note(id, statBlock);
+				});
+				
+				visibility_container.append(edit_btn);
+				
+				note.append(visibility_container);
+				
+			}
 		}
-		let note_text=$("<div class='note-text'/>");
+		
+		let note_text= noteAlreadyOpen ? note.find('.note-text') : $("<div class='note-text'/>");
+		if(noteAlreadyOpen){
+			note_text.empty();
+		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		
 		this.translateHtmlAndBlocks(note_text);	
@@ -1146,68 +1141,72 @@ class JournalManager{
 		    $(this).find('p').remove();
 		    $(this).after(input)
 	    })
-		note.append(note_text);
+		if(!noteAlreadyOpen){
+			note.append(note_text);
+		}
 		note.find("a").attr("target","_blank");
-		note.dialog({
-			draggable: true,
-			width: 860,
-			height: 600,
-			position:{
-			   my: "center",
-			   at: "center-200",
-			   of: window
-			},
-			close: function( event, ui ) {
-				$(this).remove();
+		if(!noteAlreadyOpen){
+			note.dialog({
+				draggable: true,
+				width: 860,
+				height: 600,
+				position:{
+				   my: "center",
+				   at: "center-200",
+				   of: window
+				},
+				close: function( event, ui ) {
+					$(this).remove();
+					}
+				});	
+			$("[role='dialog']").draggable({
+				containment: "#windowContainment",
+				start: function () {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function () {
+					$('.iframeResizeCover').remove();			
 				}
-			});	
-		$("[role='dialog']").draggable({
-			containment: "#windowContainment",
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();			
-			}
-		});
-		$("[role='dialog']").resizable({
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();			
-			}
-		});
+			});
+			$("[role='dialog']").resizable({
+				start: function () {
+					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+				},
+				stop: function () {
+					$('.iframeResizeCover').remove();			
+				}
+			});
 
-		note.parent().mousedown(function() {
-			frame_z_index_when_click($(this));
-		});		
-		let btn_popout=$(`<div class="popout-button journal-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>"`);
-		note.parent().append(btn_popout);
-		btn_popout.click(function(){	
-			let uiId = $(this).siblings(".note").attr("id");
-			let journal_text = $(`#${uiId}.note .note-text`)
-			let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
-			popoutWindow(title, note, journal_text.width(), journal_text.height());
-			removeFromPopoutWindow(title, ".visibility-container");
-			removeFromPopoutWindow(title, ".ui-resizable-handle");
-			$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
-				body div.note[id^="ui-id"]{
-					height: 100% !important;
-				    max-height: 100% !important;
-				    overflow: auto !important;
-				}
-			</stlye>`);
-			
-			
-			$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
-		});
-		note.off('click').on('click', '.int_source_link', function(event){
-			event.preventDefault();
-			render_source_chapter_in_iframe(event.target.href);
-		});
+			note.parent().mousedown(function() {
+				frame_z_index_when_click($(this));
+			});		
+			let btn_popout=$(`<div class="popout-button journal-button"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"></path></svg></div>"`);
+			note.parent().append(btn_popout);
+			btn_popout.click(function(){	
+				let uiId = $(this).siblings(".note").attr("id");
+				let journal_text = $(`#${uiId}.note .note-text`)
+				let title = self.notes[id]?.title?.trim() || $("#resizeDragMon .avtt-stat-block-container .mon-stat-block__name-link").text();
+				popoutWindow(title, note, journal_text.width(), journal_text.height());
+				removeFromPopoutWindow(title, ".visibility-container");
+				removeFromPopoutWindow(title, ".ui-resizable-handle");
+				$(window.childWindows[title].document).find("head").append(`<style id='noteStyles'>
+					body div.note[id^="ui-id"]{
+						height: 100% !important;
+					    max-height: 100% !important;
+					    overflow: auto !important;
+					}
+				</stlye>`);
+				
+				
+				$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
+			});
+			note.off('click').on('click', '.int_source_link', function(event){
+				event.preventDefault();
+				render_source_chapter_in_iframe(event.target.href);
+			});
+		}
 
 	}
 	add_journal_tooltip_targets(target){
