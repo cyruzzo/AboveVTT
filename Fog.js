@@ -5415,13 +5415,9 @@ function particleUpdate(x, y) {
 };
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
-	if(auraId != undefined && window.TOKEN_OBJECTS[auraId].options.underDarkness){
-		lightPolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
-		movePolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
-	}else{
-		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-	}
+
+	lightPolygon = [];
+	movePolygon = [];
 	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
 	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
 
@@ -5494,14 +5490,14 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 
 	    }	    
-	    if (closestLight && closestWall != prevClosestWall) {
-	    	if(prevClosestWall != null && prevClosestPoint != null){	    		
+	    if (closestLight && (closestWall != prevClosestWall || i == 359)) {
+	    	if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
 	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
 	    	}
 	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
-	    if (closestMove && closestBarrier != prevClosestBarrier) {
-	    	if(prevClosestBarrierPoint){
+	    if (closestMove && (closestBarrier != prevClosestBarrier || i == 359)) {
+	    	if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
 	    		 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
 	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
@@ -5519,10 +5515,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    prevClosestBarrierPoint = closestMove;
 	    prevClosestBarrier = closestBarrier;
 	}
-	if(lightPolygon[1] != undefined)
-  		lightPolygon.push(lightPolygon[1]);
-  	if(movePolygon[1] != undefined)
-  		movePolygon.push(movePolygon[1]);
   	if(draw == true){
 		if(!fog){
 			  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
