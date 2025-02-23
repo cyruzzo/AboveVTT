@@ -428,7 +428,7 @@ function getRollData(rollButton){
 }
 class DiceRoller {
 
-    timeoutDuration = 10000; // 10 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
+    timeoutDuration = 15000; // 15 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
 
     /// PRIVATE VARIABLES
     #pendingDiceRoll = undefined;
@@ -515,7 +515,7 @@ class DiceRoller {
             }
             let self = this;
             this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 10 seconds!");
+                console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
             }, this.timeoutDuration);
             let msgdata = {}
@@ -691,7 +691,7 @@ class DiceRoller {
             // This also blocks other attempts to roll until we've finished processing
        
             this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 10 seconds!");
+                console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
             }, this.timeoutDuration);
 
