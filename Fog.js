@@ -1191,6 +1191,7 @@ function reset_canvas(apply_zoom=true) {
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
+	ctxScale('draw_overlay_under_fog_darkness');
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
@@ -1440,23 +1441,31 @@ function redraw_text() {
 
 function redraw_drawings() {
 
-	let canvas = document.getElementById("draw_overlay");
-	let ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	let canvasAboveFog = document.getElementById("draw_overlay");
+	let ctxAboveFog = canvasAboveFog.getContext("2d");
+	ctxAboveFog.clearRect(0, 0, canvasAboveFog.width, canvasAboveFog.height);
+
+	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
+	let ctxBelowFog = canvasBelowFog.getContext("2d");
+	ctxBelowFog.clearRect(0, 0, canvasBelowFog.width, canvasBelowFog.height);
 
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall" && d[1] !== 'light' && d[1] !== 'elev')
 		
 	 
 
-	let offscreenDraw = document.createElement('canvas');
-	let offscreenContext = offscreenDraw.getContext('2d');
+	let offscreenDrawAboveFog = document.createElement('canvas');
+	let offscreenContextAboveFog = offscreenDrawAboveFog.getContext('2d');
+	let offscreenDrawBelowFog = document.createElement('canvas');
+	let offscreenContextBelowFog = offscreenDrawBelowFog.getContext('2d');
 
-	offscreenDraw.width = canvas.width;
-	offscreenDraw.height = canvas.height;
+	offscreenDrawAboveFog.width = canvasAboveFog.width;
+	offscreenDrawAboveFog.height = canvasAboveFog.height;
+	offscreenDrawBelowFog.width = canvasBelowFog.width;
+	offscreenDrawBelowFog.height = canvasBelowFog.height;
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, location] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
 		if(drawings[i][1] =='elev'){
@@ -1468,7 +1477,8 @@ function redraw_drawings() {
 		  color = numToColor(color, 0.8, max);
 		}
 
-		let targetCtx = offscreenContext;
+		// Will default to 'above fog' draw layer for existing drawings
+		let targetCtx = location == 'below' ? offscreenContextBelowFog : offscreenContextAboveFog;
 
 		if(fill == 'dot'){
 			targetCtx.setLineDash([lineWidth, 3*lineWidth])
@@ -1525,7 +1535,10 @@ function redraw_drawings() {
 		}
 	}
 
-	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+	ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
+
+	ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
+	
 }
 function redraw_elev(openLegened = false) {
 	window.elevHeights = {};
@@ -2257,6 +2270,7 @@ function drawing_mousedown(e) {
 	window.LINEWIDTH = data.draw_line_width
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
+	window.DRAWLOCATION = data.location
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
 
@@ -2784,7 +2798,8 @@ function drawing_mouseup(e) {
 		 width,
 		 height,
 		 window.LINEWIDTH,
-		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+		 window.DRAWLOCATION];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
@@ -3957,7 +3972,7 @@ function drawPolygon (
 	mouseY = null,
 	scale = window.CURRENT_SCENE_DATA.scale_factor,
 	replacefog = false,
-	islight = false
+	islight = false,location = 'above'
 ) {
 	ctx.save();
 	ctx.beginPath();
@@ -4206,7 +4221,8 @@ function save3PointRect(e){
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+			window.DRAWLOCATION
 		];
 		window.DRAWINGS.push(data);	
 		redraw_drawn_light();
@@ -4265,7 +4281,8 @@ function savePolygon(e) {
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+			window.DRAWLOCATION
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawn_light();
@@ -4689,11 +4706,27 @@ function init_draw_menu(buttons){
 				DOTTED
 			</button>
 		</div>`);
-			draw_menu.append(
+		draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
 				data-key="fill" data-value='dash' data-toggle='true' data-unique-with="fill">
 				DASHED
+			</button>
+		</div>`);
+		
+	draw_menu.append("<div class='menu-subtitle'>Draw Location</div>");
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-key="location" data-value='above' data-toggle='true' data-unique-with="location">
+				ABOVE FOG
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="location" data-value='below' data-toggle='true' data-unique-with="location">
+				BELOW FOG
 			</button>
 		</div>`);
 
