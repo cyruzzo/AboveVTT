@@ -1091,7 +1091,7 @@ class JournalManager{
 			
 			visibility_container.append(popup_btn);
 
-			let force_close_popup_btn=$("<button>Force Close by Players</button>")
+			let force_close_popup_btn=$("<button>Force Closed by Players</button>")
 
 			force_close_popup_btn.click(function(){
 				window.MB.sendMessage('custom/myVTT/note',{
