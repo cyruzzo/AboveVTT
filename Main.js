@@ -2426,6 +2426,12 @@ function init_ui() {
 	background.css("left", "0");
 	background.css("position", "absolute");
 	background.css("z-index", "10");
+	
+	const drawOverlayUnderFogDarkness = $("<canvas id='draw_overlay_under_fog_darkness'></canvas>");
+	drawOverlayUnderFogDarkness.css("position", "absolute");
+	drawOverlayUnderFogDarkness.css("top", "0");
+	drawOverlayUnderFogDarkness.css("left", "0");
+	drawOverlayUnderFogDarkness.css("z-index", "18");
 
 	const mapItems = $("<div id='map_items'></div>");
 	mapItems.css("top", "0");
@@ -2586,6 +2592,7 @@ function init_ui() {
 
 	VTT.append(mapContainer);
 	VTT.append(peerOverlay);
+	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
@@ -2603,6 +2610,7 @@ function init_ui() {
 
 
 	mapItems.append(background);
+	mapItems.append(drawOverlayUnderFogDarkness);
 
 
 
