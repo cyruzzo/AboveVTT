@@ -1172,14 +1172,16 @@ function draw_wizarding_box() {
 	}
 
 }
-function ctxScale(canvasid){
+function ctxScale(canvasid, doNotScale=false){
 	let canvas = document.getElementById(canvasid);
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
-	$(canvas).css({
-		'transform-origin': 'top left',
-		'transform': 'scale(var(--scene-scale))'
-	});
+  	if (!doNotScale) {
+		$(canvas).css({
+			'transform-origin': 'top left',
+			'transform': 'scale(var(--scene-scale))'
+		});
+	}
 }
 
 function reset_canvas(apply_zoom=true) {
@@ -1191,7 +1193,7 @@ function reset_canvas(apply_zoom=true) {
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
-	ctxScale('draw_overlay_under_fog_darkness');
+	ctxScale('draw_overlay_under_fog_darkness', true);
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
