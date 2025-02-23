@@ -769,10 +769,13 @@ function build_monster_stat_block(statBlock, token) {
         `;
     }
     let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
-    $stat.find('.spell-tooltip').each((index, tooltip) =>{
-      $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
-      $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
-    })
+    if(statBlock.data.spellTooltips != undefined){
+      $stat.find('.spell-tooltip').each((index, tooltip) =>{
+        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+      })
+    }
+
     return $stat[0].outerHTML;
 }
 function build_monster_copy_stat_block(statBlock) {
@@ -1293,10 +1296,12 @@ function build_monster_copy_stat_block(statBlock) {
     }
 
     let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
-    $stat.find('.spell-tooltip').each((index, tooltip) =>{
-      $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
-      $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
-    })
+    if(statBlock.data.spellTooltips != undefined){
+      $stat.find('.spell-tooltip').each((index, tooltip) =>{
+        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+      })
+    }
     return $stat[0].outerHTML;
 }
 class MonsterStatBlock {
