@@ -219,7 +219,7 @@ class JournalManager{
 		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
 		journalPanel.body.children().not('[name="journal-search"]').remove();
 		
-		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal" value=${searchText || ''}>`);
+		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal">`);
 		searchInput.off("input").on("input", mydebounce(() => {
 			let searchElement = document.getElementsByName("journal-search")[0];
 			let textValue = searchElement.value;
@@ -230,6 +230,10 @@ class JournalManager{
 				$(event.target).blur();
 			}
 		});
+		if(!searchText){
+			let searchElement = document.getElementsByName("journal-search")[0];
+			searchText = searchElement?.value || '';
+		}
 
 		
 		const row_add_chapter=$("<div class='row-add-chapter'></div>");
@@ -350,29 +354,57 @@ class JournalManager{
 				}
 			}
 			
-			let traverseChapters = function(chapter){
+			let traverseChaptersUp = function(chapter){
 				if(chapter.parentID){
 					let parent = self.chapters.find(c => c.id == chapter.parentID);
 					if(parent){
 						relevantChapters.push(parent);
-						traverseChapters(parent);
+						traverseChaptersUp(parent);
 					}
 				}
 			}
+			
+			let traverseChaptersDown = function(chapter){
+				console.log('Traverse chapters down');
+				console.log(chapter);
+				console.log(self.chapters);
+				if(chapter.notes){
+					chapter.notes.forEach(note_id => {
+						if(!relevantNotes[note_id]){
+							relevantNotes[note_id] = self.notes[note_id];
+						}
+					});
+				}
+				if(chapter.id){
+					let childChapters = self.chapters.filter(c => c.parentID == chapter.id)
+					console.log(childChapters);
+					if(childChapters?.length > 0){
+						childChapters.forEach((chapter)=> {
+							console.log('Chapter 2', chapter);
+							relevantChapters.push(chapter);
+							traverseChaptersDown(chapter);
+						})
+					}
+				}
+			}
+			
 	
 			Object.entries(relevantNotes).map(([key, value]) => ({...value, id: key})).forEach((note) => {
 				let parent = self.chapters.find(chapter => chapter.notes.includes(note.id));
 				if(parent){
 					relevantChapters.push(parent);
-					traverseChapters(parent);
+					traverseChaptersUp(parent);
 				}
 			});
 			let filteredChapters = self.chapters.filter(chapter => chapter.title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1);
 			
 			filteredChapters.forEach(chapter => {
 				relevantChapters.push(chapter);
-				traverseChapters(chapter);
+				traverseChaptersUp(chapter);
+				traverseChaptersDown(chapter);
 			});
+
+			console.log()
 			
 			filteredChapters.forEach(chapter => {
 				chapter.notes.forEach(note_id => {
