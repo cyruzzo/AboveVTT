@@ -216,7 +216,7 @@ class JournalManager{
 		console.log('build_journal');
 		let self=this;
 
-		journalPanel.body.empty();
+		journalPanel.body.children().not('[name="journal-search"]').remove();
 		
 		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal" value=${searchText || ''}>`);
 		searchInput.off("input").on("input", mydebounce(() => {
@@ -271,7 +271,9 @@ class JournalManager{
 		});
 		
 		if(window.DM) {
-			journalPanel.body.append(searchInput);
+			if (journalPanel.body.find('[name="journal-search"]').length === 0) {
+				journalPanel.body.append(searchInput);
+			}
 			row_add_chapter.append(input_add_chapter);
 			row_add_chapter.append(btn_add_chapter);
 			journalPanel.body.append(row_add_chapter);
@@ -332,18 +334,16 @@ class JournalManager{
 		let chaptersWithLaterParents = [];
 
 		console.log('window',window);
-		let relevantNotes = [];
+		let relevantNotes = {};
 		let relevantChapters = [];
 
-		console.log(searchText && searchText.length > 0);
 
 		if(searchText){
-			for(const property in window.JOURNAL.notes){
-				if(!searchText || window.JOURNAL.notes[property].title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1){
-					relevantNotes.push({...window.JOURNAL.notes[property], id: property});
+			for(const property in self.notes){
+				if(!searchText || self.notes[property].title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1){
+					relevantNotes[property] = self.notes[property];
 				}
 			}
-			console.log(relevantNotes);
 			
 			let traverseChapters = function(chapter){
 				if(chapter.parentID){
@@ -355,23 +355,37 @@ class JournalManager{
 				}
 			}
 	
-			relevantNotes.forEach(note => {
+			Object.entries(relevantNotes).map(([key, value]) => ({...value, id: key})).forEach((note) => {
 				let parent = self.chapters.find(chapter => chapter.notes.includes(note.id));
 				if(parent){
 					relevantChapters.push(parent);
 					traverseChapters(parent);
 				}
 			});
-			console.log(relevantChapters);
+			let filteredChapters = self.chapters.filter(chapter => chapter.title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1);
+			
+			filteredChapters.forEach(chapter => {
+				relevantChapters.push(chapter);
+				traverseChapters(chapter);
+			});
+			
+			filteredChapters.forEach(chapter => {
+				chapter.notes.forEach(note_id => {
+					if(!relevantNotes[note_id]){
+						relevantNotes[note_id] = self.notes[note_id];
+					}
+				});
+			});
 		} else {
-			relevantNotes = Object.entries(window.JOURNAL.notes).map(([key, value]) => ({...value, id: key}));
+			relevantNotes = self.notes;
 			relevantChapters = self.chapters;
 		}
 
-
+		console.log('relevantNotes', relevantNotes);
+		console.log('relevantChapters', relevantChapters);
 
 		for(let i=0; i<self.chapters.length;i++){
-				if(relevantChapters.find(d => d.id == self.chapters[i].id)){
+			if(relevantChapters.find(d => d.id == self.chapters[i].id)){
 		
 				if(!self.chapters[i].id){
 					self.chapters[i].id = uuid();
@@ -605,96 +619,95 @@ class JournalManager{
 
 
 				for(let n=0; n<self.chapters[i].notes.length;n++){
-					if(relevantNotes.find(d => d.id == self.chapters[i].notes[n])){
+
+					let note_id=self.chapters[i].notes[n];
+					
+					if(! (note_id in self.notes && note_id in relevantNotes ))
+						continue;
 						
-						let note_id=self.chapters[i].notes[n];
-						
-						if(! (note_id in self.notes))
-							continue;
-							
-						if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
-							continue;
-						
-						let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
-						let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
-						let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title' title='${self.notes[note_id].title}'></div>`);
+					if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
+						continue;
+					
+					let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
+					let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
+					let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title' title='${self.notes[note_id].title}'></div>`);
 
 
-						entry_title.text(self.notes[note_id].title);
-						if(!self.notes[note_id].ddbsource){
-							entry_title.click(function(){
-								self.display_note(note_id);
-							});
-						}
-						else{
-							entry_title.click(function(){
-								render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
-							});
-						}
-						let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
-						
-						rename_btn.click(function(){
-							//Convert the note title to an input field and focus it
-							const input_note_title=$(`
-								<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
-							`);
-
-							input_note_title.keypress(function(e){
-								if (e.which == 13 && input_note_title.val() !== "") {
-									self.notes[note_id].title = input_note_title.val();
-									self.sendNotes([self.notes[note_id]]);
-									self.persist();
-									self.build_journal();
-								}
-
-								// If the user presses escape, cancel the edit
-								if (e.which == 27) {
-									self.build_journal();
-								}
-							});
-							input_note_title.off('click').on('click', function(e){
-								e.stopPropagation();
-							})
-							input_note_title.blur(function(event){	
-								let e = $.Event('keypress');
-								e.which = 13;
-								input_note_title.trigger(e);
-							});
-
-							entry_title.empty();
-							
-							entry_title.append(input_note_title);
-							entry_title.append(edit_btn);
-
-							input_note_title.focus();
-
-							// Convert the edit button to a save button
-							rename_btn.empty();
-							rename_btn.append(`
-								<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
-							`);
+					entry_title.text(self.notes[note_id].title);
+					if(!self.notes[note_id].ddbsource){
+						entry_title.click(function(){
+							self.display_note(note_id);
 						});
-
-
-
-						let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
-						edit_btn.click(function(){
-							window.JOURNAL.edit_note(note_id);	
-						});
-						let note_index=n;
-
-										
-						entry.append(prependIcon);
-						entry.append(entry_title);
-
-						if(window.DM){
-							if(!self.notes[note_id].ddbsource){
-								entry.append(edit_btn);	
-							}
-						}
-
-						note_list.append(entry);
 					}
+					else{
+						entry_title.click(function(){
+							render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
+						});
+					}
+					let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
+					
+					rename_btn.click(function(){
+						//Convert the note title to an input field and focus it
+						const input_note_title=$(`
+							<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
+						`);
+
+						input_note_title.keypress(function(e){
+							if (e.which == 13 && input_note_title.val() !== "") {
+								self.notes[note_id].title = input_note_title.val();
+								self.sendNotes([self.notes[note_id]]);
+								self.persist();
+								self.build_journal();
+							}
+
+							// If the user presses escape, cancel the edit
+							if (e.which == 27) {
+								self.build_journal();
+							}
+						});
+						input_note_title.off('click').on('click', function(e){
+							e.stopPropagation();
+						})
+						input_note_title.blur(function(event){	
+							let e = $.Event('keypress');
+							e.which = 13;
+							input_note_title.trigger(e);
+						});
+
+						entry_title.empty();
+						
+						entry_title.append(input_note_title);
+						entry_title.append(edit_btn);
+
+						input_note_title.focus();
+
+						// Convert the edit button to a save button
+						rename_btn.empty();
+						rename_btn.append(`
+							<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
+						`);
+					});
+
+
+
+					let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
+					edit_btn.click(function(){
+						window.JOURNAL.edit_note(note_id);	
+					});
+					let note_index=n;
+
+									
+					entry.append(prependIcon);
+					entry.append(entry_title);
+
+					if(window.DM){
+						if(!self.notes[note_id].ddbsource){
+							entry.append(edit_btn);	
+						}
+					}
+
+					note_list.append(entry);
+					
 				}
 
 				// Create an add note button, when clicked, insert an input field above the button.
@@ -713,6 +726,7 @@ class JournalManager{
 				}
 				section_chapter.append(note_list);
 			}
+			
 		}	
 
 		if(!window.journalsortable)
