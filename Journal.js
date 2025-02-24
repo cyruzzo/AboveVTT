@@ -212,11 +212,23 @@ class JournalManager{
 
 	}
 	
-	build_journal(){
+	build_journal(searchText){
 		console.log('build_journal');
 		let self=this;
 
 		journalPanel.body.empty();
+		
+		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal" value=${searchText || ''}>`);
+		searchInput.off("input").on("input", mydebounce(() => {
+			let searchElement = document.getElementsByName("journal-search")[0];
+			let textValue = searchElement.value;
+			this.build_journal(textValue);
+		}, 500));
+		searchInput.off("keyup").on('keyup', function(event) {
+			if (event.key === "Escape") {
+				$(event.target).blur();
+			}
+		});
 
 		
 		const row_add_chapter=$("<div class='row-add-chapter'></div>");
@@ -259,6 +271,7 @@ class JournalManager{
 		});
 		
 		if(window.DM) {
+			journalPanel.body.append(searchInput);
 			row_add_chapter.append(input_add_chapter);
 			row_add_chapter.append(btn_add_chapter);
 			journalPanel.body.append(row_add_chapter);
@@ -317,345 +330,389 @@ class JournalManager{
 
 		journalPanel.body.append(chapter_list);
 		let chaptersWithLaterParents = [];
+
+		console.log('window',window);
+		let relevantNotes = [];
+		let relevantChapters = [];
+
+		console.log(searchText && searchText.length > 0);
+
+		if(searchText){
+			for(const property in window.JOURNAL.notes){
+				if(!searchText || window.JOURNAL.notes[property].title?.toLowerCase().indexOf(searchText?.toLowerCase()) > -1){
+					relevantNotes.push({...window.JOURNAL.notes[property], id: property});
+				}
+			}
+			console.log(relevantNotes);
+			
+			let traverseChapters = function(chapter){
+				if(chapter.parentID){
+					let parent = self.chapters.find(c => c.id == chapter.parentID);
+					if(parent){
+						relevantChapters.push(parent);
+						traverseChapters(parent);
+					}
+				}
+			}
+	
+			relevantNotes.forEach(note => {
+				let parent = self.chapters.find(chapter => chapter.notes.includes(note.id));
+				if(parent){
+					relevantChapters.push(parent);
+					traverseChapters(parent);
+				}
+			});
+			console.log(relevantChapters);
+		} else {
+			relevantNotes = Object.entries(window.JOURNAL.notes).map(([key, value]) => ({...value, id: key}));
+			relevantChapters = self.chapters;
+		}
+
+
+
 		for(let i=0; i<self.chapters.length;i++){
-	
-			if(!self.chapters[i].id){
-				self.chapters[i].id = uuid();
-			}
-			// A chapter title can be clicked to expand/collapse the chapter notes
-			let section_chapter=$(`
-				<div data-index='${i}' data-id='${self.chapters[i].id}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
-			`);
+				if(relevantChapters.find(d => d.id == self.chapters[i].id)){
+		
+				if(!self.chapters[i].id){
+					self.chapters[i].id = uuid();
+				}
+				// A chapter title can be clicked to expand/collapse the chapter notes
+				let section_chapter=$(`
+					<div data-index='${i}' data-id='${self.chapters[i].id}' class='sidebar-list-item-row list-item-identifier folder ${self.chapters[i]?.collapsed ? 'collapsed' : ''}'></div>
+				`);
 
-			// Create a sortale list of notes
-			const note_list=$("<ul class='note-list'></ul>");
-			section_chapter.droppable({
-			    accept: '#journal-panel .folder',
-			    greedy: true,
-				tolerance: 'pointer',
-			    drop: function(e,ui) {
-			    	let targetID = $(this).attr('data-id');
-			    	let targetIndex = $(this).attr('data-index');
-			    	let folderIndex = ui.draggable.attr('data-index');
-			    	if(self.chapters[folderIndex].id == targetID)
-			    		return;
-			    	self.chapters[folderIndex].parentID = targetID;
-			    	const new_index = targetIndex+1;
-					// Move the dragged element to the new index
-					self.chapters.splice(new_index, 0, self.chapters.splice(folderIndex, 1)[0]);
-					
-					self.persist();
-					window.MB.sendMessage('custom/myVTT/JournalChapters',{
-						chapters: self.chapters
-					});
-					self.build_journal();
-
-			    }
-			})
-			let sender;
-			// Make the section_chapter sortable
-			section_chapter.sortable({
-				refreshPositions: true,
-				connectWith: "#journal-panel .folder",
-				items: '.sidebar-list-item-row',
-		        receive: function(event, ui) {
-		            // Called only in case B (with !!sender == true)
-		            sender = ui.sender;
-		           	let sender_index = sender.attr('data-index');
-		           	let new_folder_index = ui.item.parent().closest('.folder').attr('data-index');
-		          	const old_index = self.chapters[sender_index].notes.findIndex(function(note) {
-						return note == ui.item.attr('data-id');
-					});
-					// Find the new index of the dragged element
-					const new_index = (old_index != -1) ? ui.item.index() : self.chapters.length-1;
-					// Move the dragged element to the new index
-					self.chapters[new_folder_index].notes.splice(new_index, 0, self.chapters[sender_index].notes.splice(old_index, 1)[0]);
-					self.persist();
-					window.MB.sendMessage('custom/myVTT/JournalChapters',{
-						chapters: self.chapters
-					});
-					self.build_journal();
-		            event.preventDefault();
-		        },
-				update: function(event, ui) {
-					// Find the old index of the dragged element
-					if(sender==undefined){
-						if(ui.item.hasClass('folder')){
-							
-							const old_index = self.chapters.findIndex(function(chapter) {
-								return chapter.id == ui.item.attr('data-id')
-							});
-
-							const new_index = ui.item.next().hasClass('folder') ? ui.item.next().attr('data-index') : ui.item.prev().attr('data-index') ;
-							self.chapters.splice(new_index, 0, self.chapters.splice(old_index, 1)[0]);
-						}
-						else{
-							const old_index = self.chapters[i].notes.findIndex(function(note) {
-								return note == ui.item.attr('data-id')
-							});
-							// Find the new index of the dragged element
-							const new_index = ui.item.index();
-							// Move the dragged element to the new index
-							self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
-						}
+				// Create a sortale list of notes
+				const note_list=$("<ul class='note-list'></ul>");
+				section_chapter.droppable({
+					accept: '#journal-panel .folder',
+					greedy: true,
+					tolerance: 'pointer',
+					drop: function(e,ui) {
+						let targetID = $(this).attr('data-id');
+						let targetIndex = $(this).attr('data-index');
+						let folderIndex = ui.draggable.attr('data-index');
+						if(self.chapters[folderIndex].id == targetID)
+							return;
+						self.chapters[folderIndex].parentID = targetID;
+						const new_index = targetIndex+1;
+						// Move the dragged element to the new index
+						self.chapters.splice(new_index, 0, self.chapters.splice(folderIndex, 1)[0]);
+						
 						self.persist();
 						window.MB.sendMessage('custom/myVTT/JournalChapters',{
 							chapters: self.chapters
 						});
 						self.build_journal();
+
 					}
-
-				}
-			});
-			let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
-				
-			let row_chapter_title=$("<div class='row-chapter'></div>");
-			
-			
-			let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
-			chapter_title.text(self.chapters[i].title);
-
-			// If the user clicks the chapter title, expand/collapse the chapter notes
-			chapter_title.click(function(){
-				section_chapter.toggleClass('collapsed');
-				self.chapters[i].collapsed = !self.chapters[i].collapsed;
-				self.persist();
-				window.MB.sendMessage('custom/myVTT/JournalChapters',{
-					chapters: self.chapters
-				});
-			});
-			
-	
-
-			let add_note_btn=$("<button class='token-row-button' ><span class='material-symbols-outlined'>add_notes</span></button>");
-
-			add_note_btn.click(function(){
-				let new_noteid=uuid();
-
-				const input_add_note=$("<input type='text' class='input-add-chapter' placeholder='New note title'>");
-				let note_added = false;
-				input_add_note.keydown(function(e){
-					if(e.keyCode == 13 && input_add_note.val() !== ""){
-						note_added = true;
-						let new_note_title=input_add_note.val();
-						self.notes[new_noteid]={
-							title: new_note_title,
-							text: "",
-							player: false,
-							plain: ""
-						};
-						self.chapters[i].notes.push(new_noteid);
+				})
+				let sender;
+				// Make the section_chapter sortable
+				section_chapter.sortable({
+					refreshPositions: true,
+					connectWith: "#journal-panel .folder",
+					items: '.sidebar-list-item-row',
+					receive: function(event, ui) {
+						// Called only in case B (with !!sender == true)
+						sender = ui.sender;
+						let sender_index = sender.attr('data-index');
+						let new_folder_index = ui.item.parent().closest('.folder').attr('data-index');
+						const old_index = self.chapters[sender_index].notes.findIndex(function(note) {
+							return note == ui.item.attr('data-id');
+						});
+						// Find the new index of the dragged element
+						const new_index = (old_index != -1) ? ui.item.index() : self.chapters.length-1;
+						// Move the dragged element to the new index
+						self.chapters[new_folder_index].notes.splice(new_index, 0, self.chapters[sender_index].notes.splice(old_index, 1)[0]);
+						self.persist();
 						window.MB.sendMessage('custom/myVTT/JournalChapters',{
 							chapters: self.chapters
 						});
-						self.edit_note(new_noteid);
-						self.persist();
 						self.build_journal();
-					}
-					if(e.keyCode==27){
-						self.build_journal();
+						event.preventDefault();
+					},
+					update: function(event, ui) {
+						// Find the old index of the dragged element
+						if(sender==undefined){
+							if(ui.item.hasClass('folder')){
+								
+								const old_index = self.chapters.findIndex(function(chapter) {
+									return chapter.id == ui.item.attr('data-id')
+								});
+
+								const new_index = ui.item.next().hasClass('folder') ? ui.item.next().attr('data-index') : ui.item.prev().attr('data-index') ;
+								self.chapters.splice(new_index, 0, self.chapters.splice(old_index, 1)[0]);
+							}
+							else{
+								const old_index = self.chapters[i].notes.findIndex(function(note) {
+									return note == ui.item.attr('data-id')
+								});
+								// Find the new index of the dragged element
+								const new_index = ui.item.index();
+								// Move the dragged element to the new index
+								self.chapters[i].notes.splice(new_index, 0, self.chapters[i].notes.splice(old_index, 1)[0]);
+							}
+							self.persist();
+							window.MB.sendMessage('custom/myVTT/JournalChapters',{
+								chapters: self.chapters
+							});
+							self.build_journal();
+						}
+
 					}
 				});
-
-				input_add_note.blur(function(event){	
-					if(!note_added)	{
-						let e = $.Event('keydown');
-					    e.keyCode = 13;
-					    input_add_note.trigger(e);
-					}
+				let folderIcon = $(`<div class="sidebar-list-item-row-img"><img src="${window.EXTENSION_PATH}assets/folder.svg" class="token-image"></div>`)
 					
-				});
-
-				row_notes_entry.empty();
-
-				const save_note_btn=$("<button class='btn-chapter-icon'><img src='"+window.EXTENSION_PATH+"assets/icons/save.svg'></button>");
-
+				let row_chapter_title=$("<div class='row-chapter'></div>");
 				
-				row_notes_entry.append(save_note_btn);
-				row_notes_entry.append(input_add_note);
+				
+				let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
+				chapter_title.text(self.chapters[i].title);
 
-				input_add_note.focus();
-			});
-			let add_fold_btn=$("<button class='token-row-button'><span class='material-icons'>create_new_folder</span></button>");
-			add_fold_btn.click(function(){
-
-				self.chapters.push({
-					title: "New Folder",
-					collapsed: false,
-					notes: [],
-					parentID: $(this).closest('.folder[data-id]').attr('data-id')
+				// If the user clicks the chapter title, expand/collapse the chapter notes
+				chapter_title.click(function(){
+					section_chapter.toggleClass('collapsed');
+					self.chapters[i].collapsed = !self.chapters[i].collapsed;
+					self.persist();
+					window.MB.sendMessage('custom/myVTT/JournalChapters',{
+						chapters: self.chapters
+					});
 				});
-				self.persist();
-				self.build_journal();
-				window.MB.sendMessage('custom/myVTT/JournalChapters',{
-					chapters: self.chapters
+				
+		
+
+				let add_note_btn=$("<button class='token-row-button' ><span class='material-symbols-outlined'>add_notes</span></button>");
+
+				add_note_btn.click(function(){
+					let new_noteid=uuid();
+
+					const input_add_note=$("<input type='text' class='input-add-chapter' placeholder='New note title'>");
+					let note_added = false;
+					input_add_note.keydown(function(e){
+						if(e.keyCode == 13 && input_add_note.val() !== ""){
+							note_added = true;
+							let new_note_title=input_add_note.val();
+							self.notes[new_noteid]={
+								title: new_note_title,
+								text: "",
+								player: false,
+								plain: ""
+							};
+							self.chapters[i].notes.push(new_noteid);
+							window.MB.sendMessage('custom/myVTT/JournalChapters',{
+								chapters: self.chapters
+							});
+							self.edit_note(new_noteid);
+							self.persist();
+							self.build_journal();
+						}
+						if(e.keyCode==27){
+							self.build_journal();
+						}
+					});
+
+					input_add_note.blur(function(event){	
+						if(!note_added)	{
+							let e = $.Event('keydown');
+							e.keyCode = 13;
+							input_add_note.trigger(e);
+						}
+						
+					});
+
+					row_notes_entry.empty();
+
+					const save_note_btn=$("<button class='btn-chapter-icon'><img src='"+window.EXTENSION_PATH+"assets/icons/save.svg'></button>");
+
+					
+					row_notes_entry.append(save_note_btn);
+					row_notes_entry.append(input_add_note);
+
+					input_add_note.focus();
 				});
+				let add_fold_btn=$("<button class='token-row-button'><span class='material-icons'>create_new_folder</span></button>");
+				add_fold_btn.click(function(){
 
-			});
-			row_chapter_title.append(folderIcon);	
-			row_chapter_title.append(chapter_title);
-			if(window.DM) {
-				row_chapter_title.append(add_note_btn, add_fold_btn);
-			}	
+					self.chapters.push({
+						title: "New Folder",
+						collapsed: false,
+						notes: [],
+						parentID: $(this).closest('.folder[data-id]').attr('data-id')
+					});
+					self.persist();
+					self.build_journal();
+					window.MB.sendMessage('custom/myVTT/JournalChapters',{
+						chapters: self.chapters
+					});
 
-			let containsPlayerNotes = false;
-			for(let n=0; n<self.chapters[i].notes.length;n++){
-				let note_id=self.chapters[i].notes[n];
-				if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
-					containsPlayerNotes = true;
-				} 
-			}
-
-			if(window.DM || containsPlayerNotes) {
-				section_chapter.append(row_chapter_title);
-			} else {
-				section_chapter.append(row_chapter_title);
-				section_chapter.hide();
-			}
-
-			
-
-			if(!self.chapters[i].parentID){
-				chapter_list.append(section_chapter);
-			}
-			else{		
-				let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
-				let parentID = self.chapters[i]?.parentID
-				if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
-					delete self.chapters[i].parentID
-				}
-				if(parentFolder.length == 0){
-					self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
-					i -= 1; 
-					continue;
+				});
+				row_chapter_title.append(folderIcon);	
+				row_chapter_title.append(chapter_title);
+				if(window.DM) {
+					row_chapter_title.append(add_note_btn, add_fold_btn);
 				}	
+
 				let containsPlayerNotes = false;
 				for(let n=0; n<self.chapters[i].notes.length;n++){
 					let note_id=self.chapters[i].notes[n];
-					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
+					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
 						containsPlayerNotes = true;
 					} 
 				}
 
 				if(window.DM || containsPlayerNotes) {
-					parentFolder.append(section_chapter);
-					parentFolder.show();
-					parentFolder.parents().show();
+					section_chapter.append(row_chapter_title);
 				} else {
-					parentFolder.append(section_chapter);
+					section_chapter.append(row_chapter_title);
 					section_chapter.hide();
 				}
-			}
 
-			journalPanel.body.append(chapter_list);
-
-
-			for(let n=0; n<self.chapters[i].notes.length;n++){
 				
-				let note_id=self.chapters[i].notes[n];
-				
-				if(! (note_id in self.notes))
-					continue;
-					
-				if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
-					continue;
-				
-				let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
-				let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
-				let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title' title='${self.notes[note_id].title}'></div>`);
 
-
-				entry_title.text(self.notes[note_id].title);
-				if(!self.notes[note_id].ddbsource){
-					entry_title.click(function(){
-						self.display_note(note_id);
-					});
+				if(!self.chapters[i].parentID){
+					chapter_list.append(section_chapter);
 				}
-				else{
-					entry_title.click(function(){
-						render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
-					});
-				}
-				let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
-				
-				rename_btn.click(function(){
-					//Convert the note title to an input field and focus it
-					const input_note_title=$(`
-						<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
-					`);
+				else{		
+					let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
+					let parentID = self.chapters[i]?.parentID
+					if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
+						delete self.chapters[i].parentID
+					}
+					if(parentFolder.length == 0){
+						self.chapters.splice(self.chapters.length-1, 0, self.chapters.splice(i, 1)[0]);
+						i -= 1; 
+						continue;
+					}	
+					let containsPlayerNotes = false;
+					for(let n=0; n<self.chapters[i].notes.length;n++){
+						let note_id=self.chapters[i].notes[n];
+						if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id]?.player.includes(`${window.myUser}`))){
+							containsPlayerNotes = true;
+						} 
+					}
 
-					input_note_title.keypress(function(e){
-						if (e.which == 13 && input_note_title.val() !== "") {
-							self.notes[note_id].title = input_note_title.val();
-							self.sendNotes([self.notes[note_id]]);
-							self.persist();
-							self.build_journal();
-						}
-
-						// If the user presses escape, cancel the edit
-						if (e.which == 27) {
-							self.build_journal();
-						}
-					});
-					input_note_title.off('click').on('click', function(e){
-						e.stopPropagation();
-					})
-					input_note_title.blur(function(event){	
-						let e = $.Event('keypress');
-					    e.which = 13;
-					    input_note_title.trigger(e);
-					});
-
-					entry_title.empty();
-					
-					entry_title.append(input_note_title);
-					entry_title.append(edit_btn);
-
-					input_note_title.focus();
-
-					// Convert the edit button to a save button
-					rename_btn.empty();
-					rename_btn.append(`
-						<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
-					`);
-				});
-
-
-
-				let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
-				edit_btn.click(function(){
-					window.JOURNAL.edit_note(note_id);	
-				});
-				let note_index=n;
-
-								
-				entry.append(prependIcon);
-				entry.append(entry_title);
-
-				if(window.DM){
-					if(!self.notes[note_id].ddbsource){
-						entry.append(edit_btn);	
+					if(window.DM || containsPlayerNotes) {
+						parentFolder.append(section_chapter);
+						parentFolder.show();
+						parentFolder.parents().show();
+					} else {
+						parentFolder.append(section_chapter);
+						section_chapter.hide();
 					}
 				}
 
-				note_list.append(entry);
-			}
+				journalPanel.body.append(chapter_list);
 
-			// Create an add note button, when clicked, insert an input field above the button.
-			// When the user presses enter, create a new note and insert it into the chapter.
-			// If the user presses escape, cancel the edit.
-			// If the user clicks outside the input field, cancel the edit.
-			const row_notes_entry = $("<div class='row-notes-entry'/>");
 
-			
+				for(let n=0; n<self.chapters[i].notes.length;n++){
+					if(relevantNotes.find(d => d.id == self.chapters[i].notes[n])){
+						
+						let note_id=self.chapters[i].notes[n];
+						
+						if(! (note_id in self.notes))
+							continue;
+							
+						if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
+							continue;
+						
+						let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
+						let entry=$(`<div class='sidebar-list-item-row-item sidebar-list-item-row' data-id='${note_id}'></div>`);
+						let entry_title=$(`<div class='sidebar-list-item-row-details sidebar-list-item-row-details-title' title='${self.notes[note_id].title}'></div>`);
 
-			if(window.DM){
+
+						entry_title.text(self.notes[note_id].title);
+						if(!self.notes[note_id].ddbsource){
+							entry_title.click(function(){
+								self.display_note(note_id);
+							});
+						}
+						else{
+							entry_title.click(function(){
+								render_source_chapter_in_iframe(self.notes[note_id].ddbsource);
+							});
+						}
+						let rename_btn = $("<button class='token-row-button'><img src='"+window.EXTENSION_PATH+"assets/icons/rename-icon.svg'></button>");
+						
+						rename_btn.click(function(){
+							//Convert the note title to an input field and focus it
+							const input_note_title=$(`
+								<input type='text' class='input-add-chapter' value='${self.notes[note_id].title}'>
+							`);
+
+							input_note_title.keypress(function(e){
+								if (e.which == 13 && input_note_title.val() !== "") {
+									self.notes[note_id].title = input_note_title.val();
+									self.sendNotes([self.notes[note_id]]);
+									self.persist();
+									self.build_journal();
+								}
+
+								// If the user presses escape, cancel the edit
+								if (e.which == 27) {
+									self.build_journal();
+								}
+							});
+							input_note_title.off('click').on('click', function(e){
+								e.stopPropagation();
+							})
+							input_note_title.blur(function(event){	
+								let e = $.Event('keypress');
+								e.which = 13;
+								input_note_title.trigger(e);
+							});
+
+							entry_title.empty();
+							
+							entry_title.append(input_note_title);
+							entry_title.append(edit_btn);
+
+							input_note_title.focus();
+
+							// Convert the edit button to a save button
+							rename_btn.empty();
+							rename_btn.append(`
+								<img src='${window.EXTENSION_PATH}assets/icons/save.svg'>
+							`);
+						});
+
+
+
+						let edit_btn=$("<button class='token-row-button'><span class='material-symbols-outlined'>edit_note</span></button>");
+						edit_btn.click(function(){
+							window.JOURNAL.edit_note(note_id);	
+						});
+						let note_index=n;
+
+										
+						entry.append(prependIcon);
+						entry.append(entry_title);
+
+						if(window.DM){
+							if(!self.notes[note_id].ddbsource){
+								entry.append(edit_btn);	
+							}
+						}
+
+						note_list.append(entry);
+					}
+				}
+
+				// Create an add note button, when clicked, insert an input field above the button.
+				// When the user presses enter, create a new note and insert it into the chapter.
+				// If the user presses escape, cancel the edit.
+				// If the user clicks outside the input field, cancel the edit.
+				const row_notes_entry = $("<div class='row-notes-entry'/>");
+
 				
-				let entry=$("<div class='journal-note-entry'></div>");
-				entry.append(row_notes_entry);
-				note_list.append(entry);
+
+				if(window.DM){
+					
+					let entry=$("<div class='journal-note-entry'></div>");
+					entry.append(row_notes_entry);
+					note_list.append(entry);
+				}
+				section_chapter.append(note_list);
 			}
-			section_chapter.append(note_list);
 		}	
 
 		if(!window.journalsortable)
