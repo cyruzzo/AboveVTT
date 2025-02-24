@@ -3365,26 +3365,23 @@ function drawing_mouseup(e) {
 					}						
 											
 				}
-				
-				let data = ['line',
-				 'wall',
-				 window.DRAWCOLOR,
-				 x1,
-				 y1,
-				 x2,
-				 y2,
-				 12,
-				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-				 0, 
-				 window.wallBottom, 
-				 window.wallTop
-				 ];	
-				window.DRAWINGS.push(data);
-				undoArray.push([...data]);
-
 			}
 
-			
+			let data = ['line',
+			 'wall',
+			 window.DRAWCOLOR,
+			 x1,
+			 y1,
+			 x2,
+			 y2,
+			 12,
+			 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+			 0, 
+			 window.wallBottom, 
+			 window.wallTop
+			 ];	
+			window.DRAWINGS.push(data);
+			undoArray.push([...data]);
 							
 		}
  		window.wallUndo.push({
