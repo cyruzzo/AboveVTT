@@ -216,6 +216,7 @@ class JournalManager{
 		console.log('build_journal');
 		let self=this;
 
+		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
 		journalPanel.body.children().not('[name="journal-search"]').remove();
 		
 		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal" value=${searchText || ''}>`);
@@ -242,7 +243,7 @@ class JournalManager{
 					notes: [],
 				});
 				self.persist();
-				self.build_journal();
+				self.build_journal(searchText);
 				window.MB.sendMessage('custom/myVTT/JournalChapters',{
 					chapters: self.chapters
 				});
@@ -264,7 +265,7 @@ class JournalManager{
 				notes: []
 			});
 			self.persist();
-			self.build_journal();
+			self.build_journal(searchText);
 			window.MB.sendMessage('custom/myVTT/JournalChapters',{
 				chapters: self.chapters
 			});
@@ -300,7 +301,7 @@ class JournalManager{
 				window.MB.sendMessage('custom/myVTT/JournalChapters',{
 					chapters: self.chapters
 				});
-				self.build_journal();
+				self.build_journal(searchText);
 			}
 		});
 
@@ -323,7 +324,7 @@ class JournalManager{
 				window.MB.sendMessage('custom/myVTT/JournalChapters',{
 					chapters: self.chapters
 				});
-				self.build_journal();
+				self.build_journal(searchText);
 
 		    }
 		});
@@ -337,6 +338,10 @@ class JournalManager{
 		let relevantNotes = {};
 		let relevantChapters = [];
 
+		// The idea behind what I've done below is to find all notes that contain the search text and then find 
+		// all chapters that contain those notes, recursively to the root. I also find all chapters that contain
+		// the search text and do the same. This builds out a list of relevant notes and chapters that I can then
+		// use to determine which journal items are rendered and which aren't.
 
 		if(searchText){
 			for(const property in self.notes){
@@ -381,10 +386,8 @@ class JournalManager{
 			relevantChapters = self.chapters;
 		}
 
-		console.log('relevantNotes', relevantNotes);
-		console.log('relevantChapters', relevantChapters);
-
 		for(let i=0; i<self.chapters.length;i++){
+			// Check if the chapter is in relevantChapters - if not, don't render it or any children of
 			if(relevantChapters.find(d => d.id == self.chapters[i].id)){
 		
 				if(!self.chapters[i].id){
@@ -416,7 +419,7 @@ class JournalManager{
 						window.MB.sendMessage('custom/myVTT/JournalChapters',{
 							chapters: self.chapters
 						});
-						self.build_journal();
+						self.build_journal(searchText);
 
 					}
 				})
@@ -442,7 +445,7 @@ class JournalManager{
 						window.MB.sendMessage('custom/myVTT/JournalChapters',{
 							chapters: self.chapters
 						});
-						self.build_journal();
+						self.build_journal(searchText);
 						event.preventDefault();
 					},
 					update: function(event, ui) {
@@ -470,7 +473,7 @@ class JournalManager{
 							window.MB.sendMessage('custom/myVTT/JournalChapters',{
 								chapters: self.chapters
 							});
-							self.build_journal();
+							self.build_journal(searchText);
 						}
 
 					}
@@ -518,10 +521,10 @@ class JournalManager{
 							});
 							self.edit_note(new_noteid);
 							self.persist();
-							self.build_journal();
+							self.build_journal(searchText);
 						}
 						if(e.keyCode==27){
-							self.build_journal();
+							self.build_journal(searchText);
 						}
 					});
 
@@ -554,7 +557,7 @@ class JournalManager{
 						parentID: $(this).closest('.folder[data-id]').attr('data-id')
 					});
 					self.persist();
-					self.build_journal();
+					self.build_journal(searchText);
 					window.MB.sendMessage('custom/myVTT/JournalChapters',{
 						chapters: self.chapters
 					});
@@ -622,6 +625,7 @@ class JournalManager{
 
 					let note_id=self.chapters[i].notes[n];
 					
+					// Check if the note is in relevantNotes - if not, don't render it
 					if(! (note_id in self.notes && note_id in relevantNotes ))
 						continue;
 						
@@ -657,12 +661,12 @@ class JournalManager{
 								self.notes[note_id].title = input_note_title.val();
 								self.sendNotes([self.notes[note_id]]);
 								self.persist();
-								self.build_journal();
+								self.build_journal(searchText);
 							}
 
 							// If the user presses escape, cancel the edit
 							if (e.which == 27) {
-								self.build_journal();
+								self.build_journal(searchText);
 							}
 						});
 						input_note_title.off('click').on('click', function(e){
@@ -790,7 +794,7 @@ class JournalManager{
 					
 					chapter.notes.push(new_noteid);
 					self.persist();
-					self.build_journal();
+					self.build_journal(searchText);
 				}
 				else{
 					self.chapters.push({
@@ -814,7 +818,7 @@ class JournalManager{
 								self.chapters[self.chapters.length-1].notes.push(new_noteid);
 							}
 							self.persist();
-							self.build_journal();
+							self.build_journal(searchText);
 						});
 					});
 				}
@@ -844,12 +848,12 @@ class JournalManager{
 										chapters: self.chapters
 									});
 									self.persist();
-									self.build_journal();
+									self.build_journal(searchText);
 								}
 
 								// If the user presses escape, cancel the edit
 								if (e.which == 27) {
-									self.build_journal();
+									self.build_journal(searchText);
 								}
 							});
 							input_chapter_title.off('click.prevent').on('click.prevent', function(e){
@@ -954,7 +958,7 @@ class JournalManager{
 									chapters: self.chapters
 								});
 								self.persist();
-								self.build_journal();
+								self.build_journal(searchText);
 							}
 	                    }
 	                };
@@ -992,7 +996,7 @@ class JournalManager{
 		                    		self.notes[note_id].title = input_note_title.val();
 		                    		self.sendNotes([self.notes[note_id]]);
 		                    		self.persist();
-		                    		self.build_journal();
+		                    		self.build_journal(searchText);
 		                    	}
 
 		                    	// If the user presses escape, cancel the edit
@@ -1067,7 +1071,7 @@ class JournalManager{
                         		console.log("deleting note_index"+note_index);
                         		self.chapters[i].notes.splice(note_index,1);
                         		delete self.notes[note_id];
-                        		self.build_journal();
+                        		self.build_journal(searchText);
                         		self.persist();
                         		window.MB.sendMessage('custom/myVTT/JournalChapters', {
                         			chapters: self.chapters
