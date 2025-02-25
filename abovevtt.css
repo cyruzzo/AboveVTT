@@ -2854,6 +2854,16 @@ button.roll-button-mod.minus {
     text-decoration: underline;
 }
 
+#journal-control-container {
+    display: flex;
+    gap: 5px;
+    button {
+        width: 30px;
+        height: 30px;
+        padding: 3px;
+    }
+}
+
 #btn_add_chapter {
     background: none;
     border: 1px solid #7f7f7f;

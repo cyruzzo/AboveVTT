@@ -217,7 +217,7 @@ class JournalManager{
 		let self=this;
 
 		// Clear all elements from journal panel except the searchbar, which needs to stay in place between searches
-		journalPanel.body.children().not('[name="journal-search"]').remove();
+		journalPanel.body.children().not('#journal-control-container, #journal-control-container *').remove();
 		
 		let searchInput = $(`<input name="journal-search" type="search" style="width:96%;margin:2%" placeholder="search journal">`);
 		searchInput.off("input").on("input", mydebounce(() => {
@@ -235,6 +235,21 @@ class JournalManager{
 			searchText = searchElement?.value || '';
 		}
 
+		let journalControlContainer = $(`<div id="journal-control-container"></div>`);
+		let expandAllButton = $(`<button class="expand-all-button" title="Expand all folders"><img title="Expand all folders" alt="expand" height="20px" src="${window.EXTENSION_PATH + "assets/icons/expand.svg"}"/></button>`);
+		let collapseAllButton = $(`<button class="collapse-all-button" title="Collapse all folders"><img title="Collapse all folders" alt="collapse" height="20px" src="${window.EXTENSION_PATH + "assets/icons/collapse.svg"}"/></button>`);
+		expandAllButton.on('click', function(){
+			self.chapters.forEach(chapter => {
+				chapter.collapsed = false;
+			});
+			self.build_journal(searchText);
+		});
+		collapseAllButton.on('click', function(){
+			self.chapters.forEach(chapter => {
+				chapter.collapsed = true;
+			});
+			self.build_journal(searchText);
+		});
 		
 		const row_add_chapter=$("<div class='row-add-chapter'></div>");
 		const input_add_chapter=$("<input type='text' placeholder='New folder name' class='input-add-chapter'>");
@@ -274,11 +289,14 @@ class JournalManager{
 				chapters: self.chapters
 			});
 		});
+		if (journalPanel.body.find('#journal-control-container').length === 0) {
+			journalPanel.body.append(journalControlContainer);
+			journalControlContainer.append(searchInput);
+			journalControlContainer.append(expandAllButton);
+			journalControlContainer.append(collapseAllButton);
+		}
 		
 		if(window.DM) {
-			if (journalPanel.body.find('[name="journal-search"]').length === 0) {
-				journalPanel.body.append(searchInput);
-			}
 			row_add_chapter.append(input_add_chapter);
 			row_add_chapter.append(btn_add_chapter);
 			journalPanel.body.append(row_add_chapter);
