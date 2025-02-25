@@ -3300,37 +3300,30 @@ function drawing_mouseup(e) {
 
 
 		if(intersectingWalls.length>0 && window.DRAWFUNCTION == 'wall-door-convert'){
-			let wallLine = [intersectingWalls[0]]
+			
 			let x1;
 			let x2;
 			let y1;
 			let y2;
-			let bottom = intersectingWalls[0].bottom;
-			let top = intersectingWalls[0].top;
-			let left = intersectingWalls[0].left;
-			let right = intersectingWalls[0].right;
+
 
 			for(let i = 0; i < intersectingWalls.length; i++){
-				wallLine[0].bottom.x = (wallLine[0].bottom.x < intersectingWalls[i].bottom.x) ?  intersectingWalls[i].bottom.x : wallLine[0].bottom.x;
-				wallLine[0].bottom.y = (wallLine[0].bottom.y < intersectingWalls[i].bottom.y) ?  intersectingWalls[i].bottom.y : wallLine[0].bottom.y;
 
-				wallLine[0].top.x = (wallLine[0].top.x > intersectingWalls[i].top.x) ?  intersectingWalls[i].top.x : wallLine[0].top.x;
-				wallLine[0].top.y = (wallLine[0].top.y > intersectingWalls[i].top.y) ?  intersectingWalls[i].top.y : wallLine[0].top.y;
-
-				wallLine[0].left.x = (wallLine[0].left.x > intersectingWalls[i].left.x) ?  intersectingWalls[i].left.x : wallLine[0].left.x;
-				wallLine[0].left.y = (wallLine[0].left.y > intersectingWalls[i].left.y) ?  intersectingWalls[i].left.y : wallLine[0].left.y;
-
-				wallLine[0].right.x = (wallLine[0].right.x < intersectingWalls[i].right.x) ?  intersectingWalls[i].right.x : wallLine[0].right.x;
-				wallLine[0].right.y = (wallLine[0].right.y < intersectingWalls[i].right.y) ?  intersectingWalls[i].right.y : wallLine[0].right.y;
-
-				bottom = (intersectingWalls[i].bottom != false) ? intersectingWalls[i].bottom : bottom;
-				top = (intersectingWalls[i].top != false) ? intersectingWalls[i].top : top;
-				left = (intersectingWalls[i].left != false) ? intersectingWalls[i].left : left;
-				right = (intersectingWalls[i].right != false) ? intersectingWalls[i].right : right;
+				let bottom = intersectingWalls[i].bottom;
+				let top = intersectingWalls[i].top;
+				let left = intersectingWalls[i].left;
+				let right = intersectingWalls[i].right ;
 
 				if(bottom != false && !Array.isArray(bottom?.x)){
-					x1 = bottom.x;
-					y1 = bottom.y;
+					if(x1 == undefined){
+						x1 = bottom.x;
+						y1 = bottom.y;
+					}
+					else{
+						x2 = bottom.x;
+						y2 = bottom.y;
+					}
+					
 				}
 				if(left != false && !Array.isArray(right?.y)){
 					if(x1 == undefined){
@@ -3356,33 +3349,31 @@ function drawing_mouseup(e) {
 					if(x1 == undefined){
 						x1 = top.x;
 						y1 = top.y;
-						x2 = top.x;
-						y2 = top.y;
 					}
 					else{
 						x2 = top.x;
 						y2 = top.y;	
-					}						
-											
-				}
+					}																
+				}				
 			}
-
-			let data = ['line',
-			 'wall',
-			 window.DRAWCOLOR,
-			 x1,
-			 y1,
-			 x2,
-			 y2,
-			 12,
-			 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-			 0, 
-			 window.wallBottom, 
-			 window.wallTop
-			 ];	
-			window.DRAWINGS.push(data);
-			undoArray.push([...data]);
-							
+			
+			if(x1 != undefined && x2 != undefined && y1 != undefined && y2 != undefined){
+					let data = ['line',
+				 'wall',
+				 window.DRAWCOLOR,
+				 x1,
+				 y1,
+				 x2,
+				 y2,
+				 12,
+				 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+				 0, 
+				 window.wallBottom, 
+				 window.wallTop
+				 ];	
+				window.DRAWINGS.push(data);
+				undoArray.push([...data]);
+			}					
 		}
  		window.wallUndo.push({
 			undo: [...undoArray],
