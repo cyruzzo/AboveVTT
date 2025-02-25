@@ -2860,7 +2860,9 @@ button.roll-button-mod.minus {
     button {
         width: 30px;
         height: 30px;
-        padding: 3px;
+    }
+    .material-icons{
+        padding: 1px 0px 0px 0px;
     }
 }
 

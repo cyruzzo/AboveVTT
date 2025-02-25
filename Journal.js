@@ -236,8 +236,8 @@ class JournalManager{
 		}
 
 		let journalControlContainer = $(`<div id="journal-control-container"></div>`);
-		let expandAllButton = $(`<button class="expand-all-button" title="Expand all folders"><img title="Expand all folders" alt="expand" height="20px" src="${window.EXTENSION_PATH + "assets/icons/expand.svg"}"/></button>`);
-		let collapseAllButton = $(`<button class="collapse-all-button" title="Collapse all folders"><img title="Collapse all folders" alt="collapse" height="20px" src="${window.EXTENSION_PATH + "assets/icons/collapse.svg"}"/></button>`);
+		let expandAllButton = $(`<button class="expand-all-button token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
+		let collapseAllButton = $(`<button class="collapse-all-button token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
 		expandAllButton.on('click', function(){
 			self.chapters.forEach(chapter => {
 				chapter.collapsed = false;
