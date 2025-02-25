@@ -2824,7 +2824,7 @@ class Token {
 							pauseCursorEventListener = false;
 							setTimeout(() => {
 								if(!window.DRAGGING){
-									window.dragSelectedTokens.removeClass("pause_click")
+									window.dragSelectedTokens?.removeClass("pause_click")
 									delete window.playerTokenAuraIsLight;
 									delete window.dragSelectedTokens;
 									delete window.orig_zoom;
