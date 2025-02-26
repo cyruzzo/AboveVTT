@@ -17,8 +17,8 @@
 		207CB7372CAA276200098463 /* AboveVTT Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 207CB7362CAA276200098463 /* AboveVTT Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		207CB73D2CAA276200098463 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7002CAA276100098463 /* Main.html */; };
 		207CB73E2CAA276200098463 /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7002CAA276100098463 /* Main.html */; };
-		207CB73F2CAA276200098463 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* Icon.png */; };
-		207CB7402CAA276200098463 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* Icon.png */; };
+		207CB73F2CAA276200098463 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* icon.png */; };
+		207CB7402CAA276200098463 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7022CAA276100098463 /* icon.png */; };
 		207CB7412CAA276200098463 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7032CAA276100098463 /* Style.css */; };
 		207CB7422CAA276200098463 /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7032CAA276100098463 /* Style.css */; };
 		207CB7432CAA276200098463 /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 207CB7042CAA276100098463 /* Script.js */; };
@@ -219,7 +219,7 @@
 
 /* Begin PBXFileReference section */
 		207CB7012CAA276100098463 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
-		207CB7022CAA276100098463 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		207CB7022CAA276100098463 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		207CB7032CAA276100098463 /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
 		207CB7042CAA276100098463 /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
 		207CB7052CAA276100098463 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -374,7 +374,7 @@
 			isa = PBXGroup;
 			children = (
 				207CB7002CAA276100098463 /* Main.html */,
-				207CB7022CAA276100098463 /* Icon.png */,
+				207CB7022CAA276100098463 /* icon.png */,
 				207CB7032CAA276100098463 /* Style.css */,
 				207CB7042CAA276100098463 /* Script.js */,
 			);
@@ -655,7 +655,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				207CB73F2CAA276200098463 /* Icon.png in Resources */,
+				207CB73F2CAA276200098463 /* icon.png in Resources */,
 				207CB7162CAA276200098463 /* LaunchScreen.storyboard in Resources */,
 				207CB73D2CAA276200098463 /* Main.html in Resources */,
 				207CB7432CAA276200098463 /* Script.js in Resources */,
@@ -669,7 +669,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				207CB7402CAA276200098463 /* Icon.png in Resources */,
+				207CB7402CAA276200098463 /* icon.png in Resources */,
 				207CB7422CAA276200098463 /* Style.css in Resources */,
 				207CB7252CAA276200098463 /* Main.storyboard in Resources */,
 				207CB7442CAA276200098463 /* Script.js in Resources */,
@@ -1183,8 +1183,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
@@ -1201,7 +1203,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTTdebug4.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1214,8 +1216,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "macOS (Extension)/AboveVTT.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = U8WTHPZHK8;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
@@ -1232,7 +1236,7 @@
 					"-framework",
 					SafariServices,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTTdebug4.Extension;
 				PRODUCT_NAME = "AboveVTT Extension";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1247,7 +1251,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U8WTHPZHK8;
@@ -1270,7 +1274,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTTdebug4;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1284,7 +1288,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "macOS (App)/AboveVTT.entitlements";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = U8WTHPZHK8;
@@ -1307,7 +1311,7 @@
 					"-framework",
 					WebKit,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTT;
+				PRODUCT_BUNDLE_IDENTIFIER = org.senns.AboveVTTdebug4;
 				PRODUCT_NAME = AboveVTT;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;

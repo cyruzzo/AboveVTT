@@ -64,7 +64,7 @@ jobs:
           FASTLANE_TEAM_ID: ${{ secrets.FASTLANE_TEAM_ID }}
           FASTLANE_ITC_TEAM_ID: ${{ secrets.FASTLANE_ITC_TEAM_ID }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        run: cd safari && fastlane ios beta
+        run: cd safari && fastlane ios store
 
       - name: Build & Upload macOS to TestFlight
         env:
@@ -75,4 +75,4 @@ jobs:
           FASTLANE_TEAM_ID: ${{ secrets.FASTLANE_TEAM_ID }}
           FASTLANE_ITC_TEAM_ID: ${{ secrets.FASTLANE_ITC_TEAM_ID }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        run: cd safari && fastlane mac beta
+        run: cd safari && fastlane mac store
