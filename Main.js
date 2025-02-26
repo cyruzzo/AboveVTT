@@ -1409,7 +1409,7 @@ function init_splash() {
 	ul.append("<li><a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a></li>");
 	cont.append(ul);*/
 	cont.append("");
-	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood</b></div>");
+	cont.append("<div style='padding-top:10px'>Contributors: <b>SnailDice (Nadav),Stumpy, Palad1N, KuzKuz, Coryphon, Johnno, Hypergig, JoshBrodieNZ, Kudolpf, Koals, Mikedave, Jupi Taru, Limping Ninja, Turtle_stew, Etus12, Cyelis1224, Ellasar, DotterTrotter, Mosrael, Bain, Faardvark, Azmoria, Natemoonlife, Pensan, H2, CollinHerber, Josh-Archer, TachyonicSpace, TheRyanMC, j3f (jeffsenn), MonstraG, Wyrmwood, Drenam1</b></div>");
 
 	cont.append("<br>AboveVTT is an hobby opensource project. It's completely free (like in Free Speech). The resources needed to pay for the infrastructure are kindly donated by the supporters through <a style='font-weight:bold;text-decoration: underline;' target='_blank' href='https://www.patreon.com/AboveVTT'>Patreon</a> , what's left is used to buy wine for cyruzzo");
 
@@ -2046,13 +2046,6 @@ function init_character_page_sidebar() {
 			}, 20)
 
 	});
-	$("a.ct-character-header-desktop__builder-link").on("click", function(){
-		setTimeout(function(){
-			$(".builder-sections-sheet-icon").off().on("click", function(){
-				window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
-			});
-		}, 1000)
-	});
 	$(".ct-character-header-info__content").on("click", function(){
 		setTimeout(function(){
 			$(".ct-pane-menu__item:contains('Manage Character & Levels')").replaceWith($(".ct-pane-menu__item:contains('Manage Character & Levels')").clone());
@@ -2433,6 +2426,12 @@ function init_ui() {
 	background.css("left", "0");
 	background.css("position", "absolute");
 	background.css("z-index", "10");
+	
+	const drawOverlayUnderFogDarkness = $("<canvas id='draw_overlay_under_fog_darkness'></canvas>");
+	drawOverlayUnderFogDarkness.css("position", "absolute");
+	drawOverlayUnderFogDarkness.css("top", "0");
+	drawOverlayUnderFogDarkness.css("left", "0");
+	drawOverlayUnderFogDarkness.css("z-index", "18");
 
 	const mapItems = $("<div id='map_items'></div>");
 	mapItems.css("top", "0");
@@ -2593,6 +2592,7 @@ function init_ui() {
 
 	VTT.append(mapContainer);
 	VTT.append(peerOverlay);
+	VTT.append(drawOverlayUnderFogDarkness);
 	VTT.append(fog);
 	VTT.append(grid);
 	VTT.append(drawOverlay);
@@ -2610,6 +2610,7 @@ function init_ui() {
 
 
 	mapItems.append(background);
+	mapItems.append(drawOverlayUnderFogDarkness);
 
 
 

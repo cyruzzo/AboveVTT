@@ -469,6 +469,19 @@ class Mixer extends EventTarget {
             state.channels[uuid()] = channel;
         }
 
+        this._write(state);  
+        this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
+    }
+    /**
+     * Add multiple channels to the mixer
+     * @param {Channel} channel
+     */
+    addMultiChannels(channelData = []) {
+        const state = this.state();
+        for(let i in channelData){
+            state.channels[uuid()] = channelData[i];
+        }
+
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
@@ -641,20 +654,38 @@ class Mixer extends EventTarget {
         }
         player.ontimeupdate = (e) => {
             progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
-           
-        
-            if(e.target.currentTime == e.target.duration && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length>0){
-                const id = progress.getAttribute('data-id')
+
+            if (e.target.currentTime == e.target.duration && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length > 0) {
+                const id = progress.getAttribute('data-id');
                 e.target.currentTime = 0;
                 $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
                 $(progress).css('width', '');
-
-                if($(`.sequential-button`).hasClass('pressed')){
-                    let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`)
-                    let nextTrack = $(currentTrack).nextAll('.audio-row[data-id]:not(.tokenTrack):first');
-                    if(nextTrack.length == 0){
-                        nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
+            
+                if ($(`.sequential-button`).hasClass('pressed')) {
+                    let nextTrack;
+                    let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`);
+            
+                    if ($(`.sequential-button`).hasClass('shuffle')) {
+                        // Shuffle Mode: Pick a random track with time-seeded randomness
+                        const seed = new Date().getTime(); // Get current timestamp
+                        function seededRandom(seed) {
+                            return Math.abs(Math.sin(seed) * 10000) % 1; // Generates a stable random value
+                        }
+                        let tracks = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).toArray();
+                        let randomIndex;
+                        do {
+                            randomIndex = Math.floor(seededRandom(seed + Math.random()) * tracks.length);
+                        } while ($(tracks[randomIndex]).attr("data-id") === id); // Prevent immediate repeat
+            
+                        nextTrack = $(tracks[randomIndex]);
+                    } else {
+                        // Default: Play next track in sequence
+                        nextTrack = $(currentTrack).nextAll('.audio-row[data-id]:not(.tokenTrack):first');
+                        if (nextTrack.length == 0) {
+                            nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
+                        }
                     }
+            
                     nextTrack.find('.channel-play-pause-button').click();
                 }
             }

@@ -41,7 +41,7 @@ const availableToAoe = [
 
 
 const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/8);
-const throttleTokenCheck = throttle(() => {requestAnimationFrame(do_check_token_visibility)}, 1000/4);
+const throttleTokenCheck = throttle(() => {requestAnimationFrame(()=>{do_check_token_visibility()})}, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
@@ -1543,7 +1543,7 @@ class Token {
 			cond_bar.width(symbolSize);
 			cond_bar.height(this.sizeWidth() - bar_width); // height or width???
 		})
-		if (this.isPlayer() && (this.options.inspiration || find_pc_by_player_id(this.options.id)?.inspiration, false)){
+		if (this.isPlayer() && (this.options.inspiration || find_pc_by_player_id(this.options.id, false)?.inspiration)){
 			if (!this.hasCondition("Inspiration")){
 				this.addCondition("Inspiration")
 			}
@@ -2824,7 +2824,7 @@ class Token {
 							pauseCursorEventListener = false;
 							setTimeout(() => {
 								if(!window.DRAGGING){
-									window.dragSelectedTokens.removeClass("pause_click")
+									window.dragSelectedTokens?.removeClass("pause_click")
 									delete window.playerTokenAuraIsLight;
 									delete window.dragSelectedTokens;
 									delete window.orig_zoom;

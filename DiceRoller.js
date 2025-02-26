@@ -428,7 +428,7 @@ function getRollData(rollButton){
 }
 class DiceRoller {
 
-    timeoutDuration = 10000; // 10 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
+    timeoutDuration = 15000; // 15 second timeout seems reasonable. If the message gets dropped we don't want to be stuck waiting forever.
 
     /// PRIVATE VARIABLES
     #pendingDiceRoll = undefined;
@@ -515,7 +515,7 @@ class DiceRoller {
             }
             let self = this;
             this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 10 seconds!");
+                console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
             }, this.timeoutDuration);
             let msgdata = {}
@@ -544,8 +544,12 @@ class DiceRoller {
                 let resultsArray = results[i].split(',');
                 for(let j=0; j<resultsArray.length; j++){
                     let reduceCrit = 0;
-                    if(parseInt(diceNotations[i].split('d')[1]) == 20)
+                    if(parseInt(diceNotations[i].split('d')[1]) == 20){
                         reduceCrit = 20 - critRange;
+                    }
+                    else if(rollType == 'attack' || rollType == 'to hit' || rollType == 'tohit' ){
+                        continue;
+                    }
                     if(parseInt(resultsArray[j]) >= parseInt(diceNotations[i].split('d')[1]) - reduceCrit){
                         critSuccess = true;
                     }
@@ -687,7 +691,7 @@ class DiceRoller {
             // This also blocks other attempts to roll until we've finished processing
        
             this.#timeoutId = setTimeout(function () {
-                console.warn("DiceRoller timed out after 10 seconds!");
+                console.warn("DiceRoller timed out after 15 seconds!");
                 self.#resetVariables();
             }, this.timeoutDuration);
 
@@ -729,6 +733,8 @@ class DiceRoller {
                             let reduceCrit = 0;
                             if(parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', '')) == 20)
                                 reduceCrit = 20 - critRange
+                            else
+                                continue;
                             if(roll.diceNotation.set[j].dice[k].faceValue >= parseInt(roll.diceNotation.set[j].dice[k].options.dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].faceValue)){
                                 if(roll.rollKind == 'advantage'){
                                     if(k>0 && roll.diceNotation.set[j].dice[k-1].faceValue <= roll.diceNotation.set[j].dice[k].faceValue){

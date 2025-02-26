@@ -86,19 +86,33 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 		let promises = [];
 
 		for(let i in monsterData){
-	       promises.push(new Promise(async (resolve, reject) => {
-   		       let moreInfo = await DDBApi.fetchMoreInfo(`${monsterData[i].url}`);
-   			   let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
-   		       if(initiative.length>0){
-   		           initArray = initiative.trim().split(' ');
-   		           const initMod = initArray[0];
-   		           const initScore = initArray[1];
-   		           monsterData[i].initiativeMod = initMod;
-   		           monsterData[i].initiativeScore = initScore;
-   		       }
-   		       resolve();
-	       }))
-	       
+		   if(monsterData.isReleased || monsterData.isHomebrew){
+		       promises.push(new Promise(async (resolve, reject) => {
+
+	   		       let moreInfo = await DDBApi.fetchMoreInfo(`${monsterData[i].url}`);
+	   			   let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
+	   			   let treasure = $(moreInfo)?.find('.treasure-link').closest('.tags');
+	   			   let treasureLinks = treasure.find('a');
+	   			   treasureLinks.addClass('tooltip-hover');
+	   			   treasureLinks.attr('data-moreinfo', function(){
+	   			   	return this.href;
+	   			   })
+	   			   treasure = treasure.html();
+	   			   let gear = $(moreInfo)?.find('.mon-stat-block-2024__tidbit-label:contains("Gear")').siblings('.mon-stat-block-2024__tidbit-data').html();
+	   		       if(initiative.length>0){
+	   		           initArray = initiative.trim().split(' ');
+	   		           const initMod = initArray[0];
+	   		           const initScore = initArray[1];
+	   		           monsterData[i].initiativeMod = initMod;
+	   		           monsterData[i].initiativeScore = initScore;
+	   		           monsterData[i].treasure = treasure;
+	   		           monsterData[i].gear = gear;
+	   		       }
+	   		       let spellTooltips = $(moreInfo)?.find('[class*="mon-stat-block-2024"] .spell-tooltip')
+	   		       monsterData[i].spellTooltips = spellTooltips;
+	   		       resolve();
+		       }))
+		   }  
 		}
 
 		Promise.all(promises).then(() => {

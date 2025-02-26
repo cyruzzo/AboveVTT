@@ -21,18 +21,18 @@ function scan_monster(target, stats, tokenId) {
 	const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || stats.data.avatarUrl;
 
 	function clickHandler(clickEvent) {
-		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", stats.data.id)
+		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster", tokenId)
 	};
 
 	function rightClickHandler(contextmenuEvent) {
-		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", stats.data.id);
+		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster", tokenId);
 	}
 
 	replace_ability_scores_with_avtt_rollers(target, ".ability-block__stat" ,".ability-block__heading", true)
 	replace_saves_skill_with_avtt_rollers(target, ".mon-stat-block__tidbit", ".mon-stat-block__tidbit-label", ".mon-stat-block__tidbit-data", true )
 
 	// replace all "to hit" and "damage" rolls
-	$(target).find(".mon-stat-block p").each(function() {
+	$(target).find(".mon-stat-block p, .stat-block p").each(function() {
 		if ($(this).find(".avtt-roll-button").length == 0) {
 				$($(this)).find("span[data-dicenotation]").each(function (){
 				// clone the element as if it came from an iframe these variables won't be freed from memory
@@ -287,7 +287,7 @@ $(target).find(outerSelector).each(function() {
 				// can only be saving throw or skills here, which is either save/check respectively
 				const rollType = label === "Saving Throws" ? "save" : "check"
 				// will be DEX/CON/ATHLETICS/PERCEPTION
-				const actionType = tidbit.trim().replace(/\s\S+$/, '')
+				const actionType = $($(tidbit)[0])?.is('a')? $(tidbit)[0].innerHTML : tidbit.trim().replace(/\s\S+$/, '')
 				// matches " +1 " or " + 1 "
 				const rollRegex = /(?<![0-9]+d[0-9]+)([:\s>])([+-]\s?[0-9]+)([:\s<,])?/gi
 				
@@ -327,9 +327,13 @@ function scan_player_creature_pane(target) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
 	}
 
+	
 
 	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat, [class*='styles_stats']>[class*='styles_stat']", ".ddbc-creature-block__ability-heading, [class*='styles_statHeading']")
 	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit, [class*='styles_tidbit']",".ddbc-creature-block__tidbit-label, [class*='styles_tidbitLabel']", ".ddbc-creature-block__tidbit-data, p" )
+
+	if(target.closest('[class*="styles_v2024"]').length>0)
+		add_journal_roll_buttons(target);
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find("p, .ddbc-creature-block__attribute-data-extra").each(function() {

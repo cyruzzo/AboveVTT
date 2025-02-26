@@ -35,7 +35,7 @@ function init_sidebar_tabs() {
   sidebarContent.append(journalPanel.build());
   if (window.JOURNAL === undefined) {
     init_journal(find_game_id());
-  } else {
+  } else if(window.JOURNAL.chapters?.length > 0){
     window.JOURNAL.build_journal()
   }
 
@@ -70,7 +70,10 @@ function observe_hover_text(sidebarPanelContent) {
       if (hoverEvent.type === "mouseenter") {
         build_and_display_sidebar_flyout(hoverEvent.clientY, function (flyout) {
           flyout.append(`<div class="sidebar-hover-text-flyout">${displayText}</div>`);
-          position_flyout_left_of(sidebarPanelContent, flyout);
+          if(sidebarPanelContent.hasClass('context-menu-flyout'))
+            position_flyout_right_of(sidebarPanelContent, flyout);
+          else
+            position_flyout_left_of(sidebarPanelContent, flyout);
         });
       } else {
         // only remove hover text flyouts. Don't remove other types of flyouts that may or may not be up

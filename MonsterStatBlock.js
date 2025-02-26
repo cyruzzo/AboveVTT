@@ -182,9 +182,9 @@ function build_monster_stat_block(statBlock, token) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
-
+    let statblockData = '';
     if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
-      return `
+      statblockData =  `
         <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
@@ -216,15 +216,15 @@ function build_monster_stat_block(statBlock, token) {
                                     ${statBlock.data.armorClassDescription}
                                 </span>
                               </span>
-                              ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                              <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                               <span class="mon-stat-block__attribute-value">
                                 <span class="mon-stat-block__attribute-data-value">
-                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
                                 </span>
-                                <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                     ${statBlock.data.initiativeScore}
-                                </span>
-                              </span>` : ''}         
+                                </span>` : ``}   
+                              </span>       
                             </div>
                             <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                               <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -316,6 +316,12 @@ function build_monster_stat_block(statBlock, token) {
                               <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                               <span class="mon-stat-block__tidbit-data">
                                 ${statBlock.skillsHtml}
+                              </span>
+                            </div>
+                            <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                              <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                              <span class="mon-stat-block__tidbit-data">
+                                ${statBlock.gearHtml}
                               </span>
                             </div>
                             <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -457,6 +463,9 @@ function build_monster_stat_block(statBlock, token) {
                      
 
                       <footer>
+                          
+                          ${statBlock.data.treasure ? `<p>${statBlock.data.treasure}</p>` : ''}
+                          
                           ${statBlock.sourceBookHtml}
                       </footer>
                     </div>          
@@ -469,7 +478,7 @@ function build_monster_stat_block(statBlock, token) {
       `
     }
     else{
-      return `
+      statblockData =  `
         <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
@@ -503,15 +512,15 @@ function build_monster_stat_block(statBlock, token) {
                                 ${statBlock.data.armorClassDescription}
                             </span>
                           </span>
-                          ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                          <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                           <span class="mon-stat-block__attribute-value">
                             <span class="mon-stat-block__attribute-data-value">
-                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
                             </span>
-                            <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                            ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                 ${statBlock.data.initiativeScore}
-                            </span>
-                          </span>` : ''}         
+                            </span>` : ``}    
+                          </span>        
                         </div>
                         <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                           <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -598,6 +607,12 @@ function build_monster_stat_block(statBlock, token) {
                           <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                           <span class="mon-stat-block__tidbit-data">
                             ${statBlock.skillsHtml}
+                          </span>
+                        </div>
+                        <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                          <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                          <span class="mon-stat-block__tidbit-data">
+                            ${statBlock.gearHtml}
                           </span>
                         </div>
                         <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -753,16 +768,23 @@ function build_monster_stat_block(statBlock, token) {
         </div>
         `;
     }
-    
-    
+    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
+    if(statBlock.data.spellTooltips != undefined){
+      $stat.find('.spell-tooltip').each((index, tooltip) =>{
+        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+      })
+    }
+
+    return $stat[0].outerHTML;
 }
 function build_monster_copy_stat_block(statBlock) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
+    let statblockData = '';
     if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
-      return `
-        <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
+      statblockData = `
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -793,15 +815,15 @@ function build_monster_copy_stat_block(statBlock) {
                                     ${statBlock.data.armorClassDescription}
                                 </span>
                               </span>
-                              ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                              <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                               <span class="mon-stat-block__attribute-value">
                                 <span class="mon-stat-block__attribute-data-value">
-                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
                                 </span>
-                                <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                     ${statBlock.data.initiativeScore}
-                                </span>
-                              </span>` : ''}         
+                                </span>` : ``}   
+                              </span>        
                             </div>
                             <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                               <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -893,6 +915,12 @@ function build_monster_copy_stat_block(statBlock) {
                               <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                               <span class="mon-stat-block__tidbit-data">
                                 ${statBlock.skillsHtml}
+                              </span>
+                            </div>
+                            <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                              <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                              <span class="mon-stat-block__tidbit-data">
+                                ${statBlock.gearHtml}
                               </span>
                             </div>
                             <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -1009,12 +1037,10 @@ function build_monster_copy_stat_block(statBlock) {
               </div>
             </section>
           </div>
-        </div>
       `
     }
     else{
-      return `
-        <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
+      statblockData = `
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
 
@@ -1047,15 +1073,15 @@ function build_monster_copy_stat_block(statBlock) {
                                 ${statBlock.data.armorClassDescription}
                             </span>
                           </span>
-                          ${statBlock.data.initiativeMod != undefined ? `<span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
+                          <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                           <span class="mon-stat-block__attribute-value">
                             <span class="mon-stat-block__attribute-data-value">
-                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod, 'Initiative', 'Roll', parenthesis = true) }
+                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
                             </span>
-                            <span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                            ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
                                 ${statBlock.data.initiativeScore}
-                            </span>
-                          </span>` : ''}         
+                            </span>` : ``}   
+                          </span>        
                         </div>
                         <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
                           <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Hit Points</span>
@@ -1142,6 +1168,12 @@ function build_monster_copy_stat_block(statBlock) {
                           <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Skills</span>
                           <span class="mon-stat-block__tidbit-data">
                             ${statBlock.skillsHtml}
+                          </span>
+                        </div>
+                        <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
+                          <span class="mon-stat-block__tidbit-label ddbc-creature-block__tidbit-label">Gear</span>
+                          <span class="mon-stat-block__tidbit-data">
+                            ${statBlock.gearHtml}
                           </span>
                         </div>
                         <div class="mon-stat-block__tidbit ddbc-creature-block__tidbit">
@@ -1260,9 +1292,17 @@ function build_monster_copy_stat_block(statBlock) {
               </div>
             </section>
           </div>
-        </div>
         `;
     }
+
+    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
+    if(statBlock.data.spellTooltips != undefined){
+      $stat.find('.spell-tooltip').each((index, tooltip) =>{
+        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
+        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
+      })
+    }
+    return $stat[0].outerHTML;
 }
 class MonsterStatBlock {
     constructor(data) {
@@ -1445,6 +1485,13 @@ class MonsterStatBlock {
                 return `${link} ${button}`;
             })
             .join(", ");
+    }
+
+    get gearHtml() {
+      if (!this.data.gear || this.data.gear.length === 0) {
+          return "<span class='hideme'></span>";
+      }
+      return this.data.gear
     }
 
     damageAdjustmentsHtml(damageAdjustmentType) {
@@ -1693,7 +1740,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
         console.log("fetch_tooltip starting for ", dataTooltipHref);
         if(!dataTooltipHref.includes('tooltip')){
           const parts = dataTooltipHref.split("/");
-          const id = parseInt(parts[parts.length-1]);
+          const id = dataTooltipHref.match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
           const type = parts[parts.length-2];
 
           const typeAndId = `${type}/${id}`;
@@ -1705,10 +1752,16 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           }
           window.tooltipCache[typeAndId] = {Tooltip: ``};
           let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
-  
           let tooltipBody = $(moreInfo).find('.more-info');
-          tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
+          if(!tooltipBody.length && dataTooltipHref.match(/#.*$/gi)){
+           tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref.match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
+          }
+          else{
+            let tooltipBody = $(moreInfo).find('.more-info');
+            tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
             tooltipBody.find('.detail-content>.line:first-of-type').remove();
+          }
+          
 
           moreInfo = `
               <div class="tooltip tooltip-spell">

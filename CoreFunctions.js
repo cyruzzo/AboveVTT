@@ -312,6 +312,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
+    rollAction = (rollAction == '') ? $(this).closest('.mon-stat-block__attribute-value').prev().text().replace('.', '') : rollAction;
     let rollType = $(this).attr('data-rolltype')
     let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
     if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){
@@ -452,6 +453,12 @@ function is_characters_page() {
 function is_characters_list_page() {
   return window.location.pathname.match(/\/characters(?!\/\d)/)?.[0] !== undefined;
 }
+
+/** @return {boolean} true if the current page url includes "/characters/[number]/builder"  */
+function is_characters_builder_page() {
+  return window.location.pathname.match(/\/characters\/[0-9]+\/builder/)?.[0] !== undefined;
+}
+
 
 /** @return {boolean} true if the current page url includes "/campaigns/"  */
 function is_campaign_page() {
@@ -1029,7 +1036,8 @@ function update_pc_with_api_call(playerId) {
       window.PC_NEEDS_API_CALL[playerId] = Date.now();
     }
   }
-  debounce_fetch_character_from_api();
+  if(Object.keys(window.PC_NEEDS_API_CALL).length > 0)
+    debounce_fetch_character_from_api();
 }
 
 const debounce_fetch_character_from_api = mydebounce(() => {

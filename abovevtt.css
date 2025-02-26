@@ -1767,7 +1767,7 @@ padding-bottom: 5px;
     transition: none;
     visibility: visible;
     font-size: 12px;
-    bottom: -36px;
+    bottom: calc(-0.8 * var(--font-size-zoom));
     pointer-events: none;
     --positive-shadow: 1px;
     --negative-shadow: -1px;
@@ -2852,6 +2852,18 @@ button.roll-button-mod.minus {
 }
 #above-vtt-error-message a {
     text-decoration: underline;
+}
+
+#journal-control-container {
+    display: flex;
+    gap: 5px;
+    button {
+        width: 30px;
+        height: 30px;
+    }
+    .material-icons{
+        padding: 1px 0px 0px 0px;
+    }
 }
 
 #btn_add_chapter {
@@ -3970,7 +3982,7 @@ audio::-webkit-media-controls-time-remaining-display{
     border: 1px solid #dddddd;
     background: #e9e9e9;
     padding: 5px;
-    width: 370px;
+    min-width: 370px;
     margin-right: auto;
 }
 .visibility-container button {
@@ -4378,6 +4390,23 @@ h5.token-image-modal-footer-title:after {
 }
 .sidebar-panel-footer-horizontal-wrapper .sidebar-panel-footer-button {
     margin: 0px 4px 0px 4px;
+}
+.avtt-settings-section{
+    margin-bottom: 15px;
+    padding:0px;
+}
+.avtt-settings-section h4:after{
+    margin-bottom:5px;
+}
+.avtt-settings-section h4.token-image-modal-footer-title {
+    font-size: 15px;
+}
+h3.no-bottom-margin-setting:after {
+    margin-bottom:0px;
+}
+
+h3.no-bottom-margin-setting ~ .sidebar-panel-header-explanation{
+    margin-bottom:20px;
 }
 .token-image-modal-footer-select-wrapper select {
     min-width: 35%;
@@ -5761,18 +5790,6 @@ div#selectedTokensBorderRotationGrabberConnector,
 
 .ddbc-creature-block:after {
     bottom: -3px
-}
-.monster-details .more-info footer{
-    padding: 0px;
-    height: 20px;
-}
-
-.monster-details .more-info footer .source.monster-source {
-    font-size: inherit;
-    font-family: inherit;
-    font-style: inherit;
-    margin-top: 0px;
-    float:left;
 }
 .monster-details .more-info.details-more-info:after {
     display:none
@@ -10941,13 +10958,13 @@ div#playlistFields {
     --compendium-p-top: 10px
 }
 
- .stat-block p:first-of-type {
+.stat-block p[class]:first-of-type {
     margin-top: 0;
     font-style: italic;
     opacity: .8
 }
 
-.stat-block p:first-of-type+p {
+.stat-block p[class]:first-of-type+p {
     --compendium-p-top: 16px
 }
 
@@ -12253,13 +12270,13 @@ div#playlistFields {
     margin-top: 10px
 }
 
-:is(.tooltip) .stat-block p:first-of-type {
+:is(.tooltip) .stat-block p[class]:first-of-type {
     margin-top: 0;
     font-style: italic;
     opacity: .7
 }
 
-:is(.tooltip) .stat-block p:first-of-type+p {
+:is(.tooltip) .stat-block p[class]:first-of-type+p {
     margin-top: 16px
 }
 

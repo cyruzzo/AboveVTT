@@ -710,7 +710,7 @@ async function check_token_visibility(){
 	}
 }
 
-function do_check_token_visibility() {
+function do_check_token_visibility(doorsOnly = false) {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
@@ -722,23 +722,6 @@ function do_check_token_visibility() {
 	}
 
 	let promises = [];
-
-	let fogContext = $('#fog_overlay')[0].getContext('2d');
-	let lightContext = window.lightInLos.getContext('2d');
-	let rayContext = $('#raycastingCanvas')[0].getContext('2d');
-	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
-
-	let truesightContext;
-
-	if(truesightAuraExists) 
-		truesightContext = window.truesightCanvas.getContext('2d');
-
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	
-	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
-
-	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
-	
 	let hideIds = [];
 	let showTokenIds = [];
 	let showAuraIds = [];
@@ -746,49 +729,73 @@ function do_check_token_visibility() {
 	let hideDoors =[];
 	let dmSelectedTokens = [];
 
-	for (let id in window.TOKEN_OBJECTS) {
-		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
-			continue;
-		promises.push(new Promise(function(resolve) {
-			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
-			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
-			let tokenSelector = "div.token[data-id='" + id + "']";
+	let fogContext = $('#fog_overlay')[0].getContext('2d');
+	let lightContext = window.lightInLos.getContext('2d');
 
-			//Combining some and filter cut down about 140ms for average sized picture
-			
-			const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
-			
-			const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	
+	const playerTokenHasVision = (playerTokenId == undefined) ? ((window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0) ? true : false) : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
 
-			const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
-			
-			const dmSelected = window.DM && window.CURRENTLY_SELECTED_TOKENS.includes(id)
+	const playerHasTruesight = (playerTokenId == undefined) ? false : window.TOKEN_OBJECTS[playerTokenId].options.sight == 'truesight';
+	
 
-			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+	if(!doorsOnly){
+		let rayContext = $('#raycastingCanvas')[0].getContext('2d');
+		const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
 
-			const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+		let truesightContext;
+
+		if(truesightAuraExists) 
+			truesightContext = window.truesightCanvas.getContext('2d');
 
 
-			let inTruesight = false;
-			if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
-				inTruesight = is_token_under_truesight_aura(id, truesightContext);
-			}
 
-			if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected) || (hideInvisible && !inTruesight))) {
-				hideIds.push(tokenSelector, auraSelector)
-			}
-			else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
-				showTokenIds.push(tokenSelector);
-				if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
-					showAuraIds.push(auraSelector);
-			}else if(dmSelected){
-				dmSelectedTokens.push(tokenSelector);
-			}
-			
-			
-			resolve();
-		}));
+		for (let id in window.TOKEN_OBJECTS) {
+			if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
+				continue;
+			promises.push(new Promise(function(resolve) {
+				let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
+				let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
+				let tokenSelector = "div.token[data-id='" + id + "']";
+
+				//Combining some and filter cut down about 140ms for average sized picture
+				
+				const hideThisTokenInFogOrDarkness = (!window.TOKEN_OBJECTS[id].options.revealInFog); //we want to hide this token in fog or darkness
+				
+				const inFog = (playerTokenId != id && is_token_under_fog(id, fogContext)); // this token is in fog and not the players token
+
+				const notInLight = (inFog || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_in_raycasting_context(id, rayContext)) || (playerTokenId != id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && !is_token_under_light_aura(id, lightContext))); // this token is not in light, the player is using vision/light and darkness > 0
+				
+				const dmSelected = window.DM && window.CURRENTLY_SELECTED_TOKENS.includes(id)
+
+				const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType == 'pc' && !window.DM && playerTokenId == undefined //show this token when logged in as a player without your own token
+
+				const hideInvisible = !dmSelected && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId != id && window.TOKEN_OBJECTS[id].options.share_vision != true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+
+
+				let inTruesight = false;
+				if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && truesightAuraExists){
+					inTruesight = is_token_under_truesight_aura(id, truesightContext);
+				}
+
+				if (!showThisPlayerToken && (hideThisTokenInFogOrDarkness && notInLight && !dmSelected || (window.TOKEN_OBJECTS[id].options.hidden && !inTruesight && !dmSelected) || (hideInvisible && !inTruesight))) {
+					hideIds.push(tokenSelector, auraSelector)
+				}
+				else if (!window.TOKEN_OBJECTS[id].options.hidden || inTruesight) {
+					showTokenIds.push(tokenSelector);
+					if(!window.TOKEN_OBJECTS[id].options.hideaura || id == playerTokenId)
+						showAuraIds.push(auraSelector);
+				}else if(dmSelected){
+					dmSelectedTokens.push(tokenSelector);
+				}
+				
+				
+				resolve();
+			}));
+		}
 	}
+	
+
 	let doors = $('.door-button');
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
@@ -810,6 +817,7 @@ function do_check_token_visibility() {
 
 	Promise.all(promises);
 	requestAnimationFrame(() => {
+		
 		hideIds = hideIds.join(',');
 		showTokenIds = showTokenIds.join(',');
 		showAuraIds = showAuraIds.join(',');	
@@ -819,6 +827,7 @@ function do_check_token_visibility() {
 		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
 		$(showAuraIds).show();
 		$(dmSelectedTokens).css({'display': 'flex'});
+		
 
 		hideDoors = hideDoors.join(',');
 		showDoors = showDoors.join(',');
@@ -1163,14 +1172,16 @@ function draw_wizarding_box() {
 	}
 
 }
-function ctxScale(canvasid){
+function ctxScale(canvasid, doNotScale=false){
 	let canvas = document.getElementById(canvasid);
 	canvas.width = $("#scene_map").width();
   	canvas.height = $("#scene_map").height();
-	$(canvas).css({
-		'transform-origin': 'top left',
-		'transform': 'scale(var(--scene-scale))'
-	});
+  	if (!doNotScale) {
+		$(canvas).css({
+			'transform-origin': 'top left',
+			'transform': 'scale(var(--scene-scale))'
+		});
+	}
 }
 
 function reset_canvas(apply_zoom=true) {
@@ -1182,6 +1193,7 @@ function reset_canvas(apply_zoom=true) {
 
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
+	ctxScale('draw_overlay_under_fog_darkness', true);
 	ctxScale('fog_overlay');
 	ctxScale('grid_overlay');	
 	ctxScale('draw_overlay');
@@ -1431,23 +1443,31 @@ function redraw_text() {
 
 function redraw_drawings() {
 
-	let canvas = document.getElementById("draw_overlay");
-	let ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	let canvasAboveFog = document.getElementById("draw_overlay");
+	let ctxAboveFog = canvasAboveFog.getContext("2d");
+	ctxAboveFog.clearRect(0, 0, canvasAboveFog.width, canvasAboveFog.height);
+
+	let canvasBelowFog = document.getElementById("draw_overlay_under_fog_darkness");
+	let ctxBelowFog = canvasBelowFog.getContext("2d");
+	ctxBelowFog.clearRect(0, 0, canvasBelowFog.width, canvasBelowFog.height);
 
 	const drawings = window.DRAWINGS.filter(d => !d[0].includes("text") && d[1] !==  "wall" && d[1] !== 'light' && d[1] !== 'elev')
 		
 	 
 
-	let offscreenDraw = document.createElement('canvas');
-	let offscreenContext = offscreenDraw.getContext('2d');
+	let offscreenDrawAboveFog = document.createElement('canvas');
+	let offscreenContextAboveFog = offscreenDrawAboveFog.getContext('2d');
+	let offscreenDrawBelowFog = document.createElement('canvas');
+	let offscreenContextBelowFog = offscreenDrawBelowFog.getContext('2d');
 
-	offscreenDraw.width = canvas.width;
-	offscreenDraw.height = canvas.height;
+	offscreenDrawAboveFog.width = canvasAboveFog.width;
+	offscreenDrawAboveFog.height = canvasAboveFog.height;
+	offscreenDrawBelowFog.width = canvasBelowFog.width;
+	offscreenDrawBelowFog.height = canvasBelowFog.height;
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, location] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
 		if(drawings[i][1] =='elev'){
@@ -1459,7 +1479,8 @@ function redraw_drawings() {
 		  color = numToColor(color, 0.8, max);
 		}
 
-		let targetCtx = offscreenContext;
+		// Will default to 'above fog' draw layer for existing drawings
+		let targetCtx = location == 'below' ? offscreenContextBelowFog : offscreenContextAboveFog;
 
 		if(fill == 'dot'){
 			targetCtx.setLineDash([lineWidth, 3*lineWidth])
@@ -1516,7 +1537,10 @@ function redraw_drawings() {
 		}
 	}
 
-	ctx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
+	ctxAboveFog.drawImage(offscreenDrawAboveFog, 0, 0); // draw to visible canvas only once so we render this once
+
+	ctxBelowFog.drawImage(offscreenDrawBelowFog, 0, 0); // draw to visible canvas only once so we render this once
+	
 }
 function redraw_elev(openLegened = false) {
 	window.elevHeights = {};
@@ -1926,7 +1950,7 @@ function redraw_light_walls(clear=true){
 
 			door_note_icon(id);
 		}
-	
+		do_check_token_visibility(true);
 		
 
 		if((/rgba.*0\.5\)/g).test(color))
@@ -2158,10 +2182,10 @@ function get_snapped_coordinates(pointX, pointY) {
     const offsetX = parseFloat(window.CURRENT_SCENE_DATA.offsetx) || 0;
     const offsetY = parseFloat(window.CURRENT_SCENE_DATA.offsety) || 0;
 
-    if (window.CURRENT_SCENE_DATA.gridType == "1") {
+    if (window.CURRENT_SCENE_DATA.gridType == "1" || typeof window.CURRENT_SCENE_DATA.gridType == "undefined") {
         // Square grid
-        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps);
-        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps);
+        const gridWidth = parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
+        const gridHeight = parseFloat(window.CURRENT_SCENE_DATA.vpps)/2;
         pointX = Math.round((pointX-offsetX) / gridWidth) * gridWidth + offsetX;
         pointY = Math.round((pointY-offsetY) / gridHeight) * gridHeight + offsetY;
     } else if (window.CURRENT_SCENE_DATA.gridType == "2" || window.CURRENT_SCENE_DATA.gridType == "3") {
@@ -2248,6 +2272,7 @@ function drawing_mousedown(e) {
 	window.LINEWIDTH = data.draw_line_width
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
+	window.DRAWLOCATION = data.location
 	window.DRAWSHAPE = data.shape;
 	window.DRAWFUNCTION = data.function;
 
@@ -2775,7 +2800,8 @@ function drawing_mouseup(e) {
 		 width,
 		 height,
 		 window.LINEWIDTH,
-		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion];
+		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+		 window.DRAWLOCATION];
 
 	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
@@ -3274,37 +3300,30 @@ function drawing_mouseup(e) {
 
 
 		if(intersectingWalls.length>0 && window.DRAWFUNCTION == 'wall-door-convert'){
-			let wallLine = [intersectingWalls[0]]
+			
 			let x1;
 			let x2;
 			let y1;
 			let y2;
-			let bottom = intersectingWalls[0].bottom;
-			let top = intersectingWalls[0].top;
-			let left = intersectingWalls[0].left;
-			let right = intersectingWalls[0].right;
+
 
 			for(let i = 0; i < intersectingWalls.length; i++){
-				wallLine[0].bottom.x = (wallLine[0].bottom.x < intersectingWalls[i].bottom.x) ?  intersectingWalls[i].bottom.x : wallLine[0].bottom.x;
-				wallLine[0].bottom.y = (wallLine[0].bottom.y < intersectingWalls[i].bottom.y) ?  intersectingWalls[i].bottom.y : wallLine[0].bottom.y;
 
-				wallLine[0].top.x = (wallLine[0].top.x > intersectingWalls[i].top.x) ?  intersectingWalls[i].top.x : wallLine[0].top.x;
-				wallLine[0].top.y = (wallLine[0].top.y > intersectingWalls[i].top.y) ?  intersectingWalls[i].top.y : wallLine[0].top.y;
-
-				wallLine[0].left.x = (wallLine[0].left.x > intersectingWalls[i].left.x) ?  intersectingWalls[i].left.x : wallLine[0].left.x;
-				wallLine[0].left.y = (wallLine[0].left.y > intersectingWalls[i].left.y) ?  intersectingWalls[i].left.y : wallLine[0].left.y;
-
-				wallLine[0].right.x = (wallLine[0].right.x < intersectingWalls[i].right.x) ?  intersectingWalls[i].right.x : wallLine[0].right.x;
-				wallLine[0].right.y = (wallLine[0].right.y < intersectingWalls[i].right.y) ?  intersectingWalls[i].right.y : wallLine[0].right.y;
-
-				bottom = (intersectingWalls[i].bottom != false) ? intersectingWalls[i].bottom : bottom;
-				top = (intersectingWalls[i].top != false) ? intersectingWalls[i].top : top;
-				left = (intersectingWalls[i].left != false) ? intersectingWalls[i].left : left;
-				right = (intersectingWalls[i].right != false) ? intersectingWalls[i].right : right;
+				let bottom = intersectingWalls[i].bottom;
+				let top = intersectingWalls[i].top;
+				let left = intersectingWalls[i].left;
+				let right = intersectingWalls[i].right ;
 
 				if(bottom != false && !Array.isArray(bottom?.x)){
-					x1 = bottom.x;
-					y1 = bottom.y;
+					if(x1 == undefined){
+						x1 = bottom.x;
+						y1 = bottom.y;
+					}
+					else{
+						x2 = bottom.x;
+						y2 = bottom.y;
+					}
+					
 				}
 				if(left != false && !Array.isArray(right?.y)){
 					if(x1 == undefined){
@@ -3330,17 +3349,16 @@ function drawing_mouseup(e) {
 					if(x1 == undefined){
 						x1 = top.x;
 						y1 = top.y;
-						x2 = top.x;
-						y2 = top.y;
 					}
 					else{
 						x2 = top.x;
 						y2 = top.y;	
-					}						
-											
-				}
-				
-				let data = ['line',
+					}																
+				}				
+			}
+			
+			if(x1 != undefined && x2 != undefined && y1 != undefined && y2 != undefined){
+					let data = ['line',
 				 'wall',
 				 window.DRAWCOLOR,
 				 x1,
@@ -3355,11 +3373,7 @@ function drawing_mouseup(e) {
 				 ];	
 				window.DRAWINGS.push(data);
 				undoArray.push([...data]);
-
-			}
-
-			
-							
+			}					
 		}
  		window.wallUndo.push({
 			undo: [...undoArray],
@@ -3948,7 +3962,7 @@ function drawPolygon (
 	mouseY = null,
 	scale = window.CURRENT_SCENE_DATA.scale_factor,
 	replacefog = false,
-	islight = false
+	islight = false,location = 'above'
 ) {
 	ctx.save();
 	ctx.beginPath();
@@ -4197,7 +4211,8 @@ function save3PointRect(e){
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+			window.DRAWLOCATION
 		];
 		window.DRAWINGS.push(data);	
 		redraw_drawn_light();
@@ -4256,7 +4271,8 @@ function savePolygon(e) {
 			null,
 			null,
 			window.LINEWIDTH,
-			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
+			window.DRAWLOCATION
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawn_light();
@@ -4680,11 +4696,27 @@ function init_draw_menu(buttons){
 				DOTTED
 			</button>
 		</div>`);
-			draw_menu.append(
+		draw_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
 				data-key="fill" data-value='dash' data-toggle='true' data-unique-with="fill">
 				DASHED
+			</button>
+		</div>`);
+		
+	draw_menu.append("<div class='menu-subtitle'>Draw Location</div>");
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading button-enabled ddbc-tab-options__header-heading--is-active'
+				data-key="location" data-value='above' data-toggle='true' data-unique-with="location">
+				ABOVE FOG
+			</button>
+		</div>`);
+	draw_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button class='drawbutton menu-option ddbc-tab-options__header-heading'
+				data-key="location" data-value='below' data-toggle='true' data-unique-with="location">
+				BELOW FOG
 			</button>
 		</div>`);
 
@@ -5406,13 +5438,9 @@ function particleUpdate(x, y) {
 };
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
-	if(auraId != undefined && window.TOKEN_OBJECTS[auraId].options.underDarkness){
-		lightPolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
-		movePolygon = [{x: window.PARTICLE.pos.x, y: window.PARTICLE.pos.y}];
-	}else{
-		lightPolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-		movePolygon = [{x: window.PARTICLE.pos.x*window.CURRENT_SCENE_DATA.scale_factor, y: window.PARTICLE.pos.y*window.CURRENT_SCENE_DATA.scale_factor}];
-	}
+
+	lightPolygon = [];
+	movePolygon = [];
 	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
 	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
 
@@ -5485,14 +5513,14 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 
 	    }	    
-	    if (closestLight && closestWall != prevClosestWall) {
-	    	if(prevClosestWall != null && prevClosestPoint != null){	    		
+	    if (closestLight && (closestWall != prevClosestWall || i == 359)) {
+	    	if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
 	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
 	    	}
 	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    } 
-	    if (closestMove && closestBarrier != prevClosestBarrier) {
-	    	if(prevClosestBarrierPoint){
+	    if (closestMove && (closestBarrier != prevClosestBarrier || i == 359)) {
+	    	if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
 	    		 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
 	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
@@ -5510,10 +5538,6 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    prevClosestBarrierPoint = closestMove;
 	    prevClosestBarrier = closestBarrier;
 	}
-	if(lightPolygon[1] != undefined)
-  		lightPolygon.push(lightPolygon[1]);
-  	if(movePolygon[1] != undefined)
-  		movePolygon.push(movePolygon[1]);
   	if(draw == true){
 		if(!fog){
 			  drawPolygon(ctx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
@@ -5930,9 +5954,11 @@ function redraw_light(){
 					  	let img = new Image;
 
 						img.onload = function(){
-						  window.exploredCanvasContext.drawImage(img,0,0); 
-						  window.exploredCanvasContext.globalCompositeOperation='lighten';
-						  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+							requestAnimationFrame(function(){
+							  window.exploredCanvasContext.drawImage(img,0,0); 
+							  window.exploredCanvasContext.globalCompositeOperation='lighten';
+							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+							});
 						};
 						img.src = event.target.result.exploredData;
 					}
@@ -5942,9 +5968,10 @@ function redraw_light(){
 				if(window.exploredCanvasContext == undefined){
 					window.exploredCanvasContext = exploredCanvas.getContext('2d');
 				}
-				window.exploredCanvasContext.globalCompositeOperation='lighten';
-				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-
+				requestAnimationFrame(function(){
+					window.exploredCanvasContext.globalCompositeOperation='lighten';
+					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+				});
 				debounceStoreExplored(exploredCanvas);
 			}
 		

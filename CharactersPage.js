@@ -405,24 +405,48 @@ function character_sheet_changed(changes) {
 
 function send_character_hp(maxhp) {
   const pc = find_pc_by_player_id(find_currently_open_character_sheet(), false); // use `find_currently_open_character_sheet` in case we're not on CharactersPage for some reason
+
+
+  let current, maximum, temp, deathsaves;
+  if(window.CurrentPcHp == undefined)
+    window.CurrentPcHp = {};
   if(maxhp > 0){ //the player just died and we are sending removed node max hp data
-    character_sheet_changed({
-      hitPointInfo: {
-        current: 0,
-        maximum: maxhp,
-        temp: 0
-      },
-      deathSaveInfo: read_death_save_info()
-    });
+    current = 0;
+    maximum = maxhp;
+    temp = 0;
   }
   else{
+    current = read_current_hp();
+    maximum = read_max_hp(window.CurrentPcHp?.hitPointInfo?.maximum);
+    temp = read_temp_hp();  
+  }
+  deathSaves = read_death_save_info();
+  
+
+
+  if(window.CurrentPcHp?.hitPointInfo?.current != current || 
+    window.CurrentPcHp?.hitPointInfo?.maximum != maximum || 
+    window.CurrentPcHp?.hitPointInfo?.temp != temp || 
+    window.CurrentPcHp?.deathSaveInfo?.successCount != deathSaves.successCount || 
+    window.CurrentPcHp?.deathSaveInfo?.failCount != deathSaves.failCount ){
+    window.CurrentPcHp = {
+      hitPointInfo: {
+        current: current,
+        maximum: maximum,
+        temp: temp
+      },
+      deathSaveInfo:{
+        successCount: deathSaves.successCount,
+        failCount: deathSaves.failCount
+      }
+    }
     character_sheet_changed({
       hitPointInfo: {
-        current: read_current_hp(),
-        maximum: read_max_hp(pc?.hitPointInfo?.maximum),
-        temp: read_temp_hp()
+        current: current,
+        maximum: maximum,
+        temp: temp
       },
-      deathSaveInfo: read_death_save_info()
+      deathSaveInfo: deathSaves
     });
   }
 
@@ -686,6 +710,8 @@ function convertToRPGRoller(){
     }
 
     $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('contextmenu.rpg-roller').on('contextmenu.rpg-roller', function(e){
+          if($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice')) // allow hit dice roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+            return;
           let rollData = {} 
           if($(this).hasClass('avtt-roll-formula-button')){
              rollData = DiceRoll.fromSlashCommand($(this).attr('data-slash-command'))
@@ -710,6 +736,8 @@ function convertToRPGRoller(){
     })
  
     $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
+      if($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice'))// allow hit dice roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
+        return;
       let rollData = {} 
       rollData = getRollData(this);
       if(!rollData.expression.match(allDiceRegex) && window.EXPERIMENTAL_SETTINGS['rpgRoller'] != true){
@@ -831,7 +859,23 @@ function init_character_list_page_without_avtt() {
   }
   window.location_href_observer = new MutationObserver(function(mutationList, observer) {
     if (oldHref !== document.location.href) {
-      if (!is_characters_list_page()) {
+      if(is_characters_builder_page()){
+         window.oldHref = document.location.href;
+        if (window.location_href_observer) {
+          window.location_href_observer.disconnect();
+          delete window.location_href_observer;
+        }
+        $('#site-main').css({
+          'visibility':'',
+          'display': ''
+        });
+        setTimeout(function(){
+          $(".builder-sections-sheet-icon").off().on("click", function(){
+            window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+          });
+        }, 1000)
+      }
+      else if (!is_characters_list_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);
         window.oldHref = document.location.href;
         init_characters_pages();
@@ -2024,12 +2068,10 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass("ct-health-summary__deathsaves-mark") ||
               mutationTarget.hasClass("ct-health-manager__input") ||
               mutationTarget.hasClass('ct-status-summary-mobile__deathsaves-mark') ||
-              mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span'))||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
-            } else if (mutationTarget.hasClass("ct-subsection--senses")) {
-              send_senses();
             } else if (mutationTarget.hasClass("ct-status-summary-mobile__button--interactive") && mutationTarget.text() === "Inspiration") {
               character_sheet_changed({inspiration: mutationTarget.hasClass("ct-status-summary-mobile__button--active")});
             } else if(mutationParent.find('[class*="ct-extras"]').length>0 && mutationParent.find('.add-monster-token-to-vtt').length==0){
@@ -2052,7 +2094,7 @@ function observe_character_sheet_changes(documentToObserve) {
               mutationTarget.hasClass('ct-health-summary__deathsaves') ||
               mutationTarget.hasClass('ct-health-summary__deathsaves-mark') ||
               mutationTarget.hasClass('[class*="styles_mark"]') ||
-              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.find("input[class*=styles_input]").length == 0) ||
+              (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span')) ||
               mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
             ) {
               send_character_hp();
@@ -2092,7 +2134,7 @@ function observe_character_sheet_changes(documentToObserve) {
 
               if (mutationParent.parent().hasClass('ct-health-summary__hp-item-content') ||
                 mutationParent.hasClass("ct-health-manager__health-item-value") ||
-                mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 ||
+                (mutationTarget.parents('[class*="styles_hitPointsBox"]').length>0 && mutationTarget.closest('[class*="styles_container"]').find("input[class*='styles_input']").length == 0 && mutationTarget.is('button, span')) ||
                 mutationTarget.closest('[class*="styles_pane"]')?.find('[class*="styles_healingContainer"]').length
               ) {
                 send_character_hp();          
@@ -2107,6 +2149,13 @@ function observe_character_sheet_changes(documentToObserve) {
               ){
                 send_abilities();
               }
+              else  if (mutationTarget.closest('.ct-conditions-summary').length>0) { // conditions update from sidebar
+                const conditionsSet = read_conditions(documentToObserve);
+                character_sheet_changed({conditions: conditionsSet});
+              }
+              else if (mutationTarget.closest(".ct-subsection--senses").length>0) {
+                send_senses();
+              } 
             if (typeof mutation.target.data === "string") {
               if (mutation.target.data.match(multiDiceRollCommandRegex)?.[0]) {
                 try {
@@ -2201,7 +2250,7 @@ function set_window_name_and_image(callback) {
   window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app]").text();
   try {
     // This should be just fine, but catch any parsing errors just in case
-    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || defaultAvatarUrl;
+    window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || get_higher_res_url($(".ddbc-character-avatar__portrait").attr('src')) || defaultAvatarUrl;
   } catch {}
 
   if (typeof window.PLAYER_NAME !== "string" || window.PLAYER_NAME.length <= 1 || typeof window.PLAYER_IMG !== "string" || window.PLAYER_IMG.length <= 1) {

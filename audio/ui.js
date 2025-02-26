@@ -275,18 +275,29 @@ function init_mixer() {
     let sequentialPlay = $('<button class="sequential-button"></button>');
     let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
     sequentialPlay.append(sequential_svg);
-    sequentialPlay.on('click', function(){
-        if(sequentialPlay.hasClass('pressed')){
-            sequentialPlay.toggleClass('pressed', false)
-        }
-        else{
-
-            sequentialPlay.toggleClass('pressed', true)
+    sequentialPlay.off().on("click", function() {
+        const icon = sequentialPlay.find(".material-symbols-outlined"); // Find the icon span
+    
+        // Cycle through: Off → Continuous → Shuffle → Off
+        if (!sequentialPlay.hasClass("pressed")) {
+            sequentialPlay.addClass("pressed");
+            sequentialPlay.attr("title", "Continuous Play");
             let currentlyPlaying = $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing:not(:first)`)
             if(currentlyPlaying.length>0){
                 currentlyPlaying.click();
             }
-        }     
+            // icon.text("repeat"); // Continuous Play icon
+        } else if (!sequentialPlay.hasClass("shuffle")) {
+            sequentialPlay.addClass("shuffle");
+            sequentialPlay.attr("title", "Shuffle Play");
+            icon.text("shuffle"); // Shuffle Play icon
+        } else {
+            sequentialPlay.removeClass("shuffle pressed");
+            sequentialPlay.attr("title", "Loop Off");
+            icon.text("format_list_numbered_rtl"); // Default icon
+        }
+    
+        console.log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
     // play/pause button
@@ -350,6 +361,48 @@ function init_mixer() {
     $('#master-volume').append(clear, sequentialPlay, playPause);
 }
 
+
+function shuffleArray(array) {
+    const seed = new Date().getTime(); // Get the current timestamp at shuffle time
+
+    function seededRandom(seed) {
+        return Math.sin(seed) * 10000 % 1; // Simple deterministic function
+    }
+
+    return array
+        .map(track => ({ track, sort: seededRandom(seed + Math.random()) })) // Use dynamic seed
+        .sort((a, b) => a.sort - b.sort) // Sort based on seeded value
+        .map(obj => obj.track); // Return only tracks
+}
+
+// Function to add filtered tracks to the Mixer
+function addTracks(filteredTracks, shuffle = false) {
+    if (filteredTracks.length === 0) {
+        alert("No tracks found in the current filter.");
+        return;
+    }
+
+    if (shuffle) {
+        filteredTracks = shuffleArray(filteredTracks); // Random shuffle
+    }
+
+    // Show confirmation if adding more than 50 tracks
+    if (filteredTracks.length > 200) {
+        confirm(`You're about to add ${filteredTracks.length} tracks to the mixer. This message would be too large to send to players. Add fewer tracks.`)
+        return;
+    }
+    let channelData = [];
+    filteredTracks.forEach(track => {
+        const channel = new Channel(track.name, track.src);
+        channel.paused = true; // Add but don't auto-play
+        channelData.push(channel);
+    });
+    window.MIXER.addMultiChannels(channelData);
+
+    console.log(`Added ${filteredTracks.length} ${shuffle ? "shuffled " : ""}tracks to the Mixer.`);
+}
+
+
 function init_trackLibrary() {
     // header
     const header = document.createElement("h3");
@@ -396,6 +449,31 @@ function init_trackLibrary() {
     const trackSrc = $(`<input class='trackSrc trackInput' placeholder='https://.../example.mp3'/>`)
     const okButton = $('<button class="add-track-ok-button">OK</button>');  
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+
+    // Mixer/ Track List QOL updates
+    const addTracksToMixer = $(`<button id='addTrack'>Add Tracks to Mixer</button>`);
+    const addShuffledToMixer = $('<button id="addShuffledToMixer">Add Shuffled</button>');
+
+    // Click handlers
+    addTracksToMixer.on("click", function() {
+        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row:not(.hidden-track)")]
+            .map(track => ({
+                name: track.getAttribute("data-name"),
+                src: track.getAttribute("data-src"),
+            }));
+        addTracks(filteredTracks);
+    });
+
+    addShuffledToMixer.on("click", function() {
+        const filteredTracks = [...document.querySelectorAll("#track-list .audio-row:not(.hidden-track)")]
+            .map(track => ({
+                name: track.getAttribute("data-name"),
+                src: track.getAttribute("data-src"),
+            }));
+        addTracks(filteredTracks, true); // Enable shuffle
+    });
+    
+
     addTrack.off().on("click", function(){
         importTrackFields.css("height", "25px");
     });
@@ -603,7 +681,7 @@ function init_trackLibrary() {
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
 
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, dropBoxbutton, importCSV, addTrack, importTrackFields, trackList);
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br><b>Import</b>:  ", addTrack, dropBoxbutton, importCSV, importTrackFields, trackList);
 }
 
 function init() {

@@ -269,6 +269,8 @@ function addFloatingCombatText(id, damageValue, heal = false){
 class MessageBroker {
 
 	loadAboveWS(callback=null){
+		if(is_gamelog_popout())
+			return;
 		let self=this;
 		if (callback)
 			this.callbackAboveQueue.push(callback);
@@ -788,10 +790,15 @@ class MessageBroker {
 					
 					if(msg.data.id in window.TOKEN_OBJECTS){
 						window.TOKEN_OBJECTS[msg.data.id].place();			
-					}				
-					if(msg.data.popup)
-						window.JOURNAL.display_note(msg.data.id);
+					}			
 					const openNote = $(`.note[data-id='${msg.data.id}']`);
+					// If the 'Open' button is clicked OR the note is already opened by a player and it is saved 
+					// by the DM, the note gets refreshed.
+					if (msg.data.popup == true || (msg.data.popup == undefined && openNote.length != 0)){
+						window.JOURNAL.display_note(msg.data.id);
+					} else if (msg.data.popup == false) {
+						openNote.remove();
+					}
 					
 
 					if(window.JOURNAL.notes[msg.data.id].abilityTracker && openNote.length>0){
@@ -1205,8 +1212,12 @@ class MessageBroker {
 						for (let j=0; j<roll.diceNotation.set.length; j++){
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
 								let reduceCrit = 0;
-								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20)
+								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20){
                   reduceCrit = 20 - msg.data.critRange;
+								}
+                else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
+                	continue;
+                }
 								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
 									if(roll.rollKind == 'advantage'){
 										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
@@ -1599,7 +1610,7 @@ class MessageBroker {
 					</p>
 					<div class="tss-1e6zv06-MessageContainer-Flex">
 						<div class="tss-dr2its-Line-Flex">
-							<span class="tss-1tj70tb-Sender">${data.player}</span>
+							<span class="tss-1tj70tb-Sender" title="${data.player}">${data.player}</span>
 						</div>
 						<div class="tss-8-Collapsed-ref tss-8-Other-ref tss-11w0h4e-Message-Collapsed-Other-Flex">${data.text}</div>
 						<time datetime="${datetime}" title="${datestamp} ${timestamp}" class="tss-1yxh2yy-TimeAgo-TimeAgo">${timestamp}</time>
@@ -1868,10 +1879,21 @@ class MessageBroker {
 				if(data.UVTTFile == 1){
 					build_import_loading_indicator("Loading UVTT Map");
 					try{
-						data.map = await get_map_from_uvtt_file(data.player_map);
+						if(window.DM && data.dm_map && data.dm_map_usable){
+							data.map = await get_map_from_uvtt_file(data.map)
+						}
+						else{
+							data.map = await get_map_from_uvtt_file(data.player_map);
+						}			
 					}
 					catch{
-						data.UVTTFile = 0;
+						console.log('non-UVTT file found for map')
+						if(window.DM && data.dm_map && data.dm_map_usable){
+							data.map = data.dm_map;
+						}
+						else{
+							data.map = data.player_map;
+						}
 					}
 				}
 				else{
@@ -2289,6 +2311,8 @@ class MessageBroker {
 	}
 
 	sendAbovePing(){
+		if(is_gamelog_popout())
+			return;
 		let self = this;
 		if(this.abovews.readyState == this.abovews.OPEN){
 			this.abovews.send(JSON.stringify({action:"keepalive",eventType:"custom/myVTT/keepalive"}));
@@ -2340,6 +2364,8 @@ class MessageBroker {
 	}
 
 	reconnectDisconnectedAboveWs(){
+		if(is_gamelog_popout())
+			return;
 		if (this.abovews.readyState != this.abovews.OPEN && !this.loadingAboveWS && $('#above-vtt-error-message').length == 0){
 			if(window.reconnectAttemptAbovews == undefined){
 				window.reconnectAttemptAbovews = 0;
