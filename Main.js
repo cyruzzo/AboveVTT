@@ -3334,6 +3334,10 @@ function init_help_menu() {
 							<dd>Select multiple tokens</dd>
 						<dl>
 						<dl>
+							<dt>SHIFT+Drag Token</dt>
+							<dd>If token is grouped or multiple tokens selected just move the one token</dd>
+						<dl>
+						<dl>
 							<dt>SHIFT+Click Door/Window</dt>
 							<dd>Quick toggle door/window locked</dd>
 						<dl>
