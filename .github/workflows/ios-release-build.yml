@@ -17,17 +17,6 @@ run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build $
 
 on:
   workflow_dispatch:
-    inputs:
-      release_type:
-        type: choice
-        description: "beta or production?"
-        options:
-          - beta
-          - production
-        default: prerelease
-      version_name_override:
-        description: "Version Name Override (Only specify this if you need a name outside of our typical naming convention)"
-        required: false
 
 jobs:
   build_with_signing:
