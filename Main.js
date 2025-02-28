@@ -2461,7 +2461,7 @@ function init_ui() {
 	drawOverlay.css("position", "absolute");
 	drawOverlay.css("top", "0");
 	drawOverlay.css("left", "0");
-	drawOverlay.css("z-index", "18");
+	drawOverlay.css("z-index", "22");
 
 	const lightOverlay = $("<canvas id='light_overlay'></canvas>");
 	lightOverlay.css("position", "absolute");
