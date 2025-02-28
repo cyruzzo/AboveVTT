@@ -816,7 +816,8 @@ select#doorTypeSelectUVTT{
   
 }
 #fog_overlay,
-#draw_overlay_under_fog_darkness{
+#draw_overlay_under_fog_darkness,
+#draw_overlay{
   pointer-events:none;
 }
 #elev_overlay{
