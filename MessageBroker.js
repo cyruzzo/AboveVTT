@@ -272,9 +272,14 @@ class MessageBroker {
 		if(is_gamelog_popout())
 			return;
 		let self=this;
+
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
+		if (this.loadingAboveWS) {
+			return;
+		}
+		this.loadingAboveWS=true;
 		// current dev wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1
 		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		let searchParams = new URLSearchParams(window.location.search)
@@ -295,11 +300,9 @@ class MessageBroker {
 
 		}
 		
-		if (this.loadingAboveWS) {
-			return;
-		}
 
-		this.loadingAboveWS=true;
+
+		
 		
 		this.abovews.onerror = function(errorEvent) {
 			self.loadingAboveWS = false;
