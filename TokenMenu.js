@@ -187,8 +187,9 @@ function token_context_menu_expanded(tokenIds, e) {
 
 
 				redraw_light_walls();
-				redraw_light();
 				redraw_drawn_light();
+				redraw_light();
+
 
 				sync_drawings();
 				if(window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]  != undefined){
