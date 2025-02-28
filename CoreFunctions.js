@@ -991,7 +991,7 @@ const debounce_pc_token_update = mydebounce(() => {
         ...pc,
         imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
         id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-      };
+      };      
       if (window.DM) {
         token.place_sync_persist(); // update it on the server
       }
@@ -1008,6 +1008,10 @@ const debounce_pc_token_update = mydebounce(() => {
         imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
         id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
       };
+      const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
+      for(let i in unusedPlayerData){
+        delete token.options[unusedPlayerData[i]];
+      }
     }     
   });
   if (window.DM) {
