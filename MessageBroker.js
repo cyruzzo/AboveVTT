@@ -676,25 +676,22 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
 				redraw_light_walls();		
-				redraw_drawn_light();
 				redraw_drawings();
 				redraw_elev();
 				redraw_text();
-				await redraw_light();
-				check_token_visibility();
+				redraw_drawn_light();
+				redraw_light();
+
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
 				redraw_light_walls();
-				setTimeout(async function(){
-					redraw_drawn_light();
-					redraw_elev();
-					redraw_drawings();
-					redraw_text();
-					await redraw_light();
-				}, 100)
-				check_token_visibility();
+				redraw_elev();
+				redraw_drawings();
+				redraw_text();
+				redraw_drawn_light();
+				redraw_light();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
