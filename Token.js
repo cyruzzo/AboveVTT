@@ -1989,6 +1989,12 @@ class Token {
 				this.delete();
 				return;
 			}
+			if(this.isPlayer() && this.options.campaign != undefined){ // put this here so it's removed from existing tokens for now
+				const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
+				for(let i in unusedPlayerData){
+					delete this.options[unusedPlayerData[i]];
+				}
+			}
 			if(this.options.combatGroupToken){
 				this.options.left = '0px';
 				this.options.top = '0px';
