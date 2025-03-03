@@ -181,7 +181,16 @@ $(function() {
               window.MB.sendMessage("custom/myVTT/place-extras-token", event.data.data);
             }
           }                 
-                  
+          if(event.data.msgType=='placeAoe' && (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false)))  {
+              let options = build_aoe_token_options(event.data.data.color, event.data.data.shape, event.data.data.feet / window.CURRENT_SCENE_DATA.fpsq, event.data.data.name)
+              if(name == 'Darkness' || name == 'Maddening Darkness' ){
+                options = {
+                  ...options,
+                  darkness: true
+                }
+              }
+              place_aoe_token_in_centre(options)
+          }      
           if(!window.DM){
             if(event.data.msgType == 'CharacterData'){
               update_pc_with_data(event.data.characterId, event.data.pcData);
