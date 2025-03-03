@@ -138,20 +138,7 @@ function place_aoe_token_in_centre(options){
 function restyle_aoe_class(cls, style){
     return cls.replace(/aoe-style-\w+ /gm, style)
 }
-function sanitize_aoe_shape(shape){
-     // normalize shape
-     switch(shape) {
-        case "cube":
-            shape = "square";
-            break;
-        case "sphere":
-            shape = "circle";
-            break;
-        case "cylinder":
-            shape = "circle";
-    }
-    return shape
-}
+
 
 function set_spell_override_style(spellName){
     const spells = ["hypnotic pattern", "web", "fog cloud", "stinking cloud", "darkness"]
