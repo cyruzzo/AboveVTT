@@ -1,0 +1,28 @@
+name: Build Environment.js Action
+description: "Build the environment.js file"
+runs:
+  using: "composite"
+  steps:
+    - name: "Build environment.js"
+      run: |
+        version_suffix=''
+        if [[ "${{inputs.release_type}}" == "beta" ]]; then
+          version_suffix=${{env.version_name}}
+          version_suffix=-${version_suffix#*-}
+        fi
+        AVTT_ENVIRONMENT=$(jq --null-input \
+          --arg version_suffix "$version_suffix" \
+          '{"versionSuffix": $version_suffix, "baseUrl": "https://services.abovevtt.net"}'
+        )
+        echo "about to cat environment.js" 
+        cat environment.js
+        echo "did cat environment.js" 
+        echo "let AVTT_ENVIRONMENT = ${AVTT_ENVIRONMENT};" > environment.js
+        echo "about to cat environment.js" 
+        cat environment.js
+        echo "did cat environment.js"
+        git config user.email "bot@github.com"
+        git config user.name "workflow bot"
+        git add environment.js
+        git commit -m "update environment.js" environment.js
+

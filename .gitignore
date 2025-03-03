@@ -2,3 +2,10 @@
 .vscode
 .history
 .idea
+Makefile
+safari/AboveVTT.xcodeproj/project.xcworkspace/xcuserdata
+safari/AboveVTT.xcodeproj/xcuserdata
+safari/fastlane/report.xml
+safari/Gemfile.lock
+safari/fastlane/README.md
+safari/build
