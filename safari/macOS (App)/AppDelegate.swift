@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  macOS (App)
 //
-//  Created by Jeff Senn on 9/29/24.
+//  Created by Jeff Senn on 3/3/25.
 //
 
 import Cocoa

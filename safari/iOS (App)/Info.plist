@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>SFSafariWebExtensionConverterVersion</key>
-	<string>16.0</string>
+	<string>16.2</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -23,5 +23,7 @@
 			</array>
 		</dict>
 	</dict>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.role-playing-games</string>
 </dict>
 </plist>
