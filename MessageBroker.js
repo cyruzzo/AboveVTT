@@ -272,9 +272,14 @@ class MessageBroker {
 		if(is_gamelog_popout())
 			return;
 		let self=this;
+
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
+		if (this.loadingAboveWS) {
+			return;
+		}
+		this.loadingAboveWS=true;
 		// current dev wss://b2u1l4fzc7.execute-api.eu-west-1.amazonaws.com/v1
 		// current prod wss://blackjackandhookers.abovevtt.net/v1
 		let searchParams = new URLSearchParams(window.location.search)
@@ -295,11 +300,9 @@ class MessageBroker {
 
 		}
 		
-		if (this.loadingAboveWS) {
-			return;
-		}
 
-		this.loadingAboveWS=true;
+
+		
 		
 		this.abovews.onerror = function(errorEvent) {
 			self.loadingAboveWS = false;
@@ -676,25 +679,22 @@ class MessageBroker {
 			if (msg.eventType == "custom/myVTT/drawing") {
 				window.DRAWINGS.push(msg.data);
 				redraw_light_walls();		
-				redraw_drawn_light();
 				redraw_drawings();
 				redraw_elev();
 				redraw_text();
-				await redraw_light();
-				check_token_visibility();
+				redraw_drawn_light();
+				redraw_light();
+
 			}
 
 			if(msg.eventType=="custom/myVTT/drawdata"){
 				window.DRAWINGS=msg.data;
 				redraw_light_walls();
-				setTimeout(async function(){
-					redraw_drawn_light();
-					redraw_elev();
-					redraw_drawings();
-					redraw_text();
-					await redraw_light();
-				}, 100)
-				check_token_visibility();
+				redraw_elev();
+				redraw_drawings();
+				redraw_text();
+				redraw_drawn_light();
+				redraw_light();
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){

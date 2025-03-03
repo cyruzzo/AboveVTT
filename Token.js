@@ -1989,6 +1989,12 @@ class Token {
 				this.delete();
 				return;
 			}
+			if(this.isPlayer() && this.options.campaign != undefined){ // put this here so it's removed from existing tokens for now
+				const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
+				for(let i in unusedPlayerData){
+					delete this.options[unusedPlayerData[i]];
+				}
+			}
 			if(this.options.combatGroupToken){
 				this.options.left = '0px';
 				this.options.top = '0px';
@@ -2882,7 +2888,7 @@ class Token {
 						window.playerTokenAuraIsLight = (window.CURRENT_SCENE_DATA.disableSceneVision == '1') ? false : (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight; // used in drag to know if we should check for wall/LoS collision.
 						window.dragSelectedTokens = $(`#tokens .token.tokenselected, #tokens .token[data-group-id='${self.options.groupId}'][style*=' display: none;']`); //set variable for selected tokens that we'll be looking at in drag, deleted in stop.
 						
-						if (self.selected && window.dragSelectedTokens.length>1) {
+						if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								window.TOKEN_OBJECTS[id].selected = true;
@@ -3120,7 +3126,7 @@ class Token {
 							}
 
 
-							if (self.selected && window.dragSelectedTokens.length>1) {
+							if (self.selected && window.dragSelectedTokens.length>1 && !shiftHeld) {
 								// if dragging on a selected token, we should move also the other selected tokens
 								// try to move other tokens by the same amount
 								let offsetLeft = tokenPosition.x - parseInt(self.orig_left);

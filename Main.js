@@ -2461,7 +2461,7 @@ function init_ui() {
 	drawOverlay.css("position", "absolute");
 	drawOverlay.css("top", "0");
 	drawOverlay.css("left", "0");
-	drawOverlay.css("z-index", "18");
+	drawOverlay.css("z-index", "22");
 
 	const lightOverlay = $("<canvas id='light_overlay'></canvas>");
 	lightOverlay.css("position", "absolute");
@@ -3332,6 +3332,10 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+Click Token</dt>
 							<dd>Select multiple tokens</dd>
+						<dl>
+						<dl>
+							<dt>SHIFT+Drag Token</dt>
+							<dd>If token is grouped or multiple tokens selected just move the one token</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click Door/Window</dt>

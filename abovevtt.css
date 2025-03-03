@@ -815,7 +815,9 @@ select#doorTypeSelectUVTT{
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
   
 }
-#fog_overlay{
+#fog_overlay,
+#draw_overlay_under_fog_darkness,
+#draw_overlay{
   pointer-events:none;
 }
 #elev_overlay{
