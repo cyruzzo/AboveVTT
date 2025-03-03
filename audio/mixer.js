@@ -305,7 +305,8 @@ class Mixer extends EventTarget {
 
         if(window.DM){
             for(let id in mixerState.channels){
-                mixerState.channels[id].currentTime = this._players[id]?.currentTime;
+                if(this._players[id]?.currentTime != 0)
+                    mixerState.channels[id].currentTime = this._players[id]?.currentTime;
             } 
         }    
         return mixerState;
@@ -694,11 +695,12 @@ class Mixer extends EventTarget {
         $(total).off().on('click', function(e){
             let progressRect = this.getBoundingClientRect();
             let percentClick = (e.clientX - progressRect.left) / $(this).width();
-
             const channel = window.MIXER.readChannel(id);
             if(!isNaN(player.duration)){
+
                 player.currentTime = player.duration * percentClick;
                 channel.currentTime = player.currentTime;
+                progress.style.width = player.currentTime / player.duration * 100 + "%";
                 window.MIXER.updateChannel(id, channel);
             }
        

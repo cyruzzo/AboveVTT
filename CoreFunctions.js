@@ -217,7 +217,20 @@ function deleteExploredScene(sceneId){
       }        
     };
 }
-
+function sanitize_aoe_shape(shape){
+     // normalize shape
+     switch(shape) {
+        case "cube":
+            shape = "square";
+            break;
+        case "sphere":
+            shape = "circle";
+            break;
+        case "cylinder":
+            shape = "circle";
+    }
+    return shape
+}
 function add_journal_roll_buttons(target, tokenId=undefined){
   console.group("add_journal_roll_buttons")
   

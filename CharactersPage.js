@@ -1149,6 +1149,7 @@ function rebuild_buffs(fullBuild = false){
     $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
   register_buff_row_context_menu();
 }
+
 /**
  * Observes character sheet changes and:
  *     injects Dice Roll buttons when a slash command is in item notes.
@@ -1188,12 +1189,11 @@ function observe_character_sheet_changes(documentToObserve) {
       }
     }
 
-    if(is_abovevtt_page() || window.self != window.top){
+    if(is_abovevtt_page() || window.self != window.top || window.sendToTab != undefined){
       const icons = documentToObserve.find(".ddbc-note-components__component--aoe-icon:not('.above-vtt-visited')");
       if (icons.length > 0) {
         icons.wrap(function() {
-          if(!window.top?.CURRENT_SCENE_DATA?.fpsq)
-            return;
+          
 
           $(this).addClass("above-vtt-visited");
           const button = $("<button class='above-aoe integrated-dice__container'></button>");
@@ -1211,7 +1211,7 @@ function observe_character_sheet_changes(documentToObserve) {
           button.attr("title", "Place area of effect token")
           button.attr("data-shape", shape);
           button.attr("data-style", color);
-          button.attr("data-size", Math.round(feet / window.top.CURRENT_SCENE_DATA.fpsq));
+          button.attr("data-size", feet);
           button.attr("data-name", name);
 
           // Players need the token side panel for this to work for them.
@@ -1222,18 +1222,28 @@ function observe_character_sheet_changes(documentToObserve) {
           button.click(function(e) {
             e.stopPropagation();
             // hide the sheet, and drop the token. Don't reopen the sheet because they probably  want to position the token right away
-           
-            window.top.hide_player_sheet();
-            window.top.minimize_player_sheet();
+            if(is_abovevtt_page() || window.self != window.top){
+              window.top.hide_player_sheet();
+              window.top.minimize_player_sheet();
 
-            let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
-            if(name == 'Darkness' || name == 'Maddening Darkness' ){
-              options = {
-                ...options,
-                darkness: true
+
+              let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+              if(name == 'Darkness' || name == 'Maddening Darkness' ){
+                options = {
+                  ...options,
+                  darkness: true
+                }
               }
+              window.top.place_aoe_token_in_centre(options)
             }
-            window.top.place_aoe_token_in_centre(options)
+            else if(window.sendToTab != undefined){
+              const data = {color: color, shape: shape, feet: feet, name: name}
+              tabCommunicationChannel.postMessage({
+                msgType: 'placeAoe',
+                data: data,
+                sendTo: window.sendToTab
+              });
+            }
             // place_token_in_center_of_view only works for the DM
             // place_token_in_center_of_view(options)
           });
@@ -1243,6 +1253,7 @@ function observe_character_sheet_changes(documentToObserve) {
         console.log(`${icons.length} aoe spells discovered`);
       }    
     }
+    
     //for character page snippets and sidebar text. Can add anything else that's text isn't modified without removing parent.
     const snippets = documentToObserve.find(`
       .ddbc-snippet__content p:not('.above-vtt-visited'), 
