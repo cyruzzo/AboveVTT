@@ -33,8 +33,8 @@ jobs:
           security unlock-keychain -p "$P12_PASSWORD" "$KEYCHAIN_PATH"
           echo "import certs"
           security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
-          security set-key-partition-list -S apple-tool:,apple: -k "$P12_PASSWORD" "$KEYCHAIN_PATH"
-          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          # security set-key-partition-list -S apple-tool:,apple: -k "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          # security list-keychain -d user -s "$KEYCHAIN_PATH"
           echo "setup app store connect"
           echo "$APP_STORE_CONNECT_API_KEY" | base64 -d > AuthKey.p8
           source appconnect_setup.sh AuthKey.p8
