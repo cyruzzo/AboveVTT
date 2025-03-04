@@ -1,9 +1,9 @@
 name: safari-release-build
 run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
 on:
-  pull_request:
-  workflow_dispatch:
-  
+  push:
+    branches:
+      - '**'
 jobs:
   build-safari:
     runs-on: macos-latest
