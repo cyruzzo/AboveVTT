@@ -21,20 +21,22 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           PP_PATH=~/Library/MobileDevice/Provisioning\ Profiles
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-          # move profiles to the "right" place
-          mkdir -p $PP_PATH
+          echo "move profiles"
+          mkdir -p "$PP_PATH"
           cp AboveVTTProvisionProfile.mobileprovision "$PP_PATH"
           cp AboveVTTProvisionProfileExtension.mobileprovision "$PP_PATH"
-          # import certificate secrets
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
-          security create-keychain -p "$P12_PASSWORD" $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$P12_PASSWORD" $KEYCHAIN_PATH
-          # import certificates to keychain
-          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH2 -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security set-key-partition-list -S apple-tool:,apple: -k "$P12_PASSWORD" $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
+          echo "import certificate secrets"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+          echo "create keychain"
+          security create-keychain -p "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          echo "import certs"
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security import "$CERTIFICATE_PATH2" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple: -k "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          echo "setup app store connect"
           echo "$APP_STORE_CONNECT_API_KEY" | base64 -d > AuthKey.p8
           source appconnect_setup.sh AuthKey.p8
           rm AuthKey.p8
