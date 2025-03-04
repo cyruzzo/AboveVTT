@@ -1,5 +1,8 @@
-name: ios-release-build
+name: safari-release-build
 run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
+
+on:
+  workflow_dispatch:
 
 # These secrets are needed:
 ## APP_STORE_CONNECT_API_KEY - (base64encoded value - SECRET!, issuer id, key id are in safari/env file)
@@ -10,12 +13,9 @@ run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build $
 
 # TODO: Probably need to move the version numbers into the project files
 
-on:
-  workflow_dispatch:
-
 jobs:
-  build_ios:
-    name: Build iOS and Mac Extensions
+  build_safari:
+    name: Build iOS and Mac Extensions and upload to Testflight
     runs-on: macos-latest
     steps:
       - name: Checkout Repository
