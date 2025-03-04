@@ -61,5 +61,4 @@ jobs:
       - name: Run build script
         run: ./build.sh
         working-directory: safari        
-        env:
 
