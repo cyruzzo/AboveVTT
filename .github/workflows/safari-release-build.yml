@@ -3,8 +3,7 @@ run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build $
 on:
   workflow_dispatch:
 jobs:
-  build_safari:
-    name: Build iOS and Mac Extensions and upload to Testflight
+  build-safari:
     runs-on: macos-latest
     steps:
       - name: Checkout Repository
