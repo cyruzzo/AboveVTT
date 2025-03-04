@@ -1,9 +1,8 @@
 name: safari-release-build
 run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
 on:
-  push:
-    branches:
-      - '**'
+  workflow_dispatch:
+  
 jobs:
   build-safari:
     runs-on: macos-latest
@@ -22,8 +21,8 @@ jobs:
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
           # move profiles to the "right" place
           mkdir -p $PP_PATH
-          cp AboveVTTProvisionProfile.mobileprovision $PP_PATH
-          cp AboveVTTProvisionProfileExtension.mobileprovision $PP_PATH
+          cp AboveVTTProvisionProfile.mobileprovision "$PP_PATH"
+          cp AboveVTTProvisionProfileExtension.mobileprovision "$PP_PATH"
           # import certificate secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           security create-keychain -p "$P12_PASSWORD" $KEYCHAIN_PATH
