@@ -2844,7 +2844,7 @@ function init_zoom_buttons() {
 	if ($("#zoom_buttons").length > 0) {
 		return;
 	}
-
+	let defaultValues = get_avtt_setting_value('quickToggleDefaults');
 	// ZOOM BUTTON
 	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
@@ -2867,6 +2867,8 @@ function init_zoom_buttons() {
 	if(window.DM) {
 
 		const projector_toggle = $(`<div id='projector_toggle' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector mode'></div>`);
+
+
 		projector_toggle.click(function (event) {
 			console.log("projector_toggle", event);
 			const iconWrapper = $(event.currentTarget).find(".ddbc-tab-options__header-heading");
@@ -2879,7 +2881,11 @@ function init_zoom_buttons() {
 			}
 		});
 		projector_toggle.append(`<div class="ddbc-tab-options__header-heading"><span style="font-size: 20px;" class="material-symbols-outlined">cast</span></div>`);
-		
+		if(defaultValues.projectorMode != undefined){
+			projector_toggle.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.projectorMode) 
+			window.ProjectorEnabled = defaultValues.projectorMode;
+		}
+				
 		const projector_zoom_lock = $(`<div id='projector_zoom_lock' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle projector zoom lock'></div>`);
 		projector_zoom_lock.click(function (event) {
 			console.log("projector_toggle", event);
@@ -2898,7 +2904,9 @@ function init_zoom_buttons() {
 				expand_content
 			</span>
 		</div>`);
-		
+		if(defaultValues.projectorLock != undefined){
+			projector_zoom_lock.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.projectorLock) 
+		}
 
 		zoom_section.append(projector_zoom_lock, projector_toggle);
 		if (get_avtt_setting_value("projector")) {
@@ -2923,6 +2931,10 @@ function init_zoom_buttons() {
 		if (!get_avtt_setting_value("peerStreaming")) {
 			cursor_ruler_toggle.css("display", "none");
 		}
+		if(defaultValues.rulerToPlayers != undefined){
+			cursor_ruler_toggle.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.rulerToPlayers); 
+			window.PeerManager.allowCursorAndRulerStreaming = defaultValues.rulerToPlayers;
+		}
 
 		const ping_center = $(`<div id='ping_center' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Center Player View on Pings'> 
 		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
@@ -2943,7 +2955,9 @@ function init_zoom_buttons() {
 				$('#ping_center .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', true)
 			}
 		});
-
+		if(defaultValues.centerPing != undefined){
+			ping_center.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.centerPing); 
+		}
 
 		let select_locked = $(`<div id='select_locked' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Toggle Locked Tokens Selectable'> 
 		<div class="ddbc-tab-options__header-heading ddbc-tab-options__header-heading--is-active">
@@ -3041,7 +3055,13 @@ function init_zoom_buttons() {
 				$('#tokens .lockedToken').draggable("enable");
 			}
 		});
-	
+		if(defaultValues.selectLocked != undefined){
+			select_locked.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.selectLocked); 
+			$('body').toggleClass('preventSelectDefinitelyNot', !defaultValues.selectLocked);
+			$('#tokens .lockedToken').draggable(!defaultValues.selectLocked ? "disable" : "enable");
+			$('#tokens .lockedToken').toggleClass("ui-state-disabled", defaultValues.selectLocked);	
+		}
+
 
 		let pause_players = $(`<div id='pause_players' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Pause players'> 
 		<div class="ddbc-tab-options__header-heading">
@@ -3073,14 +3093,15 @@ function init_zoom_buttons() {
 	}
 
 
-	let grid_snap_drawings = $(`<div id='grid_snap_drawings' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Grid Snap Drawings'> 
+	let grid_snap_drawings = $(`<div id='grid_snap_drawings' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Grid Snap Most Tools'> 
 	<div class="ddbc-tab-options__header-heading">
 			<span style="font-size: 20px;" class="material-symbols-outlined">
 				rebase_edit
 			</span>
 	</div></div>
 	`);
-
+	$('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
+	window.toggleDrawingSnap = false;
 	grid_snap_drawings.click(async function(){
 		if ($('#grid_snap_drawings .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')) {
 			$('#grid_snap_drawings .ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', false)
@@ -3090,7 +3111,12 @@ function init_zoom_buttons() {
 			window.toggleDrawingSnap = true;
 		}
 	});
+	if(defaultValues.snapTooltoGrid != undefined){
+		grid_snap_drawings.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.snapTooltoGrid); 
+		window.toggleDrawingSnap = defaultValues.snapTooltoGrid;
+	}
 	zoom_section.append(grid_snap_drawings)
+
 
 	let selected_token_vision = $(`<div id='selected_token_vision' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Selected Token Vision'> 
 	<div class="ddbc-tab-options__header-heading">
@@ -3136,7 +3162,10 @@ function init_zoom_buttons() {
 		}
 		await redraw_light();	
 	});
-
+	if(defaultValues.selectedTokenVision != undefined){
+		selected_token_vision.find('.ddbc-tab-options__header-heading').toggleClass('ddbc-tab-options__header-heading--is-active', defaultValues.selectedTokenVision); 
+		window.SelectedTokenVision = defaultValues.selectedTokenVision;
+	}
 	zoom_section.append(selected_token_vision);
 
 
@@ -3326,8 +3355,8 @@ function init_help_menu() {
 							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
-							<dt>Hold CTRL while drawing</dt>
-							<dd>Temporary toggle snap drawings to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
+							<dt>Hold CTRL while using most tools</dt>
+							<dd>Temporary toggle snap tools to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+Click Token</dt>

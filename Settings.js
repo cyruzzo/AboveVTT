@@ -442,6 +442,7 @@ function avtt_settings() {
 			}
 		);
 	}
+
 	settings.push(
 	{
 		name: "rpgRoller",
@@ -503,7 +504,43 @@ function avtt_settings() {
 		defaultValue: false,
 		class: 'ui'
 	})
-
+	settings.push({
+		name: 'quickToggleDefaults',
+		label: 'Quick Toggle Defaults on Load',
+		type: 'flyoutButton',
+		options: [
+			{ name: "selectedTokenVision", label: "Selected Token Vision", defaultValue: false, dmOnly: false, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+			{ name: "snapTooltoGrid", label: "Grid Snap Most Tools", defaultValue: false, dmOnly: false, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+			{ name: "centerPing", label: "Center Player View on Ping", defaultValue: true, dmOnly: true, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },,
+			{ name: "selectLocked", label: "Locked Tokens Selectagble", defaultValue: true, dmOnly: true, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+			{ name: "rulerToPlayers", label: "Send ruler/cursor to Players", defaultValue: true, dmOnly: true, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+			{ name: "projectorMode", label: "Projector Mode Quick Toggle", defaultValue: false, dmOnly: true, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+			{ name: "projectorLock", label: "Projector Mode Lock Zoom", defaultValue: false, dmOnly: true, type: 'toggle',options: [
+				{ value: true, label: "Enabled", description: `` },
+				{ value: false, label: "Disabled", description: `` }
+			], },
+		],
+		defaultValue: {},
+		class: 'ui'
+	})
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool
@@ -810,6 +847,11 @@ function init_settings() {
 					set_avtt_setting_value(name, newValue);
 				})
 				break;
+			case "flyoutButton":
+				inputWrapper = build_flyout_input(setting, currentValue, function(name, newValue){
+					set_avtt_setting_value(name, newValue);
+				})
+				break;
 		}
 		if (inputWrapper) {
 			body.find(`.avtt-settings-${setting.class}`).append(inputWrapper);
@@ -931,7 +973,7 @@ function build_example_token(options) {
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
-function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false) {
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false, genericFlyout=false) {
 	if (typeof updateValue !== 'function') {
 		updateValue = function(name, newValue){
 			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
@@ -956,6 +998,8 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	availableOptions.forEach(option => {
 		if(option.hiddenSetting == true)
 			return;
+		if(option.dmOnly == true && !window.DM)
+			return;
 		const currentValue = setValues[option.name];
 		if (option.type === "dropdown") {
 			let inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
@@ -973,16 +1017,19 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
-	container.append(build_age_inputs([setValues['age']], [setValues['maxAge']],
-	function(age){
-		updateValue("age", age)
-		didChange();
-	
-	}, 
-	function(maxAge, updateToken){
-		updateValue("maxAge", maxAge)
-		didChange();
-	}));
+	if(!genericFlyout){
+		container.append(build_age_inputs([setValues['age']], [setValues['maxAge']],
+		function(age){
+			updateValue("age", age)
+			didChange();
+		
+		}, 
+		function(maxAge, updateToken){
+			updateValue("maxAge", maxAge)
+			didChange();
+		}));
+	}
+
 
 	if(showExtraOptions){
 		
@@ -1032,72 +1079,71 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 
 
 	}
+	if(!genericFlyout){
+		update_token_base_visibility(container);
+		// Build example tokens to show the settings changes
+		container.append(`<h5 class="token-image-modal-footer-title" style="margin-top:15px;">Example Tokens</h5>`);
+		let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
+		container.append(tokenExamplesWrapper);
+		// not square image to show aspect ratio
+		tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"}));
+		// perfectly square image
+		tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"}));
+		// idk, something else I guess
+		tokenExamplesWrapper.append(build_example_token({imgsrc: "https://i.imgur.com/2Lglcip.png"}));
 
-	update_token_base_visibility(container);
+		let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
+		resetToDefaults.on("click", function (clickEvent) {
 
+			let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).parent();
 
-	// Build example tokens to show the settings changes
-	container.append(`<h5 class="token-image-modal-footer-title" style="margin-top:15px;">Example Tokens</h5>`);
-	let tokenExamplesWrapper = $(`<div class="example-tokens-wrapper"></div>`);
-	container.append(tokenExamplesWrapper);
-	// not square image to show aspect ratio
-	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/thumbnails/6/359/420/618/636272697874197438.png"}));
-	// perfectly square image
-	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg"}));
-	// idk, something else I guess
-	tokenExamplesWrapper.append(build_example_token({imgsrc: "https://i.imgur.com/2Lglcip.png"}));
+			// disable all toggle switches
+			tokenOptionsFlyoutContainer
+				.find(".rc-switch")
+				.each(function (){
+					let el = $(this);
+					let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
+					el.toggleClass("rc-switch-checked", matchingOption.defaultValue)
+				})		
+				.removeClass("rc-switch-unknown");
 
-	let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
-	resetToDefaults.on("click", function (clickEvent) {
+			// set all dropdowns to their default values
+			tokenOptionsFlyoutContainer
+				.find("select")
+				.each(function () {
+					let el = $(this);
+					let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
+					el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
+				});
 
-		let tokenOptionsFlyoutContainer = $(clickEvent.currentTarget).parent();
+			// This is why we want multiple callback functions.
+			// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
 
-		// disable all toggle switches
-		tokenOptionsFlyoutContainer
-			.find(".rc-switch")
-			.each(function (){
-				let el = $(this);
-				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
-				el.toggleClass("rc-switch-checked", matchingOption.defaultValue)
-			})		
-			.removeClass("rc-switch-unknown");
+			availableOptions.forEach(option => updateValue(option.name, undefined));
+			updateValue('vision', {});
+			updateValue('light1', {});
+			updateValue('light2', {});
 
-		// set all dropdowns to their default values
-		tokenOptionsFlyoutContainer
-			.find("select")
-			.each(function () {
-				let el = $(this);
-				let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
-				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
-			});
+			let defaultTokenOptions = default_options();
 
-		// This is why we want multiple callback functions.
-		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
-
-		availableOptions.forEach(option => updateValue(option.name, undefined));
-		updateValue('vision', {});
-		updateValue('light1', {});
-		updateValue('light2', {});
-
-		let defaultTokenOptions = default_options();
-
-		if(showExtraOptions == true){
-			$("input[name='visionColor']").spectrum("set", defaultTokenOptions.light2.color);
-		    $("input[name='light1Color']").spectrum("set", defaultTokenOptions.light1.color);
-		    $("input[name='light2Color']").spectrum("set", defaultTokenOptions.light2.color);
-		}
-		else{
-			$("input[name='visionColor']").spectrum("set", ((window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : defaultTokenOptions.light2.color));
-		    $("input[name='light1Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : defaultTokenOptions.light1.color));
-		    $("input[name='light2Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : defaultTokenOptions.light2.color));
-		}
+			if(showExtraOptions == true){
+				$("input[name='visionColor']").spectrum("set", defaultTokenOptions.light2.color);
+			    $("input[name='light1Color']").spectrum("set", defaultTokenOptions.light1.color);
+			    $("input[name='light2Color']").spectrum("set", defaultTokenOptions.light2.color);
+			}
+			else{
+				$("input[name='visionColor']").spectrum("set", ((window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : defaultTokenOptions.light2.color));
+			    $("input[name='light1Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light1?.color) ? window.TOKEN_SETTINGS.light1.color : defaultTokenOptions.light1.color));
+			    $("input[name='light2Color']").spectrum("set", ((window.TOKEN_SETTINGS?.light2?.color) ? window.TOKEN_SETTINGS.light2.color : defaultTokenOptions.light2.color));
+			}
 
 
-		didChange();
-	});
-	container.append(resetToDefaults);
+			didChange();
+		});
+		container.append(resetToDefaults);
 
-	observe_hover_text(container);
+		observe_hover_text(container);
+	}
 
 	return container;
 }
