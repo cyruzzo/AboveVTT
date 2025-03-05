@@ -1,0 +1,59 @@
+name: safari-release-build
+run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
+on:
+  workflow_dispatch:
+  
+jobs:
+  build-safari:
+    runs-on: macos-15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Keys
+        env:
+          APP_STORE_CONNECT_API_KEY: ${{ secrets.APP_STORE_CONNECT_API_KEY }}
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          BUILD_CERTIFICATE2_BASE64: ${{ secrets.BUILD_CERTIFICATE2_BASE64 }}
+          BUILD_CERTIFICATE3_BASE64: ${{ secrets.BUILD_CERTIFICATE3_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          PP_PATH=~/Library/Developer/Xcode/UserData/Provisioning\ Profiles
+          echo "move profiles to $PP_PATH"
+          mkdir -p "$PP_PATH"
+          cp *.mobileprovision "$PP_PATH"
+          cp *.provisionprofile "$PP_PATH"                    
+          ls -al "$PP_PATH"
+          echo "create keychain"
+          security create-keychain -p "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          echo "import certificate secrets"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          echo -n "$BUILD_CERTIFICATE2_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          echo -n "$BUILD_CERTIFICATE3_BASE64" | base64 --decode -o "$CERTIFICATE_PATH"
+          security import "$CERTIFICATE_PATH" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          # this command keeps the keychain unlocked for apple tools
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -k "$P12_PASSWORD" "$KEYCHAIN_PATH"
+          security list-keychain -d user -s "$KEYCHAIN_PATH"
+          echo "setup app store connect"
+          echo "$APP_STORE_CONNECT_API_KEY" | base64 -d > AuthKey.p8
+          source appconnect_setup.sh AuthKey.p8
+          rm AuthKey.p8
+        working-directory: safari
+        
+      - name: Update Build Number
+        run: |
+             pip install pyjwt cryptography requests
+             python calc_testflight_next_version.py 
+        env:      
+          PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}      
+        working-directory: safari
+        
+      - name: Run build script
+        run: ./build.sh
+        working-directory: safari
