@@ -4470,6 +4470,12 @@ div#importer_area>div>div:first-of-type {
     width: 100%;
     flex-grow: 0;
 }
+.avtt-small-settings-edit{
+    height:fit-content;
+    width:fit-content;
+    margin: 5px 0px;
+    padding:5px;
+}
 .token-image-modal-add-button {
     margin: 0px 4px 0px 4px;
     width: auto;
