@@ -23,7 +23,7 @@ function unhide_interface() {
     }
 }
 
-extras_bound = [];
+let extras_bound = [];
 function bind_extras() {
     //cycle between modes of showing combat&log
     function mybind(a,b) {
