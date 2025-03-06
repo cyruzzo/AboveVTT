@@ -9509,6 +9509,14 @@ button.journal-view-button.journal-button {
     position: relative;
     border-image-source: var(--theme-read-aloud-border,url(https://media.dndbeyond.com/ddb-compendium-client/146117d0758df55ed5ff299b916e9bd1.png))
 }
+.injected-input {
+    font-size: 14px; 
+    min-width: 40px; 
+    appearance: none; 
+    border: 1px solid #d8e1e8; 
+    border-radius: 3px;
+}
+
 .custom-stat-block input.injected-input {
     margin-left: 5px;
 }
