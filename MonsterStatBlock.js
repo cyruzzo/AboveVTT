@@ -1756,6 +1756,9 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           if(!tooltipBody.length && dataTooltipHref.match(/#.*$/gi)){
            tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref.match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
           }
+          else if(!tooltipBody.length && $(moreInfo).find('.p-article-content').length>0){
+            tooltipBody = $('<div>').append($(moreInfo).find('.p-article-content'));
+          }
           else{
             let tooltipBody = $(moreInfo).find('.more-info');
             tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
