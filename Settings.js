@@ -317,6 +317,17 @@ function avtt_settings() {
 			class: 'ui'
 		},
 		{
+			name: 'extraTableKeys',
+			label: 'Extra Number Pad Keybindings',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Extra", description: `Extra keybindings useful for driving UI from number keypad and rolling dice` },
+				{ value: false, label: "No extra keys", description: `Enable this add to add extra keybindings useful for driving UI from number keypad and rolling dice.` }
+			],
+			defaultValue: false,
+			class: 'ui'
+		},
+		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -647,6 +658,9 @@ function set_avtt_setting_value(name, newValue) {
 		 case "iconUi":
 		 	$('body').toggleClass('mobileAVTTUI', newValue)
 		 	break;
+		case "extraTableKeys":
+			bind_or_unbind_extras();
+			break;
 	}
 }
 

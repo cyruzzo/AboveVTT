@@ -23,9 +23,96 @@ function unhide_interface() {
     }
 }
 
+extras_bound = [];
+function bind_extras() {
+    //cycle between modes of showing combat&log
+    function mybind(a,b) {
+        Mousetrap.bind(a,b);
+        extras_bound.push(a);
+    }
+    cyclelog = function () {
+        setTimeout(() => $('#combat_button').click(), 20);
+        if ($('#combat_tracker_inside').is(':visible')) {
+            //make sure gamelog selected
+            change_sidbar_tab($('#switch_gamelog'), true);
+            $('#hide_rightpanel').click();
+        }
+    };
+    mybind('g', cyclelog); //for debug on non-Enter kbd
+    mybind('/', cyclelog);
+    mybind('*', () => { //hightight and center current combat token
+        current = $('#combat_area tr[data-current=1]');
+        if (current) {
+            target = current.attr('data-target');
+            if (target in window.TOKEN_OBJECTS) {
+                window.TOKEN_OBJECTS[target].highlight();
+            } else {
+                place_token_in_center_of_view(window.all_token_objects[target].options);
+            }
+        }
+    });
+    //Use number keys to collect some dice to roll in a short time
+    collectSome = function (d, n) {
+        if (Mousetrap.collectdice) {
+            clearTimeout(Mousetrap.collectTimeout);
+            Mousetrap.collectdice[d] = (Mousetrap.collectdice[d] || 0) + n;
+        } else {
+            Mousetrap.collectdice = { [d]: n };
+        }
+        Mousetrap.collectTimeout = setTimeout(() => {
+            e = Object.keys(Mousetrap.collectdice)
+                .map((k) => '' + (Mousetrap.collectdice[k] || '2') + k + ' ')
+                .join('+');
+            delete Mousetrap.collectdice;
+            window.diceRoller.roll(new DiceRoll(e, 'Table Roll', 'roll'));
+        }, 750);
+    };
+    mybind('1', function () {
+        collectSome('d20kl1', 0);
+    });
+    mybind('2', function () {
+        collectSome('d20', 1);
+    });
+    mybind('3', function () {
+        collectSome('d20kh1', 0);
+    });
+    mybind('4', function () {
+        collectSome('d4', 1);
+    });
+    mybind('5', function () {
+        collectSome('d6', 1);
+    });
+    mybind('6', function () {
+        collectSome('d8', 1);
+    });
+    mybind('7', function () {
+        collectSome('d10', 1);
+    });
+    mybind('8', function () {
+        collectSome('d12', 1);
+    });
+    mybind('9', function () {
+        collectSome('d100', 1);
+    });
+}
+function unbind_extras() {
+    extras_bound.forEach(k => Mousetrap.unbind(k));
+    extras_bound = [];
+}
+function bind_or_unbind_extras() {    
+    if (get_avtt_setting_value("extraTableKeys")) {
+        if(extras_bound.length == 0) {
+            bind_extras();
+        }
+    } else if(extras_bound) {
+        unbind_extras();
+    }
+}
+
 function init_keypress_handler(){
 
-
+bind_or_unbind_extras();
+    
 Mousetrap.bind('c', function () {       //combat tracker
         $('#combat_button').click()
 });
