@@ -1587,16 +1587,31 @@ class JournalManager{
             input = input.replace(/'/g, '’');
             // e.g. Divine Touch. Melee Spell Attack:
             input = input.replace(
-                /^(([a-z0-9]+([\s])?){1,7}\.)( (Melee|Ranged|Melee or Ranged) (Weapon|Spell) Attack:)?/gim,
+                /^(([A-Z0-9][^ .]+ ?){1,7}(\([^\)]+\))?\.)( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gim,
                 /(lair|legendary) actions/g.test(data)
                     ? '<strong>$1</strong>'
                     : '<em><strong>$1</strong>$4</em>'
+            );
+
+            // Find actions requiring saving throws
+            input = input.replace(
+                /(?<!\])(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) Saving Throw:/gi,
+                '<em>$1 Saving Throw:</em>'
             );
             // Emphasize hit
             input = input.replace(/Hit:/g, '<em>Hit:</em>');
             // Emphasize hit or miss
             input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
-  
+            // Emphasize trigger (2024 monsters)
+            input = input.replace(/Trigger:/g, '<em>Trigger:</em>');
+            // Emphasize response (2024 monsters)
+            input = input.replace(/Response:/g, '<em>Response:</em>');
+            // Emphasize failure/success (2024 monsters)
+            input = input.replace(/Failure:/g, '<em>Failure:</em>');
+            input = input.replace(/Success:/g, '<em>Success:</em>');
+            input = input.replace(/Success or Failure:/g, '<em>Success or Failure:</em>');
+            input = input.replace(/Failure or Success:/g, '<em>Failure or Success:</em>');
+  			
         
             // Find cover rules
             input = input.replace(
