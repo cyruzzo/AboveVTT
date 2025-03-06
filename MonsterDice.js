@@ -173,8 +173,12 @@ function rebuild_ability_trackers(target, tokenId){
  * @returns 
  */
 function createCountTracker(token, key, remaining, foundDescription, descriptionPostfix, callback) {
-	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}" style="font-size: 14px; width: 40px; appearance: none; border: 1px solid #d8e1e8; border-radius: 3px;"> ${foundDescription} ${descriptionPostfix}</input>`);
+	const input = $(`<input class="injected-input" data-token-id="${token.id}" data-tracker-key="${key}" type="number" value="${remaining}"> ${foundDescription} ${descriptionPostfix}</input>`);
+	input.off('input').on('input', function(){
+		resizeInput(input[0]);
+	})
 	input.off("change").on("change", function(changeEvent) {
+		resizeInput(input[0]);
 		const updatedValue = changeEvent.target.value;
 		console.log(`add_ability_tracker_inputs ${key} changed to ${updatedValue}`);
 		if(callback)
@@ -182,9 +186,12 @@ function createCountTracker(token, key, remaining, foundDescription, description
 		else
 			token.track_ability(key, updatedValue);
 	});
+	resizeInput(input[0]);
 	return input
 }
-
+function resizeInput(input) {
+  input.style.width = `${input.value.length+3}ch`;
+}
 /**
  * Adds spell/feature/legendary tracker inputs to a monster block
  * @param {$} target 

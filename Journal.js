@@ -1456,17 +1456,18 @@ class JournalManager{
 
 				return;	
 			}
-			if(!$(self).attr('data-tooltip-href'))
+			
 
-			if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]/gi)){
+			if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
 				$(self).attr('data-moreinfo', `${self.href}`);
 			}	
 
-			window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
-				$(self).attr('data-tooltip-href', url);
-				$(self).toggleClass(`${typeClass}-tooltip`, true);
-
-			});
+			if(!$(self).attr('data-tooltip-href')){
+				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
+					$(self).attr('data-tooltip-href', url);
+					$(self).toggleClass(`${typeClass}-tooltip`, true);
+				});
+			}
 		});
 	}
 
@@ -1586,16 +1587,31 @@ class JournalManager{
             input = input.replace(/'/g, '’');
             // e.g. Divine Touch. Melee Spell Attack:
             input = input.replace(
-                /^(([a-z0-9]+([\s])?){1,7}\.)( (Melee|Ranged|Melee or Ranged) (Weapon|Spell) Attack:)?/gim,
+                /^(([A-Z0-9][^ .]+ ?){1,7}(\([^\)]+\))?\.)( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gim,
                 /(lair|legendary) actions/g.test(data)
                     ? '<strong>$1</strong>'
                     : '<em><strong>$1</strong>$4</em>'
+            );
+
+            // Find actions requiring saving throws
+            input = input.replace(
+                /(?<!\])(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) Saving Throw:/gi,
+                '<em>$1 Saving Throw:</em>'
             );
             // Emphasize hit
             input = input.replace(/Hit:/g, '<em>Hit:</em>');
             // Emphasize hit or miss
             input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
-  
+            // Emphasize trigger (2024 monsters)
+            input = input.replace(/Trigger:/g, '<em>Trigger:</em>');
+            // Emphasize response (2024 monsters)
+            input = input.replace(/Response:/g, '<em>Response:</em>');
+            // Emphasize failure/success (2024 monsters)
+            input = input.replace(/Failure:/g, '<em>Failure:</em>');
+            input = input.replace(/Success:/g, '<em>Success:</em>');
+            input = input.replace(/Success or Failure:/g, '<em>Success or Failure:</em>');
+            input = input.replace(/Failure or Success:/g, '<em>Failure or Success:</em>');
+  			
         
             // Find cover rules
             input = input.replace(
@@ -1747,9 +1763,8 @@ class JournalManager{
             input = input.replace(/\[spell\](.*?)\[\/spell\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
-            	const spellMoreInfo = spell;
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" ${spellMoreInfo.includes(';') ? `data-moreinfo="https://www.dndbeyond.com/spells/${spellMoreInfo.split(';')[0]}"` : ''} aria-haspopup="true" target="_blank">${spell}</a>`
+                return `<a class="tooltip-hover spell-tooltip" href="https://www.dndbeyond.com/spells/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
              input = input.replace(/\[item\](.*?)\[\/item\]/g, function(m){
             	let item = m.replace(/<\/?p>/g, '').replace(/\s?\[item\]\s?|\s?\[\/item\]\s?/g, '').replace('[/item]', '');   	
@@ -1773,17 +1788,22 @@ class JournalManager{
             input = input.replace(/\[monster\](.*?)\[\/monster\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[monster\]\s?|\s?\[\/monster\]\s?/g, '').replace('[/monster]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
-            	const spellMoreInfo = spell;
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" ${spellMoreInfo.includes(';') ? `data-moreinfo="https://www.dndbeyond.com/spells/${spellMoreInfo.split(';')[0]}"` : ''}  aria-haspopup="true" target="_blank">${spell}</a>`
+                return `<a class="tooltip-hover monster-tooltip" href="https://www.dndbeyond.com/monsters/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
             input = input.replace(/\[magicItem\](.*?)\[\/magicItem\]/g, function(m){
             	let spell = m.replace(/<\/?p>/g, '').replace(/\s?\[magicItem\]\s?|\s?\[\/magicItem\]\s?/g, '').replace('[/magicItem]', '');   	
             	const spellUrl = spell.replace(/\s/g, '-').split(';')[0];
-            	const spellMoreInfo = spell;
             	spell = (spell.split(';')[1]) ? spell.split(';')[1] : spell;
-                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" ${spellMoreInfo.includes(';') ? `data-moreinfo="https://www.dndbeyond.com/spells/${spellMoreInfo.split(';')[0]}"` : ''} aria-haspopup="true" target="_blank">${spell}</a>`
+                return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
+            })
+
+             input = input.replace(/\[source\](.*?)\[\/source\]/g, function(m){
+            	let source = m.replace(/<\/?p>/g, '').replace(/\s?\[source\]\s?|\s?\[\/source\]\s?/g, '').replace('[/source]', '');   	
+            	const sourceUrl = source.replace(/\s/g, '-').split(';')[0];
+            	source = (source.split(';')[1]) ? source.split(';')[1] : source;
+                return `<a class="tooltip-hover source-tooltip" href="${sourceUrl}" aria-haspopup="true" target="_blank">${source}</a>`
             })
 
             input = input.replace(/\[track\]([a-zA-Z\s]+)([\d]+)\[\/track\]/g, function(m, m1, m2){
@@ -2983,7 +3003,7 @@ class JournalManager{
 			link_class_list: [
 			   {title: 'External Link', value: 'ext_link'},
 			   {title: 'DDB Sourcebook Link', value: 'int_source_link'},
-			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items)', value: 'tooltip-hover'}
+			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover'}
 			],
 			valid_children : '+body[style]',
 			setup: function (editor) { 

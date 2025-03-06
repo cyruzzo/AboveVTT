@@ -1,12 +1,12 @@
 const isVttGamePage = window.location.search.includes("abovevtt=true");
-const isPlainCharacterPage = !isVttGamePage && window.location.pathname.includes("/characters/");
-const isCampaignPage = window.location.pathname.includes("/campaigns/");
+const isPlainCharacterPage = !isVttGamePage && window.location.pathname.match("/characters"); //character, builder, or listing
+const isCampaignPage = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi); //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude
 console.log("Load.js is executing", isVttGamePage, isPlainCharacterPage, isCampaignPage);
 function getExtURL(url) {
 	return (chrome || browser).runtime.getURL(url);
 }
 let loadStyle = [];
-
+window.scripts = []; // in case it ever loads on a non-matching page
 if (isPlainCharacterPage) {
 	let l = document.createElement('div');
 	l.setAttribute("style", "display:none;");
@@ -141,18 +141,18 @@ if (isPlainCharacterPage) {
 		// AboveVTT files that execute when loaded
 		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 		{ src: "CampaignPage.js" },
-		{ src: "CharactersPage.js" },
 		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
-		// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
-		{ src: "Startup.js", type: "module" }
 	]
+	//Do not load characterPage.js for DM or on campaign page
+	if(window.location.pathname.includes("/characters")){ 
+		window.scripts.push({ src: "CharactersPage.js" })
+	}
+	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
+	window.scripts.push({ src: "Startup.js", type: "module" })
 }
-//jas: probably should review this change - not sure why it was done this way...
-if(!window.location.pathname.includes("/characters/")){
-	window.scripts = window.scripts.filter(d=> d.src != 'CharactersPage.js');
-}
+
 
 loadStyle.forEach(function(value, index, array) {
 	let l = document.createElement('link');
