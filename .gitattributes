@@ -10,3 +10,4 @@ safari/ export-ignore
 .github/ export-ignore
 .gitten/ export-ignore
 LOCK export-ignore
+lock.js export-ignore
