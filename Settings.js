@@ -359,6 +359,17 @@ function avtt_settings() {
 			],
 			defaultValue: false,
 			class: 'ui'
+		},
+		{
+			name: "alwaysHideScrollbar",
+			label: "Always Hide Scrollbar",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `Scrollbar is hidden` },
+				{ value: false, label: "Disable", description: `Scrollbar is allowed` }
+			],
+			defaultValue: false,
+			class: 'ui'
 		}
 	];
 
@@ -647,6 +658,9 @@ function set_avtt_setting_value(name, newValue) {
 		 case "iconUi":
 		 	$('body').toggleClass('mobileAVTTUI', newValue)
 		 	break;
+		case "alwaysHideScrollbar":
+			hide_or_unhide_scrollbar();
+			break;
 	}
 }
 

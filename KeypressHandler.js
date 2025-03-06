@@ -5,11 +5,55 @@ let toggleSnap = false;
 let cursor_x = -1;
 let cursor_y = -1;
 let arrowKeysHeld = [0, 0, 0, 0];
+
+const sb_scroll_style = "avtt-scroll-hidden"
+function hide_scrollbar() {
+    if (!document.getElementById(sb_scroll_style)) {
+        const style = document.createElement("style");
+        style.id = sb_scroll_style
+        style.textContent = `
+    body::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+    }
+    body::-webkit-scrollbar-track {
+        background: transparent !important;
+    }
+    body::-webkit-scrollbar-thumb {
+        background-color: transparent;
+        border-radius: 6px;
+        border: none;
+    }
+    body::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+    .sidebar__pane-content {
+        box-shadow: none;
+    }
+    html {
+        scrollbar-width: none;
+    }
+        `;
+        document.head.appendChild(style);
+    }
+}
+function allow_scrollbar() {
+    e = document.getElementById(sb_scroll_style);
+    if(e) e.remove();
+}
+function hide_or_unhide_scrollbar() {
+    if (get_avtt_setting_value("alwaysHideScrollbar")) {
+        hide_scrollbar();
+    } else {
+        allow_scrollbar();        
+    }
+}
 function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
         $('#hide_interface_button').hide().removeClass('unhidden');
         $('.hideable').show();
         $(".dice-toolbar").show();
+        hide_scrollbar();
     } else {
         if ($('#hide_rightpanel').hasClass('point-right')) {
             $('#hide_rightpanel').click();
@@ -20,6 +64,9 @@ function unhide_interface() {
         $(".dice-toolbar").hide();
         $('#hide_interface_button').show().addClass('unhidden');
         $('.hideable').hide();
+        if (!get_avtt_setting_value("alwaysHideScrollbar")) {        
+            allow_scrollbar();        
+        }
     }
 }
 
