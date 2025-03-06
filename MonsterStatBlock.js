@@ -1751,18 +1751,44 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
               return;
           }
           window.tooltipCache[typeAndId] = {Tooltip: ``};
-          let moreInfo = await DDBApi.fetchMoreInfo(dataTooltipHref);
+          let moreInfoString = await DDBApi.fetchMoreInfo(dataTooltipHref);
+          const parser = new DOMParser()
+
+          // Parse the text
+          let moreInfo = parser.parseFromString(moreInfoString, "text/html")
           let tooltipBody = $(moreInfo).find('.more-info');
+          let bodyClass = $(moreInfo).find('body').attr('class');
+          let subClasses = !tooltipBody.length && dataTooltipHref.match(/#.*$/gi) ? ['p-article-a', 'p-article-content'] : ['more-info', 'detail-content']
           if(!tooltipBody.length && dataTooltipHref.match(/#.*$/gi)){
            tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref.match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
           }
           else{
-            let tooltipBody = $(moreInfo).find('.more-info');
+            tooltipBody.find('.ddb-homebrew-cant-publish').closest('ul').remove();
             tooltipBody.find('script,[class*="homebrew"],footer,div.image').remove();
             tooltipBody.find('.detail-content>.line:first-of-type').remove();
           }
-          
+          let functionArray = [];
+          let importStyleText = ``;
+          $(moreInfo).find('link[rel="stylesheet"]').each(function(){
+            if(!this.href.includes('dndbeyond'))
+                return;
+            functionArray.push(async () => {
+              
+              let importStyle = await $.get(this.href);
+              let splitHref= this.href.split('/');
 
+              let parentDir = splitHref.slice(0,splitHref.length-2).join('/');
+              importStyleText = `${importStyle.replaceAll(/\.\.\/images/gi, `${parentDir}/images`)}${importStyleText}`
+            
+              return true;
+            }); 
+          });
+          functionArray.reverse();
+           for(let i in functionArray){
+            await functionArray[i]();
+           }
+
+         
           moreInfo = `
               <div class="tooltip tooltip-spell">
                 <div class="tooltip-header">
@@ -1774,13 +1800,33 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
                         </div>
                     </div>
               <div class="tooltip-body">
-                 ${tooltipBody.html()}
+                <div class='${bodyClass}'>
+                  <style>                         
+                      .tooltip-flyout .tooltip-body{
+                        ${importStyleText.replaceAll(/\:root/gi, '')}
+                        .detail-content{
+                          width: 100% !important;
+                        }
+                        .p-article-content>*,
+                        .detail-content>*{
+                          width:100%;
+                        }
+                      }
+                  </style>
+                  <div class='${subClasses[0]}'>
+                    <div class='${subClasses[1]}'> 
+                     ${tooltipBody.html()}
+                    </div>
+                  </div>
+                </div>
               </div>
           </div>`
 
           const toolTipJson = {Tooltip: moreInfo}
           window.tooltipCache[typeAndId] = toolTipJson;
           callback(toolTipJson)
+          
+          
         }
         else{
           const parts = dataTooltipHref.split("/");
