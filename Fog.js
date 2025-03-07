@@ -2490,13 +2490,14 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
-	if (window.MOUSEMOVEWAIT) {
+	if (window.MOUSEMOVEWAIT || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
 	// don't perform any drawing when dragging a token
 	if ($(".ui-draggable-dragging").length > 0){
 		return
 	}
+	 
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 
 	
@@ -2735,7 +2736,7 @@ function drawing_mousemove(e) {
  * @returns
  */
 function drawing_mouseup(e) {
-	if(!window.MOUSEDOWN)
+	if(!window.MOUSEDOWN || (window.DRAWFUNCTION === "select" && e.touches != undefined))
 		return;
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging").length > 0){

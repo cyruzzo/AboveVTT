@@ -179,7 +179,13 @@ const debounce_scroll_event = mydebounce(function(){
 			$(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
 		}, 200)	
 }, 200)
+const debounce_font_change = mydebounce(function(){
+	$('#VTTWRAPPER').css({"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"})
+}, 25);
 
+const throttleZoom = throttle((newZoom, x, y, reset=false) => {
+	change_zoom(newZoom, x, y, reset);
+}, 1, {leading: false, trailing: true})
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
@@ -210,8 +216,11 @@ function change_zoom(newZoom, x, y, reset = false) {
 
 	$('#VTTWRAPPER').css({
 		"--window-zoom": window.ZOOM,
-		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
 	})
+	debounce_font_change();
+
+
+
 	set_default_vttwrapper_size();
 	if(reset == true){
 		$("#scene_map")[0].scrollIntoView({
@@ -344,7 +353,7 @@ function apply_zoom_from_storage() {
  */
 function decrease_zoom() {
 	if (window.ZOOM > MIN_ZOOM) {
-		change_zoom(window.ZOOM * 0.9);
+		throttleZoom(window.ZOOM * 0.9);
 	}
 }
 /**
@@ -383,7 +392,7 @@ function reset_zoom() {
  * Increases zoom level by 10%.
  */
 function increase_zoom() {
-	change_zoom(window.ZOOM * 1.10);
+	throttleZoom(window.ZOOM * 1.10);
 }
 
 /**
@@ -1318,37 +1327,42 @@ function init_mouse_zoom() {
 		}
 	}, { passive: false } );
 	let dist1=0;
+	let originalZoom=window.ZOOM;
 	function start_pinch(ev) {
            if (ev.targetTouches.length == 2) {//check if two fingers touched screen
+           		 ev.preventDefault();
+    					 ev.stopPropagation();
                dist1 = Math.hypot( //get rough estimate of distance between two fingers
                 ev.touches[0].pageX - ev.touches[1].pageX,
                 ev.touches[0].pageY - ev.touches[1].pageY);                  
            }
-    
+    			originalZoom = window.ZOOM;
     }
     function move_pinch(ev) {
            if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
+           	 		ev.preventDefault();
+    			 			ev.stopPropagation();
                  // Check if the two target touches are the same ones that started
               	let dist2 = Math.hypot(//get rough estimate of new distance between fingers
                 ev.touches[0].pageX - ev.touches[1].pageX,
                 ev.touches[0].pageY - ev.touches[1].pageY);
-              	let newScale;
-                //alert(dist);
-                if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
-                  newScale = window.ZOOM * 0.95;
-                }
-                if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-                  newScale = window.ZOOM * 1.05;
-                }
+              	difference = dist1-dist2;
+
+              	const multiplier = dist2/dist1;
+                
+                
+                let newScale = originalZoom * multiplier;
+                
+                
 
                 if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
 				
-	                change_zoom(newScale);
+	                throttleZoom(newScale);
 	            }
             }
            
     }
-    window.addEventListener ('touchstart', start_pinch, false);
+    window.addEventListener('touchstart', start_pinch, false);
     window.addEventListener('touchmove', move_pinch, false);
 
 	}
