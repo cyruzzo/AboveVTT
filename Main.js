@@ -341,13 +341,17 @@ function apply_zoom_from_storage() {
 	console.groupEnd()
 }
 
+const throttleZoom = throttle((newZoom, x, y, reset=false) => {
+	change_zoom(newZoom, x, y, reset);
+}, 1, {leading: false, trailing: true});
+
 /**
  * Decreases zoom level by 10%.
  * Prevents zooming below MIN_ZOOM.
  */
 function decrease_zoom() {
 	if (window.ZOOM > MIN_ZOOM) {
-		change_zoom(window.ZOOM * 0.9);
+		throttleZoom(window.ZOOM * 0.9);
 	}
 }
 /**
@@ -386,7 +390,7 @@ function reset_zoom() {
  * Increases zoom level by 10%.
  */
 function increase_zoom() {
-	change_zoom(window.ZOOM * 1.10);
+	throttleZoom(window.ZOOM * 1.10);
 }
 
 /**
@@ -1375,7 +1379,7 @@ function init_mouse_zoom() {
 					if(newScale < MIN_ZOOM) newScale = MIN_ZOOM;
 					if(newScale > MAX_ZOOM) newScale = MAX_ZOOM;
 					if(newScale != window.ZOOM) {
-						change_zoom(newScale,zsx,zsy);
+						throttleZoom(newScale,zsx,zsy);
 					}
 				}
 			}
@@ -1385,17 +1389,22 @@ function init_mouse_zoom() {
 	let isProcessing = false;
 	window.addEventListener('touchmove', function(e) {
 		//attempt here to process ASAP - but not faster than the frame rate
-		move_pinch(e, isProcessing);
+		move_pinch(e, isProcessing); // this will just suppress if already processing
 		isProcessing = true;
 		requestAnimationFrame(() => {
+			//if there is one: handle that last supressed one and stop supressing
 			isProcessing = false;
-			if(suppressed) move_pinch(e, isProcessing);			
-	})}, {passive: false});
+			if(suppressed) move_pinch(suppressed, isProcessing);			
+		})
+	}, {passive: false});		
 	window.addEventListener("touchend", function (e) {
 		if(touchTimeout) clearTimeout(touchTimeout);
 		if (e.touches.length === 0) {
 			touchTimeout = setTimeout(() => {
-				if(suppressed) { //handle final event if it was suppressed
+				if(suppressed) {
+					//handle final event if it was suppressed
+					//there probably was one if slow updates
+					//essentially that last event before fingers come up
 					move_pinch(suppressed, false);
 				}
 				console.log("TOUCH off");
@@ -1406,7 +1415,7 @@ function init_mouse_zoom() {
 	window.addEventListener("touchcancel", function (e) {
 		if (e.touches.length === 0) {
 			console.log("Touch interrupted. Resetting.");
-			change_zoom(start_scale);
+			throttleZoom(start_scale);
 		}
 	});
 
