@@ -1300,10 +1300,22 @@ const MAX_ZOOM_STEP = 20
  * Register event for mousewheel zoom.
  */
 function init_mouse_zoom() {
+	let wheelBusy = false;
+	let wheelScaleTarget;
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
+			if(!wheelBusy) {
+				wheelBusy = true;
+				requestAnimationFrame(() => {
+					wheelBusy = false;
+					if(wheelScaleTarget != window.ZOOM) {
+						console.log("wheel");
+						change_zoom(wheelScaleTarget, e.clientX, e.clientY);
+					}
+				});
+			}
 			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
 				newScale = window.ZOOM * 0.9;
@@ -1314,11 +1326,9 @@ function init_mouse_zoom() {
 			else {
 				newScale = window.ZOOM - 0.01 * e.deltaY;
 			}
-
-			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
-				console.log("wheel");
-				change_zoom(newScale, e.clientX, e.clientY);
-			}
+			if(newScale < MIN_ZOOM) newScale = MIN_ZOOM;
+			if(newScale > MAX_ZOOM) newScale = MAX_ZOOM;
+			wheelScaleTarget = newScale;
 		}
 	}, { passive: false } );
 	
