@@ -180,6 +180,9 @@ const debounce_scroll_event = mydebounce(function(){
 		}, 200)	
 }, 200)
 
+const debounce_font_change = mydebounce(function(){
+	$('#VTTWRAPPER').css({"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"})
+}, 25);
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
@@ -210,8 +213,8 @@ function change_zoom(newZoom, x, y, reset = false) {
 
 	$('#VTTWRAPPER').css({
 		"--window-zoom": window.ZOOM,
-		"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"
 	})
+	debounce_font_change();	
 	set_default_vttwrapper_size();
 	if(reset == true){
 		$("#scene_map")[0].scrollIntoView({
