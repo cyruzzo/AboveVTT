@@ -2473,6 +2473,14 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 
+	// On iOS make sure browser zoom is zero-d out
+	if (isIOS()) { //might also be useful on other mobile. not sure.
+		var meta = document.createElement('meta');
+		meta.name = "viewport";
+		meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+		document.getElementsByTagName('head')[0].appendChild(meta);
+	}
+	
 	window.VTTMargin = 1000;
 
 	// ATTIVA GAMELOG
