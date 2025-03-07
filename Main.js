@@ -1313,45 +1313,96 @@ function init_mouse_zoom() {
 			}
 
 			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
+				console.log("wheel");
 				change_zoom(newScale, e.clientX, e.clientY);
 			}
 		}
 	}, { passive: false } );
+	
 	let dist1=0;
-	function start_pinch(ev) {
-           if (ev.targetTouches.length == 2) {//check if two fingers touched screen
-               dist1 = Math.hypot( //get rough estimate of distance between two fingers
-                ev.touches[0].pageX - ev.touches[1].pageX,
-                ev.touches[0].pageY - ev.touches[1].pageY);                  
-           }
-    
-    }
-    function move_pinch(ev) {
-           if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
-                 // Check if the two target touches are the same ones that started
-              	let dist2 = Math.hypot(//get rough estimate of new distance between fingers
-                ev.touches[0].pageX - ev.touches[1].pageX,
-                ev.touches[0].pageY - ev.touches[1].pageY);
-              	let newScale;
-                //alert(dist);
-                if(dist1>dist2) {//if fingers are closer now than when they first touched screen, they are pinching
-                  newScale = window.ZOOM * 0.95;
-                }
-                if(dist1<dist2) {//if fingers are further apart than when they first touched the screen, they are making the zoomin gesture
-                  newScale = window.ZOOM * 1.05;
-                }
-
-                if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
-				
-	                change_zoom(newScale);
-	            }
-            }
-           
-    }
-    window.addEventListener ('touchstart', start_pinch, false);
-    window.addEventListener('touchmove', move_pinch, false);
-
+	let start_scale=window.ZOOM;
+	let zsx=0, zsy=0;
+	let touchMode = 0;
+	let touchTimeout;
+	function getDist(ts) {
+  		const dx = ts[0].clientX - ts[1].clientX;
+		const dy = ts[0].clientY - ts[1].clientY;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
+	function start_pinch(ev) {
+		console.log("START PINCH??????",ev.targetTouches.length);
+		if (ev.targetTouches.length == 2) {
+			ev.preventDefault()
+			ev.stopPropagation();			
+			const ts = ev.targetTouches;
+			dist1 = getDist(ts);
+			start_scale = window.ZOOM;
+			zsx = (ts[0].clientX + ts[1].clientX)/2;
+			zsy = (ts[0].clientY + ts[1].clientY)/2;
+			touchMode = 2;
+		}
+	}
+	let suppressed = null;
+	function move_pinch(ev, busy) {
+		if(touchMode == 2) {
+			if(ev.preventDefault) {
+				ev.preventDefault()
+				ev.stopPropagation();
+			}
+			if (ev.targetTouches.length == 2) {
+				if(busy) {
+					suppressed = {targetTouches: ev.targetTouches};
+					console.log("suppress")
+				} else {
+					const dist2 = getDist(ev.targetTouches)
+              				const factor = dist2 / dist1;
+					const newScale = start_scale * factor;
+					suppressed = null;
+					console.log("SCALE",dist2, factor, newScale);
+					if(newScale < MIN_ZOOM) newScale = MIN_ZOOM;
+					if(newScale > MAX_ZOOM) newScale = MAX_ZOOM;
+					if(newScale != window.ZOOM) {
+						change_zoom(newScale,zsx,zsy);
+					}
+				}
+			}
+	        }
+        }
+	window.addEventListener ('touchstart', start_pinch, false);
+	let isProcessing = false;
+	window.addEventListener('touchmove', function(e) {
+		//attempt here to process ASAP - but not faster than the frame rate
+		move_pinch(e, isProcessing);
+		isProcessing = true;
+		requestAnimationFrame(() => {
+			isProcessing = false;
+			if(suppressed) move_pinch(e, isProcessing);			
+	})}, {passive: false});
+	window.addEventListener("touchend", function (e) {
+		if(touchTimeout) clearTimeout(touchTimeout);
+		if (e.touches.length === 0) {
+			touchTimeout = setTimeout(() => {
+				if(suppressed) { //handle final event if it was suppressed
+					move_pinch(suppressed, false);
+				}
+				console.log("TOUCH off");
+				touchMode = 0;
+			}, 100);
+		}
+	});
+	window.addEventListener("touchcancel", function (e) {
+		if (e.touches.length === 0) {
+			console.log("Touch interrupted. Resetting.");
+			change_zoom(start_scale);
+		}
+	});
+
+	//disable browser gestures (not sure: is there a more subtle way in CSS?)
+	function prevent(e) { e.preventDefault(); }
+	document.addEventListener("gesturestart", prevent);
+	document.addEventListener("gesturechange", prevent);
+	document.addEventListener("gestureend", prevent);
+}
 
 
 /**
