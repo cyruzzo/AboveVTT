@@ -1361,7 +1361,7 @@ function init_mouse_zoom() {
 	}
 	let suppressed = null;
 	function move_pinch(ev, busy) {
-		if(touchMode == 2) {
+		if(ev && touchMode == 2) {
 			if(ev.preventDefault) {
 				ev.preventDefault()
 				ev.stopPropagation();
