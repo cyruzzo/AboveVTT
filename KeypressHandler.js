@@ -70,6 +70,15 @@ function unhide_interface() {
     }
 }
 
+//for number key binds that aren't enabled yet
+function hotkeyDice(nthDice){
+    const dieButton = $(`.sidebar__pane-content .dice-roller>div:nth-of-type(${nthDice}) img`); 
+    if(ctrlHeld)
+        dieButton.triggerHandler('contextmenu');
+    else
+        dieButton.click();
+}
+
 function init_keypress_handler(){
 
 
@@ -138,15 +147,51 @@ Mousetrap.bind('shift+v', function () {       //check token vision
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
-    $('#zoom_plus').click()
+    if($('.roll-mod-container').hasClass('show'))
+        $('.roll-button-mod.plus').click();
+    else
+        $('#zoom_plus').click()
 });
 
+Mousetrap.bind(["1","2","3","4","5","6","7","mod+1","mod+2","mod+3","mod+4","mod+5","mod+6","mod+7",], function (e, combo) {
+    e.preventDefault();  
+    let numberPressed = parseInt(combo.replace('mod+',''));
+    hotkeyDice(numberPressed);
+});
+
+/*menu specific shortcuts, select the nth element of menu when it's open
+function handle_menu_number_press(e) {
+    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
+    const button = $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`)
+    $(button).click()
+    $(button).children().first().focus()
+}
+Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
+    handle_menu_number_press(e)
+});*/
+
 Mousetrap.bind('+', function () {       //zoom plus
-    $('#zoom_plus').click()
+    if($('.roll-mod-container').hasClass('show'))
+        $('.roll-button-mod.plus').click(); 
+    else
+        $('#zoom_plus').click()
 });
 
 Mousetrap.bind('-', function () {       //zoom minus
-    $('#zoom_minus').click()
+    if($('.roll-mod-container').hasClass('show'))
+        $('.roll-button-mod.minus').click();
+    else
+        $('#zoom_minus').click()
+});
+Mousetrap.bind('enter', function () {       //zoom minus
+    if(!$('.roll-mod-container').hasClass('show'))
+        return;
+    $('.roll-mod-container>.roll-button').click(); 
+});
+
+Mousetrap.bind('mod+space', function (e) {    
+    e.preventDefault();
+    $('#combat_area tr[data-current=1] .findTokenCombatButton').click();
 });
 
 Mousetrap.bind('0', function () {   
@@ -242,16 +287,7 @@ Mousetrap.bind('esc', function () {     //deselect all buttons
     removeError();
 });
 
-//menu specific shortcuts, select the nth element of menu when it's open
-function handle_menu_number_press(e) {
-    const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
-    const button = $(`${visibleMenuId} .menu-option:eq(${parseInt(e.key) -1})`)
-    $(button).click()
-    $(button).children().first().focus()
-}
-Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
-    handle_menu_number_press(e)
-});
+
 const moveLoop = function(callback = function(){}){
     for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
         let id = window.CURRENTLY_SELECTED_TOKENS[i];
@@ -398,17 +434,17 @@ Mousetrap.bind('shift', function () {
 }, 'keyup');
 
 
-Mousetrap.bind('ctrl', function () {
-	ctrlHeld=true;
-	window.toggleSnap=true;
+Mousetrap.bind('mod', function () {
+    ctrlHeld=true;
+    window.toggleSnap=true;
 }, 'keydown');
 
-Mousetrap.bind('ctrl', function () {
-	ctrlHeld=false;
-	window.toggleSnap=false;
+Mousetrap.bind('mod', function () {
+    ctrlHeld=false;
+    window.toggleSnap=false;
 }, 'keyup');
 
-Mousetrap.bind(['ctrl+shift', 'shift+ctrl'], function () {
+Mousetrap.bind(['mod+shift', 'shift+mod'], function () {
     ctrlHeld=true;
     shiftHeld=true;
     $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
@@ -417,25 +453,19 @@ Mousetrap.bind(['ctrl+shift', 'shift+ctrl'], function () {
     window.toggleSnap=true;
 }, 'keydown');
 
-Mousetrap.bind(['ctrl+shift', 'shift+ctrl'], function () {
-    ctrlHeld=false;
-    shiftHeld = false;
-    window.toggleSnap=false;
-}, 'keyup');
+
 
 Mousetrap.bind('shift+h', function () {
     unhide_interface();
 });
 
-Mousetrap.bind('ctrl+c', function(e) {
+Mousetrap.bind('mod+c', function(e) {
     if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
-    copy_selected_tokens();
-});
-Mousetrap.bind('command+c', function(e) {
     copy_selected_tokens();
 });
 
-Mousetrap.bind('ctrl+v', function(e) {
+
+Mousetrap.bind('mod+v', function(e) {
     if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
     if($('#temp_overlay:hover').length>0){
         paste_selected_tokens(window.cursor_x, window.cursor_y);
@@ -445,15 +475,7 @@ Mousetrap.bind('ctrl+v', function(e) {
         paste_selected_tokens(center.x, center.y);
     }
 });
-Mousetrap.bind('command+v', function(e) {
-    if($('#temp_overlay:hover').length>0){
-        paste_selected_tokens(window.cursor_x, window.cursor_y);
-    } 
-    else {
-        let center = center_of_view();
-        paste_selected_tokens(center.x, center.y);
-    }
-});
+
 
 document.onmousemove = function(event)
 {
@@ -464,18 +486,13 @@ document.onmousemove = function(event)
 Mousetrap.bind(['backspace', 'del'], function(e) {
     delete_selected_tokens();
 });
-Mousetrap.bind('ctrl+z', function(e) {
+Mousetrap.bind('mod+z', function(e) {
     if($('input:focus').length ==0){
         e.preventDefault();
     }
     handle_undo();
 });
-Mousetrap.bind('command+z', function(e) {
-    if($('input:focus').length ==0){
-        e.preventDefault();
-    }
-    handle_undo();
-});
+
 Mousetrap.bind(']', function(e) {
     select_next_tab();
 });
