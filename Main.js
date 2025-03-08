@@ -1403,8 +1403,8 @@ function init_mouse_zoom() {
 			}
 	        }
         }
-	window.addEventListener('touchstart', start_pinch, false);
-	window.addEventListener('touchmove', move_pinch, {passive: false});		
+	window.addEventListener('touchstart', start_pinch, {passive: false});
+	window.addEventListener('touchmove', move_pinch, {passive: false});
 	window.addEventListener("touchend", function (e) {
 		if(touchTimeout) clearTimeout(touchTimeout);
 		if (e.touches.length === 0) {
