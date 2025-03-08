@@ -341,19 +341,73 @@ function apply_zoom_from_storage() {
 	console.groupEnd()
 }
 
-const throttleZoom = throttle((newZoom, x, y, reset=false) => {
-	change_zoom(newZoom, x, y, reset);
-}, 1, {leading: false, trailing: true});
-
-/**
- * Decreases zoom level by 10%.
- * Prevents zooming below MIN_ZOOM.
- */
-function decrease_zoom() {
-	if (window.ZOOM > MIN_ZOOM) {
-		throttleZoom(window.ZOOM * 0.9);
+let zoomBusy = false;
+let zoomQ = [];
+let lastZoom;	  
+//each zoom event [amt, typ, off, x, y] typ = 0(relative) 1(absolute) 2(offset)
+//keep a queue - which can mostly be squashed except for some offset events
+function throttledZoom(amount, typeFlag, zx, zy)  {
+	if(typeFlag === 2) {
+		if(zoomQ.length == 0) {
+			zoomQ = [[1.0,0,amount,zx,zy]];				
+		} else {
+			last = zoomQ[zoomQ.length-1];
+			if(last[1] === 0) {
+				last[2] = amount;
+			} else { //last[1] == 1
+				last[0] += amount;
+			}
+		}
+	} else if(zoomQ.length == 0 || typeFlag === 1) {
+		zoomQ = [[amount,typeFlag, 0, zx, zy]];
+	} else { //relative
+		last = zoomQ[zoomQ.length-1];
+		if(last[2] === 0) { //no offset
+			last[0] = last[0] * amount;
+		} else { //complex case where we need sequence
+			zoomQ.push([amount,typeFlag, 0, zx, zy]);
+		}
+	}
+	if(!zoomBusy) {
+		zoomBusy = true;
+		function applyOrDone() {
+			if(zoomQ.length) { //add all the queue events together based on current zoom
+				let z = window.ZOOM;
+				let zoomX, zoomY;
+				let doit = false;
+				if(zoomQ.length) {
+					while(zoomQ.length) {
+						e = zoomQ.pop(0);
+						z = ((e[1] === 0) ? z * e[0] : e[0]) + e[2];
+						zoomX = e[3];
+						zoomY = e[4];
+					}
+					z = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+					if(z != window.ZOOM) doit = true;
+					zoomQ = [];
+				}
+				if(doit && lastZoom && Date.now() - lastZoom < 2) {
+					//throttle by time
+					setTimeout(() => {
+						change_zoom(z, zoomX, zoomY);
+						lastZoom = Date.now();
+						requestAnimationFrame(applyOrDone)
+					}, 1);
+				} else {
+					if(doit) {
+						change_zoom(z, zoomX, zoomY);
+						lastZoom = Date.now();
+					}
+					requestAnimationFrame(applyOrDone);
+				} 
+			} else {
+				zoomBusy = false;
+			}
+		}
+		requestAnimationFrame(applyOrDone);
 	}
 }
+
 /**
 * Gets the zoom values that will fit the map to the viewport
 * @return {Number}
@@ -384,13 +438,6 @@ function reset_zoom() {
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
-}
-
-/**
- * Increases zoom level by 10%.
- */
-function increase_zoom() {
-	throttleZoom(window.ZOOM * 1.10);
 }
 
 /**
@@ -1304,35 +1351,19 @@ const MAX_ZOOM_STEP = 20
  * Register event for mousewheel zoom.
  */
 function init_mouse_zoom() {
-	let wheelBusy = false;
-	let wheelScaleTarget;
 	window.addEventListener('wheel', function (e) {
 		if (e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
-			if(!wheelBusy) {
-				wheelBusy = true;
-				requestAnimationFrame(() => {
-					wheelBusy = false;
-					if(wheelScaleTarget != window.ZOOM) {
-						console.log("wheel");
-						change_zoom(wheelScaleTarget, e.clientX, e.clientY);
-					}
-				});
-			}
-			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
-				newScale = window.ZOOM * 0.9;
+				throttledZoom(0.9,0);
 			}
 			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
-				newScale = window.ZOOM * 1.10;
+				throttledZoom(1.1,0);
 			}
 			else {
-				newScale = window.ZOOM - 0.01 * e.deltaY;
+				throttledZoom(- 0.01 * e.deltaY, 2)
 			}
-			if(newScale < MIN_ZOOM) newScale = MIN_ZOOM;
-			if(newScale > MAX_ZOOM) newScale = MAX_ZOOM;
-			wheelScaleTarget = newScale;
 		}
 	}, { passive: false } );
 	
@@ -1350,7 +1381,7 @@ function init_mouse_zoom() {
 		console.log("START PINCH??????",ev.targetTouches.length);
 		if (ev.targetTouches.length == 2) {
 			ev.preventDefault()
-			ev.stopPropagation();			
+			ev.stopPropagation();
 			const ts = ev.targetTouches;
 			dist1 = getDist(ts);
 			start_scale = window.ZOOM;
@@ -1362,60 +1393,30 @@ function init_mouse_zoom() {
 	let suppressed = null;
 	function move_pinch(ev, busy) {
 		if(ev && touchMode == 2) {
-			if(ev.preventDefault) {
-				ev.preventDefault()
-				ev.stopPropagation();
-			}
+			ev.preventDefault()
+			ev.stopPropagation();
 			if (ev.targetTouches.length == 2) {
-				if(busy) {
-					suppressed = {targetTouches: ev.targetTouches};
-					console.log("suppress")
-				} else {
-					const dist2 = getDist(ev.targetTouches)
-              				const factor = dist2 / dist1;
-					const newScale = start_scale * factor;
-					suppressed = null;
-					console.log("SCALE",dist2, factor, newScale);
-					if(newScale < MIN_ZOOM) newScale = MIN_ZOOM;
-					if(newScale > MAX_ZOOM) newScale = MAX_ZOOM;
-					if(newScale != window.ZOOM) {
-						throttleZoom(newScale,zsx,zsy);
-					}
-				}
+				const dist2 = getDist(ev.targetTouches)
+              			const factor = dist2 / dist1;
+				const newScale = start_scale * factor;
+				throttledZoom(newScale, 1, zsx, zsy);
 			}
 	        }
         }
-	window.addEventListener ('touchstart', start_pinch, false);
-	let isProcessing = false;
-	window.addEventListener('touchmove', function(e) {
-		//attempt here to process ASAP - but not faster than the frame rate
-		move_pinch(e, isProcessing); // this will just suppress if already processing
-		isProcessing = true;
-		requestAnimationFrame(() => {
-			//if there is one: handle that last supressed one and stop supressing
-			isProcessing = false;
-			if(suppressed) move_pinch(suppressed, isProcessing);			
-		})
-	}, {passive: false});		
+	window.addEventListener('touchstart', start_pinch, false);
+	window.addEventListener('touchmove', move_pinch, {passive: false});		
 	window.addEventListener("touchend", function (e) {
 		if(touchTimeout) clearTimeout(touchTimeout);
 		if (e.touches.length === 0) {
 			touchTimeout = setTimeout(() => {
-				if(suppressed) {
-					//handle final event if it was suppressed
-					//there probably was one if slow updates
-					//essentially that last event before fingers come up
-					move_pinch(suppressed, false);
-				}
-				console.log("TOUCH off");
 				touchMode = 0;
 			}, 100);
 		}
 	});
-	window.addEventListener("touchcancel", function (e) {
+        window.addEventListener("touchcancel", function (e) {
 		if (e.touches.length === 0) {
 			console.log("Touch interrupted. Resetting.");
-			throttleZoom(start_scale);
+			throttledZoom(start_scale,1); //todo: x,y?
 		}
 	});
 
@@ -3256,11 +3257,11 @@ function init_zoom_buttons() {
 
 	let zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
 
-	zoom_minus.click(decrease_zoom)
+	zoom_minus.click(function() { throttledZoom(0.90, 0)});
 	zoom_section.append(zoom_minus);
 
 	let zoom_plus = $("<div id='zoom_plus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></div></div>");
-	zoom_plus.click(increase_zoom);
+	zoom_plus.click(function() { throttledZoom(1.10, 0)});
 	zoom_section.append(zoom_plus);
 
 	let hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);
