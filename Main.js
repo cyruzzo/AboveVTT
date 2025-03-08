@@ -3403,7 +3403,11 @@ function init_help_menu() {
 						<dl>
 						<dl>
 							<dt>N</dt>
-							<dd>Next creature (if combat tracker is open)</dd>
+							<dd>Next creature in combat</dd>
+						<dl>
+						<dl>
+							<dt>P</dt>
+							<dd>Prev creature in combat</dd>
 						<dl>
 						<dl>
 							<dt>- / CTRL+Mouse Wheel Down</dt>

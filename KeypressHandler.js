@@ -159,6 +159,12 @@ Mousetrap.bind(["1","2","3","4","5","6","7","mod+1","mod+2","mod+3","mod+4","mod
     hotkeyDice(numberPressed);
 });
 
+Mousetrap.bind("n", function (e) {
+    $('#combat_next_button').click();
+});
+Mousetrap.bind("p", function (e) {
+    $('#combat_prev_button').click();
+});
 /*menu specific shortcuts, select the nth element of menu when it's open
 function handle_menu_number_press(e) {
     const visibleMenuId = `#${$('[id*="_menu"].visible').attr("id")}`
