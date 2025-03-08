@@ -1378,7 +1378,6 @@ function init_mouse_zoom() {
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 	function start_pinch(ev) {
-		console.log("START PINCH??????",ev.targetTouches.length);
 		if (ev.targetTouches.length == 2) {
 			ev.preventDefault()
 			ev.stopPropagation();
@@ -1414,8 +1413,10 @@ function init_mouse_zoom() {
 		}
 	});
         window.addEventListener("touchcancel", function (e) {
-		if (e.touches.length === 0) {
+		//still needs to be tested - not sure how to trigger
+		if (e.touches.length === 0 && touchMode === 2) {
 			console.log("Touch interrupted. Resetting.");
+			touchMode = 0;
 			throttledZoom(start_scale,1); //todo: x,y?
 		}
 	});
