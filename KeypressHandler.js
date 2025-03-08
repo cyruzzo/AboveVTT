@@ -129,7 +129,11 @@ Mousetrap.bind('v', function () {       //video toggle
 });
 
 Mousetrap.bind('shift+v', function () {       //check token vision
-   window.SelectedTokenVision = true;
+    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0)
+        window.SelectedTokenVision = false;
+    else
+        window.SelectedTokenVision = true;
+
    redraw_light();
 });
 

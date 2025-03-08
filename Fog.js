@@ -5738,9 +5738,37 @@ function redraw_light(){
 	 		});
 
 		 	$('#exploredCanvas').css('opacity', '0');
-		 
-		 	
 	  	}
+	  	else {
+  			let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
+  			let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
+
+  		 	if(window.DM && darknessPercent < 40){
+  		 		darknessPercent = 40;
+  		 		$('#raycastingCanvas').css('opacity', '0');
+  		 	}
+  		 	else if(window.DM){
+  		 		$('#raycastingCanvas').css('opacity', '');
+  		 	}
+  			$('#VTT').css('--darkness-filter', darknessPercent + "%");
+  		   	if(window.DM){
+  		   		$("#light_container [id^='light_']").css('visibility', "visible");
+  		   		$(`.token`).show();
+  				$(`.door-button`).css('visibility', '');
+  				$(`.aura-element`).show();
+  		   	}
+	  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
+			 	$('#light_container').css({
+		 			'opacity': '0.3'
+			 	});
+		  	}
+		  	else{
+		  		$('#light_container').css({
+		 			'opacity': ''
+		 		});
+  			}
+  			$('#exploredCanvas').css('opacity', '');
+  		}
 	  	
 	  
 	  	
