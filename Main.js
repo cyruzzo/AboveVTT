@@ -179,13 +179,10 @@ const debounce_scroll_event = mydebounce(function(){
 			$(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
 		}, 200)	
 }, 200)
+
 const debounce_font_change = mydebounce(function(){
 	$('#VTTWRAPPER').css({"--font-size-zoom": Math.max(12 * Math.max((3 - window.ZOOM), 0), 8.5) + "px"})
 }, 25);
-
-const throttleZoom = throttle((newZoom, x, y, reset=false) => {
-	change_zoom(newZoom, x, y, reset);
-}, 1, {leading: false, trailing: true})
 /**
  * Changes the zoom level.
  * @param {Number} newZoom new zoom value
@@ -217,10 +214,7 @@ function change_zoom(newZoom, x, y, reset = false) {
 	$('#VTTWRAPPER').css({
 		"--window-zoom": window.ZOOM,
 	})
-	debounce_font_change();
-
-
-
+	debounce_font_change();	
 	set_default_vttwrapper_size();
 	if(reset == true){
 		$("#scene_map")[0].scrollIntoView({
@@ -347,15 +341,73 @@ function apply_zoom_from_storage() {
 	console.groupEnd()
 }
 
-/**
- * Decreases zoom level by 10%.
- * Prevents zooming below MIN_ZOOM.
- */
-function decrease_zoom() {
-	if (window.ZOOM > MIN_ZOOM) {
-		throttleZoom(window.ZOOM * 0.9);
+let zoomBusy = false;
+let zoomQ = [];
+let lastZoom;	  
+//each zoom event [amt, typ, off, x, y] typ = 0(relative) 1(absolute) 2(offset)
+//keep a queue - which can mostly be squashed except for some offset events
+function throttledZoom(amount, typeFlag, zx, zy)  {
+	if(typeFlag === 2) {
+		if(zoomQ.length == 0) {
+			zoomQ = [[1.0,0,amount,zx,zy]];				
+		} else {
+			last = zoomQ[zoomQ.length-1];
+			if(last[1] === 0) {
+				last[2] = amount;
+			} else { //last[1] == 1
+				last[0] += amount;
+			}
+		}
+	} else if(zoomQ.length == 0 || typeFlag === 1) {
+		zoomQ = [[amount,typeFlag, 0, zx, zy]];
+	} else { //relative
+		last = zoomQ[zoomQ.length-1];
+		if(last[2] === 0) { //no offset
+			last[0] = last[0] * amount;
+		} else { //complex case where we need sequence
+			zoomQ.push([amount,typeFlag, 0, zx, zy]);
+		}
+	}
+	if(!zoomBusy) {
+		zoomBusy = true;
+		function applyOrDone() {
+			if(zoomQ.length) { //add all the queue events together based on current zoom
+				let z = window.ZOOM;
+				let zoomX, zoomY;
+				let doit = false;
+				if(zoomQ.length) {
+					while(zoomQ.length) {
+						e = zoomQ.pop(0);
+						z = ((e[1] === 0) ? z * e[0] : e[0]) + e[2];
+						zoomX = e[3];
+						zoomY = e[4];
+					}
+					z = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+					if(z != window.ZOOM) doit = true;
+					zoomQ = [];
+				}
+				if(doit && lastZoom && Date.now() - lastZoom < 2) {
+					//throttle by time
+					setTimeout(() => {
+						change_zoom(z, zoomX, zoomY);
+						lastZoom = Date.now();
+						requestAnimationFrame(applyOrDone)
+					}, 1);
+				} else {
+					if(doit) {
+						change_zoom(z, zoomX, zoomY);
+						lastZoom = Date.now();
+					}
+					requestAnimationFrame(applyOrDone);
+				} 
+			} else {
+				zoomBusy = false;
+			}
+		}
+		requestAnimationFrame(applyOrDone);
 	}
 }
+
 /**
 * Gets the zoom values that will fit the map to the viewport
 * @return {Number}
@@ -386,13 +438,6 @@ function reset_zoom() {
 	// Don't store any zoom for this scene as we default to map fit on load
 	remove_zoom_from_storage();
 	console.groupEnd();
-}
-
-/**
- * Increases zoom level by 10%.
- */
-function increase_zoom() {
-	throttleZoom(window.ZOOM * 1.10);
 }
 
 /**
@@ -1310,62 +1355,78 @@ function init_mouse_zoom() {
 		if (e.ctrlKey) {
 			e.preventDefault();
 			e.stopPropagation();
-			let newScale;
 			if (e.deltaY > MAX_ZOOM_STEP) {
-				newScale = window.ZOOM * 0.9;
+				throttledZoom(0.9,0,e.clientX,e.clientY);
 			}
 			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
-				newScale = window.ZOOM * 1.10;
+				throttledZoom(1.1,0,e.clientX,e.clientY);
 			}
 			else {
-				newScale = window.ZOOM - 0.01 * e.deltaY;
-			}
-
-			if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
-				change_zoom(newScale, e.clientX, e.clientY);
+				throttledZoom(- 0.01 * e.deltaY,2,e.clientX,e.clientY)
 			}
 		}
 	}, { passive: false } );
+	
 	let dist1=0;
-	let originalZoom=window.ZOOM;
-	function start_pinch(ev) {
-           if (ev.targetTouches.length == 2) {//check if two fingers touched screen
-           		 ev.preventDefault();
-    					 ev.stopPropagation();
-               dist1 = Math.hypot( //get rough estimate of distance between two fingers
-                ev.touches[0].pageX - ev.touches[1].pageX,
-                ev.touches[0].pageY - ev.touches[1].pageY);                  
-           }
-    			originalZoom = window.ZOOM;
-    }
-    function move_pinch(ev) {
-           if (ev.targetTouches.length == 2 && ev.changedTouches.length == 2) {
-           	 		ev.preventDefault();
-    			 			ev.stopPropagation();
-                 // Check if the two target touches are the same ones that started
-              	let dist2 = Math.hypot(//get rough estimate of new distance between fingers
-                ev.touches[0].pageX - ev.touches[1].pageX,
-                ev.touches[0].pageY - ev.touches[1].pageY);
-              	difference = dist1-dist2;
-
-              	const multiplier = dist2/dist1;
-                
-                
-                let newScale = originalZoom * multiplier;
-                
-                
-
-                if ((newScale > MIN_ZOOM || newScale > window.ZOOM) && (newScale < MAX_ZOOM || newScale < window.ZOOM)) {
-				
-	                throttleZoom(newScale);
-	            }
-            }
-           
-    }
-    window.addEventListener('touchstart', start_pinch, false);
-    window.addEventListener('touchmove', move_pinch, false);
-
+	let start_scale=window.ZOOM;
+	let zsx=0, zsy=0;
+	let touchMode = 0;
+	let touchTimeout;
+	function getDist(ts) {
+  		const dx = ts[0].clientX - ts[1].clientX;
+		const dy = ts[0].clientY - ts[1].clientY;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
+	function start_pinch(ev) {
+		if (ev.targetTouches.length == 2) {
+			ev.preventDefault()
+			ev.stopPropagation();
+			const ts = ev.targetTouches;
+			dist1 = getDist(ts);
+			start_scale = window.ZOOM;
+			zsx = (ts[0].clientX + ts[1].clientX)/2;
+			zsy = (ts[0].clientY + ts[1].clientY)/2;
+			touchMode = 2;
+		}
+	}
+	let suppressed = null;
+	function move_pinch(ev, busy) {
+		if(ev && touchMode == 2) {
+			ev.preventDefault()
+			ev.stopPropagation();
+			if (ev.targetTouches.length == 2) {
+				const dist2 = getDist(ev.targetTouches)
+              			const factor = dist2 / dist1;
+				const newScale = start_scale * factor;
+				throttledZoom(newScale, 1, zsx, zsy);
+			}
+	        }
+        }
+	window.addEventListener('touchstart', start_pinch, {passive: false});
+	window.addEventListener('touchmove', move_pinch, {passive: false});
+	window.addEventListener("touchend", function (e) {
+		if(touchTimeout) clearTimeout(touchTimeout);
+		if (e.touches.length === 0) {
+			touchTimeout = setTimeout(() => {
+				touchMode = 0;
+			}, 100);
+		}
+	});
+        window.addEventListener("touchcancel", function (e) {
+		//still needs to be tested - not sure how to trigger
+		if ((e.touches == undefined || e.touches.length === 0) && touchMode === 2) {
+			console.log("Touch interrupted. Resetting.");
+			touchMode = 0;
+			throttledZoom(start_scale,1); //todo: x,y?
+		}
+	});
+
+	//disable browser gestures (not sure: is there a more subtle way in CSS?)
+	function prevent(e) { e.preventDefault(); }
+	document.addEventListener("gesturestart", prevent);
+	document.addEventListener("gesturechange", prevent);
+	document.addEventListener("gestureend", prevent);
+}
 
 
 /**
@@ -2414,6 +2475,14 @@ function inject_chat_buttons() {
 function init_ui() {
 	console.log("init_ui");
 
+	// On iOS make sure browser zoom is zero-d out
+	if (isIOS()) { //might also be useful on other mobile. not sure.
+		var meta = document.createElement('meta');
+		meta.name = "viewport";
+		meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+		document.getElementsByTagName('head')[0].appendChild(meta);
+	}
+	
 	window.VTTMargin = 1000;
 
 	// ATTIVA GAMELOG
@@ -3189,11 +3258,11 @@ function init_zoom_buttons() {
 
 	let zoom_minus = $("<div id='zoom_minus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom out (-)'><span class='material-icons button-icon'>zoom_out</span></div></div>");
 
-	zoom_minus.click(decrease_zoom)
+	zoom_minus.click(function() { throttledZoom(0.90, 0)});
 	zoom_section.append(zoom_minus);
 
 	let zoom_plus = $("<div id='zoom_plus' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon hideable' data-name='zoom in (+)'><span class='material-icons button-icon'>zoom_in</span></div></div>");
-	zoom_plus.click(increase_zoom);
+	zoom_plus.click(function() { throttledZoom(1.10, 0)});
 	zoom_section.append(zoom_plus);
 
 	let hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);

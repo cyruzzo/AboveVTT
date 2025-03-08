@@ -33,6 +33,11 @@ const charactersPageRegex = /\/characters\/\d+/;
 
 const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication');
 
+function isIOS() {
+  return (/iPad|iPhone|iPod/.test(navigator.userAgent) || 
+	  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+}
+
 function mydebounce(func, timeout = 800){
   let timer;
   return (...args) => {
