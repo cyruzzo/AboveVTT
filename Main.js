@@ -3358,6 +3358,10 @@ function init_help_menu() {
 							<dd>Center Player Token (players only)</dd>
 						<dl>
 						<dl>
+							<dt>CTRL(Control)+SPACE</dt>
+							<dd>Center Current Turn Token</dd>
+						<dl>
+						<dl>
 							<dt>Q</dt>
 							<dd>Show/hide sidebar</dd>
 						<dl>
@@ -3406,8 +3410,24 @@ function init_help_menu() {
 							<dd>Zoom out</dd>
 						<dl>
 						<dl>
-							<dt>= / CTRL+Mouse Wheel Up</dt>
+							<dt>= / + / CTRL+Mouse Wheel Up</dt>
 							<dd>Zoom in</dd>
+						<dl>
+						<dl>
+							<dt>1-7</dt>
+							<dd> Add Dice to Dice Pool</dd>
+						<dl>
+							<dl>
+							<dt>Ctrl(control)+1-7</dt>
+							<dd>Remove Dice from Dice Pool</dd>
+						<dl>
+						<dl>
+							<dt>- (with Dice Pool Mod visibile)</dt>
+							<dd>Subtract from Roll Mod</dd>
+						<dl>
+						<dl>
+							<dt>= / + (with Dice Pool Mod visibile)</dt>
+							<dd>Add to Roll Mod</dd>
 						<dl>
 						<dl>
 							<dt>CTRL (held)</dt>
