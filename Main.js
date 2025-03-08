@@ -1356,13 +1356,13 @@ function init_mouse_zoom() {
 			e.preventDefault();
 			e.stopPropagation();
 			if (e.deltaY > MAX_ZOOM_STEP) {
-				throttledZoom(0.9,0);
+				throttledZoom(0.9,0,e.clientX,e.clientY);
 			}
 			else if (e.deltaY < -MAX_ZOOM_STEP) { //-ve, zoom out
-				throttledZoom(1.1,0);
+				throttledZoom(1.1,0,e.clientX,e.clientY);
 			}
 			else {
-				throttledZoom(- 0.01 * e.deltaY, 2)
+				throttledZoom(- 0.01 * e.deltaY,2,e.clientX,e.clientY)
 			}
 		}
 	}, { passive: false } );
@@ -1414,7 +1414,7 @@ function init_mouse_zoom() {
 	});
         window.addEventListener("touchcancel", function (e) {
 		//still needs to be tested - not sure how to trigger
-		if (e.touches.length === 0 && touchMode === 2) {
+		if ((e.touches == undefined || e.touches.length === 0) && touchMode === 2) {
 			console.log("Touch interrupted. Resetting.");
 			touchMode = 0;
 			throttledZoom(start_scale,1); //todo: x,y?
