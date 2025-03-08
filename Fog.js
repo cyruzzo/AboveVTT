@@ -40,8 +40,6 @@ for(let i in doorColors){
 		doorColorsArray.push(doorColors[i][j])
 	}
 }
-
-
 function sync_fog(){
 	window.MB.sendMessage("custom/myVTT/fogdata",window.REVEALED);
 }
@@ -85,7 +83,9 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 	  ctx.fill();
 	}
 }
-
+const throttleDrawRuler = throttle((callback=()=>{})=>{
+	callback();
+},1000/24)//24 fps
 /**
  * Class to manage measure waypoints
  */
@@ -280,36 +280,39 @@ class WaypointManagerClass {
 	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
 	*/
 	draw(labelX = undefined, labelY = undefined, alpha = 1, playerId=window.PLAYER_ID) {
-		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
 
-		// update alpha for the entire container
-		rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+		throttleDrawRuler(function(){
+			const sceneMapSize = WaypointManager.getSceneMapSize();
 
-		const sceneMapSize = this.getSceneMapSize();
-
-		let cumulativeDistance = 0;
-		this.numberOfDiagonals = 0;
-		let elementsToDraw = "";
-		const { sceneWidth, sceneHeight } = sceneMapSize;
-		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
-		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
+			let cumulativeDistance = 0;
+			WaypointManager.numberOfDiagonals = 0;
+			let elementsToDraw = "";
+			const { sceneWidth, sceneHeight } = sceneMapSize;
+			const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
+			const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
 
 
-		for (let i = 0; i < this.coords.length; i++) {
-			// We do the beginPath here because otherwise the lines on subsequent waypoints get
-			// drawn over the labels...
-			this.ctx.beginPath();
-			if (i < this.coords.length - 1) {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
-			} else {
-				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
+			for (let i = 0; i < WaypointManager.coords.length; i++) {
+				
+				if (i < WaypointManager.coords.length - 1) {
+					elementsToDraw += WaypointManager.makeWaypointSegment(WaypointManager.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
+				} else {
+					elementsToDraw += WaypointManager.makeWaypointSegment(WaypointManager.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
+				}
+
+				cumulativeDistance += WaypointManager.coords[i].distance
 			}
+			elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
 
-			cumulativeDistance += this.coords[i].distance
-		}
-		elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
+			clear_temp_canvas(playerId);
+			const rulerContainer = WaypointManager.getOrCreateDrawingContainer(playerId);
 
-		rulerContainer.innerHTML = elementsToDraw;
+			// update alpha for the entire container
+			rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+			rulerContainer.innerHTML = elementsToDraw;
+			
+		})
+		
 	}
 
 	/**
@@ -326,7 +329,7 @@ class WaypointManagerClass {
 		let gridSize =  window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor;
 		let snapPointXStart = coord.startX;
 		let snapPointYStart = coord.startY;
-		this.ctx.moveTo(snapPointXStart, snapPointYStart);
+	
 
 		let snapPointXEnd = coord.endX;
 		let snapPointYEnd = coord.endY;
@@ -535,9 +538,10 @@ class WaypointManagerClass {
 	/**
 	 *
 	 */
-	cancelFadeout(){
+	cancelFadeout(dontClearCanvas=false){
 		if (this.fadeoutAnimationId !== undefined) {
-			clear_temp_canvas();
+			if(!dontClearCanvas)
+				clear_temp_canvas();
 			cancelAnimationFrame(this.fadeoutAnimationId);
 			this.ctx.globalAlpha = 1.0
 			this.fadeoutAnimationId = undefined
@@ -2519,7 +2523,8 @@ function drawing_mousemove(e) {
 	}
 
 	if (window.MOUSEDOWN) {
-		clear_temp_canvas()
+		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING)
+			clear_temp_canvas()
 		const width = mouseX - window.BEGIN_MOUSEX;
 		const height = mouseY - window.BEGIN_MOUSEY;
 		// bain todo why is this here?
@@ -2612,7 +2617,7 @@ function drawing_mousemove(e) {
 			if(window.DRAWFUNCTION === "measure"){
 				if(e.which === 1 || e.touches){
 					WaypointManager.setCanvas(window.temp_canvas);
-					WaypointManager.cancelFadeout()
+					WaypointManager.cancelFadeout(true)
 					WaypointManager.registerMouseMove(mouseX, mouseY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw();
