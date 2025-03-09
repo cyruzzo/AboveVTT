@@ -1213,14 +1213,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         statText=statText[0].innerHTML;
         let hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
-
+        let searchText = statText.replaceAll('mon-stat-block-2024', '');
         if(averageHP == ''){
-            let match = statText.matchAll(/Hit Points[\s\D]+?([0-9]+)/gi).next()
+            let match = searchText.matchAll(/Hit Points[\s\D]+?([0-9]+)/gi).next()
             if(match.value != undefined){
                 averageHP = match.value[1] 
             }
             else{
-                match = statText.matchAll(/[Hh][Pp][\s\D]+?([0-9]+)/gi).next()
+                match = searchText.matchAll(/[Hh][Pp][\s\D]+?([0-9]+)/gi).next()
                 if(match.value != undefined){
                     averageHP = match.value[1] 
                 }
@@ -1228,7 +1228,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         }
         if(hitDiceData == ''){
             const hpRollRegex = /Hit Points[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|Hit Points[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)\)/gi
-            let match = statText.matchAll(hpRollRegex).next()
+            let match = searchText.matchAll(hpRollRegex).next()
             if(match.value != undefined){
                 if(match.value[1] != undefined)
                     hitDiceData = match.value[1] 
@@ -1236,7 +1236,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                     hitDiceData = match.value[4] 
             }
             else{
-                match = statText.matchAll(/hp[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|hp[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)/gi).next()
+                match = searchText.matchAll(/hp[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|hp[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)/gi).next()
                 if(match.value != undefined){
                     if(match.value[1] != undefined)
                         hitDiceData = match.value[1] 
@@ -1274,22 +1274,22 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
         }
-        let newStatBlockInit = statText.matchAll(/Initiative[\s\D]+?([+-][0-9]+)/gi).next()
+        let newStatBlockInit = searchText.matchAll(/Initiative[\s\D]+?([+-][0-9]+)/gi).next()
 
         if(newStatBlockInit.value != undefined){
             if(newStatBlockInit.value[1] != undefined)
                 options.customInit = newStatBlockInit.value[1];
         }        
 
-        const newInit = $(statText).find('.custom-initiative.custom-stat').text();
+        const newInit = $(searchText).find('.custom-initiative.custom-stat').text();
         if(newInit){
             options.customInit = newInit
         }
 
 
-        if($(statText).find('table.abilities-saves').length>0){
-             let physicalStats = $(statText).find('table.abilities-saves.physical');
-             let mentalStats = $(statText).find('table.abilities-saves.mental');
+        if($(searchText).find('table.abilities-saves').length>0){
+             let physicalStats = $(searchText).find('table.abilities-saves.physical');
+             let mentalStats = $(searchText).find('table.abilities-saves.mental');
              options.customStat = {
                 '0': {
                     mod: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(2)').text(),
@@ -1319,7 +1319,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         }
 
         if(options.customStat == undefined){
-            let match = statText.matchAll(/STR[<\s][\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)/gi).next()
+            let match = searchText.matchAll(/STR[<\s][\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)/gi).next()
             if(match.value != undefined){
                 const str = match.value[1] != undefined ? match.value[1] : '+0'
                 const dex = match.value[2] != undefined ? match.value[2] : '+0'
@@ -1350,12 +1350,12 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 }
             }
 
-            let matchStrSave = statText.matchAll(/Saving Throw[\s\S]+?str[\s]?([+-][0-9]+)?/gi).next()
-            let matchDexSave = statText.matchAll(/Saving Throw[\s\S]+?dex[\s]?([+-][0-9]+)?/gi).next()
-            let matchConSave = statText.matchAll(/Saving Throw[\s\S]+?con[\s]?([+-][0-9]+)?/gi).next()
-            let matchIntSave = statText.matchAll(/Saving Throw[\s\S]+?int[\s]?([+-][0-9]+)?/gi).next()
-            let matchWisSave = statText.matchAll(/Saving Throw[\s\S]+?wis[\s]?([+-][0-9]+)?/gi).next()
-            let matchChaSave = statText.matchAll(/Saving Throw[\s\S]+?cha[\s]?([+-][0-9]+)?/gi).next()
+            let matchStrSave = searchText.matchAll(/Saving Throw[\s\S]+?str[\s]?([+-][0-9]+)?/gi).next()
+            let matchDexSave = searchText.matchAll(/Saving Throw[\s\S]+?dex[\s]?([+-][0-9]+)?/gi).next()
+            let matchConSave = searchText.matchAll(/Saving Throw[\s\S]+?con[\s]?([+-][0-9]+)?/gi).next()
+            let matchIntSave = searchText.matchAll(/Saving Throw[\s\S]+?int[\s]?([+-][0-9]+)?/gi).next()
+            let matchWisSave = searchText.matchAll(/Saving Throw[\s\S]+?wis[\s]?([+-][0-9]+)?/gi).next()
+            let matchChaSave = searchText.matchAll(/Saving Throw[\s\S]+?cha[\s]?([+-][0-9]+)?/gi).next()
 
             
             if(options.customStat == undefined){
@@ -1388,15 +1388,15 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.customStat[5]['save'] = (matchChaSave.value && matchChaSave.value[1] != undefined) ? matchChaSave.value[1] : options.customStat[5]['mod'];
         }
 
-        let newAC = $(statText).find('.custom-ac.custom-stat').text();
+        let newAC = $(searchText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = statText.match(/Armor Class[\s\D]+([0-9]+)/i)
+            let match = searchText.match(/Armor Class[\s\D]+([0-9]+)/i)
             if(match && match[1] != undefined){
                 newAC = match[1]
             }
             else{
-                match = statText.match(/[Aa][Cc][\s\D]+([0-9]+)/i)
+                match = searchText.match(/[Aa][Cc][\s\D]+([0-9]+)/i)
                 if(match && match[1] != undefined){
                     newAC = match[1]
                 }
