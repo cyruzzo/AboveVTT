@@ -52,7 +52,7 @@ function unhide_interface() {
     if ($('#hide_interface_button').hasClass('unhidden')) {
         $('#hide_interface_button').hide().removeClass('unhidden');
         $('.hideable').show();
-        $(".dice-toolbar").show();
+        $(".dice-toolbar").css({'visibility': '', 'pointer-events': ''});
         hide_scrollbar();
     } else {
         if ($('#hide_rightpanel').hasClass('point-right')) {
@@ -61,7 +61,7 @@ function unhide_interface() {
         if (is_characters_page()) {
             hide_player_sheet();
         }
-        $(".dice-toolbar").hide();
+        $(".dice-toolbar").css({'visibility': 'hidden', 'pointer-events': 'none'});
         $('#hide_interface_button').show().addClass('unhidden');
         $('.hideable').hide();
         if (!get_avtt_setting_value("alwaysHideScrollbar")) {        
@@ -72,7 +72,11 @@ function unhide_interface() {
 
 //for number key binds that aren't enabled yet
 function hotkeyDice(nthDice){
-    const dieButton = $(`.sidebar__pane-content .dice-roller>div:nth-of-type(${nthDice}) img`); 
+
+    if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
+        $(".dice-toolbar__dropdown-die").click();
+    }
+    const dieButton = $(`.dice-toolbar__dropdown-top>.dice-die-button:nth-of-type(${8-nthDice})`); 
     if(ctrlHeld)
         dieButton.triggerHandler('contextmenu');
     else
@@ -395,11 +399,10 @@ Mousetrap.bind('right', function (e) {
 }, 'keyup');
 
 Mousetrap.bind('alt', function () {
-    if (altHeld) {
-        return false;
-    } else {
-        altHeld = true;
-    }
+    if (altHeld) 
+        return;
+    
+    altHeld = true;
     window.selectedMenuButton = $('#VTTWRAPPER ~ .ddbc-tab-options--layout-pill>button.button-enabled')
     if (!($('#ruler_button').hasClass('button-enabled'))) {
         $('#ruler_button').click()
@@ -425,11 +428,10 @@ Mousetrap.bind('alt', function () {
 
 
 Mousetrap.bind('shift', function () {
-    if (shiftHeld == true) {
+    if (shiftHeld == true) 
         return;
-    } else {
-        shiftHeld = true;
-    }
+    
+    shiftHeld = true;   
     $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
       window.shiftHeld = false;
     })
@@ -441,8 +443,15 @@ Mousetrap.bind('shift', function () {
 
 
 Mousetrap.bind('mod', function () {
+    if (ctrlHeld == true && window.toggleSnap == true) 
+        return;
+    
     ctrlHeld=true;
     window.toggleSnap=true;
+    $(window).off('blur.ctrlCheck').one('blur.ctrlCheck', function(){
+      window.ctrlHeld = false;
+      window.toggleSnap = false;
+    })
 }, 'keydown');
 
 Mousetrap.bind('mod', function () {

@@ -2258,8 +2258,6 @@ function inject_chat_buttons() {
 	
 	window.rollButtonObserver = new MutationObserver(function() {
         // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
-
-		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			$(".dice-die-button").each(function() {
 				let dieSize = $(this).attr("data-dice");
 				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
@@ -2285,8 +2283,7 @@ function inject_chat_buttons() {
 				} else {
 					$(".roll-mod-container").removeClass("show");
 				}
-			}, 0);
-		}
+			}, 0);	
     })
 
 	let watchForDicePanel = new MutationObserver((mutations) => {
@@ -2403,19 +2400,30 @@ function inject_chat_buttons() {
 		});
 		rollButton.on("click", function (e) {
 			let modValue = parseInt($('.roll-input-mod').val())
-			if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-				let theirRollButton = $(".dice-toolbar__target").children().first();
-				if (theirRollButton.length > 0) {
-					// we found a DDB dice roll button. Click it and move on
-					theirRollButton.click();
-					return;
-				}
+			if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {			
+					let theirRollButton = $(".dice-toolbar__target").children().first();
+					if (theirRollButton.length > 0) {
+						// we found a DDB dice roll button. Click it and move on
+						theirRollButton.click();
+						return;
+					}
 			}
 
 			const rollExpression = [];
-			$(".dice-roller > div img[data-count]").each(function() {
-				rollExpression.push($(this).attr("data-count") + $(this).attr("alt"));
+			const diceToCount = $(".dice-roller > div img[data-count]").length>0 ? $(".dice-roller > div img[data-count]") : $('.dice-die-button__count')
+			diceToCount.each(function() {
+				let count, dieType;
+				if($(this).is('.dice-die-button__count')){
+					count = $(this).text();
+					dieType = $(this).closest('[data-dice]').attr("data-dice");
+				}
+				else{
+					count = $(this).attr("data-count");
+					dieType = $(this).attr("alt");
+				}
+				rollExpression.push(count + dieType);
 			});
+			$('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
 			let expression = `${rollExpression.join("+")}${modValue<0 ? modValue : `+${modValue}`}`
 			let sendToDM = window.DM || false;
 			let sentAsDDB = send_rpg_dice_to_ddb(expression, sendToDM);
