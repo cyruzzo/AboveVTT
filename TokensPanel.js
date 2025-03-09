@@ -1287,9 +1287,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         }
 
 
-        if($(searchText).find('table.abilities-saves').length>0){
-             let physicalStats = $(searchText).find('table.abilities-saves.physical');
-             let mentalStats = $(searchText).find('table.abilities-saves.mental');
+        if($(searchText).find('table.abilities-saves, table.stat-table').length>0){
+             let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');
+             let mentalStats = $(searchText).find('table.abilities-saves.mental, table.stat-table.mental');
              options.customStat = {
                 '0': {
                     mod: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(2)').text(),
