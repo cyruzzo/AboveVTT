@@ -548,7 +548,7 @@ function read_speeds(container = $(document), speedManagePage) {
     speedManagePage.find(".ct-speed-manage-pane__speed").each(function() {
       const container = $(this);
       const name = container.find(".ct-speed-manage-pane__speed-label").text();
-      const distance = parseInt(container.find(".ddbc-distance-number__number").text());
+      const distance = parseInt(container.find(".ddbc-distance-number__number, [class*='styles_numberDisplay']>span:first-of-type").text());
       speeds.push({name: name, distance: distance});
     });
     if (speeds.length) {
@@ -558,7 +558,7 @@ function read_speeds(container = $(document), speedManagePage) {
 
   // just update the primary speed
   const name = container.find(".ct-speed-box__heading").text();
-  const distance = parseInt( container.find(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number").text() ) || 0;
+  const distance = parseInt( container.find(".ct-speed-box__box-value .ddbc-distance-number .ddbc-distance-number__number, .ct-speed-box__box-value [class*='styles_numberDisplay']>span:first-of-type").text() ) || 0;
   return [ { name: name, distance: distance } ];
 }
 
