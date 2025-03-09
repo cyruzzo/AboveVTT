@@ -2258,8 +2258,6 @@ function inject_chat_buttons() {
 	
 	window.rollButtonObserver = new MutationObserver(function() {
         // Any time the DDB dice buttons change state, we want to synchronize our dice buttons to match theirs.
-
-		if (!window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
 			$(".dice-die-button").each(function() {
 				let dieSize = $(this).attr("data-dice");
 				let ourDiceElement = $(`.dice-roller > div img[alt='${dieSize}']`);
@@ -2285,8 +2283,7 @@ function inject_chat_buttons() {
 				} else {
 					$(".roll-mod-container").removeClass("show");
 				}
-			}, 0);
-		}
+			}, 0);	
     })
 
 	let watchForDicePanel = new MutationObserver((mutations) => {
@@ -2403,12 +2400,17 @@ function inject_chat_buttons() {
 		});
 		rollButton.on("click", function (e) {
 			let modValue = parseInt($('.roll-input-mod').val())
-			if ($(".dice-toolbar").hasClass("rollable") && modValue == 0 && !window.EXPERIMENTAL_SETTINGS['rpgRoller']) {
-				let theirRollButton = $(".dice-toolbar__target").children().first();
-				if (theirRollButton.length > 0) {
-					// we found a DDB dice roll button. Click it and move on
-					theirRollButton.click();
-					return;
+			if ($(".dice-toolbar").hasClass("rollable") && modValue == 0) {
+				if(!window.EXPERIMENTAL_SETTINGS['rpgRoller']){
+					let theirRollButton = $(".dice-toolbar__target").children().first();
+					if (theirRollButton.length > 0) {
+						// we found a DDB dice roll button. Click it and move on
+						theirRollButton.click();
+						return;
+					}
+				}
+				else{
+					$('.dice-toolbar__dropdown-selected>div:first-of-type')?.click();
 				}
 			}
 
