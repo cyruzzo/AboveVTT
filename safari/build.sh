@@ -2,6 +2,8 @@
 
 # for first time build:
 # FIRST_TIME_OPTION=-allowProvisioningUpdates
+# if you actually want to upload to testflight:
+# ./build.sh UPLOAD
 
 source ./env
 cat <<EOF | envsubst > ./ExportOptions.plist
@@ -52,11 +54,13 @@ xcodebuild -exportArchive -archivePath ./build/AboveVTT-ios.xcarchive -exportPat
 echo "----Notarizing iOS"
 xcrun notarytool submit ./build/AboveVTT.ipa --keychain-profile "appstoreconnect" --wait
 
-if [ -z "${!FIRST_TIME_OPTION}" ]; then
-    echo "Skipping upload"
-else
-    echo "----Uploading iOS"
-    xcrun altool --upload-app -f ./build/AboveVTT.ipa -t ios --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
+if [ "$1" == "UPLOAD" ]; then
+    if [ -z "${!FIRST_TIME_OPTION}" ]; then
+        echo "----Uploading iOS"
+        xcrun altool --upload-app -f ./build/AboveVTT.ipa -t ios --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
+    else
+        echo "Skipping upload"
+    fi
 fi
 
 echo "----Export macOS"
@@ -65,11 +69,13 @@ xcodebuild -exportArchive -archivePath ./build/AboveVTT-mac.xcarchive -exportPat
 echo "----Notarizing macOS"
 xcrun notarytool submit ./build/AboveVTT.pkg --keychain-profile "appstoreconnect" --wait
 
-if [ -z "${!FIRST_TIME_OPTION}" ]; then
-    echo "Skipping upload"
-else
-    echo "----Uploading macOS"
-    xcrun altool --upload-app -f ./build/AboveVTT.pkg -t macos --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
+if [ "$1" == "UPLOAD" ]; then
+    if [ -z "${!FIRST_TIME_OPTION}" ]; then
+        echo "----Uploading macOS"
+        xcrun altool --upload-app -f ./build/AboveVTT.pkg -t macos --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
+    else
+        echo "Skipping upload"
+    fi
 fi
 echo "Completed"
 
