@@ -1,7 +1,6 @@
 let altHeld = false;
 let ctrlHeld = false;
 let shiftHeld = false;
-let toggleSnap = false;
 let cursor_x = -1;
 let cursor_y = -1;
 let arrowKeysHeld = [0, 0, 0, 0];
@@ -449,7 +448,7 @@ Mousetrap.bind('mod', function () {
     ctrlHeld=true;
     window.toggleSnap=true;
     $(window).off('blur.ctrlCheck').one('blur.ctrlCheck', function(){
-      window.ctrlHeld = false;
+      ctrlHeld = false;
       window.toggleSnap = false;
     })
 }, 'keydown');
