@@ -164,6 +164,41 @@
     width: 100%;
 }
 
-.dcmExpressionRow{
-    margin-left:5px;
+.dcm-row[role='additionalDice'] .dcm-row-icon{
+    margin-right:6px;
+    width:10px;
+    min-width:10px;
+}
+.dcm-row[role='additionalDice']{
+    padding:0px
+}
+.context-add-dice-roller {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 2px;
+    color:#fff;
+}
+
+.context-add-dice-roller>div>div[alt]{
+    background: #fff;
+    width:25px;
+    height:25px;
+    -webkit-mask-size:cover !important;  
+    mask-size: cover !important;
+}
+.dcm-row-title span.dcm-dice-badge {
+    display:flex;
+    position:absolute;
+    top: 3px;
+    transform: translateX(12px);
+    background:#182026;
+    border:1px solid #fff;
+    border-radius:50%;
+    width:14px;
+    height:14px;
+    font-size:10px;
+    justify-content: center;
+    align-items: center;
+    pointer-events:none;
 }
