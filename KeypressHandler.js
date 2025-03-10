@@ -77,10 +77,18 @@ function hotkeyDice(nthDice){
         $(".dice-toolbar__dropdown-die").click();
     }
     const dieButton = $(`.dice-toolbar__dropdown-top>.dice-die-button:nth-of-type(${8-nthDice})`); 
-    if(ctrlHeld)
+    if(ctrlHeld){
         dieButton.triggerHandler('contextmenu');
-    else
+            let element = dieButton[0];
+            let e = element.ownerDocument.createEvent('MouseEvents');
+            e.initMouseEvent('contextmenu', true, true,
+                    element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
+                    false, false, false, 2, null);
+            element.dispatchEvent(e);
+    }
+    else{
         dieButton.click();
+    }
 }
 
 function init_keypress_handler(){
