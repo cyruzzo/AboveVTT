@@ -106,15 +106,15 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             let diceRoll;
             if (rollAsIndex === 0) {
                 // crit damage
-                diceExpression = diceExpression.replaceAll(/([\d]+)d/gi, function(m, m1){
-                    return `${parseInt(m1)*2}d`
+                diceExpression = diceExpression.replaceAll(/([+-])?([\d]+)d/gi, function(m, m1, m2){
+                    return m1 == '-' ? `${m1}${parseInt(m2)}d` : `${m1 != undefined ? m1 : ''}${parseInt(m2)*2}d`
                 })
                 diceRoll = new DiceRoll(diceExpression)
             } 
              else if (rollAsIndex === 1) {
                 // perfect crit damage
-                diceExpression = diceExpression.replaceAll(/([\d]+)d([\d]+)/gi, function(m, m1, m2){
-                    return `${m}+${parseInt(m1)*parseInt(m2)}`
+                diceExpression = diceExpression.replaceAll(/([+-])?([\d]+)d([\d]+)/gi, function(m, m1, m2, m3){
+                    return `${m}${m1 == '-' ? '' : `+${parseInt(m2)*parseInt(m3)}`}`
                 })
                 diceRoll = new DiceRoll(diceExpression)
             } 
@@ -325,14 +325,20 @@ class DiceContextMenuSection {
                     e.preventDefault();
                     e.stopPropagation();
                     const targetDie = e.currentTarget;
-                    const dataCount = $(targetDie).attr("data-count");
+                    let dataCount = $(targetDie).attr("data-count");
                     $(targetDie).parent().find("span").remove();
                     if (dataCount === undefined) {
                         $(targetDie).attr("data-count", 1);
                         $(targetDie).parent().append(`<span class="dcm-dice-badge">1</span>`);
                     } else {
-                        $(targetDie).attr("data-count", parseInt(dataCount) + 1);
-                        $(targetDie).parent().append(`<span class="dcm-dice-badge">${parseInt(dataCount) + 1}</span>`);
+                        dataCount = parseInt(dataCount) + 1;
+                        if (dataCount === 0) {
+                            $(targetDie).removeAttr("data-count");
+                        } 
+                        else{
+                            $(targetDie).attr("data-count", dataCount);
+                            $(targetDie).parent().append(`<span class="dcm-dice-badge">${dataCount}</span>`);
+                        }
                     }
                     const newDice = $(diceRoller).find('[data-count]');
                     let newExpression = ''
