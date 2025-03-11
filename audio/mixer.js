@@ -659,9 +659,12 @@ class Mixer extends EventTarget {
             if (e.target.currentTime == e.target.duration && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length > 0) {
                 const id = progress.getAttribute('data-id');
                 e.target.currentTime = 0;
-                $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
                 $(progress).css('width', '');
-            
+                let channel = window.MIXER.readChannel(id);
+                channel.currentTime = 0;
+                window.MIXER.updateChannel(id, channel);
+                $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
+
                 if ($(`.sequential-button`).hasClass('pressed')) {
                     let nextTrack;
                     let currentTrack = $(`.audio-row[data-id="${id}"]:not(.tokenTrack)`);
@@ -686,7 +689,13 @@ class Mixer extends EventTarget {
                             nextTrack = $(`#mixer-channels .audio-row[data-id]:not(.tokenTrack)`).first();
                         }
                     }
-            
+                    
+                    const nextTrackId= nextTrack.attr('data-id');
+                    channel = window.MIXER.readChannel(nextTrackId);    
+                    this._players[id].currentTime = 0;
+                    channel.currentTime = 0;
+                    window.MIXER.updateChannel(nextTrackId, channel);
+                
                     nextTrack.find('.channel-play-pause-button').click();
                 }
             }
