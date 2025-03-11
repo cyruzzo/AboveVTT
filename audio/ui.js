@@ -153,7 +153,7 @@ function init_mixer() {
                 
                 const channel = window.MIXER.state().channels[id]
                 if(channel.paused) {
-                    if($('.sequential-button').hasClass('pressed')){
+                    if($('.sequential-button').hasClass('pressed') && !$(this).closest(`.audio-row`).hasClass('tokenTrack')){
                         $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
                     }
                     play_svg.css('display', 'none');
@@ -500,7 +500,7 @@ function init_trackLibrary() {
     $(trackList).off('click.play').on('click.play', '.track-play-pause-button', function(e){
         const currentTrack = $(e.currentTarget).closest('li')
         const track = {name: currentTrack.attr('data-name'), src:currentTrack.attr('data-src')};
-        if($('.sequential-button').hasClass('pressed')){
+        if($('.sequential-button').hasClass('pressed') && !$(this).closest(`.audio-row`).hasClass('tokenTrack')){
             $(`.audio-row[data-id]:not(.tokenTrack) .channel-play-pause-button.playing`).click();
         }
         const channel = new Channel(track.name, track.src);
