@@ -1939,7 +1939,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 			</style>
 		`);
 		console.log("removing headers");
-
+		$(event.target).contents().find("body").append(`<div id='extensionpath' data-path='${window.EXTENSION_PATH}'></div>`)
 
 		if (window.JOINTHEDICESTREAM) {
 			joinDiceRoom();
