@@ -38,12 +38,41 @@ function isIOS() {
 	  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 }
 
-function mydebounce(func, timeout = 800){
+function mydebounce(func, timeout = 800){  
   let timer;
   return (...args) => {
     clearTimeout(timer);
-    timer = setTimeout(async () => {await func.apply(this, args); }, timeout);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
   };
+}
+
+function throttle(func, wait, option = {leading: true, trailing: true}) {
+  let waiting = false;
+  let lastArgs = null;
+  return function wrapper(...args) {
+    if(!waiting) {
+      waiting = true;
+      const startWaitingPeriod = () => setTimeout(() => {
+        if(option.trailing && lastArgs) {
+          func.apply(this, lastArgs);
+          lastArgs = null;
+          startWaitingPeriod();
+        }
+        else {
+          waiting = false;
+        }
+      }, wait);
+      if(option.leading) {
+        func.apply(this, args);
+      } else {
+        lastArgs = args; // if not leading, treat like another any other function call during the waiting period
+      }
+      startWaitingPeriod();
+    }
+    else {
+      lastArgs = args; 
+    }
+  }
 }
 function find_currently_open_character_sheet() {
   if (is_characters_page()) {
