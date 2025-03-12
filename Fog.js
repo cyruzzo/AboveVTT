@@ -512,9 +512,8 @@ class WaypointManagerClass {
 			}
 			prevFrameTime = time;
 
-			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
-			self.ctx.globalAlpha = alpha;
-			self.draw(undefined, undefined, alpha, window.PLAYER_ID)
+
+			self.draw(undefined, undefined, alpha, playerID)
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
