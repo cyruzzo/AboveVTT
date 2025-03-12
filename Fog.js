@@ -112,6 +112,7 @@ class WaypointManagerClass {
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
+		this.playerId = window.PLAYER_ID;
 	}
 
 	resetDefaultDrawStyle(){
@@ -287,7 +288,7 @@ class WaypointManagerClass {
 		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
 		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
 
-		this.ctx.beginPath();
+		
 		for (let i = 0; i < this.coords.length; i++) {
 			
 			if (i < this.coords.length - 1) {
@@ -489,13 +490,13 @@ class WaypointManagerClass {
 		if(self.ctx == undefined){
 				self.cancelFadeout()
 				self.clearWaypoints();
-				clear_temp_canvas(playerID)
+				self.clearWaypointDrawings(playerID)
 				return;
 		} 
 		// only ever allow a single fadeout to occur
 		// this stops weird flashing behaviour with interacting
 		// interval function calls
-		if (this.fadeoutAnimationId) {
+		if (self.fadeoutAnimationId) {
 			return
 		}
 
@@ -512,20 +513,19 @@ class WaypointManagerClass {
 			}
 			prevFrameTime = time;
 
-			self.ctx.clearRect(0,0, self.canvas.width, self.canvas.height);
-			self.ctx.globalAlpha = alpha;
-			self.draw(undefined, undefined, alpha, window.PLAYER_ID)
+
+			self.draw(undefined, undefined, alpha, playerID)
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
-				clear_temp_canvas(playerID)
+				self.cancelFadeout();
 				return;
 			}
 
-			this.fadeoutAnimationId = requestAnimationFrame(fadeout)
+			self.fadeoutAnimationId = requestAnimationFrame(fadeout)
 		};
 
-		this.fadeoutAnimationId = requestAnimationFrame(fadeout);
+		self.fadeoutAnimationId = requestAnimationFrame(fadeout);
 	}
 
 	/**
@@ -534,9 +534,8 @@ class WaypointManagerClass {
 	cancelFadeout(dontClearCanvas=false){
 		if (this.fadeoutAnimationId !== undefined) {
 			if(!dontClearCanvas)
-				clear_temp_canvas();
+				this.clearWaypointDrawings(this.playerId)
 			cancelAnimationFrame(this.fadeoutAnimationId);
-			this.ctx.globalAlpha = 1.0
 			this.fadeoutAnimationId = undefined
 		}
 	}
@@ -4099,7 +4098,6 @@ function calculateFourthPoint(point1, point2, point3) {
 }
 function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
-	WaypointManager.clearWaypointDrawings(playerId)
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){

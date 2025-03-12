@@ -3795,6 +3795,8 @@ function token_menu() {
 		let initialX;
 		let initialY;
 		$("#tokens").on("touchstart", ".VTTToken, .door-button", function(event) {
+			event.stopPropagation();
+			event.preventDefault();
 			initialX = event.touches[0].clientX;
 			initialY = event.touches[0].clientY;
 		    LongPressTimer = setTimeout(function() {
@@ -3808,9 +3810,13 @@ function token_menu() {
 		    }, 600)
 		  })
 		  .on('touchend', function(e) {
+		  	e.stopPropagation();
+			e.preventDefault();
 		    clearTimeout(LongPressTimer)
 		  })
 		  .on('touchmove', function(e) {
+		  	e.stopPropagation();
+			e.preventDefault();
 		  	let currentY = e.touches[0].clientY;
 		  	let currentX = e.touches[0].clientX;
 		  	if(Math.abs(initialX-currentX) > 15 || Math.abs(initialY-currentY) > 15 ){

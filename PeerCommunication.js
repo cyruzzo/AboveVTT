@@ -703,11 +703,7 @@ function peer_is_dragging_token(eventData) {
 
 /** clears other player's rulers from our screen */
 function clear_peer_canvas(playerId) {
-  const canvas = document.getElementById("peer_overlay");
-  const context = canvas.getContext("2d");
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
-  WaypointManager.clearWaypointDrawings(playerId)
+  window.PEER_RULERS[playerId].clearWaypointDrawings(playerId)
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */
@@ -715,7 +711,7 @@ function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
   const waypointManager = window.PEER_RULERS[playerId];
   waypointManager.draw(undefined, undefined, undefined, playerId);
-  
+  waypointManager.fadeoutMeasuring(playerId)
 }
 
 /** finds or creates a {@link WaypointManagerClass} for the given player
@@ -733,6 +729,7 @@ function get_peer_waypoint_manager(playerId, color) {
   const waypointManager = new WaypointManagerClass();
   window.PEER_RULERS[playerId] = waypointManager;
   waypointManager.resetDefaultDrawStyle();
+  window.PEER_RULERS[playerId].playerId = playerId;
   if (color) {
     waypointManager.drawStyle.color = color;
   }
