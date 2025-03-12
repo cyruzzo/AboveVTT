@@ -22,8 +22,8 @@ if (isPlainCharacterPage) {
 		{ src: "jquery-3.6.0.min.js" },
 		{ src: "jquery.contextMenu.js" },		
 		// AboveVTT Files
-		{ src: "DDBApi.js" },// Make sure Above API executes first
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes second
+		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
+		{ src: "DDBApi.js" },
 		{ src: "MonsterDice.js" },
 		{ src: "DiceRoller.js" },
 		{ src: "DiceContextMenu/DiceContextMenu.js" },
@@ -94,8 +94,8 @@ if (isPlainCharacterPage) {
 		{ src: "fuse.min.js" },
 		// AboveVTT Files
 		{ src: "environment.js" },
+		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 		{ src: "AboveApi.js" },
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else except aboveapi
 		{ src: "DDBApi.js" },
 		{ src: "AOETemplates.js" },
 		{ src: "Text.js" },

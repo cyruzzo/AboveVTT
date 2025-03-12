@@ -1831,8 +1831,8 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    { src: "jquery-3.6.0.min.js" },
 		    { src: "jquery.contextMenu.js" },
 		    // AboveVTT Files
-		    { src: "DDBApi.js" },// Make sure CoreFunctions executes first
-		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes second
+		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
+		    { src: "DDBApi.js" },
 		    { src: "MonsterDice.js" },
 		    { src: "DiceRoller.js" },
 		    { src: "DiceContextMenu/DiceContextMenu.js" },
