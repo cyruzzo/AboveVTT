@@ -729,6 +729,7 @@ function get_peer_waypoint_manager(playerId, color) {
   const waypointManager = new WaypointManagerClass();
   window.PEER_RULERS[playerId] = waypointManager;
   waypointManager.resetDefaultDrawStyle();
+  window.PEER_RULERS[playerId].playerId = playerId;
   if (color) {
     waypointManager.drawStyle.color = color;
   }

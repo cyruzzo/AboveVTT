@@ -112,6 +112,7 @@ class WaypointManagerClass {
 			textColor: "black",
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
+		this.playerId = window.PLAYER_ID;
 	}
 
 	resetDefaultDrawStyle(){
@@ -517,7 +518,7 @@ class WaypointManagerClass {
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
-				self.clearWaypointDrawings(playerID)
+				self.cancelFadeout();
 				return;
 			}
 
@@ -531,9 +532,10 @@ class WaypointManagerClass {
 	 *
 	 */
 	cancelFadeout(dontClearCanvas=false){
-		if (self.fadeoutAnimationId !== undefined) {
+		if (this.fadeoutAnimationId !== undefined) {
 			if(!dontClearCanvas)
-				self.clearWaypointDrawings(playerID)
+				this.clearWaypointDrawings(this.playerId)
+			cancelAnimationFrame(this.fadeoutAnimationId);
 			this.fadeoutAnimationId = undefined
 		}
 	}
