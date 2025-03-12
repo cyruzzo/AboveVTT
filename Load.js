@@ -22,14 +22,14 @@ if (isPlainCharacterPage) {
 		{ src: "jquery-3.6.0.min.js" },
 		{ src: "jquery.contextMenu.js" },		
 		// AboveVTT Files
-		{ src: "DiceContextMenu/DiceContextMenu.js" },
+		{ src: "DDBApi.js" },// Make sure Above API executes first
+		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes second
 		{ src: "MonsterDice.js" },
 		{ src: "DiceRoller.js" },
-		{ src: "DDBApi.js" },
+		{ src: "DiceContextMenu/DiceContextMenu.js" },
 		{ src: "MessageBroker.js" },
 		{ src: "rpg-dice-roller.bundle.min.js" },
 		// AboveVTT files that execute when loaded
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		{ src: "CharactersPage.js" } // Make sure CharactersPage executes last
 	]
 	
@@ -95,6 +95,7 @@ if (isPlainCharacterPage) {
 		// AboveVTT Files
 		{ src: "environment.js" },
 		{ src: "AboveApi.js" },
+		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else except aboveapi
 		{ src: "DDBApi.js" },
 		{ src: "AOETemplates.js" },
 		{ src: "Text.js" },
@@ -139,7 +140,6 @@ if (isPlainCharacterPage) {
 		{ src: "Main.js" },
 		{ src: "MonsterStatBlock.js" },
 		// AboveVTT files that execute when loaded
-		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
 		{ src: "CampaignPage.js" },
 		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
