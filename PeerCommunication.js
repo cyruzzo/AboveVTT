@@ -703,10 +703,6 @@ function peer_is_dragging_token(eventData) {
 
 /** clears other player's rulers from our screen */
 function clear_peer_canvas(playerId) {
-  const canvas = document.getElementById("peer_overlay");
-  const context = canvas.getContext("2d");
-  context.clearRect(0, 0, canvas.width, canvas.height);
-
   window.PEER_RULERS[playerId].clearWaypointDrawings(playerId)
 }
 

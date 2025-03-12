@@ -287,7 +287,7 @@ class WaypointManagerClass {
 		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
 		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
 
-		this.ctx.beginPath();
+		
 		for (let i = 0; i < this.coords.length; i++) {
 			
 			if (i < this.coords.length - 1) {
@@ -531,11 +531,9 @@ class WaypointManagerClass {
 	 *
 	 */
 	cancelFadeout(dontClearCanvas=false){
-		if (this.fadeoutAnimationId !== undefined) {
+		if (self.fadeoutAnimationId !== undefined) {
 			if(!dontClearCanvas)
-				clear_temp_canvas();
-			cancelAnimationFrame(this.fadeoutAnimationId);
-			this.ctx.globalAlpha = 1.0
+				self.clearWaypointDrawings(playerID)
 			this.fadeoutAnimationId = undefined
 		}
 	}
