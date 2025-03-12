@@ -707,7 +707,7 @@ function clear_peer_canvas(playerId) {
   const context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  WaypointManager.clearWaypointDrawings(playerId)
+  window.PEER_RULERS[playerId].clearWaypointDrawings(playerId)
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */

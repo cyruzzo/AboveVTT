@@ -495,7 +495,7 @@ class WaypointManagerClass {
 		// only ever allow a single fadeout to occur
 		// this stops weird flashing behaviour with interacting
 		// interval function calls
-		if (this.fadeoutAnimationId) {
+		if (self.fadeoutAnimationId) {
 			return
 		}
 
@@ -518,11 +518,11 @@ class WaypointManagerClass {
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
-				clear_temp_canvas(playerID)
+				self.clearWaypointDrawings(playerID)
 				return;
 			}
 
-			this.fadeoutAnimationId = requestAnimationFrame(fadeout)
+			self.fadeoutAnimationId = requestAnimationFrame(fadeout)
 		};
 
 		this.fadeoutAnimationId = requestAnimationFrame(fadeout);
