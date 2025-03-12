@@ -667,8 +667,7 @@ function update_peer_ruler(eventData) {
   fade_peer_ruler(eventData.playerId);
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
   const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
-  clear_peer_canvas(eventData.playerId)
-  waypointManager.clearWaypoints()
+  waypointManager.clearWaypoints(false);
   waypointManager.numWaypoints = eventData.numWaypoints;
   waypointManager.coords = eventData.coords;
   redraw_peer_rulers(eventData.playerId);
@@ -711,7 +710,7 @@ function redraw_peer_rulers(playerId) {
   //clear_peer_canvas(playerId); // make sure we clear the canvas first. Otherwise, we'll see every previous position of every ruler
   const waypointManager = window.PEER_RULERS[playerId];
   waypointManager.draw(undefined, undefined, undefined, playerId);
-  waypointManager.fadeoutMeasuring(playerId)
+  waypointManager.fadeoutMeasuring(playerId);
 }
 
 /** finds or creates a {@link WaypointManagerClass} for the given player
