@@ -525,7 +525,7 @@ class WaypointManagerClass {
 			self.fadeoutAnimationId = requestAnimationFrame(fadeout)
 		};
 
-		this.fadeoutAnimationId = requestAnimationFrame(fadeout);
+		self.fadeoutAnimationId = requestAnimationFrame(fadeout);
 	}
 
 	/**
