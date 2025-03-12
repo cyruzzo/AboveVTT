@@ -83,9 +83,7 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 	  ctx.fill();
 	}
 }
-const throttleDrawRuler = throttle((callback=()=>{})=>{
-	callback();
-},1000/24)//24 fps
+
 /**
  * Class to manage measure waypoints
  */
@@ -280,39 +278,34 @@ class WaypointManagerClass {
 	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
 	*/
 	draw(labelX = undefined, labelY = undefined, alpha = 1, playerId=window.PLAYER_ID) {
+		const sceneMapSize = this.getSceneMapSize();
 
-		throttleDrawRuler(function(){
-			const sceneMapSize = WaypointManager.getSceneMapSize();
+		let cumulativeDistance = 0;
+		this.numberOfDiagonals = 0;
+		let elementsToDraw = "";
+		const { sceneWidth, sceneHeight } = sceneMapSize;
+		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
+		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
 
-			let cumulativeDistance = 0;
-			WaypointManager.numberOfDiagonals = 0;
-			let elementsToDraw = "";
-			const { sceneWidth, sceneHeight } = sceneMapSize;
-			const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
-			const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
-
-
-			for (let i = 0; i < WaypointManager.coords.length; i++) {
-				
-				if (i < WaypointManager.coords.length - 1) {
-					elementsToDraw += WaypointManager.makeWaypointSegment(WaypointManager.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
-				} else {
-					elementsToDraw += WaypointManager.makeWaypointSegment(WaypointManager.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
-				}
-
-				cumulativeDistance += WaypointManager.coords[i].distance
-			}
-			elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
-
-			clear_temp_canvas(playerId);
-			const rulerContainer = WaypointManager.getOrCreateDrawingContainer(playerId);
-
-			// update alpha for the entire container
-			rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
-			rulerContainer.innerHTML = elementsToDraw;
+		this.ctx.beginPath();
+		for (let i = 0; i < this.coords.length; i++) {
 			
-		})
-		
+			if (i < this.coords.length - 1) {
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, undefined, undefined, sceneMapSize, bobbles, lines);
+			} else {
+				elementsToDraw += this.makeWaypointSegment(this.coords[i], cumulativeDistance, labelX, labelY, sceneMapSize, bobbles, lines);
+			}
+
+			cumulativeDistance += this.coords[i].distance
+		}
+		elementsToDraw = `${lines[0].outerHTML}${elementsToDraw}${bobbles[0].outerHTML}`
+
+	
+		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
+
+		// update alpha for the entire container
+		rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+		rulerContainer.innerHTML = elementsToDraw;		
 	}
 
 	/**
