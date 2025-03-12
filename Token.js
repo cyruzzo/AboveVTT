@@ -2796,6 +2796,7 @@ class Token {
 				tok.draggable({
 					stop:
 						function (event) {
+							event.stopPropagation();
 							//remove cover for smooth drag
 							$('.iframeResizeCover').remove();
 
@@ -2839,7 +2840,7 @@ class Token {
 							debounceAudioChecks();
 						},
 					start: function (event) {
-						
+						event.stopPropagation();
 						pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
@@ -2964,15 +2965,15 @@ class Token {
 								// reset measuring when a new token is picked up
 								if(window.previous_measured_token != self.options.id){
 									window.previous_measured_token = self.options.id
-									WaypointManager.cancelFadeout()
-									WaypointManager.clearWaypoints()
+									WaypointManager.clearWaypoints(false);
+									WaypointManager.cancelFadeout(true);
 								}
 								const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
 								const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
 
 								if(WaypointManager.numWaypoints > 0){
 									WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
-									WaypointManager.cancelFadeout()
+									WaypointManager.cancelFadeout(true);
 								}
 								window.BEGIN_MOUSEX = tokenMidX;
 								window.BEGIN_MOUSEY = tokenMidY;
@@ -2999,7 +3000,7 @@ class Token {
 					 * @param {Object} ui UI-object
 					 */
 					drag: function(event, ui) {
-
+						event.stopPropagation();
 						
 						let zoom = parseFloat(window.ZOOM);
 
@@ -3849,6 +3850,7 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	}
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
+	WaypointManager.cancelFadeout();
 	if(ignoreVisionUpdate == false){
 		let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 		let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	

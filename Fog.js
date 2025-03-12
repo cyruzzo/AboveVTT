@@ -199,9 +199,8 @@ class WaypointManagerClass {
 		this.coords = [];
 		this.currentWaypointIndex = 0;
 		this.mouseDownCoords = { mousex: undefined, mousey: undefined };
-		clearTimeout(this.timeout);
-		this.timeout = undefined;
-		this.cancelFadeout()
+		if(cancelFadeout)
+			this.cancelFadeout();
 	}
 
 	// Helper function to convert mouse coordinates to 'snap' or 'centre of current grid cell' coordinates
@@ -487,20 +486,16 @@ class WaypointManagerClass {
 	fadeoutMeasuring(playerID){
 		let alpha = 1.0
 		const self = this
-		if(self.ctx == undefined){
-				self.cancelFadeout()
-				self.clearWaypoints();
-				self.clearWaypointDrawings(playerID)
-				return;
-		} 
+
 		// only ever allow a single fadeout to occur
 		// this stops weird flashing behaviour with interacting
 		// interval function calls
 		if (self.fadeoutAnimationId) {
-			return
+			cancelAnimationFrame(this.fadeoutAnimationId);
 		}
 
-		let prevFrameTime, deltaTime;
+		let prevFrameTime= undefined;
+		let deltaTime = 0;
 		/**
 		* This is a function expression to make sure `this` is available.
 		* @type {FrameRequestCallback}
@@ -518,7 +513,7 @@ class WaypointManagerClass {
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0) {
 				self.clearWaypoints();
-				self.cancelFadeout();
+				self.clearWaypointDrawings(self.playerId)
 				return;
 			}
 
@@ -2240,13 +2235,13 @@ function numToColor(num, alpha, max) {
  * @returns
  */
 function drawing_mousedown(e) {
-
+	if(window.DRAWFUNCTION != 'select')
+		e.preventDefault();
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){
 		clear_temp_canvas()
 		WaypointManager.resetDefaultDrawStyle()
-		WaypointManager.cancelFadeout()
-		WaypointManager.clearWaypoints()
+		WaypointManager.clearWaypoints(false)
 	}
 	const mousePosition = {
 		clientX: (e.touches) ? e.touches[0].clientX : e.clientX,
@@ -2486,6 +2481,8 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
+	if(window.DRAWFUNCTION != 'select')
+		e.preventDefault();
 	if (window.MOUSEMOVEWAIT || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
@@ -2733,6 +2730,9 @@ function drawing_mousemove(e) {
  * @returns
  */
 function drawing_mouseup(e) {
+
+	if(window.DRAWFUNCTION != 'select')
+		e.preventDefault();
 	if(!window.MOUSEDOWN || (window.DRAWFUNCTION === "select" && e.touches != undefined))
 		return;
 	// ignore this if we're dragging a token
@@ -2802,7 +2802,7 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 		 window.DRAWLOCATION];
 
-	if ((window.DRAWFUNCTION !== "select" || window.DRAWFUNCTION !== "measure") &&
+	if ((window.DRAWFUNCTION !== "select" && window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
 		switch (window.DRAWSHAPE) {
 			case "line":
