@@ -490,7 +490,7 @@ class WaypointManagerClass {
 		if(self.ctx == undefined){
 				self.cancelFadeout()
 				self.clearWaypoints();
-				clear_temp_canvas(playerID)
+				self.clearWaypointDrawings(playerID)
 				return;
 		} 
 		// only ever allow a single fadeout to occur
@@ -4097,8 +4097,7 @@ function calculateFourthPoint(point1, point2, point3) {
     return { x: point3.x - dx, y: point3.y - dy };
 }
 function clear_temp_canvas(playerId=window.PLAYER_ID){
-	//window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
-	//WaypointManager.clearWaypointDrawings(playerId)
+	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
 }
 
 function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){
