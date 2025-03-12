@@ -1831,13 +1831,14 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		    { src: "jquery-3.6.0.min.js" },
 		    { src: "jquery.contextMenu.js" },
 		    // AboveVTT Files
-		    { src: "DiceContextMenu/DiceContextMenu.js" },	   
-		    { src: "MonsterDice.js" },	
+		    { src: "DDBApi.js" },// Make sure CoreFunctions executes first
+		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes second
+		    { src: "MonsterDice.js" },
 		    { src: "DiceRoller.js" },
-		    { src: "DDBApi.js" },
+		    { src: "DiceContextMenu/DiceContextMenu.js" },
+		    { src: "MessageBroker.js" },
 		    { src: "rpg-dice-roller.bundle.min.js" },
 		    // AboveVTT files that execute when loaded
-		    { src: "CoreFunctions.js" }, // Make sure CoreFunctions executes first
 		    { src: "CharactersPage.js" } // Make sure CharactersPage executes last
 		]
 
