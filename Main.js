@@ -2871,7 +2871,7 @@ function init_ui() {
 	init_mouse_zoom()
 
 	init_help_menu();
-
+  hide_or_unhide_scrollbar()
 
 }
 
