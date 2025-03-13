@@ -4512,6 +4512,7 @@ async function do_draw_selected_token_bounding_box() {
 		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
 			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
 		}
+									
 	}
 
 	for(let index in groupIDs){
@@ -4539,6 +4540,8 @@ async function do_draw_selected_token_bounding_box() {
 				
 				let id = window.CURRENTLY_SELECTED_TOKENS[i];
 				let token = window.TOKEN_OBJECTS[id];
+
+				$(`#combat_area tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token);
 				if(!window.DM && $(`div.token[data-id='${id}']`).css('display') == 'none')
 					continue;
 				let tokenImageClientPosition = $(`div.token[data-id='${id}']>.token-image`)[0].getBoundingClientRect();
@@ -4847,6 +4850,7 @@ async function do_draw_selected_token_bounding_box() {
 
 /// removes everything that draw_selected_token_bounding_box added
 function remove_selected_token_bounding_box() {
+	$(`#combat_area tr`).toggleClass('selected-token', false);
 	$("#selectedTokensBorder").remove();
 	$("#selectedTokensBorderRotationGrabberConnector").remove();
 	$("#rotationGrabberHolder").remove();

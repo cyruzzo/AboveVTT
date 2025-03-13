@@ -616,6 +616,13 @@ function openCombatTrackerSettings(){
 	if(window.DM)
 		form.append(removeInitRow);
 
+	let highlightSelectedTokensToggle = form_toggle('ct_selected_token', `Adds a selected highlight to tokens in the combat tracker`, combatSettingData['ct_selected_token'] == '1', function(e){
+		handle_basic_form_toggle_click(e)
+	});
+	let highlightSelectedTokensRow = form_row(`ct_selected_token`, `${window.DM ? 'Highlight Selected Token Image' : 'Highlight Selected Token Image'}`, highlightSelectedTokensToggle)
+	form.append(highlightSelectedTokensRow);
+
+
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
 		$("#sources-import-main-container").remove();
