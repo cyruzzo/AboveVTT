@@ -3358,6 +3358,7 @@ function init_help_menu() {
 				<section class="tabs-content">
 					<div id="tab1">
 						<h3>Keyboard Shortcuts</h3>
+						<span><b>Unless stated otherwise CTRL = meta/cmd on mac. Alternative Mac keybinds when set will be listed in brackets</b></span>
 						<dl>
 							<dt>SPACE</dt>
 							<dd>Show/hide character sheet (players only)</dd>
@@ -3431,7 +3432,7 @@ function init_help_menu() {
 							<dd> Add Dice to Dice Pool</dd>
 						<dl>
 							<dl>
-							<dt>Ctrl(control)+1-7</dt>
+							<dt>Ctrl+1-7</dt>
 							<dd>Remove Dice from Dice Pool</dd>
 						<dl>
 						<dl>
@@ -3453,6 +3454,14 @@ function init_help_menu() {
 						<dl>
 							<dt>SHIFT+H</dt>
 							<dd>Hide buttons from screen (spectator mode)</dd>
+						<dl>
+						<dl>
+							<dt>CTRL+C</dt>
+							<dd>Copy Selected Token</dd>
+						<dl>
+						<dl>
+							<dt>CTRL+V</dt>
+							<dd>Paste Selected Tokens</dd>
 						<dl>
 						<dl>
 							<dt>SHIFT+L</dt>
