@@ -3358,17 +3358,16 @@ function init_help_menu() {
 				<section class="tabs-content">
 					<div id="tab1">
 						<h3>Keyboard Shortcuts</h3>
-						<span><b>Unless stated otherwise CTRL = meta/cmd on mac. Alternative Mac keybinds when set will be listed in brackets</b></span>
 						<dl>
 							<dt>SPACE</dt>
 							<dd>Show/hide character sheet (players only)</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+SPACE</dt>
+							<dt>${getShiftKeyName()}+SPACE</dt>
 							<dd>Center Player Token (players only)</dd>
 						<dl>
 						<dl>
-							<dt>CTRL(Control)+SPACE</dt>
+							<dt>${getCtrlKeyName()}+SPACE</dt>
 							<dd>Center Current Turn Token</dd>
 						<dl>
 						<dl>
@@ -3420,11 +3419,11 @@ function init_help_menu() {
 							<dd>Prev creature in combat</dd>
 						<dl>
 						<dl>
-							<dt>- / CTRL+Mouse Wheel Down</dt>
+							<dt>- / ${getCtrlKeyName()}+Mouse Wheel Down</dt>
 							<dd>Zoom out</dd>
 						<dl>
 						<dl>
-							<dt>= / + / CTRL+Mouse Wheel Up</dt>
+							<dt>= / + / ${getCtrlKeyName()}+Mouse Wheel Up</dt>
 							<dd>Zoom in</dd>
 						<dl>
 						<dl>
@@ -3432,7 +3431,7 @@ function init_help_menu() {
 							<dd> Add Dice to Dice Pool</dd>
 						<dl>
 							<dl>
-							<dt>Ctrl+1-7</dt>
+							<dt>${getModKeyName()}+1-7</dt>
 							<dd>Remove Dice from Dice Pool</dd>
 						<dl>
 						<dl>
@@ -3444,59 +3443,59 @@ function init_help_menu() {
 							<dd>Add to Roll Mod</dd>
 						<dl>
 						<dl>
-							<dt>CTRL (held)</dt>
+							<dt>${getModKeyName()} (held)</dt>
 							<dd>Temporarily toggle grid snapping</dd>
 						<dl>
 						<dl>
-							<dt>ALT (held)</dt>
+							<dt>${getAltKeyName()} (held)</dt>
 							<dd>Temporarily activate ruler</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+H</dt>
+							<dt>${getShiftKeyName()}+H</dt>
 							<dd>Hide buttons from screen (spectator mode)</dd>
 						<dl>
 						<dl>
-							<dt>CTRL+C</dt>
+							<dt>${getModKeyName()}+C</dt>
 							<dd>Copy Selected Token</dd>
 						<dl>
 						<dl>
-							<dt>CTRL+V</dt>
+							<dt>${getModKeyName()}+V</dt>
 							<dd>Paste Selected Tokens</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+L</dt>
+							<dt>${getShiftKeyName()}+L</dt>
 							<dd>Enable/Disable locked token interation (DM only)</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+V</dt>
+							<dt>${getShiftKeyName()}+V</dt>
 							<dd>Temporary check token vision.</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+W</dt>
+							<dt>${getShiftKeyName()}+W</dt>
 							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+S</dt>
+							<dt>${getShiftKeyName()}+S</dt>
 							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
-							<dt>Hold CTRL while using most tools</dt>
+							<dt>Hold ${getModKeyName()} while using most tools</dt>
 							<dd>Temporary toggle snap tools to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+Click Token</dt>
+							<dt>${getShiftKeyName()}+Click Token</dt>
 							<dd>Select multiple tokens</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+Drag Token</dt>
+							<dt>${getShiftKeyName()}+Drag Token</dt>
 							<dd>If token is grouped or multiple tokens selected just move the one token</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT+Click Door/Window</dt>
+							<dt>${getShiftKeyName()}+Click Door/Window</dt>
 							<dd>Quick toggle door/window locked</dd>
 						<dl>
 						<dl>
-							<dt>Hold SHIFT while drawing walls</dt>
+							<dt>Hold ${getShiftKeyName()} while drawing walls</dt>
 							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						<dl>
 						<dl>
@@ -3504,7 +3503,7 @@ function init_help_menu() {
 							<dd>Will cycle through fog & draw options if menu open</dd>
 						<dl>
 						<dl>
-							<dt>SHIFT/CTRL Click on Character Sheet Icon Rolls</dt>
+							<dt>${getShiftKeyName()}/${getCtrlKeyName()} Click on Character Sheet Icon Rolls</dt>
 							<dd>Will roll with ADV/DIS respectively</dd>
 						<dl>
 					</div>

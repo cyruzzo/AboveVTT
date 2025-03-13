@@ -37,6 +37,22 @@ function isIOS() {
   return (/iPad|iPhone|iPod/.test(navigator.userAgent) || 
 	  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 }
+function isMac() {
+  return (navigator.userAgentData.platform || navigator.platform).toLowerCase().includes("mac");
+}
+function getModKeyName() {
+  return isMac() ? "&#8984;" : "CTRL";
+}
+function getCtrlKeyName() {
+  return isMac() ? "&#8963;" : "CTRL";
+}
+function getAltKeyName() {
+  return isMac() ? "&#8984;" : "ALT";
+}
+function getShiftKeyName() {
+  return isMac() ? "&#8679;" : "SHIFT";
+}
+
 
 function mydebounce(func, timeout = 800){  
   let timer;
