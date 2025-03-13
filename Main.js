@@ -3358,7 +3358,6 @@ function init_help_menu() {
 				<section class="tabs-content">
 					<div id="tab1">
 						<h3>Keyboard Shortcuts</h3>
-						<span><b>Unless stated otherwise CTRL = meta/cmd on mac. Alternative Mac keybinds when set will be listed in brackets</b></span>
 						<dl>
 							<dt>SPACE</dt>
 							<dd>Show/hide character sheet (players only)</dd>
@@ -3368,7 +3367,7 @@ function init_help_menu() {
 							<dd>Center Player Token (players only)</dd>
 						<dl>
 						<dl>
-							<dt>CTRL(Control)+SPACE</dt>
+							<dt>Ctrl+SPACE</dt>
 							<dd>Center Current Turn Token</dd>
 						<dl>
 						<dl>
@@ -3432,7 +3431,7 @@ function init_help_menu() {
 							<dd> Add Dice to Dice Pool</dd>
 						<dl>
 							<dl>
-							<dt>Ctrl+1-7</dt>
+							<dt>${getModKey()}+1-7</dt>
 							<dd>Remove Dice from Dice Pool</dd>
 						<dl>
 						<dl>
@@ -3444,7 +3443,7 @@ function init_help_menu() {
 							<dd>Add to Roll Mod</dd>
 						<dl>
 						<dl>
-							<dt>CTRL (held)</dt>
+							<dt>${getModKey()} (held)</dt>
 							<dd>Temporarily toggle grid snapping</dd>
 						<dl>
 						<dl>
@@ -3456,11 +3455,11 @@ function init_help_menu() {
 							<dd>Hide buttons from screen (spectator mode)</dd>
 						<dl>
 						<dl>
-							<dt>CTRL+C</dt>
+							<dt>${getModKey()}+C</dt>
 							<dd>Copy Selected Token</dd>
 						<dl>
 						<dl>
-							<dt>CTRL+V</dt>
+							<dt>${getModKey()}+V</dt>
 							<dd>Paste Selected Tokens</dd>
 						<dl>
 						<dl>
@@ -3480,7 +3479,7 @@ function init_help_menu() {
 							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>
-							<dt>Hold CTRL while using most tools</dt>
+							<dt>Hold ${getModKey()} while using most tools</dt>
 							<dd>Temporary toggle snap tools to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						<dl>
 						<dl>

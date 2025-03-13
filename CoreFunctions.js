@@ -37,6 +37,14 @@ function isIOS() {
   return (/iPad|iPhone|iPod/.test(navigator.userAgent) || 
 	  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 }
+function getModKey() {
+  if (navigator.userAgentData) {
+    return navigator.userAgentData.platform.includes("mac") ? "CMD" : "CTRL";
+  } else {
+    return navigator.platform.includes("mac") ?  "CMD" : "CTRL";
+  }
+}
+
 
 function mydebounce(func, timeout = 800){  
   let timer;
