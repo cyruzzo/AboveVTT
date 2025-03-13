@@ -39,9 +39,9 @@ function isIOS() {
 }
 function getModKey() {
   if (navigator.userAgentData) {
-    return navigator.userAgentData.platform.includes("mac") ? "CMD" : "CTRL";
+    return navigator.userAgentData.platform.includes("mac") ? "&#8984;" : "CTRL";
   } else {
-    return navigator.platform.includes("mac") ?  "CMD" : "CTRL";
+    return navigator.platform.includes("mac") ?  "&#8984;" : "CTRL";
   }
 }
 
