@@ -529,7 +529,11 @@ const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
 function handle_peer_cursor_event(eventData) {
   try {
     if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene so don't show their cursor
-
+    if(eventData.tokenId){
+      const token = $(`.token[data-id='${eventData.tokenId}']:not(.underDarkness), #token_map_items .token[data-id='${eventData.tokenId}']`);
+      if(token.length>0 && (token.css('display') == 'none' || token.css('visibility') == 'hidden'))
+        return;
+    }
     // if they're drawing a ruler, don't bother drawing the cursor. For these cases, we return;
     // if we don't draw the ruler, see if we want to draw the cursor. For these cases, we break;
     if (eventData.coords && eventData.coords.length > 0) {
@@ -702,7 +706,9 @@ function peer_is_dragging_token(eventData) {
 
 /** clears other player's rulers from our screen */
 function clear_peer_canvas(playerId) {
-  window.PEER_RULERS[playerId].clearWaypointDrawings(playerId)
+  window.PEER_RULERS[playerId].throttleDraw(function(){
+    window.PEER_RULERS[playerId].clearWaypointDrawings(playerId)
+  })
 }
 
 /** iterates over window.PEER_RULERS and draws any rulers that need to be drawn */

@@ -3070,7 +3070,6 @@ class Token {
 							const tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
 							const tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
 							WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
-
 							WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
 						}
 						if (!self.options.hidden) {
@@ -3850,7 +3849,7 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	}
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
-	WaypointManager.cancelFadeout();
+
 	if(ignoreVisionUpdate == false){
 		let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 		let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	

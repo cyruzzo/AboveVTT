@@ -113,6 +113,7 @@ class WaypointManagerClass {
 			backgroundColor: "rgba(255, 255, 255, 0.7)"
 		}
 		this.playerId = window.PLAYER_ID;
+		this.throttleDraw = throttle((callback) => {requestAnimationFrame(callback)}, 1000/240);
 	}
 
 	resetDefaultDrawStyle(){
@@ -258,7 +259,6 @@ class WaypointManagerClass {
 			// it's empty then
 			return;
 		}
-
 		rulerContainer.innerHTML = "";
 	}
 
@@ -302,10 +302,11 @@ class WaypointManagerClass {
 
 	
 		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
-
-		// update alpha for the entire container
-		rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
-		rulerContainer.innerHTML = elementsToDraw;		
+		this.throttleDraw(function(){
+			// update alpha for the entire container
+			rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+			rulerContainer.innerHTML = elementsToDraw;	
+		})
 	}
 
 	/**
@@ -488,10 +489,8 @@ class WaypointManagerClass {
 		const self = this
 
 		// only ever allow a single fadeout to occur
-		// this stops weird flashing behaviour with interacting
-		// interval function calls
 		if (self.fadeoutAnimationId) {
-			cancelAnimationFrame(this.fadeoutAnimationId);
+			self.cancelFadeout(true);
 		}
 
 		let prevFrameTime= undefined;
@@ -509,11 +508,13 @@ class WaypointManagerClass {
 			prevFrameTime = time;
 
 
-			self.draw(undefined, undefined, alpha, playerID)
+			this.throttleDraw(function(){self.draw(undefined, undefined, alpha, playerID)})
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
-			if (alpha <= 0.0) {
+			if (alpha <= 0.0 || this.fadeoutAnimationId == undefined) {
 				self.clearWaypoints();
-				self.clearWaypointDrawings(self.playerId)
+				self.throttleDraw(function(){
+					self.clearWaypointDrawings(self.playerId)
+				})
 				return;
 			}
 
@@ -527,12 +528,15 @@ class WaypointManagerClass {
 	 *
 	 */
 	cancelFadeout(dontClearCanvas=false){
-		if (this.fadeoutAnimationId !== undefined) {
-			if(!dontClearCanvas)
-				this.clearWaypointDrawings(this.playerId)
-			cancelAnimationFrame(this.fadeoutAnimationId);
-			this.fadeoutAnimationId = undefined
+		cancelAnimationFrame(this.fadeoutAnimationId);
+		this.fadeoutAnimationId = undefined	
+		const self = this
+		if(!dontClearCanvas){
+			self.throttleDraw(function(){
+				self.clearWaypointDrawings(self.playerId)
+			})
 		}
+
 	}
 };
 
@@ -2235,8 +2239,6 @@ function numToColor(num, alpha, max) {
  * @returns
  */
 function drawing_mousedown(e) {
-	if(window.DRAWFUNCTION != 'select')
-		e.preventDefault();
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){
 		clear_temp_canvas()
@@ -2481,8 +2483,6 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
-	if(window.DRAWFUNCTION != 'select')
-		e.preventDefault();
 	if (window.MOUSEMOVEWAIT || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
@@ -2604,13 +2604,12 @@ function drawing_mousemove(e) {
 		}
 		else if (window.DRAWSHAPE == "line") {
 			if(window.DRAWFUNCTION === "measure"){
-				if(e.which === 1 || e.touches){
+				if(e.which === 1 || e.touches){					
+					WaypointManager.cancelFadeout(true);
 					WaypointManager.setCanvas(window.temp_canvas);
-					WaypointManager.cancelFadeout(true)
 					WaypointManager.registerMouseMove(mouseX, mouseY);
 					WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor);
 					WaypointManager.draw();
-					window.temp_context.fillStyle = '#f50';
 					sendRulerPositionToPeers();
 				}
 			}else{
@@ -2731,8 +2730,7 @@ function drawing_mousemove(e) {
  */
 function drawing_mouseup(e) {
 
-	if(window.DRAWFUNCTION != 'select')
-		e.preventDefault();
+
 	if(!window.MOUSEDOWN || (window.DRAWFUNCTION === "select" && e.touches != undefined))
 		return;
 	// ignore this if we're dragging a token
