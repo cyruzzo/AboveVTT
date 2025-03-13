@@ -206,7 +206,7 @@ Mousetrap.bind('enter', function () {       //zoom minus
     $('.roll-mod-container>.roll-button').click(); 
 });
 
-Mousetrap.bind('mod+space', function (e) {    
+Mousetrap.bind('ctrl+space', function (e) {    
     e.preventDefault();
     $('#combat_area tr[data-current=1] .findTokenCombatButton').click();
 });
