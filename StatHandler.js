@@ -63,8 +63,8 @@ class StatHandler {
 					else {
 						promises.push(new Promise((resolve, reject) => {
 							this.getStat(window.all_token_objects[i].options.monster, function(stat) {
-								if(stat.data.initiativeMod != undefined){
-									modArray.push(stat.data.initiativeMod.replace('+', ''));
+								if(stat.data.initiativeBonus != null){
+									modArray.push(stat.data.initiativeBonus);
 								}
 								else{
 									modArray.push(Math.floor((stat.data.stats[1].value - 10) / 2.0));
@@ -129,8 +129,8 @@ class StatHandler {
 		else{
 			this.getStat(monsterid, function(stat) {
 				let modifier;
-				if(stat.data.initiativeMod != undefined){
-					modifier = stat.data.initiativeMod.replace('+', '');
+				if(stat.data.initiativeBonus != null){
+					modifier = stat.data.initiativeBonus;
 				}
 				else{
 					modifier = Math.floor((stat.data.stats[1].value - 10) / 2.0);
