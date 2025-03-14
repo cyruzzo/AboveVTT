@@ -3443,6 +3443,10 @@ function init_help_menu() {
 							<dd>Add to Roll Mod</dd>
 						<dl>
 						<dl>
+							<dt>Enter</dt>
+							<dd>Roll added dice pool</dd>
+						<dl>
+						<dl>
 							<dt>${getModKeyName()} (held)</dt>
 							<dd>Temporarily toggle grid snapping</dd>
 						<dl>
