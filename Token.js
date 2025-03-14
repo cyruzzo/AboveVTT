@@ -298,13 +298,12 @@ class Token {
 					output = calculatedFromSize;
 				}
 			}
-			output = Math.round(output * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
 			if (output < 0.5) {
 				return 0.5;
 			}
 			return output;
 		} catch (error) {
-			console.warn("Failed to parse gridHeight for token", this, error);
+			console.warn("Failed to parse gridWidth for token", this, error);
 			return 1;
 		}
 	}
@@ -323,7 +322,6 @@ class Token {
 					output = calculatedFromSize;
 				}
 			}
-			output = Math.round(output * 2) / 2; // round to the nearest 0.5; ex: everything between 0.25 and 0.74 round to 0.5; below .025 rounds to 0, and everything above 0.74 rounds to 1
 			if (output < 0.5) {
 				return 0.5;
 			}
@@ -336,15 +334,15 @@ class Token {
 
 	// number of pixels
 	sizeWidth() {
-		let w = parseInt(this.options.gridWidth);
+		let w = parseFloat(this.options.gridWidth);
 		if (isNaN(w)) return this.options.size;
-		return parseInt(window.CURRENT_SCENE_DATA.hpps) * w;
+		return parseInt(parseInt(window.CURRENT_SCENE_DATA.hpps) * w);
 	}
 	// number of pixels
 	sizeHeight() {
-		let h = parseInt(this.options.gridHeight);
+		let h = parseFloat(this.options.gridHeight);
 		if (isNaN(h)) return this.options.size;
-		return parseInt(window.CURRENT_SCENE_DATA.vpps) * h;
+		return parseInt(parseInt(window.CURRENT_SCENE_DATA.vpps) * h);
 	}
 
 	hasCondition(conditionName) {
@@ -446,7 +444,7 @@ class Token {
 
 		if(this.isLineAoe()) {
 			// token is not proportional such as a line aoe token
-			this.options.gridHeight = Math.round(newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps));
+			this.options.gridHeight = newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		}
 		else {
 			this.options.size = newSize;
