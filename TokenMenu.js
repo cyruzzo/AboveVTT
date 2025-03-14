@@ -2902,7 +2902,12 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 	let tokenSizes = [];
 	tokens.forEach(t => {
-		tokenSizes.push(t.numberOfGridSpacesWide());
+		if(t.isLineAoe()){
+			tokenSizes.push(t.numberOfGridSpacesTall());
+		}
+		else{
+			tokenSizes.push(t.numberOfGridSpacesWide());
+		}
 	});
 
 
