@@ -116,7 +116,17 @@ function setup_aoe_button(buttons) {
         const style = $("#aoe_styles").val().toLowerCase()
         const options = build_aoe_token_options(style, shape, size)
 
-        place_aoe_token_in_centre(options)
+        //if single token selected, place there:
+        if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
+            tok = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]];
+            const half = parseFloat(window.CURRENT_SCENE_DATA.hpps) * tok.options.gridSquares/2;
+            const x = parseInt(tok.options.left.slice(0,-2)) + half;
+            const y = parseInt(tok.options.top.slice(0,-2)) + half;
+            console.log("PLACEAT",tok, half, x, y);
+            place_token_at_map_point(options, x, y);
+        } else {
+            place_aoe_token_in_centre(options);
+        }
         $('#select-button').click();
 
     });
