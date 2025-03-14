@@ -416,7 +416,7 @@ Mousetrap.bind('alt', function () {
     }
 
     $(window).off('blur.altCheck').one('blur.altCheck', function(){
-      window.altHeld = false;
+      altHeld = false;
         if ($('#ruler_button').hasClass('button-enabled')) {
             window.selectedMenuButton.click()
         }
@@ -440,7 +440,7 @@ Mousetrap.bind('shift', function () {
     
     shiftHeld = true;   
     $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
-      window.shiftHeld = false;
+      shiftHeld = false;
     })
 }, 'keydown');
 
@@ -470,7 +470,7 @@ Mousetrap.bind(['mod+shift', 'shift+mod'], function () {
     ctrlHeld=true;
     shiftHeld=true;
     $(window).off('blur.shiftCheck').one('blur.shiftCheck', function(){
-      window.shiftHeld = false;
+      shiftHeld = false;
     })
     window.toggleSnap=true;
 }, 'keydown');
