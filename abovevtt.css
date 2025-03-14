@@ -6635,20 +6635,20 @@ div#tokenOptionsContainer .remove-from-ct>button{
     opacity: 1;
     border-style: solid;
 }
-#combat_area .selected-token td:first-of-type .ac:before {
+#combat_area .selected-token td:first-of-type:before {
     content:'';
     width:35px;
     height:35px;
-    top:-19px;
-    left:-19px;
+    top:2px;
+    left:2px;
     border:2px solid #0000;
     position:absolute;
     border-radius:5px;
     box-shadow:  rgb(255 255 255) 0px 0px 1px 1px inset, rgba(192, 243, 255, 0.96) 0px 0px 1px 3px inset;
-    z-index:-1;
+    z-index:1;
 }
 #combat_area .selected-token td:first-of-type .ac{
-    z-index:1;
+    z-index:2;
     position:absolute;
     display:block;
 }
