@@ -118,18 +118,23 @@ function setup_aoe_button(buttons) {
 
         //if single token selected, place there:
         if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
-            tok = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]];
-            const half = parseFloat(window.CURRENT_SCENE_DATA.hpps) * tok.options.gridSquares/2;
-            const x = parseInt(tok.options.left.slice(0,-2)) + half;
-            const y = parseInt(tok.options.top.slice(0,-2)) + half;
-            console.log("PLACEAT",tok, half, x, y);
-            place_token_at_map_point(options, x, y);
+            place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]]);
         } else {
             place_aoe_token_in_centre(options);
         }
         $('#select-button').click();
 
     });
+}
+
+function place_aoe_token_at_token(options, token){
+    const sc = parseFloat(window.CURRENT_SCENE_DATA.hpps);
+    const dx = options.imgsrc.includes("line") ? (- options.gridWidth * sc / 2) : 0;
+    const dy = options.imgsrc.includes("cone") ? (options.size / 2) : 0;
+    const half = sc * token.options.gridSquares/2;
+    const x = parseInt(token.options.left.slice(0,-2)) + half + dx;
+    const y = parseInt(token.options.top.slice(0,-2)) + half + dy;
+    place_token_at_map_point(options, x, y);
 }
 
 function place_aoe_token_in_centre(options){
