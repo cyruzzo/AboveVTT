@@ -139,6 +139,31 @@ function restyle_aoe_class(cls, style){
     return cls.replace(/aoe-style-\w+ /gm, style)
 }
 
+function getOrigin(token){
+    let tok = $(`div.token[data-id='${token.options.id}']`);
+    let tokImage = $(`div.token[data-id='${token.options.id}']>.token-image`);
+
+    let tokenImageClientPosition = tokImage[0].getBoundingClientRect();
+    let tokenImagePosition = tokImage.position();
+    let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+    let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+    let tokenTop = (tok.position().top + tokenImagePosition.top) / (window.ZOOM);
+    let tokenBottom = tokenTop + tokenImageHeight;
+    let tokenLeft = (tok.position().left  + tokenImagePosition.left) / (window.ZOOM);
+    let tokenRight = tokenLeft + tokenImageWidth;
+    
+    let rayAngle = 90;
+    let ray = new Ray({x: (tokenLeft + tokenRight)/2, y: (tokenTop + tokenBottom)/2}, degreeToRadian(parseFloat(tok.css('--token-rotation')) % 360 - rayAngle));   
+    let dir = ray.dir;
+    let tokenWidth = token.sizeWidth();
+    let tokenHeight = token.sizeHeight();
+    let widthAdded = tokenHeight; 
+
+    return  {
+                'x': (tokenLeft + tokenRight)/2 + (widthAdded*dir.x/2),
+                'y': (tokenTop + tokenBottom)/2 + (widthAdded*dir.y/2)
+            }                         
+}
 
 function set_spell_override_style(spellName){
     const spells = ["hypnotic pattern", "web", "fog cloud", "stinking cloud", "darkness"]
