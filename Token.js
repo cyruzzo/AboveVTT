@@ -2973,11 +2973,34 @@ class Token {
 								// reset measuring when a new token is picked up
 								if(window.previous_measured_token != self.options.id){
 									window.previous_measured_token = self.options.id
-									WaypointManager.clearWaypoints(false);
+									WaypointManager.clearWaypoints(false);s
 									WaypointManager.cancelFadeout(true);
 								}
-								const tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
-								const tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
+								let tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
+								let tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
+
+								if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi/) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
+									let tokenImageClientPosition = $(`div.token[data-id='${self.options.id}']>.token-image`)[0].getBoundingClientRect();
+									let tokenImagePosition = $(`div.token[data-id='${self.options.id}']>.token-image`).position();
+									let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+									let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+									let tokenTop = (tok.position().top + tokenImagePosition.top) / (window.ZOOM);
+									let tokenBottom = tokenTop + tokenImageHeight;
+									let tokenLeft = (tok.position().left  + tokenImagePosition.left) / (window.ZOOM);
+									let tokenRight = tokenLeft + tokenImageWidth;
+									
+									let rayAngle = 90;
+									let ray = new Ray({x: (tokenLeft + tokenRight)/2, y: (tokenTop + tokenBottom)/2}, degreeToRadian(parseFloat($(`div.token[data-id='${self.options.id}']`).css('--token-rotation')) % 360 - rayAngle));	
+									let dir = ray.dir;
+									let tokenWidth = self.sizeWidth();
+									let tokenHeight = self.sizeHeight();
+									let widthAdded = tokenHeight;
+									
+									tokenMidX = (tokenLeft + tokenRight)/2 + (widthAdded*dir.x/2);
+									tokenMidY = (tokenTop + tokenBottom)/2 + (widthAdded*dir.y/2);
+								}
+								
+								
 
 								if(WaypointManager.numWaypoints > 0){
 									WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
@@ -3075,11 +3098,40 @@ class Token {
 						const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 						
 						if (allowTokenMeasurement) {
-							const tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
-							const tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
-							WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
-							WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
-						}
+							let tokenMidX = tokenPosition.x + Math.round(self.sizeWidth() / 2);
+							let tokenMidY = tokenPosition.y + Math.round(self.sizeHeight() / 2);
+
+							if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
+								let tokenImageClientPosition = $(`div.token[data-id='${self.options.id}']>.token-image`)[0].getBoundingClientRect();
+								let tokenImagePosition = $(`div.token[data-id='${self.options.id}']>.token-image`).position();
+								let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
+								let tokenImageHeight = (tokenImageClientPosition.height) / (window.ZOOM);
+								let tokenTop = (tok.position().top + tokenImagePosition.top) / (window.ZOOM);
+								let tokenBottom = tokenTop + tokenImageHeight;
+								let tokenLeft = (tok.position().left  + tokenImagePosition.left) / (window.ZOOM);
+								let tokenRight = tokenLeft + tokenImageWidth;
+								
+								let rayAngle = 90;
+								let ray = new Ray({x: (tokenLeft + tokenRight)/2, y: (tokenTop + tokenBottom)/2}, degreeToRadian(parseFloat($(`div.token[data-id='${self.options.id}']`).css('--token-rotation')) % 360 - rayAngle));	
+								let dir = ray.dir;
+								let tokenWidth = self.sizeWidth();
+								let tokenHeight = self.sizeHeight();
+								let widthAdded = tokenHeight;
+								
+								tokenMidX = (tokenLeft + tokenRight)/2 + (widthAdded*dir.x/2);
+								tokenMidY = (tokenTop + tokenBottom)/2 + (widthAdded*dir.y/2);
+
+								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
+								WaypointManager.draw(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);
+								
+							}
+							else{
+								WaypointManager.storeWaypoint(WaypointManager.currentWaypointIndex, window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor, tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor);		
+								WaypointManager.draw(Math.round(tokenPosition.x + (self.sizeWidth() / 2))/window.CURRENT_SCENE_DATA.scale_factor, Math.round(tokenPosition.y + self.sizeHeight() + 10)/window.CURRENT_SCENE_DATA.scale_factor);
+							}
+
+
+							}
 						if (!self.options.hidden) {
 							sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
 						}
