@@ -2973,13 +2973,13 @@ class Token {
 								// reset measuring when a new token is picked up
 								if(window.previous_measured_token != self.options.id){
 									window.previous_measured_token = self.options.id
-									WaypointManager.clearWaypoints(false);s
+									WaypointManager.clearWaypoints(false);
 									WaypointManager.cancelFadeout(true);
 								}
 								let tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
 								let tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
 
-								if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi/) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
+								if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
 									let tokenImageClientPosition = $(`div.token[data-id='${self.options.id}']>.token-image`)[0].getBoundingClientRect();
 									let tokenImagePosition = $(`div.token[data-id='${self.options.id}']>.token-image`).position();
 									let tokenImageWidth = (tokenImageClientPosition.width) / (window.ZOOM);
