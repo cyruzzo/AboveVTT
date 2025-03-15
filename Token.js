@@ -336,13 +336,13 @@ class Token {
 	sizeWidth() {
 		let w = parseFloat(this.options.gridWidth);
 		if (isNaN(w)) return this.options.size;
-		return parseInt(parseInt(window.CURRENT_SCENE_DATA.hpps) * w);
+		return Math.round(parseInt(window.CURRENT_SCENE_DATA.hpps) * w);
 	}
 	// number of pixels
 	sizeHeight() {
 		let h = parseFloat(this.options.gridHeight);
 		if (isNaN(h)) return this.options.size;
-		return parseInt(parseInt(window.CURRENT_SCENE_DATA.vpps) * h);
+		return Math.round(parseInt(window.CURRENT_SCENE_DATA.vpps) * h);
 	}
 
 	hasCondition(conditionName) {
