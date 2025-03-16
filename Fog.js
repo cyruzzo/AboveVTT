@@ -233,7 +233,8 @@ class WaypointManagerClass {
 	* @param playerId {string | boolean}
 	*/
 	getOrCreateDrawingContainer(playerId) {
-		const rulerContainerId = `ruler-container-${playerId}`;
+		playerId = `${playerId}`;
+		const rulerContainerId = `ruler-container-${playerId.replace(' ','')}`;
 
 		let rulerContainer = document.getElementById(rulerContainerId)
 		if (!rulerContainer) {
@@ -252,14 +253,18 @@ class WaypointManagerClass {
 	* @param playerId
 	*/
 	clearWaypointDrawings(playerId) {
-		const rulerContainerId = `ruler-container-${playerId}`;
-
-		let rulerContainer = document.getElementById(rulerContainerId)
+		let rulerContainer = this.getOrCreateDrawingContainer(playerId)
 		if (!rulerContainer) {
 			// it's empty then
 			return;
 		}
+
 		rulerContainer.innerHTML = "";
+		if (window.PEER_TOKEN_DRAGGING[playerId]) {
+	        const html = window.PEER_TOKEN_DRAGGING[playerId];
+	        delete window.PEER_TOKEN_DRAGGING[playerId];
+	        $(html).remove();
+      	}
 	}
 
 	/**
@@ -302,10 +307,16 @@ class WaypointManagerClass {
 
 	
 		const rulerContainer = this.getOrCreateDrawingContainer(playerId);
+		const self = this;
 		this.throttleDraw(function(){
 			// update alpha for the entire container
-			rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
-			rulerContainer.innerHTML = elementsToDraw;	
+			if(alpha>0){
+				rulerContainer.style.setProperty("--svg-text-alpha", alpha.toString());
+				rulerContainer.innerHTML = elementsToDraw;	
+			}
+			else{
+				self.clearWaypointDrawings(playerId);
+			}
 		})
 	}
 
@@ -508,7 +519,14 @@ class WaypointManagerClass {
 			prevFrameTime = time;
 
 
-			this.throttleDraw(function(){self.draw(undefined, undefined, alpha, playerID)})
+			this.throttleDraw(function(){
+				self.draw(undefined, undefined, alpha, playerID)
+				if (window.PEER_TOKEN_DRAGGING[self.playerId]) {
+			        const html = window.PEER_TOKEN_DRAGGING[self.playerId];
+			        $(html).css('opacity', 0.5 * alpha);
+		      	}
+			})
+			
 			alpha = alpha - (0.08 * deltaTime / 100); // 0.08 per 100 ms
 			if (alpha <= 0.0 || this.fadeoutAnimationId == undefined) {
 				self.clearWaypoints();
