@@ -834,8 +834,8 @@ function token_context_menu_expanded(tokenIds, e) {
 				if(window.all_token_objects[group] == undefined){
 					window.all_token_objects[group] = t;
 				}
-				t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
-					window.MB.sendMessage('custom/myVTT/token', t.options);
+				t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+					window.MB.sendMessage('custom/myVTT/token', options);
 				}, 300);
 				t.place_sync_persist();
 				ct_add_token(window.TOKEN_OBJECTS[group], false, clickEvent.shiftKey, clickEvent.ctrlKey)

@@ -484,14 +484,6 @@ function init_peer_fade_function(playerId) {
       noisy_log("executing PEER_FADE_RULER_FUNCTIONS", playerId);
       const waypointManager = get_peer_waypoint_manager(playerId, undefined);
       waypointManager.clearWaypoints();
-      redraw_peer_rulers(playerId);
-      if (window.PEER_TOKEN_DRAGGING[playerId]) {
-        const html = window.PEER_TOKEN_DRAGGING[playerId];
-        delete window.PEER_TOKEN_DRAGGING[playerId];
-        html.fadeOut(400, function() {
-          html.remove();
-        });
-      }
     });
   }
 }
@@ -636,6 +628,7 @@ function fade_peer_cursor(playerId) {
   } catch (error) {
     console.debug("fade_peer_cursor is missing a fade function", playerId, typeof playerId, error);
     init_peer_fade_function(playerId);
+    window.PEER_FADE_CURSOR_FUNCTIONS[playerId]();
   }
 }
 
@@ -649,6 +642,7 @@ function fade_peer_ruler(playerId) {
   } catch (error) {
     console.debug("fade_peer_ruler is missing a fade function", playerId, typeof playerId, error);
     init_peer_fade_function(playerId);
+    window.PEER_FADE_RULER_FUNCTIONS[playerId]();
   }
 }
 
@@ -668,7 +662,7 @@ function update_peer_ruler(eventData) {
   // we're not checking receiveRulerFromPeers because we did that in handle_peer_cursor_event
 
   noisy_log("update_peer_ruler", eventData)
-  fade_peer_ruler(eventData.playerId);
+
   if (window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id !== eventData.sceneId) return; // they're on a different scene
   const waypointManager = get_peer_waypoint_manager(eventData.playerId, eventData.color);
   waypointManager.clearWaypoints(false);
@@ -688,6 +682,7 @@ function peer_is_dragging_token(eventData) {
     html.attr("data-clone-id", `dragging-${eventData.tokenId}`);
     html.attr("data-id", ``);
     html.removeClass('tokenselected underDarkness');
+    html.css('opaicty', '0.5')
     if (!html || html.length === 0) {
       noisy_log("peer_is_dragging_token no token on scene matching", `#tokens div[data-id='${eventData.tokenId}']`, eventData);
       return;
@@ -699,8 +694,7 @@ function peer_is_dragging_token(eventData) {
   noisy_log("peer_is_dragging_token updating drag token css", eventData, html);
   html.css({
     top: eventData.y,
-    left: eventData.x,
-    opacity: 0.5
+    left: eventData.x
   });
 }
 

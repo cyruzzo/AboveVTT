@@ -1693,8 +1693,8 @@ class MessageBroker {
 			if(window.all_token_objects[data.id] == undefined){
 				window.all_token_objects[data.id] = t;
 			}
-			t.sync = mydebounce(function(e) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
-				window.MB.sendMessage('custom/myVTT/token', t.options);
+			t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+				window.MB.sendMessage('custom/myVTT/token', options);
 			}, 300);
 			if(t.isPlayer()){
 				const pc = find_pc_by_player_id(data.id, false);

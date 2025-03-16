@@ -249,7 +249,6 @@ class Token {
 		tok.stop(true, true);
 		this.doing_highlight = false;
 		this.update_opacity(tok, false);
-		$('.token[data-clone-id^="dragging-"]').remove();
 		debounceLightChecks();
 	}
 
@@ -672,7 +671,7 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
-					$('.token[data-clone-id^="dragging-"]').remove();
+					// if we need to do something after queue - used to remove clone here
 				}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
@@ -774,7 +773,7 @@ class Token {
 			else
 				longDebounceLightChecks();
 		
-			this.sync();
+			this.sync($.extend(true, {}, this.options));
 		}
 	}
 
@@ -806,7 +805,7 @@ class Token {
 	}
 	place_sync_persist() {
 		this.place();
-		this.sync();
+		this.sync($.extend(true, {}, this.options));
 	}
 
 	highlight(dontscroll=false) {
@@ -1153,7 +1152,7 @@ class Token {
 		self = this;
 		self.update_from_page();
 		if (self.sync != null)
-			self.sync(e);
+			self.sync($.extend(true, {}, self.options));//create deep copy so we don't send data when tokens are updated too quickly
 
 		/* UPDATE COMBAT TRACKER */
 		this.update_combat_tracker()
@@ -2054,7 +2053,7 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
-							$('.token[data-clone-id^="dragging-"]').remove();
+							// if we need to do something after queue - used to remove clone here
 						}
 					});
 					
@@ -2796,9 +2795,22 @@ class Token {
 				let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 				tok.draggable({
-					stop:
-						function (event) {
+					stop: function (event) {
 							event.stopPropagation();
+							
+							
+							self.place_sync_persist();
+
+							if (self.selected ) {
+								for (let tok of window.dragSelectedTokens){
+									let id = $(tok).attr("data-id");
+									if (id == self.options.id)
+										continue;
+									let curr = window.TOKEN_OBJECTS[id];
+									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
+									curr.place_sync_persist();
+								}												
+							}
 							//remove cover for smooth drag
 							$('.iframeResizeCover').remove();
 
@@ -2815,17 +2827,6 @@ class Token {
 							}	
 							debounceLightChecks();
 
-							self.update_and_sync(event, false);
-							if (self.selected ) {
-								for (let tok of window.dragSelectedTokens){
-									let id = $(tok).attr("data-id");
-									if (id == self.options.id)
-										continue;
-									let curr = window.TOKEN_OBJECTS[id];
-									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									curr.update_and_sync(ev);
-								}												
-							}
 							window.DRAGGING = false;
 							draw_selected_token_bounding_box();
 							window.toggleSnap=false;
