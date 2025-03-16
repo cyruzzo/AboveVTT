@@ -35,10 +35,10 @@ const tabCommunicationChannel = new BroadcastChannel('aboveVttTabCommunication')
 
 function isIOS() {
   return (/iPad|iPhone|iPod/.test(navigator.userAgent) || 
-	  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
+	  (navigator?.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 }
 function isMac() {
-  return (navigator.userAgentData.platform || navigator.platform).toLowerCase().includes("mac");
+  return (navigator?.userAgentData?.platform || navigator?.platform).toLowerCase().includes("mac");
 }
 function getModKeyName() {
   return isMac() ? "&#8984;" : "CTRL";
