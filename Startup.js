@@ -189,7 +189,12 @@ $(function() {
                   darkness: true
                 }
               }
-              place_aoe_token_in_centre(options)
+              //if single token selected, place there:
+              if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
+                place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]]);
+              } else {
+                place_aoe_token_in_centre(options)
+              }
           }      
           if(!window.DM){
             if(event.data.msgType == 'CharacterData'){

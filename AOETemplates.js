@@ -130,11 +130,19 @@ function setup_aoe_button(buttons) {
 function place_aoe_token_at_token(options, token){
     const sc = parseFloat(window.CURRENT_SCENE_DATA.hpps);
     const dx = options.imgsrc.includes("line") ? (- options.gridWidth * sc / 2) : 0;
-    const dy = options.imgsrc.includes("cone") ? (options.size / 2) : 0;
+    const dy = options.imgsrc.includes("cone") || options.imgsrc.includes("square") ? (options.size / 2) : 0;
     const half = sc * token.options.gridSquares/2;
     const x = parseInt(token.options.left.slice(0,-2)) + half + dx;
     const y = parseInt(token.options.top.slice(0,-2)) + half + dy;
-    place_token_at_map_point(options, x, y);
+    if(window.DM){
+        place_token_at_map_point(options, x, y);
+    }
+    else{
+        options.left = x;
+        options.top = y;
+        window.MB.sendMessage("custom/myVTT/createtoken",options);
+    }
+    
 }
 
 function place_aoe_token_in_centre(options){

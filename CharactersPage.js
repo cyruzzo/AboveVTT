@@ -1234,7 +1234,13 @@ function observe_character_sheet_changes(documentToObserve) {
                   darkness: true
                 }
               }
-              window.top.place_aoe_token_in_centre(options)
+              //if single token selected, place there:
+              if(window.top.CURRENTLY_SELECTED_TOKENS.length == 1) {
+                window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
+              } else {
+                window.top.place_aoe_token_in_centre(options)
+              }
+              
             }
             else if(window.sendToTab != undefined){
               const data = {color: color, shape: shape, feet: feet, name: name}
