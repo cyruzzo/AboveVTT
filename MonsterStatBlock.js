@@ -183,7 +183,7 @@ function build_monster_stat_block(statBlock, token) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
     let statblockData = '';
-    if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
+    if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeBonus != null || get_avtt_setting_value('statBlockStyle') == 2){
       statblockData =  `
         <div class="container avtt-stat-block-container ${(statBlock.data.slug) ? 'open5eMonster' : ''}">
           <div id="content" class="main content-container" style="padding:0!important">
@@ -219,10 +219,9 @@ function build_monster_stat_block(statBlock, token) {
                               <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                               <span class="mon-stat-block__attribute-value">
                                 <span class="mon-stat-block__attribute-data-value">
-                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
-                                </span>
-                                ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
-                                    ${statBlock.data.initiativeScore}
+                                    ${statBlock.initiativeButton()}</span>
+                                ${statBlock.data.initiativeBonus != null ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                    (${statBlock.data.initiativeBonus+10})
                                 </span>` : ``}   
                               </span>       
                             </div>
@@ -515,11 +514,11 @@ function build_monster_stat_block(statBlock, token) {
                           <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                           <span class="mon-stat-block__attribute-value">
                             <span class="mon-stat-block__attribute-data-value">
-                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
+                                ${statBlock.initiativeButton()}
                             </span>
-                            ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
-                                ${statBlock.data.initiativeScore}
-                            </span>` : ``}    
+                            ${statBlock.data.initiativeBonus != null ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                (${statBlock.data.initiativeBonus+10})
+                            </span>` : ``}   
                           </span>        
                         </div>
                         <div class="mon-stat-block__attribute ddbc-creature-block__attribute">
@@ -768,22 +767,16 @@ function build_monster_stat_block(statBlock, token) {
         </div>
         `;
     }
-    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
-    if(statBlock.data.spellTooltips != undefined){
-      $stat.find('.spell-tooltip').each((index, tooltip) =>{
-        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
-        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
-      })
-    }
 
-    return $stat[0].outerHTML;
+
+    return statblockData;
 }
 function build_monster_copy_stat_block(statBlock) {
     if (!statBlock.userHasAccess) {
         return `<div id='noAccessToContent' style='height: 100%;text-align: center;width: 100%;padding: 10px;font-weight: bold;color: #944;'>You do not have access to this content on DndBeyond.</div>`;
     }
     let statblockData = '';
-    if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeMod != undefined || get_avtt_setting_value('statBlockStyle') == 2){
+    if(get_avtt_setting_value('statBlockStyle') == 0 && statBlock.data.initiativeBonus != null || get_avtt_setting_value('statBlockStyle') == 2){
       statblockData = `
           <div id="content" class="main content-container" style="padding:0!important">
             <section class="primary-content" role="main">
@@ -818,10 +811,10 @@ function build_monster_copy_stat_block(statBlock) {
                               <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                               <span class="mon-stat-block__attribute-value">
                                 <span class="mon-stat-block__attribute-data-value">
-                                    ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
+                                    ${statBlock.initiativeButton() }
                                 </span>
-                                ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
-                                    ${statBlock.data.initiativeScore}
+                                ${statBlock.data.initiativeBonus != null ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                    (${statBlock.data.initiativeBonus + 10})
                                 </span>` : ``}   
                               </span>        
                             </div>
@@ -1076,10 +1069,10 @@ function build_monster_copy_stat_block(statBlock) {
                           <span class="mon-stat-block__attribute-label ddbc-creature-block__attribute-label">Initiative</span>
                           <span class="mon-stat-block__attribute-value">
                             <span class="mon-stat-block__attribute-data-value">
-                                ${statBlock.rollButton(`1d20`, statBlock.data.initiativeMod != undefined ? statBlock.data.initiativeMod : statBlock.dexModString, 'Roll', 'Initiative', parenthesis = true) }
+                                ${statBlock.initiativeButton() }
                             </span>
-                            ${statBlock.data.initiativeScore != undefined ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
-                                ${statBlock.data.initiativeScore}
+                            ${statBlock.data.initiativeBonus != null ? `<span class="mon-stat-block__attribute-data-extra ddbc-creature-block__attribute-data-extra">
+                                ${statBlock.data.initiativeBonus + 10}
                             </span>` : ``}   
                           </span>        
                         </div>
@@ -1295,14 +1288,7 @@ function build_monster_copy_stat_block(statBlock) {
         `;
     }
 
-    let $stat = $(statblockData); //spell tooltip data is incorrect in 2024 monsters - grab from monster page until fixed in monster api for encounter tool/MAPS
-    if(statBlock.data.spellTooltips != undefined){
-      $stat.find('.spell-tooltip').each((index, tooltip) =>{
-        $(tooltip).attr('data-tooltip-href', $(statBlock.data.spellTooltips[index]).attr('data-tooltip-href'))
-        $(tooltip).attr('href', $(statBlock.data.spellTooltips[index]).attr('href'))
-      })
-    }
-    return $stat[0].outerHTML;
+    return statblockData;
 }
 class MonsterStatBlock {
     constructor(data) {
@@ -1402,6 +1388,18 @@ class MonsterStatBlock {
     get wisModString() { return this.modString(this.wis); }
     get chaModString() { return this.modString(this.cha); }
 
+    get initiativeModString() {
+      const init = this.data.initiativeBonus;
+      if (isNaN(init)) {
+        return 0; // not sure what to do here... send a number
+      }
+      if (init < 0) {
+        return `${init}`;
+      } else {
+        return `+${init}`;
+      }
+    }
+
     modInt(value) {
         if (isNaN(value)) {
             return 0; // not sure what to do here... send a number
@@ -1423,6 +1421,10 @@ class MonsterStatBlock {
       } else {
           return `+${value}`;
       }
+    }
+
+    initiativeButton(){
+      return this.rollButton(`1d20`, this.data.initiativeBonus != null ? this.initiativeModString : this.dexModString, 'Roll', 'Initiative', false)                   
     }
 
     statButton(value, stat, parenthesis = true) {

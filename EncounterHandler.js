@@ -100,26 +100,10 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 	   			   let gear = $(moreInfo)?.find('.mon-stat-block-2024__tidbit-label:contains("Gear")').siblings('.mon-stat-block-2024__tidbit-data').html();
 	   		       let initMod, initScore;
 
-
-	   		       let initiative = $(moreInfo)?.find('.mon-stat-block-2024__attribute:first-of-type .mon-stat-block-2024__attribute-data')?.text();
-	   			   
-
-
-
-					if(initiative.length>0){
-						initArray = initiative.trim().split(' ');
-						initMod = initArray[0];
-						initScore = initArray[1];
-					}
-
-
-	   		        monsterData[i].initiativeMod = initMod;
-	   		        monsterData[i].initiativeScore = initScore;
 	   		        monsterData[i].treasure = treasure;
 	   		        monsterData[i].gear = gear;
 	   		       
-	   		       let spellTooltips = $(moreInfo)?.find('[class*="mon-stat-block-2024"] .spell-tooltip')
-	   		       monsterData[i].spellTooltips = spellTooltips;
+
 	   		       resolve();
 		       }))
 		   }  
