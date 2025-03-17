@@ -1237,13 +1237,15 @@ function observe_character_sheet_changes(documentToObserve) {
               //if single token selected, place there:
               if(window.top.CURRENTLY_SELECTED_TOKENS.length == 1) {
                 window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
-              } else {
+              } 
+              else if(window.top.TOKEN_OBJECTS[`/profile/${window.myUser}/characters/${window.PLAYER_ID}`] != undefined){
+                window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[`/profile/${window.myUser}/characters/${window.PLAYER_ID}`]);
+              }else {
                 window.top.place_aoe_token_in_centre(options)
               }
-              
             }
             else if(window.sendToTab != undefined){
-              const data = {color: color, shape: shape, feet: feet, name: name}
+              const data = {color: color, shape: shape, feet: feet, name: name, tokenId: `/profile/${window.myUser}/characters/${window.PLAYER_ID}`}
               tabCommunicationChannel.postMessage({
                 msgType: 'placeAoe',
                 data: data,
