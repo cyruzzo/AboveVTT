@@ -32,8 +32,25 @@ rm -r build/*.pkg build/*.ipa build/*.xcarchive build/*.log build/*.plist
 xcodebuild clean -project AboveVTT.xcodeproj -scheme "AboveVTT (iOS)" -destination 'generic/platform=iOS' -configuration Release
 xcodebuild clean -project AboveVTT.xcodeproj -scheme "AboveVTT (macOS)" -destination 'generic/platform=macOS' -configuration Release
 
+# I would love it if this worked - but it doesn't.  For some reason
+# github checkout is not fetching the tags - even when we ask it to
+# get from git tag if there is a nearby version tag
+if [ -z "$MARKETING_VERSION" ]; then
+    V="`git describe --tags --abbrev=0`"
+    [[ $V =~ ^[0-9]+\.[0-9]+.*$ ]] && MARKETING_VERSION="$V"
+fi
+
 #exit on errors
 set -e
+
+# or from manifest
+if [ -z "$MARKETING_VERSION" ]; then
+    echo "Using Manifest version...."
+    MARKETING_VERSION=`python -c 'import json; print(json.loads(open("../manifest.json").read()).get("version"))'`
+fi
+
+echo "----Set marketing version to ${MARKETING_VERSION}"
+echo "MARKETING_VERSION=${MARKETING_VERSION}" > Config.xcconfig
 
 echo "----Building iOS"
 xcodebuild build -project AboveVTT.xcodeproj -scheme "AboveVTT (iOS)" -destination 'generic/platform=iOS' -configuration Release $FIRST_TIME_OPTION
@@ -49,13 +66,16 @@ echo "Export plist:"
 cat ExportOptions.plist
 
 echo "----Export iOS"
-xcodebuild -exportArchive -archivePath ./build/AboveVTT-ios.xcarchive -exportPath ./build -exportOptionsPlist ExportOptions.plist -verbose $FIRST_TIME_OPTION
+xcodebuild -exportArchive -archivePath ./build/AboveVTT-ios.xcarchive -exportPath ./build -exportOptionsPlist ExportOptions.plist $FIRST_TIME_OPTION
 
 echo "----Notarizing iOS"
+# this has to "upload" to get the file notarized -
+# however this is NOT the upload to the store/testflight yet.
 xcrun notarytool submit ./build/AboveVTT.ipa --keychain-profile "appstoreconnect" --wait
 
 if [ "$1" == "UPLOAD" ]; then
     if [ -z "${!FIRST_TIME_OPTION}" ]; then
+        # this is the actual upload that matters for testflight/store
         echo "----Uploading iOS"
         xcrun altool --upload-app -f ./build/AboveVTT.ipa -t ios --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
     else
@@ -64,13 +84,16 @@ if [ "$1" == "UPLOAD" ]; then
 fi
 
 echo "----Export macOS"
-xcodebuild -exportArchive -archivePath ./build/AboveVTT-mac.xcarchive -exportPath ./build -exportOptionsPlist ExportOptions.plist -verbose  $FIRST_TIME_OPTION
+xcodebuild -exportArchive -archivePath ./build/AboveVTT-mac.xcarchive -exportPath ./build -exportOptionsPlist ExportOptions.plist $FIRST_TIME_OPTION
 
+# this has to "upload" to get the file notarized -
+# however this is NOT the upload to the store/testflight yet.
 echo "----Notarizing macOS"
 xcrun notarytool submit ./build/AboveVTT.pkg --keychain-profile "appstoreconnect" --wait
 
 if [ "$1" == "UPLOAD" ]; then
     if [ -z "${!FIRST_TIME_OPTION}" ]; then
+        # this is the actual upload that matters for testflight/store        
         echo "----Uploading macOS"
         xcrun altool --upload-app -f ./build/AboveVTT.pkg -t macos --apiKey $APP_STORE_CONNECT_API_KEY_ID --apiIssuer $APP_STORE_CONNECT_API_ISSUER_ID
     else

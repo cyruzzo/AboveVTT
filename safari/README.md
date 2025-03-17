@@ -64,13 +64,16 @@ To Setup up TestFlight and App store building:
     - open XCode -> Settings -> Accounts
     - Choose your account on left (prob only 1), choose the org (NOT PERSONAL) on right
     - Click "Manage Certificates"
-    -   Hopefully we see the certs there.  Need to right-click "Export Certificate" on
-        one each of "Apple Dev Cert" and "Apple Dist Cert". Use the P12_PASSWORD above to 
-        encrypt.  Save as two WHATEVER.p12 files
+    -   Hopefully we see the certs there.  Need to right-click 
+        "Export Certificate" on one each of "Apple Dev Cert", 
+        "Apple Dist Cert", "Mac Installer Dist". 
+        Use the P12_PASSWORD above to encrypt.  Save the WHATEVER.p12 files
  - Get those .p12 files into github secrets (order doesn't matter):
- - `BUILD_CERTIFICATE_BASE64` and  `BUILD_CERTIFICATE2_BASE64`
+ - `BUILD_CERTIFICATE_BASE64` `BUILD_CERTIFICATE2_BASE64` `BUILD_CERTIFICATE3_BASE64`
  - `base64 -i WHATEVER.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE_BASE64`
  - `base64 -i WHATEVER_2.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE2_BASE64`
+ - `base64 -i WHATEVER_3.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE3_BASE64` 
+ 
 
 - probably should do one local build and full push to TestFlight before running in Github
   - `cd safari; ./build.sh`
