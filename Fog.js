@@ -260,7 +260,7 @@ class WaypointManagerClass {
 		}
 
 		rulerContainer.innerHTML = "";
-		if (window.PEER_TOKEN_DRAGGING[playerId]) {
+		if (window.PEER_TOKEN_DRAGGING != undefined && window.PEER_TOKEN_DRAGGING[playerId]) {
 	        const html = window.PEER_TOKEN_DRAGGING[playerId];
 	        delete window.PEER_TOKEN_DRAGGING[playerId];
 	        $(html).remove();
@@ -521,7 +521,7 @@ class WaypointManagerClass {
 
 			this.throttleDraw(function(){
 				self.draw(undefined, undefined, alpha, playerID)
-				if (window.PEER_TOKEN_DRAGGING[self.playerId]) {
+				if (window.PEER_TOKEN_DRAGGING != undefined && window.PEER_TOKEN_DRAGGING[self.playerId]) {
 			        const html = window.PEER_TOKEN_DRAGGING[self.playerId];
 			        $(html).css('opacity', 0.5 * alpha);
 		      	}
