@@ -65,3 +65,5 @@ if __name__ == "__main__":
     v = fetch_latest_testflight_version(token,app_id) + 1
     result = subprocess.run(["agvtool", "new-version", "-all", str(v)], capture_output=True, text=True)
     print(result.stdout)
+    #NOTE: if this does not work - we will need to move to VERSION in the Config.xcconfig file instead
+

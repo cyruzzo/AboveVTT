@@ -35,6 +35,20 @@ xcodebuild clean -project AboveVTT.xcodeproj -scheme "AboveVTT (macOS)" -destina
 #exit on errors
 set -e
 
+# get from git tag if there is a nearby version tag
+if [ -z "$MARKETING_VERSION" ]; then
+    V="`git describe --tags --abbrev=0`"
+    [[ $V =~ ^[0-9]+\.[0-9]+.*$ ]] && MARKETING_VERSION="$V"
+fi
+# or from manifest
+if [ -z "$MARKETING_VERSION" ]; then
+    echo "Using Manifest version...."
+    MARKETING_VERSION=`python -c 'import json; print(json.loads(open("../manifest.json").read()).get("version"))'`
+fi
+
+echo "----Set marketing version to ${MARKETING_VERSION}"
+echo "MARKETING_VERSION=${MARKETING_VERSION}" > Config.xcconfig
+
 echo "----Building iOS"
 xcodebuild build -project AboveVTT.xcodeproj -scheme "AboveVTT (iOS)" -destination 'generic/platform=iOS' -configuration Release $FIRST_TIME_OPTION
 xcodebuild archive -project AboveVTT.xcodeproj -scheme "AboveVTT (iOS)" -archivePath ./build/AboveVTT-ios.xcarchive -destination 'generic/platform=iOS' -configuration Release $FIRST_TIME_OPTION
