@@ -192,7 +192,10 @@ $(function() {
               //if single token selected, place there:
               if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
                 place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[0]]);
-              } else {
+              } 
+              else if(window.TOKEN_OBJECTS[event.data.data.tokenId] != undefined){
+                place_aoe_token_at_token(options, window.TOKEN_OBJECTS[event.data.data.tokenId]);
+              }else {
                 place_aoe_token_in_centre(options)
               }
           }      
