@@ -1494,7 +1494,7 @@ class MessageBroker {
 
 	}
 
-  handleCT(data){
+  	handleCT(data){
 		ct_load(data);
 	}
 
