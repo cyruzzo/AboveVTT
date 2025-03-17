@@ -1730,12 +1730,7 @@ div#combat-tracker-settings form > div {
 }
 
 .hasTooltip.CTToken::after{
-    position: absolute;
-    z-index: 4;
-    left: 100%;
-    transform: translate(0, calc(var(--scrollY) * -1px + 25%));
-    font-size: 16px;
-    transition: visibility 0.1s ease-in-out 0.2s;
+    display:none;
 }
 
 .hasTooltip:hover:after {

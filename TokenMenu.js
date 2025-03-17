@@ -745,16 +745,25 @@ function token_context_menu_expanded(tokenIds, e) {
 					$(this).parent().trigger(ctrlClick);
 				});
 
-						clickedButton.find('#adv').click(function(e){
+				clickedButton.find('#adv').click(function(e){
 					e.stopPropagation();
 					$(this).parent().trigger(shiftClick);
 				});
 				const reset_init = getCombatTrackersettings().remove_init;
 				tokens.forEach(t =>{
+					if(t.options.combatGroup && Object.values(window.TOKEN_OBJECTS).filter(d=>d.options.combatGroup == t.options.combatGroup).length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
+					}
+					if(window.all_token_objects[t.options.id] == undefined)
+						window.all_token_objects[t.options.id] = t;
 					t.options.ct_show = undefined;
 					t.options.combatGroup = undefined;
-					if(reset_init == true)
+					window.all_token_objects[t.options.id].options.ct_show = undefined;
+					window.all_token_objects[t.options.id].options.combatGroup = undefined;
+					if(reset_init == true){
 						t.options.init = undefined;
+						window.all_token_objects[t.options.id].options.init = undefined;
+					}
 					ct_remove_token(t, false);
 					t.update_and_sync();
 				});
@@ -764,9 +773,15 @@ function token_context_menu_expanded(tokenIds, e) {
 				const reset_init = getCombatTrackersettings().remove_init;
 
 				tokens.forEach(t => {
+					if(window.all_token_objects[t.options.id] == undefined)
+						window.all_token_objects[t.options.id] = t;
 					t.options.combatGroup = undefined;
-					if(reset_init == true)
+					window.all_token_objects[t.options.id].options.combatGroup = undefined;
+
+					if(reset_init == true){
 						t.options.init = undefined;
+						window.all_token_objects[t.options.id].options.init = undefined;
+					}
 					ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
 					t.update_and_sync();
 				});
@@ -786,19 +801,26 @@ function token_context_menu_expanded(tokenIds, e) {
 					e.stopPropagation();
 					$(this).parent().trigger(ctrlClick);
 				});
-						clickedButton.find('#adv').click(function(e){
+				clickedButton.find('#adv').click(function(e){
 					e.stopPropagation();
 					$(this).parent().trigger(shiftClick);
 				});
 				const reset_init = getCombatTrackersettings().remove_init;
 				tokens.forEach(t =>{
-					if(t.options.combatGroup && window.TOKEN_OBJECTS[t.options.combatGroup]){
+					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
-					if(reset_init == true)
+					if(window.all_token_objects[t.options.id] == undefined)
+						window.all_token_objects[t.options.id] = t;
+					if(reset_init == true){
 						t.options.init = undefined;
+						window.all_token_objects[t.options.id].options.init = undefined;
+					}
 					t.options.combatGroup = undefined;
 					t.options.ct_show = undefined;
+					
+					window.all_token_objects[t.options.id].options.combatGroup = undefined;
+					window.all_token_objects[t.options.id].options.ct_show = undefined;
 					ct_remove_token(t, false);
 					t.update_and_sync();
 				});
@@ -809,25 +831,39 @@ function token_context_menu_expanded(tokenIds, e) {
 				combatButton.html(removeButtonInternals);
 				let group = uuid();
 				let allHidden = true;
+				let allVisibleNames = true
 				const reset_init = getCombatTrackersettings().remove_init;
+	
+
 				tokens.forEach(t => {
-					if(t.options.combatGroup && window.TOKEN_OBJECTS[t.options.combatGroup]){
+					ct_remove_token(t, false);
+					if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
 						window.TOKEN_OBJECTS[t.options.combatGroup].delete()
 					}
 					if(t.options.hidden !== true){
 						allHidden = false
 					}
-					if(reset_init == true)
+					if(!t.isPlayer() && t.options.revealname == false){
+						allVisibleNames = false;
+					}
+					if(window.all_token_objects[t.options.id] == undefined)
+						window.all_token_objects[t.options.id] = t;
+					if(reset_init == true){
 						t.options.init = undefined;
+						window.all_token_objects[t.options.id].options.init = undefined;
+					}
 					t.options.combatGroup = group;
+					window.all_token_objects[t.options.id].options.combatGroup = group;
+
 					ct_add_token(t, false, undefined, clickEvent.shiftKey,  clickEvent.ctrlKey);
 					t.update_and_sync();
-				});		
+				});	
 				let t = new Token({
 					...tokens[0].options,
 					id: group,
 					combatGroupToken: group,
 					ct_show: !allHidden,
+					revealname: allVisibleNames,
 					name: `${tokens[0].options.name} Group`
 				});
 				window.TOKEN_OBJECTS[group] = t;

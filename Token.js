@@ -490,7 +490,7 @@ class Token {
 			// only allow the DM to delete tokens unless the token specifies deleteableByPlayers == true which is used by AoE tokens and maybe others
 			return;
 		}
-		ct_remove_token(this, false);
+		
 		let id = this.options.id;
 		let selector = "#tokens div[data-id='" + id + "']";
 		$(selector).remove();
@@ -512,9 +512,7 @@ class Token {
 		$(`.aura-element-container-clip[id='${id}']`).remove()
 		$(`[data-darkness='darkness_${id}']`).remove();
 		$(`[data-notatoken='notatoken_${id}']`).remove()
-		if (persist == true) {	
-			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
-		}
+
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
@@ -546,6 +544,10 @@ class Token {
 			if(count == 1){
 				window.TOKEN_OBJECTS[this.options.combatGroup].delete();
 			}
+		}
+		ct_remove_token(this, false);
+		if (persist == true) {	
+			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
 		}
 		debounceLightChecks();
 		update_pc_token_rows();
