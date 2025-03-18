@@ -7755,10 +7755,21 @@ button span.onedrive-btn-status{
     display: none;
 }
 .glc-game-log .ddbc-concentration-icon, 
-.glc-game-log .ddbc-ritual-icon{
-    position: absolute;
-    width: 24px;
-    height:  24px;
+.glc-game-log .ddbc-ritual-icon,
+.glc-game-log [class*='styles_ritualIcon'],
+.glc-game-log [class*='styles_concentrationIcon']
+{
+    display: inline-block;
+    margin-left: .188rem;
+}
+.glc-game-log [class*='styles_concentrationIcon'] rect {
+    transform: translate(-4.18px, 10.09px) rotate(-45deg) !important;
+}
+.glc-game-log [class*='styles_concentrationIcon'] [class*='styles_svg'],
+.glc-game-log [class*='styles_ritualIcon'] [class*='styles_svg']{
+    height: .75rem;
+    margin-right: 0;
+    width: .75rem;
 }
 .stream-dice-button:hover {
     cursor: pointer;
