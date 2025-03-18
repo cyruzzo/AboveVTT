@@ -1938,8 +1938,8 @@ function observe_character_sheet_changes(documentToObserve) {
 
               .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-roll-button,
               .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-roll-button,
-              .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-aoe-button:hover,
-              .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-aoe-button:hover{
+              .ct-sidebar__inner [class*='styles_creatureBlock'] .avtt-aoe-button,
+              .ct-sidebar__inner [class*='ddbc-creature-block'] .avtt-aoe-button{
                   /* lifted from DDB encounter stat blocks  */
                   color: #b43c35 !important;
                   background: #fff !important;
