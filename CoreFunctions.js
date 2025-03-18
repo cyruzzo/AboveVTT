@@ -303,7 +303,9 @@ function get_available_styles(){
     ]
 }
 function add_aoe_to_statblock(html, tokenId=undefined){
-  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide|-long, [\d]+-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*? ([a-zA-Z]+) damage)?/gi
+
+  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide|-long, [\d]+-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
+
 
   return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6){
     const shape = m4.toLowerCase();
