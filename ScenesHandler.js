@@ -1007,12 +1007,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		this.scene.tokens[id]=options;
 
 		if (!(id in window.TOKEN_OBJECTS)) {
-
 			window.TOKEN_OBJECTS[id] = new Token(options);
 
 			window.TOKEN_OBJECTS[id].sync = mydebounce(function(options) {
-				if(window.TOKEN_OBJECTS[id])
-					window.MB.sendMessage('custom/myVTT/token', options);
+				window.MB.sendMessage('custom/myVTT/token', options);
 			}, 300);
 		}
 

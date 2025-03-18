@@ -1881,7 +1881,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 }, 200);
 
 
-function add_aoe_buttons(html, tokenId){
+function add_tooltip_aoe_buttons(html, tokenId){
   const icons = html.find(".aoe-size i:not('.above-vtt-visited')");
   if (icons.length > 0) {
     icons.wrap(function() {
@@ -1947,7 +1947,8 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
             flyout.addClass("tooltip-flyout")
             const tooltipHtml = $(tooltipHtmlString);
             add_journal_roll_buttons(tooltipHtml, tokenId);
-            add_aoe_buttons(tooltipHtml, tokenId);
+            add_aoe_statblock_click(tooltipHtml, tokenId);
+            add_tooltip_aoe_buttons(tooltipHtml, tokenId);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
             sendToGamelogButton.css({ "float": "right" });
