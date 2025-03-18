@@ -1,3 +1,11 @@
+To do a test build for personal use:
+
+-- open the Xcode project
+-- Choose iOS or Mac at the top and one of your devices
+-- Go to each target (4 of them) in build settings and choose your Personal Dev Team for "Team"
+-- Build and Run
+-- You will need to "trust" your personal team on each device as well
+
 To Setup up TestFlight and App store building:
 
 - Need a mac with Xcode and command line tools installed and selected
@@ -36,11 +44,9 @@ To Setup up TestFlight and App store building:
      `https://appstoreconnect.apple.com/access/integrations/api`
   - Generate a new API key with “App Manager” role (a Team Key will be convenient).
   - Collect the "Issuer ID" and "Key ID" from this page and update safari/env
-  - Download the .p8 file and store it securely (this is really the only sensitive thing here).
-  - For local build script execute this:
-      `cd safari; source appconnect_setup.sh FILENAME_YOU_DOWNLOADED`
- - For github actions: put the contents of that file into github secrets:
-      `base64 P8FILE_YOU_DOWNLOADED | pbcopy` and paste to github
+  - Download the .p8 file and store it as `safari/appkey.p8`
+  - For local build script execute this (securely stores credentials for local build):
+      `cd safari; source appconnect_setup.sh appkey.p8`
 
 - We need to collect the relevant Provisioning Profiles.  Easiest way is to delete
   all that exist on local machine (or move temporarily) and then do builds of ONLY
@@ -53,12 +59,14 @@ To Setup up TestFlight and App store building:
   - `cd safari; ./build_init_profile.sh`
   - Copy all those profiles to Safari (and commit them for GitHub build)
   - `cp ~/Library/Developer/Xcode/UserData/Provisioning\ Profiles/* .`
+  - `git add *.*profile*`
 
 -This is what you need to put in github secrets for safari-release-build.yml.
- - Choose a password (eg "p12pass123") - this goes into github secret `P12_PASSWORD`
+ - Choose a password (eg "p12pass123") - this later goes into github secret `P12_PASSWORD`
  - List the signing certs on your mac with:
      `security find-identity -p codesigning -v`
- - Ensure there is at least one "Apple Development" and one "Apple Distribution" cert
+ - Ensure there is at least one each of "Apple Development","Apple Distribution", and
+   "Mac Installer Distribution"
  - Need to get this certificates into github secrets.
  - Easiest way:
     - open XCode -> Settings -> Accounts
@@ -67,18 +75,16 @@ To Setup up TestFlight and App store building:
     -   Hopefully we see the certs there.  Need to right-click 
         "Export Certificate" on one each of "Apple Dev Cert", 
         "Apple Dist Cert", "Mac Installer Dist". 
-        Use the P12_PASSWORD above to encrypt.  Save the WHATEVER.p12 files
- - Get those .p12 files into github secrets (order doesn't matter):
- - `BUILD_CERTIFICATE_BASE64` `BUILD_CERTIFICATE2_BASE64` `BUILD_CERTIFICATE3_BASE64`
- - `base64 -i WHATEVER.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE_BASE64`
- - `base64 -i WHATEVER_2.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE2_BASE64`
- - `base64 -i WHATEVER_3.p12 | pbcopy` and paste into github `BUILD_CERTIFICATE3_BASE64` 
- 
+        Use the P12_PASSWORD above to encrypt.  Save the files as cert[1-3].p12
+        
+        
+- Use `gh auth login` and `upload_secrets.sh` script to get those and the app 
+  connect key from earlier to github secrets (or do it manually)
 
 - probably should do one local build and full push to TestFlight before running in Github
-  - `cd safari; ./build.sh`
-- Go ahead and git add all the profiles and push the changes
-- Not sure how we should configure the workflow triggers...
+  - `cd safari; ./build.sh UPLOAD`
+  
+- Go ahead and `git commit` and push (the profiles, env, and project file changes)
 
 
 Things that some people might consider sensitive but really are not:

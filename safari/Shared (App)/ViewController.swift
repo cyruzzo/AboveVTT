@@ -16,7 +16,8 @@ import SafariServices
 typealias PlatformViewController = NSViewController
 #endif
 
-let extensionBundleIdentifier = "com.yourCompany.AboveVTT.Extension"
+let extensionBundleIdentifier = Bundle.main.bundleIdentifier! + ".Extension"
+//"org.something.AboveVTT.Extension"
 
 class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMessageHandler {
 

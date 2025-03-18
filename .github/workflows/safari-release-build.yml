@@ -2,6 +2,13 @@ name: safari-release-build
 run-name: ${{ github.actor }} is publishing a ${{ inputs.release_type }} build ${{ inputs.version_name_override }}
 on:
   workflow_dispatch:
+    inputs:
+     upload_build:
+        type: choice
+        description: "upload to TestFlight?"
+        options:
+          - UPLOAD
+          - NOUPLOAD
   
 jobs:
   build-safari:
@@ -58,5 +65,5 @@ jobs:
         working-directory: safari
         
       - name: Run build script
-        run: ./build.sh
+        run: ./build.sh ${{inputs.upload_build}}
         working-directory: safari
