@@ -303,7 +303,7 @@ function get_available_styles(){
     ]
 }
 function add_aoe_to_statblock(html, tokenId=undefined){
-  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide)? ([a-zA-z]+))(.*? ([a-zA-Z]+) damage)?/gi
+  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide|-long, [\d]+-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))([\s\S]+? ([a-zA-Z]+) damage)?/gi
 
   return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6){
     const shape = m4.toLowerCase();
@@ -362,7 +362,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
 function add_journal_roll_buttons(target, tokenId=undefined){
   console.group("add_journal_roll_buttons")
   
-  let pastedButtons = target.find('.avtt-roll-button').add(target.find('.integrated-dice__container'));
+  let pastedButtons = target.find('.avtt-roll-button, .integrated-dice__container, .avtt-aoe-button');
 
   for(let i=0; i<pastedButtons.length; i++){
     $(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
