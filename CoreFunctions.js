@@ -292,7 +292,7 @@ function add_aoe_to_statblock(html, tokenId=undefined){
     if(shape == 'emanation')
       return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
     else
-      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && m6 != '' ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
+      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && get_available_styles().includes(m6) ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
   })
 }
 
