@@ -1738,13 +1738,10 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     // dataTooltipHref will look something like this `//www.dndbeyond.com/spells/2329-tooltip?disable-webm=1&disable-webm=1`
     // we only want the `spells/2329` part of that
     try {
-        if (window.tooltipCache === undefined) {
-            window.tooltipCache = {};
-        }
-        console.log("fetch_tooltip starting for ", dataTooltipHref);
-        if(!dataTooltipHref.includes('tooltip')){
-          const parts = dataTooltipHref.split("/");
-          const id = dataTooltipHref.match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
+      const homebrewTooltip = async function(){
+        if(typeof dataTooltipHref[1] === 'string'){
+          const parts = dataTooltipHref[1].split("/");
+          const id = dataTooltipHref[1].match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
           const type = parts[parts.length-2];
 
           const typeAndId = `${type}/${id}`;
@@ -1755,16 +1752,16 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
               return;
           }
           window.tooltipCache[typeAndId] = {Tooltip: ``};
-          let moreInfoString = await DDBApi.fetchMoreInfo(dataTooltipHref);
+          let moreInfoString = await DDBApi.fetchMoreInfo(dataTooltipHref[1]);
           const parser = new DOMParser()
 
           // Parse the text
           let moreInfo = parser.parseFromString(moreInfoString, "text/html")
           let tooltipBody = $(moreInfo).find('.more-info');
           let bodyClass = $(moreInfo).find('body').attr('class');
-          let subClasses = !tooltipBody.length && dataTooltipHref.match(/#.*$/gi) ? ['p-article-a', 'p-article-content'] : ['more-info', 'detail-content']
-          if(!tooltipBody.length && dataTooltipHref.match(/#.*$/gi)){
-           tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref.match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
+          let subClasses = !tooltipBody.length && dataTooltipHref[1].match(/#.*$/gi) ? ['p-article-a', 'p-article-content'] : ['more-info', 'detail-content']
+          if(!tooltipBody.length && dataTooltipHref[1].match(/#.*$/gi)){
+           tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref[1].match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
           }
           else if(!tooltipBody.length && $(moreInfo).find('.p-article-content').length>0){
             tooltipBody = $('<div>').append($(moreInfo).find('.p-article-content'));
@@ -1818,6 +1815,24 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
                         .detail-content>*{
                           width:100%;
                         }
+                        .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+                            position: relative;
+                            top: -10px;
+                            background-color: #fff;
+                            border: none;
+                            width: calc(100% - 2px);
+                            margin: 0 auto;
+                            padding: 5px 5px 0
+                        }
+                        .more-info::after{
+                          display:none;
+                        }
+                        @media(min-width: 1024px) {
+                             .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+                                width: calc(100% - 2px);
+                                padding: 5px 5px 0;
+                            }
+                        }
                       }
                   </style>
                   <div class='${subClasses[0]}'>
@@ -1831,50 +1846,65 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
 
           const toolTipJson = {Tooltip: moreInfo}
           window.tooltipCache[typeAndId] = toolTipJson;
-          callback(toolTipJson)
-          
-          
+          callback(toolTipJson); 
         }
-        else{
-          const parts = dataTooltipHref.split("/");
-          const idIndex = parts.findIndex(p => p.includes("-tooltip"));
-          const id = parseInt(parts[idIndex]);
-          const type = parts[idIndex - 1];
-          const typeAndId = `${type}/${id}`;
+      }
+      if (window.tooltipCache === undefined) {
+          window.tooltipCache = {};
+      }
 
-          const existingJson = window.tooltipCache[typeAndId];
-          if (existingJson !== undefined) {
-              console.log("fetch_tooltip existingJson", existingJson);
-              callback(existingJson);
+
+      console.log("fetch_tooltip starting for ", dataTooltipHref);
+
+      if(dataTooltipHref[0] != undefined){
+        const parts = dataTooltipHref[0].split("/");
+        const idIndex = parts.findIndex(p => p.includes("-tooltip"));
+        const id = parseInt(parts[idIndex]);
+        const type = parts[idIndex - 1];
+        const typeAndId = `${type}/${id}`;
+
+        const existingJson = window.tooltipCache[typeAndId];
+        if (existingJson !== undefined) {
+          console.log("fetch_tooltip existingJson", existingJson);
+          callback(existingJson);
+          return;
+        }
+        
+        window.ajaxQueue.addRequest({
+          url: `https://www.dndbeyond.com/${typeAndId}/tooltip-json`,
+          beforeSend: function() {
+            // only make the call if we don't have it cached.
+            // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
+            const alreadyFetched = window.tooltipCache[typeAndId];
+            if (alreadyFetched) {
+                callback(alreadyFetched);
+                return false;
+            }
+            return true;
+          },
+          success: async function (response) {
+            console.log("fetch_tooltip success", response);
+
+            if(typeof response === 'string'){
+
+              homebrewTooltip()
+              if(window.tooltipCache[typeAndId].Tooltip == undefined){
+                window.tooltipCache[typeAndId] = response;
+              }
               return;
-          }
+            }
 
-          
-            window.ajaxQueue.addRequest({
-                url: `https://www.dndbeyond.com/${typeAndId}/tooltip-json`,
-                beforeSend: function() {
-                    // only make the call if we don't have it cached.
-                    // This prevents the scenario where a user triggers `mouseenter`, and `mouseleave` multiple times before the first network request finishes
-                    const alreadyFetched = window.tooltipCache[typeAndId];
-                    if (alreadyFetched) {
-                        callback(alreadyFetched);
-                        return false;
-                    }
-                    return true;
-                },
-                success: function (response) {
-                    console.log("fetch_tooltip success", response);
-                    window.tooltipCache[typeAndId] = response;
-                    callback(response);
-                },
-                error: function (error) {
-                    console.warn("fetch_tooltip error", error);
-                }
-            });
-          
-        }
-        
-        
+            window.tooltipCache[typeAndId] = response;
+            callback(response);
+          },
+          error: function (error) {
+            console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
+          }
+        });
+      }  
+      else{
+        homebrewTooltip();
+      }
     } catch(error) {
         console.warn("Failed to find tooltip info in", dataTooltipHref, error);
     }
@@ -2010,32 +2040,83 @@ function remove_tooltip(delay = 0, removeHoverNote = true) {
 
 function add_stat_block_hover(statBlockContainer, tokenId) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
+    
     tooltip.hover(function (hoverEvent) {
+        let currentTarget = $(hoverEvent.currentTarget);
+        let cursorOffset = {
+           left : 10,
+           top  : -10
+        }
+        currentTarget.off('mousemove.cursor').on('mousemove.cursor', function(e){
+          currentTarget.css({
+            '--cursor-offsetX': `${(e.clientX + cursorOffset.left)}px`,
+            '--cursor-offsetY': `${(e.clientY + cursorOffset.top)}px`
+          })
+        })
         if (hoverEvent.type === "mouseenter") {
-            let dataTooltipHref = $(hoverEvent.currentTarget).attr("data-moreinfo") ? $(hoverEvent.currentTarget).attr("data-moreinfo") : $(hoverEvent.currentTarget).attr("data-tooltip-href");
-            let name = $(hoverEvent.currentTarget).text()
+          currentTarget.css({
+            '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
+            '--cursor-offsetY': `${(hoverEvent.clientY + cursorOffset.top)}px`
+          })
+          let dataTooltipHref =[currentTarget.attr("data-tooltip-href"), currentTarget.attr("data-moreinfo")]; 
+          let name = currentTarget.text()
 
-            if (typeof dataTooltipHref === "string") {
-                fetch_tooltip(dataTooltipHref, name, function (tooltipJson) {
 
-                    let container = $(hoverEvent.target).closest(".sidebar-flyout");
-                    if(container.find('.tooltip-header').length === 0){
-                      container = $(hoverEvent.target).closest("#resizeDragMon");
-                    }
-                    if (container.length === 0) {
-                        container = $(hoverEvent.target).closest(".sidebar-modal");
-                    }
-                    if (container.length === 0) {
-                        container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
-                    }
 
-                    display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);
-                });
+          const callback = function (tooltipJson) {
+              currentTarget.toggleClass('loading-tooltip', false);
+              currentTarget.off('mousemove.cursor');
+              let container = currentTarget.closest(".sidebar-flyout");
+              if(container.find('.tooltip-header').length === 0){
+                container = currentTarget.closest("#resizeDragMon");
+              }
+              if (container.length === 0) {
+                  container = currentTarget.closest(".sidebar-modal");
+              }
+              if (container.length === 0) {
+                  container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
+              }
+
+              display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);   
+          };
+          if(window.tooltipCache == undefined)
+            window.tooltipCache = {};
+          if(dataTooltipHref[0] != undefined){
+            const parts = dataTooltipHref[0].split("/");
+            const idIndex = parts.findIndex(p => p.includes("-tooltip"));
+            const id = parseInt(parts[idIndex]);
+            const type = parts[idIndex - 1];
+            const typeAndId = `${type}/${id}`;
+
+            const existingJson = window.tooltipCache[typeAndId];
+            if (existingJson !== undefined) {
+              console.log("fetch_tooltip existingJson", existingJson);
+              callback(existingJson);
+              return;
             }
+          }
+          else if(dataTooltipHref[1] != undefined){              
+            const parts = dataTooltipHref[1].split("/");
+            const id = dataTooltipHref[1].match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
+            const type = parts[parts.length-2];
+
+            const typeAndId = `${type}/${id}`;
+            const existingJson = window.tooltipCache[typeAndId];
+            if (existingJson !== undefined) {
+              console.log("fetch_tooltip existingJson", existingJson);
+              callback(existingJson);
+              return;
+            }
+          }
+          currentTarget.toggleClass('loading-tooltip', true);   
+          fetch_tooltip(dataTooltipHref, name, callback);   
         } else {
             remove_tooltip(500);
+            currentTarget.toggleClass('loading-tooltip', false);
+            currentTarget.off('mousemove.cursor');
         }
     });
+
 }
 
 function send_html_to_gamelog(outerHtml) {

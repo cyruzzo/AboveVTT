@@ -11526,23 +11526,17 @@ div#playlistFields {
 }
 
 
- .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
+.more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
     position: relative;
     top: -10px;
     background-color: #fff;
-    border-left: 1px solid #ECE9E9;
-    border-right: 1px solid #ECE9E9;
+    border: none;
     width: calc(100% - 2px);
     margin: 0 auto;
-    padding: 20px 20px 0
+    padding: 5px 5px 0
 }
 
-@media(min-width: 1024px) {
-     .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
-        width:calc(100% - 10px);
-        padding: 30px 26px 0
-    }
-}
+
 
  .more-info-body-description,.RPGMonster-listing .more-info-body-description,.RPGMagicItem-listing .more-info-body-description,.ihomebrewable-listing .more-info-body-description,.RPGSpell-listing .more-info-body-description,.IGear-listing .more-info-body-description,.RPGFeat-listing .more-info-body-description,.RPGBackground-listing .more-info-body-description,.RPGSubclass-listing .more-info-body-description {
     font-size: 14px;
@@ -12225,7 +12219,17 @@ div#playlistFields {
     text-decoration: underline;
     text-decoration: underline solid #1b9af0
 }
-
+.tooltip-hover.loading-tooltip:hover:after {
+    position  : fixed;
+    left: var(--cursor-offsetX);
+    top: var(--cursor-offsetY);
+    z-index   : 1000000;
+    width     : 20px;
+    height    : 20px;
+    background: url(https://dndbeyond.com/content/1-0-3132-0/skins/waterdeep/images/character-sheet/loading-ring.svg) no-repeat;
+    background-size: contain;
+    content: '';
+}
 @media print,(min-width: 1480px) {
     .mon-stat-block-2024 {
         -webkit-column-count:2;
