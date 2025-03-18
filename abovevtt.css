@@ -3557,7 +3557,8 @@ div#selectedTokensBorder {
 .aoe-style-force{
     background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
 }
-.aoe-style-ice {
+.aoe-style-ice,
+.aoe-style-cold {
     background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
 }
 .aoe-style-nature{

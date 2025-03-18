@@ -23,11 +23,11 @@ function get_available_styles(){
     return [
         "Acid",
         "Bludgeoning",
+        "Cold",
         "Darkness",
         "Default",
         "Fire",
         "Force",
-        "Ice",
         "Lightning",
         "Nature",
         "Necrotic",
