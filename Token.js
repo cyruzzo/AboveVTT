@@ -1858,6 +1858,7 @@ class Token {
 				let flyoutLocation = convert_point_from_map_to_view(parseInt(this.options.left), parseInt(this.options.top))
 				const noteId = this.options.id;
 				let hoverNoteTimer;
+				const tokenId=this.options.id;
 				conditionContainer.on({
 					'mouseover': function(e){
 						hoverNoteTimer = setTimeout(function () {
@@ -1868,7 +1869,8 @@ class Token {
 								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
-								add_stat_block_hover(tooltipHtml, this.options.id);
+								add_stat_block_hover(tooltipHtml, tokenId);
+								add_aoe_statblock_click(tooltipHtml, tokenId);
 
 								$(tooltipHtml).find('.add-input').each(function(){
 								    let numberFound = $(this).attr('data-number');
@@ -3738,7 +3740,6 @@ function place_token_at_map_point(tokenObject, x, y) {
 	if (is_player_id(options.id)) {
 		update_pc_token_rows();
 	}
-	window.MB.sendMessage('custom/myVTT/token', options);
 
 	
 	fetch_and_cache_scene_monster_items();
