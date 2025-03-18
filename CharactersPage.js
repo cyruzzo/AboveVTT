@@ -1285,6 +1285,7 @@ function observe_character_sheet_changes(documentToObserve) {
       })
       snippets.each(function(){
         add_journal_roll_buttons($(this));
+        add_aoe_statblock_click($(this), `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
     }
 

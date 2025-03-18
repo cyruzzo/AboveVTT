@@ -1254,6 +1254,7 @@ class JournalManager{
 		this.add_journal_tooltip_targets(note_text);
 		this.block_send_to_buttons(note_text);
 		add_stat_block_hover(note_text);
+		add_aoe_statblock_click(note_text);
 		$(note_text).find('.add-input').each(function(){
 		    let numberFound = $(this).attr('data-number');
 		    const spellName = $(this).attr('data-spell');
@@ -1396,6 +1397,7 @@ class JournalManager{
 									add_journal_roll_buttons(tooltipHtml);
 									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 									add_stat_block_hover(tooltipHtml);
+									add_aoe_statblock_click(note_text);
 						            flyout.append(tooltipHtml);
 						            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
 						            sendToGamelogButton.css({ "float": "right" });
