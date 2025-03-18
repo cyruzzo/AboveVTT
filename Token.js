@@ -1868,7 +1868,7 @@ class Token {
 								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
-								add_stat_block_hover(tooltipHtml);
+								add_stat_block_hover(tooltipHtml, this.options.id);
 
 								$(tooltipHtml).find('.add-input').each(function(){
 								    let numberFound = $(this).attr('data-number');

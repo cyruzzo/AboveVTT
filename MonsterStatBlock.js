@@ -95,6 +95,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
                 <a id="monster-image-to-gamelog-link" class="ddbeb-button monster-details-link" href="${token.options.imgsrc}" target='_blank' >Send Image To Gamelog</a>
             </div>`)
     }
+    add_aoe_statblock_click(container, tokenId);
     container.find("#monster-image-to-gamelog-link").on("click", function (e) {
         e.stopPropagation();
         e.preventDefault();
@@ -122,7 +123,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       let rollButtons = $(event.target.closest('p')).find('.avtt-roll-button');
       const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
       const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock.data.avatarUrl;
-
+      $(event.target.closest('p')).find('.avtt-aoe-button')?.click();
       for(let i = 0; i<rollButtons.length; i++){      
         let data = getRollData(rollButtons[i]);
         let diceRoll;
@@ -167,7 +168,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     else
       add_ability_tracker_inputs(container, tokenId)
     // scan_creature_pane(container, statBlock.name, statBlock.image);
-    add_stat_block_hover(container);
+    add_stat_block_hover(container, tokenId);
 
     let abilities = container.find("p>em>strong, p>strong>em");
     for(let i = 0; i<abilities.length; i++){
@@ -475,6 +476,7 @@ function build_monster_stat_block(statBlock, token) {
           </div>
         </div>
       `
+
     }
     else{
       statblockData =  `
@@ -768,7 +770,7 @@ function build_monster_stat_block(statBlock, token) {
         `;
     }
 
-
+    statblockData = add_aoe_to_statblock(statblockData, token.options.id);
     return statblockData;
 }
 function build_monster_copy_stat_block(statBlock) {
@@ -1878,7 +1880,62 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
     }
 }, 200);
 
-function display_tooltip(tooltipJson, container, clientY) {
+
+function add_aoe_buttons(html, tokenId){
+  const icons = html.find(".aoe-size i:not('.above-vtt-visited')");
+  if (icons.length > 0) {
+    icons.wrap(function() {
+  
+      $(this).addClass("above-vtt-visited");
+      const button = $("<button class='above-aoe integrated-dice__container'></button>");
+
+      const spellContainer = $(this).closest('.tooltip-spell');
+      const name = spellContainer.find(".tooltip-header-title").first().text();
+      let color = "default"
+      const feet = /([\d]+) ft/gi.exec(spellContainer.find('.aoe-size').text())[1];
+      const dmgType = spellContainer.find(`[class*='-damage'] i[class*='i-type']`)?.attr('class')?.split('-')[2];
+      if (dmgType != undefined && dmgType != ''){
+        color = dmgType.toLowerCase();
+      }
+      let shape = $(this).attr('class').split(' ').filter(c => c.startsWith('i-aoe-'))[0].split('-')[2];
+      shape = window.sanitize_aoe_shape(shape)
+      button.attr("title", "Place area of effect token")
+      button.attr("data-shape", shape);
+      button.attr("data-style", color);
+      button.attr("data-size", feet);
+      button.attr("data-name", name);
+
+
+      button.css("border-width","1px");
+      button.click(function(e) {
+        e.stopPropagation();
+
+        let options = window.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+        if(name == 'Darkness' || name == 'Maddening Darkness' ){
+          options = {
+            ...options,
+            darkness: true
+          }
+        }
+        //if single token selected, place there:
+        if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
+          window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
+        } 
+        else if(window.TOKEN_OBJECTS[tokenId] != undefined){
+          window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[tokenId]);
+        }
+        else {
+          window.place_aoe_token_in_centre(options)
+        }
+      })
+      
+      return button;
+    });
+    console.log(`${icons.length} aoe spells discovered`);
+  }  
+}
+
+function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
     if (typeof tooltipJson?.Tooltip === "string") {
         remove_tooltip(0, false);
 
@@ -1889,7 +1946,8 @@ function display_tooltip(tooltipJson, container, clientY) {
             flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
             flyout.addClass("tooltip-flyout")
             const tooltipHtml = $(tooltipHtmlString);
-            add_journal_roll_buttons(tooltipHtml);
+            add_journal_roll_buttons(tooltipHtml, tokenId);
+            add_aoe_buttons(tooltipHtml, tokenId);
             flyout.append(tooltipHtml);
             let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
             sendToGamelogButton.css({ "float": "right" });
@@ -1949,7 +2007,7 @@ function remove_tooltip(delay = 0, removeHoverNote = true) {
     }
 }
 
-function add_stat_block_hover(statBlockContainer) {
+function add_stat_block_hover(statBlockContainer, tokenId) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     tooltip.hover(function (hoverEvent) {
         if (hoverEvent.type === "mouseenter") {
@@ -1970,7 +2028,7 @@ function add_stat_block_hover(statBlockContainer) {
                         container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
                     }
 
-                    display_tooltip(tooltipJson, container, hoverEvent.clientY);
+                    display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);
                 });
             }
         } else {

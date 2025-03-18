@@ -5554,7 +5554,7 @@ div button.add-monster-token-to-vtt {
     background: var(--theme-background);
 }
 button.avtt-roll-button,
-.avtt-ability-roll-button {
+.avtt-ability-roll-button{
     /* lifted from DDB encounter stat blocks  */
     color: #b43c35;
     border: 1px solid #b43c35;
@@ -5567,6 +5567,29 @@ button.avtt-roll-button,
     line-height: 18px;
     letter-spacing: 1px;
     padding: 1px 4px 0;
+}
+.tooltip .tooltip-body-statblock-item-value{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+}
+.tooltip .above-aoe.integrated-dice__container,
+.avtt-aoe-button {
+    display: inline-flex;
+    padding: 0px;
+    color: #b43c35;
+    border: 1px solid #b43c35;
+    border-radius: 4px;
+    background-color: #fff;
+    white-space: nowrap;
+    font-size: 14px;
+    padding: 1px 2px 1px 3px;
+    font-weight:bold;
+}
+
+.tooltip .aoe-size{
+    display:flex;
+    align-items: center;
 }
 button.avtt-roll-button:has(button.avtt-roll-button) {
     border:0 !important;
@@ -12920,57 +12943,41 @@ div#playlistFields {
     .i-aoe-cone {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cone.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
+
     }
 
     .i-aoe-cube {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cube.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
     }
 
     .i-aoe-cylinder {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/cylinder.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
     }
 
     .i-aoe-emanation {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/emanation.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
+
     }
 
     .i-aoe-line {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/line.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
+
     }
 
     .i-aoe-sphere {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/sphere.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
+
     }
 
     .i-aoe-square {
         background-image: url(https://www.dndbeyond.com/content/1-0-3073-0/skins/waterdeep/images/icons/areas_of_effect/square.svg);
         position: relative;
-        top: 3px;
-        left: 1px;
-        margin-right: 3px
+
     }
 
     .i-artificer {

@@ -1458,11 +1458,12 @@ class JournalManager{
 			}
 			
 
-			if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
-				$(self).attr('data-moreinfo', `${self.href}`);
-			}	
 
 			if(!$(self).attr('data-tooltip-href')){
+				
+				if(self.href.match(/\/spells\/[0-9]|\/magic-items\/[0-9]|\/monsters\/[0-9]|\/sources\//gi)){
+					$(self).attr('data-moreinfo', `${self.href}`);
+				}	
 				window.JOURNAL.getDataTooltip(self.href, function(url, typeClass){
 					$(self).attr('data-tooltip-href', url);
 					$(self).toggleClass(`${typeClass}-tooltip`, true);
