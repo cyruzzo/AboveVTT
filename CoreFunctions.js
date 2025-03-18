@@ -281,6 +281,49 @@ function sanitize_aoe_shape(shape){
     }
     return shape
 }
+function add_aoe_to_statblock(html, tokenId=undefined){
+  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide)? ([a-zA-z]+))(.*? ([a-zA-Z]+) damage)?/gi
+  return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6){
+    const shape = m4.toLowerCase();
+
+    if(shape != 'cone' && shape != 'sphere' && shape != 'cube' && shape != 'cylinder' && shape != 'line')
+      return `${m}`
+
+    if(shape == 'emanation')
+      return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
+    else
+      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && m6 != '' ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
+  })
+}
+
+function add_aoe_statblock_click(target, tokenId = undefined){
+  target.find(`button.avtt-aoe-button`).click(function(e) {
+    e.stopPropagation();
+    const color = $(this).attr('data-style');
+    const shape = $(this).attr('data-shape');
+    const feet = $(this).attr('data-size');
+    const name = $(this).attr('data-name');
+
+    let options = window.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+    if(name == 'Darkness' || name == 'Maddening Darkness' ){
+      options = {
+        ...options,
+        darkness: true
+      }
+    }
+    //if single token selected, place there:
+    if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
+      window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
+    } 
+    else if(window.TOKEN_OBJECTS[tokenId] != undefined){
+      window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[tokenId]);
+    }
+    else {
+      window.place_aoe_token_in_centre(options)
+    }
+  })
+}
+
 function add_journal_roll_buttons(target, tokenId=undefined){
   console.group("add_journal_roll_buttons")
   
@@ -324,7 +367,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
   const rechargeRegEx = /(Recharge [0-6]?\s?[–-]?\s?[0-6])/gi
   const actionType = "roll"
   const rollType = "AboveVTT"
-  const updated = currentElement.html()
+  let updated = currentElement.html()
     .replaceAll(strongRoll, `$2`)
     .replaceAll(dashToMinus, `$1-$2`)
     .replaceAll(damageRollRegexBracket, ` <button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$1$2$5</button>`)
@@ -334,7 +377,9 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     .replaceAll(dRollRegex, ` <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1</button> `)
     .replaceAll(tableNoSpaceRollRegex, `> <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1</button><`)
     .replaceAll(rechargeRegEx, ` <button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
-    
+
+  updated = add_aoe_to_statblock(updated, tokenId);
+
   
   let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
 
@@ -430,9 +475,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
   const entityType = tokenId ? "monster" : "character";
 
   // terminate the clones reference, overkill but rather be safe when it comes to memory
-  currentElement = null
-
-
+  currentElement = null;
 
   $(target).find(".avtt-roll-button").click(clickHandler);
   $(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
@@ -467,7 +510,6 @@ function add_journal_roll_buttons(target, tokenId=undefined){
         .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
     }
   })
-
 
   console.groupEnd()
 }
