@@ -334,13 +334,19 @@ function scan_player_creature_pane(target) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
 	}
 
-	
 
 	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat, [class*='styles_stats']>[class*='styles_stat']", ".ddbc-creature-block__ability-heading, [class*='styles_statHeading']")
 	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit, [class*='styles_tidbit']",".ddbc-creature-block__tidbit-label, [class*='styles_tidbitLabel']", ".ddbc-creature-block__tidbit-data, p" )
 
-	if(target.closest('[class*="styles_v2024"]').length>0)
+	if(target.closest('[class*="styles_v2024"]').length>0){
 		add_journal_roll_buttons(target);
+	}
+	else{
+		target.html(function(index, html){
+			return add_aoe_to_statblock(html);
+		});
+	}
+
 
 	// replace all "to hit" and "damage" rolls
 	$(target).find("p, .ddbc-creature-block__attribute-data-extra").each(function() {

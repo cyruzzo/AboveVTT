@@ -5586,6 +5586,12 @@ button.avtt-roll-button,
     font-size: 14px;
     padding: 1px 2px 1px 3px;
     font-weight:bold;
+    cursor: pointer;
+}
+
+.tooltip .avtt-roll-button,
+.avtt-ability-roll-button{
+    cursor: pointer;
 }
 
 .tooltip .aoe-size{

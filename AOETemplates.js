@@ -19,27 +19,7 @@ const AOE_TEMPLATES = {
     'green-square': 'https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/Spelltoken_GreenSquare.png',
 }
 
-function get_available_styles(){
-    return [
-        "Acid",
-        "Bludgeoning",
-        "Cold",
-        "Darkness",
-        "Default",
-        "Fire",
-        "Force",
-        "Lightning",
-        "Nature",
-        "Necrotic",
-        "Piercing",
-        "Poison",
-        "Psychic",
-        "Radiant",
-        "Slashing",
-        "Thunder",
-        "Water"
-    ]
-}
+
 
 
 
