@@ -1340,6 +1340,7 @@ function observe_character_sheet_changes(documentToObserve) {
     if(extras_stats.length>0){
       extras_stats.addClass("above-vtt-visited");   
       scan_player_creature_pane($(extras_stats));
+      add_aoe_statblock_click($(extras_stats));
     }
 
 

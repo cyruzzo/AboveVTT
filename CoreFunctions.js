@@ -281,8 +281,30 @@ function sanitize_aoe_shape(shape){
     }
     return shape
 }
+function get_available_styles(){
+    return [
+        "Acid",
+        "Bludgeoning",
+        "Cold",
+        "Darkness",
+        "Default",
+        "Fire",
+        "Force",
+        "Lightning",
+        "Nature",
+        "Necrotic",
+        "Piercing",
+        "Poison",
+        "Psychic",
+        "Radiant",
+        "Slashing",
+        "Thunder",
+        "Water"
+    ]
+}
 function add_aoe_to_statblock(html, tokenId=undefined){
   const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide)? ([a-zA-z]+))(.*? ([a-zA-Z]+) damage)?/gi
+
   return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6){
     const shape = m4.toLowerCase();
 
@@ -292,34 +314,47 @@ function add_aoe_to_statblock(html, tokenId=undefined){
     if(shape == 'emanation')
       return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
     else
-      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && get_available_styles().includes(m6) ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
+      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m6.toLowerCase())) ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
   })
 }
 
 function add_aoe_statblock_click(target, tokenId = undefined){
-  target.find(`button.avtt-aoe-button`).click(function(e) {
+  target.find(`button.avtt-aoe-button`).off('click.aoe').on('click.aoe', function(e) {
     e.stopPropagation();
     const color = $(this).attr('data-style');
     const shape = $(this).attr('data-shape');
     const feet = $(this).attr('data-size');
     const name = $(this).attr('data-name');
 
-    let options = window.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
-    if(name == 'Darkness' || name == 'Maddening Darkness' ){
-      options = {
-        ...options,
-        darkness: true
+    if(is_abovevtt_page() || window.self != window.top){
+      window.top.hide_player_sheet();
+      window.top.minimize_player_sheet();
+
+
+      let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+      if(name == 'Darkness' || name == 'Maddening Darkness' ){
+        options = {
+          ...options,
+          darkness: true
+        }
+      }
+      //if single token selected, place there:
+      if(window.top.CURRENTLY_SELECTED_TOKENS.length == 1) {
+        window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
+      } 
+      else if(window.top.TOKEN_OBJECTS[tokenId] != undefined){
+        window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[tokenId]);
+      }else {
+        window.top.place_aoe_token_in_centre(options)
       }
     }
-    //if single token selected, place there:
-    if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
-      window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
-    } 
-    else if(window.TOKEN_OBJECTS[tokenId] != undefined){
-      window.place_aoe_token_at_token(options, window.TOKEN_OBJECTS[tokenId]);
-    }
-    else {
-      window.place_aoe_token_in_centre(options)
+    else if(window.sendToTab != undefined){
+      const data = {color: color, shape: shape, feet: feet, name: name, tokenId: tokenId}
+      tabCommunicationChannel.postMessage({
+        msgType: 'placeAoe',
+        data: data,
+        sendTo: window.sendToTab
+      });
     }
   })
 }
