@@ -43,11 +43,12 @@ fi
 #exit on errors
 set -e
 
-# or from manifest
-if [ -z "$MARKETING_VERSION" ]; then
+# now always from manifest
+# Apple doesn't like the "-betaN" on Testflight
+#if [ -z "$MARKETING_VERSION" ]; then
     echo "Using Manifest version...."
     MARKETING_VERSION=`python -c 'import json; print(json.loads(open("../manifest.json").read()).get("version"))'`
-fi
+#fi
 
 echo "----Set marketing version to ${MARKETING_VERSION}"
 echo "MARKETING_VERSION=${MARKETING_VERSION}" > Config.xcconfig
