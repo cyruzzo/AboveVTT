@@ -32,7 +32,9 @@ function setup_aoe_button(buttons) {
     
     aoeMenu.append(`<div><input min='5' onclick='$(this).select()'
         tabindex='2' id='aoe_feet_in_menu' value='20' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
-
+    aoeMenu.append("<div class='menu-subtitle'>Line Width</div>");
+    aoeMenu.append(`<div><input min='5' onclick='$(this).select()'
+        tabindex='2' id='aoe_line_feet_in_menu' value='5' style='width:75px;margin:0px;text-align:center' maxlength='10' type='number' step='5'></div>`);
     aoeMenu.append("<div class='menu-subtitle'>Style</div>");
     aoeMenu.append(
         `<div class='ddbc-tab-options--layout-pill'>
@@ -90,11 +92,12 @@ function setup_aoe_button(buttons) {
 
     $("#aoe_menu button").click(function (e) {
        
-        const size = $("#aoe_feet_in_menu").val() / window.CURRENT_SCENE_DATA.fpsq
+        const size = $("#aoe_feet_in_menu").val() / window.CURRENT_SCENE_DATA.fpsq;
+        const lineSize= $("#aoe_line_feet_in_menu").val() / window.CURRENT_SCENE_DATA.fpsq;
 
         const shape = $(e.currentTarget).attr("data-shape") 
         const style = $("#aoe_styles").val().toLowerCase()
-        const options = build_aoe_token_options(style, shape, size)
+        const options = build_aoe_token_options(style, shape, size, '', lineSize)
 
         //if single token selected, place there:
         if(window.CURRENTLY_SELECTED_TOKENS.length == 1) {
@@ -283,7 +286,7 @@ function build_aoe_class_name(style, shape, name) {
 function build_aoe_img_name(style, shape, name) {
     return `class=${build_aoe_class_name(style, shape, name)}`;
 }
-function build_aoe_token_options(style, shape, countGridSquares, name = "") {
+function build_aoe_token_options(style, shape, countGridSquares, name = "", lineWidth = 1) {
     shape = sanitize_aoe_shape(shape)
     let size = Math.round(window.CURRENT_SCENE_DATA.hpps * countGridSquares)
 
@@ -297,7 +300,10 @@ function build_aoe_token_options(style, shape, countGridSquares, name = "") {
     
     options.size = shape !== "line" ? size : ""
     options.gridHeight = shape === "line" ? countGridSquares : ""
-    options.gridWidth = shape === "line" ? 1 : ""
+    options.gridWidth = shape === "line" ? lineWidth : ""
+    if(shape === "line"){
+        options.lineAoe = "1";
+    }
 
     if(style == 'darkness'){
         options = {

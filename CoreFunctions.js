@@ -304,11 +304,11 @@ function get_available_styles(){
 }
 function add_aoe_to_statblock(html, tokenId=undefined){
 
-  const aoeRegEx = /(([\d]+)-foot(-long [\d]+-foot-wide|-long, [\d]+-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
+  const aoeRegEx = /(([\d]+)-foot(-long ([\d]+)-foot-wide|-long, ([\d]+)-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
 
 
-  return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6){
-    const shape = m4.toLowerCase();
+  return html.replaceAll(aoeRegEx, function(m, m1, m2,m3, m4, m5, m6, m7, m8){
+    const shape = m6.toLowerCase();
 
     if(shape != 'cone' && shape != 'sphere' && shape != 'cube' && shape != 'cylinder' && shape != 'line')
       return `${m}`
@@ -316,7 +316,17 @@ function add_aoe_to_statblock(html, tokenId=undefined){
     if(shape == 'emanation')
       return `${m}` // potentially set a button for aura being set on these if an aura doesn't already exist
     else
-      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' data-shape='${shape}' data-style='${m6 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m6.toLowerCase())) ? m6.toLowerCase() : 'default'}' data-size='${m2}' data-name='${m4} AoE'>${m1}</button>${m5 != undefined? m5 : ''}`
+      return `<button class='avtt-aoe-button' border-width='1px' title='Place area of effect token' 
+          data-shape='${shape}' 
+          data-style='${m8 != undefined && get_available_styles().some(shape => shape.toLowerCase().includes(m8.toLowerCase())) ? m8.toLowerCase() : 'default'}' 
+          data-size='${m2}' 
+          data-name='${m6} AoE' 
+          ${shape == 'line' ? `data-line-width=${m4 != undefined ? `'${m4}'` : m5 != undefined ? `'${m5}'` : '5'}` : ''}>
+          ${m1}
+        </button>
+        ${m7 != undefined? m7 : ''}
+      `
+       
   })
 }
 
@@ -327,13 +337,14 @@ function add_aoe_statblock_click(target, tokenId = undefined){
     const shape = $(this).attr('data-shape');
     const feet = $(this).attr('data-size');
     const name = $(this).attr('data-name');
+    const lineWidth = $(this).attr('data-line-width');
 
     if(is_abovevtt_page() || window.self != window.top){
       window.top.hide_player_sheet();
       window.top.minimize_player_sheet();
 
 
-      let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name)
+      let options = window.top.build_aoe_token_options(color, shape, feet / window.top.CURRENT_SCENE_DATA.fpsq, name, lineWidth / window.top.CURRENT_SCENE_DATA.fpsq)
       if(name == 'Darkness' || name == 'Maddening Darkness' ){
         options = {
           ...options,

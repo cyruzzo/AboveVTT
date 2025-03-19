@@ -2950,7 +2950,9 @@ function build_adjustments_flyout_menu(tokenIds) {
 	let uniqueSizes = [...new Set(tokenSizes)];
 
 	console.log("uniqueSizes", uniqueSizes);
-	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize) {
+	let lineaoe = tokens.length == 1 && tokens[0].isLineAoe();
+	let linewidthsize = tokens[0].numberOfGridSpacesWide();
+	let sizeInputs = build_token_size_input(uniqueSizes, function (newSize, linewidth=false) {
 		let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 			
 		const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
@@ -2965,10 +2967,10 @@ function build_adjustments_flyout_menu(tokenIds) {
 			if(token.options.size < newSize) {
 				token.imageSize(1);
 			}
-			token.size(newSize);	
+			token.size(newSize, linewidth);
 			clampTokenImageSize(token.options.imageSize, token.options.size);
 		});
-	}, allTokensAreAoe); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
+	}, allTokensAreAoe, lineaoe, linewidthsize); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
 	body.append(sizeInputs);
 	if (allTokensAreAoe) {
 		sizeInputs.find("select").closest(".token-image-modal-footer-select-wrapper").hide(); // if we're only dealing with aoe, don't bother displaying the select list. Just show the size input
@@ -3482,7 +3484,7 @@ function build_options_flyout_menu(tokenIds) {
  * @param forceCustom {boolean} whether or not to force the current setting to be custom even if the size is a standard size... We do this for aoe
  * @returns {*|jQuery|HTMLElement} the jQuery object containing all the input elements
  */
-function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) {
+function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, lineaoe=false, linewidthsize=1) {
 	let numGridSquares = undefined;
 	// get the first value if there's only 1 value
 	if (tokenSizes.length === 1) {
@@ -3508,6 +3510,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 
 	let customStyle = isSizeCustom ? "display:flex;" : "display:none;"
 	const size = (numGridSquares > 0) ? (numGridSquares * window.CURRENT_SCENE_DATA.fpsq) : 1;
+	const lineSize = linewidthsize * window.CURRENT_SCENE_DATA.fpsq;
 	let output = $(`
  		<div class="token-image-modal-footer-select-wrapper">
  			<div class="token-image-modal-footer-title">Token Size</div>
@@ -3526,10 +3529,18 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
  			<input type="number" min="${window.CURRENT_SCENE_DATA.fpsq / 2}" step="${window.CURRENT_SCENE_DATA.fpsq /2}"
 			 name="data-token-size-custom" value=${size} style="width: 3rem;">
  		</div>
+ 		${lineaoe == true ? `
+		 		<div class="token-image-modal-footer-select-wrapper" style="${customStyle}">
+		 			<div class="token-image-modal-footer-title">Custom line width in ${upsq}</div>
+		 			<input type="number" min="${window.CURRENT_SCENE_DATA.fpsq / 2}" step="${window.CURRENT_SCENE_DATA.fpsq /2}"
+					 name="data-token-line-width-custom" value=${lineSize} style="width: 3rem;">
+		 		</div>
+
+ 		`: ``}
  	`);
 
 	let tokenSizeInput = output.find("select");
-	let customSizeInput = output.find("input");
+	let customSizeInput = output.find("input[name='data-token-size-custom']");
 
 	tokenSizeInput.change(function(event) {
 		let customInputWrapper = $(event.target).parent().next();
@@ -3557,6 +3568,24 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false) 
 			changeHandler(newValue);
 		}
 	});
+
+	if(lineaoe == true){
+		let customLineWidthInput = output.find("input[name='data-token-line-width-custom']");
+		customLineWidthInput.change(function(event) {
+		console.log("customSizeInput changed");
+		// convert custom footage into squares
+		let newValue = 
+			parseFloat($(event.target).val() / window.CURRENT_SCENE_DATA.fpsq);
+		// tiny is the smallest you can go with a custom size
+		if (newValue < 0.5){
+			 newValue = 0.5
+			$(event.target).val(window.CURRENT_SCENE_DATA.fpsq / 2)
+		}
+		if (!isNaN(newValue)) {
+			changeHandler(newValue, lineaoe);
+		}
+	});
+	}
 
 	return output;
 }
