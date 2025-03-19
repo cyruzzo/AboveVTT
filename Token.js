@@ -254,7 +254,7 @@ class Token {
 
 	isLineAoe() {
 		// 1 being a single square which is usually 5ft
-		return (this.options.size === "" || this.options.size === 0) && this.options.gridWidth === 1 && this.options.gridHeight > 0
+		return (this.options.size === "" || this.options.size === 0) && ((this.options.gridWidth === 1 && this.options.gridHeight > 0) || this.options.lineAoe == '1')
 	}
 
 	isAoe() {
@@ -433,15 +433,17 @@ class Token {
 		return ct_list_tokens().includes(this.options.id);
 	}
 
-	size(newSize) {
+	size(newSize, linewidth=false) {
 		this.MAX_TOKEN_SIZE = Math.max(window.CURRENT_SCENE_DATA.width*window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.height*window.CURRENT_SCENE_DATA.scale_factor);
 
 		// Clamp token size to min/max token size
 		newSize = clamp(newSize, this.MIN_TOKEN_SIZE, this.MAX_TOKEN_SIZE);
 
 		this.update_from_page();
-
-		if(this.isLineAoe()) {
+		if(this.isLineAoe() && linewidth == true){
+			this.options.gridWidth = newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps);
+		}
+		else if(this.isLineAoe()) {
 			// token is not proportional such as a line aoe token
 			this.options.gridHeight = newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		}
