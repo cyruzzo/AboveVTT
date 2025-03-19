@@ -9,6 +9,13 @@ on:
         options:
           - UPLOAD
           - NOUPLOAD
+     build_type:
+        type: choice
+        description: "type of build"
+        options:
+          - local
+          - beta
+          - prod
   
 jobs:
   build-safari:
@@ -67,3 +74,6 @@ jobs:
       - name: Run build script
         run: ./build.sh ${{inputs.upload_build}}
         working-directory: safari
+        env:
+          AVTT_BUILD: ${{inputs.build_type}}
+
