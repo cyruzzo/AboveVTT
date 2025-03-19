@@ -50,6 +50,22 @@ set -e
     MARKETING_VERSION=`python -c 'import json; print(json.loads(open("../manifest.json").read()).get("version"))'`
 #fi
 
+# revert to default
+git checkout -- ../environment.js        
+case $AVTT_BUILD in
+    "prod")
+        echo "--------production build-------------"
+        sed -i '' 's/-local//g' ../environment.js        
+        ;;
+    "beta")
+        echo "--------beta build-------------------"
+        sed -i '' 's/-local/-beta/g' ../environment.js        
+        ;;
+    *)
+        echo "-----default to local build----------"
+        ;;
+esac
+
 echo "----Set marketing version to ${MARKETING_VERSION}"
 echo "MARKETING_VERSION=${MARKETING_VERSION}" > Config.xcconfig
 
