@@ -362,7 +362,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
       }
     }
     else if(window.sendToTab != undefined){
-      const data = {color: color, shape: shape, feet: feet, name: name, tokenId: tokenId}
+      const data = {color: color, shape: shape, feet: feet, name: name, lineWidth: lineWidth, tokenId: tokenId}
       tabCommunicationChannel.postMessage({
         msgType: 'placeAoe',
         data: data,
