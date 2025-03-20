@@ -3326,6 +3326,11 @@ div#selectedTokensBorder {
 .context-menu-icon-view:before {
     content: "\f22e" !important;
 }
+#tokenOptionsContainer .aoe-select-tokens::before, 
+#tokenOptionsContainer .context-menu-aoe-select-tokens::before {
+    content: "\e9fe" !important;
+    font-family: 'Material Symbols Outlined' !important;
+}
 .icon-add-circle:before,
 .context-menu-icon-add-circle:before {
     content: "\e148" !important;

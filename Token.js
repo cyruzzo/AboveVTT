@@ -570,7 +570,7 @@ class Token {
 		let imageScale = (this.options.imageSize != undefined) ? this.options.imageSize : 1;
 
 		let selector = "div[data-id='" + this.options.id + "']";
-		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`);
+		let tokenElement = $("#tokens").find(selector).add(`[data-notatoken='notatoken_${this.options.id}']`).add(`[data-darkness='darkness_${this.options.id.replaceAll("/", "")}']`);
 		tokenElement.css("--token-rotation", newRotation + "deg");
 		tokenElement.css("--token-scale", imageScale);
 		tokenElement.find(".token-image").css("transform", `scale(var(--token-scale)) rotate(var(--token-rotation))`);
@@ -675,8 +675,11 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
-					// if we need to do something after queue - used to remove clone here
-				}
+					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+						throttleLight();
+					else
+						debounceLightChecks()
+					}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
 				setTokenAuras(old, this.options);
@@ -2059,7 +2062,10 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
-							// if we need to do something after queue - used to remove clone here
+							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+								throttleLight();
+							else
+								debounceLightChecks()
 						}
 					});
 					
@@ -2118,7 +2124,12 @@ class Token {
 						old.animate({
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
-						}, { duration: 1000, queue: false });
+						}, { duration: 1000, queue: false, complete: async function() {
+							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+								throttleLight();
+							else
+								debounceLightChecks()
+						}});
 					}
 					
 					$(`.isAoe[data-id='${this.options.id}']:not(.token)`).css({
@@ -2374,7 +2385,12 @@ class Token {
 							top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 						}, 
 						{ 
-							duration: animationDuration, queue: true
+							duration: animationDuration, queue: true, complete: async function() {
+								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+									throttleLight();
+								else
+									debounceLightChecks()
+							}
 						}
 					);
 				}
@@ -2444,7 +2460,12 @@ class Token {
 									top: parseInt(parseFloat(this.options.top) / window.CURRENT_SCENE_DATA.scale_factor),
 								}, 
 								{ 
-									duration: animationDuration, queue: true
+									duration: animationDuration, queue: true, complete: async function() {
+										if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+											throttleLight();
+										else
+											debounceLightChecks()
+									}
 								}
 							);
 						}
@@ -3415,10 +3436,7 @@ class Token {
 				new Promise(() => this.update_dead_cross(token)),
 				new Promise(() => toggle_player_selectable(this, token)),
 				new Promise(() => {
-					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-						throttleLight();
-					else
-						debounceLightChecks()
+					
 				}),
 				new Promise(debounceAudioChecks)
 			]).catch((error) => {
@@ -4742,6 +4760,7 @@ async function do_draw_selected_token_bounding_box() {
 						let token = window.TOKEN_OBJECTS[id];
 						token.place_sync_persist();
 					}
+					draw_selected_token_bounding_box();	
 				},
 			});
 
@@ -4767,9 +4786,10 @@ async function do_draw_selected_token_bounding_box() {
 					
 					
 					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
+
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
-						$(`#scene_map_container .token[data-id='${id}']`).remove();
+						$(`#scene_map_container .token[data-id='${id}'], [data-darkness='darkness_${id.replaceAll("/", "")}']`).remove();
 						
 					
 						let sceneToken = $(`div.token[data-id='${id}']`)
@@ -4809,8 +4829,6 @@ async function do_draw_selected_token_bounding_box() {
 					}
 						
 						
-
-					
 
 
 				
@@ -4872,16 +4890,14 @@ async function do_draw_selected_token_bounding_box() {
 						
 					
 					}
-
 					$(`.grouprotate`).remove();
 					for (let i = 0; i < window.CURRENTLY_SELECTED_TOKENS.length; i++) {
 						let id = window.CURRENTLY_SELECTED_TOKENS[i];
 						let token = window.TOKEN_OBJECTS[id];
 						token.selected = true;
 						token.place_sync_persist();
-					
-						draw_selected_token_bounding_box();
-					}			
+					}		
+					draw_selected_token_bounding_box();	
 				},
 			});
 		}
