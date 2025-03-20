@@ -1655,6 +1655,12 @@ div#combat-tracker-settings form > div {
     transition: box-shadow 0.5 ease-in-out;
     z-index: 50;
 }
+[class*='styles_mobileNav']>div>button[class*='styles_navToggle']{
+    display: none;
+}
+[class*='styles_mobileNav'].visibleMobileNav>div>button[class*='styles_navToggle']{
+    display: flex;
+}
 
 .hasTooltip::after {
     content: attr(data-name);
