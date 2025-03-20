@@ -1672,8 +1672,8 @@ div#combat-tracker-settings form > div {
     transition: 0.2s ease-in-out 0.5s;
 }
 
-[data-name]::after,
-[data-hover]{
+.hasTooltip::after,
+.sidebar-hover-text-flyout{
   pointer-events: none;
 }
 
