@@ -927,7 +927,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			Promise.all(promises).then(()=>{
 				draw_selected_token_bounding_box();
 			})
-	
+			close_token_context_menu();
 		});
 
 		body.append(selectInAoeButton);
@@ -971,7 +971,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			Promise.all(promises).then(()=>{
 				draw_selected_token_bounding_box();
 			})
-			
+			close_token_context_menu();
 	
 		});
 
