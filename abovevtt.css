@@ -1672,6 +1672,11 @@ div#combat-tracker-settings form > div {
     transition: 0.2s ease-in-out 0.5s;
 }
 
+[data-name]::after,
+[data-hover]{
+  pointer-events: none;
+}
+
 .tooltip-body {
     overflow-y: auto;
 }
