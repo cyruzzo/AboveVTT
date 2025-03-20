@@ -482,13 +482,11 @@ Mousetrap.bind('shift+h', function () {
 });
 
 Mousetrap.bind('mod+c', function(e) {
-    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
     copy_selected_tokens();
 });
 
 
 Mousetrap.bind('mod+v', function(e) {
-    if (window.navigator.userAgent.indexOf("Mac") != -1) return; // Mac/iOS use command
     if($('#temp_overlay:hover').length>0){
         paste_selected_tokens(window.cursor_x, window.cursor_y);
     } 
