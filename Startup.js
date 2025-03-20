@@ -489,7 +489,13 @@ async function start_above_vtt_for_dm() {
   $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
   remove_loading_overlay();
 }
-
+const debounceResizeUI = mydebounce(function(){
+  init_character_page_sidebar();
+  reposition_player_sheet();
+  if(!window.showPanel){
+    hide_sidebar(false);
+  }
+}, 100)
 async function start_above_vtt_for_players() {
   if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
     throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);
@@ -513,13 +519,7 @@ async function start_above_vtt_for_players() {
     if (window.showPanel === undefined) {
       window.showPanel = is_sidebar_visible();
     }
-    init_character_page_sidebar();
-    reposition_player_sheet();
-    setTimeout(function(){
-      if(!window.showPanel){
-        hide_sidebar(false);
-      }
-    }, 1000);
+    debounceResizeUI();
     if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
       $("#youtube_controls_button").css('visibility', 'hidden');
     }
