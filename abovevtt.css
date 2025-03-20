@@ -3723,6 +3723,11 @@ div.token-image {
     width: 100%;
     height: 100%;
 }
+
+.ct-sidebar__portal>[class*='styles_mask']{
+    display: none;
+}
+
 .ct-sidebar[class*='styles_sidebar'] {
     min-width: 340px !important;
 }
