@@ -11101,7 +11101,17 @@ div#playlistFields {
 .ct-sidebar .glc-game-log .stat-block .stats table tbody tr:hover button.avtt-roll-button{
     background-color: #fff;
 }
+.ct-sidebar__inner>[class*='styles_pane']>[class*='styles_content']{
+    padding: 0px; 
+}
 
+.ct-sidebar__inner>[class*='styles_pane']>[class*='styles_content'] .glc-game-log{
+    background: #FEFEFE;
+}
+
+.ct-sidebar__inner>[class*='styles_pane']>[class*='styles_content'][class*='styles_dark'] .glc-game-log{
+    background: #12181c;
+}
 .stat-block .mon-stat-block__attribute-label,
 .stat-block .mon-stat-block__attribute-data-value,
 .stat-block .mon-stat-block__tidbits span,

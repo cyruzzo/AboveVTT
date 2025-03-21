@@ -202,7 +202,7 @@ function inject_player_join_buttons() {
     const characterCard = $(this);
     if(characterCard.find(".ddb-campaigns-character-card-footer-links-item-edit").length > 0) {
       const characterPagePathname = characterCard.find(".ddb-campaigns-character-card-footer-links-item-view").attr('href');
-      characterCard.prepend(`<a style='color:white;background: #1b9af0;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
+      characterCard.prepend(`<a style='color:white;background: #1b9af0;padding: 2px;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
     }
   });
 }
