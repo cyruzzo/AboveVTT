@@ -2054,6 +2054,13 @@ function observe_character_sheet_changes(documentToObserve) {
         }
         else if(mutationTarget.closest(".ct-game-log-pane, [class*='styles_gameLogPane']").length > 0){
           $('#castbutton').remove();
+            if($("#switch_gamelog").length > 0){
+              if($('#settings-panel').length == 0){
+                init_sidebar_tabs();
+                $('.avtt-sidebar-controls .selected-tab').click();
+              }
+            return;
+          }
         }
          
 
