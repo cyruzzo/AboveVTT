@@ -267,9 +267,7 @@ button.gamelog-to-everyone-button:hover {
     font-weight: 700;
     margin: -3px -3px;
 }
-.material-icons.button-icon:hover {
-    color: #fff;
-}
+
 
 
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading {
@@ -295,14 +293,12 @@ button .ddbc-tab-options__header-heading{
 button .ddbc-tab-options__header-heading .menu-option{
     width: 69px;
 }
+
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading--is-active {
     color: #fff;
     background-color: #c53131;
 }
-.ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
-    background-color: #5d5d5d;
-    color: #f2f2f2;
-}
+
 .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading svg path {
     fill: #838383
 }
@@ -13490,6 +13486,8 @@ div#playlistFields {
 .mobileAVTTUI #sheet_resize_button{
     left: -195px !important;
 }
+
+
 /***Font Faces*****/
 @font-face {
     font-family: Scala Sans Offc;
@@ -13671,6 +13669,26 @@ div#playlistFields {
     #combat_tracker_inside button{
         display:none !important;
         
+    }  
+}
+/* hover for non-touch device */
+@media (pointer: fine) {
+    .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
+        background-color: #5d5d5d;
+        color: #f2f2f2;
     }
-    
+    .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading.ddbc-tab-options__header-heading--is-active:hover {
+        background-color: #c53131;
+        color: #fff;
+    }
+    .material-icons.button-icon:hover {
+        color: #fff;
+    }
+}
+/* remove hover tooltips for touch devices */
+@media (pointer: coarse) {
+  .hasTooltip::after,
+  .sidebar-hover-text-flyout{
+    display:none;
+  }
 }
