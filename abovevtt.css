@@ -168,31 +168,7 @@ body > div {
     padding: 2px 4px;
 }
 
-button[id$='-button']:hover,
-button[id$='_button']:hover,
-button[id^=peerVideo_]:hover,
-#combat_tracker > button:hover,
-body > button:hover,
-#addscene:hover,
-.scene button:hover,
-#combat_tracker_inside button:hover,
-#edit_dialog button:not(.rc-switch):hover,
-#edit_scene_form button:not(.rc-switch):hover,
-#mega_importer button:hover,
-#prewiz td button:hover,
-#wizard_popup button:hover,
-.top_menu button:hover,
-.monster_frame > button:hover,
-.stp-btn:hover,
-.player-actions button:hover,
-#add-party:hover,
-.importer_toggle:hover,
-#zoom_buttons button:hover,
-.GameLogEntry_Message__1GoY3 button:hover {
-    color: #333;
-    background-image: none;
-    background: #e6e6e6;
-}
+
 [class*='GameLogEntries'] [class*='Message-Collapsed-Other-Flex'] {
     padding: 8px 10px;
     color: rgb(92, 112, 128);
@@ -13673,6 +13649,32 @@ div#playlistFields {
 }
 /* hover for non-touch device */
 @media (pointer: fine) {
+    button[id$='-button']:hover,
+    button[id$='_button']:hover,
+    button[id^=peerVideo_]:hover,
+    #combat_tracker > button:hover,
+    body > button:hover,
+    #addscene:hover,
+    .scene button:hover,
+    #combat_tracker_inside button:hover,
+    #edit_dialog button:not(.rc-switch):hover,
+    #edit_scene_form button:not(.rc-switch):hover,
+    #mega_importer button:hover,
+    #prewiz td button:hover,
+    #wizard_popup button:hover,
+    .top_menu button:hover,
+    .monster_frame > button:hover,
+    .stp-btn:hover,
+    .player-actions button:hover,
+    #add-party:hover,
+    .importer_toggle:hover,
+    #zoom_buttons button:hover,
+    .GameLogEntry_Message__1GoY3 button:hover {
+        color: #333;
+        background-image: none;
+        background: #e6e6e6;
+    }
+    
     .ddbc-tab-options--layout-pill .ddbc-tab-options__header-heading:hover {
         background-color: #5d5d5d;
         color: #f2f2f2;
