@@ -2042,6 +2042,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
     const tooltip = $(statBlockContainer).find(".tooltip-hover");
     
     tooltip.hover(function (hoverEvent) {
+
         let currentTarget = $(hoverEvent.currentTarget);
         let cursorOffset = {
            left : 10,
@@ -2054,63 +2055,66 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
           })
         })
         if (hoverEvent.type === "mouseenter") {
-          currentTarget.css({
-            '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
-            '--cursor-offsetY': `${(hoverEvent.clientY + cursorOffset.top)}px`
-          })
-          let dataTooltipHref =[currentTarget.attr("data-tooltip-href"), currentTarget.attr("data-moreinfo")]; 
-          let name = currentTarget.text()
+          window.tooltipHoverTimeout = setTimeout(function(){
+            currentTarget.css({
+              '--cursor-offsetX': `${(hoverEvent.clientX + cursorOffset.left)}px`,
+              '--cursor-offsetY': `${(hoverEvent.clientY + cursorOffset.top)}px`
+            })
+            let dataTooltipHref =[currentTarget.attr("data-tooltip-href"), currentTarget.attr("data-moreinfo")]; 
+            let name = currentTarget.text()
 
 
 
-          const callback = function (tooltipJson) {
-              currentTarget.toggleClass('loading-tooltip', false);
-              currentTarget.off('mousemove.cursor');
-              let container = currentTarget.closest(".sidebar-flyout");
-              if(container.find('.tooltip-header').length === 0){
-                container = currentTarget.closest("#resizeDragMon");
+            const callback = function (tooltipJson) {
+                currentTarget.toggleClass('loading-tooltip', false);
+                currentTarget.off('mousemove.cursor');
+                let container = currentTarget.closest(".sidebar-flyout");
+                if(container.find('.tooltip-header').length === 0){
+                  container = currentTarget.closest("#resizeDragMon");
+                }
+                if (container.length === 0) {
+                    container = currentTarget.closest(".sidebar-modal");
+                }
+                if (container.length === 0) {
+                    container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
+                }
+
+                display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);   
+            };
+            if(window.tooltipCache == undefined)
+              window.tooltipCache = {};
+            if(dataTooltipHref[0] != undefined){
+              const parts = dataTooltipHref[0].split("/");
+              const idIndex = parts.findIndex(p => p.includes("-tooltip"));
+              const id = parseInt(parts[idIndex]);
+              const type = parts[idIndex - 1];
+              const typeAndId = `${type}/${id}`;
+
+              const existingJson = window.tooltipCache[typeAndId];
+              if (existingJson !== undefined) {
+                console.log("fetch_tooltip existingJson", existingJson);
+                callback(existingJson);
+                return;
               }
-              if (container.length === 0) {
-                  container = currentTarget.closest(".sidebar-modal");
-              }
-              if (container.length === 0) {
-                  container = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']") : $(".sidebar__pane-content");
-              }
-
-              display_tooltip(tooltipJson, container, hoverEvent.clientY, tokenId);   
-          };
-          if(window.tooltipCache == undefined)
-            window.tooltipCache = {};
-          if(dataTooltipHref[0] != undefined){
-            const parts = dataTooltipHref[0].split("/");
-            const idIndex = parts.findIndex(p => p.includes("-tooltip"));
-            const id = parseInt(parts[idIndex]);
-            const type = parts[idIndex - 1];
-            const typeAndId = `${type}/${id}`;
-
-            const existingJson = window.tooltipCache[typeAndId];
-            if (existingJson !== undefined) {
-              console.log("fetch_tooltip existingJson", existingJson);
-              callback(existingJson);
-              return;
             }
-          }
-          else if(dataTooltipHref[1] != undefined){              
-            const parts = dataTooltipHref[1].split("/");
-            const id = dataTooltipHref[1].match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
-            const type = parts[parts.length-2];
+            else if(dataTooltipHref[1] != undefined){              
+              const parts = dataTooltipHref[1].split("/");
+              const id = dataTooltipHref[1].match(/#.*$/gi) ? parts[parts.length-1] : parseInt(parts[parts.length-1]);
+              const type = parts[parts.length-2];
 
-            const typeAndId = `${type}/${id}`;
-            const existingJson = window.tooltipCache[typeAndId];
-            if (existingJson !== undefined) {
-              console.log("fetch_tooltip existingJson", existingJson);
-              callback(existingJson);
-              return;
+              const typeAndId = `${type}/${id}`;
+              const existingJson = window.tooltipCache[typeAndId];
+              if (existingJson !== undefined) {
+                console.log("fetch_tooltip existingJson", existingJson);
+                callback(existingJson);
+                return;
+              }
             }
-          }
-          currentTarget.toggleClass('loading-tooltip', true);   
-          fetch_tooltip(dataTooltipHref, name, callback);   
+            currentTarget.toggleClass('loading-tooltip', true);   
+            fetch_tooltip(dataTooltipHref, name, callback);   
+          }, 200);
         } else {
+            clearTimeout(window.tooltipHoverTimeout); 
             remove_tooltip(500);
             currentTarget.toggleClass('loading-tooltip', false);
             currentTarget.off('mousemove.cursor');
