@@ -897,13 +897,15 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			canvas.width = rayCast.width;
 			canvas.height = rayCast.height;
-			ctx.fillStyle = "white";
+			ctx.fillStyle = "black";
 			ctx.fillRect(0,0,canvas.width,canvas.height);
 
 			ctx.globalCompositeOperation='source-over';
 			tokens.forEach(token => {
 				draw_aoe_to_canvas($(`#tokens .token[data-id='${token.options.id}']`), ctx);
 			});
+
+
 			let promises = [];
 			for (let id in window.TOKEN_OBJECTS) {
 				if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined || window.TOKEN_OBJECTS[id].isAoe())
@@ -941,13 +943,15 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			canvas.width = rayCast.width;
 			canvas.height = rayCast.height;
-			ctx.fillStyle = "white";
+			ctx.fillStyle = "black";
 			ctx.fillRect(0,0,canvas.width,canvas.height);
 
 			ctx.globalCompositeOperation='source-over';
 			tokens.forEach(token => {
 				draw_aoe_to_canvas($(`#tokens .token[data-id='${token.options.id}']`), ctx);
 			});
+			
+
 			let promises = [];
 			for (let id in window.TOKEN_OBJECTS) {
 				if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined || window.TOKEN_OBJECTS[id].isAoe() || window.TOKEN_OBJECTS[id].isPlayer())

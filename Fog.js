@@ -598,7 +598,7 @@ function is_token_in_aoe_context(tokenid, aoeContext=undefined){
 	let pixeldata = aoeContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor) - 2,(parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor)-2, 4, 4).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]<10 || pixeldata[i+1]<10 || pixeldata[i+2]<10){
+		if(pixeldata[i]>100 || pixeldata[i+1]>100 || pixeldata[i+2]>100){
 			return true;
 		}
 	}
@@ -5978,7 +5978,7 @@ function redraw_light(){
 
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-		
+			
 			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
@@ -6069,20 +6069,22 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 		let top = parseFloat(currentAoe.css('top'));
 		let width = parseFloat(currentAoe.css('width'));
 		let height = parseFloat(currentAoe.css('height'));
-		let scale = window.CURRENT_SCENE_DATA.scale_factor;
+		let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 		let halfGrid = window.CURRENT_SCENE_DATA.hpps/2;
-		let divideScale = 1
+		let divideScale = 1;
+		let color = 'black';
 
 		if(isDarkness == false){
 			scale = 1;
 			halfGrid = 0;
-			divideScale = window.CURRENT_SCENE_DATA.scale_factor;
+			divideScale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+			color = 'white';
 		}
 		if(currentAoe.find('.aoe-shape-circle').length>0){
 			let centerX = (left + width/2) * scale;
 			let centerY = (top + height/2) * scale;
 			let radius = (width/2) * scale;
-			drawCircle(ctx, centerX, centerY, radius, 'black')
+			drawCircle(ctx, centerX, centerY, radius, color)
 		}
 		if(currentAoe.find('.aoe-shape-square').length>0){
 			width = width;
@@ -6094,7 +6096,7 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
 			ctx.translate(centerX, centerY);
 			ctx.rotate(rotationRad);
-			drawRect(ctx, -width/2*scale, -height/2*scale, width*scale, height*scale, "black")
+			drawRect(ctx, -width/2*scale, -height/2*scale, width*scale, height*scale, color)
 			ctx.rotate(-rotationRad);
 			ctx.translate(-centerX, -centerY);
 		}
@@ -6108,7 +6110,7 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
 			ctx.translate(centerX, centerY);
 			ctx.rotate(rotationRad);
-			drawRect(ctx, -width/2*scale, -height/2*scale, width*scale, height*scale, "black")
+			drawRect(ctx, -width/2*scale, -height/2*scale, width*scale, height*scale, color)
 			ctx.rotate(-rotationRad);
 			ctx.translate(-centerX, -centerY);
 		}
@@ -6122,7 +6124,7 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
 			ctx.translate(centerX, centerY);
 			ctx.rotate(rotationRad);
-			drawCone(ctx, 0, (-height-(height*0.30))/divideScale, 0, (height+(height*0.30))/divideScale , "black", true);
+			drawCone(ctx, 0, (-height)/2*scale, 0, (height)/2*scale, color, true);
 			ctx.rotate(-rotationRad);
 			ctx.translate(-centerX, -centerY);
 		}
