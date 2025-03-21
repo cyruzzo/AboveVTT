@@ -594,15 +594,27 @@ function is_token_in_aoe_context(tokenid, aoeContext=undefined){
 	if(aoeContext == undefined)
 		return;
 	
+	let gridSquares = window.TOKEN_OBJECTS[tokenid].options.gridSquares;
 
-	let pixeldata = aoeContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor) - 2,(parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor)-2, 4, 4).data;
-	
-	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]>100 || pixeldata[i+1]>100 || pixeldata[i+2]>100){
-			return true;
+	if(gridSquares != undefined){
+		gridSquares = Math.max(gridSquares, 1);
+		let centerSquareLeft = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + window.CURRENT_SCENE_DATA.hpps/2/window.CURRENT_SCENE_DATA.scale_factor;
+		let centerSquareTop = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + window.CURRENT_SCENE_DATA.vpps/2/window.CURRENT_SCENE_DATA.scale_factor;
+		let pixeldata = aoeContext.getImageData(centerSquareLeft - 2, centerSquareTop -2, 4, 4).data;
+
+		for(let x = 0; x<gridSquares; x++){
+			let left = centerSquareLeft + (window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor)*x;
+			for(let y = 0; y<gridSquares; y++){
+				let top = centerSquareTop + (window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor)*y;
+				let pixeldata = aoeContext.getImageData(left-2, top-2, 4, 4).data;
+				for(let i=0; i<pixeldata.length; i+=4){
+					if(pixeldata[i]>100 || pixeldata[i+1]>100 || pixeldata[i+2]>100){
+						return true;
+					}
+				}
+			}	
 		}
-	}
-				
+	}			
 	return  false;
 }
 function is_token_under_light_aura(tokenid, lightContext=undefined){
