@@ -892,7 +892,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		selectInAoeButton.off().on("click", function(clickEvent){
 			deselect_all_tokens();
 			let canvas = document.createElement('canvas');
-			let ctx = canvas.getContext('2d');
+			let ctx = canvas.getContext('2d', { willReadFrequently: true }); //rare case where we can allow cpu do so all the lifting since it is not rendered
 			let rayCast = document.getElementById("raycastingCanvas");
 
 			canvas.width = rayCast.width;
@@ -938,7 +938,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		selectMosnterInAoeButton.off().on("click", function(clickEvent){
 			deselect_all_tokens();
 			let canvas = document.createElement('canvas');
-			let ctx = canvas.getContext('2d');
+			let ctx = canvas.getContext('2d', { willReadFrequently: true });  //rare case where we can allow cpu do so all the lifting since it is not rendered
 			let rayCast = document.getElementById("raycastingCanvas");
 
 			canvas.width = rayCast.width;
