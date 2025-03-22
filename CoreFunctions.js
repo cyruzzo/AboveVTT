@@ -302,7 +302,7 @@ function get_available_styles(){
         "Water"
     ]
 }
-function add_aoe_to_statblock(html, tokenId=undefined){
+function add_aoe_to_statblock(html){
 
   const aoeRegEx = /(([\d]+)-foot(-long ([\d]+)-foot-wide|-long, ([\d]+)-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
 
@@ -426,7 +426,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     .replaceAll(tableNoSpaceRollRegex, `> <button data-exp='1$1' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1</button><`)
     .replaceAll(rechargeRegEx, ` <button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
 
-  updated = add_aoe_to_statblock(updated, tokenId);
+  updated = add_aoe_to_statblock(updated);
 
   
   let ignoreFormatting = $(currentElement).find('.ignore-abovevtt-formating');
