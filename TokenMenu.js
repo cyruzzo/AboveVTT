@@ -897,8 +897,7 @@ function token_context_menu_expanded(tokenIds, e) {
 
 			canvas.width = rayCast.width;
 			canvas.height = rayCast.height;
-			ctx.fillStyle = "black";
-			ctx.fillRect(0,0,canvas.width,canvas.height);
+
 
 			ctx.globalCompositeOperation='source-over';
 			tokens.forEach(token => {
