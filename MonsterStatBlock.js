@@ -770,7 +770,7 @@ function build_monster_stat_block(statBlock, token) {
         `;
     }
 
-    statblockData = add_aoe_to_statblock(statblockData, token.options.id);
+    statblockData = add_aoe_to_statblock(statblockData);
     return statblockData;
 }
 function build_monster_copy_stat_block(statBlock) {

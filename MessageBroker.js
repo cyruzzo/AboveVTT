@@ -372,58 +372,66 @@ class MessageBroker {
 			let entityid = data.data.injected_data?.entityId ? data.data.injected_data?.entityId : data.data.injected_data?.playerId;
 
 
-			if(data.data.injected_data?.entityId){
-				let monsterid = window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.monster
-				if(monsterid =='open5e')
-				{
-					window.StatHandler.getStat(monsterid, function(data) {
-						total = parseFloat(total + data.stats[1].value/100).toFixed(2);
-					}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
-				}
-				else if(monsterid =='customStat'){
-					let decimalAdd = (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod*2)+10)/100 : 0
-					total = parseFloat(total + decimalAdd).toFixed(2);
-				}
-				else{
-					window.StatHandler.getStat(monsterid, function(stat) {
-							total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
-					}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
-				}
-			}
-			else{
-				let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
-				if(dexScore){
-					total = parseFloat(total + dexScore/100).toFixed(2);
-				}
-			}
+			let monsterTokenExists = window.TOKEN_OBJECTS[entityid] != undefined;
+			let playerExists = window.pcs.filter(d=> d.characterId == entityid).length>0;
+			
 
-
-			let combatSettingData = getCombatTrackersettings();
-			if(combatSettingData['tie_breaker'] !='1'){
-				total = parseInt(total);
-			}
-			$("#tokens .VTTToken").each(
-				function(){
-					let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-					if(converted==entityid){
-						ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
-						window.all_token_objects[$(this).attr('data-id')].options.init = total;
-						window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
-						window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+			if(monsterTokenExists || playerExists){
+				if(data.data.injected_data?.entityId){
+					let monsterid = window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.monster
+					if(monsterid =='open5e')
+					{
+						window.StatHandler.getStat(monsterid, function(data) {
+							total = parseFloat(total + data.stats[1].value/100).toFixed(2);
+						}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
+					}
+					else if(monsterid =='customStat'){
+						let decimalAdd = (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat != undefined && window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.customStat[1]?.mod*2)+10)/100 : 0
+						total = parseFloat(total + decimalAdd).toFixed(2);
+					}
+					else{
+						window.StatHandler.getStat(monsterid, function(stat) {
+								total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
+						}, window.TOKEN_OBJECTS[data.data.injected_data?.entityId]?.options?.itemId);
 					}
 				}
-			);
-
-			$("#combat_area tr").each(function() {
-				let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-				if (converted == entityid) {
-					$(this).find(".init").val(total);
-					window.all_token_objects[$(this).attr('data-target')].options.init = total;
-					window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
-					window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+				else{
+					let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
+					if(dexScore){
+						total = parseFloat(total + dexScore/100).toFixed(2);
+					}
 				}
-			});
-			debounceCombatReorder(true);
+
+
+				let combatSettingData = getCombatTrackersettings();
+				if(combatSettingData['tie_breaker'] !='1'){
+					total = parseInt(total);
+				}
+				$("#tokens .VTTToken").each(
+					function(){
+						let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+						if(converted==entityid){
+							ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+							window.all_token_objects[$(this).attr('data-id')].options.init = total;
+							window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+							window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+						}
+					}
+				);
+
+				$("#combat_area tr").each(function() {
+					let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+					if (converted == entityid) {
+						$(this).find(".init").val(total);
+						window.all_token_objects[$(this).attr('data-target')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+						window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+					}
+				});
+				debounceCombatReorder(true);
+			}
+
+			
 		}
 
 		// start the task
@@ -1358,61 +1366,65 @@ class MessageBroker {
 					console.log(msg.data);
 					let total = parseFloat(msg.data.rolls[0].result.total);
 					let entityid = msg.data.context.entityId;
-
-
-					if(msg.data.context?.entityType == 'monster'){
-						let monsterid = window.TOKEN_OBJECTS[entityid]?.options?.monster
-						if(monsterid =='open5e')
-						{
-							window.StatHandler.getStat(monsterid, function(data) {
-								total = parseFloat(total + data.stats[1].value/100).toFixed(2);
-							}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
-						}
-						else if(monsterid =='customStat'){
-							let decimalAdd = (window.TOKEN_OBJECTS[entityid]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[entityid]?.options?.customStat != undefined && window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod*2)+10)/100 : 0
-							total = parseFloat(total + decimalAdd).toFixed(2);
-						}
-						else{
-							window.StatHandler.getStat(monsterid, function(stat) {
-									total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
-							}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
-						}
-					}
-					else{
-						let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
-						if(dexScore){
-							total = parseFloat(total + dexScore/100).toFixed(2);
-						}
-					}
-		
-					let combatSettingData = getCombatTrackersettings();
-					if(combatSettingData['tie_breaker'] !='1'){
-						total = parseInt(total);
-					}
-					console.log("cerco " + entityid);
 					
-					$("#tokens .VTTToken").each(
-						function(){
-							let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-							if(converted==entityid){
-								ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
-								window.all_token_objects[$(this).attr('data-id')].options.init = total;
-								window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
-								window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+					let monsterTokenExists = window.TOKEN_OBJECTS[entityid] != undefined;
+					let playerExists = window.pcs.filter(d=> d.characterId == entityid).length>0;
+					if(monsterTokenExists || playerExists){
+						if(msg.data.context?.entityType == 'monster'){
+							let monsterid = window.TOKEN_OBJECTS[entityid]?.options?.monster
+							if(monsterid =='open5e')
+							{
+								window.StatHandler.getStat(monsterid, function(data) {
+									total = parseFloat(total + data.stats[1].value/100).toFixed(2);
+								}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
+							}
+							else if(monsterid =='customStat'){
+								let decimalAdd = (window.TOKEN_OBJECTS[entityid]?.options?.customInit != undefined || (window.TOKEN_OBJECTS[entityid]?.options?.customStat != undefined && window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod != undefined)) ? ((window.TOKEN_OBJECTS[entityid]?.options?.customStat[1]?.mod*2)+10)/100 : 0
+								total = parseFloat(total + decimalAdd).toFixed(2);
+							}
+							else{
+								window.StatHandler.getStat(monsterid, function(stat) {
+										total = parseFloat(total + stat.data.stats[1].value/100).toFixed(2);
+								}, window.TOKEN_OBJECTS[entityid]?.options?.itemId);
 							}
 						}
-					);
-
-					$("#combat_area tr").each(function() {
-						let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
-						if (converted == entityid) {
-							$(this).find(".init").val(total);
-							window.all_token_objects[$(this).attr('data-target')].options.init = total;
-							window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
-							window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+						else{
+							let dexScore = window.pcs.filter(d=> d.characterId == entityid)[0].abilities[1].score;		
+							if(dexScore){
+								total = parseFloat(total + dexScore/100).toFixed(2);
+							}
 						}
-					});
-					debounceCombatReorder(true);
+						
+						let combatSettingData = getCombatTrackersettings();
+						if(combatSettingData['tie_breaker'] !='1'){
+							total = parseInt(total);
+						}
+						console.log("cerco " + entityid);
+						
+						$("#tokens .VTTToken").each(
+							function(){
+								let converted = $(this).attr('data-id').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+								if(converted==entityid){
+									ct_add_token(window.TOKEN_OBJECTS[$(this).attr('data-id')]);
+									window.all_token_objects[$(this).attr('data-id')].options.init = total;
+									window.TOKEN_OBJECTS[$(this).attr('data-id')].options.init = total;
+									window.TOKEN_OBJECTS[$(this).attr('data-id')].update_and_sync();
+								}
+							}
+						);
+
+						$("#combat_area tr").each(function() {
+							let converted = $(this).attr('data-target').replace(/^.*\/([0-9]*)$/, "$1"); // profiles/ciccio/1234 -> 1234
+							if (converted == entityid) {
+								$(this).find(".init").val(total);
+								window.all_token_objects[$(this).attr('data-target')].options.init = total;
+								window.TOKEN_OBJECTS[$(this).attr('data-target')].options.init = total;
+								window.TOKEN_OBJECTS[$(this).attr('data-target')].update_and_sync();
+							}
+						});
+						debounceCombatReorder(true);
+					}
+					
 				}
 				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if (msg.messageScope === "userId") {
