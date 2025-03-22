@@ -602,9 +602,9 @@ function is_token_in_aoe_context(tokenid, aoeContext=undefined){
 		let centerSquareTop = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + window.CURRENT_SCENE_DATA.vpps/2/window.CURRENT_SCENE_DATA.scale_factor;
 		let pixeldata = aoeContext.getImageData(centerSquareLeft - 2, centerSquareTop -2, 4, 4).data;
 
-		for(let x = 0; x<gridSquares; x++){
+		for(let x = 0; x<gridSquares-1; x++){
 			let left = centerSquareLeft + (window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor)*x;
-			for(let y = 0; y<gridSquares; y++){
+			for(let y = 0; y<gridSquares-1; y++){
 				let top = centerSquareTop + (window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor)*y;
 				let pixeldata = aoeContext.getImageData(left-2, top-2, 4, 4).data;
 				for(let i=0; i<pixeldata.length; i+=4){
