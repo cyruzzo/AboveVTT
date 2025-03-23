@@ -1,3 +1,4 @@
+
 button[id$='-button'],
 button[id$='_button'],
 button[id^=peerVideo_],
@@ -686,47 +687,19 @@ button .ddbc-tab-options__header-heading .menu-option{
     flex-direction: column;
     justify-content: center;
 }
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover{
+#resizeDragMon .avtt-stat-block-container .tooltip-hover{
+    -webkit-text-decoration-thickness:1px ; 
+    -webkit-text-decoration-style: dotted;  
+    text-decoration-thickness:1px ; 
+    text-decoration-style: dotted;
+}
+
+#resizeDragMon .avtt-stat-block-container :is(.rule-tooltip, .skill-tooltip, .condition-tooltip, .sense-tooltip){
     color: inherit !important;
     font-weight: inherit !important;
-    -webkit-text-decoration: underline solid #47d18c;
-    text-decoration: underline solid #47d18c;
-}
-
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.spell-tooltip,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.spell-tooltip:hover,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.spell-tooltip:focus,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.spell-tooltip:active,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.spell-tooltip:visited {
-    -webkit-text-decoration: underline solid #704cd9;
-    text-decoration: underline solid #704cd9;
-}
-
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.monster-tooltip,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.monster-tooltip:hover,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.monster-tooltip:focus,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.monster-tooltip:active,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.monster-tooltip:visited {
-    -webkit-text-decoration: underline solid #bc0f0f;
-    text-decoration: underline solid #bc0f0f;
-}
-
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.magic-item-tooltip,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.magic-item-tooltip:hover,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.magic-item-tooltip:focus,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.magic-item-tooltip:active,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.magic-item-tooltip:visited {
-    -webkit-text-decoration: underline solid #0f5cbc;
-    text-decoration: underline solid #0f5cbc;
-}
-
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.vehicles-tooltip,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.vehicles-tooltip:hover,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.vehicles-tooltip:focus,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.vehicles-tooltip:active,
-#resizeDragMon .avtt-stat-block-container :is(.mon-stat-block, .stat-block) .tooltip-hover.vehicles-tooltip:visited {
-    -webkit-text-decoration: underline solid #1b9af0;
-    text-decoration: underline solid #1b9af0;
+    text-decoration-line: underline; 
+    -webkit-text-decoration-color: #47d18c;
+    text-decoration-color: #47d18c;
 }
 
 #resizeDragMon .avtt-stat-block-container .ddbc-creature-block__header{
