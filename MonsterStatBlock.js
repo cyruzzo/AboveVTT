@@ -40,23 +40,33 @@ function build_and_display_stat_block_with_data(monsterData, container, tokenId,
             display_stat_block_in_container(new MonsterStatBlock(cached_monster_items[monsterId].monsterData), container, tokenId);
           }
           else{
-            display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData), container, tokenId);}
+            display_stat_block_in_container(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData), container, tokenId);
+          }
         }, open5e);
     }
 }
 
-function build_stat_block_for_copy(listItem, options){
+function build_stat_block_for_copy(listItem, options, open5e = false){
   const monsterData = listItem.monsterData;
-  let cachedMonsterItem = cached_monster_items[monsterData.id];
-    if (cachedMonsterItem) {
-        // we have a cached monster. this data is the best data we have so display that instead of whatever we were given
-        create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cachedMonsterItem.monsterData)));
-    } else {
-       let monsterId = (monsterData.slug) ? monsterData.slug : monsterData.id
-        fetch_and_cache_monsters([monsterId], function () {
-           create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_monster_items[monsterId].monsterData)));
-        }, false);
-    }
+  const monsterId = open5e == true ? monsterData.slug : monsterData.id
+  const cachedMonsterItem = open5e == true ? cached_open5e_items[monsterId] : cached_monster_items[monsterId];
+  build_import_loading_indicator('Fetching Statblock Info');
+  if (cachedMonsterItem) {
+      // we have a cached monster. this data is the best data we have so display that instead of whatever we were given
+      create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cachedMonsterItem.monsterData)));
+      $(".import-loading-indicator").remove();
+  } else {
+    fetch_and_cache_monsters([monsterId], function (open5e = false) {
+      if(!open5e){
+         create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_monster_items[monsterId].monsterData)));
+      }
+      else{
+         create_token_inside(find_sidebar_list_item_from_path(RootFolder.MyTokens.path), undefined, undefined, undefined, options, build_monster_copy_stat_block(new MonsterStatBlock(cached_open5e_items[monsterId].monsterData)));
+   
+      }
+      $(".import-loading-indicator").remove();
+    }, open5e);
+  }  
 }
 
 function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
