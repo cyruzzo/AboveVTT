@@ -1014,7 +1014,30 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}, 300);
 		}
 
-		window.TOKEN_OBJECTS[id].place_sync_persist();
+		window.TOKEN_OBJECTS[id].place();
+		if(options.repositionAoe != undefined){
+			let origin, dx, dy;
+			if(options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi)){
+				origin = getOrigin(window.TOKEN_OBJECTS[id]);
+				dx = origin.x - options.repositionAoe.x;
+				dy = origin.y - options.repositionAoe.y;				
+			}
+			else{
+				origin = {
+					x: parseFloat(options.left) + window.TOKEN_OBJECTS[id].sizeWidth() / 2, 
+					y: parseFloat(options.top) + window.TOKEN_OBJECTS[id].sizeHeight() / 2
+				};
+				dx = origin.x - options.repositionAoe.x;
+				dy = origin.y - options.repositionAoe.y;	
+			}
+			options.left = `${parseFloat(options.left) - dx}px`;
+			options.top = `${parseFloat(options.top) - dy}px`;
+			delete options.repositionAoe;
+		}
+		
+		window.TOKEN_OBJECTS[id].place();
+		window.TOKEN_OBJECTS[id].sync();
+
 	}
 
 
