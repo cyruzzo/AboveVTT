@@ -832,7 +832,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 
 		
 		// auto roll initiative for monsters
-		if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat') && (!disablerolling) && token.options.init == undefined){
+		if(window.DM && (token.options.monster > 0 || token.options.monster == 'open5e' || token.options.monster == 'customStat' || token.options.combatGroupToken != undefined) && (!disablerolling) && token.options.init == undefined){
 			window.StatHandler.rollInit(token.options.monster,function(value){
 				init.val(value);
 				token.options.init = value;

@@ -43,10 +43,16 @@ class StatHandler {
 			let statArray = [];
 			let promises = [];
 			for(let i in window.all_token_objects){
-				if(i == tokenId)
+				if(i == tokenId )
 					continue;
+
 				if(window.all_token_objects[i].options.combatGroup == tokenId){
-					if(window.all_token_objects[i].options.monster =='open5e'){
+					if(window.all_token_objects[i].isPlayer()){
+						const pc = find_pc_by_player_id(i);
+						modArray.push(pc.initiativeBonus);
+						statArray.push(pc.abilities[1].score);
+					}
+					else if(window.all_token_objects[i].options.monster =='open5e'){
 						promises.push(new Promise((resolve, reject) => {
 							this.getStat(window.all_token_objects[i].options.monster, function(data) {
 								modArray.push(Math.floor((data.stats[1].value - 10) / 2.0));
