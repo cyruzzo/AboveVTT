@@ -162,17 +162,23 @@ function getOrigin(token){
     let tokenLeft = (tok.position().left  + tokenImagePosition.left) / (window.ZOOM);
     let tokenRight = tokenLeft + tokenImageWidth;
     
-    let rayAngle = 90;
-    let ray = new Ray({x: (tokenLeft + tokenRight)/2, y: (tokenTop + tokenBottom)/2}, degreeToRadian(parseFloat(tok.css('--token-rotation')) % 360 - rayAngle));   
-    let dir = ray.dir;
-    let tokenWidth = token.sizeWidth();
-    let tokenHeight = token.sizeHeight();
-    let widthAdded = tokenHeight; 
+    if(token.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi)){
+        let rayAngle = 90;
+        let ray = new Ray({x: (tokenLeft + tokenRight)/2, y: (tokenTop + tokenBottom)/2}, degreeToRadian(parseFloat(tok.css('--token-rotation')) % 360 - rayAngle));   
+        let dir = ray.dir;
+        let tokenWidth = token.sizeWidth();
+        let tokenHeight = token.sizeHeight();
+        let widthAdded = tokenHeight; 
 
     return  {
                 'x': (tokenLeft + tokenRight)/2 + (widthAdded*dir.x/2),
                 'y': (tokenTop + tokenBottom)/2 + (widthAdded*dir.y/2)
-            }                         
+            }    
+    } 
+    return  {
+        'x': (tokenLeft + tokenRight)/2,
+        'y': (tokenTop + tokenBottom)/2
+    }                      
 }
 
 function set_spell_override_style(spellName){
