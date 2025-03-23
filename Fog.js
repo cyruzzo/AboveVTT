@@ -597,7 +597,7 @@ function is_token_in_aoe_context(tokenid, aoeContext=undefined){
 	let gridSquares = window.TOKEN_OBJECTS[tokenid].options.gridSquares;
 
 	if(gridSquares != undefined){
-		gridSquares = Math.max(gridSquares, 1);
+		gridSquares = Math.max(Math.round(gridSquares), 1);
 		let centerSquareLeft = (parseInt(window.TOKEN_OBJECTS[tokenid].options.left.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + window.CURRENT_SCENE_DATA.hpps/2/window.CURRENT_SCENE_DATA.scale_factor;
 		let centerSquareTop = (parseInt(window.TOKEN_OBJECTS[tokenid].options.top.replace('px', ''))/ window.CURRENT_SCENE_DATA.scale_factor) + window.CURRENT_SCENE_DATA.vpps/2/window.CURRENT_SCENE_DATA.scale_factor;
 		let pixeldata = aoeContext.getImageData(centerSquareLeft - 2, centerSquareTop -2, 4, 4).data;
