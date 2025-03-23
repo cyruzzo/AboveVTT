@@ -3543,8 +3543,8 @@ div#selectedTokensBorder {
 
 /* AOE STYLES */
 .aoe-style-acid{
-    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
-    box-shadow: inset -20px -20px 2px 1000px rgba(13, 253, 0, 0.49);
+    background:linear-gradient(rgba(13, 253, 0, 0.49), rgba(13, 253, 0, 0.49)), url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    background-repeat: no-repeat, repeat;
 }
 .aoe-style-bludgeoning{
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
@@ -3570,12 +3570,12 @@ div#selectedTokensBorder {
     background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
 }
 .aoe-style-poison {
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(119, 247, 0, 0.52);
+    background:linear-gradient(rgba(119, 247, 0, 0.52), rgba(119, 247, 0, 0.52)), url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    background-repeat: no-repeat, repeat;
 }
 .aoe-style-psychic {
-    background-image: url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
-    box-shadow: inset -20px -20px 2px 1000px rgba(115, 10, 235, 0.49);
+    background:linear-gradient(rgba(115, 10, 235, 0.49), rgba(115, 10, 235, 0.49)), url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
+    background-repeat: no-repeat, repeat;
 }
 .aoe-style-radiant {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
@@ -3585,20 +3585,93 @@ div#selectedTokensBorder {
     background-image: url(https://www.tilingtextures.com/wp-content/uploads/2018/11/0069-512x512.jpg);
 }
 .aoe-style-water{
-    background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
-    box-shadow: inset -20px -20px 2px 1000px rgba(49, 177, 246, 0.49);
+    background:linear-gradient(rgba(49, 177, 246, 0.49), rgba(49, 177, 246, 0.49)), url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
+    background-repeat: no-repeat, repeat;
 }
 
 .aoe-style-darkness{
     filter: grayscale(1) brightness(0.2) !important;
 }
-
+.aoe-style-fire{
+  background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fire_background.png);
+}
+.aoe-style-lightning{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/lightning.png);
+}
+.aoe-style-slashing{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/slashing.png);
+}
+.aoe-style-darkness{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fire_background.png);
+}
 /* SPECIFIC SPELL STYLES */
-
 .aoe-style-stinking-cloud{
-    box-shadow: inset -20px -20px 2px 1000px rgba(49, 246, 85, 0.49) !important;
+    background:linear-gradient(rgba(49, 246, 85, 0.49), rgba(49, 246, 85, 0.49)), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fog_cloud_tileable.png);
+    background-repeat: no-repeat, repeat;
+}
+.aoe-style-fog-cloud{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/fog_cloud_tileable.png) !important;
+}
+.aoe-style-hypnotic-pattern{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/hypnotic-pattern.png) !important;
+}
+.aoe-style-web{
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/tileable3pxsquareweb.png) !important;
 }
 
+[data-animation='fairy-fx'] .islight,
+.aura-element[data-animation='fairy-fx'][id*='aura_'] {
+    -webkit-mask-image: url('https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/fairys.png');
+}
+
+[data-animation='fairy-fx'] .islight:before,
+.aura-element[data-animation='fairy-fx'][id*='aura_']:before {
+    -webkit-mask-image: url('https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/fairys.png');
+}
+
+[data-animation='spore-fx'] .islight,
+.aura-element[data-animation='spore-fx'][id*='aura_'] {
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/spore.png");
+}
+
+[data-animation='lightning-fx'] .islight,
+.aura-element[data-animation='lightning-fx'][id*='aura_'] {
+    --mask-1: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightningcircle.png");
+}
+
+[data-animation='magic-circle-fx'] .islight,
+.aura-element[data-animation='magic-circle-fx'][id*='aura_'] {
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/magiccircle1.png");
+}
+
+[data-animation='magic-circle-2-fx'] .islight,
+.aura-element[data-animation='magic-circle-2-fx'][id*='aura_'] {
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/magiccircle2.png");
+}
+[data-animation='hurricane-fx'] .islight,
+.aura-element[data-animation='hurricane-fx'][id*='aura_'] {
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/hurricane_cloud.png");
+}
+
+[data-animation='hurricane-fx'] .islight:before,
+.aura-element[data-animation='hurricane-fx'][id*='aura_']:before
+{
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/lightning_2.png");
+}
+[data-animation='snow-fx'] .islight:before,
+.aura-element[data-animation='snow-fx'][id*='aura_']:before,
+[data-animation='snow-fx'] .islight:after,
+.aura-element[data-animation='snow-fx'][id*='aura_']:after
+{
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/snow.png");
+}
+[data-animation='bubble-fx'] .islight:before,
+.aura-element[data-animation='bubble-fx'][id*='aura_']:before,
+[data-animation='bubble-fx'] .islight:after,
+.aura-element[data-animation='bubble-fx'][id*='aura_']:after
+{
+    -webkit-mask-image: url("https://abovevtt-assets.s3.eu-central-1.amazonaws.com/mask-images/bubble.png");
+}
 
 
 /* END AOE STYLES */

@@ -434,6 +434,11 @@ class Token {
 	}
 
 	size(newSize, linewidth=false) {
+
+		let originalOrigin;
+		if(this.isAoe()){
+			originalOrigin = getOrigin(window.TOKEN_OBJECTS[this.options.id]);
+		}
 		this.MAX_TOKEN_SIZE = Math.max(window.CURRENT_SCENE_DATA.width*window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.height*window.CURRENT_SCENE_DATA.scale_factor);
 
 		// Clamp token size to min/max token size
@@ -452,7 +457,24 @@ class Token {
 			this.options.gridSquares = newSize / parseFloat(window.CURRENT_SCENE_DATA.hpps);
 		}
 
-		this.place_sync_persist();
+		if(this.isAoe()){
+			let token = $("#tokens").find(`div[data-id='${this.options.id}']`);
+			token.css({
+				width: this.sizeWidth(),
+				height: this.sizeHeight()
+			});			
+			let origin = getOrigin(window.TOKEN_OBJECTS[this.options.id]);
+			let dx = origin.x - originalOrigin.x;
+			let dy = origin.y - originalOrigin.y;				
+			
+			this.options.left = `${parseFloat(this.options.left) - dx}px`;
+			this.options.top = `${parseFloat(this.options.top) - dy}px`;
+			this.place(0);
+			this.sync($.extend(true, {}, this.options))
+		}
+		else{
+			this.place_sync_persist()
+		}
 	}
 
 	imageSize(imageScale) {
@@ -2052,7 +2074,7 @@ class Token {
 				if (old.css("left") != this.options.left || old.css("top") != this.options.top)
 					
 					remove_selected_token_bounding_box();
-					if(old.is(':animated')){
+					if(old.is(':animated') && animationDuration > 100){
 						// this token is being moved quickly, speed up the animation
 						animationDuration = 100;
 					}
@@ -2124,7 +2146,7 @@ class Token {
 						old.animate({
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
-						}, { duration: 1000, queue: false, complete: async function() {
+						}, { duration: animationDuration, queue: false, complete: async function() {
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 								throttleLight();
 							else
@@ -2144,7 +2166,7 @@ class Token {
 					$(`.isAoe[data-id='${this.options.id}']:not(.token)`).animate({
 						width: this.sizeWidth()/window.CURRENT_SCENE_DATA.scale_factor,
 						height: this.sizeHeight()/window.CURRENT_SCENE_DATA.scale_factor
-					}, { duration: 1000, queue: false });
+					}, { duration: animationDuration, queue: false });
 
 					let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps));
 					this.options.zindexdiff = Math.max(zindexdiff, -5000);
