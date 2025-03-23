@@ -1813,12 +1813,12 @@ function register_token_row_context_menu() {
                     }
                 };
             }
-            if(rowItem.isTypeMonster()){
+            if(rowItem.isTypeMonster() || rowItem.isTypeOpen5eMonster()){
                 menuItems["copyDDBToken"] = {
                     name: 'Copy to My Tokens',
                     callback: function(itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
-                        create_ddb_token_copy_inside(itemToPlace);
+                        create_token_copy_inside(itemToPlace, rowItem.isTypeOpen5eMonster());
                     }
                 }
             }
@@ -3668,7 +3668,7 @@ function duplicate_my_token(listItem){
         create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions);
     }
 }
-function create_ddb_token_copy_inside(listItem){
+function create_token_copy_inside(listItem, open5e = false){
     if (!listItem) return {};
 
     // set up whatever you need to. We'll override a few things after
@@ -3697,7 +3697,7 @@ function create_ddb_token_copy_inside(listItem){
     // TODO: figure out if we still need to do this, and where they are coming from
     delete options.undefined;
     delete options[""];
-    const statBlock = build_stat_block_for_copy(listItem, options)
+    const statBlock = build_stat_block_for_copy(listItem, options, open5e)
 
     
 }
