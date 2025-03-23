@@ -61,7 +61,7 @@ function build_stat_block_for_copy(listItem, options){
 
 function display_stat_block_in_container(statBlock, container, tokenId, customStatBlock = undefined) {
     const token = window.TOKEN_OBJECTS[tokenId];
-    const html = (customStatBlock) ? $(`
+    let html = (customStatBlock) ? $(`
     <div class="container avtt-stat-block-container custom-stat-block">${customStatBlock}</div>`) : build_monster_stat_block(statBlock, token);
     container.find("#noAccessToContent").remove(); // in case we're re-rendering with better data
     container.find(".avtt-stat-block-container").remove(); // in case we're re-rendering with better data
@@ -105,7 +105,15 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         send_html_to_gamelog(imgContainer[0].outerHTML);
     });
 
-   
+    if(!customStatBlock)
+      container.find("div.image").append(statBlock.imageHtml(token));
+    container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
+    if(!customStatBlock)
+      scan_monster(container, statBlock, tokenId);
+    else
+      add_ability_tracker_inputs(container, tokenId)
+    // scan_creature_pane(container, statBlock.name, statBlock.image);
+    add_stat_block_hover(container, tokenId);
     container.find("p>em>strong, p>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
       if(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)
@@ -120,7 +128,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       e.preventDefault();
       if($(event.target).text().includes('Recharge'))
         return;
-      let rollButtons = $(event.target.closest('p')).find('.avtt-roll-button');
+      let rollButtons = $(event.target.closest('p')).find('.avtt-roll-button:not([data-rolltype="recharge"])');
       const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
       const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock.data.avatarUrl;
       $(event.target.closest('p')).find('.avtt-aoe-button')?.click();
@@ -158,21 +166,10 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         }
       }
     })
+    let abilities= container.find("p>em>strong, p>strong>em");
 
-
-    if(!customStatBlock)
-      container.find("div.image").append(statBlock.imageHtml(token));
-    container.find("a").attr("target", "_blank"); // make sure we only open links in new tabs
-    if(!customStatBlock)
-      scan_monster(container, statBlock, tokenId);
-    else
-      add_ability_tracker_inputs(container, tokenId)
-    // scan_creature_pane(container, statBlock.name, statBlock.image);
-    add_stat_block_hover(container, tokenId);
-
-    let abilities = container.find("p>em>strong, p>strong>em");
     for(let i = 0; i<abilities.length; i++){
-      if($(abilities[i]).closest('p').find('.avtt-roll-button').length>0 && !$(abilities[i]).closest('p').text().includes('Recharge')){
+      if($(abilities[i]).closest('p').find('.avtt-roll-button').length>0 ){
         $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
       }
     }

@@ -35,6 +35,7 @@ function scan_monster(target, stats, tokenId) {
 	$(target).find(".mon-stat-block p, .stat-block p").each(function() {
 		if ($(this).find(".avtt-roll-button").length == 0) {
 				$($(this)).find("span[data-dicenotation]").each(function (){
+
 				// clone the element as if it came from an iframe these variables won't be freed from memory
 				let currentElement = $(this).clone()
 				const modMatch = $(currentElement).attr("data-dicenotation")?.match(/(\+|-).*/gm)
@@ -45,8 +46,23 @@ function scan_monster(target, stats, tokenId) {
 				const text = $(currentElement)?.text()
 				const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
 
-
-				$(this).replaceWith(`<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' ${followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? `data-damagetype='${followingText}'` : ''} data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`)
+				const button = `<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' ${followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? `data-damagetype='${followingText}'` : ''} data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`
+				
+				if(rollType == 'recharge'){
+					const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
+					$(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').replaceWith($($(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').text().replace(
+                /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+                /(lair|legendary) actions/g.test(data)
+                    ? '<strong>$1$4</strong>$3$5$6'
+                    : '<em><strong>$1$4</strong></em>$3$5$6'
+            
+            ).replaceAll(/[\s]+\./gi, '.').replaceAll(rechargeRegEx, button))
+					);
+				}
+				else{
+					$(this).replaceWith(button)
+				}
+				
 				// terminate the clones reference, overkill but rather be safe when it comes to memory
 				currentElement = null
 			})
