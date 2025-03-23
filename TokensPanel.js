@@ -1822,6 +1822,15 @@ function register_token_row_context_menu() {
                     }
                 }
             }
+            if(rowItem.isTypeMyToken()){
+                menuItems["duplicateMyToken"] = {
+                    name: 'Duplicate',
+                    callback: function(itemKey, opt, originalEvent) {
+                        let itemToPlace = find_sidebar_list_item(opt.$trigger);
+                        duplicate_my_token(itemToPlace);
+                    }
+                }
+            }
             if(rowItem.isTypeFolder() || rowItem.isTypePC() || rowItem.isTypeEncounter()){
                 menuItems["border"] = "---";
 
@@ -3649,7 +3658,16 @@ function find_token_options_for_list_item(listItem) {
         return find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, rootId)?.allCombinedOptions() || {};
     }
 }
-
+function duplicate_my_token(listItem){
+    if (!listItem) return {};
+    let foundOptions = find_token_options_for_list_item(listItem);
+    if(window.JOURNAL.notes[listItem.id] != undefined){
+        create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
+    }
+    else{
+        create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions);
+    }
+}
 function create_ddb_token_copy_inside(listItem){
     if (!listItem) return {};
 

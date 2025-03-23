@@ -2287,6 +2287,8 @@ function numToColor(num, alpha, max) {
  * @returns
  */
 function drawing_mousedown(e) {
+	if($(e.target).is('#context-menu-layer'))
+		return;
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){
 		clear_temp_canvas()
