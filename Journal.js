@@ -1577,7 +1577,7 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
-        let lines = data.split(/(<br \/>|<br>|<p>|\n|<strong>)/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|\n|<strong>|<em>)/g);
         lines = lines.map((line, li) => {
             let input = line;
             input = input.replace(/&nbsp;/g,' ')
@@ -1590,11 +1590,11 @@ class JournalManager{
             input = input.replace(/'/g, '’');
             // e.g. Divine Touch. Melee Spell Attack:
             input = input.replace(
-                /^(([A-Z0-9][^ .]+ ?){1,7}(\([^\)]+\))?\.)( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gim,
+                /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
                 /(lair|legendary) actions/g.test(data)
-                    ? '<strong>$1</strong>'
-                    : '<em><strong>$1</strong>$4</em>'
-            );
+                    ? '<strong>$1$4</strong>$3$5$6'
+                    : '<em><strong>$1$4</strong></em>$3$5$6'
+            ).replace(/[\s]+\./gi, '.');
 
             // Find actions requiring saving throws
             input = input.replace(
