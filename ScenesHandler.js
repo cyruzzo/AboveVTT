@@ -1014,8 +1014,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}, 300);
 		}
 
-		window.TOKEN_OBJECTS[id].place();
 		if(options.repositionAoe != undefined){
+			window.TOKEN_OBJECTS[id].place(0);
 			let origin, dx, dy;		
 			origin = getOrigin(window.TOKEN_OBJECTS[id]);
 			dx = origin.x - options.repositionAoe.x;
@@ -1025,8 +1025,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			delete options.repositionAoe;
 		}
 		
-		window.TOKEN_OBJECTS[id].place();
-		window.TOKEN_OBJECTS[id].sync();
+		window.TOKEN_OBJECTS[id].place(0);
+		window.TOKEN_OBJECTS[id].sync($.extend(true, {}, options));
 
 	}
 
