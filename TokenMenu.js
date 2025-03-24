@@ -3914,6 +3914,44 @@ function open_quick_roll_menu(e){
 		qrm_update_popout();
 	});
 
+	let qrm_sendToGamelog = $("<button id='qrm-block-send-to-game-log'><span class='material-symbols-outlined'>login</span></button>");
+	qrm_sendToGamelog.click(function() {
+		let results = $("#quick_roll_area").clone();
+		results.find('#roll_bonus, .roll_mods_group, td>td:nth-of-type(2), td>td:nth-of-type(3)').remove();
+		results.find('input').replaceWith(function(){
+			return $(`<span>${$(this).val()}</span>`)
+		})
+		results.find('img').attr('width', '30').attr('height', '30');
+		results.find('tr').css({
+			'max-height': '30px',
+			'height': '30px'
+		})
+		results.find('tr>td:first-of-type').css({
+			'width': '30px',
+			'height': '30px'
+		})
+		results.find('tr>td:nth-of-type(even)').css({
+			'height': '15px',
+			'font-size': '12px'
+		})
+		results.css({'width':'100%'});
+		results.find('tr td span').each(function(){
+			if($(this).text().match(/fail/gi)){
+				$(this).toggleClass('save-fail', true)
+			}
+			else{
+				$(this).toggleClass('save-success', true)
+			}
+		})
+		results.attr('id','qrm-gamelog');
+		let msgdata = {
+			player: window.PLAYER_NAME,
+			img: window.PLAYER_IMG,
+			text: results[0].outerHTML,
+		};
+		window.MB.inject_chat(msgdata);
+	});
+
 	//Update HP buttons	
 	let qrm_hp_adjustment_wrapper=$('<div id="qrm_adjustment_wrapper" class="adjustments_wrapper"></div>');
 
@@ -4003,10 +4041,19 @@ function open_quick_roll_menu(e){
 	});
 
 	let qrm_footer = $("<div id='quick_roll_footer' class='footer-input-wrapper tfoot'/>");
-	qrm_footer.css('bottom', '0');
-	qrm_footer.css('position','sticky');
-	qrm_footer.css('background', "#f9f9f9");
-	qrm_footer.css('height', 'fit-content');
+	qrm_footer.css({
+		'bottom': '0',
+		'position':'sticky',
+		'background': "#f9f9f9",
+		'height': 'fit-content',
+	    'display': 'flex',
+	    'flex-direction': 'row',
+	    'flex-wrap': 'wrap',
+	    'justify-content': 'flex-start',
+	    'align-items': 'center',
+	    'row-gap': '5px',
+	});
+
 	
 	qrm_footer.append(damage_input)
 	qrm_footer.append(half_damage_input)
@@ -4019,6 +4066,7 @@ function open_quick_roll_menu(e){
 	qrm_footer.append(apply_adjustments)
 	//qrm_footer.append(heal_hp);
 	//qrm_footer.append(damage_hp);
+	qrm_footer.append(qrm_sendToGamelog);
 	qrm_footer.append(qrm_clear);
 	//damage_hp.hide()
 	//heal_hp.hide()
