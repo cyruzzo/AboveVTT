@@ -9728,6 +9728,15 @@ button.journal-view-button.journal-button {
     border-radius:5px;
     border:1px solid #ddd
 }
+[class*="glc-game-log"] table#qrm-gamelog tbody{
+    width:100%;
+    display:block;
+}
+
+[class*="glc-game-log"] table#qrm-gamelog tr{
+    display:table;
+    width:100%;
+}
 [class*="glc-game-log"] table#qrm-gamelog :is(tr, td),
 [class*="glc-game-log"] table#qrm-gamelog{
     background:none;
