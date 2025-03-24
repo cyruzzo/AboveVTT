@@ -9701,6 +9701,53 @@ button.journal-view-button.journal-button {
     text-align: left;
     color: #444d;
     font-weight: 600;
+
+}
+
+#qrm-block-send-to-game-log {
+    width: 22px;
+    height: 22px;
+    display:inline-flex;
+    align-items: center;
+    justify-content: center;
+    position:relative;
+}
+[class*="glc-game-log"] .qrm_name_line{
+    max-width:;
+
+}
+[class*="glc-game-log"] span.save-fail{
+    color: #A00;
+}
+[class*="glc-game-log"] span.save-success{
+    color:#0A0;
+}
+[class*="glc-game-log"] table#qrm-gamelog{
+    width: 100%;
+    display: block;
+    border-radius:5px;
+    border:1px solid #ddd
+}
+[class*="glc-game-log"] table#qrm-gamelog :is(tr, td),
+[class*="glc-game-log"] table#qrm-gamelog{
+    background:none;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    border-radius:5px;
+}
+[class*="glc-game-log"] table#qrm-gamelog td{
+    max-width:210px;
+    width:100%;
+}
+[class*="glc-game-log"] table#qrm-gamelog tr:nth-of-type(odd){
+    backdrop-filter:brightness(0.96);
+    border-radius:5px;
+}
+
+
+#qrm-block-send-to-game-log span{
+    font-size: 20px;
 }
 .menu_table{
     overflow: visible;
@@ -10587,7 +10634,6 @@ button#editAnimations {
     border-color: #ddd;
 }
 .adjustments_wrapper{
-    top: 5px;
     position: relative;
     display: inline-block;
 }
