@@ -502,12 +502,32 @@ function roll_button_contextmenu_handler(contextmenuEvent, displayName, imgUrl, 
  */
 function roll_button_clicked(clickEvent, displayName, imgUrl, entityType = undefined, entityId = undefined) {
 	let pressedButton = $(clickEvent.currentTarget).clone();
-	const expression = pressedButton.attr('data-exp');
+	let expression = pressedButton.attr('data-exp');
 	let modifier = pressedButton.attr('data-mod')?.replaceAll("(", "")?.replaceAll(")", "");
 	let rollType = pressedButton.attr('data-rolltype');
 	const action = pressedButton.attr('data-actiontype');
 	const damageType = pressedButton.attr('data-damagetype');
 	modifier = modifier == 0 ? '+0' : modifier;
+
+	
+  if (/^1d20/g.test(expression)) {
+     if(clickEvent.altKey){
+        if(clickEvent.shiftKey){
+          expression = `3d20kh1`;
+         }
+         else if((!isMac() && clickEvent.ctrlKey) || clickEvent.metaKey){
+          expression = `3d20kl1`;
+         }
+     }
+     else if(clickEvent.shiftKey){
+      expression = `2d20kh1`;
+     }
+     else if((!isMac() && clickEvent.ctrlKey) || clickEvent.metaKey){
+      expression = `2d20kl1`;
+     }
+  }
+ 
+	
 
 	window.diceRoller.roll(new DiceRoll(
 		`${expression}${modifier}`,

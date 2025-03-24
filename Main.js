@@ -3512,9 +3512,14 @@ function init_help_menu() {
 							<dd>Will cycle through fog & draw options if menu open</dd>
 						<dl>
 						<dl>
-							<dt>${getShiftKeyName()}/${getCtrlKeyName()} Click on Character Sheet Icon Rolls</dt>
+							<dt>${getShiftKeyName()}/${getModKeyName()} Click on Icon Rolls and Most Character/Extras/Monsters d20 Rolls</dt>
 							<dd>Will roll with ADV/DIS respectively</dd>
 						<dl>
+						<dl>
+							<dt>${getAltKeyName()} + ${getShiftKeyName()}/${getModKeyName()} Click on Icon Rolls and Most Character/Extras/Monsters d20 Rolls</dt>
+							<dd>Will roll with Super ADV/DIS respectively</dd>
+						<dl>
+		
 					</div>
 
 					<div id="tab2" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true">

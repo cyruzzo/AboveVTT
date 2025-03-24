@@ -126,7 +126,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
     add_stat_block_hover(container, tokenId);
     container.find("p>em>strong, p>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
       e.preventDefault();
-      if(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)
+      if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
         return;
       let outerP = event.target.closest('p').outerHTML;
       const regExFeature = new RegExp(`<p(.+)?>.+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?)(</p>|<br ?/?>|<p>)`, 'gi');
@@ -152,14 +152,14 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
                 if(e.shiftKey){
                   diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
                  }
-                 else if(e.ctrlKey || e.metaKey){
+                 else if((!isMac() && e.ctrlKey) || e.metaKey){
                   diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
                  }
              }
              else if(e.shiftKey){
               diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
              }
-             else if(e.ctrlKey || e.metaKey){
+             else if((!isMac() && e.ctrlKey) || e.metaKey){
               diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
              }else{
               diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
