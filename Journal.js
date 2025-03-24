@@ -1562,11 +1562,18 @@ class JournalManager{
 
 
     translateHtmlAndBlocks(target) {
-    	let pastedButtons = target.find('.avtt-roll-button').add(target.find('.integrated-dice__container'));
+    	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container');
 
 		for(let i=0; i<pastedButtons.length; i++){
 			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
 		}
+		let emStrong = target.find('p>em:first-of-type:has(strong), p>strong:first-of-type:has(em)');
+		for(let i=0; i<emStrong.length; i++){
+			if($(emStrong[i]).text().match(/recharge/gi))
+				$(emStrong[i]).replaceWith($(emStrong[i]).text());
+		}
+		
+
 		const trackerSpans = target.find('.note-tracker');
 		for(let i=0; i<trackerSpans.length; i++){
 			$(trackerSpans[i]).replaceWith(`[track]${$(trackerSpans[i]).text()}[/track]`);
@@ -1577,9 +1584,12 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
-        let lines = data.split(/(<br \/>|<br>|<p>|\n|<strong>|<em>)/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
+
+            input.replace(/^(<(strong|em)><(strong|em)>([a-z0-9\s])<\/(strong|em)><\/(strong|em)>)/gi, '$4');
+
             input = input.replace(/&nbsp;/g,' ')
 
 
@@ -1590,10 +1600,10 @@ class JournalManager{
             input = input.replace(/'/g, '’');
             // e.g. Divine Touch. Melee Spell Attack:
             input = input.replace(
-                /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+                /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
                 /(lair|legendary) actions/g.test(data)
-                    ? '<strong>$1$4</strong>$3$5$6'
-                    : '<em><strong>$1$4</strong></em>$3$5$6'
+                    ? '<strong>$1$4</strong><em>$3$5$6</em>'
+                    : '<em><strong>$1$4</strong></em><em>$3$5$6</em>'
             ).replace(/[\s]+\./gi, '.');
 
             // Find actions requiring saving throws
