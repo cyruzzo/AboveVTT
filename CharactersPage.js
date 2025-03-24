@@ -734,7 +734,21 @@ function convertToRPGRoller(){
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
- 
+    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off().on('mouseover.color', function(e){
+      if(e.shiftKey){
+        $(this).toggleClass('advantageHover', true)
+      }
+      else if((!isMac() && e.ctrlKey) || e.metaKey){
+        $(this).toggleClass('disadvantageHover', true)
+      }else{
+        $(this).toggleClass('advantageHover', false)
+        $(this).toggleClass('disadvantageHover', false)
+      }
+    })
+   $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseleave.color').on('mouseleave.color', function(e){
+      $(this).toggleClass('advantageHover', false)
+      $(this).toggleClass('disadvantageHover', false)
+    })
     $(`.integrated-dice__container:not('.above-combo-roll'):not('.above-aoe'):not(.avtt-roll-formula-button)`).off('click.rpg-roller').on('click.rpg-roller', function(e){
       if($(this).parent().hasClass('ct-reset-pane__hitdie-manager-dice'))// allow hit dice roll to go through ddb for auto heals - maybe setup our own message by put to https://character-service.dndbeyond.com/character/v5/life/hp/damage-taken later
         return;
@@ -744,9 +758,30 @@ function convertToRPGRoller(){
         return;
       }
       e.stopImmediatePropagation();
+
+
+      if (/^1d20/g.test( rollData.expression)) {
+        if(e.altKey){
+          if(e.shiftKey){
+            rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kh1');
+          }
+           else if((!isMac() && e.ctrlKey) || e.metaKey){
+            rollData.expression = rollData.expression.replace(/^1d20/g, '3d20kl1');
+          }
+         }
+         else if(e.shiftKey){
+          rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
+         }  
+         else if((!isMac() && e.ctrlKey) || e.metaKey){
+            rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kl1');
+         }
+      }
+
       if(rollData.rollTitle == 'Initiative' && $(`[aria-label="Has advantage on initiative"]`).length){
         rollData.expression = rollData.expression.replace(/^1d20/g, '2d20kh1');
       }
+
+     
       window.diceRoller.roll(new DiceRoll(rollData.expression, rollData.rollTitle, rollData.rollType));
     });
 }
@@ -767,11 +802,11 @@ async function init_character_sheet_page() {
     observe_character_theme_change();
     observe_character_image_change();
     $(document).off('keydown.keypressAdv keyup.keypressAdv').on('keydown.keypressAdv keyup.keypressAdv', function(e) {
-      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover')
+      let target = $('.ddbc-combat-attack__icon.above-vtt-visited:hover, .ct-spells-spell__action.above-vtt-visited:hover, .integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"]):hover')
       if(e.shiftKey){
         $(target).toggleClass('advantageHover', true)
       }
-      else if(e.ctrlKey || e.metaKey){
+      else if((!isMac() && e.ctrlKey) || e.metaKey){
         $(target).toggleClass('disadvantageHover', true)
       }else{
         $(target).toggleClass('advantageHover', false)
@@ -1357,7 +1392,7 @@ function observe_character_sheet_changes(documentToObserve) {
         if(e.shiftKey){
           $(this).toggleClass('advantageHover', true)
         }
-        else if(e.ctrlKey || e.metaKey){
+        else if((!isMac() && e.ctrlKey) || e.metaKey){
           $(this).toggleClass('disadvantageHover', true)
         }else{
           $(this).toggleClass('advantageHover', false)
@@ -1389,14 +1424,14 @@ function observe_character_sheet_changes(documentToObserve) {
                     if(e.shiftKey){
                       diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                     }
-                     else if(e.ctrlKey || e.metaKey){
+                     else if((!isMac() && e.ctrlKey) || e.metaKey){
                       diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType);
                     }
                    }
                    else if(e.shiftKey){
                     diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType);
                    }
-                   else if(e.ctrlKey || e.metaKey){
+                   else if((!isMac() && e.ctrlKey) || e.metaKey){
                     diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType);
                    }else{
                     diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType);
@@ -1640,7 +1675,7 @@ function observe_character_sheet_changes(documentToObserve) {
         if(e.shiftKey){
           $(this).toggleClass('advantageHover', true)
         }
-        else if(e.ctrlKey || e.metaKey){
+        else if((!isMac() && e.ctrlKey) || e.metaKey){
           $(this).toggleClass('disadvantageHover', true)
         }else{
           $(this).toggleClass('advantageHover', false)
@@ -1684,14 +1719,14 @@ function observe_character_sheet_changes(documentToObserve) {
                 if(e.shiftKey){
                   data.expression = data.expression.replaceAll(/^1d20/g, '3d20kh1')
                  }
-                 else if(e.ctrlKey || e.metaKey){
+                 else if((!isMac() && e.ctrlKey) || e.metaKey){
                   data.expression = data.expression.replaceAll(/^1d20/g, '3d20kl1')
                  }
               }
               else if(e.shiftKey){
                 data.expression = data.expression.replaceAll(/^1d20/g, '2d20kh1')
               }
-              else if(e.ctrlKey || e.metaKey){
+              else if((!isMac() && e.ctrlKey) || e.metaKey){
                 data.expression = data.expression.replaceAll(/^1d20/g, '2d20kl1')
               }  
             }
