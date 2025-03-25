@@ -155,6 +155,16 @@ const buffsDebuffs = {
     "type": "class",
     "class": "barbarian",
   },
+  "Luck": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /1d20/gi,
+    "newRoll": '1d20ro=1',
+    "type": "species",
+    "species": "halfling",
+  },
   "Great Weapon Master (2024)": {
     "tohit": "0",
     "dmg": "+PB",
@@ -741,7 +751,7 @@ function convertToRPGRoller(){
               .present(e.clientY, e.clientX) // TODO: convert from iframe to main window
           }
     })
-    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off().on('mouseover.color', function(e){
+    $('.integrated-dice__container.above-vtt-visited-damage:has([class*="styles_signed"])').off('mouseover.color').on('mouseover.color', function(e){
       if(e.shiftKey){
         $(this).toggleClass('advantageHover', true)
       }
@@ -1056,51 +1066,39 @@ function rebuild_buffs(fullBuild = false){
   window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
   rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
   let avttBuffSelect;
+  const innerBuffHtml = `
+    <ul id='favoriteBuffs'><li>Favorite</li></ul>
+    <ul id='classBuffs'><li>Class</li>
+      <ul id='barbarianBuffs'><li>Barbarian</li></ul>
+      <ul id='bardBuffs'><li>Bard</li></ul>
+      <ul id='clericBuffs'><li>Cleric</li></ul>
+      <ul id='druidBuffs'><li>Druid</li></ul>
+      <ul id='fighterBuffs'><li>Fighter</li></ul>
+      <ul id='monkBuffs'><li>Monk</li></ul>
+      <ul id='paladinBuffs'><li>Paladin</li></ul>
+      <ul id='rangerBuffs'><li>Ranger</li></ul>
+      <ul id='rogueBuffs'><li>Rogue</li></ul>
+      <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
+      <ul id='warlockBuffs'><li>Warlock</li></ul>
+      <ul id='wizardBuffs'><li>Wizard</li></ul>
+    </ul>
+    <ul id='speciesBuffs'><li>Species</li>
+      <ul id='halflingBuffs'><li>Halfling</li></ul>
+    </ul>      
+    <ul id='spellBuffs'><li>Spells</li></ul>
+    <ul id='featBuffs'><li>Feats</li></ul>
+  `
   if(fullBuild){
     avttBuffSelect = $(`<div id="avtt-buff-options" class="dropdown-check-list">
       <span class="clickHandle">Roll Buff/Debuffs</span>
       <ul class="avttBuffItems">
-        <ul id='favoriteBuffs'><li>Favorite</li></ul>
-        <ul id='classBuffs'><li>Class</li>
-          <ul id='barbarianBuffs'><li>Barbarian</li></ul>
-          <ul id='bardBuffs'><li>Bard</li></ul>
-          <ul id='clericBuffs'><li>Cleric</li></ul>
-          <ul id='druidBuffs'><li>Druid</li></ul>
-          <ul id='fighterBuffs'><li>Fighter</li></ul>
-          <ul id='monkBuffs'><li>Monk</li></ul>
-          <ul id='paladinBuffs'><li>Paladin</li></ul>
-          <ul id='rangerBuffs'><li>Ranger</li></ul>
-          <ul id='rogueBuffs'><li>Rogue</li></ul>
-          <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
-          <ul id='warlockBuffs'><li>Warlock</li></ul>
-          <ul id='wizardBuffs'><li>Wizard</li></ul>
-        </ul>
-        <ul id='spellBuffs'><li>Spells</li></ul>
-        <ul id='featBuffs'><li>Feats</li></ul>
+        ${innerBuffHtml}      
       </ul>
     </div>`)
   }
   else{
     avttBuffSelect = $(`#avtt-buff-options`);
-    avttBuffSelect.find('.avttBuffItems').html(`
-      <ul id='favoriteBuffs'><li>Favorite</li></ul>
-      <ul id='classBuffs'><li>Class</li>
-        <ul id='barbarianBuffs'><li>Barbarian</li></ul>
-        <ul id='bardBuffs'><li>Bard</li></ul>
-        <ul id='clericBuffs'><li>Cleric</li></ul>
-        <ul id='druidBuffs'><li>Druid</li></ul>
-        <ul id='fighterBuffs'><li>Fighter</li></ul>
-        <ul id='monkBuffs'><li>Monk</li></ul>
-        <ul id='paladinBuffs'><li>Paladin</li></ul>
-        <ul id='rangerBuffs'><li>Ranger</li></ul>
-        <ul id='rogueBuffs'><li>Rogue</li></ul>
-        <ul id='sorcererBuffs'><li>Sorcerer</li></ul>
-        <ul id='warlockBuffs'><li>Warlock</li></ul>
-        <ul id='wizardBuffs'><li>Wizard</li></ul>
-      </ul>
-      <ul id='spellBuffs'><li>Spells</li></ul>
-      <ul id='featBuffs'><li>Feats</li></ul>
-    `)
+    avttBuffSelect.find('.avttBuffItems').html(innerBuffHtml)
   }
 
   const avttBuffItems = avttBuffSelect.find('.avttBuffItems')
@@ -1128,7 +1126,7 @@ function rebuild_buffs(fullBuild = false){
     {}
   );
   for(let i in sortedBuffs){
-    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type}Buffs`);
+    const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type}Buffs`);
     const replacedName = i.replace("'", '');
     const addToFavorite = rollBuffFavorites.includes(replacedName);
 
@@ -1395,7 +1393,7 @@ function observe_character_sheet_changes(documentToObserve) {
         '-ms-user-select': 'none',
         'user-select': 'none',
       })
-      spells.off().on('mouseover.color', function(e){
+      spells.off('mouseover.color').on('mouseover.color', function(e){
         if(e.shiftKey){
           $(this).toggleClass('advantageHover', true)
         }
@@ -1678,7 +1676,7 @@ function observe_character_sheet_changes(documentToObserve) {
         '-ms-user-select': 'none',
         'user-select': 'none',
       })
-      attackIcons.off().on('mouseover.color', function(e){
+      attackIcons.off('mouseover.color').on('mouseover.color', function(e){
         if(e.shiftKey){
           $(this).toggleClass('advantageHover', true)
         }
