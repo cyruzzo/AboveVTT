@@ -2821,7 +2821,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 		const otherVersions = Object.keys(get_ddb_extras()).filter(d=>d.match(regEx));
 		if(otherVersions.length > 0){
 			for(let i = 0; i<otherVersions.length; i++){
-				scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[otherVersions[i]]}
+				scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid], ...DDB_EXTRAS[otherVersions[i]]}
 				sceneData.push(scene);
 				const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 				sectionHtml.find("ul").append(sceneHtml);
