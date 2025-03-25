@@ -407,6 +407,17 @@ function getRollData(rollButton){
         modifier = (roll.rolls.length > 1 && expression.match(/[+-]\d*$/g)) ? `${roll.rolls[roll.rolls.length-2]}${roll.rolls[roll.rolls.length-1]}` : '';
     }
     
+    if(typeof window.rollBuffs != 'undefined'){
+        for(let i in window.rollBuffs){
+            const isMultiOption = Array.isArray(window.rollBuffs[i]);
+            if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace != undefined){
+                expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace, buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].newRoll)}`
+            }
+            else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].replace != undefined){
+                expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i]].replace, buffsDebuffs[window.rollBuffs[i]].newRoll)}`
+            }
+        }
+    }
 
     const followingText = $(rollButton)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
     damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : damageType;     
