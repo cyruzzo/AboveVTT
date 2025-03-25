@@ -391,6 +391,13 @@ const buffsDebuffs = {
       "save": "0",
       "check": "0",
       "type": "spell"
+  },
+  "Synaptic Static": {
+      "tohit": "-d6",
+      "dmg": "0",
+      "save": "0",
+      "check": "-d6",
+      "type": "spell"
   }
 }
 let rollBuffFavorites = [];
