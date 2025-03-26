@@ -486,12 +486,12 @@ function add_journal_roll_buttons(target, tokenId=undefined){
       rollAction = 'Roll';
     } 
     else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){ 
-      rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+      rollAction = $(this)[0].previousSibling?.nodeValue.replace(/[\W]+/gi, '');
       rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
       rollType = 'Save';  
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'skills'){
-      rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
+      rollAction = $(this)[0].previousSibling?.nodeValue.replace(/[\W]+/gi, '');
       rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
       rollType = 'Check'; 
     }
