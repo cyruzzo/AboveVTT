@@ -5376,20 +5376,17 @@ Vector.dist = function(v1, v2) {
 // vector object instance methods
 Vector.prototype.mag = function() {
   let x = this.x,
-      y = this.y,
-      z = this.z;
-  return Math.sqrt(x * x + y * y + z * z);
+      y = this.y;
+  return Math.sqrt(x * x + y * y);
 };
 
 Vector.prototype.div = function(v) {
   if (typeof v === 'number') {
     this.x /= v;
     this.y /= v;
-    this.z /= v;
   } else {
     this.x /= v.x;
     this.y /= v.y;
-    this.z /= v.z;
   }
 };
 
@@ -5427,47 +5424,87 @@ Ray.prototype.draw = function(ctx) {
 
 Ray.prototype.cast = function(boundary) {
 
+  if(boundary.radius != undefined){
+		let u = {
+			x: boundary.a.x - this.pos.x,
+			y: boundary.a.y - this.pos.y
+		}
 
-  let x1 = boundary.a.x;
-  let y1 = boundary.a.y;
-  let x2 = boundary.b.x;
-  let y2 = boundary.b.y;
-  
-  const x3 = this.pos.x;
-  const y3 = this.pos.y;
-  const x4 = this.pos.x + this.dir.x;
-  const y4 = this.pos.y + this.dir.y;
+		let scalar = (u.x * this.dir.x) + (this.dir.y * u.y);
+		let u1 = {
+			x:scalar*this.dir.x,
+			y:scalar*this.dir.y
+		};
 
-  const r = {
-  	x: (x2 - x1),
-  	y: (y2 - y1)
-  }
-  const s = {
-  	x: (x4 - x3),
-  	y: (y4 - y3)
-  }
-  const den = (r.x * s.y) - (s.x * r.y);
-  // if denominator is zero then the ray and boundary are parallel
-  if (den === 0) {
-    return;
-  }
-  
-  const ca = {
-  	x: (x3 - x1),
-  	y: (y3 - y1)
-  }
-  // numerator divided by denominator
-  let t = ((ca.x * s.y) - (ca.y * s.x)) / den;
-  let u = ((ca.x * r.y) - (ca.y * r.x)) / den;
-  
-  if (t >= 0 && t <= 1 && u >= 0) {
-    const pt = new Vector();
-    pt.x = x1 + t * r.x;
-    pt.y = y1 + t * r.y;
-    return pt;
-  } else {
-    return;
-  }
+		let u2 = new Vector(u.x - u1.x, u.y - u1.y);
+		let d = Math.hypot(u2.x,  u2.y);
+	
+		let m = Math.sqrt(boundary.radius**2 - d**2);
+
+		if(d>boundary.radius){
+			return;
+		}
+		else{
+			let p1 = new Vector(this.pos.x + u1.x + m*this.dir.x, this.pos.y + u1.y + m*this.dir.y);
+					  
+		  	if(d < boundary.radius && Vector.dist(this.pos, boundary.a) > boundary.radius){
+		  		
+		  		let p2 = new Vector(this.pos.x + u1.x - m*this.dir.x, this.pos.y + u1.y - m*this.dir.y);
+		  		let distance1 = Vector.dist(this.pos, p1);
+		  		let distance2 = Vector.dist(this.pos, p2);
+			  	if(distance1 >= distance2){
+			  		return p2
+			  	}
+	            
+			 }
+			else{
+				return p1
+			}
+		}
+	}			
+	else{
+		let x1 = boundary.a.x;
+		let y1 = boundary.a.y;
+		let x2 = boundary.b.x;
+		let y2 = boundary.b.y;
+		
+		const x3 = this.pos.x;
+		const y3 = this.pos.y;
+		const x4 = this.pos.x + this.dir.x;
+		const y4 = this.pos.y + this.dir.y;
+
+		const r = {
+			x: (x2 - x1),
+			y: (y2 - y1)
+		}
+		const s = {
+			x: (x4 - x3),
+			y: (y4 - y3)
+		}
+		const den = (r.x * s.y) - (s.x * r.y);
+		// if denominator is zero then the ray and boundary are parallel
+		if (den === 0) {
+		  return;
+		}
+		
+		const ca = {
+			x: (x3 - x1),
+			y: (y3 - y1)
+		}
+		// numerator divided by denominator
+		let t = ((ca.x * s.y) - (ca.y * s.x)) / den;
+		let u = ((ca.x * r.y) - (ca.y * r.x)) / den;
+		
+		if (t >= 0 && t <= 1 && u >= 0) {
+		  const pt = new Vector();
+		  pt.x = x1 + t * r.x;
+		  pt.y = y1 + t * r.y;
+		  return pt;
+		} else {
+		  return;
+		}
+	}
+ 
 };
 
 // particle object
@@ -5564,7 +5601,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 
 	    }	    
-	    if (closestLight && (closestWall != prevClosestWall || i == 359)) {
+	    if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius !=undefined)) {
 	    	if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
 	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
 	    	}
