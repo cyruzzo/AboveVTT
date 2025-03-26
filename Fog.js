@@ -6102,57 +6102,57 @@ function redraw_light(){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 	}	
 
-	requestAnimationFrame(function(){
-		context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-		if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
-			let exploredCanvas = document.getElementById("exploredCanvas");
-			if($('#exploredCanvas').length == 0){
-				exploredCanvas =  document.createElement("canvas")
-				exploredCanvas.width = canvasWidth;
-				exploredCanvas.height = canvasHeight;			
-				window.exploredCanvasContext = exploredCanvas.getContext('2d');
-				
 
-				window.exploredCanvasContext.globalCompositeOperation='source-over';
-				window.exploredCanvasContext.fillStyle = "black";
-				window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
-				$(exploredCanvas).attr('id', 'exploredCanvas');
+	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+		let exploredCanvas = document.getElementById("exploredCanvas");
+		if($('#exploredCanvas').length == 0){
+			exploredCanvas =  document.createElement("canvas")
+			exploredCanvas.width = canvasWidth;
+			exploredCanvas.height = canvasHeight;			
+			window.exploredCanvasContext = exploredCanvas.getContext('2d');
+			
 
-				$('#outer_light_container').append(exploredCanvas)	
-				gameIndexedDb.transaction(["exploredData"])
-				  .objectStore(`exploredData`)
-				  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
-				 	if(event?.target?.result?.exploredData){
-					  	let img = new Image;
+			window.exploredCanvasContext.globalCompositeOperation='source-over';
+			window.exploredCanvasContext.fillStyle = "black";
+			window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
+			$(exploredCanvas).attr('id', 'exploredCanvas');
 
-						img.onload = function(){
-							requestAnimationFrame(function(){
-							  window.exploredCanvasContext.drawImage(img,0,0); 
-							  window.exploredCanvasContext.globalCompositeOperation='lighten';
-							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-							});
-						};
-						img.src = event.target.result.exploredData;
-					}
-				};		
-			}
-			else{
-				if(window.exploredCanvasContext == undefined){
-					window.exploredCanvasContext = exploredCanvas.getContext('2d');
+			$('#outer_light_container').append(exploredCanvas)	
+			gameIndexedDb.transaction(["exploredData"])
+			  .objectStore(`exploredData`)
+			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
+			 	if(event?.target?.result?.exploredData){
+				  	let img = new Image;
+
+					img.onload = function(){
+						requestAnimationFrame(function(){
+						  window.exploredCanvasContext.drawImage(img,0,0); 
+						  window.exploredCanvasContext.globalCompositeOperation='lighten';
+						  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+						});
+					};
+					img.src = event.target.result.exploredData;
 				}
-				requestAnimationFrame(function(){
-					window.exploredCanvasContext.globalCompositeOperation='lighten';
-					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-				});
-				debounceStoreExplored(exploredCanvas);
-			}
-		
+			};		
 		}
-
 		else{
-			$('#exploredCanvas').remove();
+			if(window.exploredCanvasContext == undefined){
+				window.exploredCanvasContext = exploredCanvas.getContext('2d');
+			}
+			requestAnimationFrame(function(){
+				window.exploredCanvasContext.globalCompositeOperation='lighten';
+				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+			});
+			debounceStoreExplored(exploredCanvas);
 		}
-	});
+	
+	}
+
+	else{
+		$('#exploredCanvas').remove();
+	}
+	
 	
 	if(!window.DM || window.SelectedTokenVision){
 		requestAnimationFrame(function(){
@@ -6386,7 +6386,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 	window.lightAuraClipPolygon[auraId] = {
 		canvas: lightCanvas,
 		light: lightRadius,
-		darkvision: darkvisionRadius,
+		darkvision: darkvisionRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2,
 		middle: {
 			x: horizontalTokenMiddle,
 			y: verticalTokenMiddle
