@@ -5592,19 +5592,22 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			        }         
   		       }
 	        }
-	        if(dist < recordMove){
-	        	recordMove = dist;
-	        	 if(dist == lightRadius){
-		          	pt = {
-			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
-			          }
-	       		}
-	       		closestMove = pt;
-	       		if(dist != lightRadius){
-		          	closestBarrier = walls[j];
-		        }	
+	        if(!walls[j].darkness){
+    	        if(dist < recordMove){
+    	        	recordMove = dist;
+    	        	 if(dist == lightRadius){
+    		          	pt = {
+    			          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+    			          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+    			          }
+    	       		}
+    	       		closestMove = pt;
+    	       		if(dist != lightRadius){
+    		          	closestBarrier = walls[j];
+    		        }	
+    	        }
 	        }
+	      
 	      }
 
 	    }	    
@@ -5615,8 +5618,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     		}
     		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
     	} 
-    	if (closestMove && (closestBarrier != prevClosestBarrier || i == 359) && closestBarrier?.darkness == undefined) {
-    		if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint && prevClosestBarrier?.darkness == undefined){
+    	if (closestMove && (closestBarrier != prevClosestBarrier || i == 359)) {
+    		if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
     			 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
     		}
     		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
