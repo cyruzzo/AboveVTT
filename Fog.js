@@ -5525,10 +5525,15 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.y = y;
 };
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, darkness=false) {
+	if(darkness == false){
+		lightPolygon = [];
+		movePolygon = [];
+	}
+	else{
+		darknessPolygon = [];
+	}
 
-	lightPolygon = [];
-	movePolygon = [];
 	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
 	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
 
@@ -5601,24 +5606,40 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      }
 
 	    }	    
-	    if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius !=undefined)) {
-	    	if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
-	    		lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
+	    if(darkness == false){
+	    	if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius !=undefined)) {
+	    		if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
+	    			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
+	    		}
+	    		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	} 
+	    	if (closestMove && (closestBarrier != prevClosestBarrier || i == 359)) {
+	    		if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
+	    			 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    		}
+	    		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	} 
+	    	if(recordLight == lightRadius){
+	    		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
-	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    } 
-	    if (closestMove && (closestBarrier != prevClosestBarrier || i == 359)) {
-	    	if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
-	    		 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	if(recordMove == lightRadius){
+	    		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
-	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    } 
-	    if(recordLight == lightRadius){
-	    	lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    }
-	    if(recordMove == lightRadius){
-	    	movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    else{
+	    	
+	    	if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius != undefined)) {
+	    		if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
+	    			darknessPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
+	    		}
+	    		darknessPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	} 
+
+	    	if(recordLight == lightRadius){
+	    		darknessPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	}
 	    }
+
 
 	    prevClosestPoint = closestLight;
 	    prevClosestWall = closestWall;
@@ -5790,6 +5811,21 @@ function redraw_light(){
 	tempDarkvisionCanvas.height = canvasHeight;
 
 	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
+
+	let tempDarknessCanvas = document.createElement('canvas');
+	let tempDarknessCtx = tempDarknessCanvas.getContext('2d');
+
+	tempDarknessCanvas.width = canvasWidth;
+	tempDarknessCanvas.height = canvasHeight;
+
+	let darknessBoundarys = getDarknessBoundarys();
+	if(darknessBoundarys.length == 0){
+		tempDarknessCtx.clearRect(0,0,canvasWidth,canvasHeight);	
+	}
+	else{
+		tempDarknessCtx.fillStyle = "black";
+		tempDarknessCtx.fillRect(0,0,canvasWidth,canvasHeight);
+	}
 	
 	if(window.walls.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenContext.fillStyle = "white";
@@ -5908,29 +5944,35 @@ function redraw_light(){
 			}
 
 
-			
+
 			if(window.lineOfSightPolygons == undefined){
 				window.lineOfSightPolygons = {};
 			}
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length){
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length+darknessBoundarys.length){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
-				
+				darknessPolygon = window.lineOfSightPolygonsp[auraId].darkness;
 			}
 			else{
+				
 				check_token_elev(auraId);
 				particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 				particleLook(context, walls, 100000, undefined, undefined, undefined, false, false, auraId)  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
-
+				
 				let path = "";
 				for( let i = 0; i < lightPolygon.length; i++ ){
 					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 				}
+				if(darknessBoundarys.length>0){
+					particleLook(context, darknessBoundarys, 100000, undefined, undefined, undefined, false, false, auraId, true);
+				}
+				
 				window.lineOfSightPolygons[auraId] = {
 					polygon: lightPolygon,
 					move: movePolygon,
+					darkness: darknessBoundarys.length>0 ? darknessPolygon : undefined,
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
@@ -5993,8 +6035,12 @@ function redraw_light(){
 						truesightCanvasContext.globalCompositeOperation='source-over';
 						truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
 					}
-				}
 
+				}
+				if(window.lineOfSightPolygons[auraId].darkness != undefined){
+					clearPolygon(tempDarknessCtx, window.lineOfSightPolygons[auraId].darkness);
+				}
+				
 				tokenVisionAura.toggleClass('notVisible', false);	
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
@@ -6014,12 +6060,17 @@ function redraw_light(){
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-
-			lightInLosContext.globalCompositeOperation='source-over';
+			lightInLosContext.globalCompositeOperation='source-over';			
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
+
+			tempDarknessCtx.globalCompositeOperation='destination-out';
+			tempDarknessCtx.drawImage(truesightCanvas, 0, 0);
+			tempDarknessCtx.drawImage(devilsightCanvas, 0, 0);	
 
 			truesightCanvasContext.globalCompositeOperation='destination-in';
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
+
+			offscreenContext.drawImage(tempDarknessCanvas, 0, 0);
 		}
 	}
 	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
@@ -6029,12 +6080,17 @@ function redraw_light(){
 
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-			
 			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
+			tempDarknessCtx.globalCompositeOperation='destination-out';
+			tempDarknessCtx.drawImage(truesightCanvas, 0, 0);
+			tempDarknessCtx.drawImage(devilsightCanvas, 0, 0);	
+
 			truesightCanvasContext.globalCompositeOperation='destination-in';
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);	
+
+			offscreenContext.drawImage(tempDarknessCanvas, 0, 0);
 		}
 		
 		lightInLosContext.globalCompositeOperation='destination-in';
@@ -6110,6 +6166,96 @@ function redraw_light(){
 
 }
 
+function rotatePoint(px, py, cx, cy, R) {
+        const cosA = Math.cos(R);
+        const sinA = Math.sin(R);
+	return {x: cx + (px - cx) * cosA - (py - cy) * sinA,
+		y: cy + (px - cx) * sinA + (py - cy) * cosA};
+}
+function rotatePoints(poly, cx, cy, R) {
+	return poly.map(point => rotatePoint(point.x, point.y, cx, cy, R));	
+}
+function conePoly(startx, starty, endx, endy) {
+	const L = Math.sqrt(Math.pow(endx - startx, 2) + Math.pow(endy - starty, 2));
+	const T = Math.sqrt(Math.pow(L, 2) + Math.pow(L / 2, 2));
+	const res = circle_intersection(startx, starty, T, endx, endy, L / 2);
+	return [{x: startx/window.CURRENT_SCENE_DATA.scale_factor,
+		 y: starty/window.CURRENT_SCENE_DATA.scale_factor},
+		{x: res[0]/window.CURRENT_SCENE_DATA.scale_factor,
+		 y: res[2]/window.CURRENT_SCENE_DATA.scale_factor},
+		{x: res[1]/window.CURRENT_SCENE_DATA.scale_factor,
+		 y: res[3]/window.CURRENT_SCENE_DATA.scale_factor}];
+}
+
+function getDarknessBoundarys(){
+	let darknessAoes = $('[data-darkness]');
+	let darknessBoundarys = [];
+
+	darknessBoundarys.push(window.walls[0],window.walls[1],window.walls[2],window.walls[3])
+
+	for(let i = 0; i<darknessAoes.length; i++){
+		const currentAoe = $(darknessAoes[i]);
+
+		const left = parseFloat(currentAoe.css('left'));
+		const top = parseFloat(currentAoe.css('top'));
+		const width = parseFloat(currentAoe.css('width'));
+		const height = parseFloat(currentAoe.css('height'));
+		const scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+		const cX = (left + width/2);
+		const cY = (top + height/2);
+		const rot = parseFloat(currentAoe.css('--token-rotation')) * (Math.PI/180);
+
+		if(currentAoe.find('.aoe-shape-circle').length>0){
+			let radius = (width/2);
+
+			let boundary = new Boundary({x: cX, y: cY});
+			boundary.radius = radius;
+
+			darknessBoundarys.push(boundary);
+		}
+
+		
+		if(currentAoe.find('.aoe-shape-square').length>0 || currentAoe.find('.aoe-shape-line').length>0){
+			const poly = rotatePoints([
+				{x: cX-width/2, y: cY-height/2},
+				{x: cX-width/2, y: cY+height/2},
+				{x: cX+width/2, y: cY+height/2},
+				{x: cX+width/2, y: cY-height/2}
+			], cX, cY, rot);
+
+			for(let i in poly){
+				if(i == poly.length-1){
+					darknessBoundarys.push(new Boundary(poly[i], poly[0]))
+				}
+				else{
+					darknessBoundarys.push(new Boundary(poly[i], poly[parseInt(i)+1]))
+				}
+			}
+
+			
+		}
+		if(currentAoe.find('.aoe-shape-cone').length>0){
+
+
+			const poly = rotatePoints(conePoly(cX*scale,
+						   (cY-height/2)*scale,
+						   cX*scale,
+						   (cY+height/2)*scale), 
+			cX, cY, rot);
+		
+			for(let i in poly){
+				if(i == poly.length-1){
+					darknessBoundarys.push(new Boundary(poly[i], poly[0]))
+				}
+				else{
+					darknessBoundarys.push(new Boundary(poly[i], poly[parseInt(i)+1]))
+				}
+			}
+
+		}
+	}
+	return darknessBoundarys;
+}
 
 function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 
@@ -6186,6 +6332,8 @@ function draw_darkness_aoe_to_canvas(ctx){
 	let darknessAoes = $('[data-darkness]');
 	ctx.globalCompositeOperation='source-over';
 	draw_aoe_to_canvas(darknessAoes, ctx, true)
+
+	
 }
 function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height()){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
