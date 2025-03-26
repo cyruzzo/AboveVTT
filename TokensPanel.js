@@ -2935,9 +2935,11 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         
         while(index < index+10 && index<alternativeImages.length){
             setTimeout(function(){
-                let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
-                modalBody.append(tokenDiv);
-                index++;
+                if(index < alternativeImages.length){
+                    let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
+                    modalBody.append(tokenDiv);
+                    index++;
+                }
             })
             yield
         }
