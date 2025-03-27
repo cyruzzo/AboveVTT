@@ -5529,7 +5529,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	lightPolygon = [];
 	movePolygon = [];
-	darknessPolygon = [];
+
 	let canSeeDarkness = window.TOKEN_OBJECTS[auraId]?.options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId]?.options.sight =='truesight';
 
 	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
@@ -5631,16 +5631,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
     	}
      	
-    	if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius != undefined) && (prevClosestWall?.darkness == true || closestWall?.darkness == true)) {
-    		if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
-    			darknessPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
-    		}
-    		darknessPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	} 
 
-    	if(recordLight == lightRadius){
-    		darknessPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	}
 	    
 
 
@@ -5823,8 +5814,6 @@ function redraw_light(){
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
-	tempDarknessCtx.clearRect(0,0,canvasWidth,canvasHeight);	
-	
 	if(window.walls.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenContext.fillStyle = "white";
 	}else{
@@ -5967,7 +5956,6 @@ function redraw_light(){
 				window.lineOfSightPolygons[auraId] = {
 					polygon: lightPolygon,
 					move: movePolygon,
-					darkness: darknessBoundarys.length>0 ? darknessPolygon : undefined,
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
@@ -6032,9 +6020,7 @@ function redraw_light(){
 					}
 
 				}
-				if(window.lineOfSightPolygons[auraId].darkness?.length > 0){
-					drawPolygon(tempDarknessCtx, window.lineOfSightPolygons[auraId].darkness, 'rgba(255, 255, 255, 1)', true);
-				}
+
 				
 				tokenVisionAura.toggleClass('notVisible', false);	
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
@@ -6055,11 +6041,7 @@ function redraw_light(){
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-
-
-
-			lightInLosContext.globalCompositeOperation='darken';
-			lightInLosContext.drawImage(tempDarknessCanvas, 0, 0);		
+	
 			lightInLosContext.globalCompositeOperation='source-over';	
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
@@ -6078,8 +6060,7 @@ function redraw_light(){
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
 
-			lightInLosContext.globalCompositeOperation='darken';
-			lightInLosContext.drawImage(tempDarknessCanvas, 0, 0);
+
 			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
