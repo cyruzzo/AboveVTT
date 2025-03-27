@@ -1906,6 +1906,11 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           },
           error: function (error) {
             console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
+            homebrewTooltip()
+            if(window.tooltipCache[typeAndId].Tooltip == undefined){
+              window.tooltipCache[typeAndId] = response;
+            }
+            return;
           }
         });
       }  
