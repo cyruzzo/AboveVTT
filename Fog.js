@@ -5822,13 +5822,8 @@ function redraw_light(){
 	tempDarknessCanvas.height = canvasHeight;
 
 	let darknessBoundarys = getDarknessBoundarys();
-	if(darknessBoundarys.length == 0){
-		tempDarknessCtx.clearRect(0,0,canvasWidth,canvasHeight);	
-	}
-	else{
-		tempDarknessCtx.fillStyle = "black";
-		tempDarknessCtx.fillRect(0,0,canvasWidth,canvasHeight);
-	}
+	
+	tempDarknessCtx.clearRect(0,0,canvasWidth,canvasHeight);	
 	
 	if(window.walls.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenContext.fillStyle = "white";
@@ -6038,7 +6033,7 @@ function redraw_light(){
 
 				}
 				if(window.lineOfSightPolygons[auraId].darkness?.length > 0){
-					clearPolygon(tempDarknessCtx, window.lineOfSightPolygons[auraId].darkness);
+					drawPolygon(tempDarknessCtx, window.lineOfSightPolygons[auraId].darkness, 'rgba(255, 255, 255, 1)', true);
 				}
 				
 				tokenVisionAura.toggleClass('notVisible', false);	
@@ -6060,12 +6055,12 @@ function redraw_light(){
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-			tempDarknessCtx.globalCompositeOperation='destination-out';
-			tempDarknessCtx.drawImage(truesightCanvas, 0, 0);
-			tempDarknessCtx.drawImage(devilsightCanvas, 0, 0);	
 
-			lightInLosContext.globalCompositeOperation='source-over';	
+
+
+			lightInLosContext.globalCompositeOperation='darken';
 			lightInLosContext.drawImage(tempDarknessCanvas, 0, 0);		
+			lightInLosContext.globalCompositeOperation='source-over';	
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
 			
@@ -6082,12 +6077,10 @@ function redraw_light(){
 
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
-			tempDarknessCtx.globalCompositeOperation='destination-out';
-			tempDarknessCtx.drawImage(truesightCanvas, 0, 0);
-			tempDarknessCtx.drawImage(devilsightCanvas, 0, 0);	
 
-			lightInLosContext.globalCompositeOperation='source-over';
+			lightInLosContext.globalCompositeOperation='darken';
 			lightInLosContext.drawImage(tempDarknessCanvas, 0, 0);
+			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
 			
