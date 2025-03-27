@@ -1768,7 +1768,10 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           let bodyClass = $(moreInfo).find('body').attr('class');
           let subClasses = !tooltipBody.length && dataTooltipHref[1].match(/#.*$/gi) ? ['p-article-a', 'p-article-content'] : ['more-info', 'detail-content']
           if(!tooltipBody.length && dataTooltipHref[1].match(/#.*$/gi)){
-           tooltipBody = $('<div>').append($(moreInfo).find(dataTooltipHref[1].match(/#.*$/gi)[0]).nextUntil('.heading-anchor').addBack());
+          let section = $(moreInfo).find(dataTooltipHref[1].match(/#.*$/gi)[0]);
+          let sectionElementType = $(moreInfo).find(dataTooltipHref[1].match(/#.*$/gi)[0])[0].tagName
+
+           tooltipBody = $('<div>').append(section.nextUntil(`${sectionElementType}.heading-anchor`).addBack());
           }
           else if(!tooltipBody.length && $(moreInfo).find('.p-article-content').length>0){
             tooltipBody = $('<div>').append($(moreInfo).find('.p-article-content'));
@@ -1895,9 +1898,6 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             if(typeof response === 'string'){
 
               homebrewTooltip()
-              if(window.tooltipCache[typeAndId].Tooltip == undefined){
-                window.tooltipCache[typeAndId] = response;
-              }
               return;
             }
 
@@ -1907,9 +1907,6 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
           error: function (error) {
             console.warn("fetch_tooltip error - attmpting more info link for homebrew/sources", error);
             homebrewTooltip()
-            if(window.tooltipCache[typeAndId].Tooltip == undefined){
-              window.tooltipCache[typeAndId] = response;
-            }
             return;
           }
         });
