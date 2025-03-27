@@ -1132,10 +1132,13 @@ function ct_current_turn() {
 function ct_persist(){
 	let data= [];
 	$('#combat_area tr').each( function () {			
+			let optionsClone = $.extend(true, {}, window.all_token_objects[$(this).attr("data-target")].options);
+			optionsClone.alternativeImages = [];
+
 	  	data.push( {
 			'data-target': $(this).attr("data-target"),
 			'current': ($(this).attr("data-current")=="1"),
-			'options': window.all_token_objects[$(this).attr("data-target")].options
+			'options': optionsClone
 		});		  
 	});
 
