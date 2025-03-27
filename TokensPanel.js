@@ -1391,14 +1391,14 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let newAC = $(searchText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = searchText.match(/Armor Class[\s\D]+([0-9]+)/i)
-            if(match && match[1] != undefined){
-                newAC = match[1]
+            let match = searchText.matchAll(/Armor Class[\s\D]+?([0-9]+)[<\.\s]/gi).next()
+            if(match.value != undefined && match.value[1] != undefined){
+                newAC = match.value[1]
             }
             else{
-                match = searchText.match(/[Aa][Cc][\s\D]+([0-9]+)/i)
-                if(match && match[1] != undefined){
-                    newAC = match[1]
+                match = searchText.matchAll(/AC[\s\D]+?([0-9]+)[<\.\s]/gi).next()
+                if(match.value != undefined && match.value[1] != undefined){
+                    newAC = match.value[1]
                 }
             }
         }
