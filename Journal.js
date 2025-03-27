@@ -1536,7 +1536,7 @@ class JournalManager{
 	        e.stopPropagation();
 	        e.preventDefault();
 	        let targetBlock = $(e.currentTarget).parent().clone();
-	        targetBlock.find('button').remove();
+	        targetBlock.find('button.block-send-to-game-log').remove();
 	        targetBlock.find('img').removeAttr('width height style').toggleClass('magnify', true);
 	        send_html_to_gamelog(targetBlock[0].outerHTML);
 	    });
@@ -2860,6 +2860,7 @@ class JournalManager{
 			   	]}
 			],
 			plugins: 'save,hr,image,link,lists,media,paste,tabfocus,textcolor,colorpicker,autoresize, code, table, template',
+			table_cell_advtab: true,
 			add_toolbar: "template",
 			templates: [
 			    {
@@ -3008,7 +3009,8 @@ class JournalManager{
 <p>5th level (1 slot): cone of cold</p>`
 			    },
 			],
-			toolbar1: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media | table | code',
+		  	table_grid: false,
+			toolbar: 'undo styleselect template | horizontalrules | bold italic underline strikethrough | alignleft aligncenter alignright justify| outdent indent | bullist numlist | forecolor backcolor | fontsizeselect | link unlink | image media table tableCustom | code',
 			image_class_list: [
 				{title: 'Magnify', value: 'magnify'},
 			],
