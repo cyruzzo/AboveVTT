@@ -3547,10 +3547,10 @@ div#selectedTokensBorder {
     background-repeat: no-repeat, repeat;
 }
 .aoe-style-bludgeoning{
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2020/06/17064578-0145-512x512.jpg);
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/bludgeoning.jpg);
 }
 .aoe-style-default{
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2021/06/188-comp-512x512.jpg);
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/default.jpg);
 }
 .aoe-style-force{
     background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
@@ -3560,7 +3560,7 @@ div#selectedTokensBorder {
     background-image: url(https://3djungle.net/upload/resize_cache/iblock/849/400_400_1/8495c4591433cffedbe8a19a13fbc7eb.jpg);
 }
 .aoe-style-nature{
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2017/04/0527-1-512x512.jpg);
+    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/nature.jpg);
     filter: brightness(1.2) contrast(1.2);
 }
 .aoe-style-necrotic {
@@ -3570,7 +3570,7 @@ div#selectedTokensBorder {
     background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
 }
 .aoe-style-poison {
-    background:linear-gradient(rgba(119, 247, 0, 0.52), rgba(119, 247, 0, 0.52)), url(https://www.tilingtextures.com/wp-content/uploads/2017/02/0005-512x512.jpg);
+    background:linear-gradient(rgba(119, 247, 0, 0.52), rgba(119, 247, 0, 0.52)), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/poison.jpg);
     background-repeat: no-repeat, repeat;
 }
 .aoe-style-psychic {
@@ -3578,11 +3578,13 @@ div#selectedTokensBorder {
     background-repeat: no-repeat, repeat;
 }
 .aoe-style-radiant {
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2019/06/0097-512x512.jpg);
-    background-size: 200px
+    background-image: radial-gradient(rgb(255 255 255) 5%, rgb(239 255 0 / 54%), rgb(255 24 24 / 48%)), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
+    background-size: contain, 200px !important;
 }
 .aoe-style-thunder{
-    background-image: url(https://www.tilingtextures.com/wp-content/uploads/2018/11/0069-512x512.jpg);
+    background: repeating-radial-gradient(rgb(0 0 0 / 44%) 5%, rgb(246 246 246 / 52%) 8%, rgb(0 0 0 / 44%) 15%), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/thunder.jpg);
+    background-repeat: no-repeat, repeat !important;
+    background-size: contain, 300px !important;
 }
 .aoe-style-water{
     background:linear-gradient(rgba(49, 177, 246, 0.49), rgba(49, 177, 246, 0.49)), url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
