@@ -1582,7 +1582,14 @@ class JournalManager{
 		}
 		const iframes = target.find('.journal-site-embed')
 		for(let i=0; i<iframes.length; i++){
-			$(iframes[i]).replaceWith(`<iframe class='journal-site-embed' src='${$(iframes[i]).text()}'></iframe>`);
+			let url = $(iframes[i]).text();
+			if(url.includes('dropbox.com')){
+				url = url.replace('dl=0', 'raw=1')
+			}
+			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
+				url = url.replace(/view\?usp=/gi, 'preview?usp=')
+			}
+			$(iframes[i]).replaceWith(`<iframe class='journal-site-embed' src='${url}'></iframe>`);
 		}
     	let data = $(target).clone().html();
 
