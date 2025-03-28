@@ -130,14 +130,14 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         return;
       let outerP = event.target.closest('p, div').outerHTML;
       const regExFeature = new RegExp(`<(p|div)([\\s\\S]+)?>[\\s\\S]+(${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+)(</p>|</div>|<strong><em>|<em><strong>[a-z0-9\\s\\(\\)]+\\.)`, 'gi');
-      let matched = `${outerP.matchAll(regExFeature).next().value[3]}`;
+      let matched = `<p>${outerP.matchAll(regExFeature).next().value[3]}</p>`;
       
       let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
       for(let i=0; i<nextParagraphs.length; i++){
         if(nextParagraphs[i].innerHTML.trim() != '')
-          matched = `${matched}<br><br>${nextParagraphs[i].innerHTML.trim()}`;
+          matched = `${matched}<p>${nextParagraphs[i].innerHTML.trim()}</p>`;
       }
-      matched = `<p>${matched}</p>`
+       matched = `<div>${matched}</div>`;
       send_html_to_gamelog(matched);
     })
 
@@ -145,7 +145,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       e.preventDefault();
       if($(event.target).text().includes('Recharge'))
         return;
-      let rollButtons = $(event.target.closest('p, div')).find('.avtt-roll-button:not([data-rolltype="recharge"])');
+      let rollButtons = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)').addBack().find('.avtt-roll-button:not([data-rolltype="recharge"])');
       const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
       const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock.data.avatarUrl;
       $(event.target.closest('p, div')).find('.avtt-aoe-button')?.click();

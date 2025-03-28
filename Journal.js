@@ -1597,11 +1597,13 @@ class JournalManager{
         lines = lines.map((line, li) => {
             let input = line;
 
-            input = input.replace(/^(\s+?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$5');
-
             input = input.replace(/&nbsp;/g,' ')
 
+            input = input.replace(/^((\s+?)?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$6');
 
+            //bold top of statblock info
+            input = input.replace(/^(Senses|Gear|Skills|Damage Resistances|Damage Immunites|Damage Vulnerabilities|Condition Immunities|Languages|Proficiency Bonus|Saving Throws)/gi, `<strong>$1</strong>`)
+            input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)(\s[\d\()])/gi, `<strong>$1</strong>$2`)
             // Remove space between letter ranges
             // e.g. a- b
             input = input.replace(/([a-z])- ([a-z])/gi, '$1$2');
