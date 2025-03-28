@@ -1736,7 +1736,8 @@ class JournalManager{
                 let i = parts.length - 1;
                 parts[i] = parts[i].split(/,\s(?![^(]*\))/gm);
                 for (let p in parts[i]) {
-                	if($(parts[i][p]).is('a, span[data-spell]'))
+
+                	if(parts[i][p].match(/^((\s+?)?(<a|<span))/gi) && $(parts[i][p])?.is('a, span[data-spell]'))
                 		continue;
                 	parts[i][p] = parts[i][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
                 	let spellName = (parts[i][p].startsWith('<a')) ? $(parts[i][p]).text() : parts[i][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
