@@ -1590,7 +1590,7 @@ class JournalManager{
         lines = lines.map((line, li) => {
             let input = line;
 
-            input.replace(/^(<(strong|em)><(strong|em)>([a-z0-9\s])<\/(strong|em)><\/(strong|em)>)/gi, '$4');
+            input = input.replace(/^(\s+?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$5');
 
             input = input.replace(/&nbsp;/g,' ')
 
