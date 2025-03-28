@@ -134,7 +134,8 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       
       let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
       for(let i=0; i<nextParagraphs.length; i++){
-        matched = `${matched}<br><br>${nextParagraphs[i].innerHTML}`;
+        if(nextParagraphs[i].innerHTML.trim() != '')
+          matched = `${matched}<br><br>${nextParagraphs[i].innerHTML.trim()}`;
       }
       matched = `<p>${matched}</p>`
       send_html_to_gamelog(matched);

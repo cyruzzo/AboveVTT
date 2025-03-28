@@ -1586,7 +1586,7 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
-        let lines = data.split(/(<br \/>|<br>|<p>|\n)/g);
+        let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
 
@@ -1723,10 +1723,12 @@ class JournalManager{
             	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
             	let slotsNumberFound = (input.match(/\d+\w+ level \(\d slots?\)\:/gi)) ? parseInt(input.match(/[0-9]+/gi)[1]) : undefined;
             	let spellLevelFound = (slotsNumberFound) ? input.match(/\d+\w+ level/gi)[0] : undefined;
-                let parts = input.split(/(:\s(?<!left:\s?)|:(?<!left:\s?)<\/strong>(\s)?)/g);
+                let parts = input.split(/(:\s(?<!(left:\s?|style="[\s\S]+?))|:(?<!(left:\s?|style="[\s\S]+?))<\/strong>(\s)?)/gi);
                 let i = parts.length - 1;
                 parts[i] = parts[i].split(/,\s(?![^(]*\))/gm);
                 for (let p in parts[i]) {
+                	if($(parts[i][p]).is('a, span[data-spell]'))
+                		continue;
                 	parts[i][p] = parts[i][p].replace(/<(\/)?em>|<(\/)?b>|<(\/)?strong>/gi, '')
                 	let spellName = (parts[i][p].startsWith('<a')) ? $(parts[i][p]).text() : parts[i][p].replace(/<\/?p[a-zA-z'"0-9\s]+?>/g, '').replace(/\s?\[spell\]\s?|\s?\[\/spell\]\s?/g, '').replace('[/spell]', '').replace(/\s|&nbsp;/g, '');
 
