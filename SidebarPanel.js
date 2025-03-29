@@ -2105,6 +2105,8 @@ function  disable_draggable_change_folder() {
       try {
         tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
       } catch (e) {} // don't care if it fails, just try
+
+      redraw_token_list($('[name="token-search"]').val());
   }
 
   // Scenes
