@@ -1142,7 +1142,172 @@ class JournalManager{
 		}
 	}
 	
-	
+	positionNotePins(id, note_text){
+		let pins = $(note_text).find(`.note-pin`);
+
+		if(pins.length == 0)
+			return;
+
+		pins.each(function(){
+			const pinId = $(this).attr('data-id');
+			let noteText = $(this).attr('data-text');
+			let noteTitle = 'pin';
+			const noteId = $(this).attr('data-note');
+
+		
+			if(window.JOURNAL.notes[noteId] != undefined){
+				noteText = window.JOURNAL.notes[noteId].text;
+				noteTitle = window.JOURNAL.notes[noteId].title;
+			}
+
+			
+
+			let noteHover = `<div>
+				<div class="tooltip-header">
+		       	 	<div class="tooltip-header-icon">
+		            
+			        	</div>
+			        <div class="tooltip-header-text">
+			            ${noteTitle}
+			        </div>
+			        <div class="tooltip-header-identifier tooltip-header-identifier-condition">
+			           Note
+			        </div>
+	    		</div>
+		   		<div class="tooltip-body note-text">
+			        <div class="tooltip-body-description">
+			            <div class="tooltip-body-description-text note-text">
+			                ${noteText}
+			            </div>
+			        </div>
+			    </div>
+			</div>`
+			if(window.JOURNAL.notes[id].pins != undefined && window.JOURNAL.notes[id].pins[pinId] != undefined){
+				const left = window.JOURNAL.notes[id].pins[pinId].x
+				const top = window.DM ? window.JOURNAL.notes[id].pins[pinId].y : `${parseFloat(window.JOURNAL.notes[id].pins[pinId].y) - 43}px`;
+
+				$(this).css({
+					'left': left,
+					'top': top
+				})
+			}
+			if(window.DM){
+				$(this).draggable({
+					containment: `div.note[data-id='${id}']`,
+					start: function(){
+						clearTimeout(hoverNoteTimer)
+						remove_tooltip(500);
+					},
+					stop: function () {
+						if(window.JOURNAL.notes[id].pins == undefined){
+							window.JOURNAL.notes[id].pins = {};
+						}
+						window.JOURNAL.notes[id].pins[pinId] = {
+							x: $(this).css('left'),
+							y: $(this).css('top')
+						}	
+						window.JOURNAL.persist();
+						debounceSendNote(id, window.JOURNAL.notes[id])
+					}
+				})
+			}
+			let hoverNoteTimer;
+			$(this).on({
+					'mouseover': function(e){
+						hoverNoteTimer = setTimeout(function () {
+			            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+					            flyout.addClass('note-flyout');
+					            const tooltipHtml = $(noteHover);
+								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+								add_journal_roll_buttons(tooltipHtml);
+								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+								add_stat_block_hover(tooltipHtml);
+								add_aoe_statblock_click(tooltipHtml);
+
+								$(tooltipHtml).find('.add-input').each(function(){
+								    let numberFound = $(this).attr('data-number');
+								    const spellName = $(this).attr('data-spell');
+								    const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+								    const track_ability = function(key, updatedValue){	    	
+										if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
+											window.JOURNAL.notes[noteId].abilityTracker = {};
+										}
+										const asNumber = parseInt(updatedValue); 
+										window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
+										window.JOURNAL.persist();
+										debounceSendNote(noteId, window.JOURNAL.notes[noteId])
+							    	}
+								    if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName]>= 0){
+							    		numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
+							    	} 
+							    	else{
+								    	track_ability(spellName, numberFound)
+								    }
+
+								    let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
+								    $(this).find('p').remove();
+								    $(this).after(input)
+							    })
+					            flyout.append(tooltipHtml);
+					            let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+					            sendToGamelogButton.css({ "float": "right" });
+					            sendToGamelogButton.on("click", function(ce) {
+					                ce.stopPropagation();
+					                ce.preventDefault();
+									
+					                send_html_to_gamelog(noteHover);
+					            });
+					            let flyoutLeft = e.clientX+20
+					            if(flyoutLeft + 400 > window.innerWidth){
+					            	flyoutLeft = window.innerWidth - 420
+					            }
+					            flyout.css({
+					            	left: flyoutLeft,
+					            	width: '400px'
+					            })
+
+					            const buttonFooter = $("<div></div>");
+					            buttonFooter.css({
+					                height: "40px",
+					                width: "100%",
+					                position: "relative",
+					                background: "#fff"
+					            });
+					            window.JOURNAL.block_send_to_buttons(flyout);
+					            flyout.append(buttonFooter);
+					            buttonFooter.append(sendToGamelogButton);
+					            flyout.find("a").attr("target","_blank");
+					      		flyout.off('click').on('click', '.int_source_link', function(event){
+									event.preventDefault();
+									render_source_chapter_in_iframe(event.target.href);
+								});
+								
+
+					            flyout.hover(function (hoverEvent) {
+					                if (hoverEvent.type === "mouseenter") {
+					                    clearTimeout(removeToolTipTimer);
+					                    removeToolTipTimer = undefined;
+					                } else {
+					                    remove_tooltip(500);
+					                }
+					            });
+
+					            flyout.css("background-color", "#fff");
+					        });
+			        	}, 500);		
+					
+					},
+					'mouseout': function(e){
+						clearTimeout(hoverNoteTimer)
+						remove_tooltip(500);
+					}
+			
+			    });
+
+
+		})
+	}
 	display_note(id, statBlock = false){
 		let self=this;
 		let noteAlreadyOpen = $(`div.note[data-id='${id}']`).length>0;
@@ -1345,7 +1510,7 @@ class JournalManager{
 				render_source_chapter_in_iframe(event.target.href);
 			});
 		}
-
+		this.positionNotePins(id, note_text);
 	}
 	add_journal_tooltip_targets(target){
 		$(target).find('.tooltip-hover').each(function(){
@@ -1593,6 +1758,17 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
+		data = data.replace(/\[pin id=([\w-]+?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
+        	const id = m1; 
+        	let text = m2;
+        	let noteId = '';
+        	if(text.match(/\[note\](.*?)\[\/note\]/gi)){
+        		noteId = text.matchAll(/\[note\](.*?);.*\[\/note\]/gi).next().value[1];
+        		text = '';
+        	}
+        	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}"></div>`
+        });
+
         let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
         lines = lines.map((line, li) => {
             let input = line;
@@ -1826,7 +2002,7 @@ class JournalManager{
                 return `<a class="tooltip-hover magic-item-tooltip" href="https://www.dndbeyond.com/magic-items/${spellUrl}" aria-haspopup="true" target="_blank">${spell}</a>`
             })
 
-             input = input.replace(/\[source\](.*?)\[\/source\]/g, function(m){
+            input = input.replace(/\[source\](.*?)\[\/source\]/g, function(m){
             	let source = m.replace(/<\/?p>/g, '').replace(/\s?\[source\]\s?|\s?\[\/source\]\s?/g, '').replace('[/source]', '');   	
             	const sourceUrl = source.replace(/\s/g, '-').split(';')[0];
             	source = (source.split(';')[1]) ? source.split(';')[1] : source;

@@ -777,6 +777,15 @@ class MessageBroker {
 						}
 					}
 
+					if(window.JOURNAL.notes[msg.data.id].pins && openNote.length>0){
+						for(let i in window.JOURNAL.notes[msg.data.id].pins){
+							$(`div.note[data-id='${msg.data.id}'] .note-pin[data-id='${i}']`).css({
+								'top': `${parseFloat(window.JOURNAL.notes[msg.data.id].pins[i].y) - 43}px`,
+								'left': window.JOURNAL.notes[msg.data.id].pins[i].x
+							})	
+						}
+					}
+
 					window.JOURNAL.persist(true);
 
 				}
