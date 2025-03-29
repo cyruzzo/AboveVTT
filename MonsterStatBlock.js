@@ -129,24 +129,28 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
         return;
       let outerP = event.target.closest('p, div').outerHTML;
-      const regExFeature = new RegExp(`${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}.+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
-      let matched = `<p>${outerP.match(regExFeature)[0]}</p>`;
-      
+      const regExFeature = new RegExp(`${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+      let match = outerP.match(regExFeature);
 
-      if($(event.target.closest('p, div')).find('em>strong, strong>em').length == 1){
-        let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
-        for(let i=0; i<nextParagraphs.length; i++){
 
-          if(nextParagraphs[i].innerHTML.trim() != '')
-            matched = `${matched}<p>${nextParagraphs[i].innerHTML.trim()}</p>`;
+      if(match){
+        let matched = `<p>${match[0]}</p>`;
+        
+
+        if($(event.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+          let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+          for(let i=0; i<nextParagraphs.length; i++){
+
+            if(nextParagraphs[i].innerHTML.trim() != '')
+              matched = `${matched}<p>${nextParagraphs[i].innerHTML.trim()}</p>`;
+          }
         }
+        
+         
+         matched = `<div>${matched}</div>`;
+        send_html_to_gamelog(matched);
       }
-      else{
-
-      }
-       
-       matched = `<div>${matched}</div>`;
-      send_html_to_gamelog(matched);
+      
     })
 
     container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong").off("click.roll").on("click.roll", function (e) {
