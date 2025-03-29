@@ -5612,7 +5612,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	    }	    
 	   
-    	if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall.radius !=undefined)) {
+    	if (closestLight && (closestWall != prevClosestWall || i == 359 || closestWall?.radius != undefined)) {
     		if(closestWall != prevClosestWall && prevClosestWall != null && prevClosestPoint != null){	    		
     			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
     		}
