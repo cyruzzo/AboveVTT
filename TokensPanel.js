@@ -1213,7 +1213,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         statText=statText[0].innerHTML;
         let hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
-        let searchText = statText.replaceAll('mon-stat-block-2024', '');
+        let searchText = statText.replace('mon-stat-block-2024', '').replace(/\&nbsp\;/g,' ')
         if(averageHP == ''){
             let match = searchText.matchAll(/Hit Points[\s\D]+?([0-9]+)/gi).next()
             if(match.value != undefined){
