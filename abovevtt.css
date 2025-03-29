@@ -4118,7 +4118,18 @@ audio::-webkit-media-controls-time-remaining-display{
 .note .mce-panel { 
     border:  none;
 }
-
+.note-text>p:first-of-type{
+    margin-top: 0px !important;
+}
+.note .note-pin{
+    background: url(https://drive.google.com/thumbnail?id=1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M);
+    position: absolute;
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-size: contain;
+    z-index: 1000000;
+}
 #help-overlay{
     position: fixed;
     left: 0;
