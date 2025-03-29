@@ -54,7 +54,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 	}
 
 	async switch_scene(sceneid, callback = null) { //This is still used for grid wizard loading since we load so many times. -- THIS FUNCTION SHOULD DIE AFTER EVERYTHING IS IN THE CLOUD
-		
+		$('canvas#aligner2, canvas#aligner1').remove();
 		let grid_5 = function() {
 			$("#scene_selector_toggle").show();
 			$("#tokens").show();
