@@ -2171,28 +2171,32 @@ function create_aura_presets_edit(){
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
-	let aura_presets = $('<div id="aura_presets_properties"/>');
+	let aura_presets = $('<table id="aura_presets_properties"/>');
 	dialog.append(aura_presets);
 
 	let titleRow = $(`
-		<div class='aura_preset_title_row'>
-				<div>
-					<h3 style="margin-bottom:0px;">Name</h3>
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Inner Aura</h3>			
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Outer Aura</h3>	
-				</div>
-			</div>
+		<tr class='aura_preset_title_row'>
+				<th>
+					Name
+				</th>
+				<th>
+					Inner Aura	
+				</th>
+				<th>
+					Outer Aura	
+				</th>
+				<th>
+				</th>
+			</tr>
 			`)
 	aura_presets.append(titleRow);
 	for(let i in window.AURA_PRESETS){
 		let row = $(`
-			<div class='aura_preset_row' data-index='${i}'>
-				<input class='aura_preset_title' value='${window.AURA_PRESETS[i].name}'></input>
-				<div class="menu-inner-aura">
+			<tr class='aura_preset_row' data-index='${i}'>
+				<td>
+					<input class='aura_preset_title' value='${window.AURA_PRESETS[i].name}'></input>
+				</td>
+				<td class="menu-inner-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="aura-radius" name="aura1" type="text" value="${(window.AURA_PRESETS[i].aura1?.feet) ? window.AURA_PRESETS[i].aura1.feet : ``}" style="width: 3rem" />
@@ -2201,8 +2205,8 @@ function create_aura_presets_edit(){
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="aura1Color" value="${(window.AURA_PRESETS[i].aura1?.color) ? window.AURA_PRESETS[i].aura1.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
-				</div>
-				<div class="menu-outer-aura">
+				</td>
+				<td class="menu-outer-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="aura-radius" name="aura2" type="text" value="${(window.AURA_PRESETS[i].aura2?.feet) ? window.AURA_PRESETS[i].aura2.feet : ``}" style="width: 3rem" />
@@ -2211,10 +2215,10 @@ function create_aura_presets_edit(){
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="aura2Color" value="${(window.AURA_PRESETS[i].aura2?.color) ? window.AURA_PRESETS[i].aura2.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
-				</div>
-				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+				</td>
+				<td><div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div></td>
 
-			</div>
+			</tr>
 		`)
 		row.find('input.aura_preset_title').off('change.name').on('change.name', function(){
 			window.AURA_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
@@ -2283,31 +2287,35 @@ function create_light_presets_edit(){
 	if (window.CURRENT_SCENE_DATA.upsq !== undefined && window.CURRENT_SCENE_DATA.upsq.length > 0) {
 		upsq = window.CURRENT_SCENE_DATA.upsq;
 	}
-	let light_presets = $('<div id="light_presets_properties"/>');
+	let light_presets = $('<table id="light_presets_properties"/>');
 	dialog.append(light_presets);
 
 	let titleRow = $(`
-		<div class='light_preset_title_row'>
-				<div>
-					<h3 style="margin-bottom:0px;">Name</h3>
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Darkvision</h3>			
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Inner Light</h3>			
-				</div>
-				<div>
-					<h3 style="margin-bottom:0px;">Outer Light</h3>	
-				</div>
-			</div>
+		<tr class='light_preset_title_row'>
+				<th>
+					Name
+				</th>
+				<th>
+					Darkvision		
+				</th>
+				<th>
+					Inner Light			
+				</th>
+				<th>
+					Outer Light
+				</th>
+				<th>
+				</th>
+			</tr>
 			`)
 	light_presets.append(titleRow);
 	for(let i in window.LIGHT_PRESETS){
 		let row = $(`
-			<div class='light_preset_row' data-index='${i}'>
-				<input class='light_preset_title' value='${window.LIGHT_PRESETS[i].name}'></input>
-				<div class="menu-vision-aura">
+			<tr class='light_preset_row' data-index='${i}'>
+				<td>
+					<input class='light_preset_title' value='${window.LIGHT_PRESETS[i].name}'></input>
+				</td>
+				<td class="menu-vision-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="vision-radius" name="vision" type="text" value="${(window.LIGHT_PRESETS[i].vision?.feet) ? window.LIGHT_PRESETS[i].vision.feet : ``}" style="width: 3rem" />
@@ -2316,8 +2324,8 @@ function create_light_presets_edit(){
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="visionColor" value="${(window.LIGHT_PRESETS[i].vision?.color) ? window.LIGHT_PRESETS[i].vision.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
-				</div>
-				<div class="menu-inner-aura">
+				</td>
+				<td class="menu-inner-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="light-radius" name="light1" type="text" value="${(window.LIGHT_PRESETS[i].light1?.feet) ? window.LIGHT_PRESETS[i].light1.feet : ``}" style="width: 3rem" />
@@ -2326,8 +2334,8 @@ function create_light_presets_edit(){
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="light1Color" value="${(window.LIGHT_PRESETS[i].light1?.color) ? window.LIGHT_PRESETS[i].light1.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
-				</div>
-				<div class="menu-outer-aura">
+				</td>
+				<td class="menu-outer-aura">
 					<div class="token-image-modal-footer-select-wrapper" style="padding-left: 2px">
 						<div class="token-image-modal-footer-title">Radius (${upsq})</div>
 						<input class="light-radius" name="light2" type="text" value="${(window.LIGHT_PRESETS[i].light2?.feet) ? window.LIGHT_PRESETS[i].light2.feet : ``}" style="width: 3rem" />
@@ -2336,10 +2344,10 @@ function create_light_presets_edit(){
 						<div class="token-image-modal-footer-title">Color</div>
 						<input class="spectrum" name="light2Color" value="${(window.LIGHT_PRESETS[i].light2?.color) ? window.LIGHT_PRESETS[i].light2.color : `rgba(0, 0, 0, 0)`}" >
 					</div>
-				</div>
-				<div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>
+				</td>
+				<td><div class='removePreset'><svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div></td>
 
-			</div>
+			</tr>
 		`)
 		row.find('input.light_preset_title').off('change.name').on('change.name', function(){
 			window.LIGHT_PRESETS[i].name = $(this).val().replaceAll(/['"<>]/g, '');
