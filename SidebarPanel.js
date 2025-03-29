@@ -2079,11 +2079,16 @@ function list_item_image_flyout(hoverEvent) {
 }
 
 function  disable_draggable_change_folder() {
+
+
+    
+
   window.reorderState = undefined;
   $(".token-row-drag-handle").remove();
 
   // MyToken
   if (typeof tokensPanel !== 'undefined') {
+      tokensPanel.body.find(".token-row-gear").show();
       tokensPanel.body.find(".token-row-button").show();
       tokensPanel.body.find(".token-row-button.reorder-button").show();
       tokensPanel.body.find(".reorder-button").removeClass("active");
