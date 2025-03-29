@@ -1993,6 +1993,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
           alternativeImages: [tokenImage]
         },
     );
+
     if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
         customization.tokenOptions.videoToken = true;
     }
@@ -2000,7 +2001,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         customization.tokenOptions = {
             ...customization.tokenOptions,
             ...options,
-            alternativeImages: [options.imgsrc]
+            alternativeImages: options.alternativeImages?.length > 0 ? options.alternativeImages : [options.imgsrc]
         }
     }
     if(statBlock != undefined){
