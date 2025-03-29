@@ -10555,6 +10555,32 @@ div#addAuraPreset{
     background: rgb(235, 241, 245);
     transform: scale(0.8);
 }
+
+
+
+table#light_presets_properties th,
+table#aura_presets_properties th {
+    position:sticky;
+    top:10px;
+    z-index:1;
+}
+table#light_presets_properties tr,
+table#aura_presets_properties tr{
+    display: table-row;
+}
+table#light_presets_properties :is(td, th),
+table#aura_presets_properties :is(td, th) {
+    display: table-cell;
+    vertical-align: middle;
+}
+table#light_presets_properties,
+table#aura_presets_properties  {
+   display:table;
+    border-collapse: unset;
+    border-spacing: 10px;    
+}
+
+
 #light_presets_properties div.removePreset svg rect,
 #animation_presets_properties div.removePreset svg rect,
 #aura_presets_properties div.removePreset svg rect{
