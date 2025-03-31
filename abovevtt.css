@@ -3145,11 +3145,11 @@ button.roll-button-mod.minus {
     stroke-width: max(0.5px, calc(0.5px / var(--window-zoom)));
     r: max(1px, calc(1px / var(--window-zoom)));
 }
-#raycastingCanvas,
-#light_overlay,
+
+
 .aura-element-container-clip:not([data-animation])>.islight,
 .aura-element-container-clip>div:not(.islight){
-    filter: blur(calc(5px / var(--scene-scale)));
+   filter: blur(calc(5px / var(--scene-scale)));
 }
 
 #light_container{

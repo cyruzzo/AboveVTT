@@ -569,6 +569,10 @@ class Token {
 				window.TOKEN_OBJECTS[this.options.combatGroup].delete();
 			}
 		}
+		if(this.options.darkness){
+			redraw_drawn_light();
+		}
+
 		ct_remove_token(this, false);
 		if (persist == true) {	
 			window.MB.sendMessage("custom/myVTT/delete_token",{id:id});
@@ -725,6 +729,9 @@ class Token {
 					'--token-scale': old.css('--token-scale'),
     				'--token-rotation': old.css('--token-rotation')
 				})
+				
+				redraw_drawn_light();
+		
 			}
 			if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
 				old.toggleClass('underDarkness', true);
@@ -804,6 +811,8 @@ class Token {
 		
 			this.sync($.extend(true, {}, this.options));
 		}
+
+
 	}
 
 	snap_to_closest_square() {
@@ -2390,6 +2399,7 @@ class Token {
 					old.attr("data-tokendataname", this.options.tokendataname);
 				}
 				if(this.options.darkness){
+
 					let copyImage = $(`[data-darkness='darkness_${this.options.id}']`);
 					copyImage.css({
 						'--token-width': `calc(${this.sizeWidth()}px / var(--scene-scale))`,
@@ -2415,6 +2425,7 @@ class Token {
 							}
 						}
 					);
+					redraw_drawn_light();
 				}
 				if(this.options.tokenStyleSelect == 'definitelyNotAToken' || this.options.underDarkness == true){
 						old.toggleClass('underDarkness', true);
@@ -2815,6 +2826,7 @@ class Token {
 			        tokenClone.removeClass(['token', 'VTTToken']);
 			        if($(`[data-darkness='darkness_${this.options.id}]'`).length == 0)
 			        	$('#light_container').append(tokenClone);
+			        redraw_drawn_light();
 			    }
 
 			    if(!this.options.id.includes('exampleToken')){
@@ -2874,6 +2886,7 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")){
 								WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 							}	
+
 							debounceLightChecks();
 
 							window.DRAGGING = false;
@@ -4218,6 +4231,8 @@ function setTokenLight (token, options) {
 		const daylightOpacityValue = window.CURRENT_SCENE_DATA?.daylight ? window.CURRENT_SCENE_DATA.daylight.replace(/[a-zA-Z\(\)\s]/g, '').split(',').splice(3, 1) : 1;
 
 		let clippath = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.clippath}")` : undefined;
+		let devilsightClip = window.lineOfSightPolygons ? `path("${window.lineOfSightPolygons[options.id]?.devilsightClip}")` : undefined;
+
 		const lightStyles = `width:${totalSize }px;
 							height:${totalSize }px;
 							background-image:${lightBg};
@@ -4258,7 +4273,7 @@ function setTokenLight (token, options) {
 		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").remove();
 
 
-		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
+		const lightElement = options.sight =='devilsight' || options.sight =='truesight' ?  $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${devilsightClip};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) : $(`<div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
 		if(visionRadius != 0 || totallight != 0 || options.player_owned || options.share_vision == true || options.share_vision == window.myUser || is_player_id(options.id)){

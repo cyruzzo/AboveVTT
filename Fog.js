@@ -1756,7 +1756,7 @@ function redraw_drawn_light(){
 				height = (height != undefined && parseInt(height) != 0) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 			}
 		}
-
+		targetCtx.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 
 		if (shape == "eraser") {
 			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
@@ -1787,6 +1787,7 @@ function redraw_drawn_light(){
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
+		targetCtx.filter = "";
 	}
 
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
@@ -4159,8 +4160,9 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 	}
 	let fog = true;
   	particleUpdate(mouseX, mouseY); // moves particle
+  	let darknessBoundarys = getDarknessBoundarys();
   	if(distance1 != 0){
-  		particleLook(ctx, window.walls, distance1, fog, fogStyle, fogType, true, islight); 
+  		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance1, fog, fogStyle, fogType, true, islight); 
   	}
 
 	if(distance2 != undefined){
@@ -4168,7 +4170,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 		let fogStyleArray = fogStyle.split(',');
 		fogStyleArray[3] = `${parseFloat(fogStyleArray[3])/2})`;
 		fogStyle = fogStyleArray.join(',');
-		particleLook(ctx, window.walls, distance2, fog, fogStyle, fogType, true, islight); 
+		particleLook(ctx,  [...window.walls, ...darknessBoundarys], distance2, fog, fogStyle, fogType, true, islight); 
 	}
 
 }
@@ -5497,8 +5499,8 @@ Ray.prototype.cast = function(boundary) {
 		
 		if (t >= 0 && t <= 1 && u >= 0) {
 		  const pt = new Vector();
-		  pt.x = x1 + t * r.x;
-		  pt.y = y1 + t * r.y;
+		  pt.x = x1 + t * r.x - 8*this.dir.x;
+		  pt.y = y1 + t * r.y - 8*this.dir.y;
 		  return pt;
 		} else {
 		  return;
@@ -5529,9 +5531,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	lightPolygon = [];
 	movePolygon = [];
+	noDarknessPolygon = [];
 
 	let canSeeDarkness = window.TOKEN_OBJECTS[auraId]?.options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId]?.options.sight =='truesight';
-
 	let tokenElev = window.TOKEN_OBJECTS[auraId]?.options?.elev && window.TOKEN_OBJECTS[auraId]?.options?.elev != '' ? parseInt(window.TOKEN_OBJECTS[auraId].options.elev) : 0;
 	tokenElev += window.TOKEN_OBJECTS[auraId]?.options?.mapElev ? parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev) : 0;
 
@@ -5539,8 +5541,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let prevClosestPoint = null;
    	let prevClosestBarrier = null;
     let prevClosestBarrierPoint = null;
+    let prevClosestNoDarkness = null;
+    let prevClosestNoDarknessPoint = null;
     let closestWall = null;
     let closestBarrier = null;
+    let closestNoDarknessWall = null;
     let token;
     let x1;
     let x2;
@@ -5561,24 +5566,26 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let closestMove = null;
 	    let recordLight = Infinity;
 	    let recordMove = Infinity;
+	    let closestNoDarkness = null;
+	    let recordNoDarkness = Infinity;
+
 
 	    for (let j = 0; j < walls.length; j++) {
-	      if(walls[j].darkness == true && canSeeDarkness)
-	      	continue;
 	      let wallTop = walls[j].wallTop && walls[j].wallTop != '' ? parseInt(walls[j].wallTop) : Infinity;
 	      let wallBottom = walls[j].wallBottom && walls[j].wallBottom != '' ? parseInt(walls[j].wallBottom) : -Infinity;
 	      if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 	      	continue;
 	      
 	      	pt = window.PARTICLE.rays[i].cast(walls[j]);
-
+	      	
 	      
 	      if (pt) {
 	        const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
 	        if (dist < recordLight && walls[j].c != 1 && walls[j].c != 3 && walls[j].c != 6 && walls[j].c != 7) {
 	          	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
       			{
-		          	recordLight = dist;          	
+		          	recordLight = dist;         
+		          	
 			        if(dist == lightRadius){
 			          	pt = {
 				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
@@ -5589,10 +5596,34 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 			        if(dist != lightRadius){    	
 			          	closestWall = walls[j];
-			        }         
+			        }      
   		       }
 	        }
+
+	        if(canSeeDarkness && walls[j].darkness != true){
+		        if (dist < recordNoDarkness && walls[j].c != 1 && walls[j].c != 3 && walls[j].c != 6 && walls[j].c != 7) {
+		          	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
+	      			{
+
+			          	recordNoDarkness = dist;         
+			          	
+				        if(dist == lightRadius){
+				          	pt = {
+					          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+					          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+					          }
+			       		}	           	
+			          	closestNoDarkness = pt;
+
+				        if(dist != lightRadius){    	
+				          	closestNoDarknessWall = walls[j];
+				        }      
+	  		       }
+		        }
+	        }
 	        if(!walls[j].darkness){
+
+
     	        if(dist < recordMove){
     	        	recordMove = dist;
     	        	 if(dist == lightRadius){
@@ -5631,8 +5662,23 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
     	}
      	
+		if(canSeeDarkness){
+			if (closestNoDarkness && (closestNoDarknessWall != prevClosestNoDarkness || i == 359 || closestNoDarknessWall?.radius != undefined)) {
+	    		if(closestNoDarknessWall != prevClosestNoDarkness && prevClosestNoDarkness != null && prevClosestNoDarknessPoint != null){	    		
+	    			noDarknessPolygon.push({x: prevClosestNoDarknessPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
+	    		}
+	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	} 
 
+	    	if(recordLight == lightRadius){
+	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
+	    	}
+
+	    	prevClosestNoDarknessPoint = closestNoDarkness;
+	    	prevClosestNoDarkness = closestNoDarknessWall;
+		}
 	    
+
 
 
 	    prevClosestPoint = closestLight;
@@ -5640,6 +5686,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	    prevClosestBarrierPoint = closestMove;
 	    prevClosestBarrier = closestBarrier;
+
+	   
+
 	}
   	if(draw == true){
 		if(!fog){
@@ -5940,7 +5989,7 @@ function redraw_light(){
 				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length+darknessBoundarys.length){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
-				darknessPolygon = window.lineOfSightPolygons[auraId].darkness;
+				noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;
 			}
 			else{
 				
@@ -5956,12 +6005,30 @@ function redraw_light(){
 				window.lineOfSightPolygons[auraId] = {
 					polygon: lightPolygon,
 					move: movePolygon,
+					noDarkness: noDarknessPolygon,
 					x: tokenPos.x,
 					y: tokenPos.y,
 					numberofwalls: walls.length,
 					clippath: path
 				}
-				$(`.aura-element-container-clip[id='${auraId}']`).css('clip-path', `path('${path}')`)
+
+			
+				$(`.aura-element-container-clip[id='${auraId}']:not(.vision)`).css('clip-path', `path('${path}')`)
+				
+
+	
+	
+				if( window.TOKEN_OBJECTS[auraId]?.options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId]?.options.sight =='truesight'){
+					let path = "";
+					for( let i = 0; i < noDarknessPolygon.length; i++ ){
+						path += (i && "L" || "M") + noDarknessPolygon[i].x/adjustScale+','+noDarknessPolygon[i].y/adjustScale
+					}
+					window.lineOfSightPolygons[auraId].devilsightClip = path;
+					$(`.aura-element-container-clip[id='${auraId}'].vision`).css('clip-path', `path('${path}')`)
+				
+				}
+				
+
 			}
 
 		
@@ -6001,14 +6068,17 @@ function redraw_light(){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
- 	
+ 				offscreenContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
  				
 				if(!window.DM || window.SelectedTokenVision){
 					if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
 						tempDarkvisionCtx.globalCompositeOperation='source-over';
 						drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+
 						tempDarkvisionCtx.globalCompositeOperation='destination-in';
-						drawPolygon(tempDarkvisionCtx, lightPolygon, 'rgba(255, 255, 255, 1)', true);
+						drawPolygon(tempDarkvisionCtx, noDarknessPolygon, 'rgba(255, 255, 255, 1)', true);
+						offscreenContext.globalCompositeOperation='source-over';
+						offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
 					}
 					if(currentLightAura.parent().hasClass('devilsight')){
 						devilsightCtx.globalCompositeOperation='source-over';
@@ -6023,9 +6093,10 @@ function redraw_light(){
 
 				
 				tokenVisionAura.toggleClass('notVisible', false);	
+				
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-
+				offscreenContext.filter = "";
 			}
 			resolve();
 		})); 	
@@ -6049,7 +6120,6 @@ function redraw_light(){
 
 			truesightCanvasContext.globalCompositeOperation='destination-in';
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
-
 		}
 	}
 	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
@@ -6060,16 +6130,12 @@ function redraw_light(){
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
 
-
 			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(devilsightCanvas, 0, 0);
 
 			
-
 			truesightCanvasContext.globalCompositeOperation='destination-in';
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);	
-
-			
 		}
 		
 		lightInLosContext.globalCompositeOperation='destination-in';
@@ -6082,7 +6148,9 @@ function redraw_light(){
 	}	
 
 	requestAnimationFrame(function(){
+		context.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 		context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+		context.filter = "";
 		if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
 			let exploredCanvas = document.getElementById("exploredCanvas");
 			if($('#exploredCanvas').length == 0){
@@ -6108,6 +6176,7 @@ function redraw_light(){
 							requestAnimationFrame(function(){
 							  window.exploredCanvasContext.drawImage(img,0,0); 
 							  window.exploredCanvasContext.globalCompositeOperation='lighten';
+							  window.exploredCanvasContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 							});
 						};
@@ -6121,6 +6190,7 @@ function redraw_light(){
 				}
 				requestAnimationFrame(function(){
 					window.exploredCanvasContext.globalCompositeOperation='lighten';
+					window.exploredCanvasContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 				});
 				debounceStoreExplored(exploredCanvas);
@@ -6321,9 +6391,7 @@ function draw_aoe_to_canvas(targetAoes, ctx, isDarkness = false){
 function draw_darkness_aoe_to_canvas(ctx){
 	let darknessAoes = $('[data-darkness]');
 	ctx.globalCompositeOperation='source-over';
-	draw_aoe_to_canvas(darknessAoes, ctx, true)
-
-	
+	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
 function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height()){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
