@@ -1215,34 +1215,19 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
         let searchText = statText.replace('mon-stat-block-2024', '').replace(/\&nbsp\;/g,' ')
         if(averageHP == ''){
-            let match = searchText.matchAll(/Hit Points[\s\D]+?([0-9]+)/gi).next()
+            let match = searchText.matchAll(/(Hit Points|hp)[\s\D]+?([0-9]+)/gi).next()
             if(match.value != undefined){
-                averageHP = match.value[1] 
-            }
-            else{
-                match = searchText.matchAll(/[Hh][Pp][\s\D]+?([0-9]+)/gi).next()
-                if(match.value != undefined){
-                    averageHP = match.value[1] 
-                }
+                averageHP = match.value[2] 
             }
         }
         if(hitDiceData == ''){
-            const hpRollRegex = /Hit Points[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|Hit Points[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)\)/gi
+            const hpRollRegex = /(Hit Points|hp)[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|Hit Points[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)\)/gi
             let match = searchText.matchAll(hpRollRegex).next()
             if(match.value != undefined){
-                if(match.value[1] != undefined)
-                    hitDiceData = match.value[1] 
-                else if(match.value[4] != undefined)
-                    hitDiceData = match.value[4] 
-            }
-            else{
-                match = searchText.matchAll(/hp[\s\S]+?\((([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)\)|hp[\s\S]+?\(([0-9]+\s?([+-]\s?([0-9]+d[0-9]+))?)/gi).next()
-                if(match.value != undefined){
-                    if(match.value[1] != undefined)
-                        hitDiceData = match.value[1] 
-                    else if(match.value[4] != undefined)
-                        hitDiceData = match.value[4] 
-                }
+                if(match.value[2] != undefined)
+                    hitDiceData = match.value[2] 
+                else if(match.value[5] != undefined)
+                    hitDiceData = match.value[5] 
             }
         }
          switch (options['defaultmaxhptype']) {
@@ -1391,15 +1376,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let newAC = $(searchText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = searchText.matchAll(/Armor Class[\s\D]+?([0-9]+)[<\.\s]/gi).next()
-            if(match.value != undefined && match.value[1] != undefined){
-                newAC = match.value[1]
-            }
-            else{
-                match = searchText.matchAll(/AC[\s\D]+?([0-9]+)[<\.\s]/gi).next()
-                if(match.value != undefined && match.value[1] != undefined){
-                    newAC = match.value[1]
-                }
+            let match = searchText.matchAll(/(Armor Class|ac)[\s\D]+?([0-9]+)[<\.\s]/gi).next()
+            if(match.value != undefined && match.value[2] != undefined){
+                newAC = match.value[2]
             }
         }
 
