@@ -5385,6 +5385,19 @@ span.exhaustion-pip.last{
 .example-token{
     --window-zoom: 1;
 }
+.example-token.selected:before {
+    content: 'Customizing';
+    font-weight:bold;
+    text-shadow:0px 0px #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    display:flex;
+    font-size:10px;
+    position:absolute;
+    width:100%;
+    height:100%;
+    z-index:1;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
 /* all the rc-switch styles were lifted from the content sharing screen /campaigns/<campaign_id>/content-management and then tweaked slightly */
 .rc-switch {
     position: relative;

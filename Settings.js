@@ -1127,7 +1127,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 				.each(function () {
 					let el = $(this);
 					let matchingOption = availableOptions.find(o => o.name === el.attr("name"));
-					el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
+					el.find(`option[value=undefined]`).attr('selected','selected');
 				});
 
 			// This is why we want multiple callback functions.

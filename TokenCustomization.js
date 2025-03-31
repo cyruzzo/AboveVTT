@@ -172,41 +172,62 @@ class TokenCustomization {
     }
 
     setTokenOption(key, value) {
+        let currSrc = $('.sidebar-panel-body .example-token.selected .div-token-image')?.attr('src')
+        let target = this.tokenOptions;
+        if(currSrc != undefined){
+            if(this.tokenOptions.alternativeImagesCustomizations == undefined)
+                this.tokenOptions.alternativeImagesCustomizations = {};
+            if(this.tokenOptions.alternativeImagesCustomizations[currSrc] == undefined)
+                this.tokenOptions.alternativeImagesCustomizations[currSrc] ={};
+            target = this.tokenOptions.alternativeImagesCustomizations[currSrc]
+        }
+
         console.debug("setTokenOption", key, value);
         if (value === undefined) {
-            delete this.tokenOptions[key];
+            delete target[key];
         } else if (key === "name") { // we want to special case "name" because we want to guarantee that it's a string
             if (typeof value === "string") {
-                this.tokenOptions[key] = value;
+                target[key] = value;
             } else {
-                this.tokenOptions[key] = `${value}`;
+                target[key] = `${value}`;
             }
         } else if (value === true || value === "true") {
-            this.tokenOptions[key] = true;
+            target[key] = true;
         } else if (value === false || value === "false") {
-            this.tokenOptions[key] = false;
+            target[key] = false;
         } else if (!isNaN(parseFloat(value)) && typeof value === "string") {
             if(key.includes(".")){
                 const keys = key.split('.');
                 if(keys.length == 2){
-                    if(this.tokenOptions[keys[0]] == undefined)
-                        this.tokenOptions[keys[0]] = {};
+                    if(target[keys[0]] == undefined)
+                        target[keys[0]] = {};
                     if (value.includes(".")) {
-                        this.tokenOptions[keys[0]][keys[1]] = parseFloat(value);
+                        target[keys[0]][keys[1]] = parseFloat(value);
                     } else {
-                        this.tokenOptions[keys[0]][keys[1]] = parseInt(value);
+                        target[keys[0]][keys[1]] = parseInt(value);
                     } 
                 }
             }
             else{
                 if (value.includes(".")) {
-                    this.tokenOptions[key] = parseFloat(value);
+                    target[key] = parseFloat(value);
                 } else {
-                    this.tokenOptions[key] = parseInt(value);
+                    target[key] = parseInt(value);
                 }
             }
         } else {
-            this.tokenOptions[key] = value;
+            if(key.includes(".")){
+                const keys = key.split('.');
+                if(keys.length == 2){
+                    if(target[keys[0]] == undefined)
+                        target[keys[0]] = {};
+                    target[keys[0]][keys[1]] = value;
+                }
+            }
+            else{
+                target[key] = value;
+            }
+            
         }
     }
 
@@ -231,16 +252,19 @@ class TokenCustomization {
         }
         let index = this.tokenOptions.alternativeImages.findIndex(i => i === imageUrl);
         if (typeof index === "number" && index >= 0) {
+            delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[index]];
             this.tokenOptions.alternativeImages.splice(index, 1);
         }
         const parsed = await parse_img(imageUrl);
         let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => parse_img(i) === parsed);
         if (typeof parsedIndex === "number" && parsedIndex >= 0) {
+            delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[parsedIndex]];
             this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
         }
     }
     removeAllAlternativeImages() {
         this.tokenOptions.alternativeImages = [];
+        this.tokenOptions.alternativeImagesCustomizations = {};
     }
     randomImage() {
         if (this.tokenOptions.alternativeImages && this.tokenOptions.alternativeImages.length > 0) {
@@ -708,6 +732,8 @@ function persist_token_customization(customization, callback) {
             callback(false, "Invalid Customization");
             return;
         }
+
+
         customization.tokenOptions = Object.fromEntries(Object.entries(customization.tokenOptions).filter(([key, value]) => value != 'undefined'))
         let existingIndex = window.TOKEN_CUSTOMIZATIONS.findIndex(c => c.tokenType === customization.tokenType && c.id === customization.id);
         if (existingIndex >= 0) {
@@ -732,6 +758,8 @@ function persist_token_customization(customization, callback) {
                 }
             }
         }
+        
+       
 
         // TODO: call the API with a single object instead of persisting everything
         persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
