@@ -1152,8 +1152,12 @@ class JournalManager{
 			const pinId = $(this).attr('data-id');
 			let noteText = $(this).attr('data-text');
 			let noteTitle = 'pin';
-			const noteId = $(this).attr('data-note');
+			
 
+			let noteId = $(this).attr('data-note');
+			if(noteId.replace(/[-+*&<>]/gi, '') == noteText.replace(/[-+*&<>\s]/gi, '')){
+				noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes(noteText?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
+			}
 		
 			if(window.JOURNAL.notes[noteId] != undefined){
 				noteText = window.JOURNAL.notes[noteId].text;
@@ -1763,8 +1767,9 @@ class JournalManager{
         	let text = m2;
         	let noteId = '';
         	if(text.match(/\[note\](.*?)\[\/note\]/gi)){
-        		noteId = text.matchAll(/\[note\](.*?);.*\[\/note\]/gi).next().value[1];
-        		text = '';
+        		const insideText = text.matchAll(/\[note\](.*?)\[\/note\]/gi).next().value[1];
+        		noteId = insideText.replace(/\s/g, '-').split(';')[0];
+            	text = (insideText.split(';')[1]) ? insideText.split(';')[1] : insideText;
         	}
         	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}"></div>`
         });
