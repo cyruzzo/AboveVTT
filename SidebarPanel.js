@@ -2082,52 +2082,54 @@ function  disable_draggable_change_folder() {
 
 
     
+  if(window.reorderState != undefined){
+    window.reorderState = undefined;
+    $(".token-row-drag-handle").remove();
 
-  window.reorderState = undefined;
-  $(".token-row-drag-handle").remove();
+    // MyToken
+    if (typeof tokensPanel !== 'undefined') {
+        tokensPanel.body.find(".token-row-gear").show();
+        tokensPanel.body.find(".token-row-button").show();
+        tokensPanel.body.find(".token-row-button.reorder-button").show();
+        tokensPanel.body.find(".reorder-button").removeClass("active");
+        tokensPanel.body.find(" > .custom-token-list > .folder").show();
+        tokensPanel.body.removeClass("folder");
+        tokensPanel.header.find("input[name='token-search']").show();
+        tokensPanel.updateHeader("Tokens");
+        
+        add_expand_collapse_buttons_to_header(tokensPanel, true);
 
-  // MyToken
-  if (typeof tokensPanel !== 'undefined') {
-      tokensPanel.body.find(".token-row-gear").show();
-      tokensPanel.body.find(".token-row-button").show();
-      tokensPanel.body.find(".token-row-button.reorder-button").show();
-      tokensPanel.body.find(".reorder-button").removeClass("active");
-      tokensPanel.body.find(" > .custom-token-list > .folder").show();
-      tokensPanel.body.removeClass("folder");
-      tokensPanel.header.find("input[name='token-search']").show();
-      tokensPanel.updateHeader("Tokens");
-      
-      add_expand_collapse_buttons_to_header(tokensPanel, true);
+        try {
+          tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
+        } catch (e) {} // don't care if it fails, just try
+        try {
+          tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
+        } catch (e) {} // don't care if it fails, just try
 
-      try {
-        tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
-      } catch (e) {} // don't care if it fails, just try
-      try {
-        tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
-      } catch (e) {} // don't care if it fails, just try
+        redraw_token_list($('[name="token-search"]').val());
+    }
 
-      redraw_token_list($('[name="token-search"]').val());
+    // Scenes
+    if (typeof scenesPanel !== 'undefined') {
+        scenesPanel.body.find(".token-row-gear").show();
+        scenesPanel.body.find(".token-row-button").show();
+        scenesPanel.header.find(".token-row-gear").show();
+        scenesPanel.header.find(".token-row-button").show();
+        scenesPanel.header.find(".scenes-panel-add-buttons-wrapper input").show();
+        scenesPanel.header.find(".scenes-panel-add-buttons-wrapper")
+        scenesPanel.header.find(".reorder-button").removeClass("active");
+        scenesPanel.header.find(".scenes-panel-add-buttons-wrapper .reorder-explanation").hide();
+        scenesPanel.body.removeClass("folder");
+
+        try {
+          scenesPanel.body.find(".sidebar-list-item-row").draggable("destroy");
+        } catch (e) {} // don't care if it fails, just try
+        try {
+          scenesPanel.body.find(".sidebar-list-item-row").droppable("destroy");
+        } catch (e) {} // don't care if it fails, just try
+    }
   }
-
-  // Scenes
-  if (typeof scenesPanel !== 'undefined') {
-      scenesPanel.body.find(".token-row-gear").show();
-      scenesPanel.body.find(".token-row-button").show();
-      scenesPanel.header.find(".token-row-gear").show();
-      scenesPanel.header.find(".token-row-button").show();
-      scenesPanel.header.find(".scenes-panel-add-buttons-wrapper input").show();
-      scenesPanel.header.find(".scenes-panel-add-buttons-wrapper")
-      scenesPanel.header.find(".reorder-button").removeClass("active");
-      scenesPanel.header.find(".scenes-panel-add-buttons-wrapper .reorder-explanation").hide();
-      scenesPanel.body.removeClass("folder");
-
-      try {
-        scenesPanel.body.find(".sidebar-list-item-row").draggable("destroy");
-      } catch (e) {} // don't care if it fails, just try
-      try {
-        scenesPanel.body.find(".sidebar-list-item-row").droppable("destroy");
-      } catch (e) {} // don't care if it fails, just try
-  }
+  
 }
 
 function add_expand_collapse_buttons_to_header(sidebarPanel, addHideButton=false) {
