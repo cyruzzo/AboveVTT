@@ -576,7 +576,7 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     // first let's add our root folders
     for (let i = 0; i < tokens_rootfolders.length; i++) {
-        let row =   build_sidebar_list_row(tokens_rootfolders[i]);
+        let row = build_sidebar_list_row(tokens_rootfolders[i]);
         list.append(row);
     }
 
@@ -610,6 +610,8 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     update_pc_token_rows();
     inject_encounter_monsters();
+    inject_monster_tokens(nameFilter);
+    inject_open5e_monster_list_items();
     if(!$('.reveal-hidden-button').hasClass('clicked')){
         $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
     }
