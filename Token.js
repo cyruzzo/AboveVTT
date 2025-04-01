@@ -3747,7 +3747,11 @@ function place_token_at_map_point(tokenObject, x, y) {
 	}
 
 	if (options.size == undefined) {
-		if (options.sizeId != undefined) {
+		if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
+			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
+			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);
+		} 
+		else if (options.sizeId != undefined) {
 			// sizeId was specified, convert it to size. This is used when adding from the monster pane
 			if (options.sizeId == 2) {
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 0.5;
@@ -3761,10 +3765,8 @@ function place_token_at_map_point(tokenObject, x, y) {
 				// default to small/medium size
 				options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 			}
-		} else if (options.tokenSize != undefined && parseFloat(options.tokenSize) != NaN) {
-			// tokenSize was specified, convert it to size. tokenSize is the number of squares this token fills
-			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * parseFloat(options.tokenSize);
-		} else {
+		} 
+		else {
 			// default to small/medium size
 			options.size = Math.round(window.CURRENT_SCENE_DATA.hpps) * 1;
 		}

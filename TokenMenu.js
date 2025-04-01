@@ -3231,7 +3231,7 @@ function build_age_inputs(tokenAges, tokenMaxAges, ageChangeHandler, maxAgeChang
 	let tokenMaxAgeInput = output.find("select");
 	let customAgeInput = output.find("input");
 
-	tokenMaxAgeInput.change(function(event) {
+	tokenMaxAgeInput.off('change focusout').on('change focusout', function(event) {
 		let val = event.target.value == 'false' ? false : event.target.value;
 		let customInputWrapper = $(event.target).parent().next();
 		if (val === "custom") {
@@ -3615,7 +3615,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 	let tokenSizeInput = output.find("select");
 	let customSizeInput = output.find("input[name='data-token-size-custom']");
 
-	tokenSizeInput.change(function(event) {
+	tokenSizeInput.off('change focusout').on('change focusout', function(event) {
 		let customInputWrapper = $(event.target).parent().next();
 		console.log("tokenSizeInput changed");
 		if ($(event.target).val() === "custom") {
@@ -3627,7 +3627,7 @@ function build_token_size_input(tokenSizes, changeHandler, forceCustom = false, 
 		}
 	});
 
-	customSizeInput.change(function(event) {
+	customSizeInput.off('change focusout').on('change focusout', function(event) {
 		console.log("customSizeInput changed");
 		// convert custom footage into squares
 		let newValue = 
