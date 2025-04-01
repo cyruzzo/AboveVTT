@@ -3841,28 +3841,14 @@ function display_change_image_modal(placedToken) {
 
             const imgSrc = parse_img(imgUrl);
             if(placedToken.options.alternativeImagesCustomizations != undefined){
-                // set up whatever you need to. We'll override a few things after
-                let foundOptions = find_token_options_for_list_item(listItem);
-                const pc = find_pc_by_player_id(placedToken.options.id, false) || {};
-
                 placedToken.options ={
                     ...placedToken.options,
-                    tokenStyle: undefined,
-                    ...default_options(),
-                    ...window.TOKEN_SETTINGS,
-                    ...pc,
-                    ...foundOptions,
                     ...placedToken.options.alternativeImagesCustomizations[imgSrc],
-                    id: placedToken.options.id // pc.id uses the DDB characterId, but we want to use the pc.sheet for player ids. So just use whatever we were given with tokenObject.id
                 }
-                
                 const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
                 const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
                 const newSize = placedToken.options.tokenSize * hpps
                 placedToken.size(newSize);
-                
-                
-
             }
             placedToken.options.imgsrc = imgSrc;
            
