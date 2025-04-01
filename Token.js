@@ -3455,9 +3455,14 @@ class Token {
 				        $('#token_map_items').append(tokenClone);
 					}	
 			    }
+
 			    if(window.DM)
 					setTokenAudio(tok, this)
-
+				
+				if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+					throttleLight();
+				else
+					longDebounceLightChecks();
 				console.groupEnd()
 			}
 			// HEALTH AURA / DEAD CROSS
@@ -3470,9 +3475,6 @@ class Token {
 				new Promise(() => this.update_health_aura(token)),
 				new Promise(() => this.update_dead_cross(token)),
 				new Promise(() => toggle_player_selectable(this, token)),
-				new Promise(() => {
-					
-				}),
 				new Promise(debounceAudioChecks)
 			]).catch((error) => {
 		        showError(error, `Failed to start AboveVTT on ${window.location.href}`);
