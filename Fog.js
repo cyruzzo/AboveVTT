@@ -1756,7 +1756,8 @@ function redraw_drawn_light(){
 				height = (height != undefined && parseInt(height) != 0) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 			}
 		}
-		targetCtx.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
+		
+		targetCtx.filter = `blur(3px)`;
 
 		if (shape == "eraser") {
 			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
@@ -1787,7 +1788,7 @@ function redraw_drawn_light(){
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
-		targetCtx.filter = "";
+		targetCtx.filter = "none";
 	}
 
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
@@ -5424,8 +5425,8 @@ Ray.prototype.draw = function(ctx) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 }; */
 
-Ray.prototype.cast = function(boundary) {
-
+Ray.prototype.cast = function(boundary, dirMultipler) {
+  let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
   if(boundary.radius != undefined){
 		let u = {
 			x: boundary.a.x - this.pos.x,
@@ -5447,11 +5448,11 @@ Ray.prototype.cast = function(boundary) {
 			return;
 		}
 		else{
-			let p1 = new Vector(this.pos.x + u1.x + m*this.dir.x, this.pos.y + u1.y + m*this.dir.y);
+			let p1 = new Vector(this.pos.x + u1.x + m*dirMultipler*this.dir.x, this.pos.y + u1.y + m*dirMultipler*this.dir.y);
 					  
 		  	if(d < boundary.radius && Vector.dist(this.pos, boundary.a) > boundary.radius){
 		  		
-		  		let p2 = new Vector(this.pos.x + u1.x - m*this.dir.x, this.pos.y + u1.y - m*this.dir.y);
+		  		let p2 = new Vector(this.pos.x + u1.x - m*dirMultipler*this.dir.x, this.pos.y + u1.y - m*dirMultipler*this.dir.y);
 		  		let distance1 = Vector.dist(this.pos, p1);
 		  		let distance2 = Vector.dist(this.pos, p2);
 			  	if(distance1 >= distance2){
@@ -5499,8 +5500,8 @@ Ray.prototype.cast = function(boundary) {
 		
 		if (t >= 0 && t <= 1 && u >= 0) {
 		  const pt = new Vector();
-		  pt.x = x1 + t * r.x - 8*this.dir.x;
-		  pt.y = y1 + t * r.y - 8*this.dir.y;
+		  pt.x = x1 + t * r.x - 8*dirMultipler*this.dir.x;
+		  pt.y = y1 + t * r.y - 8*dirMultipler*this.dir.y;
 		  return pt;
 		} else {
 		  return;
@@ -5552,6 +5553,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let y1;
     let y2;
     let tokenIsDoor;
+
+    let pointDirMultipler = islight ? 2 : 1;
+
     if(auraId){
     	let token = $(`#tokens [data-id='${auraId}']`)
     	tokenIsDoor = token.hasClass('door-button');
@@ -5576,7 +5580,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	      if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 	      	continue;
 	      
-	      	pt = window.PARTICLE.rays[i].cast(walls[j]);
+	      	pt = window.PARTICLE.rays[i].cast(walls[j], pointDirMultipler);
 	      	
 	      
 	      if (pt) {
@@ -6058,7 +6062,6 @@ function redraw_light(darknessMoved = false){
 
 
 
-			
 			if(selectedIds.length == 0 || found || !window.SelectedTokenVision){	
 				
 				let hideVisionWhenNoPlayerToken = (playerTokenId == undefined && !window.TOKEN_OBJECTS[auraId].options.share_vision && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType != 'pc')
@@ -6069,7 +6072,7 @@ function redraw_light(darknessMoved = false){
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
- 				offscreenContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
+ 				
  				
 				if(!window.DM || window.SelectedTokenVision){
 					if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
@@ -6097,8 +6100,10 @@ function redraw_light(darknessMoved = false){
 				
 				drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 				drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-				offscreenContext.filter = "";
+				
 			}
+
+		
 			resolve();
 		})); 	
 	}
@@ -6125,8 +6130,9 @@ function redraw_light(darknessMoved = false){
 	}
 	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
 		lightInLosContext.globalCompositeOperation='destination-over';
+		
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
-
+		
 
 		if(!window.DM || window.SelectedTokenVision){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
@@ -6143,16 +6149,34 @@ function redraw_light(darknessMoved = false){
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		
 
-		offscreenContext.globalCompositeOperation='destination-over';
+		let offscreenCanvasMask2 = document.createElement('canvas');
+		let offscreenContext2 = offscreenCanvasMask2.getContext('2d');
+
+		offscreenCanvasMask2.width = canvasWidth;
+		offscreenCanvasMask2.height = canvasHeight;
+
+		offscreenContext.globalCompositeOperation='xor';
 		offscreenContext.fillStyle = "black";
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+
+		offscreenContext2.drawImage(offscreenCanvasMask, 0, 0) // store darkness to redraw with blur
+		
+		offscreenContext.globalCompositeOperation='destination-over';
+		offscreenContext.fillStyle = "white";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
+
+		offscreenContext.filter = `blur(10px)`;
+		offscreenContext.globalCompositeOperation='source-over';
+		offscreenContext.drawImage(offscreenCanvasMask2, 0, 0);
+		offscreenContext.filter = `none`;
 	}	
 
 	requestAnimationFrame(function(){
-		context.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
+		context.filter = `blur(3px)`;
 		context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-		context.filter = "";
+		context.filter = `none`;
 		if(gameIndexedDb != undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && !window.DM){
+
 			let exploredCanvas = document.getElementById("exploredCanvas");
 			if($('#exploredCanvas').length == 0){
 				exploredCanvas =  document.createElement("canvas")
@@ -6177,7 +6201,6 @@ function redraw_light(darknessMoved = false){
 							requestAnimationFrame(function(){
 							  window.exploredCanvasContext.drawImage(img,0,0); 
 							  window.exploredCanvasContext.globalCompositeOperation='lighten';
-							  window.exploredCanvasContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 							});
 						};
@@ -6191,7 +6214,6 @@ function redraw_light(darknessMoved = false){
 				}
 				requestAnimationFrame(function(){
 					window.exploredCanvasContext.globalCompositeOperation='lighten';
-					window.exploredCanvasContext.filter = `blur(${window.CURRENT_SCENE_DATA.scale_factor != undefined ? 3 * window.CURRENT_SCENE_DATA.scale_factor : 3}px)`;
 					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 				});
 				debounceStoreExplored(exploredCanvas);
