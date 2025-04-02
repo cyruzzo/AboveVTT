@@ -5775,7 +5775,7 @@ function detectInLos(x, y) {
 	
 
 
-function redraw_light(){
+function redraw_light(darknessMoved = false){
 	let startTime = Date.now();
 
 	
@@ -5986,7 +5986,8 @@ function redraw_light(){
 			}
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length+darknessBoundarys.length){
+				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length+darknessBoundarys.length &&
+				!darknessMoved){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				noDarknessPolygon = window.lineOfSightPolygons[auraId].noDarkness;

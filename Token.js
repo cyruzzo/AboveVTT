@@ -40,7 +40,7 @@ const availableToAoe = [
 
 
 
-const throttleLight = throttle(() => {requestAnimationFrame(redraw_light)}, 1000/8);
+const throttleLight = throttle((darknessMoved = false) => {requestAnimationFrame(()=>{redraw_light(darknessMoved)})}, 1000/8);
 const throttleTokenCheck = throttle(() => {requestAnimationFrame(()=>{do_check_token_visibility()})}, 1000/4);
 const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
@@ -55,14 +55,14 @@ const debounceStoreExplored = mydebounce((exploredCanvas) => {
 	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
 	};
 }, 5000)
-let debounceLightChecks = mydebounce(() => {		
+let debounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		requestAnimationFrame(redraw_light);
+		requestAnimationFrame(()=>{redraw_light(darknessMoved)});
 		debounceAudioChecks();
 		
 }, 20);
@@ -71,14 +71,14 @@ let debounceAudioChecks = mydebounce(() => {
 	checkAudioVolume();
 }, 20)
 
-let longDebounceLightChecks = mydebounce(() => {		
+let longDebounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		requestAnimationFrame(redraw_light);
+		requestAnimationFrame(()=>{redraw_light(darknessMoved)});
 		debounceAudioChecks();
 }, 300);
 
@@ -701,10 +701,14 @@ class Token {
 
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
+					const darknessMoved = self.options.darkness;
+					if(self.option.darkness)
+						redraw_drawn_light();
+					
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-						throttleLight();
+						throttleLight(darknessMoved);
 					else
-						debounceLightChecks()
+						debounceLightChecks(darknessMoved)
 					}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
@@ -2093,10 +2097,14 @@ class Token {
 						left: this.options.left,
 						top: this.options.top,
 					}, { duration: animationDuration, queue: true, complete: async function() {
+							const darknessMoved = self.options.darkness;
+							if(self.options.darkness)
+								redraw_drawn_light();
+							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-								throttleLight();
+								throttleLight(darknessMoved);
 							else
-								debounceLightChecks()
+								debounceLightChecks(darknessMoved)
 						}
 					});
 					
@@ -2156,10 +2164,14 @@ class Token {
 							width: this.sizeWidth(),
 							height: this.sizeHeight()
 						}, { duration: animationDuration, queue: false, complete: async function() {
+							const darknessMoved = self.options.darkness;
+							if(self.options.darkness)
+								redraw_drawn_light();
+							
 							if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-								throttleLight();
+								throttleLight(darknessMoved);
 							else
-								debounceLightChecks()
+								debounceLightChecks(darknessMoved)
 						}});
 					}
 					
@@ -2418,10 +2430,14 @@ class Token {
 						}, 
 						{ 
 							duration: animationDuration, queue: true, complete: async function() {
+								const darknessMoved = self.options.darkness;
+								if(self.options.darkness)
+									redraw_drawn_light();
+								
 								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-									throttleLight();
+									throttleLight(darknessMoved);
 								else
-									debounceLightChecks()
+									debounceLightChecks(darknessMoved)
 							}
 						}
 					);
@@ -2494,6 +2510,8 @@ class Token {
 								}, 
 								{ 
 									duration: animationDuration, queue: true, complete: async function() {
+										const darknessMoved = self.options.darkness;
+									
 										if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 											throttleLight();
 										else
