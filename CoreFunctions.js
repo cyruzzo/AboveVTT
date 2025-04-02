@@ -1323,7 +1323,7 @@ function projector_scroll_event(event){
               scrollPercentageX:  (window.pageXOffset + window.innerWidth/2 - sidebarSize/2) / Math.max( document.body.scrollWidth, document.body.offsetWidth, 
                    document.documentElement.clientWidth, document.documentElement.scrollWidth, document.documentElement.offsetWidth ),
               zoom: zoom,
-              mapPos: convert_point_from_view_to_map(center.x, center.y, true)
+              mapPos: convert_point_from_view_to_map(center.x, center.y, true, true)
             });
       }
 }
