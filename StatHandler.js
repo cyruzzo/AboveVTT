@@ -66,7 +66,7 @@ class StatHandler {
 						modArray.push(modifier);
 						statArray.push((window.all_token_objects[i]?.options?.customInit != undefined || (window.all_token_objects[i]?.options?.customStat != undefined && window.all_token_objects[i]?.options?.customStat[1]?.mod != undefined)) ? ((modifier*2)+10) : 0);
 					}
-					else {
+					else if(window.all_token_objects[i].options.monster != undefined){
 						promises.push(new Promise((resolve, reject) => {
 							this.getStat(window.all_token_objects[i].options.monster, function(stat) {
 								if(stat.data.initiativeBonus != null){
@@ -80,6 +80,10 @@ class StatHandler {
 								resolve();
 							}, window.all_token_objects[i].options.itemId);
 						}));
+					}
+					else{
+						modArray.push(0);
+						statArray.push(10);
 					}
 				}
 			}
