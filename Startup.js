@@ -219,16 +219,12 @@ $(function() {
                   window.Projecting = true;
                   if(event.data.zoom == false || (windowRatio != 1 && window.ZOOM == event.data.zoom * windowRatio)){
                     let viewPos = convert_point_from_map_to_view(event.data.mapPos.x, event.data.mapPos.y) 
-                    window.scroll(viewPos.x - window.innerWidth/2 + sidebarSize/2 - 20, viewPos.y - window.innerHeight/2 - 20);  //20 for scrollbar  
-                  }
-                  else if(windowRatio != 1){
-                    change_zoom(event.data.zoom);
-                    window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);          
-                    change_zoom(event.data.zoom * windowRatio)
+                    window.scroll(viewPos.x-window.innerWidth/2+sidebarSize/2+20, viewPos.y-window.innerHeight/2+20); //20 for scrollbar width
                   }
                   else{              
                     change_zoom(event.data.zoom);
-                    window.scroll(event.data.x - window.innerWidth/2 + sidebarSize/2, event.data.y - window.innerHeight/2);    
+                    let viewPos = convert_point_from_map_to_view(event.data.mapPos.x, event.data.mapPos.y) 
+                    window.scroll(viewPos.x-window.innerWidth/2+sidebarSize/2+20, viewPos.y-window.innerHeight/2+20); //20 for scrollbar width    
                   }
                 })
                 

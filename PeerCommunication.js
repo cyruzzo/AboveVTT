@@ -509,7 +509,7 @@ const sendCursorPositionToPeers = throttle( (mouseMoveEvent) => {
       return;  // ideally, we would add the event listener to the map only, but I couldn't find a clean way to do that without restructuring things
     }
 
-    const [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent, true);
+    let [mouseX, mouseY] = get_event_cursor_position(mouseMoveEvent, true);
     noisy_log("sendCursorPositionToPeers", mouseX, mouseY);
     window.PeerManager.send(PeerEvent.cursor(mouseX, mouseY, undefined, false));
   } catch (error) {
@@ -612,8 +612,8 @@ function update_peer_cursor(eventData) {
   cursorPosition.css('background', eventData.color);
   cursorPosition.stop();
   cursorPosition.animate({
-    top: eventData.y,
-    left: eventData.x
+    top: eventData.y-cursorPosition.width()/2,
+    left: eventData.x-cursorPosition.height()/2
   }, peer_animation_timout, "linear");
   cursorPosition.fadeIn();
 }
