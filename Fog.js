@@ -677,7 +677,7 @@ function is_door_under_light_aura(door, lightContext=undefined){
 
 	let left = parseFloat($(door).css('--mid-x'))/window.CURRENT_SCENE_DATA.scale_factor;
 	let top = parseFloat($(door).css('--mid-y'))/window.CURRENT_SCENE_DATA.scale_factor;
-	let pixeldata = lightContext.getImageData(left-5, top-5, 10, 10).data;
+	let pixeldata = lightContext.getImageData(left-10, top-10, 20, 20).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
@@ -1940,6 +1940,8 @@ function redraw_light_walls(clear=true){
 						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
 		            
 		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+		        		
+
 		                let data = ['line',
 									 'wall',
 									 doorColors[type][isOpen],
@@ -1949,7 +1951,9 @@ function redraw_light_walls(clear=true){
 									 height,
 									 12,
 									 doors[0][8],
-									 doors[0][9]
+									 doors[0][9],
+									 (doors[0][10] != undefined ? doors[0][10] : ""),
+									 (doors[0][11] != undefined ? doors[0][11] : "")
 						];	
 						window.DRAWINGS.push(data);
 						window.wallUndo.push({
@@ -2179,8 +2183,10 @@ function open_close_door(x1, y1, x2, y2, type=0){
 				 y2,
 				 12,
 				 doors[0][8],
-				 doors[0][9]
-				 ];	
+				 doors[0][9],
+				 (doors[0][10] != undefined ? doors[0][10] : ""),
+				 (doors[0][11] != undefined ? doors[0][11] : "")
+				];	
 	window.DRAWINGS.push(data);
 	window.wallUndo.push({
 		undo: [[...data]],
