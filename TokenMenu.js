@@ -224,7 +224,9 @@ function token_context_menu_expanded(tokenIds, e) {
 							 y2,
 							 12,
 							 doors[0][8],
-							 doors[0][9]
+							 doors[0][9],
+				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
 				window.wallUndo.push({
@@ -307,7 +309,9 @@ function token_context_menu_expanded(tokenIds, e) {
 							 y2,
 							 12,
 							 doors[0][8],
-							 doors[0][9]
+							 doors[0][9],
+				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
 				window.wallUndo.push({
@@ -350,7 +354,9 @@ function token_context_menu_expanded(tokenIds, e) {
 							 y2,
 							 12,
 							 doors[0][8],
-							 doors[0][9]
+							 doors[0][9],
+				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
 				window.wallUndo.push({
@@ -387,7 +393,9 @@ function token_context_menu_expanded(tokenIds, e) {
 							 y2,
 							 12,
 							 doors[0][8],
-							 !hidden
+							 !hidden,
+				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+				 			 (doors[0][11] != undefined ? doors[0][11] : "")
 				];	
 				window.DRAWINGS.push(data);
 				window.wallUndo.push({
