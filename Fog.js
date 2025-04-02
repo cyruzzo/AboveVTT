@@ -6008,7 +6008,7 @@ function redraw_light(){
 					noDarkness: noDarknessPolygon,
 					x: tokenPos.x,
 					y: tokenPos.y,
-					numberofwalls: walls.length,
+					numberofwalls: walls.length+darknessBoundarys.length,
 					clippath: path
 				}
 
@@ -6046,7 +6046,7 @@ function redraw_light(){
 				tokenVisionAura.toggleClass('notVisible', false);
 			}
 
-			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight);
+			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys);
 
 			if(window.lightAuraClipPolygon[auraId]?.canvas != undefined){
 				lightInLosContext.globalCompositeOperation='source-over';
@@ -6393,7 +6393,7 @@ function draw_darkness_aoe_to_canvas(ctx){
 	ctx.globalCompositeOperation='source-over';
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
-function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height()){
+function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height(), darknessBoundarys = getDarknessBoundarys()){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
@@ -6422,7 +6422,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 			delete window.lightAuraClipPolygon[auraId];
 			return; // remove 0 range light and return
 		}
-		if(window.lightAuraClipPolygon[auraId].numberofwalls == walls.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+		if(window.lightAuraClipPolygon[auraId].numberofwalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
 			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
 	}
 	else if(circleRadius == 0){
