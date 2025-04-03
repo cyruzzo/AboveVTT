@@ -1161,7 +1161,8 @@ class JournalManager{
 		pins.each(function(){
 			const pinId = $(this).attr('data-id');
 			let noteText = $(this).attr('data-text');
-			let noteTitle = 'pin';
+			const label = $(this).attr('data-label');
+			let noteTitle = (typeof label == 'string' && label != '') ? label : 'pin';
 			
 
 			let noteId = $(this).attr('data-note');
