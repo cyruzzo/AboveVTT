@@ -2718,12 +2718,12 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 		let has_note=id in window.JOURNAL.notes;
 		if(has_note){
 			let viewNoteButton = $(`<button class="icon-view-note material-icons">View Note</button>`)		
-			let noteLinkButton = $(`<button class="icon-view-note material-icons">Copy Note Link</button>`)		
-			
+			let noteLinkButton = $(`<button class="icon-view-note material-icons">Copy Tooltip Link</button>`)		
+			let noteEmbedLinkButton = $(`<button class="icon-view-note material-icons">Copy Embed Tags</button>`)		
 			let deleteNoteButton = $(`<button class="icon-note-delete material-icons">Delete Note</button>`)
 			
 			editNoteButton = $(`<button class="icon-note material-icons">Edit Note</button>`)
-			body.append(viewNoteButton, noteLinkButton, editNoteButton, deleteNoteButton);	
+			body.append(viewNoteButton, noteLinkButton, noteEmbedLinkButton, editNoteButton, deleteNoteButton);	
 			viewNoteButton.off().on("click", function(){
 				window.JOURNAL.display_note(id);
 				$('#tokenOptionsClickCloseDiv').click();
@@ -2732,6 +2732,11 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 				let copyLink = `[note]${id};${window.JOURNAL.notes[id].title}[/note]`
 		        navigator.clipboard.writeText(copyLink);
 			});
+			noteEmbedLinkButton.off().on("click", function(){
+				let copyLink = `[note embed]${id};${window.JOURNAL.notes[id].title}[/note]`
+		        navigator.clipboard.writeText(copyLink);
+			});
+
 			deleteNoteButton.off().on("click", function(){
 				if(id in window.JOURNAL.notes){
 					delete window.JOURNAL.notes[id];

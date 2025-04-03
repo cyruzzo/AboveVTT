@@ -1906,7 +1906,7 @@ class Token {
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
-								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml, tokenId);
