@@ -1070,13 +1070,23 @@ class JournalManager{
 
 			            }   
 	            	};   
-	            	menuItems["copyLink"] = {
-		                name: "Copy Note Link",
-		                callback: function(itemKey, opt, originalEvent) {
-		                	let copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
-		                    navigator.clipboard.writeText(copyLink);
-			            }   
-	            	};   
+	            	if(!self.notes[note_id].ddbsource){
+		            	menuItems["copyLink"] = {
+			                name: "Copy Tooltip Link",
+			                callback: function(itemKey, opt, originalEvent) {
+			                	let copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
+			                    navigator.clipboard.writeText(copyLink);
+				            }   
+		            	};   
+		            	menuItems["copyEmbed"] = {
+			                name: "Copy Embed Tags",
+			                callback: function(itemKey, opt, originalEvent) {
+			                	let copyLink = `[note embed]${note_id};${self.notes[note_id].title}[/note]`
+			                    navigator.clipboard.writeText(copyLink);
+				            }   
+		            	};
+	            	}
+	            	
             		menuItems['export'] = {
             	        name: "Export Note",
             	        callback: function (itemKey, opt, e) {
@@ -1223,7 +1233,7 @@ class JournalManager{
 					            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 					            flyout.addClass('note-flyout');
 					            const tooltipHtml = $(noteHover);
-								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+								window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
 								add_journal_roll_buttons(tooltipHtml);
 								window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 								add_stat_block_hover(tooltipHtml);
@@ -1418,7 +1428,7 @@ class JournalManager{
 		}
 		note_text.append(self.notes[id].text); // valid tags are controlled by tinyMCE.init()
 		
-		this.translateHtmlAndBlocks(note_text);	
+		this.translateHtmlAndBlocks(note_text, id);	
 		add_journal_roll_buttons(note_text);
 		this.add_journal_tooltip_targets(note_text);
 		this.block_send_to_buttons(note_text);
@@ -1562,7 +1572,7 @@ class JournalManager{
 						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 						            flyout.addClass('note-flyout');
 						            const tooltipHtml = $(noteHover);
-									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
 									add_journal_roll_buttons(tooltipHtml);
 									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 									add_stat_block_hover(tooltipHtml);
@@ -1728,11 +1738,31 @@ class JournalManager{
 		}
 	}
 				   
+	replaceNoteEmbed(text, notesIncluded=[]){
+
+		return text.replace(/\[note embed\](.*?)\[\/note\]/gi, function(m, m1){
+    		let noteId = m1.replace(/\s/g, '-').split(';')[0];
+        	let noteText = (m1.split(';')[1]) ? m1.split(';')[1] : m1;
+        	if(noteId.replace(/[-+*&<>]/gi, '') == noteText.replace(/[-+*&<>\s]/gi, '')){
+				noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes(noteText?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
+			}
+		
+			if(window.JOURNAL.notes[noteId] != undefined){
+				if(notesIncluded.includes(noteId))
+					noteText = `<em style="color:#f00 !important">Warning: Note embeds that include parent notes are not supported to avoid infinite loop.</em>`;
+				else{
+					notesIncluded.push(noteId);
+					noteText = window.JOURNAL.replaceNoteEmbed(window.JOURNAL.notes[noteId].text, notesIncluded);
+				}
+			}
+			noteText = noteText.replace(/\[pin(.*?)id=([\w-]+?)(.*?)?\]([\s\S]+?)\[\/pin\]/gi,`<em style="color:#FF0 !important">Warning: Pins do not function inside embeds</em>`)
+        	return noteText;
+        });
+	}
 
 
 
-
-    translateHtmlAndBlocks(target) {
+    translateHtmlAndBlocks(target, displayNoteId) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container');
 
 		for(let i=0; i<pastedButtons.length; i++){
@@ -1762,30 +1792,31 @@ class JournalManager{
 		}
     	let data = $(target).clone().html();
 
-		data = data.replace(/\[pin id=([\w-]+?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
-        	const id = m1; 
+
+
+		data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
+			let label = '';
+			let id;
+			if(m1.match(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi)){
+				id = m1.matchAll(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi).next().value[1]
+			}
+			if(id == undefined)	
+				return `<p><em style="color: #F00 !important">Warning: Pin missing id. Ids should be unique Example: [pin id=idhere][/pin]<br><span style="padding-left: 20px;">Original text:${m}</span></em></p>`;
+			if(m1.match(/label=(.*?)([\w]+?=|$)/gi)){
+				label = m1.matchAll(/label=(.*?)([\w]+?=|$)/gi).next().value[1]
+			}
+
         	let text = m2;
         	let noteId = '';
-        	if(text.match(/\[note\](.*?)\[\/note\]/gi)){
-        		const insideText = text.matchAll(/\[note\](.*?)\[\/note\]/gi).next().value[1];
+        	if(text.match(/\[note( embed)?\](.*?)\[\/note\]/gi)){
+        		const insideText = text.matchAll(/\[note( embed)?\](.*?)\[\/note\]/gi).next().value[2];
         		noteId = insideText.replace(/\s/g, '-').split(';')[0];
             	text = (insideText.split(';')[1]) ? insideText.split(';')[1] : insideText;
         	}
-        	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}"></div>`
+        	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}" data-label="${label}"></div>`
         });
-		data = data.replace(/\[note embed\](.*?)\[\/note\]/gi, function(m, m1){
-    		let noteId = m1.replace(/\s/g, '-').split(';')[0];
-        	let noteText = (m1.split(';')[1]) ? m1.split(';')[1] : m1;
-        	if(noteId.replace(/[-+*&<>]/gi, '') == noteText.replace(/[-+*&<>\s]/gi, '')){
-				noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes(noteText?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
-			}
-		
-			if(window.JOURNAL.notes[noteId] != undefined){
-				noteText = window.JOURNAL.notes[noteId].text;
-			}
-        	return noteText;
-        });
-        
+
+       	data = this.replaceNoteEmbed(data, [displayNoteId]);
 
         let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
         lines = lines.map((line, li) => {

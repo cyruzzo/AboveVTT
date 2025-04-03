@@ -2098,7 +2098,7 @@ function door_note_icon(id){
 							    </div>
 							</div>`
 				            const tooltipHtml = $(noteHover);
-							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml);	
+							window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, id);	
 							add_journal_roll_buttons(tooltipHtml);
 							window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
 							add_stat_block_hover(tooltipHtml);
