@@ -3579,7 +3579,7 @@ div#selectedTokensBorder {
     background-size: contain, 200px !important;
 }
 .aoe-style-thunder{
-    background: repeating-radial-gradient(rgb(0 0 0 / 44%) 5%, rgb(246 246 246 / 52%) 8%, rgb(0 0 0 / 44%) 15%), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/thunder.jpg);
+    background: repeating-radial-gradient(rgb(0 0 0 / 0%) 1%, rgb(0 0 0 / 44%) 6%, rgb(246 246 246 / 52%) 7%, rgb(0 0 0 / 0%) 9%, rgb(0 0 0 / 44%) 9%), #7d7dff6e;
     background-repeat: no-repeat, repeat !important;
     background-size: contain, 300px !important;
 }
