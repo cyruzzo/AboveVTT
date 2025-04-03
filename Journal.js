@@ -1773,6 +1773,19 @@ class JournalManager{
         	}
         	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}"></div>`
         });
+		data = data.replace(/\[note embed\](.*?)\[\/note\]/gi, function(m, m1){
+    		let noteId = m1.replace(/\s/g, '-').split(';')[0];
+        	let noteText = (m1.split(';')[1]) ? m1.split(';')[1] : m1;
+        	if(noteId.replace(/[-+*&<>]/gi, '') == noteText.replace(/[-+*&<>\s]/gi, '')){
+				noteId = Object.keys(window.JOURNAL.notes).filter(d=> window.JOURNAL.notes[d]?.title?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')?.includes(noteText?.trim()?.toLowerCase()?.replace(/[-+*&<>\s]/gi, '')))[0]
+			}
+		
+			if(window.JOURNAL.notes[noteId] != undefined){
+				noteText = window.JOURNAL.notes[noteId].text;
+			}
+        	return noteText;
+        });
+        
 
         let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
         lines = lines.map((line, li) => {
