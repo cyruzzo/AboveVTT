@@ -1794,17 +1794,19 @@ class JournalManager{
 
 
 
-		data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
-			let label = '';
-			let id;
-			if(m1.match(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi)){
-				id = m1.matchAll(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi).next().value[1]
-			}
-			if(id == undefined)	
-				return `<p><em style="color: #F00 !important">Warning: Pin missing id. Ids should be unique Example: [pin id=idhere][/pin]<br><span style="padding-left: 20px;">Original text:${m}</span></em></p>`;
-			if(m1.match(/label=(.*?)([\w]+?=|$)/gi)){
-				label = m1.matchAll(/label=(.*?)([\w]+?=|$)/gi).next().value[1]
-			}
+
+        data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
+          let label = '';
+          let id;
+          if(m1.match(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi)){
+            id = m1.matchAll(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi).next().value[1]
+          }
+          if(id == undefined)	
+            return `<p><em style="color: #F00 !important">Warning: Pin missing id. Ids should be unique Example: [pin id=idhere][/pin]<br><span style="padding-left: 20px;">Original text:${m}</span></em></p>`;
+          if(m1.match(/label=(.*?)([\w]+?=|$)/gi)){
+            label = m1.matchAll(/label=(.*?)([\w]+?=|$)/gi).next().value[1]
+          }
+
 
         	let text = m2;
         	let noteId = '';
