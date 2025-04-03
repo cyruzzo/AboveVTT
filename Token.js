@@ -687,7 +687,7 @@ class Token {
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
 		let inLos = this.isAoe() ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
-
+		const self = this;
 
 		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
 
@@ -702,7 +702,7 @@ class Token {
 			old.animate({left: this.options.left,top: this.options.top,}, { duration: 0, queue: true, 
 				complete: async function() {
 					const darknessMoved = self.options.darkness;
-					if(self.option.darkness)
+					if(self.options.darkness)
 						redraw_drawn_light();
 					
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)

@@ -5506,8 +5506,8 @@ Ray.prototype.cast = function(boundary, dirMultipler) {
 		
 		if (t >= 0 && t <= 1 && u >= 0) {
 		  const pt = new Vector();
-		  pt.x = x1 + t * r.x - 8*dirMultipler*this.dir.x;
-		  pt.y = y1 + t * r.y - 8*dirMultipler*this.dir.y;
+		  pt.x = x1 + t * r.x - dirMultipler*this.dir.x;
+		  pt.y = y1 + t * r.y - dirMultipler*this.dir.y;
 		  return pt;
 		} else {
 		  return;
@@ -5560,7 +5560,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let y2;
     let tokenIsDoor;
 
-    let pointDirMultipler = islight ? 2 : 1;
+    let pointDirMultipler = islight ? 16 : 1; // used to keep light from bleeding through walls with bucketfill
 
     if(auraId){
     	let token = $(`#tokens [data-id='${auraId}']`)
@@ -5997,7 +5997,7 @@ function redraw_light(darknessMoved = false){
 			if(window.lineOfSightPolygons[auraId]?.x == tokenPos.x && 
 				window.lineOfSightPolygons[auraId]?.y == tokenPos.y && 
 				window.lineOfSightPolygons[auraId]?.numberofwalls == walls.length+darknessBoundarys.length  &&
-				window.lineOfSightPolygons[auraId].visionType == '' &&
+				window.lineOfSightPolygons[auraId].visionType == window.TOKEN_OBJECTS[auraId].options.visionType &&
 				!darknessMoved){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 				movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
