@@ -1794,16 +1794,28 @@ class JournalManager{
 
 
 
-		data = data.replace(/\[pin id=([\w-]+?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
-        	const id = m1; 
+
+        data = data.replace(/\[pin(.*?)\]([\s\S]+?)\[\/pin\]/gi, function(m, m1, m2){
+          let label = '';
+          let id;
+          if(m1.match(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi)){
+            id = m1.matchAll(/id=([\w-]+?)(\s+?|[\w]+?=|$)/gi).next().value[1]
+          }
+          if(id == undefined)	
+            return `<p><em style="color: #F00 !important">Warning: Pin missing id. Ids should be unique Example: [pin id=idhere][/pin]<br><span style="padding-left: 20px;">Original text:${m}</span></em></p>`;
+          if(m1.match(/label=(.*?)([\w]+?=|$)/gi)){
+            label = m1.matchAll(/label=(.*?)([\w]+?=|$)/gi).next().value[1]
+          }
+
+
         	let text = m2;
         	let noteId = '';
-        	if(text.match(/\[note\](.*?)\[\/note\]/gi)){
-        		const insideText = text.matchAll(/\[note\](.*?)\[\/note\]/gi).next().value[1];
+        	if(text.match(/\[note( embed)?\](.*?)\[\/note\]/gi)){
+        		const insideText = text.matchAll(/\[note( embed)?\](.*?)\[\/note\]/gi).next().value[2];
         		noteId = insideText.replace(/\s/g, '-').split(';')[0];
             	text = (insideText.split(';')[1]) ? insideText.split(';')[1] : insideText;
         	}
-        	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}"></div>`
+        	return `<div class="note-pin" data-id="${id}" data-text="${text}" data-note="${noteId}" data-label="${label}"></div>`
         });
 
        	data = this.replaceNoteEmbed(data, [displayNoteId]);
