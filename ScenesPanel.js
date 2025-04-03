@@ -2335,16 +2335,22 @@ function register_scene_row_context_menu() {
 async function duplicate_scene(sceneId) {
 	let scene = await AboveApi.getScene(sceneId);
 
+	const oldSceneId = scene.data.id;
+	const newSceneId = uuid();
 	let aboveSceneData = {
 		...scene.data,
-		id: uuid()
+		id: newSceneId
 	} 
 	
 	for(token in aboveSceneData.tokens){
 		let oldId = aboveSceneData.tokens[token].id;
-		let newId = uuid();
+		if(is_player_id(oldId))
+			continue;
+		//is a door if it has oldSceneId, we want to keep the position part of the id but replace scene so it is still targeted correctly
+		let newId = oldId.includes(oldSceneId) ? oldId.replace(oldSceneId, newSceneId) : uuid();
+		
 		for(noteID in window.JOURNAL.notes){
-			if(oldId == noteID){
+			if(oldId == noteID){	
 				window.JOURNAL.notes[newId] = {...window.JOURNAL.notes[noteID]};
 			}
 		}
