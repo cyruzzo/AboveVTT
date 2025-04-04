@@ -1756,7 +1756,7 @@ class JournalManager{
 					noteText = window.JOURNAL.replaceNoteEmbed(window.JOURNAL.notes[noteId].text, notesIncluded);
 				}
 			}
-			noteText = noteText.replace(/\[pin(.*?)id=([\w-]+?)(.*?)?\]([\s\S]+?)\[\/pin\]/gi,`<em style="color:#FF0 !important">Warning: Pins do not function inside embeds</em>`)
+			noteText = noteText.replace(/\[pin(.*?)id=([\w-]+?)(.*?)?\]([\s\S]+?)\[\/pin\]/gi,`<em style="color:#F00 !important">Warning: Pins do not function inside embeds</em>`)
         	return noteText;
         });
 	}
