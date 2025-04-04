@@ -3575,8 +3575,12 @@ div#selectedTokensBorder {
     background-repeat: no-repeat, repeat;
 }
 .aoe-style-radiant {
-    background-image: radial-gradient(rgb(255 255 255) 5%, rgb(239 255 0 / 54%), rgb(255 24 24 / 48%)), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
-    background-size: contain, 200px !important;
+    background-image: radial-gradient(rgb(255 255 255) 6% 20%, rgb(247 255 127 / 64%), rgb(255 131 24 / 27%)), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, #0006 3deg 5deg, transparent 7deg), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
+    background-size: contain, contain, 100px !important;
+    background-blend-mode: lighten, luminosity, luminosity;
+}
+.aoe-style-radiant:not(.aoe-shape-circle){
+    background-image:radial-gradient(circle at top center, rgb(255 255 255) 6% 20%, rgb(247 255 127 / 64%), rgb(255 131 24 / 27%)), repeating-conic-gradient(from 0deg at top center, transparent 0deg 1deg, #000000c4 3deg 5deg, transparent 7deg), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
 }
 .aoe-style-thunder{
     background: repeating-radial-gradient(rgb(0 0 0 / 0%) 20px, rgb(0 0 0 / 44%) 30px, rgb(246 246 246 / 47%) 32px, rgb(0 0 0 / 0%) 35px), #7d7dff6e;
