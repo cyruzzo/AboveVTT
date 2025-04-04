@@ -3547,7 +3547,7 @@ div#selectedTokensBorder {
     background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/bludgeoning.jpg);
 }
 .aoe-style-default{
-    background-image: url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/default.jpg);
+    background-image: linear-gradient(rgb(66 0 253 / 49%), rgb(0 29 253 / 49%));
 }
 .aoe-style-force{
     background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/electbubbles-900x900.jpg);
@@ -3579,7 +3579,7 @@ div#selectedTokensBorder {
     background-size: contain, 200px !important;
 }
 .aoe-style-thunder{
-    background: repeating-radial-gradient(rgb(0 0 0 / 0%) 1%, rgb(0 0 0 / 44%) 6%, rgb(246 246 246 / 52%) 7%, rgb(0 0 0 / 0%) 9%, rgb(0 0 0 / 44%) 9%), #7d7dff6e;
+    background: repeating-radial-gradient(rgb(0 0 0 / 0%) 25px, rgb(0 0 0 / 44%) 35px, rgb(246 246 246 / 47%) 40px, rgb(0 0 0 / 0%) 50px), #7d7dff6e;
     background-repeat: no-repeat, repeat !important;
     background-size: contain, 300px !important;
 }
