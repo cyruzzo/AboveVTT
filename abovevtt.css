@@ -5412,6 +5412,7 @@ span.exhaustion-pip.last{
     display:flex;
     font-size:10px;
     position:absolute;
+    color: #FFF;
     width:100%;
     height:100%;
     z-index:1;

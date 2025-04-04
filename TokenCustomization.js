@@ -252,13 +252,15 @@ class TokenCustomization {
         }
         let index = this.tokenOptions.alternativeImages.findIndex(i => i === imageUrl);
         if (typeof index === "number" && index >= 0) {
-            delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[index]];
+            if(this.tokenOptions.alternativeImagesCustomizations != undefined)
+                delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[index]];
             this.tokenOptions.alternativeImages.splice(index, 1);
         }
         const parsed = await parse_img(imageUrl);
         let parsedIndex = this.tokenOptions.alternativeImages.findIndex(i => parse_img(i) === parsed);
         if (typeof parsedIndex === "number" && parsedIndex >= 0) {
-            delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[parsedIndex]];
+            if(this.tokenOptions.alternativeImagesCustomizations != undefined)
+                delete this.tokenOptions.alternativeImagesCustomizations[this.tokenOptions.alternativeImages[parsedIndex]];
             this.tokenOptions.alternativeImages.splice(parsedIndex, 1);
         }
     }
