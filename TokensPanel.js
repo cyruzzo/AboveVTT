@@ -2967,7 +2967,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         // the placedToken image has been changed by the user so put it at the front
         let tokenDiv = build_token_div_for_sidebar_modal(placedImg, listItem, placedToken);
         tokenDiv.attr("data-token-id", placedToken.options.id);
-        if(tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken || tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage)
+        if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
             tokenDiv.toggleClass('selected', true);
         modalBody.append(tokenDiv);
     }
@@ -2980,7 +2980,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             listItem.image = pc.image;
         }
         let tokenDiv = build_token_div_for_sidebar_modal(listItem?.image, listItem, placedToken);
-        if(tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken || tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage)
+        if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
             tokenDiv.toggleClass('selected', true);
         modalBody.append(tokenDiv);
     }
@@ -2997,7 +2997,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
             setTimeout(function(){
                 if(index < alternativeImages.length){
                     let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
-                    if(tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken || tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage)
+                    if((currentlySelectedToken != undefined && tokenDiv.find('.div-token-image')?.attr('src') == currentlySelectedToken) || (selectedTokenImage != undefined && tokenDiv.find('.div-token-image')?.attr('src') == selectedTokenImage))
                         tokenDiv.toggleClass('selected', true);
                     modalBody.append(tokenDiv);
                     index++;
