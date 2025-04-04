@@ -304,6 +304,8 @@ function get_available_styles(){
 }
 function add_aoe_to_statblock(html){
 
+  html = html.replaceAll(/&shy;|­/gi, '')
+
   const aoeRegEx = /(([\d]+)-foot(-long ([\d]+)-foot-wide|-long, ([\d]+)-foot-wide|-radius, [\d]+-foot-high|-radius)? ([a-zA-z]+))(.*?[\>\s]([a-zA-Z]+) damage)?/gi
 
 
