@@ -3561,7 +3561,15 @@ div#selectedTokensBorder {
     filter: brightness(1.2) contrast(1.2);
 }
 .aoe-style-necrotic {
-    background-image: url(https://www.myfreetextures.com/wp-content/uploads/2014/10/abstract8-900x900.jpg);
+    background-image: radial-gradient(rgb(132 255 206) 0%, rgb(132 255 206 / 70%) 10%, rgb(0, 0, 0) 100%), radial-gradient(rgb(132 255 206) 0%, rgb(43 167 255) 30%, rgb(0 255 45) 70%, rgb(0 0 0) 100%), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/necrotic.jpg);
+    background-blend-mode: screen, color, normal !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+.aoe-style-necrotic:not(.aoe-shape-circle){
+    background-position: bottom center !important;
+    background-size: auto 200% !important;
 }
 .aoe-style-piercing{
     background-image: url(https://previews.123rf.com/images/sylverarts/sylverarts1801/sylverarts180100741/92992928-horror-style-horrible-seamless-pattern-vector-background-blackthorn-branches-with-thorns-stylish-end.jpg);
@@ -3571,8 +3579,15 @@ div#selectedTokensBorder {
     background-repeat: no-repeat, repeat;
 }
 .aoe-style-psychic {
-    background:linear-gradient(rgba(115, 10, 235, 0.49), rgba(115, 10, 235, 0.49)), url(https://images.assetsdelivery.com/compings_v2/almagami/almagami1912/almagami191200125.jpg);
-    background-repeat: no-repeat, repeat;
+    background: radial-gradient(#9500ff 0%, #ec77ff 50%), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/psychic.jpg), radial-gradient(#00000094 0%, #00000066 100%);
+    background-blend-mode: hue, hard-light, normal !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+}
+
+.aoe-style-psychic:not(.aoe-shape-circle){
+    background-position: bottom center !important;
+    background-size: auto 200% !important;
 }
 .aoe-style-radiant {
     background-image: radial-gradient(rgb(255 255 255) 6% 20%, rgb(247 255 127 / 64%), rgb(255 131 24 / 27%)), repeating-conic-gradient(from 0deg, transparent 0deg 1deg, #0006 3deg 5deg, transparent 7deg), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
@@ -3583,12 +3598,12 @@ div#selectedTokensBorder {
     background-image:radial-gradient(circle at top center, rgb(255 255 255) 6% 20%, rgb(247 255 127 / 64%), rgb(255 131 24 / 27%)), repeating-conic-gradient(from 0deg at top center, transparent 0deg 1deg, #000000c4 3deg 5deg, transparent 7deg), url(https://abovevtt-assets.s3.eu-central-1.amazonaws.com/aoe/radiant.jpg);
 }
 .aoe-style-thunder{
-    background: repeating-radial-gradient(rgb(0 0 0 / 0%) 20px, rgb(0 0 0 / 44%) 30px, rgb(246 246 246 / 47%) 32px, rgb(0 0 0 / 0%) 35px), #7d7dff6e;
+    background: repeating-radial-gradient(rgb(0 0 0 / 0%) calc(20px * var(--scene-scale, 1)), rgb(0 0 0 / 44%) calc(30px * var(--scene-scale, 1)), rgb(246 246 246 / 47%)  calc(32px * var(--scene-scale, 1)), rgb(0 0 0 / 0%)  calc(35px * var(--scene-scale, 1))), #7d7dff6e;
     background-repeat: no-repeat, repeat !important;
     background-size: contain, 300px !important;
 }
 .aoe-style-thunder:not(.aoe-shape-circle) {
-    background: repeating-radial-gradient(circle at top center, rgb(0 0 0 / 0%) 20px, rgb(0 0 0 / 44%) 30px, rgb(246 246 246 / 47%) 32px, rgb(0 0 0 / 0%) 35px), #7d7dff6e;
+    background: repeating-radial-gradient(circle at top center, rgb(0 0 0 / 0%) calc(20px * var(--scene-scale, 1)), rgb(0 0 0 / 44%) calc(30px * var(--scene-scale, 1)), rgb(246 246 246 / 47%)  calc(32px * var(--scene-scale, 1)), rgb(0 0 0 / 0%)  calc(35px * var(--scene-scale, 1))), #7d7dff6e;
 }
 .aoe-style-water{
     background:linear-gradient(rgba(49, 177, 246, 0.49), rgba(49, 177, 246, 0.49)), url(https://opengameart.org/sites/default/files/styles/medium/public/oga-textures/12976/caust_009.png);
