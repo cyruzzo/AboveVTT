@@ -52,10 +52,7 @@ function scan_monster(target, stats, tokenId) {
 					const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
 					$(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').replaceWith($($(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').text().replace(
                 /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
-                /(lair|legendary) actions/g.test(data)
-                    ? '<strong>$1$4</strong>$3$5$6'
-                    : '<em><strong>$1$4</strong></em>$3$5$6'
-            
+                	'<em><strong>$1$4</strong></em>$3$5$6'    
             ).replaceAll(/[\s]+\./gi, '.').replaceAll(rechargeRegEx, button))
 					);
 				}
@@ -330,7 +327,7 @@ $(target).find(outerSelector).each(function() {
  */
 function scan_player_creature_pane(target) {
 	console.group("scan_player_creature_pan")
-
+	const container = $(target);
 	const creatureType = $(".ct-sidebar__header .ct-sidebar__header-parent, .ct-sidebar__header>div:first-of-type").text(); // wildshape, familiar, summoned, etc	
 	const creatureName = $(".ct-sidebar__header .ddbc-creature-name").text(); // Wolf, Owl, etc
 	let pcSheet = find_currently_open_character_sheet();
@@ -340,7 +337,7 @@ function scan_player_creature_pane(target) {
  		// not all creatures have an avatar for some reason
  		creatureAvatar = $(".ct-sidebar__header .ct-sidebar__header-preview-image").css("background-image").slice(4, -1).replace(/"/g, "");
  	} catch { }
-	const displayName = `${pc.name} (${creatureName} ${creatureType})`;
+	const displayName = `${window.PLAYER_NAME} (${creatureName} ${creatureType})`;
 	
 	const clickHandler = function(clickEvent) {
 		roll_button_clicked(clickEvent, displayName, creatureAvatar, "monster");
@@ -350,117 +347,118 @@ function scan_player_creature_pane(target) {
 		roll_button_contextmenu_handler(contextmenuEvent, displayName, creatureAvatar, "monster");
 	}
 
+	let pastedButtons = container.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
 
-	replace_ability_scores_with_avtt_rollers(target, ".ddbc-creature-block__ability-stat, [class*='styles_stats']>[class*='styles_stat']", ".ddbc-creature-block__ability-heading, [class*='styles_statHeading']")
-	replace_saves_skill_with_avtt_rollers(target, ".ddbc-creature-block__tidbit, [class*='styles_tidbit']",".ddbc-creature-block__tidbit-label, [class*='styles_tidbitLabel']", ".ddbc-creature-block__tidbit-data, p" )
-
-	if(target.closest('[class*="styles_v2024"]').length>0){
-		add_journal_roll_buttons(target);
+	for(let i=0; i<pastedButtons.length; i++){
+		$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
 	}
-	else{
-		target.html(function(index, html){
-			return add_aoe_to_statblock(html);
-		});
+	let emStrong = container.find('p>em:first-of-type:has(strong), p>strong:first-of-type:has(em)');
+	for(let i=0; i<emStrong.length; i++){
+		if($(emStrong[i]).text().match(/recharge/gi))
+			$(emStrong[i]).replaceWith($(emStrong[i]).text());
 	}
 
+	let data = container.clone().html();
+	let lines = data.split(/(<br \/>|<br>|<p>|<\/p>|\n)/g);
+	lines = lines.map((line, li) => {
+    let input = line;
 
-	// replace all "to hit" and "damage" rolls
-	$(target).find("p, .ddbc-creature-block__attribute-data-extra").each(function() {
-		let currentElement = $(this).clone()
-		if (currentElement.find(".avtt-roll-button").length === 0) {
-			// apply most specific regex first matching all possible ways to write a dice notation
-			// to account for all the nuances of DNDB dice notation.
-			// numbers can be swapped for any number in the following comment
-			// matches "1d10", " 1d10 ", "1d10+1", " 1d10+1 ", "1d10 + 1" " 1d10 + 1 "
-			const dashToMinus = /([\s>])−(\d)/gi
-		  const strongRoll = /(<strong>)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(<\/strong>)/gi
-		  const damageRollRegexBracket = /(\()(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)(\))/gi
-		  const damageRollRegex = /([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
-		  // matches " +1 " or " + 1 "
-		  const hitRollRegexBracket = /(?<![0-9]+d[0-9]+)(\()([+-]\s?[0-9]+)(\))/gi
-		  const hitRollRegex = /(?<![0-9]+d[0-9]+)([:\s>]|^)([+-]\s?[0-9]+)([:\s<,]|$)/gi
-		  const dRollRegex = /([\s>]|^)(\s?d[0-9]+)([^+-])/gi
-		  const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
-		  const actionType = "roll"
-		  const rollType = "AboveVTT"
-		  let updated = currentElement.html()
-		    .replaceAll(strongRoll, `$2`)
-		    .replaceAll(dashToMinus, `$1-$2`)
-		    .replaceAll(damageRollRegexBracket, ` <button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$1$2$5</button>`)
-		    .replaceAll(damageRollRegex, ` $1<button data-exp='$3' data-mod='$4' data-rolltype='damage' data-actiontype='${actionType}' class='avtt-roll-button' title='${actionType}'>$2</button>$5`)
-		    .replaceAll(hitRollRegexBracket, ` <button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$1$2$3</button>`)
-		    .replaceAll(hitRollRegex, ` $1<button data-exp='1d20' data-mod='$2' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-		    .replaceAll(dRollRegex, `$1<button data-exp='1$2' data-mod='0' data-rolltype='to hit' data-actiontype=${actionType} class='avtt-roll-button' title='${actionType}'>$2</button>$3`)
-		    .replaceAll(rechargeRegEx, `<button data-exp='1d6' data-mod='' data-rolltype='recharge' data-actiontype='Recharge' class='avtt-roll-button' title='${actionType}'>$1</button>`)
+   	input = general_statblock_formating(input);
 
-
-
-
-			$(this).html(updated);
-		}
-		// terminate the clones reference, overkill but rather be safe when it comes to memory
-		currentElement = null
+    input = input.replace(/\&nbsp\;/g, ' ');
+    // Replace quotes to entity
+    input = input.replace(/\'/g, '&rsquo;');
+    return input;
 	});
-	$(target).find('button.avtt-roll-button[data-rolltype]').each(function(){
-		let rollAction = $(this).prevUntil('em>strong').find('strong').last().text().replace('.', '') || $(this).attr('data-actiontype');
-		rollAction = (rollAction == '') ? $(this).prev('strong').last().text().replace('.', '') : rollAction;
-		rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
-		rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
-		rollAction = (rollAction == '') ? $(this).closest('strong').text().replace('.', '') : rollAction;
-		
 
-		rollAction = rollAction.replace(/\s[\s(]+Recharge.*/gi, '') 
-		
-		let rollType = $(this).attr('data-rolltype')
-		let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
-		if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){
-			rollAction =  $(this).closest('tr').find('th').text();
-			rollType = $(this).closest('td').index() == 2 ? 'Check' : 'Save'
-		}
-		else if($(this).closest('table').find('tr:first').text().toLowerCase().includes('str')){
-			let statIndex = $(this).closest('table').find('tr button').index($(this));
-			let stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-			rollAction = stats[statIndex];
-			rollType = 'Check'
-		}
+  let newHtml = $(lines.join(''));
+	container.html(newHtml);
 
-		if(rollAction == ''){
-			rollAction = 'Roll';
-		}	
-		else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){	
-			rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
-			rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
-			rollType = 'Save';	
-		}
-		else if(rollAction.replace(' ', '').toLowerCase() == 'skills'){
-			rollAction = $(this)[0].previousSibling.nodeValue.replace(/[\W]+/gi, '');
-			rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
-			rollType = 'Check';	
-		}
-		else if(rollAction.replace(' ', '').toLowerCase() == 'proficiencybonus'){
-			rollAction = 'Proficiency Bonus';
-			rollType = 'Roll';	
-		}
-		else if(rollAction.replace(' ', '').toLowerCase() == 'hp' || rollAction.replace(' ', '').toLowerCase() == 'hitpoints'){
-			rollAction = 'Hit Points';
-			rollType = 'Roll';	
-		}
-		else if(rollAction.replace(' ', '').toLowerCase() == 'initiative'){
-			rollType = 'Roll';
-		}
-		
-		$(this).attr('data-actiontype', rollAction);
-		$(this).attr('data-rolltype', rollType);
 
-		const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
-		
-		const damageType = followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? followingText : undefined
-		if(damageType != undefined){
-			$(this).attr('data-damagetype', damageType);
-		}
-	})
-	$(target).find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
-	$(target).find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+	add_journal_roll_buttons(target, undefined, creatureAvatar, displayName);
+
+
+
+	container.find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
+	container.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
+
+	container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+    e.preventDefault();
+    if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
+      return;
+    let outerP = event.target.closest('p, div').outerHTML;
+    const regExFeature = new RegExp(`${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+    let match = outerP.match(regExFeature);
+
+
+    if(match){
+      let matched = `<p>${match[0]}</p>`;
+      
+
+      if($(event.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+        let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+        for(let i=0; i<nextParagraphs.length; i++){   
+          matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
+        }
+      }
+      
+       
+       matched = `<div>${matched}</div>`;
+      send_html_to_gamelog(matched);
+    }
+    
+  })
+
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong").off("click.roll").on("click.roll", function (e) {
+    e.preventDefault();
+    if($(event.target).text().includes('Recharge'))
+      return;
+    let rollButtons = $(event.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
+    
+
+    $(event.target.closest('p, div')).find('.avtt-aoe-button')?.click();
+    for(let i = 0; i<rollButtons.length; i++){      
+      let data = getRollData(rollButtons[i]);
+      let diceRoll;
+
+      if(data.expression != undefined){
+        if (/^1d20[+-]([0-9]+)/g.test(data.expression)) {
+           if(e.altKey){
+              if(e.shiftKey){
+                diceRoll = new DiceRoll(`3d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+               }
+               else if((!isMac() && e.ctrlKey) || e.metaKey){
+                diceRoll = new DiceRoll(`3d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+               }
+           }
+           else if(e.shiftKey){
+            diceRoll = new DiceRoll(`2d20kh1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+           }
+           else if((!isMac() && e.ctrlKey) || e.metaKey){
+            diceRoll = new DiceRoll(`2d20kl1${data.modifier}`, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster");
+           }else{
+            diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+           }
+        }
+        else{
+          diceRoll = new DiceRoll(data.expression, data.rollTitle, data.rollType, displayName, creatureAvatar, "monster")
+        }
+      
+
+
+        window.diceRoller.roll(diceRoll, true, undefined, undefined, undefined, data.damageType);
+
+      }
+    }
+  })
+  let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong");
+
+  for(let i = 0; i<abilities.length; i++){
+    if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button')){
+      $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
+    }
+  }
+
 	console.groupEnd()
 }
 

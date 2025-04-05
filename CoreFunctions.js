@@ -374,7 +374,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
   })
 }
 
-function add_journal_roll_buttons(target, tokenId=undefined){
+function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
   console.group("add_journal_roll_buttons")
   
   let pastedButtons = target.find('.avtt-roll-button, .integrated-dice__container, .avtt-aoe-button');
@@ -383,8 +383,8 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     $(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
   }
 
-  const rollImage = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
-  const rollName = (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true || window.TOKEN_OBJECTS[tokenId].options.player_owned ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
+  const rollImage = specificImage ? specificImage : (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
+  const rollName = specificName ? specificName : (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true || window.TOKEN_OBJECTS[tokenId].options.player_owned ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
 
   const clickHandler = function(clickEvent) {
     clickEvent.stopPropagation();
@@ -469,6 +469,7 @@ function add_journal_roll_buttons(target, tokenId=undefined){
     rollAction = (rollAction == '') ? $(this).prevUntil('strong').last().prev().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).parent().prevUntil('em>strong').find('strong').last().text().replace('.', '') : rollAction;
     rollAction = (rollAction == '') ? $(this).closest('.mon-stat-block__attribute-value').prev().text().replace('.', '') : rollAction;
+    rollAction = (rollAction == '') ? $(this).closest('.mon-stat-block__tidbit, [class*="styles_attribute"]').find('>.mon-stat-block__tidbit-label, >[class*="styles_attributeLabel"]').text().replace('.', '') : rollAction;
     let rollType = $(this).attr('data-rolltype')
     let newStatBlockTables = $(this).closest('table').find('tbody tr:first th').text().toLowerCase();
     if(newStatBlockTables.includes('str') || newStatBlockTables.includes('int')){
@@ -561,7 +562,47 @@ function add_journal_roll_buttons(target, tokenId=undefined){
 
   console.groupEnd()
 }
+function general_statblock_formating(input){
+  input = input.replace(/&nbsp;/g,' ')
 
+  input = input.replace(/^((\s+?)?<(strong|em)>(<(strong|em)>)?([a-z0-9\s\.\(\)]+)(<\/(strong|em)>)?<\/(strong|em)>)/gi, '$6');
+
+  //bold top of statblock info
+  input = input.replace(/^(Senses|Gear|Skills|Damage Resistances|Resistances|Immunities|Damage Immunities|Damage Vulnerabilities|Condition Immunities|Languages|Proficiency Bonus|Saving Throws)/gi, `<strong>$1</strong>`)
+  input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)(\s[\d\()])/gi, `<strong>$1</strong>$2`)
+  // Remove space between letter ranges
+  // e.g. a- b
+  input = input.replace(/([a-z])- ([a-z])/gi, '$1$2');
+  // Replace with right single quote
+  input = input.replace(/'/g, '’');
+  // e.g. Divine Touch. Melee Spell Attack:
+  input = input.replace(
+      /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+        '<em><strong>$1$4</strong></em><em>$3$5$6</em>'
+  ).replace(/[\s]+\./gi, '.');
+
+  // Find actions requiring saving throws
+  input = input.replace(
+      /(?<!\])(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) Saving Throw:/gi,
+      '<em>$1 Saving Throw:</em>'
+  );
+  // Emphasize hit
+  input = input.replace(/Hit:/g, '<em>Hit:</em>');
+  // Emphasize hit or miss
+  input = input.replace(/Hit or Miss:/g, '<em>Hit or Miss:</em>');
+  // Emphasize trigger (2024 monsters)
+  input = input.replace(/Trigger:/g, '<em>Trigger:</em>');
+  // Emphasize response (2024 monsters)
+  input = input.replace(/Response:/g, '<em>Response:</em>');
+  // Emphasize failure/success (2024 monsters)
+  input = input.replace(/Failure:/g, '<em>Failure:</em>');
+  input = input.replace(/Success:/g, '<em>Success:</em>');
+  input = input.replace(/Success or Failure:/g, '<em>Success or Failure:</em>');
+  input = input.replace(/Failure or Success:/g, '<em>Failure or Success:</em>');
+
+  return input;
+        
+}
 function process_monitored_logs() {
   const logs = [...console.concerningLogs, ...console.otherLogs].sort((a, b) => a.timeStamp < b.timeStamp ? 1 : -1);
   let processedLogs = [];
