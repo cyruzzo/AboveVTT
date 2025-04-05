@@ -4654,11 +4654,11 @@ button.applyDamageButton svg {
 
 
 td button.block-send-to-game-log {
-    position: relative;
+    position: absolute;
     display: block;
-    top: auto;
-    right: auto;
-    
+    float: unset;
+    top:50%;
+    right: -2px;
 }
 td button.block-send-to-game-log span{
     font-size:9px !important;

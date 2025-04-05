@@ -1718,7 +1718,7 @@ class JournalManager{
 	        let targetBlock = $(e.currentTarget).parent().clone();
 	        targetBlock.find('button.block-send-to-game-log').remove();
 	        targetBlock.find('img').removeAttr('width height style').toggleClass('magnify', true);
-	        send_html_to_gamelog(targetBlock[0].outerHTML);
+	        send_html_to_gamelog(`<p>${targetBlock[0].outerHTML}</p>`);
 	    });
 		blocks.wrap(function(){
 			if(this instanceof HTMLImageElement){
@@ -1735,6 +1735,10 @@ class JournalManager{
        
 		if(allDiceRegex.test($(tables).find('tr:first-of-type>:first-child').text())){
 			let result = $(tables).find(`tbody > tr td:last-of-type`);
+			$(tables).find('td').css({
+				'position': 'relative',
+				'padding-right': '10px'
+			});
 			result.append(sendToGamelogButton); 
 		}
 	}
