@@ -4659,6 +4659,7 @@ td button.block-send-to-game-log {
     float: unset;
     top:50%;
     right: -2px;
+    transform: translate(0px, -50%);
 }
 td button.block-send-to-game-log span{
     font-size:9px !important;
