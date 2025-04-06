@@ -292,7 +292,7 @@ class Token {
 			} else {
 				let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 		
-				const calculatedFromSize = (parseFloat(this.options.size) / (parseFloat(window.CURRENT_SCENE_DATA.hpps) * tokenMultiplierAdjustment));
+				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA.hpps) * tokenMultiplierAdjustment));
 				if (!isNaN(calculatedFromSize)) {
 					output = calculatedFromSize;
 				}
@@ -316,7 +316,7 @@ class Token {
 			} else {
 				let tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 		
-				const calculatedFromSize = (parseFloat(this.options.size) / (parseFloat(window.CURRENT_SCENE_DATA.vpps)*tokenMultiplierAdjustment));
+				const calculatedFromSize = (parseFloat(this.options.size) / (parseInt(window.CURRENT_SCENE_DATA.vpps)*tokenMultiplierAdjustment));
 				if (!isNaN(calculatedFromSize)) {
 					output = calculatedFromSize;
 				}
