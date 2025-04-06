@@ -262,8 +262,12 @@ function token_context_menu_expanded(tokenIds, e) {
 
 					target.off('mouseup.setTele touchend.setTele').one('mouseup.setTele touchend.setTele', function(e){
 						const [mouseX, mouseY] = get_event_cursor_position(e);
-						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY}
-						window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+						if(window.all_token_objects[tokenIds] != undefined){
+							window.all_token_objects[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+						}
+
+						window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
 					});
 				});
 				
