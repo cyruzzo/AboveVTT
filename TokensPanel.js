@@ -2016,7 +2016,7 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         uuid(),
         listItem.id,
         { name: newTokenName,
-          alternativeImages: [tokenImage]
+          alternativeImages: tokenImage != '' ? [tokenImage] : []
         },
     );
 
@@ -2027,9 +2027,10 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         customization.tokenOptions = {
             ...customization.tokenOptions,
             ...options,
-            alternativeImages: options.alternativeImages?.length > 0 ? options.alternativeImages : [options.imgsrc]
+            alternativeImages: options.alternativeImages?.length > 0 ? options.alternativeImages : options.imgsrc != '' ? [options.imgsrc] : []
         }
     }
+
     if(statBlock != undefined){
         window.JOURNAL.notes[customization.id] = {
             id: customization.id,
@@ -3793,7 +3794,7 @@ function display_change_image_modal(placedToken) {
 
     /// draw tokens in the body
     let listItem = list_item_from_token(placedToken);
-    let alternativeImages = [placedToken.options.imgsrc];
+    let alternativeImages = placedToken.options.imgsrc != '' ? [placedToken.options.imgsrc] : [];
     if (placedToken.options.alternativeImages) {
         alternativeImages = alternativeImages.concat(placedToken.options.alternativeImages);
     }
