@@ -34,7 +34,7 @@ async function getOpen5e(results = [], search = ''){
     const monsterTypes = (monster_search_filters?.monsterTypes) ? monster_search_filters.monsterTypes.map(item=> item = ddbMonsterTypes[item]).toString() : '';
     
 
-    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&search=${search}`
+    let api_url = `https://api.open5e.com/monsters/?slug__in=&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=${minCR}&cr__gte=&cr__lt=${maxCR}&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=${monsterTypes}&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&name__icontains=${search}&limit=10`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -46,12 +46,12 @@ async function getOpen5e(results = [], search = ''){
     results = results.concat(jsonData.results)
     open5e_monsters = results;
     open5e_next = jsonData.next;
-    inject_open5e_monster_list_items(); 
+    inject_open5e_monster_list_items(open5e_monsters); 
 
     return open5e_monsters;
 }
 async function getGroupOpen5e(slugin){
-    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=`
+    let api_url = `https://api.open5e.com/monsters/?ordering=name&slug__in=${slugin}&slug__iexact=&slug=&name__iexact=&name=&cr=&cr__range=&cr__gt=&cr__gte=&cr__lt=&cr__lte=&armor_class=&armor_class__range=&armor_class__gt=&armor_class__gte=&armor_class__lt=&armor_class__lte=&type__iexact=&type=&type__in=&type__icontains=&page_no=&page_no__range=&page_no__gt=&page_no__gte=&page_no__lt=&page_no__lte=&document__slug__iexact=&document__slug=&document__slug__in=&document__slug__not_in=&limit=10`
     let jsonData = {}
     await $.getJSON(api_url, function(data){
         jsonData = data;
@@ -346,7 +346,7 @@ function filter_token_list(searchTerm) {
 
     console.log("filter_token_list searchTerm", searchTerm)
     $('.custom-token-list').hide();
-    redraw_token_list(searchTerm);
+    redraw_token_list(searchTerm, true, true);
 
     if (searchTerm.length > 0) {
         let allFolders = tokensPanel.body.find(".folder");
@@ -557,7 +557,7 @@ function redraw_token_list_item(item){
  * @param searchTerm {string} the search term used to filter the list of tokens
  * @param enableDraggable {boolean} whether or not to make items draggable. Defaults to true
  */
-function redraw_token_list(searchTerm, enableDraggable = true) {
+function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false) {
     if (!window.DM) return;
     if (!window.tokenListItems) {
         // don't do anything on startup
@@ -610,8 +610,11 @@ function redraw_token_list(searchTerm, enableDraggable = true) {
 
     update_pc_token_rows();
     inject_encounter_monsters();
-    inject_monster_tokens(nameFilter);
-    inject_open5e_monster_list_items();
+    if(!leaveEmpty){
+        inject_monster_tokens(nameFilter);
+        inject_open5e_monster_list_items();
+    }
+
     if(!$('.reveal-hidden-button').hasClass('clicked')){
         $(".sidebar-panel-content").find(".sidebar-panel-body .hidden-sidebar-item").toggleClass("temporary-visible", false);
     }
