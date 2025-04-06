@@ -119,6 +119,7 @@ if (isPlainCharacterPage) {
 		{ src: "scenedata/hcs-scene-data.js" },
 		{ src: "scenedata/dosi-scene-data.js" },
 		{ src: "scenedata/sdw-scene-data.js" },
+		{ src: "scenedata/hgtmh1-scene-data.js" },
 		{ src: "ScenesHandler.js" },
 		{ src: "ScenesPanel.js" },
 		{ src: "Settings.js" },
