@@ -181,7 +181,10 @@ function token_context_menu_expanded(tokenIds, e) {
 
 
 	if(door?.length == 1){
+
 		if(window.DM) {
+			const isTeleporter = door.find('.teleporter').length>0;
+			
 			if(window.TOKEN_OBJECTS[tokenIds] == undefined){
 				let options = {
 					...default_options(),
@@ -199,54 +202,75 @@ function token_context_menu_expanded(tokenIds, e) {
 				};
 				window.ScenesHandler.create_update_token(options)
 			}
-			let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
-			openButton.off().on("click", function(clickEvent){
-				let clickedItem = $(this);
-				let locked = door.hasClass('locked');
-				let secret = door.hasClass('secret');
+			if(!isTeleporter){
+				let openButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Open/Close</button>`)
+				openButton.off().on("click", function(clickEvent){
+					let clickedItem = $(this);
+					let locked = door.hasClass('locked');
+					let secret = door.hasClass('secret');
 
-				const type = isDoor ? (secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (secret ? (locked ? 7 : 6) : (locked ? 3 : 1))
-		
-				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
-            
-            	let opened = (/rgba.*0\.5\)/g).test(doors[0][2]) ? true : false;
-				isOpen = opened ? 'closed' : 'open';
+					const type = isDoor ? (secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (secret ? (locked ? 7 : 6) : (locked ? 3 : 1))
+			
+					let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+	            
+	            	let opened = (/rgba.*0\.5\)/g).test(doors[0][2]) ? true : false;
+					isOpen = opened ? 'closed' : 'open';
 
-				door.toggleClass('open', !opened);
+					door.toggleClass('open', !opened);
 
-        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-                let data = ['line',
-							 'wall',
-							 doorColors[type][isOpen],
-							 x1,
-							 y1,
-							 x2,
-							 y2,
-							 12,
-							 doors[0][8],
-							 doors[0][9],
-				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
-				 			 (doors[0][11] != undefined ? doors[0][11] : "")
-				];	
-				window.DRAWINGS.push(data);
-				window.wallUndo.push({
-					undo: [data],
-					redo: [doors[0]]
-				})
-
-
-				redraw_light_walls();
-				redraw_drawn_light();
-				redraw_light();
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[type][isOpen],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8],
+								 doors[0][9],
+					 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+					 			 (doors[0][11] != undefined ? doors[0][11] : "")
+					];	
+					window.DRAWINGS.push(data);
+					window.wallUndo.push({
+						undo: [data],
+						redo: [doors[0]]
+					})
 
 
-				sync_drawings();
-				if(window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]  != undefined){
-					window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
-				}
-			});
+					redraw_light_walls();
+					redraw_drawn_light();
+					redraw_light();
 
-			body.append(openButton);
+
+					sync_drawings();
+					if(window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]  != undefined){
+						window.TOKEN_OBJECTS[`${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')].place_sync_persist();
+					}
+				});
+				
+				body.append(openButton);
+			}
+			
+			if(isTeleporter){
+				let teleportLocButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set Teleporter Location</button>`)
+				teleportLocButton.off().on("click", function(clickEvent){
+					$('#tokenOptionsClickCloseDiv').click();
+					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
+					target.css('cursor', 'crosshair');
+
+					target.off('mouseup.setTele touchend.setTele').one('mouseup.setTele touchend.setTele', function(e){
+						const [mouseX, mouseY] = get_event_cursor_position(e);
+						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY}
+						window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+					});
+				});
+				
+				body.append(teleportLocButton);
+			}
+
+
 
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Note</div></div>`);
 			notesRow.hover(function (hoverEvent) {
@@ -277,6 +301,8 @@ function token_context_menu_expanded(tokenIds, e) {
             let secret = door.hasClass('secret');
 
             let isDoor = door.children('.door').length>0;
+            let isWindow = door.children('.window').length>0;
+            let isCurtain = door.children('.curtain').length>0;
 
             let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
             let color = doors[0][2];
@@ -287,48 +313,50 @@ function token_context_menu_expanded(tokenIds, e) {
             body.append($('<div class="token-image-modal-footer-title" style="margin-top:10px">Door Type</div>'));
 
 
+            if(!isTeleporter){
+            	let lockedButton = $(`<button class="${door.hasClass('locked') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-lock material-icons">Locked</button>`)
+				lockedButton.off().on("click", function(clickEvent){
+					let clickedItem = $(this);
+					let locked = door.hasClass('locked');
+					let secret = door.hasClass('secret');
 
-			let lockedButton = $(`<button class="${door.hasClass('locked') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-lock material-icons">Locked</button>`)
-			lockedButton.off().on("click", function(clickEvent){
-				let clickedItem = $(this);
-				let locked = door.hasClass('locked');
-				let secret = door.hasClass('secret');
-
-				const type = isDoor ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1))
-
-				door.toggleClass('locked', !locked);
-				let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
-            
-        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-                let data = ['line',
-							 'wall',
-							 doorColors[type][isOpen],
-							 x1,
-							 y1,
-							 x2,
-							 y2,
-							 12,
-							 doors[0][8],
-							 doors[0][9],
-				 			 (doors[0][10] != undefined ? doors[0][10] : ""),
-				 			 (doors[0][11] != undefined ? doors[0][11] : "")
-				];	
-				window.DRAWINGS.push(data);
-				window.wallUndo.push({
-					undo: [data],
-					redo: [doors[0]]
-				})
-				redraw_light_walls();
-				redraw_light();
+					const type = isDoor ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : isWindow ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : isCurtain ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : 12
+						
+					door.toggleClass('locked', !locked);
+					let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+	            
+	        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+	                let data = ['line',
+								 'wall',
+								 doorColors[type][isOpen],
+								 x1,
+								 y1,
+								 x2,
+								 y2,
+								 12,
+								 doors[0][8],
+								 doors[0][9],
+					 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+					 			 (doors[0][11] != undefined ? doors[0][11] : "")
+					];	
+					window.DRAWINGS.push(data);
+					window.wallUndo.push({
+						undo: [data],
+						redo: [doors[0]]
+					})
+					redraw_light_walls();
+					redraw_light();
 
 
-				sync_drawings();
+					sync_drawings();
 
-				clickedItem.removeClass("single-active all-active some-active active-condition");
+					clickedItem.removeClass("single-active all-active some-active active-condition");
 
-				clickedItem.addClass(`${!locked ? 'single-active active-condition' : ''}`);
-			});
-			body.append(lockedButton);
+					clickedItem.addClass(`${!locked ? 'single-active active-condition' : ''}`);
+				});
+				body.append(lockedButton);
+            }
+			
 		
 			
 			let secretButton = $(`<button class="${door.hasClass('secret') ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-secret material-icons">Secret</button>`)
@@ -337,8 +365,8 @@ function token_context_menu_expanded(tokenIds, e) {
 				let locked = door.hasClass('locked');
 				let secret = door.hasClass('secret');
 
-				const type = isDoor ? (!secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : (locked ? (!secret ? 7 : 3) : (!secret ?  6 : 1)) 
-
+				const type = isDoor ? (!secret ? (locked ? 5 : 4) : (locked ? 2 : 0)) : isWindow ? (!secret ? (locked ? 7 : 6) : (locked ? 3 : 1)) : isCurtain ? (!secret ? (locked ? 11 : 10) : (locked ? 9 : 8)) : 12
+				
 				isOpen = locked ? 'closed' : isOpen;
 
 				door.toggleClass('secret', !secret);
@@ -374,6 +402,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedItem.addClass(`${!secret ? 'single-active active-condition' : ''}`);
 			});
 			body.append(secretButton);
+
 			let hideButton = $(`<button class="${door.attr('data-hidden') == 'true' ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden door-hidden material-icons">Hide Icon-Show Walls to View</button>`)
 			hideButton.off().on("click", function(clickEvent){
 				let clickedItem = $(this);
