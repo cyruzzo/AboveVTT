@@ -2083,6 +2083,9 @@ class Token {
 					setTokenLight(old, this.options);
 					redraw_light();
 					door_note_icon(this.options.id);
+					if(this.options.teleporterCoords != undefined){
+						old.toggleClass('linked', true);
+					}
 					return;
 				}
 				if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 && !window.DM)
