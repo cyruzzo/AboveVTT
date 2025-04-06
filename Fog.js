@@ -1945,12 +1945,15 @@ function redraw_light_walls(clear=true){
 			openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
 					if(doorType == `teleporter`){
+
 						for(let i in window.CURRENTLY_SELECTED_TOKENS){
 							let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
 							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+
 							if(tokenObject.options.teleporterCoords != undefined){
-								curr.options.left = `${tokenObject.options.teleporterCoords.left - curr.options.size/2}px`;
-								curr.options.top = `${tokenObject.options.teleporterCoords.top - curr.options.size/2}px`
+								const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
+								curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
+								curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
 							}
 							curr.place(0);
 							curr.sync($.extend(true, {}, curr.options));
