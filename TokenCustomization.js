@@ -964,7 +964,7 @@ function rebuild_ddb_npcs(redrawList = false) {
     }
 
     if (redrawList) {
-        redraw_token_list();
+        redraw_token_list("", true, true);
     }
 }
 

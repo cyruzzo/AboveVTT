@@ -3244,7 +3244,6 @@ function inject_encounter_monsters() {
 /** A convenience function to be called after any "My Tokens" are updated */
 function did_change_mytokens_items() {
     rebuild_token_items_list();
-    redraw_token_list();
     filter_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");
 }
 
