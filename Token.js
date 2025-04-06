@@ -2025,6 +2025,7 @@ class Token {
 
 	place(animationDuration) {
 		try{
+
 			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
 				this.options.deleteableByPlayers = true;
 				this.delete();
@@ -2047,6 +2048,9 @@ class Token {
 			let selector = "div[data-id='" + this.options.id + "']";
 			let old = $("#tokens").find(selector);
 			let self = this;
+
+			if(old.hasClass('pause_click'))//we're currently or just dragged this token ignore this place
+				return;
 
 			/* UPDATE COMBAT TRACKER */
 			this.update_combat_tracker()

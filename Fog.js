@@ -1949,9 +1949,15 @@ function redraw_light_walls(clear=true){
 			openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
 					if(doorType == `teleporter`){
-
+						let alreadyHighlighted = false;
 						for(let i in window.CURRENTLY_SELECTED_TOKENS){
+
 							let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
+							if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
+								continue;
+							}
+
+
 							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 
 							if(tokenObject.options.teleporterCoords != undefined){
@@ -1961,8 +1967,10 @@ function redraw_light_walls(clear=true){
 							}
 							curr.place(0);
 							curr.sync($.extend(true, {}, curr.options));
-							if(i==0)
+							if(!alreadyHighlighted){
+								alreadyHighlighted = true;
 								curr.highlight();
+							}
 						}
 						return;
 					}
