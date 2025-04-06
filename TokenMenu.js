@@ -291,6 +291,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					
 					$('#tokenOptionsClickCloseDiv').click();
 					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
+					$("#temp_overlay").css('z-index', '50');
 					let canvas = document.getElementById("temp_overlay");
 					let context = canvas.getContext("2d");
 					target.css('cursor', 'crosshair');
@@ -335,6 +336,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						clear_temp_canvas();
 						target.off('mouseup.setTele touchend.setTele');
 						target.off('mousemove.drawTele')
+						$("#temp_overlay").css('z-index', '25');
 					});
 				});
 				
