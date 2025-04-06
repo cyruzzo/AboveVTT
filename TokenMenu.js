@@ -164,6 +164,7 @@ function token_context_menu_expanded(tokenIds, e) {
 		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
 		$("#tokenOptionsContainer .sp-container").remove();
 		$(`.context-menu-flyout`).remove(); 
+		clear_temp_canvas();
 	});
 
 	tokenOptionsClickCloseDiv.off("contextmenu").on("contextmenu", function(e){
@@ -254,20 +255,83 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 			
 			if(isTeleporter){
+				let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
+				let teleScale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale : 1/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale;
+				
+				if(window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords != undefined){
+					let canvas = document.getElementById("temp_overlay");
+					let context = canvas.getContext("2d");
+					let brushpoints = [];
+					let [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[tokenIds].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[tokenIds].options.top)+25)*scale]
+					let [endX, endY] = [window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.left, window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.top]
+
+					let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
+					context.setLineDash([30, 30])
+					drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+
+
+
+					endX = endX - (endX-originX)*0.03;
+					endY = endY - (endY-originY)*0.03;
+					brushpoints.push({x:originX, y:originY}); // 4 points so arrow head works
+					brushpoints.push({x:originX, y:originY});
+					brushpoints.push({x:originX, y:originY});
+					brushpoints.push({x:originX, y:originY});
+					// draw a dot
+					brushpoints.push({x:endX, y:endY});
+					
+
+					drawBrushArrow(context, brushpoints,'#fff',6, undefined, 'dash');
+					context.setLineDash([])
+				}
 				let teleportLocButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set Teleporter Location</button>`)
 				teleportLocButton.off().on("click", function(clickEvent){
 					$('#tokenOptionsClickCloseDiv').click();
-					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");
+					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
+					let canvas = document.getElementById("temp_overlay");
+					let context = canvas.getContext("2d");
 					target.css('cursor', 'crosshair');
+					target.off('mousemove.drawTele').on('mousemove.drawTele', function(e){
+						clear_temp_canvas();
+						let brushpoints = [];
+						let [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[tokenIds].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[tokenIds].options.top)+25)*scale]
+						let [endX, endY] = get_event_cursor_position(e);
 
-					target.off('mouseup.setTele touchend.setTele').one('mouseup.setTele touchend.setTele', function(e){
+						let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
+						context.setLineDash([30, 30])
+						drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+
+
+
+						endX = endX - (endX-originX)*0.03;
+						endY = endY - (endY-originY)*0.03;
+						brushpoints.push({x:originX, y:originY}); // 4 points so arrow head works
+						brushpoints.push({x:originX, y:originY});
+						brushpoints.push({x:originX, y:originY});
+						brushpoints.push({x:originX, y:originY});
+						// draw a dot
+						brushpoints.push({x:endX, y:endY});
+						
+
+						drawBrushArrow(context, brushpoints,'#fff',6, undefined, 'dash');
+						context.setLineDash([])
+						
+					});
+					target.off('mouseup.setTele touchend.setTele').on('mouseup.setTele touchend.setTele', function(e){
+						if ( e.button == 2) {
+							return;
+						}
 						const [mouseX, mouseY] = get_event_cursor_position(e);
 						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
 						if(window.all_token_objects[tokenIds] != undefined){
 							window.all_token_objects[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
 						}
-
+						window.TOKEN_OBJECTS[tokenIds].place(0);
 						window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+
+						clear_temp_canvas();
+						target.off('mouseup.setTele touchend.setTele');
+						target.off('mousemove.drawTele')
 					});
 				});
 				

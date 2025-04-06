@@ -446,7 +446,12 @@ button .ddbc-tab-options__header-heading .menu-option{
 .teleporter.foreground{
     border:none;
     border-radius: 50%;
-    background: linear-gradient(#fff6, #fff6), radial-gradient(ellipse at center, #00F 20%, transparent) !important;
+    background: linear-gradient(#fff6, #fff6);
+    box-shadow: 0px 0px 2px 0px #000;
+}
+.linked .teleporter.background,
+.linked .teleporter.foreground{
+    background: linear-gradient(#fff6, #fff6), radial-gradient(ellipse at center, #00F 20%, transparent);
     box-shadow: 0px 0px 5px 0px #00F;
 }
 .curtain.foreground{

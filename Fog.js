@@ -2051,6 +2051,9 @@ function redraw_light_walls(clear=true){
 			doorButton.removeAttr('removeAfterDraw');
 
 			door_note_icon(id);
+			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined){
+				doorButton.toggleClass('linked', true);
+			}
 		}
 		
 		
