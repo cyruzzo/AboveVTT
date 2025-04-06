@@ -44,13 +44,14 @@ async function export_scene_import_data(){
 
 	DataFile = currentSceneData.data
 
-
 	let tokensObject = {}
 	for(let token in DataFile[uuid].tokens){
 
 		let tokenId = DataFile[uuid].tokens[token].id;
 		let statBlockID = DataFile[uuid].tokens[token].statBlock
 		if(statBlockID != undefined && window.JOURNAL.notes[statBlockID] != undefined){
+			if(DataFile[uuid].notes == undefined)
+				DataFile[uuid].notes = {};
 			DataFile[uuid].notes[statBlockID] = window.JOURNAL.notes[statBlockID];
 		}
 		if(window.JOURNAL.notes[tokenId] != undefined){
@@ -125535,7 +125536,8 @@ function get_ddb_extras() {
 		...get_scene_data_veor(),
 		...get_scene_data_hcs(),
 		...get_scene_data_dosi(),
-		...get_scene_data_sdw()
+		...get_scene_data_sdw(),
+		...get_scene_data_hgtmh1()
 	}
 }
 
