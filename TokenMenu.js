@@ -255,15 +255,16 @@ function token_context_menu_expanded(tokenIds, e) {
 			}
 			
 			if(isTeleporter){
-				let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
-				let teleScale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale : 1/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale;
-				
+
 				if(window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords != undefined){
+					let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
+					let teleScale = window.CURRENT_SCENE_DATA.scale_factor != undefined && window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale : window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords != undefined  ? 1/window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.scale : 1;
+				
 					let canvas = document.getElementById("temp_overlay");
 					let context = canvas.getContext("2d");
 					let brushpoints = [];
 					let [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[tokenIds].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[tokenIds].options.top)+25)*scale]
-					let [endX, endY] = [window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.left, window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.top]
+					let [endX, endY] = [window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.left*teleScale, window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.top*teleScale]
 
 					let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
 					context.setLineDash([30, 30])
@@ -286,6 +287,8 @@ function token_context_menu_expanded(tokenIds, e) {
 				}
 				let teleportLocButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set Teleporter Location</button>`)
 				teleportLocButton.off().on("click", function(clickEvent){
+					let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
+					
 					$('#tokenOptionsClickCloseDiv').click();
 					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
 					let canvas = document.getElementById("temp_overlay");
