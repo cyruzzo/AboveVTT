@@ -51,6 +51,10 @@ const doorColors = {
 	12: {
 		'open': "rgba(25, 25, 180, 0.5)", // portal
 		'closed': "rgba(25, 25, 180, 1)"
+	},	
+	13: {
+		'open': "rgba(10, 10, 50, 0.5)", // secret portal
+		'closed': "rgba(10, 10, 50, 1)"
 	},
 };
 let doorColorsArray = [];
@@ -1917,7 +1921,7 @@ function redraw_light_walls(clear=true){
         let dataHidden = hidden;
         let notVisible = doorButton?.hasClass('notVisible') ? true : false;
 
-        let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12) ? `teleporter` : `door`;
+        let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
 
         if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
         	doorButton.remove();
@@ -1930,10 +1934,10 @@ function redraw_light_walls(clear=true){
 			let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
 
 
-			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12) ? `teleporter` : `door`;
+			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
 			
 			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11) ? ` secret` : ``;
+			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			
@@ -1966,7 +1970,7 @@ function redraw_light_walls(clear=true){
 
 					let locked = $(this).hasClass('locked');
 					let secret = $(this).hasClass('secret');
-					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : 12
+					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
 					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
 						open_close_door(x, y, width, height, type)
 						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
@@ -1976,7 +1980,7 @@ function redraw_light_walls(clear=true){
 					else if(shiftHeld && window.DM){
 						if(doorType == `teleporter`)
 							return;
-						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : 12
+						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
 						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
 						openCloseDoorButton.toggleClass('locked', !locked);
 						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
@@ -2019,7 +2023,7 @@ function redraw_light_walls(clear=true){
 			
 		}
 		else if (doorColorsArray.includes(color)){		
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11) ? ` secret` : ``;
+			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 
 	
 			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
@@ -4686,7 +4690,8 @@ function get_available_doors(){
 		9: `Locked Curtain`,
 		10: `Secret Curtain`,
 		11: `Secret Locked Curtain`,
-		12: `Portal`
+		12: `Portal`,
+		13: `Secret Portal`
 	}
 }
 
@@ -5617,8 +5622,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     	y1 = tokenIsDoor ? parseFloat(token.attr('data-y1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
     	y2 = tokenIsDoor ? parseFloat(token.attr('data-y2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
     }
-    let notBlockVision = [1, 3, 6, 7, 12];
-    let notBlockMove = [8, 9, 10, 11, 12];
+    let notBlockVision = [1, 3, 6, 7, 12, 13];
+    let notBlockMove = [8, 9, 10, 11, 12, 13];
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    let pt;
 	    let closestLight = null;
