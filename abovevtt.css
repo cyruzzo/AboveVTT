@@ -3800,10 +3800,10 @@ div#selectedTokensBorder {
 }
 @keyframes mymove {
     from{
-        --opacity: 0.2
+        --opacity: 0.4
     }
     to {
-        --opacity: 0.5
+        --opacity: 0.6
     }
   }
 .above-vtt-container-roll-output{
