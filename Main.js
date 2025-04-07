@@ -3505,6 +3505,10 @@ function init_help_menu() {
 							<dd>Quick toggle door/window locked</dd>
 						<dl>
 						<dl>
+							<dt>${getShiftKeyName()}+Click Portal</dt>
+							<dd>Force recenter camera and instant teleport token for those receiving the message. (Always does this for those clicking the portal)</dd>
+						<dl>
+						<dl>
 							<dt>Hold ${getShiftKeyName()} while drawing walls</dt>
 							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						<dl>

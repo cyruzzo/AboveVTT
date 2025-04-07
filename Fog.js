@@ -1949,6 +1949,8 @@ function redraw_light_walls(clear=true){
 			openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
 					if(doorType == `teleporter`){
+						
+
 						let alreadyHighlighted = false;
 						for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
@@ -1965,16 +1967,24 @@ function redraw_light_walls(clear=true){
 								curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
 								curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
 							}
+
 							curr.place(0);
-							curr.sync($.extend(true, {}, curr.options));
+							let optionsClone = $.extend(true, {}, curr.options);
+							if(shiftHeld){
+								optionsClone.speedAnim = true;
+							}
+							
 							if(!alreadyHighlighted){
+								if(shiftHeld){					
+									optionsClone.highlightCenter = true;
+								}
 								alreadyHighlighted = true;
 								curr.highlight();
 							}
+							curr.sync(optionsClone);
 						}
 						return;
 					}
-
 
 					let locked = $(this).hasClass('locked');
 					let secret = $(this).hasClass('secret');
@@ -1986,8 +1996,6 @@ function redraw_light_walls(clear=true){
 							tokenObject.place_sync_persist();
 					}
 					else if(shiftHeld && window.DM){
-						if(doorType == `teleporter`)
-							return;
 						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
 						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
 						openCloseDoorButton.toggleClass('locked', !locked);
