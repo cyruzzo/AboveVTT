@@ -3167,6 +3167,7 @@ button.roll-button-mod.minus {
     mix-blend-mode:lighten;
     opacity:1;
     background:#000;
+    filter: blur(3px);
 }
 .ruler-svg-text{
     fill: #000;
