@@ -2884,7 +2884,7 @@ class Token {
 							
 							
 							self.place_sync_persist();
-
+							let darknessMoved = self.options.darkness;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
 									let id = $(tok).attr("data-id");
@@ -2893,6 +2893,8 @@ class Token {
 									let curr = window.TOKEN_OBJECTS[id];
 									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 									curr.place_sync_persist();
+									if(curr.options.darkness === true)
+										darknessMoved = true;
 								}												
 							}
 							//remove cover for smooth drag
@@ -2909,8 +2911,9 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")){
 								WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 							}	
-
-							debounceLightChecks();
+							if(darknessMoved === true)
+								redraw_drawn_light();	
+							redraw_light(darknessMoved);
 
 							window.DRAGGING = false;
 							draw_selected_token_bounding_box();
@@ -4025,7 +4028,7 @@ function setTokenAudio(tokenOnMap, token){
 function checkAudioVolume(){
 	let audioTokens = $('.audio-token');
 	let tokensToCheck = [];
-	if(window.TokenAudioLevels == undefined){
+	if(window.TokenAudioLevels === undefined){
 		window.TokenAudioLevels ={}
 	}
 	
@@ -4052,8 +4055,8 @@ function checkAudioVolume(){
 
 
 		let currAudioPosition ={
-			x: parseInt(currAudioToken.options.left.replace('px', '')) + currAudioToken.sizeWidth()/2,
-			y: parseInt(currAudioToken.options.top.replace('px', '')) + currAudioToken.sizeHeight()/2
+			x: parseInt(currAudioToken.options.left) + currAudioToken.sizeWidth()/2,
+			y: parseInt(currAudioToken.options.top) + currAudioToken.sizeHeight()/2
 		}
 		for(let checkedTokenId in tokensToCheck){
 			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
@@ -4072,8 +4075,8 @@ function checkAudioVolume(){
 			}
 
 			let checkedTokenPosition ={
-				x: parseInt(checkedToken.options.left.replace('px', '')) + checkedToken.sizeWidth()/2,
-				y: parseInt(checkedToken.options.top.replace('px', '')) + checkedToken.sizeHeight()/2
+				x: parseInt(checkedToken.options.left) + checkedToken.sizeWidth()/2,
+				y: parseInt(checkedToken.options.top) + checkedToken.sizeHeight()/2
 			}
 
 
