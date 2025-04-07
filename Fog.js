@@ -5698,7 +5698,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					
 
 			if (pt) {
-				const dist = (Vector.dist(window.PARTICLE.pos, pt) < lightRadius) ? Vector.dist(window.PARTICLE.pos, pt) : lightRadius;
+				let dist;
+				if(Vector.dist(window.PARTICLE.pos, pt) < lightRadius)
+					dist = Vector.dist(window.PARTICLE.pos, pt);
+				else
+					dist = lightRadius;
+				
 				if (dist < recordLight && !notBlockVision.includes(parseInt(walls[j].c))) {
 				  	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
 						{
