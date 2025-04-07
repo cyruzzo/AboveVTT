@@ -1644,10 +1644,16 @@ class MessageBroker {
 
 	handleToken(msg) {
 		let data = msg.data;
-		let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-		let auraislightchanged = false;
+
 		if(data.id == undefined)
 			return;
+
+		const animationDuration = data.speedAnim == true ? 0 : undefined;
+		delete msg.data.speedAnim;
+
+		const centerView = data.highlightCenter == true;
+		delete msg.data.highlightCenter;
+
 		if (msg.sceneId != window.CURRENT_SCENE_DATA.id || msg.loading) {
 			let gridSquares = parseFloat(data.gridSquares);
 			if (!isNaN(gridSquares)) {
@@ -1675,11 +1681,12 @@ class MessageBroker {
 			
 		if (data.id in window.TOKEN_OBJECTS) {
 
+
 			for (let property in data) {
 				if(msg.sceneId != window.CURRENT_SCENE_DATA.id && (property == "left" || property == "top" || property == "hidden" || property == "scaleCreated"))
 					continue;	
 				if(window.all_token_objects[data.id] == undefined){
-						window.all_token_objects[data.id] = window.TOKEN_OBJECTS[data.id]	
+					window.all_token_objects[data.id] = window.TOKEN_OBJECTS[data.id]	
 				}	
 				window.TOKEN_OBJECTS[data.id].options[property] = data[property];
 				window.all_token_objects[data.id].options[property] = data[property];
@@ -1700,7 +1707,28 @@ class MessageBroker {
 				delete window.TOKEN_OBJECTS[data.id].options.groupId;
 				delete window.all_token_objects[data.id].options.groupId;
 			}
-			window.TOKEN_OBJECTS[data.id].place();
+			let selector = "div[data-id='" + data.id + "']";
+			let token = $("#tokens").find(selector);
+			
+			if(animationDuration == 0)
+				token.css('visibility', 'hidden');
+			
+			window.TOKEN_OBJECTS[data.id].place(animationDuration);
+			if(animationDuration == 0){
+				setTimeout(function(){
+					token.css('visibility', '');
+				},100)
+			}
+			if(centerView){	
+				let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+				if(window.TOKEN_OBJECTS[data.id].isCurrentPlayer() || 
+					window.TOKEN_OBJECTS[data.id].options.share_vision == true || 
+					window.TOKEN_OBJECTS[data.id].options.share_vision == window.myUser || 
+					window.TOKEN_OBJECTS[data.id].options.player_owned ||
+					(playerTokenId == undefined && window.TOKEN_OBJECTS[data.id].options.itemType == 'pc')){
+						window.TOKEN_OBJECTS[data.id].highlight();
+				}	
+			}
 
 		}	
 		else if(data.left){

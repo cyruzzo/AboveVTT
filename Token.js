@@ -2025,7 +2025,6 @@ class Token {
 
 	place(animationDuration) {
 		try{
-
 			if(!this.options.id.includes('exampleToken') && (isNaN(parseFloat(this.options.left)) || isNaN(parseInt(this.options.top)))){// prevent errors with NaN positioned tokens - delete them as catch all. 
 				this.options.deleteableByPlayers = true;
 				this.delete();
@@ -2074,7 +2073,6 @@ class Token {
 			}		
 
 			if (old.length > 0) {
-
 				console.trace();
 				console.group("old token")
 				console.log("trovato!!");
