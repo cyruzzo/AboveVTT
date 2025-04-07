@@ -2344,10 +2344,9 @@ async function duplicate_scene(sceneId) {
 	
 	for(token in aboveSceneData.tokens){
 		let oldId = aboveSceneData.tokens[token].id;
-		if(is_player_id(oldId))
-			continue;
+
 		//is a door if it has oldSceneId, we want to keep the position part of the id but replace scene so it is still targeted correctly
-		let newId = oldId.includes(oldSceneId) ? oldId.replace(oldSceneId, newSceneId) : uuid();
+		let newId = is_player_id(oldId) ? oldId : oldId.includes(oldSceneId) ? oldId.replace(oldSceneId, newSceneId) : uuid();
 		
 		for(noteID in window.JOURNAL.notes){
 			if(oldId == noteID){	
