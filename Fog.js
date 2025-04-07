@@ -1830,7 +1830,6 @@ function redraw_drawn_light(){
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
 		}
-		targetCtx.filter = "none";
 	}
 
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
@@ -6269,26 +6268,9 @@ function redraw_light(darknessMoved = false){
 		lightInLosContext.drawImage(offscreenCanvasMask, 0, 0);
 		
 
-		let offscreenCanvasMask2 = document.createElement('canvas');
-		let offscreenContext2 = offscreenCanvasMask2.getContext('2d');
-
-		offscreenCanvasMask2.width = canvasWidth;
-		offscreenCanvasMask2.height = canvasHeight;
-
-		offscreenContext.globalCompositeOperation='xor';
-		offscreenContext.fillStyle = "black";
-		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
-
-		offscreenContext2.drawImage(offscreenCanvasMask, 0, 0) // store darkness to redraw with blur
-		
 		offscreenContext.globalCompositeOperation='destination-over';
-		offscreenContext.fillStyle = "white";
-		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
-
-		
-		offscreenContext.globalCompositeOperation='source-over';
-		offscreenContext.drawImage(offscreenCanvasMask2, 0, 0);
-		
+		offscreenContext.fillStyle = "black";
+		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);		
 	}	
 
 	requestAnimationFrame(function(){
@@ -6593,10 +6575,12 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 	
 	const selectedTokenCheck = (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
 
+
+
 	if(lightRadius > darkvisionRadius)
 		circleRadius = lightRadius;
 	else if(selectedTokenCheck === true && (window.DM === true || window.TOKEN_OBJECTS[auraId].options.share_vision === true || window.TOKEN_OBJECTS[auraId].options.share_vision === window.myUser || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType === 'pc' && playerTokenId === undefined)))
-		circleRaidus = darkvisionRadius;
+		circleRadius = darkvisionRadius;
 	else if(lightRadius > 0)
 		circleRadius = lightRadius;
 	else
