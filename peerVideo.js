@@ -1,10 +1,10 @@
 const PRE = "AboveVTT"
 const SUF = "MEET"
-let room_id;
-let screenStream;
+var room_id;
+var screenStream;
 window.videoPeer = null;
 window.currentPeers = [];
-let screenSharing = false;
+var screenSharing = false;
 
 function init_peerVideo_box() {
 

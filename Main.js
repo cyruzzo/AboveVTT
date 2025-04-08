@@ -1524,8 +1524,8 @@ function init_splash() {
 
 
 
-let DDB_WS_OBJ = null;
-let DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
+var DDB_WS_OBJ = null;
+var DDB_WS_FORCE_RECONNECT_LOCK = false; // Best effort (not atomic) - ensure function is called only once at a time
 /**
  * Attempts to force DDBs WebSocket to re-connect.
  * @returns Bool false - wasn't able to force / no need

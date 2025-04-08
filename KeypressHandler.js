@@ -1,9 +1,9 @@
-let altHeld = false;
-let ctrlHeld = false;
-let shiftHeld = false;
-let cursor_x = -1;
-let cursor_y = -1;
-let arrowKeysHeld = [0, 0, 0, 0];
+var altHeld = false;
+var ctrlHeld = false;
+var shiftHeld = false;
+var cursor_x = -1;
+var cursor_y = -1;
+var arrowKeysHeld = [0, 0, 0, 0];
 
 const sb_scroll_style = "avtt-scroll-hidden"
 function hide_scrollbar() {

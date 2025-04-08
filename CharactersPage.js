@@ -4,7 +4,7 @@ $(function() {
   init_characters_pages();
 });
 
-let recentCharacterUpdates = {};
+var recentCharacterUpdates = {};
 
 const debounce_add_extras = mydebounce(() => {
   const isAbove = is_abovevtt_page()

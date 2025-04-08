@@ -203,7 +203,25 @@ const debounceSendNote = mydebounce(function(id, note){
 
 const delayedClear = mydebounce(() => clearFrame());
 
+function setupMBIntervals(){
+	if(window.pingInterval!=undefined)
+		clearInterval(window.pingInterval);
+	if(window.reconInterval!=undefined)
+		clearInterval(window.reconInterval);
 
+	
+	window.pingInterval = setInterval(function() {
+		window.MB.sendPing();
+		window.MB.sendAbovePing();
+	}, 480000);
+
+
+	window.reconInterval = setInterval(function() {
+   		forceDdbWsReconnect();
+		window.MB.reconnectDisconnectedAboveWs();
+	}, 4000)
+	
+}
 
 function resizeCanvasChromeBug(){
 	let diceRollCanvas = $(".dice-rolling-panel__container");
@@ -1502,16 +1520,7 @@ class MessageBroker {
 
 		self.loadAboveWS();
 
-		setInterval(function() {
-			self.sendPing();
-			self.sendAbovePing();
-		}, 480000);
-
-		// Ensure we have an initial delay (15 seconds) before attempting re-connects to let everything load (every 4 seconds)
-		setTimeout(setInterval(function() {
-			   	forceDdbWsReconnect();
-			   	self.reconnectDisconnectedAboveWs();
-		}, 4000), 15000);
+		setupMBIntervals();
 
 
 	}

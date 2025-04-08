@@ -1,8 +1,8 @@
 const DICEPRE = "AboveVTT"
 const DICESUF = "DICE"
-let diceroom_id;
-let dicescreenStream;
-let diceplayer_id
+var diceroom_id;
+var dicescreenStream;
+var diceplayer_id
 window.diceVideoPeer = null;
 window.diceCurrentPeers = [];
 
