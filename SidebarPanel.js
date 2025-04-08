@@ -1222,9 +1222,6 @@ function build_sidebar_list_row(listItem) {
                 margin-top: 3px;
               }
             </style>`))
-
-          playersWindow.find('.ui-draggable').draggable('disable')
-        
         });
 
         if (listItem.isRootFolder()) {
@@ -1283,9 +1280,6 @@ function build_sidebar_list_row(listItem) {
                 margin-top: 3px;
               }
             </style>`))
-
-          playersWindow.find('.ui-draggable').draggable('disable')
-        
         });
       }
       if (listItem.folderType === ItemType.MyToken) {
