@@ -2731,7 +2731,7 @@ function build_UVTT_import_container(){
 	const dropBoxbutton1 = createCustomDropboxChooser('Choose UVTT file from Dropbox', dropBoxOptions1);
 	const onedriveButton1 = createCustomOnedriveChooser('Choose UVTT file from Onedrive', function(links){$('#player_map_row input').val(links[0].link)}, 'single', ['.dd2vtt', '.uvtt', '.df2vtt'])
 	form.append(dropBoxbutton1);
-	form.append(onedriveButton1);
+	//form.append(onedriveButton1); if we ever get this working again, or one drive changes things to make them accessible we can reenable it
 
 	const hiddenDoorToggle = form_toggle('hidden_doors_toggle', null, false, function(event) {
 		handle_basic_form_toggle_click(event);
