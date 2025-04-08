@@ -1869,7 +1869,7 @@ function display_folder_configure_modal(listItem) {
 
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {
-    if (itemType === ItemType.MyToken || itemType === ItemType.Scene || itemType === ItemType.PC){
+    if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id)){
       let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
       console.log(`saveButton nameInput`, nameInput);
       let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
@@ -2409,7 +2409,7 @@ function enable_draggable_change_folder(listItemType) {
       // TODO: disable the draggable that was added here enable_draggable_token_creation
       // tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
       let playerOffsetStart = {};
-      tokensPanel.body.find(".sidebar-list-item-row").draggable({
+      tokensPanel.body.find(".sidebar-list-item-row:not([id*='playersFolder']").draggable({
         containment: tokensPanel.body,
         appendTo: tokensPanel.body,
         revert: true,
