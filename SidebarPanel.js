@@ -1224,7 +1224,7 @@ function build_sidebar_list_row(listItem) {
             </style>`))
 
           playersWindow.find('.ui-draggable').draggable('disable')
-        
+          redraw_token_list($('[name="token-search"]').val());
         });
 
         if (listItem.isRootFolder()) {
@@ -1285,7 +1285,7 @@ function build_sidebar_list_row(listItem) {
             </style>`))
 
           playersWindow.find('.ui-draggable').draggable('disable')
-        
+          redraw_token_list($('[name="token-search"]').val());
         });
       }
       if (listItem.folderType === ItemType.MyToken) {
