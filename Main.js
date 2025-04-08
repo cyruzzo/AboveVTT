@@ -3367,163 +3367,162 @@ function init_help_menu() {
 						<dl>
 							<dt>SPACE</dt>
 							<dd>Show/hide character sheet (players only)</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+SPACE</dt>
 							<dd>Center Player Token (players only)</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getCtrlKeyName()}+SPACE</dt>
 							<dd>Center Current Turn Token</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>Q</dt>
 							<dd>Show/hide sidebar</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>ESC</dt>
 							<dd>Cancel button selections</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>S</dt>
 							<dd>Select tool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>R</dt>
 							<dd>Ruler</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>F</dt>
 							<dd>Fog menu</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>W</dt>
 							<dd>Wall tool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>D</dt>
 							<dd>Draw tool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>T</dt>
 							<dd>Text tool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>A</dt>
 							<dd>Area of effect menu</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>C</dt>
 							<dd>Combat tracker</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>N</dt>
 							<dd>Next creature in combat</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>P</dt>
 							<dd>Prev creature in combat</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>- / ${getCtrlKeyName()}+Mouse Wheel Down</dt>
 							<dd>Zoom out</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>= / + / ${getCtrlKeyName()}+Mouse Wheel Up</dt>
 							<dd>Zoom in</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>1-7</dt>
 							<dd> Add Dice to Dice Pool</dd>
-						<dl>
-							<dl>
+						</dl>
 							<dt>${getModKeyName()}+1-7</dt>
 							<dd>Remove Dice from Dice Pool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>- (with Dice Pool Mod visibile)</dt>
 							<dd>Subtract from Roll Mod</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>= / + (with Dice Pool Mod visibile)</dt>
 							<dd>Add to Roll Mod</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>Enter</dt>
 							<dd>Roll added dice pool</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getModKeyName()} (held)</dt>
 							<dd>Temporarily toggle grid snapping</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getAltKeyName()} (held)</dt>
 							<dd>Temporarily activate ruler</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+H</dt>
 							<dd>Hide buttons from screen (spectator mode)</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getModKeyName()}+C</dt>
 							<dd>Copy Selected Token</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getModKeyName()}+V</dt>
 							<dd>Paste Selected Tokens</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+L</dt>
 							<dd>Enable/Disable locked token interation (DM only)</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+V</dt>
 							<dd>Temporary check token vision.</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+W</dt>
 							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+S</dt>
 							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>Hold ${getModKeyName()} while using most tools</dt>
 							<dd>Temporary toggle snap tools to grid on/off (opposite of the toggle set). This includes drawings from most menus - fog, draw, light, walls etc.</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+Click Token</dt>
 							<dd>Select multiple tokens</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+Drag Token</dt>
 							<dd>If token is grouped or multiple tokens selected just move the one token</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+Click Door/Window</dt>
 							<dd>Quick toggle door/window locked</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+Click Portal</dt>
 							<dd>Force recenter camera and instant teleport token for those receiving the message. (Always does this for those clicking the portal)</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>Hold ${getShiftKeyName()} while drawing walls</dt>
 							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>UP/DOWN arrows</dt>
 							<dd>Will cycle through fog & draw options if menu open</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}/${getModKeyName()} Click on Icon Rolls and Most Character/Extras/Monsters d20 Rolls</dt>
 							<dd>Will roll with ADV/DIS respectively</dd>
-						<dl>
+						</dl>
 						<dl>
 							<dt>${getAltKeyName()} + ${getShiftKeyName()}/${getModKeyName()} Click on Icon Rolls and Most Character/Extras/Monsters d20 Rolls</dt>
 							<dd>Will roll with Super ADV/DIS respectively</dd>
-						<dl>
+						</dl>
 		
 					</div>
 
