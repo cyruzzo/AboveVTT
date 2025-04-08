@@ -744,7 +744,7 @@ function check_single_token_visibility(id){
 
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
-	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name === 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision !== window.myUser 
+	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name === 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
@@ -852,7 +852,7 @@ function do_check_token_visibility() {
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
-			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision !== window.myUser 
+			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 
 
 			let inTruesight = false;
@@ -2008,9 +2008,6 @@ function redraw_light_walls(clear=true){
 					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
 					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
 						open_close_door(x, y, width, height, type)
-						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
-						if(tokenObject)
-							tokenObject.place_sync_persist();
 					}
 					else if(shiftHeld && window.DM){
 						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
@@ -2248,8 +2245,6 @@ function door_note_icon(id){
 function open_close_door(x1, y1, x2, y2, type=0){
 	let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x1 && d[4] == y1 && d[5] == x2 && d[6] == y2)) 
 
-
-		
 	let color = ((/rgba.*0\.5\)/g).test(doors[0][2])) ? doorColors[type].closed : doorColors[type].open;
 		
 	
@@ -2275,9 +2270,8 @@ function open_close_door(x1, y1, x2, y2, type=0){
 		redo: [[...doors[0]]]
 	})
 	redraw_light_walls();
-	redraw_drawn_light();
-	redraw_light();
-	checkAudioVolume();
+	requestAnimationFrame(redraw_drawn_light);
+	debounceLightChecks();
 	sync_drawings();						
 }
 
@@ -5627,15 +5621,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	movePolygon = [];
 	noDarknessPolygon = [];
 
-	let canSeeDarkness = window.TOKEN_OBJECTS[auraId]?.options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId]?.options.sight =='truesight';
-	let tokenElev;
-	if(window.TOKEN_OBJECTS[auraId]?.options?.elev !== undefined && window.TOKEN_OBJECTS[auraId]?.options?.elev !== '') 
+	let canSeeDarkness = (auraId !== undefined && (window.TOKEN_OBJECTS[auraId].options.sight == 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight =='truesight'));
+	let tokenElev = 0;
+	if(auraId !== undefined && window.TOKEN_OBJECTS[auraId].options.elev !== undefined && window.TOKEN_OBJECTS[auraId].options.elev !== '') 
 		tokenElev = parseInt(window.TOKEN_OBJECTS[auraId].options.elev)
-	else
-		tokenElev = 0;
 
-	if(window.TOKEN_OBJECTS[auraId]?.options?.mapElev !== undefined)
-		tokenElev += parseInt(window.TOKEN_OBJECTS[auraId]?.options?.mapElev)
+	if(auraId !== undefined && window.TOKEN_OBJECTS[auraId].options.mapElev !== undefined)
+		tokenElev += parseInt(window.TOKEN_OBJECTS[auraId].options.mapElev)
 
 	let prevClosestWall = null;
     let prevClosestPoint = null;
@@ -6079,7 +6071,7 @@ function redraw_light(darknessMoved = false){
 	const allWalls = [...walls, ...darknessBoundarys];
 
 	for(let i = 0; i < light_auras.length; i++){
-		promises.push(new Promise((resolve) => {
+		
 			let currentLightAura = $(light_auras[i]);
 			let auraId = currentLightAura.attr('data-id');
 
@@ -6105,9 +6097,10 @@ function redraw_light(darknessMoved = false){
 			if(window.lineOfSightPolygons === undefined){
 				window.lineOfSightPolygons = {};
 			}
-			if(window.lineOfSightPolygons[auraId]?.x === tokenPos.x && 
-				window.lineOfSightPolygons[auraId]?.y === tokenPos.y && 
-				window.lineOfSightPolygons[auraId]?.numberofwalls === allWalls.length  &&
+			if(window.lineOfSightPolygons[auraId] !== undefined &&
+				window.lineOfSightPolygons[auraId].x === tokenPos.x && 
+				window.lineOfSightPolygons[auraId].y === tokenPos.y && 
+				window.lineOfSightPolygons[auraId].numberofwalls === allWalls.length  &&
 				window.lineOfSightPolygons[auraId].visionType === window.TOKEN_OBJECTS[auraId].options.sight &&
 				darknessMoved !== true){
 				lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
@@ -6121,7 +6114,7 @@ function redraw_light(darknessMoved = false){
 				particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 				
 				let path = "";
-				for( let i = 0; i < lightPolygon.length; i++ ){
+				for(let i = 0; i < lightPolygon.length; i++){
 					path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
 				}
 				
@@ -6142,9 +6135,9 @@ function redraw_light(darknessMoved = false){
 
 	
 	
-				if( window.TOKEN_OBJECTS[auraId]?.options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId]?.options.sight === 'truesight'){
+				if(window.lineOfSightPolygons[auraId] !== undefined &&(window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')){
 					let path = "";
-					for( let i = 0; i < noDarknessPolygon.length; i++ ){
+					for(let i = 0; i < noDarknessPolygon.length; i++){
 						path += (i && "L" || "M") + noDarknessPolygon[i].x/adjustScale+','+noDarknessPolygon[i].y/adjustScale
 					}
 					window.lineOfSightPolygons[auraId].devilsightClip = path;
@@ -6185,11 +6178,13 @@ function redraw_light(darknessMoved = false){
 				
 				let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && window.TOKEN_OBJECTS[auraId].options.share_vision === undefined && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
-					return resolve();//we don't want to draw this tokens vision no need for further checks - go next token.
+					continue;//we don't want to draw this tokens vision no need for further checks - go next token.
 				
-				let hideVisionWhenPlayerTokenExists = (auraId.includes(window.PLAYER_ID) !== true && window.DM !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== window.myUser && playerTokenId !== undefined)
+
+				let hideVisionWhenPlayerTokenExists = (auraId.includes(window.PLAYER_ID) !== true && window.DM !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== true && window.TOKEN_OBJECTS[auraId].options.share_vision != window.myUser && playerTokenId !== undefined)
+
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
-					return resolve(); //we don't want to draw this tokens vision - go next token.
+					continue; //we don't want to draw this tokens vision - go next token.
 
  				
  				
@@ -6223,10 +6218,9 @@ function redraw_light(darknessMoved = false){
 			}
 
 		
-			resolve();
-		})); 	
+		 	
 	}
-	Promise.all(promises);
+	
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter === 0){
@@ -6574,7 +6568,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 
 	if(lightRadius > darkvisionRadius)
 		circleRadius = lightRadius;
-	else if(selectedTokenCheck === true && (window.DM === true || window.TOKEN_OBJECTS[auraId].options.share_vision === true || window.TOKEN_OBJECTS[auraId].options.share_vision === window.myUser || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType === 'pc' && playerTokenId === undefined)))
+	else if(selectedTokenCheck === true && (window.DM === true || window.TOKEN_OBJECTS[auraId].options.share_vision === true || window.TOKEN_OBJECTS[auraId].options.share_vision == window.myUser || auraId.includes(window.PLAYER_ID) || (window.TOKEN_OBJECTS[auraId].options.itemType === 'pc' && playerTokenId === undefined)))
 		circleRadius = darkvisionRadius;
 	else if(lightRadius > 0)
 		circleRadius = lightRadius;

@@ -1083,7 +1083,9 @@ div#scene_selector,
     bottom: 0;
     position: absolute !important;
 }
-
+#edit_dialog{
+    overflow: auto;
+}
 #edit_dialog button:not(.rc-switch),
 #edit_scene_form button:not(.rc-switch){
     background:none;
