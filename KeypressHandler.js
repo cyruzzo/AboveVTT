@@ -547,7 +547,7 @@ function handle_undo(){
 
 }
 
-let rotationKeyPresses = [];
+var rotationKeyPresses = [];
 window.addEventListener("keydown", async (event) => {
     const arrowKeys = [ 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown' ];
     if (event.shiftKey && arrowKeys.includes(event.key) ) {

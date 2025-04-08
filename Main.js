@@ -341,9 +341,9 @@ function apply_zoom_from_storage() {
 	console.groupEnd()
 }
 
-let zoomBusy = false;
-let zoomQ = [];
-let lastZoom;	  
+var zoomBusy = false;
+var zoomQ = [];
+var lastZoom;	  
 //each zoom event [amt, typ, off, x, y] typ = 0(relative) 1(absolute) 2(offset)
 //keep a queue - which can mostly be squashed except for some offset events
 function throttledZoom(amount, typeFlag, zx, zy)  {
@@ -3972,7 +3972,7 @@ function reposition_player_sheet() {
 	}
 }
 
-let player_sheet_layout = "full"; // or thin
+var player_sheet_layout = "full"; // or thin
 /**
  * When playing on the characters page, this will tell you if the character sheet is full width or thin.
  * When not on the characters page, `init_sheet` injects a button to handle the iframe resizing.

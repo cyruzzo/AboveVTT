@@ -5,7 +5,7 @@ console.log("Load.js is executing", isVttGamePage, isPlainCharacterPage, isCampa
 function getExtURL(url) {
 	return (chrome || browser).runtime.getURL(url);
 }
-let loadStyle = [];
+var loadStyle = [];
 window.scripts = []; // in case it ever loads on a non-matching page
 if (isPlainCharacterPage) {
 	let l = document.createElement('div');
