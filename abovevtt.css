@@ -5413,6 +5413,25 @@ button.block-send-to-game-log span {
     bottom: 0;
     transform: scale(0.8);
 }
+#playersFolder .folder-item-list .folder .token-row-gear{
+    display: block;
+    width: 30px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: rgb(242, 246, 248);
+    cursor: pointer;
+    min-width: 30px;
+    padding: 7px;
+    border-left: 1px solid rgb(216, 225, 232);
+    margin: -4px -4px -4px 2px;
+    height:auto;
+    border-radius: 0px;
+    padding: 7px;
+}
+#playersFolder .folder-item-list .folder .token-row-gear img{
+    transform:initial;
+    position:initial
+}
 #playersFolder .token-row-button .material-icons{
     font-size: 18px;
     padding: 0px;
