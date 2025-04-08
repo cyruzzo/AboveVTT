@@ -5340,7 +5340,10 @@ button.block-send-to-game-log span {
     margin-right: 5px;
     margin-top: 5px; 
 }
-
+#playersFolder .players-popout-button.subfolder-popout{
+    left:unset;
+    right:30px;
+}
 #playersFolder .hp-attribute.death-saves.ct-health-summary__data.ct-health-summary__deathsaves {
     float: right;
     margin: 2px 6px 2px 2px;
