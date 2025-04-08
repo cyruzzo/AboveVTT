@@ -16,6 +16,12 @@ on:
           - local
           - beta
           - prod
+     tf_release:
+        type: choice
+        description: "release to testers"
+        options:
+          - RELEASE
+          - NORELEASE
   
 jobs:
   build-safari:
@@ -66,7 +72,7 @@ jobs:
       - name: Update Build Number
         run: |
              pip install pyjwt cryptography requests
-             python calc_testflight_next_version.py 
+             python connectapi.py nextversion
         env:      
           PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}      
         working-directory: safari
@@ -76,4 +82,11 @@ jobs:
         working-directory: safari
         env:
           AVTT_BUILD: ${{inputs.build_type}}
+
+      - name: Release to Test Flight Beta Group
+        if: ${{ github.event.inputs.tf_release == 'RELEASE' && github.event.inputs.upload_build == 'UPLOAD' }}
+        run: python connectapi.py releasetotest
+        env:      
+          PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}      
+        working-directory: safari
 
