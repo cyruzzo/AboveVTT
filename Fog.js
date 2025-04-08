@@ -5677,19 +5677,14 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	    for (let j = 0; j < walls.length; j++) {
 
-	      	let wallTop;
-
-	      	
+	      	let wallTop = Infinity;
 			if(walls[j].wallTop !== undefined && walls[j].wallTop !== '')
 	    		wallTop = parseInt(walls[j].wallTop)
-	    	else
-	    		wallTop = Infinity;
 
-	  		let wallBottom;
+	  		let wallBottom = -Infinity;
 			if(walls[j].wallBottom !== undefined && walls[j].wallBottom !== '')
 	    		wallBottom = parseInt(walls[j].wallBottom)
-	    	else
-	    		wallBottom = -Infinity
+	    	
 
 			if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 				continue;
@@ -5698,11 +5693,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					
 
 			if (pt) {
-				let dist;
-				if(Vector.dist(window.PARTICLE.pos, pt) < lightRadius)
-					dist = Vector.dist(window.PARTICLE.pos, pt);
-				else
-					dist = lightRadius;
+				let dist = lightRadius;
+				let pointDistance = Vector.dist(window.PARTICLE.pos, pt);
+				if(pointDistance < lightRadius)
+					dist = pointDistance;
+			
 				
 				if (dist < recordLight && !notBlockVision.includes(parseInt(walls[j].c))) {
 				  	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
@@ -6192,7 +6187,7 @@ function redraw_light(darknessMoved = false){
 				if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
 					return resolve();//we don't want to draw this tokens vision no need for further checks - go next token.
 				
-				let hideVisionWhenPlayerTokenExists = (!auraId.includes(window.PLAYER_ID) && window.DM !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== window.myUser && playerTokenId !== undefined)
+				let hideVisionWhenPlayerTokenExists = (auraId.includes(window.PLAYER_ID) !== true && window.DM !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== true && window.TOKEN_OBJECTS[auraId].options.share_vision !== window.myUser && playerTokenId !== undefined)
 				if(hideVisionWhenPlayerTokenExists)	//when player token does exist show your own vision and shared vision.
 					return resolve(); //we don't want to draw this tokens vision - go next token.
 
@@ -6527,52 +6522,47 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
-	let visionColor, visionRange, light1Color, light2Color, light1Range, light2Range, blackLight1, blackLight2, blackVision, circleRadius;
+	let visionColor = `rgba(0,0,0,0)`;
+	let visionRange = 0;
+	let light1Color = `rgba(0,0,0,0)`;
+	let light2Color = `rgba(0,0,0,0)`;
+	let light1Range = 0;
+	let light2Range = 0;
+	let blackLight1 = 1;
+	let blackLight2 = 1;
+	let blackVision = 1;
 
-	if(window.TOKEN_OBJECTS[auraId]?.options?.vision?.color !== undefined)
-		visionColor =  window.TOKEN_OBJECTS[auraId].options.vision.color;
-	else
-		visionColor = `rgba(0,0,0,0)`;
+	if(window.TOKEN_OBJECTS[auraId] !== undefined){
+		if(window.TOKEN_OBJECTS[auraId].options.vision !== undefined){
+			if(window.TOKEN_OBJECTS[auraId].options.vision.color !== undefined)
+				visionColor =  window.TOKEN_OBJECTS[auraId].options.vision.color;
 
-	if(window.TOKEN_OBJECTS[auraId]?.options?.vision?.feet !== undefined)
-		visionRange = window.TOKEN_OBJECTS[auraId]?.options?.vision?.feet;
-	else
-		visionRange = 0;
+			if(window.TOKEN_OBJECTS[auraId].options.vision.feet !== undefined)
+				visionRange = window.TOKEN_OBJECTS[auraId].options.vision.feet;
+		}
+		if(window.TOKEN_OBJECTS[auraId].options.light1 !== undefined){
+			if(window.TOKEN_OBJECTS[auraId].options.light1.color !== undefined)
+				light1Color =  window.TOKEN_OBJECTS[auraId].options.light1.color; 
+			if(window.TOKEN_OBJECTS[auraId].options.light1.feet !== undefined)
+				light1Range =  window.TOKEN_OBJECTS[auraId].options.light1.feet; 
+		}
+		if(window.TOKEN_OBJECTS[auraId].options.light2 !== undefined){	
+			if(window.TOKEN_OBJECTS[auraId].options.light2.color !== undefined)
+				light2Color =  window.TOKEN_OBJECTS[auraId].options.light2.color; 
 
-	if(window.TOKEN_OBJECTS[auraId]?.options?.light1?.color !== undefined)
-		light1Color =  window.TOKEN_OBJECTS[auraId]?.options?.light1?.color; 
-	else
-		light1Color = `rgba(0,0,0,0)`;
-
-	if(window.TOKEN_OBJECTS[auraId]?.options?.light2?.color !== undefined)
-		light2Color =  window.TOKEN_OBJECTS[auraId]?.options?.light2?.color; 
-	else
-		light2Color = `rgba(0,0,0,0)`;
-
-	if(window.TOKEN_OBJECTS[auraId]?.options?.light1?.feet !== undefined)
-		light1Range =  window.TOKEN_OBJECTS[auraId].options.light1.feet; 
-	else
-		light1Range = 0;
-
-	if( window.TOKEN_OBJECTS[auraId]?.options?.light2?.feet !== undefined)
-		light2Range =  window.TOKEN_OBJECTS[auraId].options.light2.feet 
-	else
-		light2Range = 0;
+			if( window.TOKEN_OBJECTS[auraId].options.light2.feet !== undefined)
+				light2Range =  window.TOKEN_OBJECTS[auraId].options.light2.feet 
+		}
+	}
 
 	if(light1Color.match(/rgba\(0, 0, 0.*/g) !== null)
 		blackLight1 = 0;
-	else
-		blackLight1 = 1;
 
 	if(light2Color.match(/rgba\(0, 0, 0.*/g) !== null)
 		blackLight2 = 0;
-	else
-		blackLight2 = 1;
 
 	if(visionColor.match(/rgba\(0, 0, 0.*/g) !== null)
 		blackVision = 0;
-	else
-		blackVision = 1;
 
 
 	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
@@ -6580,7 +6570,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 	
 	const selectedTokenCheck = (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
 
-
+	let circleRadius = 0
 
 	if(lightRadius > darkvisionRadius)
 		circleRadius = lightRadius;
@@ -6588,8 +6578,6 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#ray
 		circleRadius = darkvisionRadius;
 	else if(lightRadius > 0)
 		circleRadius = lightRadius;
-	else
-		circleRadius = 0;
 	
 
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
