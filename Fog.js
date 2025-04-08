@@ -57,7 +57,7 @@ const doorColors = {
 		'closed': "rgba(10, 10, 50, 1)"
 	},
 };
-let doorColorsArray = [];
+var doorColorsArray = [];
 
 for(let i in doorColors){
 	for(let j in doorColors[i]){
@@ -5438,12 +5438,12 @@ function init_vision_menu(buttons){
 
 
 // helper functions
-let degreeToRadian = function(degree) {
+var degreeToRadian = function(degree) {
   return (degree / 180) * Math.PI;
 };
 
 // vector object
-let Vector = function(x,y) {
+var Vector = function(x,y) {
   this.x = x;
   this.y = y;
 };
@@ -5489,7 +5489,7 @@ Vector.prototype.normalize = function() {
 };
 
 // boundary object a: vector, b: vector
-let Boundary = function(aVec, bVec, type=0) {
+var Boundary = function(aVec, bVec, type=0) {
   this.a = aVec;
   this.b = bVec;
   this.c = type;
@@ -5497,7 +5497,7 @@ let Boundary = function(aVec, bVec, type=0) {
 
 
 // ray object
-let Ray = function(pos, angle) {
+var Ray = function(pos, angle) {
   this.pos = pos;
   this.dir = Vector.fromAngle(angle);
 };

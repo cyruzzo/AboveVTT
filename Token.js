@@ -55,7 +55,7 @@ const debounceStoreExplored = mydebounce((exploredCanvas) => {
 	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
 	};
 }, 5000)
-let debounceLightChecks = mydebounce((darknessMoved = false) => {		
+var debounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
@@ -67,11 +67,11 @@ let debounceLightChecks = mydebounce((darknessMoved = false) => {
 		
 }, 20);
 
-let debounceAudioChecks = mydebounce(() => {
+var debounceAudioChecks = mydebounce(() => {
 	checkAudioVolume();
 }, 20)
 
-let longDebounceLightChecks = mydebounce((darknessMoved = false) => {		
+var longDebounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
 		if(window.walls?.length < 5){
