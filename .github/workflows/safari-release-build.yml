@@ -84,7 +84,7 @@ jobs:
           AVTT_BUILD: ${{inputs.build_type}}
 
       - name: Release to Test Flight Beta Group
-        if: ${{ inputs.tf_release == 'yes' && inputs.upload_build == 'UPLOAD' }}
+        if: ${{ github.event.inputs.tf_release == 'yes' && github.event.inputs.upload_build == 'UPLOAD' }}
         run: python connectapi.py releasetotest
         env:      
           PRIVATE_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY }}      
