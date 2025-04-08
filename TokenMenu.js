@@ -285,7 +285,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					drawBrushArrow(context, brushpoints,'#fff',6, undefined, 'dash');
 					context.setLineDash([])
 				}
-				let teleportLocButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set Teleporter Location</button>`)
+				let teleportLocButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set One-way Teleporter Location</button>`)
 				teleportLocButton.off().on("click", function(clickEvent){
 					let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
 					
@@ -341,6 +341,110 @@ function token_context_menu_expanded(tokenIds, e) {
 				});
 				
 				body.append(teleportLocButton);
+
+				let teleportTwoWayButton = $(`<button class=" context-menu-icon-hidden door-open material-icons">Set Return Teleporter Location</button>`)
+				teleportTwoWayButton.off().on("click", function(clickEvent){
+					let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && parseInt(d[3]) == x1 && parseInt(d[4]) == y1 && parseInt(d[5]) == x2 && parseInt(d[6]) == y2))  
+
+					let scale = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated : 1/window.TOKEN_OBJECTS[tokenIds].options.scaleCreated ;
+					
+					$('#tokenOptionsClickCloseDiv').click();
+					let target = $("#temp_overlay, #fog_overlay, #VTT, #black_layer");	
+					$("#temp_overlay").css('z-index', '50');
+					let canvas = document.getElementById("temp_overlay");
+					let context = canvas.getContext("2d");
+					target.css('cursor', 'crosshair');
+					target.off('mousemove.drawTele').on('mousemove.drawTele', function(e){
+						clear_temp_canvas();
+						let brushpoints = [];
+						let [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[tokenIds].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[tokenIds].options.top)+25)*scale]
+						let [endX, endY] = get_event_cursor_position(e);
+
+						let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
+						context.setLineDash([30, 30])
+						drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
+
+
+
+						endX = endX - (endX-originX)*0.03;
+						endY = endY - (endY-originY)*0.03;
+						brushpoints.push({x:originX, y:originY}); // 4 points so arrow head works
+						brushpoints.push({x:originX, y:originY});
+						brushpoints.push({x:originX, y:originY});
+						brushpoints.push({x:originX, y:originY});
+						// draw a dot
+						brushpoints.push({x:endX, y:endY});
+						
+
+						drawBrushArrow(context, brushpoints,'#fff',6, undefined, 'dash');
+						context.setLineDash([])
+						
+					});
+					target.off('mouseup.setTele touchend.setTele').on('mouseup.setTele touchend.setTele', function(e){
+						if ( e.button == 2) {
+							return;
+						}
+
+						const [mouseX, mouseY] = get_event_cursor_position(e);
+						const [originX, originY] = [(parseInt(window.TOKEN_OBJECTS[tokenIds].options.left)+25)*scale, (parseInt(window.TOKEN_OBJECTS[tokenIds].options.top)+25)*scale]
+						
+						let data = ['line',
+								 'wall',
+								 doors[0][2],
+								 mouseX-5,
+								 mouseY,
+								 mouseX+5,
+								 mouseY,
+								 12,
+								 doors[0][8],
+								 doors[0][9],
+					 			 (doors[0][10] != undefined ? doors[0][10] : ""),
+					 			 (doors[0][11] != undefined ? doors[0][11] : "")
+					 	]
+					 	window.DRAWINGS.push(data);
+					 	window.wallUndo.push({
+							undo: [[...data]],
+						})
+						let clonePortalId = `${mouseX-5}${mouseY}${mouseX+5}${mouseY}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+			
+			 			if(window.TOKEN_OBJECTS[clonePortalId] == undefined){
+							let options = {
+								...default_options(),
+								left: `${mouseX-25}px`,
+								top: `${mouseY-25}px`,
+								id: clonePortalId,
+								vision:{
+									feet: 0,
+									color: `rgba(0, 0, 0, 0)`
+								},
+								imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
+								type: 'door',
+								size: 50,
+								scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+								teleporterCoords: {
+									'left': originX,
+									'top': originY,
+									'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1
+								}
+							};
+							window.ScenesHandler.create_update_token(options)
+						}
+						redraw_light_walls();
+						sync_drawings();
+						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+						if(window.all_token_objects[tokenIds] != undefined){
+							window.all_token_objects[tokenIds].options.teleporterCoords = {'left': mouseX, 'top': mouseY, 'scale': window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1}
+						}
+						window.TOKEN_OBJECTS[tokenIds].place(0);
+						window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+
+						clear_temp_canvas();
+						target.off('mouseup.setTele touchend.setTele');
+						target.off('mousemove.drawTele')
+						$("#temp_overlay").css('z-index', '25');
+					});
+				});
+				body.append(teleportTwoWayButton);
 			}
 
 
