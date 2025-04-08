@@ -1828,13 +1828,13 @@ function display_folder_configure_modal(listItem) {
 
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {
-    if (itemType === ItemType.MyToken || itemType === ItemType.Scene){
+    if (itemType === ItemType.MyToken || itemType === ItemType.Scene || itemType === ItemType.PC){
       let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
       console.log(`saveButton nameInput`, nameInput);
       let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
     }
     close_sidebar_modal();
-    if(itemType === ItemType.MyToken || (listItem.isTypeFolder() && itemType !== ItemType.Scene)){
+    if(itemType === ItemType.MyToken || (listItem.isTypeFolder() && itemType !== ItemType.Scene) || itemType === ItemType.PC){
       let customization = find_or_create_token_customization(ItemType.Folder, listItem.id, listItem.parentId, RootFolder.MyTokens.id);
       customization.color = listItem.color;
       persist_token_customization(customization);
@@ -1918,6 +1918,7 @@ function delete_item(listItem) {
       switch (listItem.folderType) {
         case ItemType.PC:  
           delete_folder_and_move_children_up_one_level(listItem);
+          break;
         default:
           delete_folder_and_delete_children(listItem)
           break;
