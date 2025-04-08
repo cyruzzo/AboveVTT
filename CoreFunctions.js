@@ -675,8 +675,8 @@ function is_abovevtt_page() {
 function is_gamelog_popout() {
   return is_campaign_page() && window.location.search.includes("popoutgamelog=true");
 }
-let MYCOBALT_TOKEN = false;
-let MYCOBALT_TOKEN_EXPIRATION = 0;
+var MYCOBALT_TOKEN = false;
+var MYCOBALT_TOKEN_EXPIRATION = 0;
 /**
  * UNIFIED TOKEN HANDLING
  * Triggers callback with a valid DDB cobalt token
@@ -988,7 +988,7 @@ function showTempMessage(messageString){
  * @return {String} "THE DM" */
 const dm_id = "THE DM";
 // Use Acererak as the avatar, because he's on the DMG cover... but also because he's the fucking boss!
-let dmAvatarUrl = "https://www.dndbeyond.com/avatars/thumbnails/30/787/140/140/636395106768471129.jpeg";
+var dmAvatarUrl = "https://www.dndbeyond.com/avatars/thumbnails/30/787/140/140/636395106768471129.jpeg";
 const defaultAvatarUrl = "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/characters/default-avatar.png";
 
 /** an object that mimics window.pcs, but specific to the DM */

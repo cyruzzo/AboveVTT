@@ -8,9 +8,9 @@
 */
 
 import $ from "./jquery.module.js";
-let queue = [];
-let currentRequest = null;
-let stopped = false;
+var queue = [];
+var currentRequest = null;
+var stopped = false;
 
 class AjaxQueueTask {
   constructor(options, requestComplete) {

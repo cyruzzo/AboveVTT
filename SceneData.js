@@ -125542,7 +125542,7 @@ function get_ddb_extras() {
 }
 
 
-let CONDITIONS = {};
+var CONDITIONS = {};
 
 function get_avtt_scene_import_data() {
 	return [

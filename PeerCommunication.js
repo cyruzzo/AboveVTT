@@ -289,14 +289,14 @@ function peer_disconnected(peerId, playerId) {
 
 //#region game logic
 
-let peer_animation_timout = 20;
+var peer_animation_timout = 20;
 
 /** Set this to true to avoid sending cursor events and ruler events at the same time
  * Don't forget to unpause it */
-let pauseCursorEventListener = false;
+var pauseCursorEventListener = false;
 
 /** used by {@link start_sending_cursor_to_peers} to avoid doubling up on even listeners */
-let isTrackingCursor = false;
+var isTrackingCursor = false;
 
 /** adds an event listener that calls {@link sendCursorPositionToPeers} */
 function start_sending_cursor_to_peers() {

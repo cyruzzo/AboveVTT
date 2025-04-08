@@ -4,7 +4,7 @@ $(function() {
   init_characters_pages();
 });
 
-let recentCharacterUpdates = {};
+var recentCharacterUpdates = {};
 
 const debounce_add_extras = mydebounce(() => {
   const isAbove = is_abovevtt_page()
@@ -410,8 +410,8 @@ const buffsDebuffs = {
       "type": "spell"
   }
 }
-let rollBuffFavorites = [];
-let rollBuffContext = [];
+var rollBuffFavorites = [];
+var rollBuffContext = [];
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {

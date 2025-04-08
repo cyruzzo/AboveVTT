@@ -2056,7 +2056,7 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
     }
 }
 
-let removeToolTipTimer = undefined;
+var removeToolTipTimer = undefined;
 function remove_tooltip(delay = 0, removeHoverNote = true) {
     if (delay > 0) {
         removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
