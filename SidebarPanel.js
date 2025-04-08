@@ -628,9 +628,9 @@ class SidebarListItem {
    * @returns {SidebarListItem} the list item this creates
    * @constructor
    */
-  static PC(sheet, name, image) {
-    console.debug("SidebarListItem.PC", sheet, name, image);
-    let item = new SidebarListItem(sheet, name, image, ItemType.PC, RootFolder.Players.path, RootFolder.Players.id);
+  static PC(sheet, name, image, folderPath=RootFolder.Players.path, parentId=RootFolder.Players.id) {
+    console.debug("SidebarListItem.PC", sheet, name, image, folderPath, parentId);
+    let item = new SidebarListItem(sheet, name, image, ItemType.PC, folderPath, parentId);
     item.sheet = sheet;
     return item;
   }
@@ -799,6 +799,7 @@ class SidebarListItem {
         switch (this.folderType) {
           case ItemType.MyToken:
           case ItemType.Scene:
+          case ItemType.PC:
             return true;
           default:
             return false;
@@ -1224,7 +1225,26 @@ function build_sidebar_list_row(listItem) {
         
         });
 
-        
+        if (listItem.isRootFolder()) {
+          let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
+          rowItem.append(addFolder);
+          addFolder.on("click", function (clickEvent) {
+            clickEvent.stopPropagation();
+            let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
+            let clickedItem = find_sidebar_list_item(clickedRow);
+            create_folder_inside(clickedItem);
+          });
+          let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Tokens"><span class="material-icons">reorder</span></button>`);
+          rowItem.append(reorderButton);
+          reorderButton.on("click", function (clickEvent) {
+            clickEvent.stopPropagation();
+            if ($(clickEvent.currentTarget).hasClass("active")) {
+              disable_draggable_change_folder();
+            } else {
+              enable_draggable_change_folder(ItemType.PC);
+            }
+          });
+        }
        
       }
       if (listItem.folderType === ItemType.MyToken) {
@@ -1707,6 +1727,8 @@ function create_folder_inside(listItem) {
     create_mytoken_folder_inside(listItem);
   } else if (listItem.folderType === ItemType.Scene) {
     create_scene_folder_inside(listItem);
+  } else if(listItem.folderType == ItemType.PC){
+    create_player_folder_inside(listItem);
   } else {
     console.warn("create_folder_inside called with an incorrect item type", listItem);
   }
@@ -1761,7 +1783,7 @@ function display_folder_configure_modal(listItem) {
 
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_list_item_identifier(folderNameInput, listItem);
-  if (itemType === ItemType.MyToken || itemType === ItemType.Scene){
+  if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id)){
     sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
   }
 
@@ -1840,15 +1862,18 @@ function display_folder_configure_modal(listItem) {
       close_sidebar_modal();
       expand_all_folders_up_to_item(foundItem);
     });
-    let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
-    set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
-    sidebarModal.footer.append(deleteFolderAndChildrenButton);
-    deleteFolderAndChildrenButton.on("click", function(event) {
-      let foundItem = find_sidebar_list_item($(event.currentTarget));
-      delete_folder_and_delete_children(foundItem);
-      close_sidebar_modal();
-      expand_all_folders_up_to_item(foundItem);
-    });
+    if(itemType !== ItemType.PC){
+      let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
+      set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
+      sidebarModal.footer.append(deleteFolderAndChildrenButton);
+      deleteFolderAndChildrenButton.on("click", function(event) {
+        let foundItem = find_sidebar_list_item($(event.currentTarget));
+        delete_folder_and_delete_children(foundItem);
+        close_sidebar_modal();
+        expand_all_folders_up_to_item(foundItem);
+      });
+    }
+
   }
 
 
@@ -1864,7 +1889,7 @@ function rename_folder(item, newName, alertUser = true) {
     return undefined;
   }
 
-  if (item.folderPath.startsWith(RootFolder.MyTokens.path)) {
+  if (item.folderPath.startsWith(RootFolder.MyTokens.path) || item.folderPath.startsWith(RootFolder.Players.path)) {
     let customization = find_token_customization(item.type, item.id);
     customization.setTokenOption("name", newName);
     persist_token_customization(customization);
@@ -1890,7 +1915,13 @@ function delete_item(listItem) {
 
   switch (listItem.type) {
     case ItemType.Folder:
-      delete_folder_and_delete_children(listItem);
+      switch (listItem.folderType) {
+        case ItemType.PC:  
+          delete_folder_and_move_children_up_one_level(listItem);
+        default:
+          delete_folder_and_delete_children(listItem)
+          break;
+      }
       break;
     case ItemType.MyToken:
       delete_token_customization_by_type_and_id(listItem.type, listItem.id);
@@ -1902,6 +1933,7 @@ function delete_item(listItem) {
       }
       break;
     case ItemType.PC:
+
       console.warn("Not allowed to delete player", listItem);
       break;
     case ItemType.Monster:
@@ -1979,7 +2011,7 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     return;
   }
 
-  if (listItem.folderType === ItemType.MyToken) {
+  if (listItem.folderType === ItemType.MyToken || listItem.folderType === ItemType.PC) {
     move_mytokens_to_parent_folder_and_delete_folder(listItem, function (didSucceed, errorType) {
       did_change_mytokens_items();
       expand_all_folders_up_to_id(listItem.parentId);
@@ -1989,7 +2021,8 @@ function delete_folder_and_move_children_up_one_level(listItem) {
     delete_scenes_folder(listItem);
     did_update_scenes();
     expand_all_folders_up_to_id(listItem.parentId);
-  } else {
+  } 
+  else {
     console.warn("delete_folder_and_move_children_up_one_level called with an incorrect item type", listItem);
   }
 }
@@ -2191,6 +2224,11 @@ function enable_draggable_change_folder(listItemType) {
           customization.parentId = RootFolder.MyTokens.id;
           persist_token_customization(customization);
           rebuild_token_items_list();
+        } else if (window.reorderState === ItemType.PC) {
+          let customization = find_or_create_token_customization(draggedItem.type, draggedItem.id);
+          customization.parentId = RootFolder.Players.id;
+          persist_token_customization(customization);
+          rebuild_token_items_list();
         } else {
           console.warn("Unable to reorder item by dropping it on the body", window.reorderState, draggedItem);
         }
@@ -2305,6 +2343,66 @@ function enable_draggable_change_folder(listItemType) {
       scenesPanel.container.find(".folder").droppable(droppableOptions);
 
       break;
+    case ItemType.PC:
+
+      redraw_token_list("", false)
+      tokensPanel.body.find(".token-row-gear").hide();
+      tokensPanel.body.find(".token-row-button").hide();
+      // tokensPanel.body.find(".folder").removeClass("collapsed");
+      tokensPanel.body.find(" > .custom-token-list > .folder").hide();
+      tokensPanel.body.find(".reorder-button").show();
+      tokensPanel.body.find(".reorder-button").addClass("active");
+      tokensPanel.body.find('.player-row[id^="/profile/"]').off('click');
+      tokensPanel.header.find("input[name='token-search']").hide();
+      tokensPanel.updateHeader("Tokens", "", "Drag items to move them between folders");
+      add_expand_collapse_buttons_to_header(tokensPanel);
+
+      let playersRootItem = tokens_rootfolders.find(i => i.name === RootFolder.Players.name);
+      let playersRootFolder = find_html_row(playersRootItem, tokensPanel.body);
+      // make sure we expand all folders that can be dropped on
+      playersRootFolder.show();
+      playersRootFolder.removeClass("collapsed");
+      // myTokensRootFolder.find(".folder").removeClass("collapsed");
+
+      // TODO: disable the draggable that was added here enable_draggable_token_creation
+      // tokensPanel.body.find(".sidebar-list-item-row").draggable("destroy");
+      let playerOffsetStart = {};
+      tokensPanel.body.find(".sidebar-list-item-row").draggable({
+        containment: tokensPanel.body,
+        appendTo: tokensPanel.body,
+        revert: true,
+        scroll: true,
+        start: function(e, ui){
+          playerOffsetStart= tokensPanel.body.scrollTop();
+        },
+        drag: function(e, ui){
+          ui.position.top = ui.position.top - tokensPanel.body.scrollTop() + playerOffsetStart
+        },
+        helper: function (event) {
+          let playerDraggedRow = $(event.target).closest(".list-item-identifier");
+          let playerDraggedItem = find_sidebar_list_item(playerDraggedRow);
+          if (playerDraggedItem.isTypeFolder()) {
+            playerDraggedRow.addClass("collapsed");
+          }
+
+          playerDraggedRow.addClass("draggable-sidebar-item-reorder");
+          return playerDraggedRow;
+        },
+        stop: function (event, ui) {
+          let playerDraggedRow = $(event.target).closest(".list-item-identifier");
+          playerDraggedRow.removeClass("draggable-sidebar-item-reorder");
+          if (playerDraggedRow.hasClass("drag-cancelled")) {
+            playerDraggedRow.removeClass("drag-cancelled");
+            redraw_token_list("", false);
+          }
+        }
+      });
+
+      playersRootFolder.droppable(droppableOptions); // allow dropping on root MyTokens folder
+      playersRootFolder.find(".folder").droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
+      tokensPanel.body.addClass("folder").addClass("not-collapsible");  // allow dropping on folders within MyTokens folder
+      tokensPanel.body.droppable(droppableOptions);  // allow dropping on folders within MyTokens folder
+      break;
     default:
       console.warn("enable_draggable_change_folder was called with an invalid type");
       return;
@@ -2322,6 +2420,12 @@ function move_item_into_folder_item(listItem, folderItem) {
   } else if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
     move_scene_to_folder(listItem, folderItem.id);
     did_update_scenes();
+  } else if(listItem.isTypePC() || (listItem.isTypeFolder() && listItem.fullPath().startsWith(RootFolder.Players.path))){
+    let customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, RootFolder.Players.id);
+    customization.parentId = folderItem.id;
+    persist_token_customization(customization);
+    rebuild_token_items_list();
+    enable_draggable_change_folder(ItemType.PC);
   } else {
     console.warn("move_item_into_folder_item was called with invalid item type", listItem);
   }
