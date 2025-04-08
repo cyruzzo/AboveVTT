@@ -103,7 +103,7 @@ def add_to_beta_group(token, group, build):
         ]
     }    
     response = requests.post(url, headers=headers, json=body)
-    if response.status_code == 200:
+    if response.status_code in (200, 204):
         return True
     else:
         raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
