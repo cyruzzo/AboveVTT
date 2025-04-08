@@ -271,6 +271,12 @@ function rebuild_token_items_list() {
     console.group("rebuild_token_items_list");
     try {
 
+    //bring old players folder data up to current structure to support players folders
+    const playersFolder = window.TOKEN_CUSTOMIZATIONS.find(tc=> tc.id == RootFolder.Players.id)
+    if(playersFolder !== undefined){
+        playersFolder.parentId = '_';
+        playersFolder.rootId = 'playersFolder';
+    }
 
     backfill_mytoken_folders(); // just in case we're missing any folders
 
@@ -279,6 +285,11 @@ function rebuild_token_items_list() {
         .filter(pc => pc.sheet !== undefined && pc.sheet !== "")
         .map(pc => {
             const playerCustomization = window.TOKEN_CUSTOMIZATIONS.find(tc => tc.id == pc.sheet);
+            //adjust old data structure
+            if([RootFolder.Monsters.id, RootFolder.MyTokens.id].includes(playerCustomization?.parentId))
+                playerCustomization.parentId = RootFolder.Players.id;
+            if([RootFolder.Monsters.id, RootFolder.MyTokens.id].includes(playerCustomization?.rootId))
+                playerCustomization.rootId = RootFolder.Players.id;
             let folderPath = playerCustomization?.folderPath();
             let parentId = playerCustomization?.parentId; 
             return SidebarListItem.PC(pc.sheet, pc.name, pc.image, folderPath, parentId);
