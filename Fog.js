@@ -5694,8 +5694,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 			if (pt) {
 				let dist = lightRadius;
-				if(Vector.dist(window.PARTICLE.pos, pt) < lightRadius)
-					dist = Vector.dist(window.PARTICLE.pos, pt);
+				let pointDistance = Vector.dist(window.PARTICLE.pos, pt);
+				if(pointDistance < lightRadius)
+					dist = pointDistance;
 			
 				
 				if (dist < recordLight && !notBlockVision.includes(parseInt(walls[j].c))) {
