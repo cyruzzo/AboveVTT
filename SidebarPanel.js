@@ -1918,6 +1918,7 @@ function delete_item(listItem) {
       switch (listItem.folderType) {
         case ItemType.PC:  
           delete_folder_and_move_children_up_one_level(listItem);
+          break;
         default:
           delete_folder_and_delete_children(listItem)
           break;
