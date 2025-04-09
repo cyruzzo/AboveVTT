@@ -6252,6 +6252,7 @@ function redraw_light(darknessMoved = false){
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
+
 		offscreenContext.globalCompositeOperation='destination-over';
 		offscreenContext.fillStyle = "black";
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -6601,7 +6602,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	else if(lightRadius > 0)
 		circleRadius = lightRadius;
 	
-
+	darkvisionRadius += (window.TOKEN_OBJECTS[auraId].options.size / 2);
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	if(window.lightAuraClipPolygon[auraId] !== undefined){
@@ -6609,7 +6610,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 			delete window.lightAuraClipPolygon[auraId];
 			return; // remove 0 range light and return
 		}
-		if(window.lightAuraClipPolygon[auraId].numberofwalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+		if(window.lightAuraClipPolygon[auraId].numberOfWalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
 			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
 	}
 	else if(circleRadius === 0){
@@ -6631,12 +6632,12 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	window.lightAuraClipPolygon[auraId] = {
 		canvas: lightCanvas,
 		light: lightRadius,
-		darkvision: darkvisionRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2,
+		darkvision: darkvisionRadius,
 		middle: {
 			x: horizontalTokenMiddle,
 			y: verticalTokenMiddle
 		},
-		numberOfWall: walls.length 
+		numberOfWalls: walls.length+darknessBoundarys.length
 	}
 
 
