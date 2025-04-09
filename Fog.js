@@ -6099,23 +6099,30 @@ function redraw_light(darknessMoved = false){
 
 
 
-	let promises = []
-	let adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	const promises = []
+	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
 
 
-	let lightInLosContext = window.lightInLos.getContext('2d');
+	const lightInLosContext = window.lightInLos.getContext('2d');
 
-	let elevContext = $('#elev_overlay')[0].getContext('2d');
+	const elevContext = $('#elev_overlay')[0].getContext('2d');
 
 	const allWalls = [...walls, ...darknessBoundarys];
+	const tokenVisionAuras = $(`.aura-element-container-clip [id*='vision_']`);
 
+	if(window.SelectedTokenVision === true){
+		tokenVisionAuras.toggleClass('notVisible', true);
+	}
+	else if(window.DM && window.SelectedTokenVision !== true){
+		tokenVisionAuras.toggleClass('notVisible', false);
+	}
 	for(let i = 0; i < light_auras.length; i++){
 		
 		let currentLightAura = $(light_auras[i]);
 		let auraId = currentLightAura.attr('data-id');
 
-		let found = selectedIds.some(r=> r == auraId);
+		let found = selectedIds.includes(auraId);
 		let tokenHalfWidth = window.TOKEN_OBJECTS[auraId].sizeWidth()/2;
 		let tokenHalfHeight = window.TOKEN_OBJECTS[auraId].sizeHeight()/2;
 		let tokenPos = {
@@ -6183,14 +6190,7 @@ function redraw_light(darknessMoved = false){
 			window.lightAuraClipPolygon = {};
 			
 
-		let tokenVisionAura = $(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`);
-
-		if(window.SelectedTokenVision === true){
-			tokenVisionAura.toggleClass('notVisible', true);
-		}
-		else if(window.DM && window.SelectedTokenVision !== true){
-			tokenVisionAura.toggleClass('notVisible', false);
-		}
+	
 
 		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys);
 
@@ -6239,10 +6239,9 @@ function redraw_light(darknessMoved = false){
 			}
 
 			
-			tokenVisionAura.toggleClass('notVisible', false);	
+			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
 			offscreenContext.globalCompositeOperation='lighten';
-			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
-			
+			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			
 		}
@@ -6296,71 +6295,69 @@ function redraw_light(darknessMoved = false){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);		
 	}	
 
-	requestAnimationFrame(function(){
+	
 		
-		context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
-		
-		if(gameIndexedDb !== undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && window.DM !== true){
+	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
+	
+	if(gameIndexedDb !== undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && window.DM !== true){
 
-			let exploredCanvas = document.getElementById("exploredCanvas");
-			if($('#exploredCanvas').length == 0){
-				exploredCanvas =  document.createElement("canvas")
-				exploredCanvas.width = canvasWidth;
-				exploredCanvas.height = canvasHeight;			
-				window.exploredCanvasContext = exploredCanvas.getContext('2d');
-				
+		let exploredCanvas = document.getElementById("exploredCanvas");
+		if($('#exploredCanvas').length == 0){
+			exploredCanvas =  document.createElement("canvas")
+			exploredCanvas.width = canvasWidth;
+			exploredCanvas.height = canvasHeight;			
+			window.exploredCanvasContext = exploredCanvas.getContext('2d');
+			
 
-				window.exploredCanvasContext.globalCompositeOperation='source-over';
-				window.exploredCanvasContext.fillStyle = "black";
-				window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
-				$(exploredCanvas).attr('id', 'exploredCanvas');
+			window.exploredCanvasContext.globalCompositeOperation='source-over';
+			window.exploredCanvasContext.fillStyle = "black";
+			window.exploredCanvasContext.fillRect(0,0,canvasWidth,canvasHeight);	
+			$(exploredCanvas).attr('id', 'exploredCanvas');
 
-				$('#outer_light_container').append(exploredCanvas)	
-				gameIndexedDb.transaction(["exploredData"])
-				  .objectStore(`exploredData`)
-				  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
-				 	if(event?.target?.result?.exploredData){
-					  	let img = new Image;
+			$('#outer_light_container').append(exploredCanvas)	
+			gameIndexedDb.transaction(["exploredData"])
+			  .objectStore(`exploredData`)
+			  .get(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`).onsuccess = (event) => {
+			 	if(event?.target?.result?.exploredData){
+				  	let img = new Image;
 
-						img.onload = function(){
-							requestAnimationFrame(function(){
-							  window.exploredCanvasContext.drawImage(img,0,0); 
-							  window.exploredCanvasContext.globalCompositeOperation='lighten';
-							  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-							});
-						};
-						img.src = event.target.result.exploredData;
-					}
-				};		
-			}
-			else{
-				if(window.exploredCanvasContext == undefined){
-					window.exploredCanvasContext = exploredCanvas.getContext('2d');
+					img.onload = function(){
+						requestAnimationFrame(function(){
+						  window.exploredCanvasContext.drawImage(img,0,0); 
+						  window.exploredCanvasContext.globalCompositeOperation='lighten';
+						  window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
+						});
+					};
+					img.src = event.target.result.exploredData;
 				}
-				requestAnimationFrame(function(){
-					window.exploredCanvasContext.globalCompositeOperation='lighten';
-					window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
-				});
-				debounceStoreExplored(exploredCanvas);
-			}
-		
+			};		
 		}
-
 		else{
-			$('#exploredCanvas').remove();
-		}
-		
-		
-		if(!window.DM || window.SelectedTokenVision){
+			if(window.exploredCanvasContext == undefined){
+				window.exploredCanvasContext = exploredCanvas.getContext('2d');
+			}
 			requestAnimationFrame(function(){
-				throttleTokenCheck();
+				window.exploredCanvasContext.globalCompositeOperation='lighten';
+				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 			});
+			debounceStoreExplored(exploredCanvas);
 		}
+	
+	}
 
-		if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
-			debounceAudioChecks();
-		}
-	})
+	else{
+		$('#exploredCanvas').remove();
+	}
+	
+	
+	if(!window.DM || window.SelectedTokenVision){
+		throttleTokenCheck();	
+	}
+
+	if(window.CURRENTLY_SELECTED_TOKENS.length > 0){
+		debounceAudioChecks();
+	}
+	
 	
 
 }
