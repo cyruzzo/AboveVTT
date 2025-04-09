@@ -1355,31 +1355,89 @@ function reset_canvas(apply_zoom=true) {
 	return;
 }
 function check_darkness_value(){
+
+	let selectedTokens = $('#tokens .tokenselected');
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
- 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
- 	if(window.DM && darknessPercent < 40){
- 		darknessPercent = 40;
- 		$('#raycastingCanvas').css('opacity', '0');
- 	}
- 	else if(window.DM){
- 		$('#raycastingCanvas').css('opacity', '');
- 	}
+	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
+
+	if(selectedTokens.length>0){
+		if(window.SelectedTokenVision === true){
+			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
+				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
+			}
+	  		$('#raycastingCanvas').css('opacity', '1');
+	  		
+		 	$('#light_container').css({
+	 			'opacity': '1'
+	 		});
+
+		 	$('#exploredCanvas').css('opacity', '0');
+	  	}
+	  	else {
+  		 	if(window.DM && darknessPercent < 40){
+  		 		darknessPercent = 40;
+  		 		$('#raycastingCanvas').css('opacity', '0');
+  		 	}
+  		 	else if(window.DM){
+  		 		$('#raycastingCanvas').css('opacity', '');
+  		 	}
+  			$('#VTT').css('--darkness-filter', darknessPercent + "%");
+  		   	if(window.DM){
+  		   		$("#light_container [id^='light_']").css('visibility', "visible");
+  		   		$(`.token`).show();
+  				$(`.door-button`).css('visibility', '');
+  				$(`.aura-element`).show();
+  		   	}
+	  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
+			 	$('#light_container').css({
+		 			'opacity': '0.3'
+			 	});
+		  	}
+		  	else{
+		  		$('#light_container').css({
+		 			'opacity': ''
+		 		});
+  			}
+  			$('#exploredCanvas').css('opacity', '');
+  		}	
+	}
+	else {
+		if(window.DM && darknessPercent < 40){
+			darknessPercent = 40;
+			$('#raycastingCanvas').css('opacity', '0');
+		}
+		else if(window.DM){
+			$('#raycastingCanvas').css('opacity', '');
+		}
 
 
- 	if(!parseInt(darknessfilter) && window.walls.length>4){
- 		$('#outer_light_container').css({
- 			'mix-blend-mode': 'unset',
- 			'background':  '#FFF',
- 			'opacity': '0.3'
- 		});
- 	} else{
- 		$('#outer_light_container').css({
- 			'mix-blend-mode': '',
- 			'background': '',
- 			'opacity': ''
- 		});
- 	}
- 	$('#VTT').css('--darkness-filter', darknessPercent + "%");
+		if(!parseInt(darknessfilter) && window.walls.length>4){
+			$('#outer_light_container').css({
+				'mix-blend-mode': 'unset',
+				'background':  '#FFF',
+				'opacity': '0.3'
+			});
+		} else{
+			$('#outer_light_container').css({
+				'mix-blend-mode': '',
+				'background': '',
+				'opacity': ''
+			});
+		}
+		$('#VTT').css('--darkness-filter', darknessPercent + "%");
+  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
+		 	$('#light_container').css({
+	 			'opacity': '0.3'
+		 	});
+	  	}
+	  	else{
+	  		$('#light_container').css({
+	 			'opacity': ''
+	 		});
+  		}
+  		$('#exploredCanvas').css('opacity', '');
+  	}
 }
 
 function redraw_fog() {
@@ -2092,6 +2150,7 @@ function redraw_light_walls(clear=true){
 		window.walls.push(drawnWall);
 	}
 
+	check_darkness_value();
 
 		
 	if(window.DM){
@@ -2116,8 +2175,6 @@ function redraw_light_walls(clear=true){
 	else{
 		$('.hiddenDoor').css('display', '');
 	}
-	check_darkness_value();
- 
 }
 
 function door_note_icon(id){
@@ -2270,7 +2327,7 @@ function open_close_door(x1, y1, x2, y2, type=0){
 		redo: [[...doors[0]]]
 	})
 	redraw_light_walls();
-	requestAnimationFrame(redraw_drawn_light);
+	redraw_drawn_light();
 	debounceLightChecks();
 	sync_drawings();						
 }
@@ -6023,74 +6080,18 @@ function redraw_light(darknessMoved = false){
 		light_auras = light_auras.add(selectedTokens)
 	}
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	
+	check_darkness_value();
+
 	if(selectedTokens.length>0){
-		if(window.SelectedTokenVision){
-			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
-				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
-			}
-	  		$('#raycastingCanvas').css('opacity', '1');
-	  		
-		 	$('#light_container').css({
-	 			'opacity': '1'
-	 		});
-
-		 	$('#exploredCanvas').css('opacity', '0');
-	  	}
-	  	else {
-  			let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-  			let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
-
-  		 	if(window.DM && darknessPercent < 40){
-  		 		darknessPercent = 40;
-  		 		$('#raycastingCanvas').css('opacity', '0');
-  		 	}
-  		 	else if(window.DM){
-  		 		$('#raycastingCanvas').css('opacity', '');
-  		 	}
-  			$('#VTT').css('--darkness-filter', darknessPercent + "%");
-  		   	if(window.DM){
-  		   		$("#light_container [id^='light_']").css('visibility', "visible");
-  		   		$(`.token`).show();
-  				$(`.door-button`).css('visibility', '');
-  				$(`.aura-element`).show();
-  		   	}
-	  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
-			 	$('#light_container').css({
-		 			'opacity': '0.3'
-			 	});
-		  	}
-		  	else{
-		  		$('#light_container').css({
-		 			'opacity': ''
-		 		});
-  			}
-  			$('#exploredCanvas').css('opacity', '');
-  		}
-	  	
-	  
-	  	
-  		
 		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
 
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 		  		selectedIds.push(tokenId)
-		}	  	
-	}
-	else {
-  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
-		 	$('#light_container').css({
-	 			'opacity': '0.3'
-		 	});
-		 	 
-	  	}
-	  	else{
-	  		$('#light_container').css({
-	 			'opacity': ''
-	 		});
-  		}
-  		$('#exploredCanvas').css('opacity', '');
-  	}
+		}	  
+	}	
+
 
 
 	let promises = []
