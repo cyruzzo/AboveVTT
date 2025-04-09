@@ -4595,7 +4595,7 @@ function getPersonailityTrait(){
         245: "Businesslike",
         246: "Busy",
         247: "Casual",
-        248: "Crebral",
+        248: "Cerebral",
         249: "Chummy",
         250: "Circumspect",
         251: "Competitive",
