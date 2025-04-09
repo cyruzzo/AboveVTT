@@ -4175,7 +4175,7 @@ function drawPolygon (
 			tempoffCanvas.width = canvasWidth;
 			tempoffCanvas.height = canvasHeight;
 			tempoffContext.lineWidth = 6;
-			tempoffContext.fillStyle = 'rgba(255,255,255,1';
+			tempoffContext.fillStyle = 'rgba(255,255,255,1)';
 			tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
 		}
 		else{
