@@ -6251,9 +6251,7 @@ function redraw_light(darknessMoved = false){
 	
 
 	lightInLosContext.globalCompositeOperation='source-over';
-	if(window.CURRENT_SCENE_DATA.darkness_filter === 0){
-		lightInLosContext.fillStyle = "white";
-		lightInLosContext.fillRect(0,0,canvasWidth,canvasHeight);
+	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		offscreenContext.globalCompositeOperation='destination-over';
 		offscreenContext.fillStyle = "black";
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -6271,7 +6269,7 @@ function redraw_light(darknessMoved = false){
 			truesightCanvasContext.drawImage(offscreenCanvasMask, 0, 0);
 		}
 	}
-	if(window.CURRENT_SCENE_DATA.darkness_filter !== 0){
+	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
 		lightInLosContext.globalCompositeOperation='destination-over';
 		
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
