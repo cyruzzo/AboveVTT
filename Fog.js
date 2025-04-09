@@ -5923,9 +5923,6 @@ function detectInLos(x, y) {
 
 
 function redraw_light(darknessMoved = false){
-	let startTime = Date.now();
-
-	
 
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = canvas.width;
