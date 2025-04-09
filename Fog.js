@@ -4169,12 +4169,19 @@ function drawPolygon (
 			[canvasWidth, canvasHeight] = [getSceneMapSize().sceneWidth, getSceneMapSize().sceneHeight];
 		}
 
-		let tempoffCanvas = document.createElement('canvas');
-		let tempoffContext = tempoffCanvas.getContext('2d');
-		tempoffCanvas.width = canvasWidth;
-		tempoffCanvas.height = canvasHeight;
+		if(window.tempoffCanvas == undefined){
+			window.tempoffCanvas = document.createElement('canvas');
+			window.tempoffContext = tempoffCanvas.getContext('2d');
+			tempoffCanvas.width = canvasWidth;
+			tempoffCanvas.height = canvasHeight;
+			tempoffContext.lineWidth = 6;
+			tempoffContext.fillStyle = 'rgba(255,255,255,1)';
+			tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
+		}
+		else{
+			tempoffContext.clearRect(0, 0, tempoffCanvas.width, tempoffCanvas.height)
+		}
 
-		tempoffContext.save();
 		tempoffContext.beginPath();
 		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
 		
@@ -4189,9 +4196,8 @@ function drawPolygon (
 			tempoffContext.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		tempoffContext.closePath();
-		tempoffContext.lineWidth = lineWidth;
-		tempoffContext.fillStyle = style;
-		tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
+		
+	
 		tempoffContext.fill();
 		tempoffContext.stroke();
 
