@@ -107,18 +107,18 @@ class JournalManager{
 	persist(allowPlayerPersist=false){
 		if(window.DM || allowPlayerPersist){ 
 
-			let statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
-			let chapters = this.chapters
-			let journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true));
+			const statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
+			const chapters = this.chapters
+			const journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true));
 
 
-			let storeImage = gameIndexedDb.transaction([`journalData`], "readwrite")
-			let objectStore = storeImage.objectStore(`journalData`)
+			const storeImage = gameIndexedDb.transaction([`journalData`], "readwrite")
+			const objectStore = storeImage.objectStore(`journalData`)
 
-			let globalObjectStore = globalIndexedDB.transaction(["journalData"], "readwrite").objectStore(`journalData`)
+			const globalObjectStore = globalIndexedDB.transaction(["journalData"], "readwrite").objectStore(`journalData`)
 
 			if(window.DM){ // store your own statblocks as DM
-				let deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
+				const deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
 				deleteRequest.onsuccess = (event) => {
 				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
 				};
@@ -127,7 +127,7 @@ class JournalManager{
 				};
 			}
 			else{ // store other DMs statblocks for use when DM isn't online; We keep these seperate so we don't override our own statblocks with another DMs statblock set.
-				let deleteRequest = globalObjectStore.delete(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`);
+				const deleteRequest = globalObjectStore.delete(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`);
 				deleteRequest.onsuccess = (event) => {
 				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`, 'journalData': statBlocks});
 				};
@@ -137,7 +137,7 @@ class JournalManager{
 			}
 
 
-			let journalDeleteRequest = objectStore.delete(`Journal`);
+			const journalDeleteRequest = objectStore.delete(`Journal`);
 			journalDeleteRequest.onsuccess = (event) => {
 			  const objectStoreRequest = objectStore.add({journalId: `Journal`, 'journalData': journal});
 			};
@@ -146,7 +146,7 @@ class JournalManager{
 			};
 
 	
-			let chapterDeleteRequest = objectStore.delete(`JournalChapters`);
+			const chapterDeleteRequest = objectStore.delete(`JournalChapters`);
 			chapterDeleteRequest.onsuccess = (event) => {
 			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
 			};
@@ -1074,14 +1074,14 @@ class JournalManager{
 		            	menuItems["copyLink"] = {
 			                name: "Copy Tooltip Link",
 			                callback: function(itemKey, opt, originalEvent) {
-			                	let copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
+			                	const copyLink = `[note]${note_id};${self.notes[note_id].title}[/note]`
 			                    navigator.clipboard.writeText(copyLink);
 				            }   
 		            	};   
 		            	menuItems["copyEmbed"] = {
 			                name: "Copy Embed Tags",
 			                callback: function(itemKey, opt, originalEvent) {
-			                	let copyLink = `[note embed]${note_id};${self.notes[note_id].title}[/note]`
+			                	const copyLink = `[note embed]${note_id};${self.notes[note_id].title}[/note]`
 			                    navigator.clipboard.writeText(copyLink);
 				            }   
 		            	};
@@ -1572,6 +1572,7 @@ class JournalManager{
 				            	build_and_display_sidebar_flyout(e.clientY, function (flyout) {
 						            flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
 						            flyout.addClass('note-flyout');
+						            $(self).toggleClass('loading-tooltip', false);
 						            const tooltipHtml = $(noteHover);
 									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);	
 									add_journal_roll_buttons(tooltipHtml);

@@ -2059,7 +2059,13 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
 var removeToolTipTimer = undefined;
 function remove_tooltip(delay = 0, removeHoverNote = true) {
     if (delay > 0) {
+      if($('.prevent-sidebar-modal-close:hover').length>0){
+        clearTimeout(removeToolTipTimer);
+        removeToolTipTimer = undefined;
+      }
+      else{
         removeToolTipTimer = setTimeout(function(){remove_sidebar_flyout(removeHoverNote)}, delay);
+      } 
     } else {
         clearTimeout(removeToolTipTimer);
         removeToolTipTimer = undefined;
