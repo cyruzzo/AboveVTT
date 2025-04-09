@@ -5059,7 +5059,7 @@ function paste_selected_tokens(x, y) {
 		if (id in window.JOURNAL.notes) {
 			window.JOURNAL.notes[newId] = structuredClone(window.JOURNAL.notes[id]);
 			let copiedNote = window.JOURNAL.notes[newId];
-			copiedNote.title = window.TOKEN_OBJECTS[id].options.name;
+			copiedNote.title = window.all_token_objects[id].options.name;
 			window.JOURNAL.persist();
 			window.MB.sendMessage('custom/myVTT/note',{
 				id: newId,
