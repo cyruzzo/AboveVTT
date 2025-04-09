@@ -6120,17 +6120,6 @@ function redraw_light(darknessMoved = false){
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
 
-
-
-		if(currentLightAura.hasClass('tokenselected') && $(`.aura-element-container-clip[data-id='${auraId}']`).length == 0 ){
-			tokenPos = {
-				x: tokenPos.x / window.CURRENT_SCENE_DATA.scale_factor,
-				y: tokenPos.y / window.CURRENT_SCENE_DATA.scale_factor
-			}	
-		}
-
-
-
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
 		}
