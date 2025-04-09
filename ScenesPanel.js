@@ -3144,10 +3144,10 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 			.then(() => {
 				if(importData.notes != undefined){
 					for(let id in importData.notes){
-						window.JOURNAL.notes[id] = importData.notes[id];
+						window.JOURNAL.notes[id] = {...importData.notes[id]};
 					}
-					delete importData.notes;
 					window.JOURNAL.persist();
+					delete importData.notes;
 				}
 				window.ScenesHandler.scenes.push(importData);
 				did_update_scenes();
