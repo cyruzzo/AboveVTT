@@ -107,7 +107,17 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 	  ctx.fill();
 	}
 }
+/**
+* @returns {{sceneHeight: number, sceneWidth: number}}
+*/
+function getSceneMapSize() {
+	if(window.sceneMapSize === undefined || window.sceneMapSize.id !== window.CURRENT_SCENE_DATA.id){
+		const sceneMap = document.getElementById("scene_map");
+		window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: Math.floor(sceneMap.offsetHeight), sceneWidth: Math.floor(sceneMap.offsetWidth) }
+	}
 
+	return window.sceneMapSize
+}
 /**
  * Class to manage measure waypoints
  */
@@ -291,13 +301,7 @@ class WaypointManagerClass {
       	}
 	}
 
-	/**
-	* @returns {{sceneHeight: number, sceneWidth: number}}
-	*/
-	getSceneMapSize() {
-		const sceneMap = document.getElementById("scene_map");
-		return { sceneHeight: Math.floor(sceneMap.offsetHeight), sceneWidth: Math.floor(sceneMap.offsetWidth) }
-	}
+
 
 	/**
 	* Draw the waypoints, note that we sum up the cumulative distance
@@ -307,12 +311,12 @@ class WaypointManagerClass {
 	* @param playerId {string | false | undefined} `window.PLAYER_ID` if unset
 	*/
 	draw(labelX = undefined, labelY = undefined, alpha = 1, playerId=window.PLAYER_ID) {
-		const sceneMapSize = this.getSceneMapSize();
+		const sceneMapSize = getSceneMapSize();
 
 		let cumulativeDistance = 0;
 		this.numberOfDiagonals = 0;
 		let elementsToDraw = "";
-		const { sceneWidth, sceneHeight } = sceneMapSize;
+		const [sceneWidth, sceneHeight] = [sceneMapSize.sceneWidth, sceneMapSize.sceneHeight];
 		const bobbles = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-bobbles' style='top:0px; left:0px;'></svg>`);
 		const lines = $(`<svg viewbox='0 0 ${sceneWidth} ${sceneHeight}' width='${sceneWidth}' height='${sceneHeight}' class='ruler-svg-line' style='top:0px; left:0px;'></svg>`);
 
@@ -4162,9 +4166,7 @@ function drawPolygon (
 ) {
 	if(fill && islight && replacefog){
 		if(canvasWidth === undefined){
-			let raycast = $('#raycastingCanvas')[0]
-			canvasWidth = raycast.width;
-			canvasWidth = raycast.height;
+			[canvasWidth, canvasHeight] = [getSceneMapSize().sceneWidth, getSceneMapSize().sceneHeight];
 		}
 
 		let tempoffCanvas = document.createElement('canvas');
@@ -5982,8 +5984,8 @@ function detectInLos(x, y) {
 function redraw_light(darknessMoved = false){
 
 	let canvas = document.getElementById("raycastingCanvas");
-	let canvasWidth = canvas.width;
-	let canvasHeight = canvas.height;
+	let canvasWidth = getSceneMapSize().sceneWidth;
+	let canvasHeight = getSceneMapSize().sceneHeight
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
@@ -6069,9 +6071,12 @@ function redraw_light(darknessMoved = false){
 	}else{
 		moveOffscreenContext.fillStyle = "black";
 	}
-	
+
 	moveOffscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
 
+	if(window.CURRENT_SCENE_DATA.darkness_filter == 0){
+		moveOffscreenContext.fillStyle = "white";
+	}
 
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
@@ -6247,6 +6252,8 @@ function redraw_light(darknessMoved = false){
 
 	lightInLosContext.globalCompositeOperation='source-over';
 	if(window.CURRENT_SCENE_DATA.darkness_filter === 0){
+		lightInLosContext.fillStyle = "white";
+		lightInLosContext.fillRect(0,0,canvasWidth,canvasHeight);
 		offscreenContext.globalCompositeOperation='destination-over';
 		offscreenContext.fillStyle = "black";
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);
@@ -6535,7 +6542,7 @@ function draw_darkness_aoe_to_canvas(ctx){
 	ctx.globalCompositeOperation='source-over';
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
-function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = $("#raycastingCanvas").width(), canvasHeight = $("#raycastingCanvas").height(), darknessBoundarys = getDarknessBoundarys()){
+function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys()){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
