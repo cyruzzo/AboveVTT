@@ -1074,7 +1074,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
             options.armorClass = pc.armorClass;
-            options = {...options, ...foundOptions}
+            options = {...options, ...foundOptions, name: listItem.name};
             break;
         case ItemType.Monster:
             switch (options['defaultmaxhptype']) {
