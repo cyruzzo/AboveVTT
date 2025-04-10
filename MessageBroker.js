@@ -1759,14 +1759,14 @@ class MessageBroker {
 				const pc = find_pc_by_player_id(data.id, false);
 		    let token = window.TOKEN_OBJECTS[data.id]     
 		    if (token && pc) {
-		      let currentImage = token.options.imgsrc;
-		      token.hp = pc.hitPointInfo.current;
-		      token.options = {
-		        ...token.options,
-		        ...pc,
-		        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-		        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-		      };
+			      let currentImage = token.options.imgsrc;
+			      token.hp = pc.hitPointInfo.current;
+			      token.options = {
+			        ...token.options,
+			        ...pc,
+			        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
+			        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
+			      };
 				}
 			}
 			t.place();
@@ -2034,7 +2034,7 @@ class MessageBroker {
 							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 						}
 						reset_canvas();
-		        set_default_vttwrapper_size();
+		        		set_default_vttwrapper_size();
 						
 						console.log("LOADING TOKENS!");
 						let tokensLength = Object.keys(data.tokens).length;

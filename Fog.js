@@ -732,7 +732,7 @@ function check_single_token_visibility(id){
 	else
 		playerHasTruesight = false
 
-	if((playerTokenId === undefined && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true)
+	if((playerTokenId === undefined && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
 		playerTokenHasVision = true
 	else
 		playerTokenHasVision = false;
@@ -819,7 +819,7 @@ function do_check_token_visibility() {
 	else
 		playerHasTruesight = false
 
-	if((playerTokenId === undefined && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true)
+	if((playerTokenId === undefined && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
 		playerTokenHasVision = true
 	else
 		playerTokenHasVision = false;
