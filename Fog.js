@@ -113,6 +113,8 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 function getSceneMapSize() {
 	if(window.sceneMapSize === undefined || window.sceneMapSize.id !== window.CURRENT_SCENE_DATA.id){
 		const sceneMap = document.getElementById("scene_map");
+		if(sceneMap === null)
+			return {id: window.CURRENT_SCENE_DATA.id, sceneHeight: 0, sceneWidth: 0 }
 		window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: Math.floor(sceneMap.offsetHeight), sceneWidth: Math.floor(sceneMap.offsetWidth) }
 	}
 
