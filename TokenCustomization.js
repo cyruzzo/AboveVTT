@@ -291,7 +291,6 @@ class TokenCustomization {
         if (parent && parent.parentId != this.id && parent.parentId != '') {
             let rootId = parent.rootId || RootFolder.allValues().find(d => parent.folderPath().includes(d.path) && d.name != '')?.id;
             let parentCustomization = find_or_create_token_customization(parent.tokenType, parent.id, parent.parentId, rootId);
-            found.push(parentCustomization);
             return parent.findAncestors(found);
         } else {
             let root = RootFolder.findById(this.parentId);
