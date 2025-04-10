@@ -88,6 +88,17 @@ def add_to_beta_group(token, group, build):
     else:
         raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
 
+def add_to_beta_group_with_retry(token, group, build, retries=10):
+    while retries > 0:
+        try:
+            return add_to_beta_group(token, group, build)
+        except Exception as e:
+            retries -= 1
+            if not "Build is not assignable." in str(e): raise
+        print("Failed ot add; retry in a few minutes...")
+        time.sleep(60*3) # wait minutes
+    raise Exception("too many retries")
+
 def check_release(token,build):
     # unfortunately this could theoretically take a great deal of time (hours? days?)
     # at Apple... how long can our workflow jobs run?
@@ -121,9 +132,9 @@ if __name__ == "__main__":
             break
         for grp in beta_groups:
             print(f"Adding {ios_build_id} to {grp}")
-            add_to_beta_group(token, grp, ios_build_id)
+            add_to_beta_group_with_retry(token, grp, ios_build_id)
             print(f"Adding {mac_build_id} to {grp}")
-            add_to_beta_group(token, grp, mac_build_id)
+            add_to_beta_group_with_retry(token, grp, mac_build_id)
     else:
         raise Exception("no command")    
 
