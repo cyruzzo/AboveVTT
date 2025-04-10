@@ -25,68 +25,48 @@ def generate_token():
     token = jwt.encode(payload, private_key, algorithm="ES256", headers=headers)
     return token
 
+def app_connect(token, url, json=None):
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json().get("data")
+    else:
+        raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
+
 # Fetch latest TestFlight version
 def fetch_latest_testflight_version(token, app_id):
-    url = f"https://api.appstoreconnect.apple.com/v1/builds?filter[app]={app_id}&sort=-version"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-
-    response = requests.get(url, headers=headers)
-
-    if response.status_code == 200:
-        builds = response.json().get("data", [])
-        if builds:
-            latest_build = builds[0]  # First item is the latest version
-            version = latest_build["attributes"]["version"]
-            return int(version)
-    else:
-        raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
+    builds = app_connect(token,
+                      f"https://api.appstoreconnect.apple.com/v1/builds?filter[app]={app_id}&sort=-version") or []
+    if builds:
+        latest_build = builds[0]  # First item is the latest version
+        version = latest_build["attributes"]["version"]
+        return int(version)
+    return 1
 
 def get_build_id(token, app_id, platform): # IOS/MAC_OS
-    url = f"https://api.appstoreconnect.apple.com/v1/builds?filter[app]={app_id}&filter[preReleaseVersion.platform]={platform}&sort=-uploadedDate&limit=1"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        ret = response.json().get('data')[0]
-        # pprint.pprint(ret)
-        ret = ret.get('id'), ret.get('attributes').get('processingState')
-        return ret
-    else:
-        raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
+    ret = app_connect(token, f"https://api.appstoreconnect.apple.com/v1/builds?filter[app]={app_id}&filter[preReleaseVersion.platform]={platform}&sort=-uploadedDate&limit=1")
+    return ret[0].get('id'), ret[0].get('attributes').get('processingState')
 
 def get_beta_groups(token, app_id):
-    url = f"https://api.appstoreconnect.apple.com/v1/betaGroups?filter[app]={app_id}"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        ret = [x.get('id') for x in response.json().get('data') if not x.get('attributes').get('isInternalGroup')]
-        # pprint.pprint(ret)
-        return ret
-    else:
-        raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
+    ret = app_connect(token, f"https://api.appstoreconnect.apple.com/v1/betaGroups?filter[app]={app_id}")
+    ret = [x.get('id') for x in ret if not x.get('attributes').get('isInternalGroup')]
+    return ret
 
 def find_app(token, bundle):
-    url = f"https://api.appstoreconnect.apple.com/v1/apps?filter[bundleId]={bundle}"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        apps = response.json().get("data", [])
-        if apps:
-            return apps[0]['id']
-        raise Exception("No app found")
-    else:
-        raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
+    apps = app_connect(token,
+                       f"https://api.appstoreconnect.apple.com/v1/apps?filter[bundleId]={bundle}")
+    if apps:
+        return apps[0]['id']
+    raise Exception("No app found")
+
+def get_build_detail(token, build):
+    ret = app_connect(token,
+                      f"https://api.appstoreconnect.apple.com/v1/builds/{build}?include=buildBetaDetail,betaAppReviewSubmission")
+    detail = app_connect(token, ret.get('relationships').get('buildBetaDetail').get('links').get('related'))
+    return detail.get('attributes')
 
 def add_to_beta_group(token, group, build):
     url = f"https://api.appstoreconnect.apple.com/v1/betaGroups/{group}/relationships/builds"
@@ -107,7 +87,15 @@ def add_to_beta_group(token, group, build):
         return True
     else:
         raise Exception(f"Error fetching data: {response.status_code} - {response.text}")
-    
+
+def check_release(token,build):
+    # unfortunately this could theoretically take a great deal of time (hours? days?)
+    # at Apple... how long can our workflow jobs run?
+    detail = get_build_detail(token, ios_build_id)
+    pprint.pprint(detail)
+    xstate = detail.get("externalBuildState")
+    return xstate in ("READY_FOR_BETA_SUBMISSION",)
+
 # Run the script
 if __name__ == "__main__":
     token = generate_token()
@@ -121,13 +109,13 @@ if __name__ == "__main__":
         beta_groups = get_beta_groups(token, app_id)
         while 1:
             ios_build_id, valid = get_build_id(token, app_id, 'IOS')
-            if valid != "VALID":
-                print("Waiting for IOS valid")
+            if valid != "VALID" or not check_release(token, ios_build_id):
+                print("Waiting for IOS valid and external release validity")
                 time.sleep(10)
                 continue
             mac_build_id, valid = get_build_id(token, app_id, 'MAC_OS')
-            if valid != "VALID":
-                print("Waiting for MAC valid")                
+            if valid != "VALID" or not check_release(token, mac_build_id):
+                print("Waiting for MAC valid and external release validity")
                 time.sleep(10)
                 continue            
             break
