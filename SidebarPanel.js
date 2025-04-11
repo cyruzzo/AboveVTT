@@ -490,6 +490,24 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     wrapper.append(flyoutButton)
     return wrapper;
 }
+
+function build_text_input(settingOption, currentValue, changeHandler) {
+  if (typeof changeHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+     <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
+       <div class="token-image-modal-footer-title">${settingOption.label}</div>
+     </div>
+   `);
+    const v = get_avtt_setting_value(settingOption.name);
+    const input = $(`<input type="text" name="${settingOption.name}" value="${v}" size="10"/>`);
+    input.on('blur',function() { console.log("Change", input.value);
+                            changeHandler(settingOption.name, $(this).val()) });
+  wrapper.append(input);
+  return wrapper;
+}
+
 //#endregion UI Construction
 
 
