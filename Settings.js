@@ -317,6 +317,20 @@ function avtt_settings() {
 			class: 'ui'
 		},
 		{
+		        name: 'customDieRoll8',
+  		        label: 'Custom Roll 8 Key',
+			type: 'text',
+		        defaultValue: '2d20kl1',
+			class: 'ui'
+		},
+		{
+		        name: 'customDieRoll9',
+  		        label: 'Custom Roll 9 Key',
+			type: 'text',
+		        defaultValue: '2d20kh1',
+			class: 'ui'
+		},
+		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -861,6 +875,11 @@ function init_settings() {
 				break;
 			case "flyoutButton":
 				inputWrapper = build_flyout_input(setting, currentValue, function(name, newValue){
+					set_avtt_setting_value(name, newValue);
+				})
+				break;
+			case "text":
+				inputWrapper = build_text_input(setting, currentValue, function(name, newValue){
 					set_avtt_setting_value(name, newValue);
 				})
 				break;
