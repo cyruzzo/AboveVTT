@@ -149,10 +149,14 @@ Mousetrap.bind('v', function () {       //video toggle
 });
 
 Mousetrap.bind('shift+v', function () {       //check token vision
-    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0)
+    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
         window.SelectedTokenVision = false;
-    else
+        if(window.DM)
+            do_check_token_visibility();       
+    }
+    else{
         window.SelectedTokenVision = true;
+    }
 
    redraw_light();
 });
