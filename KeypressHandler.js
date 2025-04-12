@@ -108,7 +108,7 @@ function hotkeyDice(nthDice){
                 }
             }
             else{
-                const rollRegex = new RegExp(`(\\+${rollSetting})($|[+-])`, "i");
+                const rollRegex = new RegExp(`(\\+${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
                 
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
@@ -142,7 +142,7 @@ function hotkeyDice(nthDice){
                 }
             }
             else{
-                const rollRegex = new RegExp(`(\\-${rollSetting})($|[+-])`, "i");
+                const rollRegex = new RegExp(`(\\-${rollSetting.replace(/\+/gi, '\\+')})($|[+-])`, "i");
                 
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
@@ -165,7 +165,7 @@ function updateDisplayedDiceFormula(){
    
     let wrapper = $('#displayedDiceFormula')
     if($('#displayedDiceFormula').length == 0){
-        wrapper = $(`<div id='displayedDiceFormula'><span></span></div>`)
+        wrapper = $(`<div id='displayedDiceFormula'>Number key Formula to Roll:<span class='rollFormula'></span></div>`)
         const exitButton = $(`<button id='displayedDiceFormulaExit'>X</button>`);
         exitButton.off('click.exitNumDice').on('click.exitNumDice', function(){
             wrapper.remove();
@@ -184,7 +184,7 @@ function updateDisplayedDiceFormula(){
     if(displayText == '')
         $('#displayedDiceFormulaExit').click();
     else
-        wrapper.find('span').text(`Number key Formula to Roll: ${displayText.replace(/^\+/, '')}`)
+        wrapper.find('.rollFormula').text(`${displayText.replace(/^\+/, '')}`)
 }
 
 function init_keypress_handler(){
