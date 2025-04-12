@@ -271,7 +271,7 @@ class Token {
 	}
 
 	isMonster() {
-		if (this.options.monster === undefined) {
+		if (this.options.monster === undefined || this.options.monster == 'customStat') {
 			return false;
 		} else if (typeof this.options.monster === "string") {
 			return this.options.monster.length > 0;
@@ -4317,6 +4317,7 @@ function setTokenLight (token, options) {
 				debounceLightChecks();
 			}
 		}
+		
 		
 
 		if(options.animation?.light && options.animation?.light != 'none'){
