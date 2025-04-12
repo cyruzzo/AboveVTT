@@ -1125,8 +1125,9 @@ function token_context_menu_expanded(tokenIds, e) {
 					combatGroupToken: group,
 					ct_show: !allHidden,
 					revealname: allVisibleNames,
-					name: `${tokens[0].options.name} Group`
+					name: `${tokens[0].options.name} Group`,
 				});
+				delete t.options.groupId; 
 				window.TOKEN_OBJECTS[group] = t;
 				if(window.all_token_objects[group] == undefined){
 					window.all_token_objects[group] = t;
