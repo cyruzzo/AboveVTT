@@ -953,8 +953,8 @@ function init_settings() {
 						window.defaultToggles = newValue;
 				})
 				break;
-			case "2text":
-				inputWrapper = build_2text_input(setting, currentValue, function(name, newValue){
+			case "text":
+				inputWrapper = build_text_input(setting, currentValue, function(name, newValue){
 					set_avtt_setting_value(name, newValue);
 				})
 				break;

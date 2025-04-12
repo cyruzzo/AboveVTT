@@ -489,7 +489,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     return wrapper;
 }
 
-function build_2text_input(settingOption, currentValue, changeHandler) {
+function build_text_input(settingOption, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
@@ -498,7 +498,7 @@ function build_2text_input(settingOption, currentValue, changeHandler) {
        <div class="token-image-modal-footer-title">${settingOption.label}</div>
      </div>
   `);
-  const input = $(`<input type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="10"/>`);
+  const input = $(`<input type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="20"/>`);
   input.on('blur',function() { 
     changeHandler(settingOption.name, $(this).val()) 
   });
