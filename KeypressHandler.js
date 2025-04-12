@@ -95,7 +95,8 @@ function hotkeyDice(nthDice){
             if(window.numpadRollFormula === undefined){
                 window.numpadRollFormula = ``;
             }
-
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+        
             if(simpleDice.includes(rollSetting)){
                 const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
@@ -129,7 +130,9 @@ function hotkeyDice(nthDice){
         else{
             if(window.numpadRollFormula === undefined){
                 window.numpadRollFormula = ``;
-            }
+            } 
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+        
             if(simpleDice.includes(rollSetting)){
                 const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
@@ -145,6 +148,7 @@ function hotkeyDice(nthDice){
                 }
                 else{
                     window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}`
+
                 }
             }
             else{
@@ -186,7 +190,10 @@ function updateDisplayedDiceFormula(){
     let displayMod = window.numpadRollFormulaMod
     if(displayMod == 0)
         displayMod = '';
-    const displayText = `${window.numpadRollFormula}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : window.numpadRollFormulaMod  == 0 ? '' : `${window.numpadRollFormulaMod}`}`
+    const action = window.numpadRollFormula.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+    const expression = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0].replace(/\s*([+-])\s*|\s+$/gi, '$1');
+   
+    const displayText = `${expression}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : window.numpadRollFormulaMod  == 0 ? '' : `${window.numpadRollFormulaMod}`} ${action}`
     if(displayText == '')
         $('#displayedDiceFormulaExit').click();
     else
@@ -329,16 +336,19 @@ Mousetrap.bind('enter', function () {       //zoom minus
             window.numpadRollFormulaMod = 0
 
         let rollFormula;
+        const action = window.numpadRollFormula.replace(diceRollCommandRegex, "").replace(allowedExpressionCharactersRegex, "");
+        const expression = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
+   
         if(window.numpadRollFormula.match(/^-/)){
-            rollFormula = `${window.numpadRollFormulaMod}${window.numpadRollFormula}`
+            rollFormula = `${window.numpadRollFormulaMod}${expression}`
         }
         else if(window.numpadRollFormulaMod == 0){
-            rollFormula = window.numpadRollFormula.replace(/^\+/, '');
+            rollFormula = expression.replace(/^\+/, '');
         }
         else{
-            rollFormula = `${window.numpadRollFormula.replace(/^\+/, '')}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : `${window.numpadRollFormulaMod}`}`
+            rollFormula = `${expression.replace(/^\+/, '')}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : `${window.numpadRollFormulaMod}`}`
         }
-        const rollData = DiceRoll.fromSlashCommand(`/r ${rollFormula}`);
+        const rollData = DiceRoll.fromSlashCommand(`/r ${rollFormula}${action}`);
         window.diceRoller.roll(rollData); 
         
         $('#displayedDiceFormula').remove();
@@ -415,6 +425,11 @@ Mousetrap.bind('shift+l', function () {
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
+
+    $('#displayedDiceFormula').remove();
+    delete window.numpadRollFormulaMod;
+    delete window.numpadRollFormula;
+
     stop_drawing();
 
     if(!$("#wall_button").hasClass("button-enabled")){
