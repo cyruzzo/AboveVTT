@@ -90,9 +90,6 @@ function hotkeyDice(nthDice){
     }
     else{
         simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];
-        const dieButton = $(`.dice-toolbar__dropdown-top>.dice-die-button:nth-of-type(${8-nthDice})`); 
-        
-
 
         if(ctrlHeld){
             if(window.numpadRollFormula === undefined){
@@ -341,8 +338,8 @@ Mousetrap.bind('enter', function () {       //zoom minus
         else{
             rollFormula = `${window.numpadRollFormula.replace(/^\+/, '')}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : `${window.numpadRollFormulaMod}`}`
         }
-
-        window.diceRoller.roll(new DiceRoll(rollFormula)); 
+        const rollData = DiceRoll.fromSlashCommand(`/r ${rollFormula}`);
+        window.diceRoller.roll(rollData); 
         
         $('#displayedDiceFormula').remove();
         delete window.numpadRollFormulaMod;
