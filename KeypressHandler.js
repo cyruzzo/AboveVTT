@@ -95,7 +95,8 @@ function hotkeyDice(nthDice){
             if(window.numpadRollFormula === undefined){
                 window.numpadRollFormula = ``;
             }
-
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+        
             if(simpleDice.includes(rollSetting)){
                 const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
@@ -129,7 +130,9 @@ function hotkeyDice(nthDice){
         else{
             if(window.numpadRollFormula === undefined){
                 window.numpadRollFormula = ``;
-            }
+            } 
+            window.numpadRollFormula = window.numpadRollFormula.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0]
+        
             if(simpleDice.includes(rollSetting)){
                 const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
@@ -415,6 +418,11 @@ Mousetrap.bind('shift+l', function () {
 });
 
 Mousetrap.bind('esc', function () {     //deselect all buttons
+    
+    $('#displayedDiceFormula').remove();
+    delete window.numpadRollFormulaMod;
+    delete window.numpadRollFormula;
+
     stop_drawing();
 
     if(!$("#wall_button").hasClass("button-enabled")){
