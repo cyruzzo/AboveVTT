@@ -315,21 +315,7 @@ function avtt_settings() {
 			],
 			defaultValue: false,
 			class: 'ui'
-		},
-		{
-		        name: 'customDieRoll8',
-  		        label: 'Custom Roll 8 Key',
-			type: 'text',
-		        defaultValue: '2d20kl1',
-			class: 'ui'
-		},
-		{
-		        name: 'customDieRoll9',
-  		        label: 'Custom Roll 9 Key',
-			type: 'text',
-		        defaultValue: '2d20kh1',
-			class: 'ui'
-		},
+		},	
 		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
@@ -566,6 +552,93 @@ function avtt_settings() {
 		defaultValue: {},
 		class: 'ui'
 	})
+
+	settings.push({
+		name: 'quickRoll',
+		label: 'Numkey Quick Roll options',
+		type: 'flyoutButton',
+		options: [
+			{
+		        name: 'autoRoll',
+		        label: 'Auto-roll the below',
+				type: 'toggle',
+				options:[
+					{ value: true, label: "Enabled", description: `` },
+					{ value: false, label: "Disabled", description: `` }
+				],
+		        defaultValue: false
+			},
+			{
+		        name: 'customDieRoll1',
+			        label: 'Custom Roll 1 Key',
+				type: 'text',
+		        defaultValue: '1d4'
+			},
+			{
+		        name: 'customDieRoll2',
+			        label: 'Custom Roll 2 Key',
+				type: 'text',
+		        defaultValue: '1d6'
+			},
+			{
+		        name: 'customDieRoll3',
+			        label: 'Custom Roll 3 Key',
+				type: 'text',
+		        defaultValue: '1d8'
+			},
+			{
+		        name: 'customDieRoll4',
+			        label: 'Custom Roll 4 Key',
+				type: 'text',
+		        defaultValue: '1d100'
+			},
+			{
+		        name: 'customDieRoll5',
+			        label: 'Custom Roll 5 Key',
+				type: 'text',
+		        defaultValue: '1d10'
+			},
+			{
+		        name: 'customDieRoll6',
+			        label: 'Custom Roll 6 Key',
+				type: 'text',
+		        defaultValue: '1d12'
+			},
+			{
+		        name: 'customDieRoll7',
+			        label: 'Custom Roll 7 Key',
+				type: 'text',
+		        defaultValue: '1d20'
+			},
+			{
+		        name: 'customDieRoll8',
+			        label: 'Custom Roll 8 Key',
+				type: 'text',
+		        defaultValue: '2d20kl1'
+			},
+			{
+		        name: 'customDieRoll9',
+			        label: 'Custom Roll 9 Key',
+				type: 'text',
+		        defaultValue: '2d20kh1'
+			},
+		],
+		defaultValue: {			
+	    	'autoRoll': false,
+			'customDieRoll1': '1d4',
+			'customDieRoll2': '1d6',
+			'customDieRoll3': '1d8',
+			'customDieRoll4': '1d100',
+			'customDieRoll5': '1d10',
+			'customDieRoll6': '1d12',
+			'customDieRoll7': '1d20',
+			'customDieRoll8': '2d20kl1',
+			'customDieRoll9': '2d20kh1',
+        },
+		class: 'ui'
+	})
+
+
 
 	if (AVTT_ENVIRONMENT.versionSuffix) {
 		// This is either a local or a beta build, so allow this helpful debugging tool
@@ -876,6 +949,8 @@ function init_settings() {
 			case "flyoutButton":
 				inputWrapper = build_flyout_input(setting, currentValue, function(name, newValue){
 					set_avtt_setting_value(name, newValue);
+					if(name == 'quickToggleDefaults')
+						window.defaultToggles = newValue;
 				})
 				break;
 			case "text":
@@ -1025,27 +1100,39 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	// 		delete setValues[name];
 	// 	}
 	// };
-
+	let inputWrapper;
 	availableOptions.forEach(option => {
 		if(option.hiddenSetting == true)
 			return;
 		if(option.dmOnly == true && !window.DM)
 			return;
-		const currentValue = setValues[option.name];
-		if (option.type === "dropdown") {
-			let inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
-				updateValue(name, newValue);
-				didChange();
-			});
-			container.append(inputWrapper);
-		} else if (option.type === "toggle") {
-			let inputWrapper = build_toggle_input(option, currentValue, function (name, newValue) {
-				updateValue(name, newValue);
-				didChange();
-			});
+		const currentValue = setValues[option.name] != undefined ? setValues[option.name] : option.defaultValue;
+
+		switch (option.type) {
+			case "dropdown":
+				inputWrapper = build_dropdown_input(option, currentValue, function(name, newValue) {
+					updateValue(name, newValue);
+					didChange();
+				});
+				break;
+			case "toggle":
+				inputWrapper = build_toggle_input(option, currentValue, function (name, newValue) {
+					updateValue(name, newValue);
+					didChange();
+				});
+				break; 
+			case "text":
+				inputWrapper = build_text_input(option, currentValue, function(name, newValue){
+					updateValue(name, newValue);
+					didChange();
+				})
+
+				break;
+			case "default":
+				console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
+		}
+		if(inputWrapper){
 			container.append(inputWrapper)
-		} else {
-			console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);
 		}
 	});
 	if(!genericFlyout){
