@@ -77,7 +77,7 @@ function hotkeyDice(nthDice){
     const autoRoll = get_avtt_setting_value('quickRoll')['autoRoll'];
     
     if(autoRoll == true){
-        window.diceRoller.roll(new DiceRoll(rollSetting, `Custom Roll(${window.numpadRollFormula})`, 'roll')); 
+        window.diceRoller.roll(new DiceRoll(rollSetting)); 
     }
     else{
         simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];

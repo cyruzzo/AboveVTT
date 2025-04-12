@@ -4665,7 +4665,7 @@ div#importer_area>div>div:first-of-type {
 .avtt-small-settings-edit{
     height:fit-content;
     width:fit-content;
-    margin: 5px 0px;
+    margin: 2px 0px 0px 0px;
     padding:5px;
 }
 .token-image-modal-add-button {
