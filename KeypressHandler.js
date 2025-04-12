@@ -174,6 +174,13 @@ Mousetrap.bind(["1","2","3","4","5","6","7","mod+1","mod+2","mod+3","mod+4","mod
     hotkeyDice(numberPressed);
 });
 
+Mousetrap.bind(["8","9"], function(e, combo) {
+    e.preventDefault();
+    r = get_avtt_setting_value("customDieRolls")[combo-8];
+    console.log("About to roll",r);
+    window.diceRoller.roll(new DiceRoll(r, `Custom Roll(${r})`, 'roll'));    
+});
+
 Mousetrap.bind("n", function (e) {
     $('#combat_next_button').click();
 });
