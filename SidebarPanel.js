@@ -479,10 +479,8 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
           let currentValue = get_avtt_setting_value(settingOption.name);
             let optionsContainer = build_sidebar_token_options_flyout(settingOption.options, currentValue, function(name, value) {
-                if(window.defaultToggles == undefined)
-                  window.defaultToggles = get_avtt_setting_value('quickToggleDefaults');
-                window.defaultToggles[name] = value;
-            }, function(){changeHandler(settingOption.name, window.defaultToggles)}, false, true);
+                currentValue[name] = value;
+            }, function(){changeHandler(settingOption.name, currentValue)}, false, true);
             flyout.append(optionsContainer);
             position_flyout_left_of($('#settings-panel .sidebar-panel-body'), flyout);
         });
@@ -499,20 +497,12 @@ function build_2text_input(settingOption, currentValue, changeHandler) {
      <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
        <div class="token-image-modal-footer-title">${settingOption.label}</div>
      </div>
-   `);
-    const v = get_avtt_setting_value(settingOption.name);
-    function change(which,nv) {
-        const v = get_avtt_setting_value(settingOption.name);
-        v[which] = nv;
-        console.log("CHANGE TO",v, which, nv);
-        return v;
-    }
-    const input8 = $(`<input type="text" name="${settingOption.name}8" value="${v[0]}" size="10"/>`);
-    const input9 = $(`<input type="text" name="${settingOption.name}9" value="${v[1]}" size="10"/>`);    
-    input8.on('blur',function() { console.log("ch1"); changeHandler(settingOption.name, change(0,$(this).val())) });
-    input9.on('blur',function() { console.log("ch2"); changeHandler(settingOption.name, change(1,$(this).val())) });    
-    wrapper.append(input8);
-    wrapper.append(input9);
+  `);
+  const input = $(`<input type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="10"/>`);
+  input.on('blur',function() { 
+    changeHandler(settingOption.name, $(this).val()) 
+  });
+  wrapper.append(input);
   return wrapper;
 }
 

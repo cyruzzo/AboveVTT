@@ -72,22 +72,119 @@ function unhide_interface() {
 //for number key binds that aren't enabled yet
 function hotkeyDice(nthDice){
 
-    if (!$(".dice-toolbar__dropdown").hasClass("dice-toolbar__dropdown-selected")) {
-        $(".dice-toolbar__dropdown-die").click();
-    }
-    const dieButton = $(`.dice-toolbar__dropdown-top>.dice-die-button:nth-of-type(${8-nthDice})`); 
-    if(ctrlHeld){
-        dieButton.triggerHandler('contextmenu');
-            let element = dieButton[0];
-            let e = element.ownerDocument.createEvent('MouseEvents');
-            e.initMouseEvent('contextmenu', true, true,
-                    element.ownerDocument.defaultView, 1, 0, 0, 0, 0, false,
-                    false, false, false, 2, null);
-            element.dispatchEvent(e);
+
+    const rollSetting = get_avtt_setting_value('quickRoll')["customDieRoll"+nthDice];
+    const autoRoll = get_avtt_setting_value('quickRoll')['autoRoll'];
+    
+    if(autoRoll == true){
+        window.diceRoller.roll(new DiceRoll(rollSetting, `Custom Roll(${window.numpadRollFormula})`, 'roll')); 
     }
     else{
-        dieButton.click();
+        simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];
+        const dieButton = $(`.dice-toolbar__dropdown-top>.dice-die-button:nth-of-type(${8-nthDice})`); 
+        
+
+
+        if(ctrlHeld){
+            if(window.numpadRollFormula === undefined){
+                window.numpadRollFormula = ``;
+            }
+
+            if(simpleDice.includes(rollSetting)){
+                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                if(window.numpadRollFormula.match(rollRegex) != null){
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
+                        const newAmount = parseInt(m1) - 1;
+                        if(newAmount != 0){
+                           return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
+                        }
+                        else{
+                           return m3;
+                        }
+                    })
+                }
+                else{
+                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}`
+                }
+            }
+            else{
+                const rollRegex = new RegExp(`(\\+${rollSetting})($|[+-])`, "i");
+                
+                if(window.numpadRollFormula.match(rollRegex) != null){
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
+                        return m2;
+                    })
+                }
+                else{
+                    window.numpadRollFormula = `${window.numpadRollFormula}-${rollSetting}` 
+                }
+            }
+        }
+        else{
+            if(window.numpadRollFormula === undefined){
+                window.numpadRollFormula = ``;
+            }
+            if(simpleDice.includes(rollSetting)){
+                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                if(window.numpadRollFormula.match(rollRegex) != null){
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
+                        const newAmount = parseInt(m1) + 1;
+                        if(newAmount != 0){
+                           return `${newAmount > 0 ? `+${newAmount}` : `${newAmount}`}${m2}`;
+                        }
+                        else{
+                           return m3;
+                        }
+                    })
+                }
+                else{
+                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}`
+                }
+            }
+            else{
+                const rollRegex = new RegExp(`(\\-${rollSetting})($|[+-])`, "i");
+                
+                if(window.numpadRollFormula.match(rollRegex) != null){
+                    window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2){
+                        return m2;
+                    });
+                }
+                else{
+                    window.numpadRollFormula = `${window.numpadRollFormula}+${rollSetting}` 
+                }
+            }
+        }
+
+        updateDisplayedDiceFormula();
     }
+
+   
+}
+
+function updateDisplayedDiceFormula(){
+   
+    let wrapper = $('#displayedDiceFormula')
+    if($('#displayedDiceFormula').length == 0){
+        wrapper = $(`<div id='displayedDiceFormula'><span></span></div>`)
+        const exitButton = $(`<button id='displayedDiceFormulaExit'>X</button>`);
+        exitButton.off('click.exitNumDice').on('click.exitNumDice', function(){
+            wrapper.remove();
+            delete window.numpadRollFormulaMod;
+            delete window.numpadRollFormula
+        })
+        wrapper.append(exitButton);
+        $('#VTTWRAPPER').append(wrapper);
+    }
+     if(window.numpadRollFormulaMod == undefined)
+        window.numpadRollFormulaMod = 0;
+    let displayMod = window.numpadRollFormulaMod
+    if(displayMod == 0)
+        displayMod = '';
+    const displayText = `${window.numpadRollFormula}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : window.numpadRollFormulaMod  == 0 ? '' : `${window.numpadRollFormulaMod}`}`
+    if(displayText == '')
+        $('#displayedDiceFormulaExit').click();
+    else
+        wrapper.find('span').text(`Number key Formula to Roll: ${displayText.replace(/^\+/, '')}`)
 }
 
 function init_keypress_handler(){
@@ -162,24 +259,23 @@ Mousetrap.bind('shift+v', function () {       //check token vision
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
-    if($('.roll-mod-container').hasClass('show'))
-        $('.roll-button-mod.plus').click();
-    else
+    if(window.numpadRollFormula != undefined){
+        if(window.numpadRollFormulaMod == undefined)
+            window.numpadRollFormulaMod = 0;
+        window.numpadRollFormulaMod = window.numpadRollFormulaMod+1
+        updateDisplayedDiceFormula();
+    }
+    else{
         $('#zoom_plus').click()
+    }
 });
 
-Mousetrap.bind(["1","2","3","4","5","6","7","mod+1","mod+2","mod+3","mod+4","mod+5","mod+6","mod+7",], function (e, combo) {
+Mousetrap.bind(["1","2","3","4","5","6","7","8","9","mod+1","mod+2","mod+3","mod+4","mod+5","mod+6","mod+7","mod+8","mod+9"], function (e, combo) {
     e.preventDefault();  
     let numberPressed = parseInt(combo.replace('mod+',''));
     hotkeyDice(numberPressed);
 });
 
-Mousetrap.bind(["8","9"], function(e, combo) {
-    e.preventDefault();
-    r = get_avtt_setting_value("customDieRolls")[combo-8];
-    console.log("About to roll",r);
-    window.diceRoller.roll(new DiceRoll(r, `Custom Roll(${r})`, 'roll'));    
-});
 
 Mousetrap.bind("n", function (e) {
     $('#combat_next_button').click();
@@ -199,22 +295,50 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
 });*/
 
 Mousetrap.bind('+', function () {       //zoom plus
-    if($('.roll-mod-container').hasClass('show'))
-        $('.roll-button-mod.plus').click(); 
-    else
+    if(window.numpadRollFormula != undefined){
+        if(window.numpadRollFormulaMod == undefined)
+            window.numpadRollFormulaMod = 0;
+        window.numpadRollFormulaMod = window.numpadRollFormulaMod+1;
+        updateDisplayedDiceFormula();
+    }
+    else{
         $('#zoom_plus').click()
+    }
 });
 
 Mousetrap.bind('-', function () {       //zoom minus
-    if($('.roll-mod-container').hasClass('show'))
-        $('.roll-button-mod.minus').click();
-    else
+    if(window.numpadRollFormula != undefined){
+        if(window.numpadRollFormulaMod == undefined)
+            window.numpadRollFormulaMod = 0;
+        window.numpadRollFormulaMod = window.numpadRollFormulaMod-1;
+        updateDisplayedDiceFormula();
+    }
+    else{
         $('#zoom_minus').click()
+    }
 });
 Mousetrap.bind('enter', function () {       //zoom minus
-    if(!$('.roll-mod-container').hasClass('show'))
-        return;
-    $('.roll-mod-container>.roll-button').click(); 
+    if(window.numpadRollFormula != undefined){
+        if(window.numpadRollFormulaMod == undefined)
+            window.numpadRollFormulaMod = 0
+
+        let rollFormula;
+        if(window.numpadRollFormula.match(/^-/)){
+            rollFormula = `${window.numpadRollFormulaMod}${window.numpadRollFormula}`
+        }
+        else if(window.numpadRollFormulaMod == 0){
+            rollFormula = window.numpadRollFormula.replace(/^\+/, '');
+        }
+        else{
+            rollFormula = `${window.numpadRollFormula.replace(/^\+/, '')}${window.numpadRollFormulaMod > 0 ? `+${window.numpadRollFormulaMod}` : `${window.numpadRollFormulaMod}`}`
+        }
+
+        window.diceRoller.roll(new DiceRoll(rollFormula)); 
+        
+        $('#displayedDiceFormula').remove();
+        delete window.numpadRollFormulaMod;
+        delete window.numpadRollFormula;
+    }
 });
 
 Mousetrap.bind('ctrl+space', function (e) {    
