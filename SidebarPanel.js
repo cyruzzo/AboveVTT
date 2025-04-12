@@ -489,7 +489,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     return wrapper;
 }
 
-function build_text_input(settingOption, currentValue, changeHandler) {
+function build_2text_input(settingOption, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }

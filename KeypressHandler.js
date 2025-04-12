@@ -246,10 +246,14 @@ Mousetrap.bind('v', function () {       //video toggle
 });
 
 Mousetrap.bind('shift+v', function () {       //check token vision
-    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0)
+    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
         window.SelectedTokenVision = false;
-    else
+        if(window.DM)
+            do_check_token_visibility();       
+    }
+    else{
         window.SelectedTokenVision = true;
+    }
 
    redraw_light();
 });
@@ -272,12 +276,6 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9","mod+1","mod+2","mod+3","mod
     hotkeyDice(numberPressed);
 });
 
-/*Mousetrap.bind(["8","9"], function(e, combo) {
-    e.preventDefault();
-    r = get_avtt_setting_value('quickRoll')["customDieRoll"+combo];
-    console.log("About to roll",r);
-    window.diceRoller.roll(new DiceRoll(r, `Custom Roll(${r})`, 'roll'));    
-});*/
 
 Mousetrap.bind("n", function (e) {
     $('#combat_next_button').click();

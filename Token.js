@@ -3992,7 +3992,12 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 			$(`.aura-element`).show();
 	   	}
 	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
-	   		window.SelectedTokenVision = false;
+	   		if(window.SelectedTokenVision == true){
+	   			window.SelectedTokenVision = false;
+	   			if(window.DM)
+            		do_check_token_visibility(); 
+	   		}
+	   		
 	   	}	   	
   		
   	

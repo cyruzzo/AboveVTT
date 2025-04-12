@@ -19,7 +19,7 @@ class ChatObserver {
                     return;
                 }
                 let slashCommandMatch = value.match(diceRollCommandRegex);
-                if (slashCommandMatch?.index === 0) {
+                if (slashCommandMatch !== null) {
                     if (self.#parseSlashCommand(value)) {
                         self.#didSubmit(input, value);
                     } else {
