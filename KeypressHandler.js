@@ -69,7 +69,16 @@ function unhide_interface() {
     }
 }
 
-//for number key binds that aren't enabled yet
+/*
+Adds num key dice rolls together or rolls them if auto roll is set
+Will remove if ctrl/mod is held.
+Simple 1d# rolls are grouped together.
+
+Other rolls are added/subtracted individually such as 2d20kh1. As 4d20kh2 would not always produce the same result. 
+
+To do: Support grouping semi-simple rolls together such as 2d4+4 -> 4d4+8 instead of 2d4+4+2d4+4. 
+Adjusting this from regex adjusting a string to roll groupings in json or an array then building the formula would probably make this easier. 
+*/
 function hotkeyDice(nthDice){
 
 
@@ -91,7 +100,7 @@ function hotkeyDice(nthDice){
             }
 
             if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
                         const newAmount = parseInt(m1) - 1;
@@ -125,7 +134,7 @@ function hotkeyDice(nthDice){
                 window.numpadRollFormula = ``;
             }
             if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
                         const newAmount = parseInt(m1) + 1;
