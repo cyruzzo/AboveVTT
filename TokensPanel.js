@@ -988,11 +988,26 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
 
     options.imgsrc = random_image_for_item(listItem, specificImage);
 
+
     if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[options.imgsrc] != undefined){
+        const visionOptions = {
+            'vision': {...options.vision},
+            'light1': {...options.light1},
+            'light2': {...options.light2}
+        }
         options = {
             ...options,
             ...options.alternativeImagesCustomizations[options.imgsrc],
             imgsrc: options.imgsrc
+        }
+        if(options.vision != undefined && options.vision?.feet == undefined && visionOptions?.vision?.feet != undefined){
+            options.vision.feet = visionOptions.vision.feet;
+        }
+         if(options.light1 != undefined && options.light1?.feet == undefined && visionOptions?.light1?.feet != undefined){
+            options.light1.feet = visionOptions.light1.feet;
+        }
+         if(options.light2 != undefined && options.light2?.feet == undefined && visionOptions?.light2?.feet != undefined){
+            options.light2.feet = visionOptions.light2.feet;
         }
     }
 
@@ -3812,6 +3827,35 @@ function create_token_copy_inside(listItem, open5e = false){
         options.sizeId = listItem.monsterData.sizeId;
         // TODO: handle custom sizes
     }
+
+    let darkvision = 0;
+    if(window.monsterListItems){
+        let monsterSidebarListItem = open5e ? window.open5eListItems.filter((d) => listItem.id == d.id)[0] : window.monsterListItems.filter((d) => listItem.id == d.id)[0]; 
+        if(!monsterSidebarListItem){
+            for(let i in encounter_monster_items){
+                if(encounter_monster_items[i].some((d) => options.monster == d.id)){
+                    monsterSidebarListItem = encounter_monster_items[i].filter((d) => listItem.id == d.id)[0]
+                    break;
+                }
+            }
+        }
+           
+        if(monsterSidebarListItem){
+            if(monsterSidebarListItem.monsterData.senses.length > 0){
+                for(let i=0; i < monsterSidebarListItem.monsterData.senses.length; i++){
+                    const ftPosition = monsterSidebarListItem.monsterData.senses[i].notes.indexOf('ft.')
+                    const range = parseInt(monsterSidebarListItem.monsterData.senses[i].notes.slice(0, ftPosition));
+                    if(range > darkvision)
+                        darkvision = range;
+                }
+            }
+        }
+    } 
+    options.vision = {
+        feet: darkvision.toString(),
+        color: (window.TOKEN_SETTINGS?.vision?.color) ? window.TOKEN_SETTINGS.vision.color : 'rgba(142, 142, 142, 1)'
+    }
+    
     options.monster = 'customStat'
     
     if(foundOptions.color != undefined){
