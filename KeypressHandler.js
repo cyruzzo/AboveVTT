@@ -91,7 +91,7 @@ function hotkeyDice(nthDice){
             }
 
             if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
                         const newAmount = parseInt(m1) - 1;
@@ -125,7 +125,7 @@ function hotkeyDice(nthDice){
                 window.numpadRollFormula = ``;
             }
             if(simpleDice.includes(rollSetting)){
-                const rollRegex = new RegExp(`([+-][\\d])+?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
+                const rollRegex = new RegExp(`([+-][\\d]+)?(${rollSetting.replace('1d', 'd')}($|[+-]))`, "gi");
                 if(window.numpadRollFormula.match(rollRegex) != null){
                     window.numpadRollFormula = window.numpadRollFormula.replace(rollRegex, function(m, m1, m2, m3){
                         const newAmount = parseInt(m1) + 1;
