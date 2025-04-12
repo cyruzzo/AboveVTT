@@ -491,7 +491,7 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     return wrapper;
 }
 
-function build_text_input(settingOption, currentValue, changeHandler) {
+function build_2text_input(settingOption, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
   }
@@ -501,10 +501,18 @@ function build_text_input(settingOption, currentValue, changeHandler) {
      </div>
    `);
     const v = get_avtt_setting_value(settingOption.name);
-    const input = $(`<input type="text" name="${settingOption.name}" value="${v}" size="10"/>`);
-    input.on('blur',function() { console.log("Change", input.value);
-                            changeHandler(settingOption.name, $(this).val()) });
-  wrapper.append(input);
+    function change(which,nv) {
+        const v = get_avtt_setting_value(settingOption.name);
+        v[which] = nv;
+        console.log("CHANGE TO",v, which, nv);
+        return v;
+    }
+    const input8 = $(`<input type="text" name="${settingOption.name}8" value="${v[0]}" size="10"/>`);
+    const input9 = $(`<input type="text" name="${settingOption.name}9" value="${v[1]}" size="10"/>`);    
+    input8.on('blur',function() { console.log("ch1"); changeHandler(settingOption.name, change(0,$(this).val())) });
+    input9.on('blur',function() { console.log("ch2"); changeHandler(settingOption.name, change(1,$(this).val())) });    
+    wrapper.append(input8);
+    wrapper.append(input9);
   return wrapper;
 }
 
