@@ -4706,7 +4706,7 @@ function init_fog_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_paint_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='paint-bucket' data-function="reveal" data-unique-with="fog">
-					Bucket Fill
+					Point LoS Fill
 			</button>
 		</div>`);
 
@@ -4763,7 +4763,7 @@ function init_fog_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_paint_h' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='paint-bucket' data-function="hide" data-unique-with="fog">
-					Bucket Fill
+					Point LoS Fill
 			</button>
 		</div>`);
 
@@ -4893,7 +4893,7 @@ function init_draw_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
-				 	Bucket Fill
+				 	Point LoS Fill
 			</button>
 		</div>`);
 	}
@@ -5267,7 +5267,7 @@ function init_elev_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='paint-bucket' data-function="elev" data-unique-with="draw">
-				 	Bucket Fill
+				 	Point LoS Fill
 			</button>
 		</div>`);
 	elev_menu.append("<div class='elev-input menu-subtitle'>Elevation</div>");
@@ -5407,7 +5407,7 @@ function init_vision_menu(buttons){
 		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='paint-bucket' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='paint-bucket' data-function="draw" data-unique-with="draw">
-				 	Bucket Fill
+				 	Point LoS Fill
 			</button>
 		</div>`);
 
