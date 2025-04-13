@@ -100,11 +100,11 @@ function token_setting_options() {
 		},
 		{
 			name: 'revealInFog',
-			label: 'Reveal in Fog',
+			label: `Reveal in Fog/Ignore LoS Checks`,
 			type: 'toggle',
 			options: [
-				{ value: true, label: "Revealed in Fog", description: "The token will not be hidden by fog." },
-				{ value: false, label: "Hidden in Fog", description: "The token will be hidden if in fog" }
+				{ value: true, label: "Revealed in Fog", description: "The token will not be hidden by fog or vision checks. Below darkness tokens will still be hidden by full darkness. Useful for scene props/items when using darkness." },
+				{ value: false, label: "Hidden in Fog", description: "The token will be hidden if in fog and vision checks." }
 			],
 			defaultValue: false
 		},
