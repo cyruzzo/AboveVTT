@@ -412,13 +412,30 @@ function getRollData(rollButton){
     }
     
     if(typeof window.rollBuffs != 'undefined'){
+
         for(let i in window.rollBuffs){
+
             const isMultiOption = Array.isArray(window.rollBuffs[i]);
             if(isMultiOption && buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace != undefined){
-                expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace, buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].newRoll)}`
+                if(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replaceType != undefined){
+                    if(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replaceType[rollType] != undefined && $(rollButton).closest(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replaceType[rollType]).length>0){
+                        
+                        expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace, buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].newRoll)}`
+                    }
+                }
+                else{
+                    expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].replace, buffsDebuffs[window.rollBuffs[i][0]].multiOptions[window.rollBuffs[i][1]].newRoll)}`
+                }    
             }
             else if(!isMultiOption && buffsDebuffs[window.rollBuffs[i]].replace != undefined){
-                expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i]].replace, buffsDebuffs[window.rollBuffs[i]].newRoll)}`
+                if(buffsDebuffs[window.rollBuffs[i]].replaceType != undefined){
+                    if(buffsDebuffs[window.rollBuffs[i]].replaceType[rollType] != undefined && $(rollButton).closest(buffsDebuffs[window.rollBuffs[i]].replaceType[rollType]).length>0){
+                        expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i]].replace, buffsDebuffs[window.rollBuffs[i]].newRoll)}`
+                    }
+                }
+                else{
+                    expression = `${expression.replace(buffsDebuffs[window.rollBuffs[i]].replace, buffsDebuffs[window.rollBuffs[i]].newRoll)}`
+                }
             }
         }
     }
