@@ -408,7 +408,42 @@ const buffsDebuffs = {
       "save": "0",
       "check": "-d6",
       "type": "spell"
+  },
+  "Trance of Order": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /1d20/gi,
+      "newRoll": '1d20min10',
+      "type": "sorcerer"
+  },
+  "Reliable Talent": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /1d20/gi,
+      "replaceType": {
+        "check": '.ct-skills__item:has(.ct-skills__col--proficiency>:is([aria-label="Expert"], [aria-label="Proficient"]))' //looks for proficient or expertise class before a check
+      },
+      "newRoll": '1d20min10',
+      "type": "class",
+      "type": "rogue"
+  },
+  "Great Weapon Fighting 2024": {
+      "tohit": "0",
+      "dmg": "0",
+      "save": "0",
+      "check": "0",
+      "replace": /^(\d+d\d+)/gi,//find first roll
+      "replaceType": {
+        "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-attack--item:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+      },
+      "newRoll": '$1min3',//replace with original roll with minimum roll of 3
+      "type": "feat",
   }
+
 }
 var rollBuffFavorites = [];
 var rollBuffContext = [];
