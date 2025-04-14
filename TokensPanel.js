@@ -1263,9 +1263,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         statText=statText[0].innerHTML;
         let hitDiceData =  $(statText).find('.custom-hp-roll.custom-stat').text();
         let averageHP = $(statText).find('.custom-avghp.custom-stat').text();
-        let searchText = statText.replace('mon-stat-block-2024', '').replace(/\&nbsp\;/g,' ')
+        let searchText = statText.replaceAll('mon-stat-block-2024', '').replaceAll(/\&nbsp\;/g,' ')
         if(averageHP == ''){
-            let match = searchText.matchAll(/(Hit Points|hp)[\s\D]+?([0-9]+)/gi).next()
+            let match = searchText.matchAll(/(Hit Points|hp)[\s\S]*?[\s>]([0-9]+)/gi).next()
             if(match.value != undefined){
                 averageHP = match.value[2] 
             }
@@ -1309,7 +1309,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 temp: 0
             };
         }
-        let newStatBlockInit = searchText.matchAll(/Initiative[\s\D]+?([+-][0-9]+)/gi).next()
+        let newStatBlockInit = searchText.matchAll(/Initiative[\s\S]*?[\s>]([+-][0-9]+)/gi).next()
 
         if(newStatBlockInit.value != undefined){
             if(newStatBlockInit.value[1] != undefined)
@@ -1426,7 +1426,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         let newAC = $(searchText).find('.custom-ac.custom-stat').text();
 
         if(newAC == ''){
-            let match = searchText.matchAll(/(Armor Class|ac)[\s\D]+?([0-9]+)[<\.\s]/gi).next()
+            let match = searchText.matchAll(/(Armor Class|ac)[\s\S]*?[\s>]([0-9]+)[<\.\s]/gi).next()
             if(match.value != undefined && match.value[2] != undefined){
                 newAC = match.value[2]
             }
