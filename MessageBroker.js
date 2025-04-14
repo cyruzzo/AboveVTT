@@ -1952,6 +1952,8 @@ class MessageBroker {
 						// Store current scene width and height
 						let mapHeight = await $("#scene_map").height();
 						let mapWidth = await $("#scene_map").width();
+						window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: mapHeight, sceneWidth: mapWidth }
+	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
 						if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
