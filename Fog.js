@@ -115,9 +115,8 @@ function getSceneMapSize() {
 		const sceneMap = document.getElementById("scene_map");
 		if(sceneMap === null)
 			return {id: window.CURRENT_SCENE_DATA?.id, sceneHeight: 0, sceneWidth: 0 }
-		window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: Math.floor(sceneMap.offsetHeight), sceneWidth: Math.floor(sceneMap.offsetWidth) }
+		window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: $(sceneMap).height(), sceneWidth: $(sceneMap).width() }
 	}
-
 	return window.sceneMapSize
 }
 /**
@@ -5993,7 +5992,7 @@ function redraw_light(darknessMoved = false){
 
 	let canvas = document.getElementById("raycastingCanvas");
 	let canvasWidth = getSceneMapSize().sceneWidth;
-	let canvasHeight = getSceneMapSize().sceneHeight
+	let canvasHeight = getSceneMapSize().sceneHeight;
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
