@@ -1,12 +1,12 @@
 /** DiceRoller.js - DDB dice rolling functions */
 
-const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-const rpgDiceRegex = /\d+d(?:\d+)(?:kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+)*/gi; 
-const validExpressionRegex = /^[dkhlro<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
+const allDiceRegex = /\d+d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*/gi; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+const rpgDiceRegex = /\d+d(?:\d+)((?:kh|kl|ro(<|<=|>|>=|=)|min)\d+)*/gi; 
+const validExpressionRegex = /^[dkhlromin<=>\s\d+\-\(\)]*$/gi; // any of these [d, kh, kl, spaces, numbers, +, -] // Should we support [*, /] ?
 const validModifierSubstitutions = /(?<!\w)(str|dex|con|int|wis|cha|pb)(?!\w)/gi // case-insensitive shorthand for stat modifiers as long as there are no letters before or after the match. For example `int` and `STR` would match, but `mint` or `strong` would not match.
 const diceRollCommandRegex = /^\/(r|roll|save|hit|dmg|skill|heal)\s/gi; // matches only the slash command. EG: `/r 1d20` would only match `/r`
 const multiDiceRollCommandRegex = /\/(ir|r|roll|save|hit|dmg|skill|heal) [^\/]*/gi; // globally matches the full command. EG: `note: /r 1d20 /r2d4` would find ['/r 1d20', '/r2d4']
-const allowedExpressionCharactersRegex = /^(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
+const allowedExpressionCharactersRegex = /^(d\d|\d+d\d+|kh\d+|kl\d+|ro(<|<=|>|>=|=)\d+|min\d+|\d+|\s+|[+-]\s*STR|[+-]\s*DEX|[+-]\s*CON|[+-]\s*INT|[+-]\s*WIS|[+-]\s*CHA|[+-]\s*PB|\+|-)*/gi; // this is explicitly different from validExpressionRegex. This matches an expression at the beginning of a string while validExpressionRegex requires the entire string to match. +/- at the end so it includes modifiers first
 
 class DiceRoll {
     // `${action}: ${rollType}` is how the gamelog message is displayed
@@ -83,6 +83,10 @@ class DiceRoll {
 
         if (this.expression.includes("ro")) {
             return true; // reroll requires us to roll double the amount of dice, but then strip half the results based on the specified reroll rule
+        }
+
+        if (this.expression.includes("min")) {
+            return true; // min requires setting a minimum result
         }
 
         if (this.expression.indexOf(this.diceExpressions[0]) !== 0) {
@@ -965,6 +969,7 @@ class DiceRoller {
                     let diceType = diceExpression.match(/d\d+/g);
                     let numberOfDice = parseInt(diceExpression.split("d")[0]);
                     const includesReroll = diceExpression.includes("ro");
+                   
                     if (includesReroll) {
                         // we've doubled the dice in case we needed to reroll so grab twice as many dice as expected
                         numberOfDice = numberOfDice * 2;
@@ -988,6 +993,21 @@ class DiceRoller {
                             console.debug("rerollExpression", rerollExpression)
                             if (eval(rerollExpression)) {
                                 return rerolledValues.shift();
+                            } else {
+                                return value;
+                            }
+                        });
+                    }
+                    const includesMin = diceExpression.includes("min");
+                    if (includesMin) {                
+                        // evaluate each of the calculationValues against the min roll rule.
+                        // any value that evaluates to true is set to the minimum value
+                        const minRoll = /min(\d+)/.exec(diceExpression);
+                        calculationValues = calculationValues.map(value => {
+                            const minExpression = minRoll[0].replace('min', `${value}<`);
+                            console.debug("minExpression", minExpression)
+                            if (eval(minExpression)) {
+                                return minRoll[1];
                             } else {
                                 return value;
                             }
