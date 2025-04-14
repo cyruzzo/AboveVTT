@@ -2,7 +2,7 @@ const STANDARD_CONDITIONS = ["Blinded", "Charmed", "Deafened", "Exhaustion", "Fr
 
 const CUSTOM_CONDITIONS = ["Concentration(Reminder)", 'Reaction Used',"Flying", "Burning", "Rage", "Blessed", "Baned",
 							"Bloodied", "Advantage", "Disadvantage", "Bardic Inspiration", "Hasted",
-							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66"];
+							"#1A6AFF", "#FF7433", "#FF4D4D", "#FFD433", "#884DFF", "#86FF66", "#33ffe3", "#c333ff", "#1e0066", "#656565"];
 
 /*const TOKEN_COLORS=  [
 	"D1BBD7","882E72","5289C7","4EB265","CAEOAB","F6C141","E8601C","777777","AE76A3","1965BO","7BAFDE","90C987","F7F056","F1932D","DC050C",
@@ -1744,7 +1744,7 @@ class Token {
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
 					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg  viewBox="0 0 ${symbolSize} ${symbolSize}">
-									  <text class='custom-condition-text' x="50%" y="50%">${conditionText.charAt(0)}</text>
+									  <text class='custom-condition-text' x="50%" y="50%">${conditionText.length>0 ? [...conditionText][0] : ''}</text>
 									</svg></div>`);
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
