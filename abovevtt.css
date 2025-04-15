@@ -9863,7 +9863,19 @@ button.journal-view-button.journal-button {
     font-weight: 600;
 
 }
-
+button.resistanceButton.qrm_buttons_bar span {
+    font-size: 16px;
+    text-align:center;
+}
+#qrm_dialog button.resistanceButton{
+    outline:none; 
+    margin-right:20px;
+}
+#qrm_dialog button.resistanceButton.enabled {
+    color:#00c400;
+    box-shadow: inset 1px 1px 3px 0px #196a00, inset -1px -1px 3px 0px #82ff5b;
+    transition: none;
+}
 #qrm-block-send-to-game-log {
     width: 22px;
     height: 22px;
