@@ -431,19 +431,33 @@ const buffsDebuffs = {
       "type": "class",
       "type": "rogue"
   },
-  "Great Weapon Fighting 2024": {
-      "tohit": "0",
-      "dmg": "0",
-      "save": "0",
-      "check": "0",
-      "replace": /^(\d+d\d+)/gi,//find first roll
-      "replaceType": {
-        "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-attack--item:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+  "Great Weapon Fighting": {
+    "multiOptions": {
+      "2024": { 
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^(\d+d\d+)/gi,//find first roll
+        "replaceType": {
+          "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+        },
+        "newRoll": '$1min3',//replace with original roll with minimum roll of 3
       },
-      "newRoll": '$1min3',//replace with original roll with minimum roll of 3
-      "type": "feat",
-  }
-
+      "Legacy": {
+        "tohit": "0",
+        "dmg": "0",
+        "save": "0",
+        "check": "0",
+        "replace": /^(\d+d\d+)/gi,//find first roll
+        "replaceType": {
+            "damage": 'button:has(.ddbc-damage--versatile), .ddbc-combat-item-attack--melee:has(.ddbc-note-components__component:contains("Two-Handed"))' //looks for versatile 2 hand button or two-handed trait in item note
+        },
+        "newRoll": '$1ro<3',//reroll 1 & 2
+      },
+    },
+    "type": "feat",
+  },  
 }
 var rollBuffFavorites = [];
 var rollBuffContext = [];
@@ -1099,6 +1113,21 @@ function register_buff_row_context_menu() {
 }
 function rebuild_buffs(fullBuild = false){
   window.rollBuffs = JSON.parse(localStorage.getItem('rollBuffs' + window.PLAYER_ID)) || [];
+  const buffDebuffKeys=Object.keys(buffsDebuffs);
+  for(let i in window.rollBuffs){
+    if(Array.isArray(window.rollBuffs[i])){
+      if(!buffDebuffKeys.includes(window.rollBuffs[i][0])){
+        window.rollBuffs.splice(i, 1);
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      }
+    }
+    else{
+      if(!buffDebuffKeys.includes(window.rollBuffs[i])){
+        window.rollBuffs.splice(i, 1);
+        localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      }
+    }
+  }
   rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
   let avttBuffSelect;
   const innerBuffHtml = `
