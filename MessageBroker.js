@@ -1952,7 +1952,7 @@ class MessageBroker {
 						// Store current scene width and height
 						let mapHeight = await $("#scene_map").height();
 						let mapWidth = await $("#scene_map").width();
-						window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: mapHeight, sceneWidth: mapWidth }
+
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 

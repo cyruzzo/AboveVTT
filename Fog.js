@@ -111,13 +111,9 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
 * @returns {{sceneHeight: number, sceneWidth: number}}
 */
 function getSceneMapSize() {
-	if(window.sceneMapSize === undefined || window.sceneMapSize.id !== window.CURRENT_SCENE_DATA.id){
-		const sceneMap = document.getElementById("scene_map");
-		if(sceneMap === null)
-			return {id: window.CURRENT_SCENE_DATA?.id, sceneHeight: 0, sceneWidth: 0 }
-		window.sceneMapSize = { id: window.CURRENT_SCENE_DATA.id, sceneHeight: $(sceneMap).height(), sceneWidth: $(sceneMap).width() }
-	}
-	return window.sceneMapSize
+	if(window.CURRENT_SCENE_DATA?.width === undefined)
+		return {sceneWidth: 0, sceneHeight: 0}
+	return {sceneWidth: window.CURRENT_SCENE_DATA.width, sceneHeight: window.CURRENT_SCENE_DATA.height }
 }
 /**
  * Class to manage measure waypoints
@@ -1918,9 +1914,9 @@ function redraw_light_walls(clear=true){
 
 
 	window.walls =[];
-	let sceneMapContainer = $('#scene_map_container');
-	let sceneMapHeight = sceneMapContainer.height();
-	let sceneMapWidth = sceneMapContainer.width();
+	const sceneSize = getSceneMapSize();
+	let sceneMapHeight = sceneSize.sceneHeight;
+	let sceneMapWidth = sceneSize.sceneWidth;
 
 	let wall5 = new Boundary(new Vector(0, 0), new Vector(sceneMapWidth, 0), 0);
 	window.walls.push(wall5);
