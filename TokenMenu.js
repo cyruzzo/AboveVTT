@@ -3026,6 +3026,13 @@ function build_conditions_and_markers_flyout_menu(tokenIds) {
 							token.removeCondition(conditionName);
 						}
 						token.addCondition(conditionName, $(this).val());
+						if(conditionItem.find(`.condition-lock.locked`).length>0){
+							lockedConditions = {
+								...lockedConditions,
+								[conditionName] : $(this).val(),
+							}
+							localStorage.setItem(`lockedConditions.${window.gameId}`, JSON.stringify(lockedConditions));
+						}
 					}	
 					token.place_sync_persist();	
 				});
