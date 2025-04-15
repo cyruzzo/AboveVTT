@@ -247,7 +247,9 @@ function init_mixer() {
     const playlistName = $(`<input class='trackName trackInput' placeholder='Playlist Name'/>`)
     const okButton = $('<button class="add-track-ok-button">OK</button>');  
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
+    let copyPlaylist = false;
     addPlaylistButton.off().on("click", function(){
+        copyPlaylist = false;
         playlistFields.css("height", "25px");
     });
     cancelButton.off().on("click", function(){
@@ -256,12 +258,24 @@ function init_mixer() {
     okButton.off().on("click", function(){
         playlistFields.css("height", "0px");
         if(playlistName.val() != ''){
-            window.MIXER.addPlaylist(playlistName.val());
+            if(!copyPlaylist)
+                window.MIXER.addPlaylist(playlistName.val());
+            else
+                window.MIXER.addPlaylist(playlistName.val(), true);
         }
         playlistName.val('');
     });
     playlistFields.append(playlistName, okButton, cancelButton);
-    let removePlaylistButton = $('<button id="remove-playlist">Remove Playlist</button>');
+
+    let copyPlaylistButton = $('<button id="add-playlist">Copy</button>');
+    copyPlaylistButton.off().on('click', function(e){
+        copyPlaylist = true;
+        playlistFields.css("height", "25px");
+        playlistName.val(`${window.MIXER.readPlaylist(window.MIXER.selectedPlaylist()).name} (copy)`);
+        playlistName.select();
+    });
+
+    let removePlaylistButton = $('<button id="remove-playlist">Remove</button>');
 
     removePlaylistButton.off().on('click', function(e){
         window.MIXER.deletePlaylist(window.MIXER.selectedPlaylist());
@@ -357,7 +371,7 @@ function init_mixer() {
             "--overflow-speed": (overflowVal - nameWidth < 0) ? parseInt(nameWidth)*10+'ms' : 800+'ms'
         });   
     })
-    $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
+    $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, copyPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
     $('#master-volume').append(clear, sequentialPlay, playPause);
 }
 
