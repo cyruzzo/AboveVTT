@@ -4386,9 +4386,9 @@ function add_to_quick_roll_menu(token){
 	//qrm_entry_name_hp_bonus = $("<td style='width:60%;'/>")
 	qrm_entry_name = $("<td style='display:block; width:100%; overflow:hidden;'/>")
 	qrm_entry_row = $("<td style='display:block; width:100%;'/>")
-	qrm_entry_row_rolls = $("<td style='display:inline-flex; width:40%;'/>")
+	qrm_entry_row_rolls = $("<td style='display:inline-flex; width:30%;'/>")
 	qrm_entry_row_hp = $("<td style='display:inline-flex; width:25%; white-space: nowrap;'/>")
-	qrm_entry_row_buttons = $("<td style='display:inline-flex; width:35%;'/>")
+	qrm_entry_row_buttons = $("<td style='display:inline-flex; width:45%;'/>")
 
 	name_line = $("<div class='qrm_name_line'>"+token.options.name+"</div>")
 
@@ -4537,9 +4537,17 @@ function add_to_quick_roll_menu(token){
 		maxhp_input.keydown(function(e) { if (e.keyCode == '13') token.update_from_page(); e.preventDefault(); });
 	}
 
-	qrm_entry_buttons = $("<td style='height:100%; text-align: right; width:100%; top: 1px; position: relative; white-space:nowrap'>");
+	const qrm_resistance_button = $(`<button title="resistance" class='resistanceButton qrm_buttons_bar' style="display:inline-flex;"><span class="material-symbols-outlined">person_shield</span></button>`);
+
+
+	qrm_entry_buttons = $("<td style='height:100%; text-align: right; width:100%; top: 1px; position: relative; white-space:nowrap; display:flex'>");
 	
-	find=$('<button class="qrm_buttons_bar" title="Find Token" style="display:inline-block;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
+	qrm_resistance_button.off('click.resistance').on('click.resistance', function(){
+		$(this).toggleClass('enabled');
+	});
+	qrm_entry_buttons.append(qrm_resistance_button);
+
+	find=$('<button class="qrm_buttons_bar" title="Find Token" style="display:inline-flex;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z"/></svg></button>');
 	//find.tooltip({show: { duration: 1000 }})
 	find.click(function(){
 		let target=$(this).parent().parent().parent().parent().attr('data-target');
@@ -4555,7 +4563,7 @@ function add_to_quick_roll_menu(token){
 	});
 	qrm_entry_buttons.append(find);
 
-	remove_from_list=$('<button title="Remove from menu" id="qrm_remove" class="qrm_buttons_bar" style="display:inline-block;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
+	remove_from_list=$('<button title="Remove from menu" id="qrm_remove" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/></svg></button>');
 	//remove_from_list.tooltip({show: { duration: 1000 }})
 	remove_from_list.click(
 		function() {
@@ -4569,7 +4577,7 @@ function add_to_quick_roll_menu(token){
 	qrm_entry_buttons.append(remove_from_list);
 	
 	if(token.options.statBlock){
-		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat_block.click(function(){
 			window.JOURNAL.display_note(token.options.statBlock);
@@ -4579,7 +4587,7 @@ function add_to_quick_roll_menu(token){
 		}
 	}
 	else if(token.isMonster() == true){
-		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="Open Monster Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		
 		stat_block.click(function(){
 			load_monster_stat(token.options.monster, token.options.id);
@@ -4589,13 +4597,13 @@ function add_to_quick_roll_menu(token){
 		}
 	}	
 	else if (token.isPlayer() == true) {
-		stat_block=$('<button title="Open Player Stat Block" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="Open Player Stat Block" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		stat_block.click(function(){
 			open_player_sheet(token.options.id);
 		});
 	}
 	else{
-		stat_block=$('<button title="No Stat Block for custom tokens" disabled="true" class="qrm_buttons_bar" style="display:inline-block;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
+		stat_block=$('<button title="No Stat Block for custom tokens" disabled="true" class="qrm_buttons_bar" style="display:inline-flex;"><svg class="statSVG" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><g><rect fill="none" height="24" width="24"/><g><path d="M19,5v14H5V5H19 M19,3H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5C21,3.9,20.1,3,19,3L19,3z"/></g><path d="M14,17H7v-2h7V17z M17,13H7v-2h10V13z M17,9H7V7h10V9z"/></g></svg></button>');
 		//can add the below if people don't like the disabled button
 		//stat_block.click(function(){
 		//	alert('Sorry, this appears to be a custom token, there was no stat block to fetch.');
@@ -4873,8 +4881,8 @@ function qrm_apply_hp_adjustment(healing=false){
 		let hp_adjustment_failed_save = $('#hp_adjustment_failed_save').val()
 		let half_damage_save_success = $('#half_damage_save').val()
 
-		hp_adjustment_failed_save = hp_adjustment_failed_save.replace(/[^\d.-]/g, '');
-		half_damage_save_success = half_damage_save_success.replace(/[^\d.-]/g, '');
+		hp_adjustment_failed_save = parseInt(hp_adjustment_failed_save.replace(/[^\d.-]/g, ''));
+		half_damage_save_success = parseInt(half_damage_save_success.replace(/[^\d.-]/g, ''));
 
 		let damage;
 		if (result.includes('Fail')){
@@ -4900,6 +4908,9 @@ function qrm_apply_hp_adjustment(healing=false){
 		}
 		if (healing == true){
 			damage = -damage
+		}
+		else if($(this).find('button.resistanceButton.enabled').length>0){
+			damage = Math.floor(damage/2);
 		}
 		
 		if(token.options.hitPointInfo.maximum>0 && token.options.itemType != 'pc'){
