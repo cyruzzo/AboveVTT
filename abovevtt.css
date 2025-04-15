@@ -8099,7 +8099,8 @@ button span.onedrive-btn-status{
     fill: #fff;
     stroke: #000;
     text-anchor: middle;
-    dominant-baseline: middle;
+    alignment-baseline: text-before-edge;
+    transform: translate(50%, 0%);  
     paint-order: stroke;
     text-shadow: 1px 1px 2px #000;
     pointer-events:none;
@@ -8107,7 +8108,11 @@ button span.onedrive-btn-status{
 .custom-condition.text{
     pointer-events:auto;
 }
-
+.condition-img svg {
+    width:100%;
+    height:100%;
+    border-radius:50%;    
+}
 
 .duration-badge {
     position: absolute;

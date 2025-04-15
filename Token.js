@@ -1743,8 +1743,8 @@ class Token {
 				const conditionDescription = CONDITIONS[conditionName];
 				let symbolImage;
 				if (conditionName.startsWith('#')) {
-					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg  viewBox="0 0 ${symbolSize} ${symbolSize}">
-									  <text class='custom-condition-text' x="50%" y="50%">${conditionText.length>0 ? [...conditionText][0] : ''}</text>
+					symbolImage = $(`<div class='condition-img custom-condition text' style='background: ${conditionName}'><svg viewBox="0 0 100 100">
+									  <text class='custom-condition-text' font-size='80'>${conditionText.length>0 ? [...conditionText][0] : ''}</text>
 									</svg></div>`);
 				} else {
 					symbolImage = $("<img class='condition-img custom-condition' src='" + window.EXTENSION_PATH + "assets/conditons/" + conditionSymbolName + ".png'/>");
