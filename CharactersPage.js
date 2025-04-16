@@ -1223,10 +1223,9 @@ function rebuild_buffs(fullBuild = false){
     }, 
     {}
   );
-  const tabContent = $(`[class*='styles_tabList'] [class*='styles_tabFilter']>[class*='styles_content']`);
   const pinWrapper = $(`<div id='avttBuffSheetPins'></div>`);
   $('#avttBuffSheetPins').remove()
-  tabContent.prepend(pinWrapper);
+ 
   for(let i in sortedBuffs){
     const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type}Buffs`);
     const replacedName = i.replace("'", '');
@@ -1240,8 +1239,8 @@ function rebuild_buffs(fullBuild = false){
         </select>
         <label for='buff_${replacedName}'>${i}</label>
         <div class='iconButtons'>
-          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}">pinboard</span>
-          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}">stars</span>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}"> </span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}"> </span>
         </div>
       </li>`)
       const select = row.find('select');
@@ -1314,8 +1313,8 @@ function rebuild_buffs(fullBuild = false){
         <input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/>
         <label for='buff_${replacedName}'>${i}</label>
         <div class='iconButtons'>
-          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}">pinboard</span>
-          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}">stars</span>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}"> </span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}"> </span>
         </div>
       </li>`)
       if(window.rollBuffs.includes(i))
@@ -1380,6 +1379,9 @@ function rebuild_buffs(fullBuild = false){
 
   if(fullBuild)
     $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
+  
+  const tabContent = $(`#avtt-buff-options~[class*='styles_tabFilter']>[class*='styles_content']`);
+  tabContent.prepend(pinWrapper);
   register_buff_row_context_menu();
 }
 
@@ -1975,6 +1977,12 @@ function observe_character_sheet_changes(documentToObserve) {
               #avtt-buff-options span.material-symbols-outlined.enabled {
                   opacity: 1;
               }
+              .pinToSheet.material-symbols-outlined:before{
+                   content:"\\f3ab";
+              }
+              .favorite.material-symbols-outlined:before{
+                  content:"\\e8d0";
+              }
               #avttBuffSheetPins div.iconButtons{
                 display:none;
               }
@@ -1983,13 +1991,19 @@ function observe_character_sheet_changes(documentToObserve) {
                   display:flex;
                   right:0px;
               }
-
+              #avtt-buff-options .collapsed .iconButtons {
+                  display: none;
+              }
               #avtt-buff-options li:has(label) {
                   width:calc(100% - 30px);
+              }
+              #avtt-buff-options~[class*='styles_tabFilter']>[class*='styles_buttons']{
+                margin-bottom:2px;
               }
               div#avttBuffSheetPins {
                 display: flex;
                 flex-wrap: wrap;
+                margin: 5px 0px;
               }
               div#avttBuffSheetPins li {
                 list-style: none; 
