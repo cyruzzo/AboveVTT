@@ -2039,6 +2039,9 @@ function observe_character_sheet_changes(documentToObserve) {
               .ct-character-sheet--dark-mode div#avttBuffSheetPins select {
                 background: #363636 !important;
               }
+              div#avttBuffSheetPins select{
+                font-size: 10px;
+              }
               .ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
                   backdrop-filter:brightness(3);
               }
