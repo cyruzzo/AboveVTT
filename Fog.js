@@ -4169,15 +4169,16 @@ function drawPolygon (
 		if(window.tempoffCanvas == undefined){
 			window.tempoffCanvas = document.createElement('canvas');
 			window.tempoffContext = tempoffCanvas.getContext('2d');
+		}
+		if(tempoffCanvas.width != canvasWidth || tempoffCanvas.height != canvasHeight){
 			tempoffCanvas.width = canvasWidth;
 			tempoffCanvas.height = canvasHeight;
 			tempoffContext.lineWidth = 6;
 			tempoffContext.fillStyle = 'rgba(255,255,255,1)';
 			tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
 		}
-		else{
-			tempoffContext.clearRect(0, 0, tempoffCanvas.width, tempoffCanvas.height)
-		}
+		tempoffContext.clearRect(0, 0, tempoffCanvas.width, tempoffCanvas.height)
+		
 
 		tempoffContext.beginPath();
 		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
