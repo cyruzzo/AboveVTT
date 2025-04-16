@@ -4912,7 +4912,9 @@ function qrm_apply_hp_adjustment(healing=false){
 		else if($(this).find('button.resistanceButton.enabled').length>0){
 			damage = Math.floor(damage/2);
 		}
-		
+		if(damage == 0 && healing != true){
+			damage = 1;
+		}
 		if(token.options.hitPointInfo.maximum>0 && token.options.itemType != 'pc'){
 			let _hp = $(this).find('#qrm_hp');
 			let _max_hp = $(this).find('#qrm_maxhp');
