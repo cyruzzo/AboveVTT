@@ -1380,7 +1380,7 @@ function rebuild_buffs(fullBuild = false){
   if(fullBuild)
     $('.ct-primary-box__tab--actions .ct-actions h2, .ct-actions-mobile .ct-actions h2, .ct-actions-tablet .ct-tablet-box__header').after(avttBuffSelect)
   
-  const tabContent = $(`#avtt-buff-options~[class*='styles_tabFilter']>[class*='styles_content']`);
+  const tabContent = $(`#avtt-buff-options~[class*='styles_tabFilter']>[class*='styles_content'], #avtt-buff-options~.ct-tablet-box__content [class*='styles_tabFilter']>[class*='styles_content']`);
   tabContent.prepend(pinWrapper);
   register_buff_row_context_menu();
 }
