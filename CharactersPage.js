@@ -461,6 +461,7 @@ const buffsDebuffs = {
 }
 var rollBuffFavorites = [];
 var rollBuffContext = [];
+var rollBuffPins = [];
 
 /** @param changes {object} the changes that were observed. EX: {hp: 20} */
 function character_sheet_changed(changes) {
@@ -1091,6 +1092,20 @@ function register_buff_row_context_menu() {
 
         }
       };
+      menuItems["pin"] = {
+        name: rollBuffPins.includes(rowBuff) ? "Unpin from Sheet" : "Pin to Sheet",
+        callback: function(itemKey, opt, originalEvent) {
+            if(rollBuffPins.includes(rowBuff)){
+              rollBuffPins = rollBuffPins.filter(d=> d != rowBuff)
+            }
+            else{
+              rollBuffPins.push(rowBuff)
+            }
+            localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+            rebuild_buffs();
+
+        }
+      };
       /**** To do: Allow select menus to be added to roll context menus for this to work. Checkbox inputs can just be added as list items ****/
       /*
       menuItems["addToContext"] = {
@@ -1129,6 +1144,7 @@ function rebuild_buffs(fullBuild = false){
     }
   }
   rollBuffFavorites = JSON.parse(localStorage.getItem('rollFavoriteBuffs' + window.PLAYER_ID)) || [];
+  rollBuffPins = JSON.parse(localStorage.getItem('rollBuffPins' + window.PLAYER_ID)) || [];
   let avttBuffSelect;
   const innerBuffHtml = `
     <ul id='favoriteBuffs'><li>Favorite</li></ul>
@@ -1189,10 +1205,15 @@ function rebuild_buffs(fullBuild = false){
     }, 
     {}
   );
+  const tabContent = $(`[class*='styles_tabList'] [class*='styles_tabFilter']>[class*='styles_content']`);
+  const pinWrapper = $(`<div id='avttBuffSheetPins'></div>`);
+  $('#avttBuffSheetPins').remove()
+  tabContent.prepend(pinWrapper);
   for(let i in sortedBuffs){
     const headerRow = avttBuffItems.find(`ul#${buffsDebuffs[i].type == 'class' ? buffsDebuffs[i].class : buffsDebuffs[i].type == 'species' ? buffsDebuffs[i].species : buffsDebuffs[i].type}Buffs`);
     const replacedName = i.replace("'", '');
     const addToFavorite = rollBuffFavorites.includes(replacedName);
+    const addToPins = rollBuffPins.includes(replacedName);
 
     if(buffsDebuffs[i]['multiOptions'] != undefined){
       const row = $(`<li><select id='buff_${replacedName}' data-buff='${replacedName}'/><option value='0'></option></select><label for='buff_${replacedName}'>${i}</label></li>`)
@@ -1222,6 +1243,17 @@ function rebuild_buffs(fullBuild = false){
         avttBuffItems.find(`ul#favoriteBuffs`).append(row);  
       else    
         headerRow.append(row);
+
+      if(addToPins){
+        const cloneRow = row.clone(true, true);
+        cloneRow.find('select').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+          row.find('select').val($(this).val())
+        })
+        row.find('select').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+          cloneRow.find('select').val($(this).val());
+        })
+        pinWrapper.append(cloneRow);
+      }
     }else{
       const row = $(`<li><input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/><label for='buff_${replacedName}'>${i}</label></li>`);
       if(window.rollBuffs.includes(i))
@@ -1241,6 +1273,17 @@ function rebuild_buffs(fullBuild = false){
         avttBuffItems.find(`ul#favoriteBuffs`).append(row);
       else   
         headerRow.append(row);
+
+      if(addToPins){
+        const cloneRow = row.clone(true, true);
+         cloneRow.find('input').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+            row.find('input').prop('checked', $(this).is(':checked'));
+         })
+         row.find('input').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+            cloneRow.find('input').prop('checked', $(this).is(':checked'));
+         })
+        pinWrapper.append(cloneRow);
+      }
     }
 
   }
@@ -1830,7 +1873,21 @@ function observe_character_sheet_changes(documentToObserve) {
       if($(`style#advantageHover`).length == 0){
           $('body').append(`
             <style id='advantageHover'>
-
+              div#avttBuffSheetPins {
+                display: flex;
+                flex-wrap: wrap;
+              }
+              div#avttBuffSheetPins li {
+                list-style: none;
+                display: flex;
+                align-items: center;
+              }
+              div#avttBuffSheetPins li input {
+                  margin-right: 5px;
+              }
+              div#avttBuffSheetPins li {
+                  margin-right: 20px;
+              }
               .avtt-ability-roll-button{
                   color: #b43c35;
                   border: 1px solid #b43c35;
@@ -1845,7 +1902,8 @@ function observe_character_sheet_changes(documentToObserve) {
                   padding: 1px 4px 0;
                   cursor: pointer;
               }
-              ul.avttBuffItems select {
+              ul.avttBuffItems select,
+              div#avttBuffSheetPins select {
                 -webkit-appearance: none;
                 -moz-appearance: none;
                 text-indent: 1px;
@@ -1861,7 +1919,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 text-shadow: none !important;
                 font-weight: bold; 
               }
-              .ct-character-sheet--dark-mode ul.avttBuffItems select{
+              .ct-character-sheet--dark-mode ul.avttBuffItems select,
+              div#avttBuffSheetPins select {
                 background: #363636 !important;
               }
               .ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
