@@ -4885,32 +4885,37 @@ function qrm_apply_hp_adjustment(healing=false){
 		half_damage_save_success = parseInt(half_damage_save_success.replace(/[^\d.-]/g, ''));
 
 		let damage;
-		if (result.includes('Fail')){
-			damage = hp_adjustment_failed_save || 0
-			let conditions = $('#qrm_apply_conditions')
-			let conditionName = conditions.val()
-			if(conditionName == 'conditions'){
-				//Do nothing
-			} 
-			else if(conditionName == "remove_all"){
-				//guess this is fine, we update the token immediately. Probably a better way to clear though
-				token.options.conditions = []
-				token.options.custom_conditions = []
-			}
-			else{
-				if(!token.hasCondition(conditionName)){
-					token.addCondition(conditionName, conditionName);
-				}
-			}	
-		}
-		else {
-			damage = half_damage_save_success || 0
-		}
 		if (healing == true){
-			damage = -damage
+			damage = -hp_adjustment_failed_save || 0
 		}
-		else if($(this).find('button.resistanceButton.enabled').length>0){
-			damage = Math.floor(damage/2);
+		else{
+			if (result.includes('Fail')){
+				damage = hp_adjustment_failed_save || 0
+				let conditions = $('#qrm_apply_conditions')
+				let conditionName = conditions.val()
+				if(conditionName == 'conditions'){
+					//Do nothing
+				} 
+				else if(conditionName == "remove_all"){
+					//guess this is fine, we update the token immediately. Probably a better way to clear though
+					token.options.conditions = []
+					token.options.custom_conditions = []
+				}
+				else{
+					if(!token.hasCondition(conditionName)){
+						token.addCondition(conditionName, conditionName);
+					}
+				}	
+			}
+			else {
+				damage = half_damage_save_success || 0
+			}	
+			if($(this).find('button.resistanceButton.enabled').length>0){
+				damage = Math.floor(damage/2);
+			}
+			if(damage == 0){
+				damage = 1;
+			}
 		}
 		
 		if(token.options.hitPointInfo.maximum>0 && token.options.itemType != 'pc'){
