@@ -119,19 +119,37 @@ const buffsDebuffs = {
         "tohit": "0",
         "dmg": "+2",
         "save": "0",
-        "check": "0"
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
       },
       "+3": {
         "tohit": "0",
         "dmg": "+3",
         "save": "0",
-        "check": "0"
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
       },
       "+4": {
         "tohit": "0",
         "dmg": "+4",
         "save": "0",
-        "check": "0"
+        "check": "0",
+        "replace": /^1d20/gi,
+        "replaceType": {
+          "check": '.ct-skills__item:has(.ct-skills__col--stat:contains("STR")), .ddbc-ability-summary .ddbc-ability-summary__abbr:contains("str")', 
+          "save": '.ddbc-saving-throws-summary__ability--str' 
+        },
+        "newRoll": '2d20kh1',
       },
     },
     "type": "class",
