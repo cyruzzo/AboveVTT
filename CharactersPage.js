@@ -1297,10 +1297,14 @@ function rebuild_buffs(fullBuild = false){
 
       if(addToPins){
         const cloneRow = row.clone(true, true);
-        cloneRow.find('select').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+        const cloneSelect = cloneRow.find('select');
+        if(currentSelected != undefined){
+          cloneSelect.val(currentSelected[1])
+        }
+        cloneSelect.off('change.syncRollBuff').on('change.syncRollBuff', function(e){
           row.find('select').val($(this).val())
         })
-        row.find('select').off('change.syncRollBuff').on('change.syncRollBuff', function(e){
+        select.off('change.syncRollBuff').on('change.syncRollBuff', function(e){
           cloneRow.find('select').val($(this).val());
         })
         pinWrapper.append(cloneRow);
