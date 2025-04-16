@@ -1187,7 +1187,7 @@ function rebuild_buffs(fullBuild = false){
     if(avttBuffSelect.hasClass('visible')){
       $(document).on('click.blurHandle', function(e){
         if($(e.target).closest('#avtt-buff-options, .context-menu-list').length == 0){
-          avttBuffSelect.toggleClass('visible')
+          avttBuffSelect.toggleClass('visible', false)
           $(document).off('click.blurHandle');
         }
       })  
@@ -1216,7 +1216,16 @@ function rebuild_buffs(fullBuild = false){
     const addToPins = rollBuffPins.includes(replacedName);
 
     if(buffsDebuffs[i]['multiOptions'] != undefined){
-      const row = $(`<li><select id='buff_${replacedName}' data-buff='${replacedName}'/><option value='0'></option></select><label for='buff_${replacedName}'>${i}</label></li>`)
+      const row = $(`<li>
+        <select id='buff_${replacedName}' data-buff='${replacedName}'/>
+          <option value='0'></option>
+        </select>
+        <label for='buff_${replacedName}'>${i}</label>
+        <div class='iconButtons'>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(i) ? 'enabled' : ''}">pinboard</span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(i) ? 'enabled' : ''}">stars</span>
+        </div>
+      </li>`)
       const select = row.find('select');
       const currentSelected = window.rollBuffs.find(d => d.includes(i));
 
@@ -1239,6 +1248,30 @@ function rebuild_buffs(fullBuild = false){
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
       })
+      row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffFavorites.includes(i)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != i)
+        }
+        else{
+          rollBuffFavorites.push(i)
+        }
+        localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+        rebuild_buffs();
+      })
+      row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffPins.includes(i)){
+          rollBuffPins = rollBuffPins.filter(d=> d != i)
+        }
+        else{
+          rollBuffPins.push(i)
+        }
+        localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+        rebuild_buffs();
+      })
       if(addToFavorite)
         avttBuffItems.find(`ul#favoriteBuffs`).append(row);  
       else    
@@ -1255,7 +1288,14 @@ function rebuild_buffs(fullBuild = false){
         pinWrapper.append(cloneRow);
       }
     }else{
-      const row = $(`<li><input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/><label for='buff_${replacedName}'>${i}</label></li>`);
+      const row = $(`<li>
+        <input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/>
+        <label for='buff_${replacedName}'>${i}</label>
+        <div class='iconButtons'>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(i) ? 'enabled' : ''}">pinboard</span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(i) ? 'enabled' : ''}">stars</span>
+        </div>
+      </li>`)
       if(window.rollBuffs.includes(i))
         row.find('input').prop('checked', true);
       row.find('input').off('change.setRollBuff').on('change.setRollBuff', function(e){
@@ -1268,6 +1308,30 @@ function rebuild_buffs(fullBuild = false){
          window.rollBuffs = window.rollBuffs.filter(d => d != i); 
         }
         localStorage.setItem('rollBuffs' + window.PLAYER_ID, JSON.stringify(window.rollBuffs));
+      })
+      row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffFavorites.includes(i)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != i)
+        }
+        else{
+          rollBuffFavorites.push(i)
+        }
+        localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
+        rebuild_buffs();
+      })
+      row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(rollBuffPins.includes(i)){
+          rollBuffPins = rollBuffPins.filter(d=> d != i)
+        }
+        else{
+          rollBuffPins.push(i)
+        }
+        localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
+        rebuild_buffs();
       })
       if(addToFavorite)
         avttBuffItems.find(`ul#favoriteBuffs`).append(row);
@@ -1880,12 +1944,33 @@ function observe_character_sheet_changes(documentToObserve) {
       if($(`style#advantageHover`).length == 0){
           $('body').append(`
             <style id='advantageHover'>
+              #avtt-buff-options span.material-symbols-outlined {
+                  opacity: 0.2;
+                  font-size:16px;
+                  margin-right: 2px;
+                  cursor: pointer;
+              }
+              #avtt-buff-options span.material-symbols-outlined.enabled {
+                  opacity: 1;
+              }
+              #avttBuffSheetPins div.iconButtons{
+                display:none;
+              }
+              #avtt-buff-options .iconButtons {
+                  position:absolute;
+                  display:flex;
+                  right:0px;
+              }
+
+              #avtt-buff-options li:has(label) {
+                  width:calc(100% - 30px);
+              }
               div#avttBuffSheetPins {
                 display: flex;
                 flex-wrap: wrap;
               }
               div#avttBuffSheetPins li {
-                list-style: none;
+                list-style: none; 
                 display: flex;
                 align-items: center;
               }
@@ -1929,7 +2014,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 font-weight: bold; 
               }
               .ct-character-sheet--dark-mode ul.avttBuffItems select,
-              div#avttBuffSheetPins select {
+              .ct-character-sheet--dark-mode div#avttBuffSheetPins select {
                 background: #363636 !important;
               }
               .ct-character-sheet--dark-mode .dropdown-check-list ul.avttBuffItems>ul>li:first-of-type:hover{
@@ -1940,7 +2025,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 position: absolute;
                 left: 130px;
                 font-size: 10px;
-                width: 200px;
+                width: 250px;
               }
               .ct-tablet-box__header ~ .dropdown-check-list {
                 left: unset;
@@ -1952,7 +2037,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 padding: 0px 50px 0px 10px;
                 border: 1px solid #ccc;
                 border-radius: 5px 5px 0px 0px;
-                width: 200px;
+                width: 250px;
               }
 
               .dropdown-check-list .clickHandle:after {
@@ -1979,7 +2064,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 height: 300px;
                 overflow: auto;
                 scrollbar-width: thin;
-                width: 200px;
+                width: 250px;
               }
               .dropdown-check-list ul.avttBuffItems>ul.collapsed,
               .dropdown-check-list ul.avttBuffItems>ul>ul.collapsed {
