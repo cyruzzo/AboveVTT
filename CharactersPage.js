@@ -1240,8 +1240,8 @@ function rebuild_buffs(fullBuild = false){
         </select>
         <label for='buff_${replacedName}'>${i}</label>
         <div class='iconButtons'>
-          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(i) ? 'enabled' : ''}">pinboard</span>
-          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(i) ? 'enabled' : ''}">stars</span>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}">pinboard</span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}">stars</span>
         </div>
       </li>`)
       const select = row.find('select');
@@ -1269,11 +1269,11 @@ function rebuild_buffs(fullBuild = false){
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffFavorites.includes(i)){
-          rollBuffFavorites = rollBuffFavorites.filter(d=> d != i)
+        if(rollBuffFavorites.includes(replacedName)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
         }
         else{
-          rollBuffFavorites.push(i)
+          rollBuffFavorites.push(replacedName)
         }
         localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
         rebuild_buffs();
@@ -1281,11 +1281,11 @@ function rebuild_buffs(fullBuild = false){
       row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffPins.includes(i)){
-          rollBuffPins = rollBuffPins.filter(d=> d != i)
+        if(rollBuffPins.includes(replacedName)){
+          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
         }
         else{
-          rollBuffPins.push(i)
+          rollBuffPins.push(replacedName)
         }
         localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
         rebuild_buffs();
@@ -1314,8 +1314,8 @@ function rebuild_buffs(fullBuild = false){
         <input type="checkbox" id='buff_${replacedName}' data-buff='${replacedName}'/>
         <label for='buff_${replacedName}'>${i}</label>
         <div class='iconButtons'>
-          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(i) ? 'enabled' : ''}">pinboard</span>
-          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(i) ? 'enabled' : ''}">stars</span>
+          <span title='Pin to sheet' class="material-symbols-outlined pinToSheet ${rollBuffPins.includes(replacedName) ? 'enabled' : ''}">pinboard</span>
+          <span title='Favorite' class="material-symbols-outlined favorite ${rollBuffFavorites.includes(replacedName) ? 'enabled' : ''}">stars</span>
         </div>
       </li>`)
       if(window.rollBuffs.includes(i))
@@ -1334,11 +1334,11 @@ function rebuild_buffs(fullBuild = false){
       row.find('span.favorite').off('click.favorite').on('click.favorite', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffFavorites.includes(i)){
-          rollBuffFavorites = rollBuffFavorites.filter(d=> d != i)
+        if(rollBuffFavorites.includes(replacedName)){
+          rollBuffFavorites = rollBuffFavorites.filter(d=> d != replacedName)
         }
         else{
-          rollBuffFavorites.push(i)
+          rollBuffFavorites.push(replacedName)
         }
         localStorage.setItem('rollFavoriteBuffs' + window.PLAYER_ID, JSON.stringify(rollBuffFavorites));
         rebuild_buffs();
@@ -1346,11 +1346,11 @@ function rebuild_buffs(fullBuild = false){
       row.find('span.pinToSheet').off('click.pinToSheet').on('click.pinToSheet', function(e){
         e.preventDefault();
         e.stopPropagation();
-        if(rollBuffPins.includes(i)){
-          rollBuffPins = rollBuffPins.filter(d=> d != i)
+        if(rollBuffPins.includes(replacedName)){
+          rollBuffPins = rollBuffPins.filter(d=> d != replacedName)
         }
         else{
-          rollBuffPins.push(i)
+          rollBuffPins.push(replacedName)
         }
         localStorage.setItem('rollBuffPins' + window.PLAYER_ID, JSON.stringify(rollBuffPins));
         rebuild_buffs();
@@ -2030,8 +2030,8 @@ function observe_character_sheet_changes(documentToObserve) {
                 width:16px;
                 height:16px;
                 border-radius:3px;
-                background: #fff !important;
-                color: var(--theme-contrast) !important;
+                background: #fff;
+                color: var(--theme-contrast);
                 text-shadow: none !important;
                 font-weight: bold; 
               }
