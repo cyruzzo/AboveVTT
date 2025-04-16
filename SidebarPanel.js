@@ -498,7 +498,7 @@ function build_text_input(settingOption, currentValue, changeHandler) {
        <div class="token-image-modal-footer-title">${settingOption.label}</div>
      </div>
   `);
-  const input = $(`<input type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="30"/>`);
+  const input = $(`<input class='flyout-text-input' type="text" name="${settingOption.name}" value="${currentValue != undefined ? currentValue : settingOption.defaultValue}" size="30"/>`);
   input.on('blur',function() { 
     changeHandler(settingOption.name, $(this).val()) 
   });

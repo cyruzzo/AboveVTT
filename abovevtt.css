@@ -1608,8 +1608,6 @@ div#combat-tracker-settings form > div {
     padding: 2px 0px;
 }
 
-
-
 .spatial-audio-off.material-icons:before{
     content:"\ebe8"; 
     padding: 2px 0px;
@@ -4901,6 +4899,17 @@ button.block-send-to-game-log span {
     box-shadow: 1px 1px 10px black, -1px -1px 10px black;
     border-radius: 5px;
     overflow: hidden;
+}
+.sidebar-flyout .flyout-text-input {
+    background: none rgb(255, 255, 255);
+    border: 1px solid rgb(221, 221, 221);
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.075) 0px 1px 1px inset;
+    color: rgb(0, 0, 0);
+    padding: 4px;
+    transition: border 0.2s linear, box-shadow 0.2s linear;
+    font-family: Roboto, Helvetica, sans-serif;
+    font-size: 100%;
 }
 .list-item-image-flyout {
     width: 400px;
