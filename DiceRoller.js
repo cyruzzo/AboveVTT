@@ -1185,13 +1185,13 @@ function getCharacterStatModifiers(entityType, entityId) {
         try {
             let stats = $(".ddbc-ability-summary__secondary");
             const statMods = {
-                "str": Math.floor((parseInt(stats[0].textContent) - 10) / 2),
-                "dex": Math.floor((parseInt(stats[1].textContent) - 10) / 2),
-                "con": Math.floor((parseInt(stats[2].textContent) - 10) / 2),
-                "int": Math.floor((parseInt(stats[3].textContent) - 10) / 2),
-                "wis": Math.floor((parseInt(stats[4].textContent) - 10) / 2),
-                "cha": Math.floor((parseInt(stats[5].textContent) - 10) / 2),
-                "pb": parseInt($(".ct-proficiency-bonus-box__value").text())
+                "str": stats[0].textContent.match(/[+-]/gi) ? parseInt(stats[0].textContent) : Math.floor((parseInt(stats[0].textContent) - 10) / 2),
+                "dex": stats[1].textContent.match(/[+-]/gi) ? parseInt(stats[1].textContent) : Math.floor((parseInt(stats[1].textContent) - 10) / 2),
+                "con": stats[2].textContent.match(/[+-]/gi) ? parseInt(stats[2].textContent) : Math.floor((parseInt(stats[2].textContent) - 10) / 2),
+                "int": stats[3].textContent.match(/[+-]/gi) ? parseInt(stats[3].textContent) : Math.floor((parseInt(stats[3].textContent) - 10) / 2),
+                "wis": stats[4].textContent.match(/[+-]/gi) ? parseInt(stats[4].textContent) : Math.floor((parseInt(stats[4].textContent) - 10) / 2),
+                "cha": stats[5].textContent.match(/[+-]/gi) ? parseInt(stats[5].textContent) : Math.floor((parseInt(stats[5].textContent) - 10) / 2),
+                "pb": parseInt($(".ct-proficiency-bonus-box__value, .ct-combat-mobile__extra--proficiency [class*='styles_numberDisplay']").text())
             };
             console.debug("getCharacterStatModifiers built statMods from character sheet html", statMods);
             return statMods
