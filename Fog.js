@@ -847,7 +847,7 @@ function do_check_token_visibility() {
 			
 			const inFog = (playerTokenId !== id && is_token_under_fog(id, fogContext) === true); // this token is in fog and not the players token
 
-			const notInLight = (inFog === true || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && is_token_in_raycasting_context(id, rayContext) !== true) || (playerTokenId !== id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && is_token_under_light_aura(id, lightContext) !== true)); // this token is not in light, the player is using vision/light and darkness > 0
+			const notInLight = (inFog === true || (playerTokenId !== id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && (is_token_in_raycasting_context(id, rayContext) !== true || is_token_under_light_aura(id, lightContext) !== true))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
@@ -6246,7 +6246,7 @@ function redraw_light(darknessMoved = false){
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
 			offscreenContext.globalCompositeOperation='lighten';
 			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
-			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			
 		}
 				
