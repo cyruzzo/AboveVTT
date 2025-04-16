@@ -1412,14 +1412,14 @@ function observe_character_sheet_changes(documentToObserve) {
     //for character page snippets and sidebar text. Can add anything else that's text isn't modified without removing parent.
     const snippets = documentToObserve.find(`
       .ddbc-snippet__content p:not('.above-vtt-visited'), 
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'])>div>div:not(.ct-item-detail__customize):not([class*='__intro']) p:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'])>div>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'])>div>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'])>div>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not([class*='__modifier']):not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'])>div>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'], :has(input[type="search"]))>div>div:not(.ct-item-detail__customize):not([class*='__intro']) p:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'], :has(input[type="search"]))>div>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'], :has(input[type="search"]))>div>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'], :has(input[type="search"]))>div>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not([class*='__modifier']):not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane'], :has(input[type="search"]))>div>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not(.above-vtt-visited),
       [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited)
     `);
-
+  
     if(add_journal_roll_buttons && snippets.length > 0){
       snippets.addClass("above-vtt-visited");
       snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){
@@ -1435,7 +1435,7 @@ function observe_character_sheet_changes(documentToObserve) {
         add_aoe_statblock_click($(this), `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
     }
-
+ 
     // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar
     const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited)`) 
     if(manualSetRollbuttons.length > 0){
