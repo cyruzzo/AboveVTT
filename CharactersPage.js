@@ -1883,7 +1883,9 @@ function observe_character_sheet_changes(documentToObserve) {
                 align-items: center;
               }
               div#avttBuffSheetPins li input {
-                  margin-right: 5px;
+                margin-right: 5px;
+                width: 16px;
+                height: 16px;
               }
               div#avttBuffSheetPins li {
                   margin-right: 20px;
