@@ -1511,21 +1511,17 @@ function observe_character_sheet_changes(documentToObserve) {
     if(add_journal_roll_buttons && snippets.length > 0){
 
       snippets.addClass("above-vtt-visited");
-      snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){
-         if($(this).closest(`.ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type`).find('input[type="search"]').length>0)
-          return;
+      snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){   
         $(this).parent().replaceWith($(this).text());
       })
       snippets.find('td').each(function(){
-        if($(this).closest(`.ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type`).find('input[type="search"]').length>0)
-          return;
         let text = $(this).text();
         text = text.replace("–", "-");
         $(this).text(text);
       })
       snippets.each(function(){
-         if($(this).closest(`.ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type`).find('input[type="search"]').length>0)
-          return;
+        if($(this).closest(`[class*='styles_maxHeight']`).has('input[type="search"]'))
+          return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
         add_journal_roll_buttons($(this));
         add_aoe_statblock_click($(this), `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
