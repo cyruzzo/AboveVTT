@@ -3868,7 +3868,7 @@ function show_player_sheet() {
 	$("#character-tools-target").css({
 		"display": "",
 	});
-	$(".ct-character-sheet__inner").css({
+	$(".ct-character-sheet__inner, [class*='styles_mobileNav']>div>button[class*='styles_navToggle']").css({
 		"display": "",
 		"z-index": 110
 	});
