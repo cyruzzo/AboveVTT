@@ -273,7 +273,10 @@ Mousetrap.bind('shift+v', function () {       //check token vision
 });
 
 Mousetrap.bind('=', function () {       //zoom plus
-    if(window.numpadRollFormula != undefined){
+    if($('.roll-mod-container').hasClass('show')){
+        $('.roll-button-mod.plus').click();
+    }
+    else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
             window.numpadRollFormulaMod = 0;
         window.numpadRollFormulaMod = window.numpadRollFormulaMod+1
@@ -309,7 +312,10 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9"], function (e) {
 });*/
 
 Mousetrap.bind('+', function () {       //zoom plus
-    if(window.numpadRollFormula != undefined){
+    if($('.roll-mod-container').hasClass('show')){
+        $('.roll-button-mod.plus').click();
+    }
+    else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
             window.numpadRollFormulaMod = 0;
         window.numpadRollFormulaMod = window.numpadRollFormulaMod+1;
@@ -321,7 +327,10 @@ Mousetrap.bind('+', function () {       //zoom plus
 });
 
 Mousetrap.bind('-', function () {       //zoom minus
-    if(window.numpadRollFormula != undefined){
+    if($('.roll-mod-container').hasClass('show')){
+        $('.roll-button-mod.minus').click();
+    }
+    else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
             window.numpadRollFormulaMod = 0;
         window.numpadRollFormulaMod = window.numpadRollFormulaMod-1;
@@ -332,7 +341,10 @@ Mousetrap.bind('-', function () {       //zoom minus
     }
 });
 Mousetrap.bind('enter', function () {       //zoom minus
-    if(window.numpadRollFormula != undefined){
+    if($('.roll-mod-container').hasClass('show')){
+        $('.roll-mod-container>.roll-button').click(); 
+    }   
+    else if(window.numpadRollFormula != undefined){
         if(window.numpadRollFormulaMod == undefined)
             window.numpadRollFormulaMod = 0
 

@@ -3433,18 +3433,18 @@ function init_help_menu() {
 							<dd>Zoom in</dd>
 						</dl>
 						<dl>
-							<dt>1-7</dt>
-							<dd> Add Dice to Dice Pool</dd>
+							<dt>1-9</dt>
+							<dd>Add Custom Numkey Dice to Dice Pool</dd>
 						</dl>
-							<dt>${getModKeyName()}+1-7</dt>
-							<dd>Remove Dice from Dice Pool</dd>
+							<dt>${getModKeyName()}+1-9</dt>
+							<dd>Remove Custom Numkey Dice from Dice Pool</dd>
 						</dl>
 						<dl>
-							<dt>- (with Dice Pool Mod visibile)</dt>
+							<dt>- (with Dice Pool or Mod adjuster visibile)</dt>
 							<dd>Subtract from Roll Mod</dd>
 						</dl>
 						<dl>
-							<dt>= / + (with Dice Pool Mod visibile)</dt>
+							<dt>= / + (with Dice Pool or Mod adjuster visibile)</dt>
 							<dd>Add to Roll Mod</dd>
 						</dl>
 						<dl>
