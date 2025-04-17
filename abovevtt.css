@@ -4761,6 +4761,27 @@ div#initialPosition_row input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+#journal_structure {
+    display: none;
+    max-height: 400px;
+    border: 1px solid black;
+    width: 340px;
+    .folder-item {
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        padding: 5px;
+        margin: 5px;
+        .folder-title {
+            font-weight: 600;
+        }
+        .folder-children {
+            display: none;
+            .note-item {
+                width: min-content;
+            }
+        }
+    }
+}
 
 /*do our own css of mobile character sheets due to disabling ddb event that changes classes*/
 .ct-character-sheet-mobile__header{

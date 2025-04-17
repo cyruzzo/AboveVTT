@@ -1298,6 +1298,93 @@ function edit_scene_dialog(scene_id) {
 			})
 		)
 	);
+	
+	const sceneJournalRow = form_row('scene_journal', 'Scene journal', $(`<input name='scene_journal' value='${scene.scene_journal || ''}' style="width: 100%"/>`)
+	, true)
+
+	const sceneJournalButton = $("<button type='button'><b>Select scene journal</b></button>");
+
+	let journalStructure = $("<div id='journal_structure'/>");
+	let notes = {...window.JOURNAL.notes};
+	let folders = [...window.JOURNAL.chapters]; 
+
+	// Build journal structure
+	let folderTree = [];
+
+	// Create a map for quick lookup of folders by their ID
+	let folderMap = {};
+	folders.forEach(folder => {
+		folder.children = []; // Initialize children array for each folder
+		folderMap[folder.id] = folder;
+	});
+
+	// Build the folder tree structure
+	folders.forEach(folder => {
+		if (folder.parentID) {
+			// If the folder has a parent, add it to the parent's children array
+			if (folderMap[folder.parentID]) {
+				folderMap[folder.parentID].children.push(folder);
+			}
+		} else {
+			// If the folder has no parent, it's a root folder
+			folderTree.push(folder);
+		}
+	});
+
+	// The folderTree now contains the full hierarchical structure
+	function renderFolderTree(folderTree, parentElement) {
+		folderTree.forEach(folder => {
+			const folderElement = $(`<div class="folder-item" id="${folder.id}">
+				<div class="folder-title">${folder.title}</div>
+				<div class="folder-children"></div>
+			</div>`);
+
+			// Append notes to the folder
+			folder.notes.forEach(noteId => {
+				const noteObject = notes[noteId];
+				const noteElement = $(`<div class="note-item" id="${noteId}">${noteObject.title}</div>`);
+				folderElement.find('.folder-children').append(noteElement);
+			});
+			parentElement.append(folderElement);
+
+			// Recursively render child folders
+			if (folder.children.length > 0) {
+				renderFolderTree(folder.children, folderElement.find('.folder-children'));
+			}
+
+		});
+	}
+
+	journalStructure.on('click', '.folder-item', function(e) {
+		e.stopPropagation(); // Prevent click event from bubbling up to parent elements
+		const children = $(this).find('>.folder-children');
+		if (children.is(':visible')) {
+			children.hide();
+		} else {
+			children.show();
+		}
+	});
+
+	journalStructure.on('click', '.note-item', function(e) {
+		e.stopPropagation(); // Prevent click event from bubbling up to parent elements
+		const noteId = $(this).attr('id');
+		$('input[name="scene_journal"]').val(noteId);
+});
+
+	// Render the folder tree inside journalStructure
+	renderFolderTree(folderTree, journalStructure);
+
+	let journalStructureVisible = false;
+
+	sceneJournalButton.click(function() {
+		journalStructure.css('display', journalStructureVisible? 'none' : 'block');
+		journalStructureVisible = !journalStructureVisible;
+	});
+	sceneJournalRow.append(sceneJournalButton);
+	sceneJournalRow.append(journalStructure);
+
+	form.append(sceneJournalRow);
+
 	form.find('#dmMapToggle_row').attr('title', `Enable this if you have a 2nd map that has secrets embedded that you don't want your players to see.`)
 
 	let darknessValue = scene.darkness_filter || 0;
