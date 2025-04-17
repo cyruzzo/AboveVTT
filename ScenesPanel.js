@@ -1298,8 +1298,9 @@ function edit_scene_dialog(scene_id) {
 			})
 		)
 	);
-	
-	const sceneJournalRow = form_row('scene_journal', 'Scene journal', $(`<input name='scene_journal' value='${scene.scene_journal || ''}' style="width: 100%"/>`)
+	const currentContainingFolder = window.JOURNAL.chapters.find(folder => folder.notes.includes(scene.scene_journal))?.title;
+
+	const sceneJournalRow = form_row('scene_journal', 'Scene journal', $(`<span id="scene_journal_display">${currentContainingFolder}${currentContainingFolder && '\\'}${scene.scene_journal ? window.JOURNAL.notes[scene.scene_journal].title : ''}</span><input name='scene_journal' value='${scene.scene_journal || ''}' style="display:none"/>`)
 	, true)
 
 	const sceneJournalButton = $("<button type='button'><b>Select scene journal</b></button>");
@@ -1369,6 +1370,8 @@ function edit_scene_dialog(scene_id) {
 		e.stopPropagation(); // Prevent click event from bubbling up to parent elements
 		const noteId = $(this).attr('id');
 		$('input[name="scene_journal"]').val(noteId);
+		const containingFolder = window.JOURNAL.chapters.find(folder => folder.notes.includes(noteId))?.title;
+		$('#scene_journal_display').text(`${containingFolder}${containingFolder && '\\'}${window.JOURNAL.notes[noteId].title}`);
 });
 
 	// Render the folder tree inside journalStructure

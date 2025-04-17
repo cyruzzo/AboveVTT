@@ -4777,7 +4777,7 @@ div#initialPosition_row input::-webkit-inner-spin-button {
         .folder-children {
             display: none;
             .note-item {
-                width: min-content;
+                width: fit-content;
             }
         }
     }
