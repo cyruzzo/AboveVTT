@@ -5853,6 +5853,12 @@ button.avtt-roll-button:has(button.avtt-roll-button) {
 .ct-sidebar__portal{
     overflow: unset !important;
     z-index: 57000 !important;
+    width:100%; /* allows positioning of menus to be correct, remove pointer-events to stop it from taking up all clicks*/
+    pointer-events: none;
+}
+.ct-sidebar__portal .ct-sidebar__inner,
+.ct-sidebar__portal>[role='presentation']:not([aria-hidden=true]) .MuiBackdrop-invisible{
+    pointer-events: auto; /*override pointer events of portal to allow clicking in the actual sidebar*/
 }
 .ct-sidebar__portal>[role='presentation'] .MuiPopover-paper{
     width: fit-content;
