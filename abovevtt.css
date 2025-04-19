@@ -2923,6 +2923,7 @@ button.roll-button-mod.minus {
     }
     .material-icons{
         padding: 1px 0px 0px 0px;
+        color:#000;
     }
 }
 
@@ -5650,15 +5651,15 @@ span.exhaustion-pip.last{
     transition: opacity 1s ease-in-out;
     position: absolute;
     z-index: 1;
-    left: 5%;
+    right: 5%;
     margin-top: 30px;
     width: 90%;
 }
 
 #edit_scene_form .sidebar-hovertext:before,
 #edit_scene_form .sidebar-hovertext:hover:before{
-    width: fit-content;
-    white-space: nowrap;
+    max-width: 300px;
+    width: max-content;
 }
 .ct-sidebar{
     inset: 0px 0px 0px auto !important;
