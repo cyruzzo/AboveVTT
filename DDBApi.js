@@ -162,6 +162,7 @@ class DDBApi {
         }
       }    
     }
+    return find_game_id(); // return this here to be used in createAboveVttEncounter - this return being here seems to prevent bugged encounters. Maybe something do with going ahead to create without finishing deleting, not sure but haven't been able to replicate it with it here.
   }
 
   static async createAboveVttEncounter(campaignId = find_game_id()) {
