@@ -3060,10 +3060,10 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 								// Setup waypoint manager
 								// reset measuring when a new token is picked up
+								WaypointManager.cancelFadeout(true);
 								if(window.previous_measured_token != self.options.id){
 									window.previous_measured_token = self.options.id
 									WaypointManager.clearWaypoints(false);
-									WaypointManager.cancelFadeout(true);
 								}
 								let tokenMidX = parseInt(self.orig_left) + Math.round(self.options.size / 2);
 								let tokenMidY = parseInt(self.orig_top) + Math.round(self.options.size / 2);
@@ -3078,7 +3078,7 @@ class Token {
 
 								if(WaypointManager.numWaypoints > 0){
 									WaypointManager.checkNewWaypoint(tokenMidX/window.CURRENT_SCENE_DATA.scale_factor, tokenMidY/window.CURRENT_SCENE_DATA.scale_factor)
-									WaypointManager.cancelFadeout(true);
+									
 								}
 								window.BEGIN_MOUSEX = tokenMidX;
 								window.BEGIN_MOUSEY = tokenMidY;
@@ -3182,7 +3182,6 @@ class Token {
 							
 							if (allowTokenMeasurement) {
 								
-
 								if(self.isAoe() && self.options.imgsrc.match(/aoe-shape-cone|aoe-shape-line|aoe-shape-square/gi) && (window.dragSelectedTokens.length == 1 || shiftHeld)){					
 									let origin = getOrigin(self)
 									
