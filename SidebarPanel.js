@@ -2435,6 +2435,7 @@ function enable_draggable_change_folder(listItemType) {
         revert: true,
         scroll: false, // jQuery UI has a bug where scrolling changes the offset of the helper. If we can figure out how to work around that bug, then we can change this to true
         // axis: "y",  // this helps if we set scroll: true
+        distance: 10,
         helper: function (event) {
           let draggedRow = $(event.target).closest(".list-item-identifier");
           let draggedItem = find_sidebar_list_item(draggedRow);
@@ -2489,6 +2490,7 @@ function enable_draggable_change_folder(listItemType) {
         start: function(e, ui){
           playerOffsetStart= tokensPanel.body.scrollTop();
         },
+        distance: 10,
         drag: function(e, ui){
           ui.position.top = ui.position.top - tokensPanel.body.scrollTop() + playerOffsetStart
         },
