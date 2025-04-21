@@ -3512,6 +3512,14 @@ function init_help_menu() {
 							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						</dl>
 						<dl>
+							<dt>${getModKeyName()}+click scenes/tokens while reordering (DM only)</dt>
+							<dd>While reordering the scenes listing or token listing this will to add/remove scenes to multi-selection</dd>
+						</dl>
+						<dl>
+							<dt>${getShiftKeyName()}+click scenes/tokens while reordering (DM only)</dt>
+							<dd>While reordering the scenes listing this will add scenes between clicked scene and other selected scenes in the same folder to multi-selection</dd>
+						</dl>
+						<dl>
 							<dt>UP/DOWN arrows</dt>
 							<dd>Will cycle through fog & draw options if menu open</dd>
 						</dl>
