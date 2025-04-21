@@ -1595,7 +1595,7 @@ class Token {
 		}
 		
 		const conditions = this.conditions;
-		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || window.JOURNAL.notes[this.options.id].player == window.myUser))
+		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || (window.JOURNAL.notes[this.options.id].player instanceof Array && window.JOURNAL.notes[this.options.id].player.includes(`${window.myUser}`))))
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
@@ -1856,12 +1856,12 @@ class Token {
 							remove_tooltip(500);
 						}
 				
-				    });
+				    });	
 				}
 				conditionCount++;
 			}
 			// CHECK IF ADDING NOTE CONDITION
-			if (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player)) {
+			if (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || (window.JOURNAL.notes[this.options.id].player instanceof Array && window.JOURNAL.notes[this.options.id].player.includes(`${window.myUser}`)))) {
 				console.log("aggiungerei nota");
 				const conditionName = "note"
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
