@@ -2160,11 +2160,11 @@ function edit_encounter(clickEvent) {
             let crText = $(statBlock).find('.custom-challenge-rating.custom-stat').text();
             if(crText == '' || crText == undefined){
               let searchText = statBlock.replaceAll('mon-stat-block-2024', '').replaceAll(/\&nbsp\;/g,' ')
-              let statBlockCR = searchText.matchAll(/CR[\s\S]*?[\s>]([0-9]+(\/[0-9])?)/gi).next()
+              let statBlockCR = searchText.matchAll(/[\s>]+(CR|challenge)[\s\S]*?[\s>]([0-9]+(\/[0-9])?)/gi).next()
 
               if(statBlockCR.value != undefined){
-                  if(statBlockCR.value[1] != undefined)
-                      crText = statBlockCR.value[1];
+                  if(statBlockCR.value[2] != undefined)
+                      crText = statBlockCR.value[2];
               }        
             }
             if(crText != '' && crText != undefined)
