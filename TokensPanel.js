@@ -353,6 +353,9 @@ function rebuild_token_items_list() {
         console.groupEnd();
         console.error("rebuild_token_items_list caught an unexpected error", error);
     }
+
+    if(window.reorderState == ItemType.PC || window.reorderState == ItemType.MyToken)
+       enable_draggable_change_folder(window.reorderState)
 }
 
 /**
