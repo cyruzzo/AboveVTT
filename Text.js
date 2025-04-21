@@ -36,7 +36,8 @@ function store_text_settings(){
         "stroke_size": $("#stroke_size").val(),
         "stroke_color": $("#stroke_color").val(),
         "text_background_color":  $("#text_background_color").val(),
-        "text_shadow": $("#text_shadow").hasClass(buttonSelectedClasses)
+        "text_shadow": $("#text_shadow").hasClass(buttonSelectedClasses),
+        "text_hide":  $('#hide_text').hasClass(buttonSelectedClasses),
     }
     window.TEXTDATA = storageObject
     localStorage.setItem('textSettings', JSON.stringify(storageObject));
