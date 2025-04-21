@@ -1637,7 +1637,33 @@ function did_click_row(clickEvent) {
   let clickedItem = find_sidebar_list_item(clickedRow);
   console.log("did_click_row", clickedItem);
 
+  let rowId = clickedRow.attr('data-id');
+
+
   switch (clickedItem.type) {
+    case ItemType.Scene:
+    case ItemType.MyToken:
+    case ItemType.PC:
+      if(window.reorderState == clickedItem.type){
+        if(ctrlHeld && rowId != undefined){
+          clickedRow.toggleClass('selected');
+        }
+        else if(shiftHeld && rowId != undefined){
+          if($('.list-item-identifier.selected.selected').length>0){
+            if(clickedRow.nextAll('.selected').length>0){
+              const nextRows = clickedRow.nextUntil('.selected').addBack();
+              nextRows.toggleClass('selected', true);
+            }else if(clickedRow.prevAll('.selected').length>0){
+              const nextRows = clickedRow.prevUntil('.selected').addBack();
+              nextRows.toggleClass('selected', true);
+            }
+          }
+        }
+        else{
+          $('.list-item-identifier.selected').toggleClass('selected', false);
+          clickedRow.toggleClass('selected', true);
+        }  
+      }
     case ItemType.Encounter:
     case ItemType.Folder:
       if (clickedRow.hasClass("collapsed")) {
@@ -1676,19 +1702,22 @@ function did_click_row(clickEvent) {
       // display_builtin_token_details_modal(clickedItem);
       break;
     case ItemType.Scene:
-      // show the preview
-      build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-        if (clickedItem.isVideo) {
-          flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
-        } else {
-          flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
-        }
-        flyout.css("right", "340px");
-      });
-      clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
-        $(mouseleaveEvent.currentTarget).off("mouseleave");
-        remove_sidebar_flyout();
-      });
+      if(window.reorderState != 'scene'){
+        // show the preview
+        build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+          if (clickedItem.isVideo) {
+            flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
+          } else {
+            flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
+          }
+          flyout.css("right", "340px");
+        });
+        clickedRow.off("mouseleave").on("mouseleave", function (mouseleaveEvent) {
+          $(mouseleaveEvent.currentTarget).off("mouseleave");
+          remove_sidebar_flyout();
+        });
+      }
+      
       break;
     case ItemType.Aoe:
       // bain todo open context menu to choose style / size
@@ -2196,7 +2225,7 @@ function  disable_draggable_change_folder() {
         try {
           tokensPanel.body.find(".sidebar-list-item-row").droppable("destroy");
         } catch (e) {} // don't care if it fails, just try
-
+          tokensPanel.body.find('.list-item-identifier.selected').toggleClass('selected', false)
         redraw_token_list($('[name="token-search"]').val());
     }
 
@@ -2218,6 +2247,8 @@ function  disable_draggable_change_folder() {
         try {
           scenesPanel.body.find(".sidebar-list-item-row").droppable("destroy");
         } catch (e) {} // don't care if it fails, just try
+
+        scenesPanel.body.find('.list-item-identifier.selected').toggleClass('selected', false)
     }
   }
   
@@ -2264,28 +2295,44 @@ function enable_draggable_change_folder(listItemType) {
 
   disable_draggable_change_folder();
   window.reorderState = listItemType; // if you move the current scene, it will reload. When that happens, we need to know to re-enter this state.
-
   const droppableOptions = {
     greedy: true,
     tolerance: "pointer",
     accept: ".draggable-sidebar-item-reorder:not(.drag-cancelled)",
     drop: function (dropEvent, ui) {
       let draggedRow = $(ui.helper);
+      draggedRow.toggleClass('selected', true);
       let draggedItem = find_sidebar_list_item(draggedRow);
+      let selectedItems = $(`.list-item-identifier.selected`)
+
       let droppedFolder = $(dropEvent.target);
       if (droppedFolder.hasClass("sidebar-panel-body") || droppedFolder.attr("id") === RootFolder.Scenes.id) {
         // they dropped it on the header so find the root folder
         if (window.reorderState === ItemType.Scene) {
-          move_item_into_folder_item(draggedItem, RootFolder.Scenes.id);
+          for(let i=0; i<selectedItems.length; i++){
+            draggedRow = $(selectedItems[i]);
+            draggedItem = find_sidebar_list_item(draggedRow);
+            move_item_into_folder_item(draggedItem, RootFolder.Scenes.id);
+          }
+          did_update_scenes();
         } else if (window.reorderState === ItemType.MyToken) {
-          let customization = find_token_customization(draggedItem.type, draggedItem.id);
-          customization.parentId = RootFolder.MyTokens.id;
-          persist_token_customization(customization);
+          for(let i=0; i<selectedItems.length; i++){
+            draggedRow = $(selectedItems[i]);
+            draggedItem = find_sidebar_list_item(draggedRow);
+            let customization = find_token_customization(draggedItem.type, draggedItem.id);
+            customization.parentId = RootFolder.MyTokens.id;
+            persist_token_customization(customization);
+          }
           rebuild_token_items_list();
-        } else if (window.reorderState === ItemType.PC) {
-          let customization = find_or_create_token_customization(draggedItem.type, draggedItem.id);
-          customization.parentId = RootFolder.Players.id;
-          persist_token_customization(customization);
+          
+        } else if (window.reorderState === ItemType.PC) {   
+          for(let i=0; i<selectedItems.length; i++){
+            draggedRow = $(selectedItems[i]);
+            draggedItem = find_sidebar_list_item(draggedRow);
+            let customization = find_or_create_token_customization(draggedItem.type, draggedItem.id);
+            customization.parentId = RootFolder.Players.id;
+            persist_token_customization(customization);
+          }
           rebuild_token_items_list();
         } else {
           console.warn("Unable to reorder item by dropping it on the body", window.reorderState, draggedItem);
@@ -2293,7 +2340,15 @@ function enable_draggable_change_folder(listItemType) {
       } else {
         let folderItem = find_sidebar_list_item(droppedFolder);
         console.log("enable_draggable_change_folder dropped", draggedItem, folderItem);
-        move_item_into_folder_item(draggedItem, folderItem);
+        if(selectedItems.length > 0){
+          for(let i=0; i<selectedItems.length; i++){
+            draggedRow = $(selectedItems[i]);
+            draggedItem = find_sidebar_list_item(draggedRow);
+            move_item_into_folder_item(draggedItem, folderItem);
+          }
+          did_update_scenes();
+        }
+        
         expand_all_folders_up_to_item(folderItem);
       }
     }
@@ -2328,6 +2383,7 @@ function enable_draggable_change_folder(listItemType) {
         appendTo: tokensPanel.body,
         revert: true,
         scroll: true,
+        distance: 10,
         start: function(e, ui){
           offsetStart= tokensPanel.body.scrollTop();
         },
@@ -2477,7 +2533,6 @@ function move_item_into_folder_item(listItem, folderItem) {
     enable_draggable_change_folder(ItemType.MyToken);
   } else if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
     move_scene_to_folder(listItem, folderItem.id);
-    did_update_scenes();
   } else if(listItem.isTypePC() || (listItem.isTypeFolder() && listItem.fullPath().startsWith(RootFolder.Players.path))){
     let customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, RootFolder.Players.id);
     customization.parentId = folderItem.id;

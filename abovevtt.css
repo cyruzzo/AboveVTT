@@ -4894,6 +4894,9 @@ button.block-send-to-game-log span {
     text-align: center;
     color: lightgray;
 }
+.list-item-identifier.selected{
+    border: 2px solid #66Fd;
+}
 .sidebar-flyout {
     position: fixed;
     z-index: 100000;

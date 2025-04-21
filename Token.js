@@ -3357,7 +3357,8 @@ class Token {
 								throttleLight();
 						});
 
-					}
+					},
+					distance: 5,
 				});
 				let classToClick = null;
 				if(this.isLineAoe()){
