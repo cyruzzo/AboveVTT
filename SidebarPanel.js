@@ -2332,6 +2332,7 @@ async function enable_draggable_change_folder(listItemType) {
             persist_token_customization(customization);
           }
           rebuild_token_items_list();
+
         } else if (window.reorderState === ItemType.PC) {   
           for(let i=0; i<selectedItems.length; i++){
             draggedRow = $(selectedItems[i]);
@@ -2341,6 +2342,7 @@ async function enable_draggable_change_folder(listItemType) {
             persist_token_customization(customization);
           }
           rebuild_token_items_list();
+          enable_draggable_change_folder(ItemType.PC);
         } else {
           console.warn("Unable to reorder item by dropping it on the body", window.reorderState, draggedItem);
         }
@@ -2353,11 +2355,13 @@ async function enable_draggable_change_folder(listItemType) {
           draggedItem = find_sidebar_list_item(draggedRow);
           move_item_into_folder_item(draggedItem, folderItem);
         }
+
         if(window.reorderState === ItemType.Scene){
           did_update_scenes();
         }else if(window.reorderState === ItemType.PC ||window.reorderState === ItemType.MyToken){
           rebuild_token_items_list();
         }  
+
         
         
         expand_all_folders_up_to_item(folderItem);
@@ -2540,17 +2544,14 @@ async function enable_draggable_change_folder(listItemType) {
 function move_item_into_folder_item(listItem, folderItem) {
   if (listItem.isTypeMyToken() || (listItem.isTypeFolder() && listItem.fullPath().startsWith(RootFolder.MyTokens.path))) {
     let customization = find_token_customization(listItem.type, listItem.id);
-    customization.parentId = folderItem.id;
-    persist_token_customization(customization);
-    
+    customization.parentId = folderItem.id;    persist_token_customization(customization);
+
   } else if (listItem.isTypeScene() || listItem.isTypeSceneFolder()) {
     move_scene_to_folder(listItem, folderItem.id);
   } else if(listItem.isTypePC() || (listItem.isTypeFolder() && listItem.fullPath().startsWith(RootFolder.Players.path))){
     let customization = find_or_create_token_customization(listItem.type, listItem.id, listItem.parentId, RootFolder.Players.id);
     customization.parentId = folderItem.id;
     persist_token_customization(customization);
-  
-    
   } else {
     console.warn("move_item_into_folder_item was called with invalid item type", listItem);
   }
