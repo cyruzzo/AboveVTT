@@ -390,11 +390,15 @@ class WaypointManagerClass {
 		const eucDistance = Math.sqrt(xLength*xLength+yLength*yLength)/gridSize * window.CURRENT_SCENE_DATA.fpsq;
 		distance = Math.round(distance / gridSize);
 
-		const lineSlope = yLength/xLength;
 		let addedDistance = 0;
+		
+		if(rulerType == "fiveten" ){		
+        	const dx = Math.round(xLength / gridSize);
+       		const dy = Math.round(yLength / gridSize);
+       		//The below keeps the even/odd count for number of diagonals based on last waypoint position and sets addedDistance to the number of extra squares depending on the starting pattern.
+       		//If the last waypoint ended on even it follows the 1,2,1 squares pattern. If the last waypoint ended on odd it follows the 2,1,2 squares pattern for the next diagonal segments.
 
-		if(rulerType == "fiveten" && lineSlope > 0.6 && lineSlope < 1.4){
-			this.numberOfDiagonals = (this.numberOfDiagonals%2 == 0) ? distance : distance+1 ;
+			this.numberOfDiagonals = this.numberOfDiagonals%2 == 0 ? Math.min(dx, dy) : Math.min(dx, dy)+1;
 			addedDistance = Math.floor(this.numberOfDiagonals/2);
 		}
 
