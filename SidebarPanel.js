@@ -2149,7 +2149,7 @@ function edit_encounter(clickEvent) {
         const hasCustomStatBlock = itemCustomization?.tokenOptions?.statBlock != undefined;
         let statBlock = hasCustomStatBlock ? $(`<div>${window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock].text}</div>`) : new MonsterStatBlock(item.monsterData);       
         let cr;
-        if(!hasCustomStatBlock){
+        if(!hasCustomStatBlock && item.monsterData != undefined){
           cr = statBlock.data.challengeRatingId < 1 ? 1 : statBlock.data.challengeRatingId
         }
         else if(hasCustomStatBlock){
@@ -2186,18 +2186,20 @@ function edit_encounter(clickEvent) {
         for(let j = 0; j<item.quantity; j++ ){
           if(item.monsterData != undefined || hasCustomStatBlock){
             if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
-              xpLowMax += xpTable[cr].low;
-              xpMidMax += xpTable[cr].mid;
-              xpHighMax += xpTable[cr].high;
+              const minCR = Math.max(cr, 1);
+              const multiplier = Math.min(cr, 1)
+              xpLowMax += xpTable[minCR].low * multiplier;
+              xpMidMax += xpTable[minCR].mid * multiplier;
+              xpHighMax += xpTable[minCR].high * multiplier;
               if(isOldrules){
-                xpDeadlyMax += xpTable[cr].deadly;
+                xpDeadlyMax += xpTable[minCR].deadly * multiplier;
               }
             }
             else{
               const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp;
               xp += xpValue;
             }
-          } else if(item.type == 'pc' && (item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
+          } else if(item.type == 'pc' && ((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j)){
             const pc = find_pc_by_player_id(item.id);
             const pcLevel = pc.level
             xpLowMax += xpTable[pcLevel].low;
@@ -2206,6 +2208,11 @@ function edit_encounter(clickEvent) {
             if(isOldrules){
               xpDeadlyMax += xpTable[pcLevel].deadly;
             }
+          }
+          else if(item.type == 'pc' && (item.isAlly == false || item.isAllyQuantity <= j)){
+            const pc = find_pc_by_player_id(item.id);
+            const pcLevel = pc.level
+            xp += crXpTable[pcLevel];
           }
           let row = build_sidebar_list_row(SidebarListItem.fromJson(item));
           const removeButton = $('<button class="removeItem" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>')
