@@ -2606,6 +2606,9 @@ class JournalManager{
 			.custom-initiative.custom-stat{
 				 color: #007900;
 			}
+			.custom-challenge-rating.custom-stat{
+				 color: #007979;
+			}
 			.custom-pc-sheet.custom-stat{
 				 color: #08a1e3;
 			}
@@ -3062,6 +3065,7 @@ class JournalManager{
 			      { title: 'Average HP', inline: 'b',classes: 'custom-avghp custom-stat' },
 			      { title: 'HP Roll', inline: 'b', classes: 'custom-hp-roll custom-stat' },
 			      { title: 'Initiative', inline: 'b', classes: 'custom-initiative custom-stat' },
+			      { title: 'CR', inline: 'b', classes: 'custom-challenge-rating custom-stat' },
 			      { title: 'Custom PC Sheet Link', inline: 'b', classes: 'custom-pc-sheet custom-stat' },
 			      { title: 'AboveVTT Slash Command Roll Button', inline: 'span', classes: 'abovevtt-slash-command-journal custom-stat' }
 			   	]}

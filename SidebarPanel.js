@@ -2010,6 +2010,42 @@ function edit_encounter(clickEvent) {
         'deadly': 12700
       }
   }
+  const crXpTable = {
+    "0":0,
+    "0.125":25,
+    "0.25":50,
+    "0.5":100,
+    "1":200,
+    "2":450,
+    "3":700,
+    "4":1100,
+    "5":1800,
+    "6":2300,
+    "7":2900,
+    "8":3900,
+    "9":5000,
+    "10":5900,
+    "11":7200,
+    "12":8400,
+    "13":10000,
+    "14":11500,
+    "15":13000,
+    "16":15000,
+    "17":18000,
+    "18":20000,
+    "19":22000,
+    "20":25000,
+    "21":33000,
+    "22":41000,
+    "23":50000,
+    "24":62000,
+    "25":75000,
+    "26":90000,
+    "27":105000,
+    "28":120000,
+    "29":135000,
+    "30":155000
+  }
 
   clickEvent.stopPropagation();
   const clickedRow = $(clickEvent.target).closest(".list-item-identifier");
@@ -2108,14 +2144,38 @@ function edit_encounter(clickEvent) {
 
 
       for(let i in customization.encounterData.tokenItems){
-        const item = customization.encounterData?.tokenItems[i];
-        for(let j = 0; j<item.quantity; j++ ){
-          if(item.monsterData != undefined){
-           const statBlock = new MonsterStatBlock(item.monsterData);
-           const crDefinition = statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId);
+        const item = customization.encounterData.tokenItems[i];
+        const itemCustomization = find_token_customization(customization.encounterData.tokenItems[i].type, customization.encounterData.tokenItems[i].id);
+        const hasCustomStatBlock = itemCustomization?.tokenOptions?.statBlock != undefined;
+        let statBlock = hasCustomStatBlock ? $(`<div>${window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock].text}</div>`) : new MonsterStatBlock(item.monsterData);       
+        let cr;
+        if(!hasCustomStatBlock){
+          cr = statBlock.data.challengeRatingId < 1 ? 1 : statBlock.data.challengeRatingId
+        }
+        else if(hasCustomStatBlock){
+          if(window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock] != undefined){
+           
+            statBlock.find('style').remove();
+            statBlock=statBlock[0].innerHTML;
+            let crText = $(statBlock).find('.custom-challenge-rating.custom-stat').text();
+            if(crText == '' || crText == undefined){
+              let searchText = statBlock.replaceAll('mon-stat-block-2024', '').replaceAll(/\&nbsp\;/g,' ')
+              let statBlockCR = searchText.matchAll(/CR[\s\S]*?[\s>]([0-9]+(\/[0-9])?)/gi).next()
 
+              if(statBlockCR.value != undefined){
+                  if(statBlockCR.value[1] != undefined)
+                      crText = statBlockCR.value[1];
+              }        
+            }
+            if(crText != '' && crText != undefined)
+              cr = eval(crText);   
+            else
+              cr = 0;
+          }
+        }
+        for(let j = 0; j<item.quantity; j++ ){
+          if(item.monsterData != undefined || hasCustomStatBlock){
             if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
-              const cr = statBlock.data.challengeRatingId < 1 ? 1 : statBlock.data.challengeRatingId;
               xpLowMax += xpTable[cr].low;
               xpMidMax += xpTable[cr].mid;
               xpHighMax += xpTable[cr].high;
@@ -2124,7 +2184,7 @@ function edit_encounter(clickEvent) {
               }
             }
             else{
-              const xpValue = crDefinition.xp;
+              const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp;
               xp += xpValue;
             }
           } else if(item.type == 'pc' && (item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
