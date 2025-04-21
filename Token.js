@@ -1595,7 +1595,7 @@ class Token {
 		}
 		
 		const conditions = this.conditions;
-		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player));
+		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || window.JOURNAL.notes[this.options.id].player == window.myUser))
 
 		if (conditionsTotal > 0) {
 			let conditionCount = 0;
