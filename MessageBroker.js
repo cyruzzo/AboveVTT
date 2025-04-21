@@ -814,8 +814,9 @@ class MessageBroker {
 						let noteId = msg.data.notes[i].id;
 						window.JOURNAL.notes[noteId] = msg.data.notes[i];
 						delete window.JOURNAL.notes[noteId].id;
-						if(msg.data.notes[i].id in window.TOKEN_OBJECTS){
-							window.TOKEN_OBJECTS[msg.data.id].place();	
+						if(window.TOKEN_OBJECTS[noteId] != undefined){
+							const placedToken = $(`#tokens div[data-id='${noteId}']`);
+							window.TOKEN_OBJECTS[noteId].build_conditions(placedToken);	
 						}	
 					}			
 					window.JOURNAL.build_journal();			
