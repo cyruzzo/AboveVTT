@@ -528,7 +528,7 @@ class SidebarListItem {
    * @param folderPath {string} the folder this item is in
    * @param parentId {string|undefined} a string id of the folder this item is in
    */
-  constructor(id, name, image, type, folderPath = RootFolder.Root.path, parentId = "root", color = undefined) {
+  constructor(id, name, image, type, folderPath = RootFolder.Root.path, parentId = "root", color = undefined, monsterData=undefined) {
     this.id = id;
     this.name = name;
     this.image = image;
@@ -536,6 +536,13 @@ class SidebarListItem {
     this.folderPath = sanitize_folder_path(folderPath);
     this.parentId = parentId;
     this.color = color;
+    if (typeof monsterData === "object") {
+      this.monsterData = {...monsterData};
+    }
+  }
+
+  static fromJson(obj){
+    return new SidebarListItem(obj.id, obj.name, obj.image, obj.type, obj.folderPath, obj.parentId, obj.color, obj.monsterData);
   }
 
   /**
@@ -816,7 +823,9 @@ class SidebarListItem {
           case ItemType.MyToken:
           case ItemType.Scene:
           case ItemType.PC:
-            return true;
+          case ItemType.Encounter:
+            if(this.encounterId == undefined)
+              return true;
           default:
             return false;
         }
@@ -827,7 +836,11 @@ class SidebarListItem {
       case ItemType.Monster:
       case ItemType.isTypeOpen5eMonster:
       case ItemType.BuiltinToken:
-      case ItemType.Encounter: // we technically could support this, but I don't think we should
+      case ItemType.Encounter:
+        if(this.encounterId != undefined)
+          return false;
+        else
+          return true;
       case ItemType.Aoe: // we technically could support this, but I don't think we should
       default:
         return false;
@@ -1183,9 +1196,18 @@ function build_sidebar_list_row(listItem) {
   let subtitle = $(`<div class="sidebar-list-item-row-details-subtitle"></div>`);
   details.append(subtitle);
 
+  const isCustomEncounterFolder = !listItem.isRootFolder() && listItem.folderType == ItemType.Encounter;
 
-
-  if (!listItem.isTypeFolder() && !listItem.isTypeScene()) {
+  if ((!listItem.isTypeFolder() && !listItem.isTypeScene()) || isCustomEncounterFolder) {
+    if(isCustomEncounterFolder){
+      let editEncounter = $(`<button class="token-row-button token-row-edit-encounter" title="Edit Encounter">
+         <span class="material-symbols-outlined">
+           person_edit
+         </span>
+       </button>`)
+      rowItem.append(editEncounter);
+      editEncounter.on("click", edit_encounter);
+    }
     let addButton = $(`
         <button class="token-row-button token-row-add" title="Add Token to Scene">
             <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 10.8V18h3.6v-7.2H18V7.2h-7.2V0H7.2v7.2H0v3.6h7.2z"></path></svg>
@@ -1244,6 +1266,7 @@ function build_sidebar_list_row(listItem) {
         });
 
         if (listItem.isRootFolder()) {
+          
           let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
           rowItem.append(addFolder);
           addFolder.on("click", function (clickEvent) {
@@ -1252,6 +1275,8 @@ function build_sidebar_list_row(listItem) {
             let clickedItem = find_sidebar_list_item(clickedRow);
             create_folder_inside(clickedItem);
           });
+        
+        
           let reorderButton = $(`<button class="token-row-button reorder-button" title="Reorder Tokens"><span class="material-icons">reorder</span></button>`);
           rowItem.append(reorderButton);
           reorderButton.on("click", function (clickEvent) {
@@ -1261,10 +1286,22 @@ function build_sidebar_list_row(listItem) {
             } else {
               enable_draggable_change_folder(ItemType.PC);
             }
-          });
-        }
-       
+          });               
+        }      
       }
+     
+      
+      if (listItem.isRootFolder() && listItem.id == RootFolder.Encounters.id) {
+        let addFolder = $(`<button class="token-row-button" title="Create New Folder"><span class="material-icons">create_new_folder</span></button>`);
+        rowItem.append(addFolder);
+        addFolder.on("click", function (clickEvent) {
+          clickEvent.stopPropagation();
+          let clickedRow = $(clickEvent.target).closest(".list-item-identifier");
+          let clickedItem = find_sidebar_list_item(clickedRow);
+          create_folder_inside(clickedItem);
+        });     
+      }
+      
       if(listItem.folderType === ItemType.PC && listItem.id !== RootFolder.Players.id){
         let popoutButton = $(`<div class="players-popout-button subfolder-popout"><svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h5c.55 0 1-.45 1-1s-.45-1-1-1H5c-1.11 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6c0-.55-.45-1-1-1s-1 .45-1 1v5c0 .55-.45 1-1 1zM14 4c0 .55.45 1 1 1h2.59l-9.13 9.13c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L19 6.41V9c0 .55.45 1 1 1s1-.45 1-1V4c0-.55-.45-1-1-1h-5c-.55 0-1 .45-1 1z"/></svg></div>`);
         row.append(popoutButton);
@@ -1739,6 +1776,490 @@ function did_click_row_gear(clickEvent) {
   display_sidebar_list_item_configuration_modal(clickedItem);
 }
 
+
+
+/**
+ * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
+ * This should only be called with someElement.on("click", did_click_add_button);
+ * @param clickEvent {Event} the click event
+ */
+function edit_encounter(clickEvent) {
+
+  const xpTable2024 = {
+      '1':{
+        'low': 50,
+        'mid': 75,
+        'high': 100 
+      },
+      '2':{
+        'low': 100,
+        'mid': 150,
+        'high': 200
+      },
+      '3':{
+        'low': 150,
+        'mid': 225,
+        'high': 400
+      },
+      '4':{
+        'low': 250,
+        'mid': 375,
+        'high': 500
+      },
+      '5':{
+        'low': 500,
+        'mid': 750,
+        'high': 1100
+      },
+      '6':{
+        'low': 600,
+        'mid': 1000,
+        'high': 1400
+      },
+      '7':{
+        'low': 750,
+        'mid': 1300,
+        'high': 1700
+      },
+      '8':{
+        'low': 1000,
+        'mid': 1700,
+        'high': 2100
+      },
+      '9':{
+        'low': 1300,
+        'mid': 2000,
+        'high': 2600
+      },
+      '10':{
+        'low': 1600,
+        'mid': 2300,
+        'high': 3100
+      },
+      '11':{
+        'low': 1900,
+        'mid': 2900,
+        'high': 4100
+      },
+      '12':{
+        'low': 2200,
+        'mid': 3700,
+        'high': 4700
+      },
+      '13':{
+        'low': 2600,
+        'mid': 4200,
+        'high': 5400
+      },
+      '14':{
+        'low': 2900,
+        'mid': 4900,
+        'high': 6200
+      },
+      '15':{
+        'low': 3300,
+        'mid': 5400,
+        'high': 7800
+      },
+      '16':{
+        'low': 3800,
+        'mid': 6100,
+        'high': 9800
+      },
+      '17':{
+        'low': 4500,
+        'mid': 7200,
+        'high': 11700
+      },
+      '18':{
+        'low': 5000,
+        'mid': 8700,
+        'high': 14200
+      },
+      '19':{
+        'low': 5500,
+        'mid': 10700,
+        'high': 17200
+      },
+      '20':{
+        'low': 6400,
+        'mid': 13200,
+        'high': 22000
+      }
+  }
+
+  const xpTable2014 = {
+      '1':{
+        'low': 25,
+        'mid': 50,
+        'high': 75,
+        'deadly': 100 
+      },
+      '2':{
+        'low': 50,
+        'mid': 100,
+        'high': 150,
+        'deadly': 200
+      },
+      '3':{
+        'low': 75,
+        'mid': 150,
+        'high': 225,
+        'deadly': 400
+      },
+      '4':{
+        'low': 125,
+        'mid': 250,
+        'high': 375,
+        'deadly': 500
+      },
+      '5':{
+        'low': 250,
+        'mid': 500,
+        'high': 750,
+        'deadly': 1100
+      },
+      '6':{
+        'low': 300,
+        'mid': 600,
+        'high': 900,
+        'deadly': 1400
+      },
+      '7':{
+        'low': 350,
+        'mid': 750,
+        'high': 1100,
+        'deadly': 1700
+      },
+      '8':{
+        'low': 450,
+        'mid': 900,
+        'high': 1400,
+        'deadly': 2100
+      },
+      '9':{
+        'low': 550,
+        'mid': 1100,
+        'high': 1600,
+        'deadly': 2400
+      },
+      '10':{
+        'low': 600,
+        'mid': 1200,
+        'high': 1900,
+        'deadly': 2800
+      },
+      '11':{
+        'low': 800,
+        'mid': 1600,
+        'high': 2400,
+        'deadly': 3600
+      },
+      '12':{
+        'low': 1000,
+        'mid': 2000,
+        'high': 3000,
+        'deadly': 4500
+      },
+      '13':{
+        'low': 1100,
+        'mid': 2200,
+        'high': 3400,
+        'deadly': 5100
+      },
+      '14':{
+        'low': 1250,
+        'mid': 2500,
+        'high': 3800,
+        'deadly': 5700
+      },
+      '15':{
+        'low': 1400,
+        'mid': 2800,
+        'high': 4300,
+        'deadly': 6400
+      },
+      '16':{
+        'low': 1600,
+        'mid': 3200,
+        'high': 4800,
+        'deadly': 7200
+      },
+      '17':{
+        'low': 2000,
+        'mid': 3900,
+        'high': 5900,
+        'deadly': 8800
+      },
+      '18':{
+        'low': 2100,
+        'mid': 4200,
+        'high': 6300,
+        'deadly': 9500
+      },
+      '19':{
+        'low': 2400,
+        'mid': 4900,
+        'high': 7300,
+        'deadly': 10900
+      },
+      '20':{
+        'low': 2800,
+        'mid': 5700,
+        'high': 8500,
+        'deadly': 12700
+      }
+  }
+
+  clickEvent.stopPropagation();
+  const clickedRow = $(clickEvent.target).closest(".list-item-identifier");
+  const clickedItem = find_sidebar_list_item(clickedRow);
+  console.log('edit encounter clicked');
+
+  const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);
+
+  const encounterContainer = find_or_create_generic_draggable_window(`encounterWindow`, clickedItem.name, false, false, undefined, '350px', undefined, undefined, 'calc(100% - 700px)', false);
+
+  encounterContainer.attr('data-encounter-id', clickedItem.id)
+  encounterContainer.find('.title_bar_close_button').off('click.save').on('click.save', function(){
+    rebuild_token_items_list();
+    redraw_token_list($('[name="token-search"]').val() ? $('[name="token-search"]').val() : "");
+  })
+ function form_toggle(name, hoverText, defaultOn, callback){
+    const toggle = $(
+      `<button id="${name}_toggle" name=${name} type="button" role="switch" data-hover="${hoverText}"
+      class="rc-switch sidebar-hovertext"><span class="rc-switch-inner" /></button>`)
+    if (!hoverText) toggle.removeClass("sidebar-hovertext")
+    toggle.on("click", callback)
+    if (defaultOn){
+      toggle.addClass("rc-switch-checked")
+    }
+    return toggle
+  }
+
+  const encounterBody = $(`<div class="encounter-body"></div>`)
+  const encounterListing = $(`<div class="encounter-listing"></div>`);
+
+  const rulesToggle = form_toggle('Rules Version', 'Rules Version', customization.encounterData?.rules != undefined ? customization.encounterData.rules : true, function(){
+    const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);
+    if(customization.encounterData == undefined)
+      customization.encounterData = {}
+    const enabled = $(this).hasClass("rc-switch-checked")
+
+    $(this).toggleClass('rc-switch-checked', !enabled);
+    customization.encounterData.rules = !enabled;
+    persist_token_customization(customization);
+    encounterContainer.trigger('redrawListing');
+  }); 
+
+  const rulesLine = $(`<div id='encounterRulesLine'><span>2014</span><span class='toggle'></span><span>2024</span></div>`)
+  rulesLine.find('.toggle').append(rulesToggle);
+
+  const difficultyLine = $(`<div id='encounterDifficultyLine'>
+
+     <div class='xpLine low'>
+      <span>Low XP:</span>
+      <span class='lowDifficulty'></span>
+    </div>
+    <div class='xpLine mid'>
+      <span>Moderate XP:</span>
+      <span class='midDifficulty'></span>
+    </div>
+    <div class='xpLine high'>
+      <span>High XP:</span>
+      <span class='highDifficulty'></span>
+    </div>
+    <div class='xpLine deadly'>
+      <span>Deadly XP:</span>
+      <span class='deadlyDifficulty'></span>
+    </div>
+    <div class='xpLine multiplier'>
+      <span>XP Multiplier:</span>
+      <span class='difficultyMulti'></span>
+    </div>
+
+    <div class='xpLine current'>
+      <span>XP:</span>
+      <span class='encounterXp'>0</span>
+    </div>
+    <div class='difficultyLine'>
+      <span>Difficulty:</span>
+      <span class='encounterDifficulty'>Low</span>
+    </div>
+    </div>`)
+
+  const allyTitle = $(`<div id='allyTitle'>
+      Is Ally
+    </div>`)
+  
+
+  encounterContainer.off('redrawListing').on('redrawListing',function() {
+    encounterListing.empty();
+
+    if(customization.encounterData?.tokenItems != undefined){
+      let xp = 0;
+      let xpLowMax = 0;
+      let xpMidMax = 0;
+      let xpHighMax = 0;
+      let xpDeadlyMax = 0;
+      const isOldrules = customization.encounterData.rules == false;
+      const xpTable = isOldrules ? xpTable2014 : xpTable2024;
+
+
+
+      for(let i in customization.encounterData.tokenItems){
+        const item = customization.encounterData?.tokenItems[i];
+        for(let j = 0; j<item.quantity; j++ ){
+          if(item.monsterData != undefined){
+           const statBlock = new MonsterStatBlock(item.monsterData);
+           const crDefinition = statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId);
+
+            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
+              const cr = statBlock.data.challengeRatingId < 1 ? 1 : statBlock.data.challengeRatingId;
+              xpLowMax += xpTable[cr].low;
+              xpMidMax += xpTable[cr].mid;
+              xpHighMax += xpTable[cr].high;
+              if(isOldrules){
+                xpDeadlyMax += xpTable[cr].deadly;
+              }
+            }
+            else{
+              const xpValue = crDefinition.xp;
+              xp += xpValue;
+            }
+          } else if(item.type == 'pc' && (item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
+            const pc = find_pc_by_player_id(item.id);
+            const pcLevel = pc.level
+            xpLowMax += xpTable[pcLevel].low;
+            xpMidMax += xpTable[pcLevel].mid;
+            xpHighMax += xpTable[pcLevel].high;
+            if(isOldrules){
+              xpDeadlyMax += xpTable[pcLevel].deadly;
+            }
+          }
+          let row = build_sidebar_list_row(SidebarListItem.fromJson(item));
+          const removeButton = $('<button class="removeItem" style="font-size:24px;"><svg class="delSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"></path><path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"></path></svg></button>')
+          removeButton.off('click.removeItem').on('click.removeItem', function(){
+            const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);
+
+            if(item.quantity>1){
+              customization.encounterData.tokenItems[i].quantity-=1;
+            }
+            else{
+              delete customization.encounterData.tokenItems[i];
+            }
+            persist_token_customization(customization);
+            encounterContainer.trigger('redrawListing');
+          })
+
+          const allyToggle = form_toggle('isAlly', 'Is Ally', ((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j) ? true : item.type == 'pc' ? item.isAlly : false, function(){
+              const customization = find_or_create_token_customization(ItemType.Folder, clickedItem.id);      
+              const enabled = $(this).hasClass("rc-switch-checked")
+              const item = customization.encounterData.tokenItems[i];
+              $(this).toggleClass('rc-switch-checked', !enabled);
+              item.isAlly = !enabled;
+              if(item.quantity != undefined){
+                if(item.isAllyQuantity == undefined){
+                  if(!enabled)
+                    item.isAllyQuantity = 1;
+                  else
+                    item.isAllyQuantity = 0
+                }
+                else{
+                  item.isAllyQuantity = !enabled ? item.isAllyQuantity + 1 : item.isAllyQuantity - 1;
+                }
+              }
+              persist_token_customization(customization)
+              encounterContainer.trigger('redrawListing');
+            }); 
+          $(encounterListing).append(row);
+          row.find('.sidebar-list-item-row-item').append(removeButton, allyToggle);
+        }
+      }
+      difficultyLine.find('.lowDifficulty').text(xpLowMax);
+      difficultyLine.find('.midDifficulty').text(xpMidMax);
+      difficultyLine.find('.highDifficulty').text(xpHighMax);
+
+      if(!isOldrules){
+        difficultyLine.find('.xpLine.deadly, .xpLine.multiplier').css('visibility', 'hidden');
+      }
+      else{
+        difficultyLine.find('.xpLine.deadly, .xpLine.multiplier').css('visibility', '');
+        difficultyLine.find('.deadlyDifficulty').text(xpDeadlyMax);
+      }
+      if(!isOldrules){
+        if(xp < xpLowMax){
+          difficultyLine.find('.encounterDifficulty').text('Low');
+          difficultyLine.find('.difficultyLine').toggleClass('low', true);
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false);
+        }
+        else if(xp > xpLowMax && xp < xpMidMax){
+          difficultyLine.find('.encounterDifficulty').text('Moderate');
+          difficultyLine.find('.difficultyLine').toggleClass('mid', true);
+          difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false);
+        }else if(xp > xpMidMax && xp < xpHighMax){
+          difficultyLine.find('.encounterDifficulty').text('High');
+          difficultyLine.find('.difficultyLine').toggleClass('high', true);
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false);
+        }
+        else{
+          difficultyLine.find('.encounterDifficulty').text('Greater than High');
+          difficultyLine.find('.difficultyLine').toggleClass('deadly', true)
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'low'], false)
+        }
+      }else{
+        const numberOfEnemies = encounterListing.find('.rc-switch:not(.rc-switch-checked)').length;
+        const xpMultipler = numberOfEnemies >= 15 ? 4 : numberOfEnemies >= 11 ? 3 : numberOfEnemies >= 7 ? 2.5 : numberOfEnemies >= 3 ? 2 : numberOfEnemies == 2 ? 1.5 : 1;
+
+        xp = xp*xpMultipler;
+
+        if(xp < xpMidMax){
+          difficultyLine.find('.encounterDifficulty').text('Low');
+          difficultyLine.find('.difficultyLine').toggleClass('low', true)
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false)
+        }
+        else if(xp > xpMidMax && xp < xpHighMax){
+          difficultyLine.find('.encounterDifficulty').text('Moderate');
+          difficultyLine.find('.difficultyLine').toggleClass('mid', true)
+          difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false)
+        }else if(xp > xpHighMax && xp < xpDeadlyMax){
+          difficultyLine.find('.encounterDifficulty').text('High');
+          difficultyLine.find('.difficultyLine').toggleClass('high', true)
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false)
+        }
+        else{
+          difficultyLine.find('.encounterDifficulty').text('Deadly');
+          difficultyLine.find('.difficultyLine').toggleClass('deadly', true)
+          difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'low'], false)
+        }
+        difficultyLine.find('.difficultyMulti').text(`x${xpMultipler}`);
+        
+      }
+      difficultyLine.find('.encounterXp').text(xp);
+
+
+     
+    }
+    encounterListing.children('.sidebar-list-item-row').sort(function(a, b) {
+      const aAlly = $(a).find('.rc-switch-checked').length>0;
+      if (aAlly) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }).appendTo(encounterListing);
+    
+   
+  });
+  
+
+   
+
+  encounterBody.append(rulesLine, difficultyLine, allyTitle, encounterListing);
+  encounterContainer.append(encounterBody);
+  encounterContainer.trigger('redrawListing');
+
+}
 /**
  * When an AddToken (plus) button on a row in the sidebar is clicked, this handles that click based on the item represented by the row, and adds a token to the scene for that item.
  * This should only be called with someElement.on("click", did_click_add_button);
@@ -1815,7 +2336,9 @@ function create_folder_inside(listItem) {
     create_scene_folder_inside(listItem);
   } else if(listItem.folderType == ItemType.PC){
     create_player_folder_inside(listItem);
-  } else {
+  } else if(listItem.folderType == ItemType.Encounter){
+    create_encounter_folder_inside(listItem);
+  }else {
     console.warn("create_folder_inside called with an incorrect item type", listItem);
   }
 }
@@ -1869,7 +2392,7 @@ function display_folder_configure_modal(listItem) {
 
   let folderNameInput = $(`<input type="text" title="Folder Name" name="folderName" value="${listItem.name}" />`);
   set_list_item_identifier(folderNameInput, listItem);
-  if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id)){
+  if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id) || (itemType === ItemType.Encounter && listItem.id !== RootFolder.Encounters.id)){
     sidebarModal.body.append(build_text_input_wrapper("Folder Name", folderNameInput, undefined, renameFolder, false));
   }
 
@@ -1914,7 +2437,7 @@ function display_folder_configure_modal(listItem) {
 
   let saveButton = $(`<button class="sidebar-panel-footer-button" style="width:100%;padding:8px;margin-top:8px;margin-left:0px;">Save Folder</button>`);
   saveButton.on("click", function (clickEvent) {
-    if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id)){
+    if (itemType === ItemType.MyToken || itemType === ItemType.Scene || (itemType === ItemType.PC && listItem.id !== RootFolder.Players.id) || (itemType === ItemType.Encounter && listItem.id !== RootFolder.Encounters.id)){
       let nameInput = $(clickEvent.currentTarget).closest(".sidebar-panel-body").find("input[name='folderName']");
       console.log(`saveButton nameInput`, nameInput);
       let renameResult = renameFolder(nameInput.val(), nameInput, clickEvent);
@@ -1939,15 +2462,18 @@ function display_folder_configure_modal(listItem) {
   });
   sidebarModal.body.append(saveButton);
   if(!RootFolder.allValues().some(d => d.id == listItem.id) && itemType !== ItemType.BuiltinToken){
-    let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
-    set_list_item_identifier(deleteFolderAndMoveChildrenButton, listItem);
-    sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
-    deleteFolderAndMoveChildrenButton.on("click", function(event) {
-      let foundItem = find_sidebar_list_item($(event.currentTarget));
-      delete_folder_and_move_children_up_one_level(foundItem);
-      close_sidebar_modal();
-      expand_all_folders_up_to_item(foundItem);
-    });
+    if(itemType !== ItemType.Encounter){
+      let deleteFolderAndMoveChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder">Delete folder and<br />move items up one level</button>`);
+      set_list_item_identifier(deleteFolderAndMoveChildrenButton, listItem);
+      sidebarModal.footer.append(deleteFolderAndMoveChildrenButton);
+      deleteFolderAndMoveChildrenButton.on("click", function(event) {
+        let foundItem = find_sidebar_list_item($(event.currentTarget));
+        delete_folder_and_move_children_up_one_level(foundItem);
+        close_sidebar_modal();
+        expand_all_folders_up_to_item(foundItem);
+      });
+    }
+    
     if(itemType !== ItemType.PC){
       let deleteFolderAndChildrenButton = $(`<button class="token-image-modal-remove-all-button" title="Delete this folder and everything in it">Delete folder and<br />everything in it</button>`);
       set_list_item_identifier(deleteFolderAndChildrenButton, listItem);
@@ -1975,11 +2501,11 @@ function rename_folder(item, newName, alertUser = true) {
     return undefined;
   }
 
-  if (item.folderPath.startsWith(RootFolder.MyTokens.path) || item.folderPath.startsWith(RootFolder.Players.path)) {
+  if (item.folderPath.startsWith(RootFolder.MyTokens.path) || item.folderPath.startsWith(RootFolder.Players.path) || item.folderPath.startsWith(RootFolder.Encounters.path)) {
     let customization = find_token_customization(item.type, item.id);
     customization.setTokenOption("name", newName);
     persist_token_customization(customization);
-    did_change_mytokens_items();
+    
     return customization.fullPath();
   } else if (item.isTypeSceneFolder()) {
     return rename_scene_folder(item, newName, alertUser);
@@ -2072,7 +2598,7 @@ function delete_folder_and_delete_children(listItem) {
     return;
   }
 
-  if (listItem.folderType === ItemType.MyToken) {
+  if (listItem.folderType === ItemType.MyToken || listItem.folderType === ItemType.Encounter) {
     delete_mytokens_folder_and_everything_in_it(listItem);
   } else if (listItem.folderType === ItemType.Scene) {
     delete_folder_and_all_scenes_within_it(listItem);

@@ -5251,6 +5251,9 @@ button.block-send-to-game-log span {
     height: 100%;
     fill: #738694;
 }
+button.token-row-button.token-row-edit-encounter{
+    padding:0px;
+}
 .sidebar-list-item-row.encounter .player-row > .sidebar-list-item-row-item,
 .sidebar-list-item-row.folder .player-row > .sidebar-list-item-row-item {
     height: 42px; /* players are taller than everything else */
@@ -7184,6 +7187,83 @@ input.max_hp[disabled]{
         -1px 1px 0  #000,
         1px 1px 0  #000;
     padding-left: 3px;
+}
+
+.resize_drag_window .encounter-body{
+    background: #fff;
+    height: calc(100% - 25px);
+    border-radius: 0px 0px 5px 5px;
+}
+.resize_drag_window .encounter-listing {
+    max-height:calc(100% - 166px);
+    width:100%;
+    overflow:auto;
+    padding:10px;
+}
+div#encounterRulesLine {
+    float: right;
+    display:inline-flex;
+    align-items: center;
+    position: absolute;
+    justify-content: flex-end;
+    right: 10px;
+}
+
+div#encounterRulesLine span{
+    padding: 5px;
+    font-weight:bold;
+}
+#encounterDifficultyLine span{
+    padding:5px;
+    font-weight:bold;
+}
+#encounterDifficultyLine{
+    display:inline-flex;
+    width: 100%;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+.encounter-listing :is(.token-row-gear, .token-row-add, .sidebar-list-item-row-item~*, .token-row-button, .sidebar-list-item-row[id^='/profile'] .sidebar-list-item-row-details-subtitle) {
+    display: none;
+}
+
+.encounter-listing .sidebar-list-item-row.player-row{
+    height:initial;
+}
+.encounter-body div#allyTitle {
+    display:flex;
+    font-weight:bold;
+    justify-content: flex-end;
+    padding:0px 20px;
+}
+.encounter-listing .removeItem svg.delSVG {
+    width:24px;
+    height:24px;
+}
+.encounter-listing .removeItem{
+    width:24px;
+    height:24px;
+    margin-right:5px;
+    display: flex;
+    padding: 1px;
+}
+.encounter-body .xpLine.current{
+    margin-top:20px;
+}
+.encounter-body :is(.xpLine, .difficultyLine).low span:nth-of-type(2) {
+    color: #0055b6;
+}
+.encounter-body :is(.xpLine, .difficultyLine).mid span:nth-of-type(2) {
+    color: #019d11;
+}
+.encounter-body :is(.xpLine, .difficultyLine).high span:nth-of-type(2) {
+    color: #c48e05;
+}
+.encounter-body :is(.xpLine, .difficultyLine).deadly span:nth-of-type(2) {
+    color: #620000;
+}
+#encounterRulesLine .rc-switch:before{
+    width:fit-content;
 }
 #combat_tracker_inside{
     margin: 0px;

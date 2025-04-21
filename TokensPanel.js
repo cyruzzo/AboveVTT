@@ -307,6 +307,16 @@ function rebuild_token_items_list() {
             tokenItems.push(SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId, ItemType.MyToken, tc.color))
         })
 
+    // Encounter Folders
+    window.TOKEN_CUSTOMIZATIONS
+        .filter(tc => tc.tokenType === ItemType.Folder && tc.fullPath().startsWith(RootFolder.Encounters.path))
+        .forEach(tc => {
+            const newFolder = SidebarListItem.Folder(tc.id, tc.folderPath(), tc.name(), tc.tokenOptions.collapsed, tc.parentId, ItemType.Encounter, tc.color)
+            if(tc.encounterData != undefined)
+                newFolder.encounterData = tc.encounterData;
+            tokenItems.push(newFolder);
+        })
+
     // My Tokens
     window.TOKEN_CUSTOMIZATIONS
         .filter(tc => tc.tokenType === ItemType.MyToken)
@@ -610,8 +620,29 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
         .sort(SidebarListItem.folderDepthComparator)
         .forEach(item => {
             let row = build_sidebar_list_row(item);
+
+            if(item.encounterData?.tokenItems != undefined){
+                for(let i in item.encounterData.tokenItems){
+                    if(item.encounterData.tokenItems[i].type != 'pc'){
+                        if(item.encounterData.tokenItems[i].quantity != undefined){
+                            for(let j = 0; j<item.encounterData.tokenItems[i].quantity; j++){
+                                const newRow = build_sidebar_list_row(SidebarListItem.fromJson(item.encounterData.tokenItems[i]));
+                                row.find('.folder-item-list').append(newRow);
+                            }
+                        }
+                        else{
+                            const newRow = build_sidebar_list_row(SidebarListItem.fromJson(item.encounterData.tokenItems[i]));
+                            row.find('.folder-item-list').append(newRow);
+                        }
+                    }
+                    
+                }
+
+            }
             console.debug("appending item", item);
             $(`#${item.parentId} > .folder-item-list`).append(row);
+
+
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
@@ -804,7 +835,40 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 create_and_place_token(draggedItem, hidden, src, event.pageX, event.pageY, false);
                 // create_and_place_token(draggedItem, hidden, src, event.pageX - ui.helper.width() / 2, event.pageY - ui.helper.height() / 2, false, ui.helper.attr("data-name-override"));
                 
-            } else {
+            } 
+            else if(droppedOn?.closest("#encounterWindow")){
+                const droppedOnWindow = $(droppedOn?.closest("#encounterWindow"));
+                const encounterId = droppedOnWindow.attr('data-encounter-id');
+                console.log("enable_draggable_token_creation stop");
+                let draggedRow = $(event.target).closest(".list-item-identifier");
+                if ($(event.target).hasClass("list-item-identifier")) {
+                    draggedRow = $(event.target);
+                }
+                let draggedItem = find_sidebar_list_item(draggedRow);
+
+                const customization = find_or_create_token_customization(ItemType.Folder, encounterId);
+                if(customization.encounterData == undefined)
+                    customization.encounterData = {}
+                if(customization.encounterData.tokenItems == undefined)
+                    customization.encounterData.tokenItems = {};
+
+                if(customization.encounterData.tokenItems[draggedItem.id] != undefined){
+                    customization.encounterData.tokenItems[draggedItem.id].quantity += 1;
+                }
+                else{
+                    customization.encounterData.tokenItems[draggedItem.id] = draggedItem;
+                    customization.encounterData.tokenItems[draggedItem.id].quantity = 1; 
+                }
+                if(draggedItem.type == 'pc'){
+                    customization.encounterData.tokenItems[draggedItem.id].isAlly = true;
+                }
+                persist_token_customization(customization)
+                droppedOnWindow.trigger('redrawListing');
+                
+
+                console.log(`Dropped on encounter: ${draggedItem}`);
+
+            }else {
                 console.log("Not dropping over element", droppedOn);
             }
         }
@@ -946,6 +1010,21 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             tokensToPlace = (listItem.fullPath().startsWith(RootFolder.Monsters.path) ? window.monsterListItems : window.tokenListItems)
                 .filter(item => !item.isTypeFolder()) // if we ever want to add everything at every subfolder depth, remove this line
                 .filter(item => item.folderPath === fullPath);
+
+            if(listItem.encounterData?.tokenItems != undefined){
+                for(let i in listItem.encounterData.tokenItems){
+                    if(listItem.encounterData.tokenItems[i].type != 'pc'){
+                        if(listItem.encounterData.tokenItems[i].quantity != undefined){
+                            for(let j = 0; j<listItem.encounterData.tokenItems[i].quantity; j++){
+                                tokensToPlace.push(SidebarListItem.fromJson(listItem.encounterData.tokenItems[i])); 
+                            }
+                        }
+                        else{
+                            tokensToPlace.push(SidebarListItem.fromJson(listItem.encounterData.tokenItems[i])); 
+                        }                    
+                    }
+                }
+            }
         } else if (listItem.isTypeEncounter()) {
             let encounterId = listItem.encounterId;
             let encounterMonsterItems = encounter_monster_items[encounterId];
@@ -1949,7 +2028,36 @@ function register_token_row_context_menu() {
     });
 }
 /**
- * Creates a "My Tokens" folder within another "My Tokens" folder
+ * Creates an "Encounter" folder within another "Encounter" folder
+ * @param listItem {SidebarListItem} The folder to create a new folder within
+ */
+function create_encounter_folder_inside(listItem) {
+    if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.Encounters.path)) {
+        console.warn("create_mytoken_folder_inside called with an incorrect item type", listItem);
+        return;
+    }
+
+    let newFolderName = "New Folder";
+    let newFolderCount = window.TOKEN_CUSTOMIZATIONS
+        .filter(tc => tc.tokenType === ItemType.Folder && tc.name().startsWith(newFolderName))
+        .length;
+    if (newFolderCount > 0) {
+        newFolderName += ` ${newFolderCount + 1}`;
+    }
+    let newFolder = TokenCustomization.Folder(uuid(), listItem.id, RootFolder.Encounters.id, { name: newFolderName });
+    persist_token_customization(newFolder, function(didSucceed, errorType) {
+        if (didSucceed) {
+                did_change_mytokens_items();
+                let newListItem = window.tokenListItems.find(li => li.type === ItemType.Folder && li.id === newFolder.id);
+                display_folder_configure_modal(newListItem);
+                expand_all_folders_up_to_item(newListItem);
+        } else {
+            showError(errorType, "create_mytoken_folder_inside failed to create a new folder");
+        }
+    });
+}
+/**
+ * Creates a "Players" folder within another "Players" folder
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
 function create_player_folder_inside(listItem) {
