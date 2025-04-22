@@ -2150,7 +2150,8 @@ function edit_encounter(clickEvent) {
         let statBlock = hasCustomStatBlock ? $(`<div>${window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock].text}</div>`) : new MonsterStatBlock(item.monsterData);       
         let cr;
         if(!hasCustomStatBlock && item.monsterData != undefined){
-          cr = statBlock.data.challengeRatingId < 1 ? 1 : statBlock.data.challengeRatingId
+          const foundCR = statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).value;
+          cr = foundCR;
         }
         else if(hasCustomStatBlock){
           if(window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock] != undefined){
@@ -2184,16 +2185,16 @@ function edit_encounter(clickEvent) {
           }
         }
         for(let j = 0; j<item.quantity; j++ ){
-          if(item.monsterData != undefined || hasCustomStatBlock){
-            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
-              const minCR = Math.max(cr, 1);
-              const multiplier = Math.min(cr, 1)
-              xpLowMax += xpTable[minCR].low * multiplier;
-              xpMidMax += xpTable[minCR].mid * multiplier;
-              xpHighMax += xpTable[minCR].high * multiplier;
+          if(item.type != 'pc'){
+            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){         
+              let addedLowXp, addedMidXp, addedHighXp, addedDeadlyXp;          
+              cr = Math.min(30, cr);
+              xpLowMax += isOldrules ? crXpTable[cr]/4 :crXpTable[cr]/2;
+              xpMidMax += isOldrules ? crXpTable[cr]/2 : crXpTable[cr]*3/4;
+              xpHighMax += isOldrules ? crXpTable[cr]*3/4 : crXpTable[cr];
               if(isOldrules){
-                xpDeadlyMax += xpTable[minCR].deadly * multiplier;
-              }
+                xpDeadlyMax += crXpTable[cr];
+              } 
             }
             else{
               const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp;
@@ -2253,28 +2254,28 @@ function edit_encounter(clickEvent) {
           row.find('.sidebar-list-item-row-item').append(removeButton, allyToggle);
         }
       }
-      difficultyLine.find('.lowDifficulty').text(xpLowMax);
-      difficultyLine.find('.midDifficulty').text(xpMidMax);
-      difficultyLine.find('.highDifficulty').text(xpHighMax);
+      difficultyLine.find('.lowDifficulty').text(Math.round(xpLowMax));
+      difficultyLine.find('.midDifficulty').text(Math.round(xpMidMax));
+      difficultyLine.find('.highDifficulty').text(Math.round(xpHighMax));
 
       if(!isOldrules){
         difficultyLine.find('.xpLine.deadly, .xpLine.multiplier').css('visibility', 'hidden');
       }
       else{
         difficultyLine.find('.xpLine.deadly, .xpLine.multiplier').css('visibility', '');
-        difficultyLine.find('.deadlyDifficulty').text(xpDeadlyMax);
+        difficultyLine.find('.deadlyDifficulty').text(Math.round(xpDeadlyMax));
       }
       if(!isOldrules){
-        if(xp < xpLowMax){
+        if(xp <= xpLowMax){
           difficultyLine.find('.encounterDifficulty').text('Low');
           difficultyLine.find('.difficultyLine').toggleClass('low', true);
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false);
         }
-        else if(xp > xpLowMax && xp < xpMidMax){
+        else if(xp > xpLowMax && xp <= xpMidMax){
           difficultyLine.find('.encounterDifficulty').text('Moderate');
           difficultyLine.find('.difficultyLine').toggleClass('mid', true);
           difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false);
-        }else if(xp > xpMidMax && xp < xpHighMax){
+        }else if(xp > xpMidMax && xp <= xpHighMax){
           difficultyLine.find('.encounterDifficulty').text('High');
           difficultyLine.find('.difficultyLine').toggleClass('high', true);
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false);
@@ -2290,16 +2291,16 @@ function edit_encounter(clickEvent) {
 
         xp = xp*xpMultipler;
 
-        if(xp < xpMidMax){
+        if(xp <= xpMidMax){
           difficultyLine.find('.encounterDifficulty').text('Low');
           difficultyLine.find('.difficultyLine').toggleClass('low', true)
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false)
         }
-        else if(xp > xpMidMax && xp < xpHighMax){
+        else if(xp > xpMidMax && xp <= xpHighMax){
           difficultyLine.find('.encounterDifficulty').text('Moderate');
           difficultyLine.find('.difficultyLine').toggleClass('mid', true)
           difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false)
-        }else if(xp > xpHighMax && xp < xpDeadlyMax){
+        }else if(xp > xpHighMax && xp <= xpDeadlyMax){
           difficultyLine.find('.encounterDifficulty').text('High');
           difficultyLine.find('.difficultyLine').toggleClass('high', true)
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false)
@@ -2312,7 +2313,7 @@ function edit_encounter(clickEvent) {
         difficultyLine.find('.difficultyMulti').text(`x${xpMultipler}`);
         
       }
-      difficultyLine.find('.encounterXp').text(xp);
+      difficultyLine.find('.encounterXp').text(Math.round(xp));
 
 
      
