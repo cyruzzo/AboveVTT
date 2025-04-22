@@ -2191,6 +2191,7 @@ function edit_encounter(clickEvent) {
               const multiplier = Math.min(cr, 1);
               let addedLowXp, addedMidXp, addedHighXp, addedDeadlyXp;
               if(cr > 20){
+                cr = Math.min(30, cr);
                 xpLowMax += isOldrules ? crXpTable[cr]/4 :crXpTable[cr]/2;
                 xpMidMax += isOldrules ? crXpTable[cr]/2 : crXpTable[cr]*3/4;
                 xpHighMax += isOldrules ? crXpTable[cr]*3/4 : crXpTable[cr];
