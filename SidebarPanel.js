@@ -2151,7 +2151,7 @@ function edit_encounter(clickEvent) {
         let cr;
         if(!hasCustomStatBlock && item.monsterData != undefined){
           const foundCR = statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).value;
-          cr = foundCR < 1 ? 1 : foundCR;
+          cr = foundCR;
         }
         else if(hasCustomStatBlock){
           if(window.JOURNAL.notes[itemCustomization.tokenOptions.statBlock] != undefined){
@@ -2186,29 +2186,15 @@ function edit_encounter(clickEvent) {
         }
         for(let j = 0; j<item.quantity; j++ ){
           if(item.type != 'pc'){
-            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){
-              const minCR = Math.max(cr, 1);
-              const multiplier = Math.min(cr, 1);
-              let addedLowXp, addedMidXp, addedHighXp, addedDeadlyXp;
-              if(cr > 20){
-                cr = Math.min(30, cr);
-                xpLowMax += isOldrules ? crXpTable[cr]/4 :crXpTable[cr]/2;
-                xpMidMax += isOldrules ? crXpTable[cr]/2 : crXpTable[cr]*3/4;
-                xpHighMax += isOldrules ? crXpTable[cr]*3/4 : crXpTable[cr];
-                if(isOldrules){
-                  xpDeadlyMax += crXpTable[cr];
-                }
-              }
-              else{
-                xpLowMax += xpTable[minCR].low * multiplier;
-                xpMidMax += xpTable[minCR].mid * multiplier;
-                xpHighMax += xpTable[minCR].high * multiplier;
-                if(isOldrules){
-                  xpDeadlyMax += xpTable[minCR].deadly * multiplier;
-                }
-              }
-              
-              
+            if((item.isAllyQuantity == undefined && item.isAlly == true) || item.isAllyQuantity > j){         
+              let addedLowXp, addedMidXp, addedHighXp, addedDeadlyXp;          
+              cr = Math.min(30, cr);
+              xpLowMax += isOldrules ? crXpTable[cr]/4 :crXpTable[cr]/2;
+              xpMidMax += isOldrules ? crXpTable[cr]/2 : crXpTable[cr]*3/4;
+              xpHighMax += isOldrules ? crXpTable[cr]*3/4 : crXpTable[cr];
+              if(isOldrules){
+                xpDeadlyMax += crXpTable[cr];
+              } 
             }
             else{
               const xpValue = hasCustomStatBlock ? crXpTable[cr]: statBlock.findObj("challengeRatings", statBlock.data.challengeRatingId).xp;
@@ -2280,16 +2266,16 @@ function edit_encounter(clickEvent) {
         difficultyLine.find('.deadlyDifficulty').text(Math.round(xpDeadlyMax));
       }
       if(!isOldrules){
-        if(xp < xpLowMax){
+        if(xp <= xpLowMax){
           difficultyLine.find('.encounterDifficulty').text('Low');
           difficultyLine.find('.difficultyLine').toggleClass('low', true);
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false);
         }
-        else if(xp > xpLowMax && xp < xpMidMax){
+        else if(xp > xpLowMax && xp <= xpMidMax){
           difficultyLine.find('.encounterDifficulty').text('Moderate');
           difficultyLine.find('.difficultyLine').toggleClass('mid', true);
           difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false);
-        }else if(xp > xpMidMax && xp < xpHighMax){
+        }else if(xp > xpMidMax && xp <= xpHighMax){
           difficultyLine.find('.encounterDifficulty').text('High');
           difficultyLine.find('.difficultyLine').toggleClass('high', true);
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false);
@@ -2305,16 +2291,16 @@ function edit_encounter(clickEvent) {
 
         xp = xp*xpMultipler;
 
-        if(xp < xpMidMax){
+        if(xp <= xpMidMax){
           difficultyLine.find('.encounterDifficulty').text('Low');
           difficultyLine.find('.difficultyLine').toggleClass('low', true)
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'high', 'deadly'], false)
         }
-        else if(xp > xpMidMax && xp < xpHighMax){
+        else if(xp > xpMidMax && xp <= xpHighMax){
           difficultyLine.find('.encounterDifficulty').text('Moderate');
           difficultyLine.find('.difficultyLine').toggleClass('mid', true)
           difficultyLine.find('.difficultyLine').toggleClass(['low', 'high', 'deadly'], false)
-        }else if(xp > xpHighMax && xp < xpDeadlyMax){
+        }else if(xp > xpHighMax && xp <= xpDeadlyMax){
           difficultyLine.find('.encounterDifficulty').text('High');
           difficultyLine.find('.difficultyLine').toggleClass('high', true)
           difficultyLine.find('.difficultyLine').toggleClass(['mid', 'low', 'deadly'], false)
