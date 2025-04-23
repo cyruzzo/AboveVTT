@@ -373,10 +373,22 @@ class WaypointManagerClass {
 		// Calculate the distance and set into the waypoint object
 		const xAdjustment = window.CURRENT_SCENE_DATA.scaleAdjustment?.x != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : 1;
 		const yAdjustment = window.CURRENT_SCENE_DATA.scaleAdjustment?.y != undefined ? window.CURRENT_SCENE_DATA.scaleAdjustment.y : 1;
-		const xLength = Math.abs(snapPointXStart - snapPointXEnd)/xAdjustment;
-		const yLength = Math.abs(snapPointYStart - snapPointYEnd)/yAdjustment;
-		let distance = Math.max(xLength, yLength);
+
 		const rulerType = $('#ruler_menu .button-enabled').attr('data-type');
+
+		const startPointSnapped = snap_point_to_grid(snapPointXStart, snapPointYStart, true);
+		const endPointSnapped = snap_point_to_grid(snapPointXEnd, snapPointYEnd, true);
+		const measureStartX = startPointSnapped.x;
+		const measureStartY = startPointSnapped.y;
+		const measureEndX = endPointSnapped.x;
+		const measureEndY = endPointSnapped.y;		
+
+		const xLength = ((window.CURRENT_SCENE_DATA.gridType == undefined || window.CURRENT_SCENE_DATA.gridType == 1) && rulerType != 'euclidean') ? Math.abs(measureStartX - measureEndX)/xAdjustment : Math.abs(snapPointXStart - snapPointXEnd)/xAdjustment;
+		const yLength = ((window.CURRENT_SCENE_DATA.gridType == undefined || window.CURRENT_SCENE_DATA.gridType == 1) && rulerType != 'euclidean') ?  Math.abs(measureStartY - measureEndY)/yAdjustment : Math.abs(snapPointYStart - snapPointYEnd)/yAdjustment;
+
+
+		let distance = Math.max(xLength, yLength);
+	
 		if(window.CURRENT_SCENE_DATA.gridType != undefined){
 			if((xLength > yLength && window.CURRENT_SCENE_DATA.gridType != 1 && rulerType != 'euclidean') || (window.CURRENT_SCENE_DATA.gridType == 2 && rulerType == 'euclidean')){
 				gridSize = window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor;
