@@ -793,7 +793,7 @@ function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
 		return;
-	if((window.DM && !window.SelectedTokenVision) || (window.DM && window.CURRENTLY_SELECTED_TOKENS.length == 0)){
+	if((window.DM && !window.SelectedTokenVision) || (window.DM && $('#tokens .tokenselected:not(.isAoe)').length == 0)){
 		$(`.token`).show();
 		$(`.door-button`).toggleClass('notVisible', false);
 		$(`.aura-element`).show();
@@ -1361,7 +1361,7 @@ function reset_canvas(apply_zoom=true) {
 }
 function check_darkness_value(){
 
-	let selectedTokens = $('#tokens .tokenselected');
+	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
@@ -6088,7 +6088,7 @@ function redraw_light(darknessMoved = false){
 
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
-	let selectedTokens = $('#tokens .tokenselected');
+	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
 	if(window.SelectedTokenVision){
 		light_auras = light_auras.add(selectedTokens)
 	}
