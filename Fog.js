@@ -6303,6 +6303,8 @@ function redraw_light(darknessMoved = false){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);		
 	}	
 
+	offscreenContext.globalCompositeOperation='multiply'; // fixes a darkness aoe issue when multiple tokens are inside but one is slightly out
+	offscreenContext.drawImage(window.lightInLos, 0, 0);
 	
 		
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once

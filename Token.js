@@ -3255,13 +3255,7 @@ class Token {
 										let curr = window.TOKEN_OBJECTS[id];
 										tokenX = offsetLeft + parseInt(curr.orig_left);
 										tokenY = offsetTop + parseInt(curr.orig_top);
-										if(should_snap_to_grid()){
-											let tinyToken = (Math.round(parseFloat(curr.options.gridSquares)*2)/2 < 1) || curr.isAoe();
-											let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
-							
-											tokenY =  Math.round(tokenPosition.y);
-											tokenX = Math.round(tokenPosition.x);
-										}
+										
 
 										$(tok).css('left', tokenX + "px");
 										$(tok).css('top', tokenY + "px");
