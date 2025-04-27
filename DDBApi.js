@@ -57,14 +57,19 @@ class DDBApi {
   }
 
   static async fetchHtmlWithToken(url, extraConfig = {}) {
-   const token = await DDBApi.#refreshToken();
-    const config = {...extraConfig,
-      headers: {
-        'Authorization': `Bearer ${token}`,
+    try{
+      const token = await DDBApi.#refreshToken();
+      const config = {...extraConfig,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        }
       }
+      const request = await fetch(url, config)
+      return await request.text();
+    }   
+    catch{
+      console.warn(`Failed to Fetch: ${url}`);
     }
-    const request = await fetch(url, config).then(DDBApi.lookForErrors)
-    return await request.text();
   }
 
     static async fetchJsonWithTokenOmitCred(url, extraConfig = {}) {
