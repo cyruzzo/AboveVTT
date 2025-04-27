@@ -1921,7 +1921,7 @@ class JournalManager{
                 spellcasting >= 0 &&
                 spellcasting < li &&
                 (input.match('At will:') ||
-                    input.match('Cantrips (at will):') ||
+                    input.match(/Cantrips \(at will\):/gi) ||
                     input.match(/(\d+\/day( each)?|\d+\w+ level \(\d slots?\))\:/gi))
             ) {
             	let eachNumberFound = (input.match(/\d+\/day( each)?/gi)) ? parseInt(input.match(/[0-9]+(?![0-9]?px)/gi)[0]) : undefined;
