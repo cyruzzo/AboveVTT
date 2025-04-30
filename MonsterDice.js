@@ -47,14 +47,15 @@ function scan_monster(target, stats, tokenId) {
 				const followingText = $(this)[0].nextSibling?.textContent?.trim()?.split(' ')[0]
 
 				const button = `<button data-exp='${dice}' data-mod='${modifier}' data-rolltype='${rollType}' ${followingText && window.ddbConfigJson.damageTypes.some(d => d.name.toLowerCase() == followingText.toLowerCase()) ? `data-damagetype='${followingText}'` : ''} data-actiontype='${actionType}' class='avtt-roll-button' title="${actionType} ${rollType}">${text}</button>`
-				
-				if(rollType == 'recharge'){
+				const targetTitle = 	$(this).closest('p').length > 0 ? $(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)') : $(this).closest('strong:first-of-type:has(em), em:first-of-type:has(strong)')
+					
+				if(rollType == 'recharge' && targetTitle.length > 0){
 					const rechargeRegEx = /(Recharge [0-6]?\s?[—–-]?\s?[0-6])/gi
-					$(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').replaceWith($($(this).closest('p>strong:first-of-type:has(em), p>em:first-of-type:has(strong)').text().replace(
-                /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+
+					targetTitle.replaceWith(targetTitle.text().replace(
+                /^((\s*[a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s])?( (Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
                 	'<em><strong>$1$4</strong></em>$3$5$6'    
-            ).replaceAll(/[\s]+\./gi, '.').replaceAll(rechargeRegEx, button))
-					);
+            ).replaceAll(/[\s]+\./gi, '.').replaceAll(rechargeRegEx, button));
 				}
 				else{
 					$(this).replaceWith(button)
