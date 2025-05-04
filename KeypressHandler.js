@@ -426,6 +426,19 @@ Mousetrap.bind('shift+w', function () {
     }
        
 });
+Mousetrap.bind('shift+e', function () {
+    if(window.DM){
+        $('#show_elev').toggleClass(['button-enabled', 'ddbc-tab-options__header-heading--is-active']);
+        if($('#show_elev').hasClass('button-enabled')){
+            redraw_elev(true);
+        }
+        else{
+            redraw_elev();
+            $('#elev_legend_window').remove();
+        }
+    }
+       
+});
 Mousetrap.bind('l', function () {
     if(shiftHeld)
         return;

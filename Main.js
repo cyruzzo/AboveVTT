@@ -3484,6 +3484,10 @@ function init_help_menu() {
 							<dd>Toggle always show walls. Will also show 'hidden icon' doors/windows.</dd>
 						</dl>
 						<dl>
+							<dt>${getShiftKeyName()}+E</dt>
+							<dd>Toggle always show elevation. Will always show elevation areas.</dd>
+						</dl>
+						<dl>
 							<dt>${getShiftKeyName()}+S</dt>
 							<dd>Toggle snap drawings to grid. This includes drawings from most menus - fog, draw, light, walls etc.</dd>
 						</dl>
