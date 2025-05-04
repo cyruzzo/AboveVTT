@@ -1694,7 +1694,8 @@ function redraw_elev(openLegened = false) {
 	let ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.setLineDash([]);
-	let displayElev = $('#elev_button').hasClass('button-enabled')
+	const showElevToggle = $('#show_elev').hasClass('button-enabled');
+	const displayElev = $('#elev_button').hasClass('button-enabled') || showElevToggle == true
 	if(displayElev){
 		$('#elev_overlay').css('display', '');
 	}
@@ -3900,7 +3901,8 @@ function handle_drawing_button_click() {
 				$('#walls_layer').css('display', 'none');		
 				$('.hiddenDoor').css('display', '');	
 			}
-			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active')){
+
+			if($(clicked).is("#elev_button") || $("#elev_button").hasClass('ddbc-tab-options__header-heading--is-active') || $('#show_elev').hasClass('button-enabled')){
 				redraw_elev(true);
 			}	
 			else{
@@ -5283,6 +5285,12 @@ function init_elev_menu(buttons){
 			</button>
 		</div>`)
 	elev_menu.append("<div class='menu-subtitle'>Controls</div>");
+	elev_menu.append(
+	`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+		<button id='show_elev' data-toggle='true' class='drawbutton menu-option ddbc-tab-options__header-heading'>
+			Always Show
+		</button>
+	</div>`);
 	elev_menu.append(`
 			<div class='ddbc-tab-options--layout-pill' data-skip='true'>
 				<button class='ddbc-tab-options__header-heading  menu-option' id='elev_undo'>
