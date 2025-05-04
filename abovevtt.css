@@ -2981,8 +2981,8 @@ button.roll-button-mod.minus {
     padding: 0px;
 }
 .note-list .sidebar-list-item-row-item {
-    margin-left:2px;
-    width:calc(100% - 1px);
+    margin-left: 6px;
+    width: calc(100% - 12px);
 }
 .journal-chapter-title:hover {
     text-decoration: underline;
@@ -3042,10 +3042,10 @@ button.roll-button-mod.minus {
 
 #journal-panel .folder.collapsed > .note-list,
 #journal-panel .folder.collapsed > .folder{
-    display: none;
+    display: none !important;
 }
 #journal-panel .folder>.folder{
-    transform: scale(0.98);
+    transform: scale(0.96);
 }
 
 .journal-chapter-title {
@@ -4983,6 +4983,7 @@ button.block-send-to-game-log span {
     width: 100%;
     margin: 2px 0px;
     border: 1px solid #d8e1e8;
+    border-color: #3d6e9352;
     border-radius: 3px;
     background-color: #fff;
     cursor: pointer;
