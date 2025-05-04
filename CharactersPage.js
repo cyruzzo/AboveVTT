@@ -447,7 +447,19 @@ const buffsDebuffs = {
       },
       "newRoll": '1d20min10',
       "type": "class",
-      "type": "rogue"
+      "class": "rogue",
+  },
+  "Pass Without a Trace":{
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "replaceType": {
+      "check": '.ct-skills__item:contains("Stealth")' //looks for stealth
+    },
+    "newRoll": '1d20+10',
+    "type": "spell",
   },
   "Great Weapon Fighting": {
     "multiOptions": {
@@ -1026,9 +1038,10 @@ function inject_dice_roll(element, clear=true) {
     console.debug("inject_dice_roll slashCommands", slashCommands);
     let updatedInnerHtml = element.text();
     for (const command of slashCommands) {
+      let originalCommand = command[0];
       try {
         let iconRoll = command[0].startsWith('/ir');
-        let originalCommand = command[0];
+        
         if(iconRoll){
           command[0] = command[0].replace(/^(\/ir)/i, '/r')
           command[1] = 'r';
@@ -1036,10 +1049,8 @@ function inject_dice_roll(element, clear=true) {
         const diceRoll = DiceRoll.fromSlashCommand(command[0], window.PLAYER_NAME, window.PLAYER_IMG, "character", window.PLAYER_ID); // TODO: add gamelog_send_to_text() once that's available on the characters page without avtt running
         updatedInnerHtml = updatedInnerHtml.replace(originalCommand, `<button class='avtt-roll-formula-button integrated-dice__container ${iconRoll ? 'abovevtt-icon-roll' : ''}' title="${diceRoll.action?.toUpperCase() ?? "CUSTOM"}: ${diceRoll.rollType?.toUpperCase() ?? "ROLL"}" data-slash-command="${command[0]}">${diceRoll.expression}</button>`);
       } catch (error) {
-
         console.warn("inject_dice_roll failed to parse slash command. Removing the command to avoid infinite loop", command, command[0]);
-        updatedInnerHtml = updatedInnerHtml.replace(command[0], '');
-        element.find('.ddbc-damage').toggleClass('above-vtt-visited', true);
+        updatedInnerHtml = updatedInnerHtml.replace(originalCommand, '');
       }
     }
     if(clear == true){
