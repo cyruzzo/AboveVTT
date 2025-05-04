@@ -2882,8 +2882,10 @@ class Token {
 					stop: function (event) {
 							event.stopPropagation();
 							
+							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
+								self.place_sync_persist();
+							}
 							
-							self.place_sync_persist();
 							let darknessMoved = self.options.darkness;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
@@ -2892,7 +2894,10 @@ class Token {
 										continue;
 									let curr = window.TOKEN_OBJECTS[id];
 									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									curr.place_sync_persist();
+									if(window.TOKEN_OBJECTS[curr.options.id] != undefined){
+										curr.place_sync_persist();
+									}
+									
 									if(curr.options.darkness === true)
 										darknessMoved = true;
 								}												
