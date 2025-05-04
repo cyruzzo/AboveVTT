@@ -4967,7 +4967,7 @@ button.block-send-to-game-log span {
 }
 .encounter.collapsed .folder-item-list,
 .folder.collapsed .folder-item-list {
-    display: none;
+    display: none !important;
 }
 .encounter > .sidebar-list-item-row-item .token-row-button,
 .folder > .sidebar-list-item-row-item .token-row-button {
