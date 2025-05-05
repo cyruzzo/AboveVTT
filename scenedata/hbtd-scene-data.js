@@ -2960,7 +2960,7 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 133.0000000000001,
 			"hpps": 136.7,
-		}
+		},
 		"dnd/hbtd/hold-back-the-dead/Map13MithralHallDefenseZone": {
 			"scale": 44.11764705882353,
 			"vpps": 187.66666666666666,
