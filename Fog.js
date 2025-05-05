@@ -3328,6 +3328,8 @@ function drawing_mouseup(e) {
 				let wallColor;
 				let wallBottom;
 				let wallTop;
+				let wallHidden;
+				let wallWidth;
 				for(let j = 0; j < window.DRAWINGS.length; j++){
 					if(window.DRAWINGS[j][1] == ("wall") && window.DRAWINGS[j][0] == ("line") && window.DRAWINGS[j][3] == walls[i][3] && window.DRAWINGS[j][4] == walls[i][4] && window.DRAWINGS[j][5] == walls[i][5] && window.DRAWINGS[j][6] == walls[i][6]){
 						
@@ -3355,6 +3357,8 @@ function drawing_mouseup(e) {
 							break;
 						}
 						wallColor = window.DRAWINGS[j][2];
+						wallWidth = window.DRAWINGS[j][7];
+						wallHidden = window.DRAWINGS[j][9];
 						wallBottom = window.DRAWINGS[j][10];
 						wallTop = window.DRAWINGS[j][11];
 						redoArray.push([...window.DRAWINGS[j]]);
@@ -3394,9 +3398,9 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 6,
+						 wallWidth,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						 0, 
+						 wallHidden, 
 						 wallBottom, 
 						 wallTop];	
 						window.DRAWINGS.push(data);
@@ -3421,9 +3425,9 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 6,
+						 wallWidth,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						 0, 
+						 wallHidden, 
 						 wallBottom, 
 						 wallTop
 						 ];	
@@ -3448,9 +3452,9 @@ function drawing_mouseup(e) {
 						 y1,
 						 x2,
 						 y2,
-						 6,
+						 wallWidth,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						 0, 
+						 wallHidden, 
 						 wallBottom, 
 						 wallTop
 						 ];	
@@ -3469,16 +3473,16 @@ function drawing_mouseup(e) {
 						}
 						x2 = bottom.x;
 						y2 = bottom.y;
-							let data = ['line',
+						let data = ['line',
 						 'wall',
 						 wallColor,
 						 x1,
 						 y1,
 						 x2,
 						 y2,
-						 6,
+						 wallWidth,
 						 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-						 0, 
+						 wallHidden, 
 						 wallBottom, 
 						 wallTop
 						 ];	
@@ -3552,7 +3556,7 @@ function drawing_mouseup(e) {
 			}
 			
 			if(x1 != undefined && x2 != undefined && y1 != undefined && y2 != undefined){
-					let data = ['line',
+				let data = ['line',
 				 'wall',
 				 window.DRAWCOLOR,
 				 x1,
