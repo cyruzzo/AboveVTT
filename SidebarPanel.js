@@ -1784,7 +1784,7 @@ function did_click_row_gear(clickEvent) {
  * @param clickEvent {Event} the click event
  */
 function edit_encounter(clickEvent) {
-
+  $('#encounterWindow .title_bar_close_button').click();
   const xpTable2024 = {
       '1':{
         'low': 50,

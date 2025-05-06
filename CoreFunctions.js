@@ -491,13 +491,13 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
       rollAction = 'Roll';
     } 
     else if(rollAction.replace(' ', '').toLowerCase() == 'savingthrows'){ 
-      rollAction = $(this)[0].previousSibling?.nodeValue.replace(/[\W]+/gi, '');
-      rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+      rollAction = $(this)[0].previousSibling?.nodeValue?.replace(/[\W]+/gi, '');
+      rollAction = (rollAction == '') ? $(this).prev()?.text()?.replace(/[\W]+/gi, '') : rollAction;
       rollType = 'Save';  
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'skills'){
-      rollAction = $(this)[0].previousSibling?.nodeValue.replace(/[\W]+/gi, '');
-      rollAction = (rollAction == '') ? $(this).prev().text().replace(/[\W]+/gi, '') : rollAction;
+      rollAction = $(this)[0].previousSibling?.nodeValue?.replace(/[\W]+/gi, '');
+      rollAction = (rollAction == '') ? $(this).prev()?.text()?.replace(/[\W]+/gi, '') : rollAction;
       rollType = 'Check'; 
     }
     else if(rollAction.replace(' ', '').toLowerCase() == 'proficiencybonus'){
@@ -573,7 +573,7 @@ function general_statblock_formating(input){
 
   //bold top of statblock info
   input = input.replace(/^(Senses|Gear|Skills|Damage Resistances|Resistances|Immunities|Damage Immunities|Damage Vulnerabilities|Condition Immunities|Languages|Proficiency Bonus|Saving Throws)/gi, `<strong>$1</strong>`)
-  input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)(\s[\d\()])/gi, `<strong>$1</strong>$2`)
+  input = input.replace(/^(Speed|Hit Points|HP|AC|Armor Class|Challenge|CR)([\s<][\d\()<])/gi, `<strong>$1</strong>$2`)
   // Remove space between letter ranges
   // e.g. a- b
   input = input.replace(/([a-z])- ([a-z])/gi, '$1$2');
