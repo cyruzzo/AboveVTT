@@ -4733,12 +4733,13 @@ button.applyDamageButton svg {
     border: none;
     outline: none !important;
     align-items: center;
+    direction: rtl;
 }
 
 
 td button.block-send-to-game-log {
     position: absolute;
-    display: block;
+    display: flex;
     float: unset;
     top:50%;
     right: -2px;
@@ -4746,6 +4747,26 @@ td button.block-send-to-game-log {
 }
 td button.block-send-to-game-log span{
     font-size:9px !important;
+}
+button.block-send-to-game-log:has(.whisper-container.visible){
+    border:1px solid #000;
+    z-index:10000;
+}
+.whisper-container.visible {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    margin-right:10px;
+}
+
+.whisper-container {
+    display: none;
+}
+.whisper_toggle_row {
+    display: flex;
+    align-items: center;
 }
 h3#error-message{
     max-height:100px;

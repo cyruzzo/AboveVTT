@@ -105,7 +105,7 @@ const debounceHandleInjected = mydebounce(() => {
 					li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
 				}					
 				
-				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${(current.data.injected_data.whisper == window.PLAYER_NAME && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${((current.data.injected_data.whisper == window.PLAYER_NAME || current.data.injected_data.whisper == window.myUser) && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
 
 				let img = li.find(".magnify");
@@ -1565,7 +1565,7 @@ class MessageBroker {
 		if(data.dmonly && !(window.DM) && !local) // /dmroll only for DM of or the user who initiated it
 			return $("<div/>");
 				
-		if(data.whisper && (data.whisper!=window.PLAYER_NAME) && (!local))
+		if(data.whisper && (data.whisper!=window.PLAYER_NAME && !(Array.isArray(data.whisper) && data.whisper.includes(`${window.myUser}`))) && (!local))
 			return $("<div/>");
 		//notify_gamelog();
 
