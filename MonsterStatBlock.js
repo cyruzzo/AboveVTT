@@ -2158,7 +2158,7 @@ function add_stat_block_hover(statBlockContainer, tokenId) {
 
 }
 
-function send_html_to_gamelog(outerHtml) {
+function send_html_to_gamelog(outerHtml, whisper) {
     console.log("send_html_to_gamelog", outerHtml);
     outerHtml = outerHtml.replace('disableremoteplayback', 'disableremoteplayback autoplay loop');
     let html = window.MB.encode_message_text(outerHtml);
@@ -2167,6 +2167,8 @@ function send_html_to_gamelog(outerHtml) {
         img: window.PLAYER_IMG,
         text: html
     };
+    if(whisper != undefined)
+      data.whisper = whisper
     window.MB.inject_chat(data);
     notify_gamelog();
 }

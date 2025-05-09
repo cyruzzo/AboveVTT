@@ -1709,39 +1709,99 @@ class JournalManager{
 	    }
 	}
 	block_send_to_buttons(target){
-		let blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
+		const blocks = target.find('img:not(.mon-stat-block__separator-img), .text--quote-box, .rules-text, .block-torn-paper, .read-aloud-text')
 
-		let sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
-		let container = $(`<div class='note-text' style='position:relative; width:'></div>`)
+		const sendToGamelogButton = $('<button class="block-send-to-game-log"><span class="material-symbols-outlined">login</span></button>')
+		const container = $(`<div class='note-text' style='position:relative; width:'></div>`)
+		
+	
+
+	    const whisper_container=$("<div class='whisper-container'/>");
+
+        for(let i in window.playerUsers){
+			if(whisper_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+				const randomId = uuid();
+				let whisper_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+				let whisper_row = $(`<div class='whisper_toggle_row'><label>${window.playerUsers[i].userName}</label></div>`)
+				whisper_toggle.off('click.toggle').on('click.toggle', function(e){
+
+					e.stopPropagation();
+				})
+				whisper_row.find('label').off('click.stopProp').on('click.stopProp', function(e){
+					e.stopPropagation();
+					e.preventDefault();
+					$(this).next('input[type=checkbox]').click();
+				})
+				whisper_row.append(whisper_toggle)
+
+				
+				whisper_container.append(whisper_row);
+			}
+		}
+		sendToGamelogButton.off('contextmenu').on("contextmenu", function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			const checkedInputs=$(this).find('.whisper-container input:checked');
+	        checkedInputs.click();
+			$(this).find('.whisper-container').toggleClass('visible');
+
+			if($(this).find('.whisper-container').hasClass('visible')){
+		      $(document).on('click.blurWhisperHandle', function(e){
+		        if($(e.target).closest('.whisper-container').length == 0){
+		          $('.whisper-container').toggleClass('visible', false)
+		          $(document).off('click.blurWhisperHandle');
+		        }
+		      })  
+		    }
+		})
+		$(sendToGamelogButton).append(whisper_container);
 		sendToGamelogButton.off('click').on("click", function(e) {
 	        e.stopPropagation();
 	        e.preventDefault();
+	        
 	        let targetBlock = $(e.currentTarget).parent().clone();
 	        targetBlock.find('button.block-send-to-game-log').remove();
 	        targetBlock.find('img').removeAttr('width height style').toggleClass('magnify', true);
-	        send_html_to_gamelog(`<p>${targetBlock[0].outerHTML}</p>`);
+	       	const whisper_container=$(this).find('.whisper-container');
+	        if(whisper_container.hasClass('visible')){
+	        	const checkedInputs = whisper_container.find('input:checked');
+	        	const whisperArray = [];
+	        	checkedInputs.each(function () {
+			       whisperArray.push($(this).attr('name'));
+			  	});
+			  	send_html_to_gamelog(`<p>${targetBlock[0].outerHTML}</p>`, whisperArray)
+	        }
+	        else{
+	        	send_html_to_gamelog(`<p>${targetBlock[0].outerHTML}</p>`);
+	        }
+	        
 	    });
-		blocks.wrap(function(){
+
+
+		const tables = target.find('table');
+		
+		const allDiceRegex = /(\d+)?d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
+       	
+   		blocks.wrap(function(){
 			if(this instanceof HTMLImageElement){
 				container.css('width', 'fit-content');
 				$(this).attr('href', $(this).attr('src'));
 			}
+
 			return container;
 		});
-		blocks.after(sendToGamelogButton); 
-
-		let tables = target.find('table');
-		
-		const allDiceRegex = /(\d+)?d(?:100|20|12|10|8|6|4)((?:kh|kl|ro(<|<=|>|>=|=)|min=)\d+)*/g; // ([numbers]d[diceTypes]kh[numbers] or [numbers]d[diceTypes]kl[numbers]) or [numbers]d[diceTypes]
-       
+		sendToGamelogButton.clone(true, true).insertAfter(blocks);
 		if(allDiceRegex.test($(tables).find('tr:first-of-type>:first-child').text())){
 			let result = $(tables).find(`tbody > tr td:last-of-type`);
 			$(tables).find('td').css({
 				'position': 'relative',
 				'padding-right': '10px'
 			});
-			result.append(sendToGamelogButton); 
+			result.append(sendToGamelogButton.clone(true, true)); 
 		}
+
+
+		
 	}
 				   
 	replaceNoteEmbed(text, notesIncluded=[]){
