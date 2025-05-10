@@ -2960,6 +2960,30 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 133.0000000000001,
 			"hpps": 136.7,
+			"notes": {
+				"29249d88-c3fb-488b-a28f-06501776440f": {
+					"title": "Siege Weapon Sabotage",
+					"text": "<p>The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose <strong>Token Adjustments</strong>, then <strong>Change Token Image</strong>. You can have the doppleganger transform back to that token image, if you want.</p>",
+					"plain": "The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose Token Adjustments, then Change Token Image. You can have the doppleganger transform back to that token image, if you want.",
+					"player": false,
+					"statBlock": false
+				},
+				"c0976a09-2f4a-4796-8077-3697d09af8a9": {
+					"title": "Animated Flying Sword",
+					"text": "<div class=\"stat-block\">\n<div class=\"monster-header\">Clockwork Trebuchet</div>\n<p>Huge Object</p>\n<p><strong>AC</strong>&nbsp;15&nbsp;</p>\n<p><strong>HP</strong>&nbsp;100</p>\n<p><strong>Speed</strong>&nbsp;30 ft.</p>\n<p class=\"monster-header\">Actions</p>\n<p><em><strong>Trebuchet Stone.</strong>&nbsp;</em>(Requires Lever Pull).&nbsp;<em>Ranged Attack Roll</em>: +5, range 200/800 ft. (can&rsquo;t hit targets within 30 feet of itself).&nbsp;<em>Hit:</em>&nbsp;27 (5d10) Bludgeoning damage.</p>\n<p><strong><em>Level Pull.</em></strong>&nbsp;Pulling a lever of the Clockwork Trebuchet requires the Utilize action. Then a creature can take the&nbsp;<em>Trebuchet Stone</em>&nbsp;action.</p>\n</div>\n<p>&nbsp;</p>",
+					"plain": "Clockwork TrebuchetHuge ObjectAC 15 HP 100Speed 30 ft.ActionsTrebuchet Stone. (Requires Lever Pull). Ranged Attack Roll: +5, range 200/800 ft. (can’t hit targets within 30 feet of itself). Hit: 27 (5d10) Bludgeoning damage.Level Pull. Pulling a lever of the Clockwork Trebuchet requires the Utilize action. Then a creature can take the Trebuchet Stone action. ",
+					"player": true,
+					"statBlock": true,
+					"id": "c0976a09-2f4a-4796-8077-3697d09af8a9"
+				},
+				"c6d4faca-a823-4f04-96b6-e894df36c193": {
+					"id": "c6d4faca-a823-4f04-96b6-e894df36c193",
+					"plain": "Decrepit MangonelLarge ObjectArmor Class: 12Hit Points: 30Sack of Hands. (Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws appears where the sack lands.Loading a Decrepit Mangonel requires two Utilize actions, and aiming it requires one Utilize action. Then a creature can take the Sack of Hands action.Actions required to launch Sack of Hands:Load part 1Load part 2AimSack of Hands",
+					"player": true,
+					"statBlock": true,
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<p><span style=\"font-size: 24pt; color: #800000;\"><strong>Decrepit Mangonel</strong></span><br /><em><span style=\"font-size: 14pt;\">Large Object</span></em></p>\n<p><span style=\"font-size: 14pt;\">Armor Class:&nbsp;<strong class=\"custom-ac custom-stat\">12</strong></span></p>\n<p><span style=\"font-size: 14pt;\">Hit Points:&nbsp;<strong class=\"custom-avghp custom-stat\">30</strong></span></p>\n<p><br /><span style=\"font-size: 14pt;\"><strong><em>Sack of Hands.</em></strong>&nbsp;(Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws&nbsp;</span><span style=\"font-size: 14pt;\">appears where the sack lands.</span></p>\n<p><br /><span style=\"font-size: 14pt;\"><span style=\"text-decoration: underline;\"><strong>Loading</strong>&nbsp;</span>a Decrepit Mangonel requires<span style=\"text-decoration: underline;\"><strong>&nbsp;two Utilize actions</strong></span>, and&nbsp;<span style=\"text-decoration: underline;\"><strong>aiming</strong>&nbsp;</span>it requires&nbsp;<span style=\"text-decoration: underline;\"><strong>one Utilize action</strong></span>. Then a creature can take the Sack of Hands action.</span></p>\n</div>\n<p><span style=\"font-size: 14pt;\"><img class=\"mon-stat-block__separator-img\" src=\"https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg\" alt=\"\" /></span></p>\n<p><span style=\"font-size: 14pt;\">Actions required to launch Sack of Hands:</span></p>\n<ol>\n<li><span style=\"font-size: 14pt;\">Load part 1</span></li>\n<li><span style=\"font-size: 14pt;\">Load part 2</span></li>\n<li><span style=\"font-size: 14pt;\">Aim</span></li>\n<li><strong><em><span style=\"font-size: 14pt;\">Sack of Hands</span></em></strong></li>\n</ol>"
+				}
+			}
 		},
 		"dnd/hbtd/hold-back-the-dead/Map13MithralHallDefenseZone": {
 			"scale": 44.11764705882353,
@@ -6003,6 +6027,30 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 163.6666666666668,
 			"hpps": 187.5333333333333,
+			"notes": {
+				"c6d4faca-a823-4f04-96b6-e894df36c193": {
+					"id": "c6d4faca-a823-4f04-96b6-e894df36c193",
+					"plain": "Decrepit MangonelLarge ObjectArmor Class: 12Hit Points: 30Sack of Hands. (Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws appears where the sack lands.Loading a Decrepit Mangonel requires two Utilize actions, and aiming it requires one Utilize action. Then a creature can take the Sack of Hands action.Actions required to launch Sack of Hands:Load part 1Load part 2AimSack of Hands",
+					"player": true,
+					"statBlock": true,
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<p><span style=\"font-size: 24pt; color: #800000;\"><strong>Decrepit Mangonel</strong></span><br /><em><span style=\"font-size: 14pt;\">Large Object</span></em></p>\n<p><span style=\"font-size: 14pt;\">Armor Class:&nbsp;<strong class=\"custom-ac custom-stat\">12</strong></span></p>\n<p><span style=\"font-size: 14pt;\">Hit Points:&nbsp;<strong class=\"custom-avghp custom-stat\">30</strong></span></p>\n<p><br /><span style=\"font-size: 14pt;\"><strong><em>Sack of Hands.</em></strong>&nbsp;(Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws&nbsp;</span><span style=\"font-size: 14pt;\">appears where the sack lands.</span></p>\n<p><br /><span style=\"font-size: 14pt;\"><span style=\"text-decoration: underline;\"><strong>Loading</strong>&nbsp;</span>a Decrepit Mangonel requires<span style=\"text-decoration: underline;\"><strong>&nbsp;two Utilize actions</strong></span>, and&nbsp;<span style=\"text-decoration: underline;\"><strong>aiming</strong>&nbsp;</span>it requires&nbsp;<span style=\"text-decoration: underline;\"><strong>one Utilize action</strong></span>. Then a creature can take the Sack of Hands action.</span></p>\n</div>\n<p><span style=\"font-size: 14pt;\"><img class=\"mon-stat-block__separator-img\" src=\"https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg\" alt=\"\" /></span></p>\n<p><span style=\"font-size: 14pt;\">Actions required to launch Sack of Hands:</span></p>\n<ol>\n<li><span style=\"font-size: 14pt;\">Load part 1</span></li>\n<li><span style=\"font-size: 14pt;\">Load part 2</span></li>\n<li><span style=\"font-size: 14pt;\">Aim</span></li>\n<li><strong><em><span style=\"font-size: 14pt;\">Sack of Hands</span></em></strong></li>\n</ol>"
+				},
+				"a80ea37d-34ab-4fce-aa79-902ba776f936": {
+					"title": "Siege Weapon Sabotage",
+					"text": "<p>The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose <strong>Token Adjustments</strong>, then <strong>Change Token Image</strong>. You can have the doppleganger transform back to that token image, if you want.</p>",
+					"plain": "The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose Token Adjustments, then Change Token Image. You can have the doppleganger transform back to that token image, if you want.",
+					"player": false,
+					"statBlock": false
+				},
+				"735c37ff-e96d-4c3c-8e26-301bced3f321": {
+					"title": "Forge Launcher - State block for DM",
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<h4 id=\"ForgeLauncher\" class=\"compendium-hr with-metadata heading-anchor\" data-content-chunk-id=\"5d4913bc-891b-4361-b4f3-6607b26bf307\"><span style=\"font-size: 18pt; color: #800000;\">Forge Launcher</span></h4>\n<p data-content-chunk-id=\"0a8b822d-0ead-4d51-b080-e09dfac27ae0\"><span style=\"font-size: 12pt;\"><em>Large Object</em></span></p>\n<div class=\"condensed-group\" data-content-chunk-id=\"93131278-2e5e-4944-9c9c-7543e4ff87ed\">\n<p data-content-chunk-id=\"ce98abbc-5d3a-4b94-b435-9f289dc9cb97\"><span style=\"font-size: 12pt;\"><strong>Armor Class:</strong>&nbsp;15&nbsp;<strong class=\"left-indent\">Hit Points:</strong>&nbsp;30</span></p>\n<p data-content-chunk-id=\"8ec753ec-3a66-424e-a120-da822a36892a\"><span style=\"font-size: 12pt;\"><strong><em>Fiery Canister (Requires Aim).</em></strong>&nbsp;<em>Dexterity Saving Throw:</em>&nbsp;DC 15, each creature in a 20-foot-radius&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#SphereAreaofEffect\" data-tooltip-href=\"//www.dndbeyond.com/rules-glossary/109-tooltip?disable-webm=1&amp;disable-webm=1\">Sphere</a>&nbsp;centered on a point 30 to 300 feet from the launcher.&nbsp;<em>Failure:</em>&nbsp;14 (4d6) Fire damage.&nbsp;<em>Success:</em>&nbsp;Half damage.</span></p>\n</div>\n<p data-content-chunk-id=\"14d0c711-f4b8-44ae-ba61-bff8418c8ace\"><span style=\"font-size: 12pt;\">Aiming the Forge Launcher requires the&nbsp;<a class=\"tooltip-hover action-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#UtilizeAction\" data-tooltip-href=\"//www.dndbeyond.com/actions/11-tooltip?disable-webm=1&amp;disable-webm=1\">Utilize</a>&nbsp;action. Then a creature can take the Fiery Canister action.</span></p>\n</div>",
+					"plain": "Forge LauncherLarge ObjectArmor Class: 15 Hit Points: 30Fiery Canister (Requires Aim). Dexterity Saving Throw: DC 15, each creature in a 20-foot-radius Sphere centered on a point 30 to 300 feet from the launcher. Failure: 14 (4d6) Fire damage. Success: Half damage.Aiming the Forge Launcher requires the Utilize action. Then a creature can take the Fiery Canister action.",
+					"player": true,
+					"statBlock": true,
+					"id": "735c37ff-e96d-4c3c-8e26-301bced3f321"
+				}
+			}
 		},
 		"dnd/hbtd/hold-back-the-dead/Map14NeverwinterDefenseZone": {
 			"scale": 32.0855614973262,
@@ -8961,6 +9009,30 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 123.66666666666677,
 			"hpps": 137.66666666666666,
+			"notes": {
+				"c6d4faca-a823-4f04-96b6-e894df36c193": {
+					"id": "c6d4faca-a823-4f04-96b6-e894df36c193",
+					"plain": "Decrepit MangonelLarge ObjectArmor Class: 12Hit Points: 30Sack of Hands. (Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws appears where the sack lands.Loading a Decrepit Mangonel requires two Utilize actions, and aiming it requires one Utilize action. Then a creature can take the Sack of Hands action.Actions required to launch Sack of Hands:Load part 1Load part 2AimSack of Hands",
+					"player": true,
+					"statBlock": true,
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<p><span style=\"font-size: 24pt; color: #800000;\"><strong>Decrepit Mangonel</strong></span><br /><em><span style=\"font-size: 14pt;\">Large Object</span></em></p>\n<p><span style=\"font-size: 14pt;\">Armor Class:&nbsp;<strong class=\"custom-ac custom-stat\">12</strong></span></p>\n<p><span style=\"font-size: 14pt;\">Hit Points:&nbsp;<strong class=\"custom-avghp custom-stat\">30</strong></span></p>\n<p><br /><span style=\"font-size: 14pt;\"><strong><em>Sack of Hands.</em></strong>&nbsp;(Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws&nbsp;</span><span style=\"font-size: 14pt;\">appears where the sack lands.</span></p>\n<p><br /><span style=\"font-size: 14pt;\"><span style=\"text-decoration: underline;\"><strong>Loading</strong>&nbsp;</span>a Decrepit Mangonel requires<span style=\"text-decoration: underline;\"><strong>&nbsp;two Utilize actions</strong></span>, and&nbsp;<span style=\"text-decoration: underline;\"><strong>aiming</strong>&nbsp;</span>it requires&nbsp;<span style=\"text-decoration: underline;\"><strong>one Utilize action</strong></span>. Then a creature can take the Sack of Hands action.</span></p>\n</div>\n<p><span style=\"font-size: 14pt;\"><img class=\"mon-stat-block__separator-img\" src=\"https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg\" alt=\"\" /></span></p>\n<p><span style=\"font-size: 14pt;\">Actions required to launch Sack of Hands:</span></p>\n<ol>\n<li><span style=\"font-size: 14pt;\">Load part 1</span></li>\n<li><span style=\"font-size: 14pt;\">Load part 2</span></li>\n<li><span style=\"font-size: 14pt;\">Aim</span></li>\n<li><strong><em><span style=\"font-size: 14pt;\">Sack of Hands</span></em></strong></li>\n</ol>"
+				},
+				"d5b730ea-b299-458f-ba0b-92ccfe832953": {
+					"title": "Forge Launcher - Stat block for DM",
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<h4 id=\"AutomaticBallista\" class=\"compendium-hr with-metadata heading-anchor\" data-content-chunk-id=\"1cb71f09-f66a-46a8-b903-978f96539613\"><span style=\"font-size: 18pt; color: #800000;\">Automatic Ballista</span></h4>\n<p data-content-chunk-id=\"d9b720ef-4d70-4257-ad65-6b3533e9ed36\"><span style=\"font-size: 14pt;\"><em>Large Object</em></span></p>\n<div class=\"condensed-group\" data-content-chunk-id=\"504a5c85-5e05-4573-b6e2-0289364e91b2\">\n<p data-content-chunk-id=\"e7a1857c-25ae-4e1d-8e31-99ca055e5b38\"><span style=\"font-size: 14pt;\"><strong>Armor Class:</strong>&nbsp;15&nbsp;<strong class=\"left-indent\">Hit Points:</strong>&nbsp;50</span></p>\n<p data-content-chunk-id=\"aec06f2c-7251-47ad-baf3-d8c5be8b7638\"><span style=\"font-size: 14pt;\"><strong><em>Ballista Bolt (Requires Aim).</em></strong>&nbsp;<em>Ranged Attack Roll:</em>&nbsp;+6, range 120/480 ft.&nbsp;<em>Hit:</em>&nbsp;22 (4d10) Piercing damage.</span></p>\n</div>\n<p data-content-chunk-id=\"bb33784d-f0cb-4305-9ccc-2c2671028e3d\"><span style=\"font-size: 14pt;\">Aiming the Automatic Ballista requires the&nbsp;<a class=\"tooltip-hover action-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#UtilizeAction\" data-tooltip-href=\"//www.dndbeyond.com/actions/11-tooltip?disable-webm=1&amp;disable-webm=1\">Utilize</a>&nbsp;action. Then a creature can take the Ballista Bolt action.</span></p>\n</div>",
+					"plain": "Automatic BallistaLarge ObjectArmor Class: 15 Hit Points: 50Ballista Bolt (Requires Aim). Ranged Attack Roll: +6, range 120/480 ft. Hit: 22 (4d10) Piercing damage.Aiming the Automatic Ballista requires the Utilize action. Then a creature can take the Ballista Bolt action.",
+					"player": true,
+					"statBlock": true,
+					"id": "d5b730ea-b299-458f-ba0b-92ccfe832953"
+				},
+				"986d16a9-1fc5-4782-802e-9ea92597e626": {
+					"title": "Siege Weapon Sabotage",
+					"text": "<p>The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose <strong>Token Adjustments</strong>, then <strong>Change Token Image</strong>. You can have the doppleganger transform back to that token image, if you want.</p>",
+					"plain": "The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose Token Adjustments, then Change Token Image. You can have the doppleganger transform back to that token image, if you want.",
+					"player": false,
+					"statBlock": false
+				}
+			}
 		},
 		"dnd/hbtd/hold-back-the-dead/Map15SilverymoonDefenseZone": {
 			"scale": 43.79562043795621,
@@ -11919,6 +11991,30 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 127.66666666666657,
 			"hpps": 137.46666666666667,
+			"notes": {
+				"c6d4faca-a823-4f04-96b6-e894df36c193": {
+					"id": "c6d4faca-a823-4f04-96b6-e894df36c193",
+					"plain": "Decrepit MangonelLarge ObjectArmor Class: 12Hit Points: 30Sack of Hands. (Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws appears where the sack lands.Loading a Decrepit Mangonel requires two Utilize actions, and aiming it requires one Utilize action. Then a creature can take the Sack of Hands action.Actions required to launch Sack of Hands:Load part 1Load part 2AimSack of Hands",
+					"player": true,
+					"statBlock": true,
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<p><span style=\"font-size: 24pt; color: #800000;\"><strong>Decrepit Mangonel</strong></span><br /><em><span style=\"font-size: 14pt;\">Large Object</span></em></p>\n<p><span style=\"font-size: 14pt;\">Armor Class:&nbsp;<strong class=\"custom-ac custom-stat\">12</strong></span></p>\n<p><span style=\"font-size: 14pt;\">Hit Points:&nbsp;<strong class=\"custom-avghp custom-stat\">30</strong></span></p>\n<p><br /><span style=\"font-size: 14pt;\"><strong><em>Sack of Hands.</em></strong>&nbsp;(Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws&nbsp;</span><span style=\"font-size: 14pt;\">appears where the sack lands.</span></p>\n<p><br /><span style=\"font-size: 14pt;\"><span style=\"text-decoration: underline;\"><strong>Loading</strong>&nbsp;</span>a Decrepit Mangonel requires<span style=\"text-decoration: underline;\"><strong>&nbsp;two Utilize actions</strong></span>, and&nbsp;<span style=\"text-decoration: underline;\"><strong>aiming</strong>&nbsp;</span>it requires&nbsp;<span style=\"text-decoration: underline;\"><strong>one Utilize action</strong></span>. Then a creature can take the Sack of Hands action.</span></p>\n</div>\n<p><span style=\"font-size: 14pt;\"><img class=\"mon-stat-block__separator-img\" src=\"https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg\" alt=\"\" /></span></p>\n<p><span style=\"font-size: 14pt;\">Actions required to launch Sack of Hands:</span></p>\n<ol>\n<li><span style=\"font-size: 14pt;\">Load part 1</span></li>\n<li><span style=\"font-size: 14pt;\">Load part 2</span></li>\n<li><span style=\"font-size: 14pt;\">Aim</span></li>\n<li><strong><em><span style=\"font-size: 14pt;\">Sack of Hands</span></em></strong></li>\n</ol>"
+				},
+				"4222088e-9141-4032-af8d-521d2ded68a2": {
+					"title": "Siege Weapon Sabotage",
+					"text": "<p>The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose <strong>Token Adjustments</strong>, then <strong>Change Token Image</strong>. You can have the doppleganger transform back to that token image, if you want.</p>",
+					"plain": "The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose Token Adjustments, then Change Token Image. You can have the doppleganger transform back to that token image, if you want.",
+					"player": false,
+					"statBlock": false
+				},
+				"e0d1e1a6-f4b5-4205-aee4-05499f832bdf": {
+					"title": "Bal",
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<h4 id=\"EnchantedBallista\" class=\"compendium-hr with-metadata heading-anchor\" data-content-chunk-id=\"3b1d162f-3482-48e6-a3eb-bfc7ec63e69e\"><span style=\"font-size: 18pt; color: #800000;\">Enchanted Ballista</span></h4>\n<p data-content-chunk-id=\"b38c95ac-a497-45e5-8d99-a96564fbbe93\"><span style=\"font-size: 14pt;\"><em>Large Object</em></span></p>\n<div class=\"condensed-group\" data-content-chunk-id=\"4576312f-dba4-484a-90c3-121b049575d9\">\n<p data-content-chunk-id=\"4ba5ef01-e39a-4a65-acc8-1e3acb97ac00\"><span style=\"font-size: 14pt;\"><strong>Armor Class:</strong>&nbsp;15&nbsp;<strong class=\"left-indent\">Hit Points:</strong>&nbsp;50</span></p>\n<p data-content-chunk-id=\"e369668b-fa30-4ac7-883a-e2f0cf0dcf91\"><span style=\"font-size: 14pt;\"><strong><em>Ballista Bolt (Requires Load).</em></strong>&nbsp;<em>Ranged Attack Roll:</em>&nbsp;+6, range 120/480 ft.&nbsp;<em>Hit:</em>&nbsp;22 (4d10) Piercing damage.</span></p>\n</div>\n<p data-content-chunk-id=\"d13fd22d-e58e-472b-a095-36d956dd3587\"><span style=\"font-size: 14pt;\">Loading the Enchanted Ballista requires the&nbsp;<a class=\"tooltip-hover action-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#UtilizeAction\" data-tooltip-href=\"//www.dndbeyond.com/actions/11-tooltip?disable-webm=1&amp;disable-webm=1\">Utilize</a>&nbsp;action. Then a creature can take the Ballista Bolt action.</span></p>\n</div>",
+					"plain": "Enchanted BallistaLarge ObjectArmor Class: 15 Hit Points: 50Ballista Bolt (Requires Load). Ranged Attack Roll: +6, range 120/480 ft. Hit: 22 (4d10) Piercing damage.Loading the Enchanted Ballista requires the Utilize action. Then a creature can take the Ballista Bolt action.",
+					"player": true,
+					"statBlock": true,
+					"id": "e0d1e1a6-f4b5-4205-aee4-05499f832bdf"
+				}
+			}
 		},
 		"dnd/hbtd/hold-back-the-dead/Map16WaterdeepDefenseZone": {
 			"scale": 43.79562043795621,
@@ -14877,6 +14973,30 @@ function get_scene_data_hbtd() {
 			"dm_map_usable": "1",
 			"offsety": 167.6666666666668,
 			"hpps": 187.66666666666666,
+			"notes": {
+				"c6d4faca-a823-4f04-96b6-e894df36c193": {
+					"id": "c6d4faca-a823-4f04-96b6-e894df36c193",
+					"plain": "Decrepit MangonelLarge ObjectArmor Class: 12Hit Points: 30Sack of Hands. (Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws appears where the sack lands.Loading a Decrepit Mangonel requires two Utilize actions, and aiming it requires one Utilize action. Then a creature can take the Sack of Hands action.Actions required to launch Sack of Hands:Load part 1Load part 2AimSack of Hands",
+					"player": true,
+					"statBlock": true,
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<p><span style=\"font-size: 24pt; color: #800000;\"><strong>Decrepit Mangonel</strong></span><br /><em><span style=\"font-size: 14pt;\">Large Object</span></em></p>\n<p><span style=\"font-size: 14pt;\">Armor Class:&nbsp;<strong class=\"custom-ac custom-stat\">12</strong></span></p>\n<p><span style=\"font-size: 14pt;\">Hit Points:&nbsp;<strong class=\"custom-avghp custom-stat\">30</strong></span></p>\n<p><br /><span style=\"font-size: 14pt;\"><strong><em>Sack of Hands.</em></strong>&nbsp;(Requires Load and Aim). A launched sack of writhing hands lands in a space 30 to 100 feet away from the mangonel. A Swarm of Crawling Claws&nbsp;</span><span style=\"font-size: 14pt;\">appears where the sack lands.</span></p>\n<p><br /><span style=\"font-size: 14pt;\"><span style=\"text-decoration: underline;\"><strong>Loading</strong>&nbsp;</span>a Decrepit Mangonel requires<span style=\"text-decoration: underline;\"><strong>&nbsp;two Utilize actions</strong></span>, and&nbsp;<span style=\"text-decoration: underline;\"><strong>aiming</strong>&nbsp;</span>it requires&nbsp;<span style=\"text-decoration: underline;\"><strong>one Utilize action</strong></span>. Then a creature can take the Sack of Hands action.</span></p>\n</div>\n<p><span style=\"font-size: 14pt;\"><img class=\"mon-stat-block__separator-img\" src=\"https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg\" alt=\"\" /></span></p>\n<p><span style=\"font-size: 14pt;\">Actions required to launch Sack of Hands:</span></p>\n<ol>\n<li><span style=\"font-size: 14pt;\">Load part 1</span></li>\n<li><span style=\"font-size: 14pt;\">Load part 2</span></li>\n<li><span style=\"font-size: 14pt;\">Aim</span></li>\n<li><strong><em><span style=\"font-size: 14pt;\">Sack of Hands</span></em></strong></li>\n</ol>"
+				},
+				"44f1ee82-fab6-4bed-be8f-9f2095c0af3d": {
+					"title": "Forge Launcher - Stat block for DM",
+					"text": "<div class=\"Basic-Text-Frame stat-block-background one-column-stat\">\n<h4 id=\"StormCannon\" class=\"compendium-hr with-metadata heading-anchor\" data-content-chunk-id=\"72ea95f8-93ee-46d0-9f90-0265df0b0e5f\"><span style=\"font-size: 18pt; color: #800000;\">Storm Cannon</span></h4>\n<p data-content-chunk-id=\"2ada0161-4a41-4692-ad6d-79cb1a07b771\"><span style=\"font-size: 14pt;\"><em>Medium Object</em></span></p>\n<div class=\"condensed-group\" data-content-chunk-id=\"f0d3cc71-70eb-4cd0-8309-db6ef887e48e\">\n<p data-content-chunk-id=\"d72971f3-ae21-4389-9ffe-d26988cd7ae7\"><span style=\"font-size: 14pt;\"><strong>Armor Class:</strong>&nbsp;18&nbsp;<strong class=\"left-indent\">Hit Points:</strong>&nbsp;30</span></p>\n<p data-content-chunk-id=\"2808ccfd-21ee-429d-a61a-f7d66ee466e5\"><span style=\"font-size: 14pt;\"><strong><em>Lightning Ball (Requires Aim).</em></strong>&nbsp;<em>Ranged Attack Roll:</em>&nbsp;+6, range 200/800 ft.&nbsp;<em>Hit:</em>&nbsp;22 (4d10) Lightning damage.</span></p>\n</div>\n<p data-content-chunk-id=\"c872e897-2144-428a-b4f1-ae4363bcca5b\"><span style=\"font-size: 14pt;\">Aiming a Storm Cannon requires the&nbsp;<a class=\"tooltip-hover action-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#UtilizeAction\" data-tooltip-href=\"//www.dndbeyond.com/actions/11-tooltip?disable-webm=1&amp;disable-webm=1\">Utilize</a>&nbsp;action, then a creature can take the Lightning Ball action.</span></p>\n</div>",
+					"plain": "Storm CannonMedium ObjectArmor Class: 18 Hit Points: 30Lightning Ball (Requires Aim). Ranged Attack Roll: +6, range 200/800 ft. Hit: 22 (4d10) Lightning damage.Aiming a Storm Cannon requires the Utilize action, then a creature can take the Lightning Ball action.",
+					"player": true,
+					"statBlock": true,
+					"id": "44f1ee82-fab6-4bed-be8f-9f2095c0af3d"
+				},
+				"56ad5141-1482-4712-a847-91beecf30aa0": {
+					"title": "Siege Weapon Sabotage",
+					"text": "<p>The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose <strong>Token Adjustments</strong>, then <strong>Change Token Image</strong>. You can have the doppleganger transform back to that token image, if you want.</p>",
+					"plain": "The token for \"Corlie Halvachar\" has a doppelganger statblock. You can also right click on the token, choose Token Adjustments, then Change Token Image. You can have the doppleganger transform back to that token image, if you want.",
+					"player": false,
+					"statBlock": false
+				}
+			}
 		},
 	}
 }
