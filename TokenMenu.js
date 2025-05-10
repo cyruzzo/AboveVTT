@@ -4863,36 +4863,34 @@ function qrm_apply_hp_adjustment(healing=false){
 			damage = -hp_adjustment_failed_save || 0
 		}
 		else{
-			if (result.includes('Fail')){
-				damage = hp_adjustment_failed_save || 0
-				let conditions = $('#qrm_apply_conditions')
-				let conditionName = conditions.val()
-				if(conditionName == 'conditions'){
-					//Do nothing
-				} 
-				else if(conditionName == "remove_all"){
-					//guess this is fine, we update the token immediately. Probably a better way to clear though
-					token.options.conditions = []
-					token.options.custom_conditions = []
-				}
-				else{
-					if(!token.hasCondition(conditionName)){
-						token.addCondition(conditionName, conditionName);
-					}
-				}	
-			}
-			else {
-				damage = half_damage_save_success || 0
+			
+			damage = hp_adjustment_failed_save || 0
+			
+			if(!result.includes('Fail') && damage > 0) {
+				damage = Math.max(half_damage_save_success, 1) || 0
 			}	
-			if($(this).find('button.resistanceButton.enabled').length>0){
-				damage = Math.floor(damage/2);
-			}
-			if(damage == 0){
-				damage = 1;
+			if($(this).find('button.resistanceButton.enabled').length>0 && damage>0){
+				damage = Math.max(Math.floor(damage/2), 1);
 			}
 		}
+	
+		let conditions = $('#qrm_apply_conditions')
+		let conditionName = conditions.val()
+		if(conditionName == 'conditions'){
+			//Do nothing
+		} 
+		else if(conditionName == "remove_all"){
+			//guess this is fine, we update the token immediately. Probably a better way to clear though
+			token.options.conditions = []
+			token.options.custom_conditions = []
+		}
+		else if(result.includes('Fail')){
+			if(!token.hasCondition(conditionName)){
+				token.addCondition(conditionName, conditionName);
+			}
+		}	
 		
-		if(token.options.hitPointInfo.maximum>0 && token.options.itemType != 'pc'){
+		if(token.options?.hitPointInfo?.maximum>0 && token.options?.itemType != 'pc'){
 			let _hp = $(this).find('#qrm_hp');
 			let _max_hp = $(this).find('#qrm_maxhp');
 
@@ -4909,20 +4907,21 @@ function qrm_apply_hp_adjustment(healing=false){
 			_hp.trigger('change');
 		}
 		else {
-			// doing it this way, because Players might also have resistances or abilites and they should manage their own HP. 
-			let dmg_heal_text;
-			if (damage >= 0){
-				dmg_heal_text = token.options.name + " takes " + damage +" damage (adjust manually)";
+			if (damage != 0){
+				let dmg_heal_text;
+				if (damage > 0){
+					dmg_heal_text = token.options.name + " takes " + damage +" damage (adjust manually)";
+				}
+				else{
+					dmg_heal_text = token.options.name + " heals for " + -damage +" (adjust manually)";
+				}
+					let msgdata = {
+					player: window.PLAYER_NAME,
+					img: window.PLAYER_IMG,
+					text: dmg_heal_text,
+				};
+				window.MB.inject_chat(msgdata);
 			}
-			else{
-				dmg_heal_text = token.options.name + " heals for " + damage +" (adjust manually)";
-			}
-				let msgdata = {
-				player: window.PLAYER_NAME,
-				img: window.PLAYER_IMG,
-				text: dmg_heal_text,
-			};
-			window.MB.inject_chat(msgdata);
 		}
 		//token.place_sync_persist();	
 		// bit of overlap with place_sync_persist nad update_and_sync, so probably break it up, just to only sync once.
