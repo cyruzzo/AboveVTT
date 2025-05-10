@@ -23,6 +23,7 @@ $(function() {
             window.PLAYER_NAME = urlParams.get('player_name');
             inject_chat_buttons();
           } else {
+
             inject_instructions();
             inject_dm_join_button();  
             inject_player_join_buttons();
@@ -162,6 +163,10 @@ function inject_dm_join_button() {
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
+    tabCommunicationChannel.postMessage({
+      msgType: 'DMOpenAlready',
+      sendTo: false
+    });
     $(e.currentTarget).addClass("button-loading");
     DDBApi.fetchAllEncounters()         	    // Fetch all encounters, so we can delete all the old AboveVTT encounters in the next step
       .then(DDBApi.deleteAboveVttEncounters)	// Delete any AboveVTT encounters that we've created in the past because we don't want to bloat the user's encounters with a bunch of AboveVTT encounters
