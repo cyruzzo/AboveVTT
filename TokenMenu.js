@@ -4619,6 +4619,7 @@ function save_type_change(dropdown){
 }
 
 function qrm_fetch_stat(token) {
+	let roll_bonus
 	//if its a monster it needs to be calulated.
 	if(token.options.monster > 0 || token.options.monster == 'open5e'){
 		let stat = (cached_monster_items[token.options.monster]?.monsterData) ? cached_monster_items[token.options.monster]?.monsterData : cached_open5e_items[token.options.itemId]?.monsterData;
