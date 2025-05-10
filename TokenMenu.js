@@ -179,7 +179,21 @@ function token_context_menu_expanded(tokenIds, e) {
 
 	$('body').append(moveableTokenOptions);
 	$('body').append(tokenOptionsClickCloseDiv);
+	$("#tokenOptionsPopup").addClass("moveableWindow");
+	$("#tokenOptionsPopup").draggable({
+		addClasses: false,
+		scroll: false,
+		handle: "div:not(:has(select))",
+		cancel: "select",
+		start: function () {
+			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
+			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
+		},
+		stop: function () {
+			$('.iframeResizeCover').remove();
 
+		}
+	});
 
 	if(door?.length == 1){
 
@@ -622,19 +636,7 @@ function token_context_menu_expanded(tokenIds, e) {
 			
 
 		}
-		$("#tokenOptionsPopup").addClass("moveableWindow");
-		$("#tokenOptionsPopup").draggable({
-				addClasses: false,
-				scroll: false,
-				start: function () {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function () {
-					$('.iframeResizeCover').remove();
 
-				}
-			});
 		
 
 		if(e.touches?.length>0){
@@ -855,20 +857,6 @@ function token_context_menu_expanded(tokenIds, e) {
 				close_token_context_menu();
 		 	});
 		 }
-	
-		$("#tokenOptionsPopup").addClass("moveableWindow");
-		$("#tokenOptionsPopup").draggable({
-				addClasses: false,
-				scroll: false,
-				start: function () {
-					$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-					$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-				},
-				stop: function () {
-					$('.iframeResizeCover').remove();
-
-				}
-			});
 		
 
 		if(e.touches?.length>0){
@@ -1454,21 +1442,6 @@ function token_context_menu_expanded(tokenIds, e) {
 			close_token_context_menu();
 	 	});
 	 }
-
-
-	$("#tokenOptionsPopup").addClass("moveableWindow");
-	$("#tokenOptionsPopup").draggable({
-			addClasses: false,
-			scroll: false,
-			start: function () {
-				$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
-				$("#sheet").append($('<div class="iframeResizeCover"></div>'));
-			},
-			stop: function () {
-				$('.iframeResizeCover').remove();
-
-			}
-		});
 	
 
 	

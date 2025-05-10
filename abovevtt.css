@@ -14205,7 +14205,7 @@ button#displayedDiceFormulaExit:hover {
 }
 /* remove hover tooltips for touch devices */
 @media (pointer: coarse) {
-  .hasTooltip::after,
+  .hasTooltip:not(.token)::after,
   .sidebar-hover-text-flyout{
     display:none;
   }
