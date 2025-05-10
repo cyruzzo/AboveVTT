@@ -992,20 +992,27 @@ function init_character_list_page_without_avtt() {
   window.location_href_observer = new MutationObserver(function(mutationList, observer) {
     if (oldHref !== document.location.href) {
       if(is_characters_builder_page()){
-         window.oldHref = document.location.href;
-        if (window.location_href_observer) {
-          window.location_href_observer.disconnect();
-          delete window.location_href_observer;
-        }
-        $('#site-main').css({
-          'visibility':'',
-          'display': ''
-        });
-        setTimeout(function(){
-          $(".builder-sections-sheet-icon").off().on("click", function(){
-            window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+        
+        if(oldHref.includes('abovevtt=true')){
+          window.oldHref = document.location.href;
+          if (window.location_href_observer) {
+            window.location_href_observer.disconnect();
+            delete window.location_href_observer;
+          }
+          $('#site-main').css({
+            'visibility':'',
+            'display': ''
           });
-        }, 1000)
+          setTimeout(function(){
+            $(".builder-sections-sheet-icon").off().on("click", function(){
+              window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
+            });
+          }, 1000)
+        }
+        else{
+          window.oldHref = document.location.href;
+        }
+      
       }
       else if (!is_characters_list_page()) {
         console.log("Detected location change from", oldHref, "to", document.location.href);
