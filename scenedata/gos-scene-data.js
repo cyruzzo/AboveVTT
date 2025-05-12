@@ -52405,6 +52405,7 @@ function get_scene_data_gos() {
 			},
 			"dm_map_usable": "1",
 			"hpps": 60,
+			"darkness_filter": "100",
 			"notes": {
 				"0704f8c3-b409-4301-91f9-407c0f672c83": {
 					"title": "Garbage Room",
