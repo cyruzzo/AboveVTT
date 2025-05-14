@@ -3238,10 +3238,8 @@ class Token {
 							}
 							el = ui.helper.parent().parent().find(`[data-notatoken='notatoken_${ui.helper.attr("data-id")}']`);
 							if (el.length > 0) {
-								let currLeft = parseFloat(el.attr("data-left"));
-								let currTop = parseFloat(el.attr("data-top"));
-								el.css('left', Math.round((currLeft + (offsetLeft/window.CURRENT_SCENE_DATA.scale_factor))) + "px");
-								el.css('top', Math.round((currTop + (offsetTop/window.CURRENT_SCENE_DATA.scale_factor)))  + "px");
+								el.css('left', Math.round((parseFloat(self.options.left) / window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+								el.css('top', Math.round((parseFloat(self.options.top) / window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 							}
 
 
@@ -3346,8 +3344,8 @@ class Token {
 										}
 										selEl = $(tok).parent().parent().find(`[data-notatoken='notatoken_${id}']`);
 										if (selEl.length > 0) {
-											selEl.css('left', Math.round(parseInt(tokLeft/window.CURRENT_SCENE_DATA.scale_factor))  + "px");
-											selEl.css('top', Math.round(parseInt(tokTop/window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+											selEl.css('left', Math.round((parseFloat(curr.options.left) / window.CURRENT_SCENE_DATA.scale_factor)) + "px");
+											selEl.css('top', Math.round((parseFloat(curr.options.top) / window.CURRENT_SCENE_DATA.scale_factor))  + "px");
 										}
 									}
 								}													
