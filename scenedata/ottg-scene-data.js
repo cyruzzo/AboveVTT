@@ -1,31 +1,8 @@
 function get_scene_data_ottg() {
 	return {
 		"dnd/ottg/adventures/MapTheSunkenTown": {
-			"reveals": [
-				[
-					0,
-					0,
-					0,
-					0,
-					2,
-					0
-				],
-				[
-					3504,
-					1194,
-					0,
-					0,
-					0,
-					0,
-					1
-				]
-			],
-			"gridStrokeNumberInput": "0.5",
-			"scale": 48.38709677419355,
 			"vpps": 120.23333333333333,
-			"darkness_filter_number": "100",
 			"title": "Map: Sunken Town ",
-			"upsq": "ft",
 			"scaleX": 0.4838709677419355,
 			"scaleY": 0.47619047619047616,
 			"gridType": "1",
@@ -559,9 +536,6 @@ function get_scene_data_ottg() {
 					1
 				]
 			],
-			"initial_x": "",
-			"initial_y": "",
-			"fpsq": "5",
 			"tokens": {
 				"078abeae-c781-4f49-913e-d651862721b3": {
 					"disablestat": false,
@@ -3170,16 +3144,12 @@ function get_scene_data_ottg() {
 				}
 			},
 			"darkness_filter": "100",
-			"grid_line_width": "0.5",
-			"grid_subdivided": "0",
 			"scale_factor": 1,
 			"offsetx": 74.26666666666686,
 			"dm_map_usable": "0",
 			"offsety": 57.966666666666654,
-			"initial_zoom": "",
 			"grid": "0",
 			"hpps": 119.93333333333332,
-			"grid_color": "rgba(0, 0, 0, 0.5)",
 			"notes": {
 				"078abeae-c781-4f49-913e-d651862721b3": {
 					"title": "06",
