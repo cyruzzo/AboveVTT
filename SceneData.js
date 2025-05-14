@@ -113863,6 +113863,7 @@ function get_ddb_extras() {
 		...get_scene_data_gotsf(),
 		...get_scene_data_gos(),
 		...get_scene_data_hbtd(),
+		...get_scene_data_ottg()
 	}
 }
 
