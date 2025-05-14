@@ -183,8 +183,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	$("#tokenOptionsPopup").draggable({
 		addClasses: false,
 		scroll: false,
-		handle: "div:not(:has(select))",
-		cancel: "select",
+		handle: "div:not(:has(select)), button, label, input",
 		start: function () {
 			$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
