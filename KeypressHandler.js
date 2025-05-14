@@ -92,7 +92,7 @@ function hotkeyDice(nthDice){
     else{
         simpleDice = ['1d4', '1d6', '1d8', '1d100', '1d10', '1d12', '1d20'];
 
-        if(ctrlHeld){
+        if(shiftHeld){
             if(window.numpadRollFormula === undefined){
                 window.numpadRollFormula = ``;
             }
@@ -287,9 +287,9 @@ Mousetrap.bind('=', function () {       //zoom plus
     }
 });
 
-Mousetrap.bind(["1","2","3","4","5","6","7","8","9","mod+1","mod+2","mod+3","mod+4","mod+5","mod+6","mod+7","mod+8","mod+9"], function (e, combo) {
+Mousetrap.bind(["1","2","3","4","5","6","7","8","9","shift+1","shift+2","shift+3","shift+4","shift+5","shift+6","shift+7","shift+8","shift+9"], function (e, combo) {
     e.preventDefault();  
-    let numberPressed = parseInt(combo.replace('mod+',''));
+    let numberPressed = parseInt(combo.replace('shift+',''));
     hotkeyDice(numberPressed);
 });
 
