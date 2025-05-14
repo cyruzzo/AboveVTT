@@ -2917,13 +2917,15 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 			});
 
 			deleteNoteButton.off().on("click", function(){
-				if(id in window.JOURNAL.notes){
-					delete window.JOURNAL.notes[id];
-					window.JOURNAL.persist();
-					window.TOKEN_OBJECTS[id].place();	
-					body.remove();
-					if(flyout != undefined)
-						flyout.append(build_notes_flyout_menu(tokenIds, flyout))		
+				if (window.confirm(`Are you sure you want to delete this note?`)) {
+					if(id in window.JOURNAL.notes){
+						delete window.JOURNAL.notes[id];
+						window.JOURNAL.persist();
+						window.TOKEN_OBJECTS[id].place();	
+						body.remove();
+						if(flyout != undefined)
+							flyout.append(build_notes_flyout_menu(tokenIds, flyout))		
+					}
 				}
 			});
 		}

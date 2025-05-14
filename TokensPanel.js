@@ -2498,13 +2498,15 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                 window.JOURNAL.display_note(customization.id, true);
             });
             deleteNoteButton.off().on("click", function(){
-                if(customization.id in window.JOURNAL.notes){
-                    delete window.JOURNAL.notes[customization.id];
-                    window.JOURNAL.persist();
+                if (window.confirm(`Are you sure you want to delete this custom statblock?`)) {
+                    if(customization.id in window.JOURNAL.notes){
+                        delete window.JOURNAL.notes[customization.id];
+                        window.JOURNAL.persist();
+                    }
+                    delete customization.tokenOptions.statBlock; 
+                    persist_token_customization(customization);
+                    display_token_configuration_modal(listItem, placedToken)
                 }
-                delete customization.tokenOptions.statBlock; 
-                persist_token_customization(customization);
-                display_token_configuration_modal(listItem, placedToken)
             });
         }
         else {
