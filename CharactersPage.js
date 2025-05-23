@@ -2785,15 +2785,14 @@ function observe_character_image_change() {
     mutationList.forEach(mutation => {
       try {
         // This should be just fine, but catch any parsing errors just in case
-        const updatedUrl = get_higher_res_url($(mutation.target).css("background-image").slice(4, -1).replace(/"/g, ""));
+        const updatedUrl = get_higher_res_url($(mutation.target).attr("src"));
         window.PLAYER_IMG = updatedUrl;
-        character_sheet_changed({imgsrc: updatedUrl,
-                                avatarUrl: updatedUrl,
+        character_sheet_changed({avatarUrl: updatedUrl,
                                 image: updatedUrl});
       } catch { }
     });
   });
-  window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["style"] });
+  window.character_image_observer.observe(document.querySelector(".ddbc-character-avatar__portrait"), { attributeFilter: ["src"] });
 }
 
 function update_window_color(colorValue) {
