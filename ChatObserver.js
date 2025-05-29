@@ -94,9 +94,13 @@ class ChatObserver {
             let matches = text.match(/\[(.*?)] (.*)/);
             if (matches.length === 3) {
                 data.whisper = matches[1]
-                data.text = `<div class="custom-gamelog-message"><b>&#8594;${matches[1]}</b>&nbsp;${matches[2]}</div>`;
+                data.text = `<div class="custom-gamelog-message"style="position: relative;margin-bottom: 12px;"><span style='font-size: 9px;position: absolute;bottom: -18px;left: 0px;opacity: 0.5;margin-top: 10px;'><b>To: ${matches[1]}</b></span>${matches[2]}</div>`;
             }
-        } else if (validateUrl(text)) {
+        } 
+        else if(text.startsWith("/dm")){     
+            data.whisper = "THE DM"
+            data.text = `<div class="custom-gamelog-message"style="position: relative;margin-bottom: 12px;"><span style='font-size: 9px;position: absolute;bottom: -18px;left: 0px;opacity: 0.5;margin-top: 10px;'><b>To: THE DM</b></span>&nbsp;${text.replace('/dm', '')}</div>`;  
+        }else if (validateUrl(text)) {
             data.text = `
                 <a class='chat-link' href='${text}' target='_blank' rel='noopener noreferrer'>${text}</a>
                 <img width=100% class='magnify' src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Image' style='display: none'/>
