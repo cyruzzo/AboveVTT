@@ -2188,7 +2188,8 @@ function inject_chat_buttons() {
 		'/skill 1d20+1d4 Thieves' Tools + Guidance'&#xa;
 		Advantage: 2d20kh1 (keep highest)&#xa;
 		Disadvantage: 2d20kl1 (keep lowest)&#xa;
-		'/w [playername] a whisper to playername'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`
+		'/w [playername] a whisper to playername'&#xa;
+		'/dm for a shortcut to whisper THE DM'"><input id='chat-text' autocomplete="off" placeholder='Chat, /r 1d20+4..'></div>`
 	);
   const diceRoller = $(`
 		<div class="dice-roller">
