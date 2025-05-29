@@ -1701,6 +1701,10 @@ function did_click_row(clickEvent) {
           clickedRow.toggleClass('selected', true);
         }  
       }
+      else if(clickedItem.type == ItemType.PC){
+        open_player_sheet(clickedItem.sheet);
+      }    
+      break;
     case ItemType.Encounter:
     case ItemType.Folder:
       if (clickedRow.hasClass("collapsed")) {
@@ -1718,9 +1722,6 @@ function did_click_row(clickEvent) {
       break;
     case ItemType.MyToken:
       // display_sidebar_list_item_configuration_modal(clickedItem);
-      break;
-    case ItemType.PC:
-      open_player_sheet(clickedItem.sheet);
       break;
     case ItemType.Monster:
       if (clickedItem.monsterData.isReleased === true || clickedItem.monsterData.isHomebrew === true) {
