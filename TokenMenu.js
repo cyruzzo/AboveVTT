@@ -4517,7 +4517,8 @@ function add_to_quick_roll_menu(token){
 	qrm_entry_buttons = $("<td style='height:100%; text-align: right; width:100%; top: 1px; position: relative; white-space:nowrap; display:flex'>");
 	
 	qrm_resistance_button.off('click.resistance').on('click.resistance', function(){
-		$(this).toggleClass('enabled');
+		qrm_resistance_button.toggleClass('enabled');
+		qrm_update_popout();
 	});
 	qrm_entry_buttons.append(qrm_resistance_button);
 
