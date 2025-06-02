@@ -2833,7 +2833,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
 
     }
     let revealVisionInput = build_dropdown_input(revealvisionOption, auraRevealVisionEnabled, function(name, newValue) {
-        setTokenOption(name, newValue);
+        customization.setTokenOption(name, newValue);
         persist_token_customization(customization); 
     });
 
