@@ -4215,7 +4215,10 @@ function setTokenAuras (token, options) {
 }
 
 function setTokenLight (token, options) {
-	if (!options.light1 || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')) return;
+	if ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')){
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
+		return;
+	} 
 	const innerlightSize = options.light1.feet != undefined? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
