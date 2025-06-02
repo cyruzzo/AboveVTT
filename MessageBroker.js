@@ -1796,7 +1796,8 @@ class MessageBroker {
 			let isVideoEqual = window.CURRENT_SCENE_DATA.player_map_is_video == msg.data.player_map_is_video && window.CURRENT_SCENE_DATA.dm_map_is_video == msg.data.dm_map_is_video
 
 			let isSameScaleAndMaps = isCurrentScene && scaleFactorEqual && hppsEqual && vppsEqual && isVideoEqual && ((window.DM && dmMapEqual && dmMapToggleEqual) || (!window.DM && playerMapEqual))
-																				
+			
+			const isSameTokenLight = window.CURRENT_SCENE_DATA.disableSceneVision == msg.data.disableSceneVision;																		
 			
 
 			if(isSameScaleAndMaps && !forceRefresh){
@@ -1839,7 +1840,12 @@ class MessageBroker {
 						height: hexHeight
 					}
 				}
-
+				if(!isSameTokenLight){
+					for(let i in window.TOKEN_OBJECTS){
+						const token = $(`#tokens div[data-id='${i}']`);
+						setTokenLight(token, window.TOKEN_OBJECTS[i].options);
+					}
+				}
 				await reset_canvas(false);
 				if(!window.DM || window.SelectedTokenVision)
 					check_token_visibility();
