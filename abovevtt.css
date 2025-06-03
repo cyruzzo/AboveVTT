@@ -7543,15 +7543,12 @@ button span.onedrive-btn-status{
     min-height: 0px;
     min-width: 0px;
     --aura-width: max(1px, calc(1px / var(--window-zoom)));
-    filter:  drop-shadow(#ffffff22 0px 0px) 
-        drop-shadow(var(--token-border-color) 0 0 var(--aura-width)) 
-        drop-shadow(var(--token-border-color) 0 0) 
-        drop-shadow(var(--token-hp-aura-color) 0 0 var(--aura-width)) 
-        drop-shadow(var(--token-hp-aura-color) 0 0)  
-        drop-shadow(var(--token-hp-aura-color) 0 0)  
-        drop-shadow(var(--token-temp-hp) 0 0 var(--aura-width))
-        drop-shadow(var(--token-temp-hp) 0 0)
-        drop-shadow(var(--token-temp-hp) 0 0);
+    filter:  drop-shadow(var(--token-border-color) 0px 0px var(--aura-width)) 
+    drop-shadow(var(--token-hp-aura-color) 0px 0px var(--aura-width)) 
+    drop-shadow(var(--token-temp-hp) 0px 0px var(--aura-width))
+}
+#VTT #tokens .token.underDarkness>.token-image.freeform{
+    filter:none;
 }
 #VTT .token[data-notatoken]>.token-image.freeform, 
 #token-configuration-modal .token[data-notatoken]>.token-image.freeform{
