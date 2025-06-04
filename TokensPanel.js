@@ -4802,7 +4802,7 @@ function getPersonailityTrait(){
         295: "Noncommittal",
         296: "Noncompetitive",
         297: "Obedient",
-        298: "Old-fashined",
+        298: "Old-fashioned",
         299: "Ordinary",
         300: "Outspoken",
         301: "Paternalistic",
