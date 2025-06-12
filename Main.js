@@ -840,13 +840,16 @@ function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 		let container = build_draggable_monster_window();
 		display_stat_block_in_container(customStatBlock, container, tokenId, customStatBlock);
 		$(".sidebar-panel-loading-indicator").remove();
+		container.attr('data-name', window.all_token_objects[tokenId].options.name);
 		return;
 	}
 	if(window.all_token_objects[tokenId].options.monster == 'open5e'){
 		let container = build_draggable_monster_window();
 		build_and_display_stat_block_with_id(window.all_token_objects[tokenId].options.stat, container, tokenId, function () {
 			$(".sidebar-panel-loading-indicator").remove();
+			container.attr('data-name', window.all_token_objects[tokenId].options.name);
 		}, true);
+
 		return;
 	}
 	if (should_use_iframes_for_monsters()) {
@@ -856,6 +859,7 @@ function load_monster_stat(monsterId, tokenId, customStatBlock=undefined) {
 	let container = build_draggable_monster_window();
 	build_and_display_stat_block_with_id(monsterId, container, tokenId, function () {
 		$(".sidebar-panel-loading-indicator").remove();
+		container.attr('data-name', window.all_token_objects[tokenId].options.name);
 	});
 }
 
@@ -1196,7 +1200,7 @@ function minimize_player_monster_window_double_click(titleBar) {
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");
 			// titleBar.prepend('<div class="monster_title">Monster: '+$("#resizeDragMon iframe").contents().find(".mon-stat-block__name-link").text()+"</div>");
-			titleBar.prepend('<div class="monster_title">Monster: '+$("#monster_block").contents().find(".mon-stat-block__name-link").text()+"</div>");
+			titleBar.prepend('<div class="monster_title">Monster: '+titleBar.attr('data-name')+"</div>");
 
 		} else if(titleBar.hasClass("minimized")) {
 			titleBar.data("prev-minimized-top", titleBar.css("top"));
@@ -1595,7 +1599,7 @@ function minimize_player_window_double_click(titleBar) {
 			titleBar.width(200);
 			titleBar.addClass("minimized");
 			titleBar.removeClass("restored");
-			titleBar.prepend('<div class="player_title">Player: '+$("#sheet iframe").contents().find(".ddbc-character-name").text()+"</div>");
+			titleBar.prepend('<div class="player_title">Player: '+$("#sheet").attr("data-name")+"</div>");
 		} else if(titleBar.hasClass("minimized")) {
 			titleBar.data("prev-minimized-top", titleBar.css("top"));
 			titleBar.data("prev-minimized-left", titleBar.css("left"));
@@ -1821,9 +1825,9 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 
 	iframe.attr('data-sheet_url',sheet_url);
 	iframe.attr('src', sheet_url);
-
-
-
+	const playerId = sheet_url.split('/').pop();
+	const playerName = Object.values(window.all_token_objects).find(d => d.options.id.includes(`/${playerId}`)).options.name;
+	container.attr('data-name', playerName);
 	// lock this sheet
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
 	iframe.off("load").on("load", function(event) {
@@ -1948,6 +1952,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 		if (window.JOINTHEDICESTREAM) {
 			joinDiceRoom();
 		}
+
 
 		// WIP to allow players to add in tokens from their extra tab
 		// observe_character_sheet_companion($(event.target).contents());
