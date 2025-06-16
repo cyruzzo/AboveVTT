@@ -690,6 +690,7 @@ class SidebarListItem {
     let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
+    item.sceneJournalId = sceneData.scene_journal;
     return item;
   }
 
@@ -1599,6 +1600,8 @@ function build_sidebar_list_row(listItem) {
       row.attr("title", `${listItem.name}\nclick to preview`);
       let switch_dm = $(`<button class='dm_scenes_button token-row-button' title="Move DM To This Scene"></button>`);
       switch_dm.append(svg_dm());
+      let open_scene_journal = $(`<button class='open_scene_journal_button token-row-button' title="Open scene journal"></button>`);
+      open_scene_journal.append(svg_note());
       if(window.CURRENT_SCENE_DATA && window.CURRENT_SCENE_DATA.id === listItem.id){
         switch_dm.addClass("selected-scene");
       }
@@ -1608,6 +1611,10 @@ function build_sidebar_list_row(listItem) {
         $(clickEvent.currentTarget).addClass("selected-scene");
         window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: listItem.id, switch_dm: true });
         add_zoom_to_storage();
+      });
+      open_scene_journal.on("click", function(clickEvent) {
+        clickEvent.stopPropagation();
+				window.JOURNAL.display_note(listItem.sceneJournalId);
       });
       let switch_players = $(`<button class='player_scenes_button token-row-button' title="Move Players To This Scene"></button>`);
       switch_players.append(svg_everyone());
@@ -1628,6 +1635,9 @@ function build_sidebar_list_row(listItem) {
         $('#scenes-panel .sidebar-list-item-row-details~img').remove();
         add_zoom_to_storage()
       });
+      if(listItem.sceneJournalId){
+        rowItem.append(open_scene_journal);
+      }
       rowItem.append(switch_dm);
       rowItem.append(switch_players);
       break;
