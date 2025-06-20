@@ -1454,7 +1454,7 @@ function observe_character_sheet_changes(documentToObserve) {
           const button = $("<button class='above-aoe integrated-dice__container'></button>");
 
           const spellContainer = $(this).closest('.ct-spells-spell')
-          const name = spellContainer.find(".ddbc-spell-name").first().text()
+          const name = spellContainer.find(".ddbc-spell-name, [class*='styles_spellName']").first().text()
           let color = "default"
           const feet = $(this).prev().find("[class*='styles_numberDisplay'] span:first-of-type").text();
           const dmgIcon = $(this).closest('.ct-spells-spell').find('.ddbc-damage-type-icon');

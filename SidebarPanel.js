@@ -1702,7 +1702,7 @@ function did_click_row(clickEvent) {
         }  
       }
       else if(clickedItem.type == ItemType.PC){
-        open_player_sheet(clickedItem.sheet);
+        open_player_sheet(clickedItem.sheet, undefined, clickedItem.name);
       }
       else if(clickedItem.type == ItemType.Scene){
         // show the preview
