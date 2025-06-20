@@ -1807,7 +1807,7 @@ function init_player_sheet(pc_sheet, loadWait = 0) {
  * @param {Boolean} closeIfOpen - currenlty not in use
  * @returns
  */
-function open_player_sheet(sheet_url, closeIfOpen = true) {
+function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 	if($("#sheet.minimized").length > 0) {
 		$("#sheet.minimized").dblclick();
 	}
@@ -1826,7 +1826,7 @@ function open_player_sheet(sheet_url, closeIfOpen = true) {
 	iframe.attr('data-sheet_url',sheet_url);
 	iframe.attr('src', sheet_url);
 	const playerId = sheet_url.split('/').pop();
-	const playerName = Object.values(window.all_token_objects).find(d => d.options.id.includes(`/${playerId}`)).options.name;
+
 	container.attr('data-name', playerName);
 	// lock this sheet
 	window.MB.sendMessage("custom/myVTT/lock", { player_sheet: sheet_url });
