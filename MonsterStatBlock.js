@@ -2020,7 +2020,9 @@ function display_tooltip(tooltipJson, container, clientY, tokenId=undefined) {
                     "max-width": "100%",
                     "min-width": "100%"
                 });
-                send_html_to_gamelog(tooltipWithoutButton[0].outerHTML);
+                let outerHtml = $(tooltipWithoutButton[0].outerHTML);
+                outerHtml.find('style').remove();
+                send_html_to_gamelog(outerHtml[0].outerHTML);
             });
 
             const buttonFooter = $("<div></div>");
