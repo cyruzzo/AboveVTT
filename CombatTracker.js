@@ -323,8 +323,8 @@ function init_combat_tracker(){
 				next=$("#combat_area tr:not([skipTurn])").first()
 			}
 			next.attr('data-current','1');
-			if($("#resizeDragMon:not(.hideMon)").length>0 && $("[data-current] button.openSheetCombatButton").css('visibility') == 'visible' && !$('[data-current]').attr('data-target').startsWith('/profile')) {
-				$("[data-current] button.openSheetCombatButton").click();
+			if($("#resizeDragMon:not(.hideMon)").length>0 && $("#combat_area [data-current] button.openSheetCombatButton").css('visibility') == 'visible' && !$('[data-current]').attr('data-target').startsWith('/profile')) {
+				$("#combat_area [data-current] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -391,7 +391,7 @@ function init_combat_tracker(){
 			}
 			prev.attr('data-current','1');
 			if($("#resizeDragMon:not(.hideMon)").length>0) {
-				$("[data-current][data-monster] button.openSheetCombatButton").click();
+				$("#combat_area [data-current][data-monster] button.openSheetCombatButton").click();
 			}
 			let newTarget=$("#combat_area tr[data-current=1]").attr('data-target');
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
@@ -552,6 +552,7 @@ function init_carousel_combat_tracker(){
           top:0px;
           width: 50%;
           min-width: 200px;
+    	    max-width: 700px;
           z-index:20000;
           background: none !important;
           pointer-events:none;
@@ -661,7 +662,7 @@ function init_carousel_combat_tracker(){
 
 			#combat_carousel_container #combat_prev_button, 
 			#combat_carousel_container #combat_next_button {
-			    background: none;
+			    background: none !important;
 			    border: none;
 			    color: #fffd;
 			    filter: drop-shadow(0px 0px 5px black);
