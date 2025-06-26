@@ -516,31 +516,40 @@ function init_carousel_combat_tracker(){
     const table = $('#combat_area').clone(true, true);
     table.attr('id', 'combat_area_carousel');
     table.find('td:not(:first-of-type, :last-of-type), tr[skipturn], .expandgroup').remove();
-  	const prevRows = currentTurnToken.prevAll('tr');
-  	const nextRows = currentTurnToken.nextAll('tr');
+	  const currentTurnToken = table.find('tr[data-current="1"]');
+	  const firstTokenId = $('#combat_area tr:first-of-type').attr('data-target');
+	  if(currentTurnToken.length == 0){
+	    table.find('tr:gt(7)').remove()
+	  }
+	  else{
+	  	const prevRows = currentTurnToken.prevAll('tr');
+	  	const nextRows = currentTurnToken.nextAll('tr');
+	  	
 
-  	const prevRowsRemove = currentTurnToken.prevUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index)); // Filters by index.;
-  	const nextRowsRemove = currentTurnToken.nextUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index));
-  	
-  	const originalTable = table.clone(true, true);
+	  	const prevRowsRemove = currentTurnToken.prevUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index)); // Filters by index.;
+	  	const nextRowsRemove = currentTurnToken.nextUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index));
+	  	
+	  	const originalTable = table.clone(true, true);
 
 
-  	if(prevRows.length < 4){    		
-	    for(let i = 1; i < 4-prevRows.length; i++){
-	        table.prepend(originalTable.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-	    }   	  
-  	}
-  	if(nextRows.length < 4){		
-	    for(let i = 1; i < 4-nextRows.length; i++){
-	        table.append(originalTable.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-	    }  
-  	}
+	  	if(prevRows.length < 4){    		
+		    for(let i = 1; i < 4-prevRows.length; i++){
+		        table.prepend(originalTable.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+		    }   	  
+	  	}
+	  	if(nextRows.length < 4){		
+		    for(let i = 1; i < 4-nextRows.length; i++){
+		        table.append(originalTable.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+		    }  
+	  	}
 
-    prevRowsRemove.remove();
-    nextRowsRemove.remove();
+	    prevRowsRemove.remove();
+	    nextRowsRemove.remove();
+	    
+	  }
     const prevButtonClone = $('#combat_prev_button').clone(true, true);
     const nextButtonClone = $('#combat_next_button').clone(true, true);
-
+    table.find(`tr[data-target='${firstTokenId}']`).toggleClass('first-in-round', true);
     prevButtonClone.text('<');
     nextButtonClone.text('>');
     if(window.DM)
@@ -572,6 +581,18 @@ function init_carousel_combat_tracker(){
           width:80px;
           height: 80px;   
       }
+      #combat_carousel_container tr.first-in-round:before{
+			  background:#ffffff00;
+			  position:absolute;
+			  height:60px;
+			  width:0px;
+			  left:-2px;
+			  content:'';
+			  top:43px;
+			  transform:translateY(-50%);
+			  border:1px dashed #fff;
+			  border-radius:5px;
+			}
       #combat_carousel_container tr[data-current="1"] img{
           width:100px;
           height:100px;
@@ -720,6 +741,8 @@ function update_carousel_combat_tracker(){
     else{
 	    table.find('td:not(:first-of-type, :last-of-type), tr[skipturn], .expandgroup').remove();
 	    const currentTurnToken = table.find('tr[data-current="1"]');
+	   	const firstTokenId = $('#combat_area tr:first-of-type').attr('data-target');
+
 	    if(currentTurnToken.length == 0){
 	    	table.find('tr:gt(7)').remove()
 	    }
@@ -748,7 +771,7 @@ function update_carousel_combat_tracker(){
 	    	nextRowsRemove.remove();
 	    }
 
-
+	    table.find(`tr[data-target='${firstTokenId}']`).toggleClass('first-in-round', true);
 
 
 
