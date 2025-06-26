@@ -2226,12 +2226,12 @@ class Token {
 				if (this.selected) {
 					old.addClass("tokenselected");
 					toggle_player_selectable(this, old)
-					$(`#combat_area tr[data-target='${this.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+					$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${this.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 				}
 				else {
 					old.css("border", "");
 					old.removeClass("tokenselected");
-					$(`#combat_area tr[data-target='${this.options.id}']`).toggleClass('selected-token', false);
+					$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${this.options.id}']`).toggleClass('selected-token', false);
 				}
 				let oldImage =  old.find(".token-image,[data-img]")
 				// token uses an image for it's image
@@ -2283,10 +2283,10 @@ class Token {
 							if (thisSelected == true) {
 								parentToken.addClass('tokenselected');
 								toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
-								$(`#combat_area tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 							} else {
 								parentToken.removeClass('tokenselected');
-								$(`#combat_area tr[data-target='${tokID}']`).toggleClass('selected-token', false);
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', false);
 							}				
 
 							window.TOKEN_OBJECTS[tokID].selected = thisSelected;
@@ -2955,7 +2955,7 @@ class Token {
 								let id = $(tok).attr("data-id");
 								window.TOKEN_OBJECTS[id].selected = false;
 								$("#tokens [data-id='" + id + "']").toggleClass("tokenselected", false)
-								$(`#combat_area tr[data-target='${id}']`).toggleClass('selected-token', false);
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', false);
 							}
 						}
 						let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
@@ -2963,7 +2963,7 @@ class Token {
 						self.selected = true;
 						window.CURRENTLY_SELECTED_TOKENS.push(self.options.id);
 						$("#tokens [data-id='" + self.options.id + "']").toggleClass(["tokenselected", 'pause_click'], true);
-						$(`#combat_area tr[data-target='${self.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${self.options.id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 						if(tok.is(":animated")){
 							self.stopAnimation();
 						}
@@ -2993,7 +2993,7 @@ class Token {
 							for (let tok of window.dragSelectedTokens){
 								let id = $(tok).attr("data-id");
 								window.TOKEN_OBJECTS[id].selected = true;
-								$(`#combat_area tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+								$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 						
 								$(tok).addClass("pause_click");
 								if($(tok).is(":animated")){
@@ -3423,10 +3423,10 @@ class Token {
 					if (thisSelected == true) {
 						parentToken.addClass('tokenselected');
 						toggle_player_selectable(window.TOKEN_OBJECTS[tokID], parentToken)
-						$(`#combat_area tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 					} else {
 						parentToken.removeClass('tokenselected');
-						$(`#combat_area tr[data-target='${tokID}']`).toggleClass('selected-token', false);
+						$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${tokID}']`).toggleClass('selected-token', false);
 					}				
 
 					window.TOKEN_OBJECTS[tokID].selected = thisSelected;
@@ -3966,7 +3966,7 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 		}
 	}
 	$(`.token`).toggleClass('tokenselected', false);
-	$(`#combat_area tr`).toggleClass('selected-token', false);
+	$(`:is(#combat_area, #combat_area_carousel) tr`).toggleClass('selected-token', false);
 	remove_selected_token_bounding_box();
 	window.CURRENTLY_SELECTED_TOKENS = [];
 
@@ -4638,7 +4638,7 @@ async function do_draw_selected_token_bounding_box() {
 		}));	
 		window.CURRENTLY_SELECTED_TOKENS.push(id);	
 		$("#tokens").find(selector).toggleClass('tokenselected', true);	
-		$(`#combat_area tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
+		$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${id}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');
 					
 		if(window.TOKEN_OBJECTS[id].options.groupId && !groupIDs.includes(window.TOKEN_OBJECTS[id].options.groupId)){
 			groupIDs.push(window.TOKEN_OBJECTS[id].options.groupId)
@@ -4652,7 +4652,7 @@ async function do_draw_selected_token_bounding_box() {
 			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
 				return;
 			$(this).toggleClass('tokenselected', true);	
-			$(`#combat_area tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');		
+			$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');		
 			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
 			window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
 		})

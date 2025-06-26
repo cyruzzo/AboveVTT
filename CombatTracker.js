@@ -511,7 +511,8 @@ function init_combat_tracker(){
 function init_carousel_combat_tracker(){
     $('#combat_carousel_container, #combat_area_carousel').remove();
     const container = $('body');
-    const carouselContainer = $('<div id="combat_carousel_container" class="tracker-list">')
+    const sidebarClosed = $(`#hide_rightpanel`).hasClass('point-left');
+    const carouselContainer = $(`<div id="combat_carousel_container" class="tracker-list ${sidebarClosed ? 'sidebarClosed' : ''}">`);
     const table = $('#combat_area').clone(true, true);
     table.attr('id', 'combat_area_carousel');
     table.find('td:not(:first-of-type, :last-of-type)').remove();
@@ -556,6 +557,9 @@ function init_carousel_combat_tracker(){
           z-index:20000;
           background: none !important;
           pointer-events:none;
+      }
+      #combat_carousel_container.tracker-list.sidebarClosed{
+    		left: 50%;
       }
      #combat_carousel_container tr {
           display: flex !important;
@@ -685,6 +689,16 @@ function init_carousel_combat_tracker(){
 			#combat_carousel_container #combat_area_carousel{
 			    max-width:100%;
 			    overflow:hidden;
+			}
+
+			#combat_carousel_container .openEye path:not([fill*="none"]), 
+			#combat_carousel_container .closedEye path:not([fill*="none"]), 
+			#combat_carousel_container .hideSVG path:not([fill*="none"]), 
+			#combat_carousel_container .rollSVG path:not([fill*="none"]), 
+			#combat_carousel_container .findSVG path:not([fill*="none"]), 
+			#combat_carousel_container .delSVG path:not([fill*="none"]), 
+			#combat_carousel_container .statSVG path:not([fill*="none"]){
+    		fill: #fff;
 			}
     </style>`)
 }
