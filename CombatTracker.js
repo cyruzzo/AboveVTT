@@ -515,23 +515,26 @@ function init_carousel_combat_tracker(){
     const carouselContainer = $(`<div id="combat_carousel_container" class="tracker-list ${sidebarClosed ? 'sidebarClosed' : ''}">`);
     const table = $('#combat_area').clone(true, true);
     table.attr('id', 'combat_area_carousel');
-    table.find('td:not(:first-of-type, :last-of-type)').remove();
-    const prevRows = table.find('tr[data-current="1"]').prevAll('tr');
-    const nextRows = table.find('tr[data-current="1"]').nextAll('tr');
+    table.find('td:not(:first-of-type, :last-of-type), tr[skipturn], .expandgroup').remove();
+  	const prevRows = currentTurnToken.prevAll('tr');
+  	const nextRows = currentTurnToken.nextAll('tr');
 
-    const prevRowsRemove = table.find('tr[data-current="1"]').prev().prev().prev().prevUntil(':not(tr)');
-    const nextRowsRemove = table.find('tr[data-current="1"]').next().next().next().nextUntil(':not(tr)');
+  	const prevRowsRemove = currentTurnToken.prevUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index)); // Filters by index.;
+  	const nextRowsRemove = currentTurnToken.nextUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index));
+  	
+  	const originalTable = table.clone(true, true);
 
-    if(prevRows.length < 4){
-        for(let i = 0; i < 4-prevRows.length; i++){
-            table.prepend(table.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-        }
-    }
-    if(nextRows.length < 4){
-        for(let i = 1; i < 4-nextRows.length; i++){
-            table.append(table.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-        }
-    }
+
+  	if(prevRows.length < 4){    		
+	    for(let i = 1; i < 4-prevRows.length; i++){
+	        table.prepend(originalTable.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+	    }   	  
+  	}
+  	if(nextRows.length < 4){		
+	    for(let i = 1; i < 4-nextRows.length; i++){
+	        table.append(originalTable.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+	    }  
+  	}
 
     prevRowsRemove.remove();
     nextRowsRemove.remove();
@@ -562,7 +565,7 @@ function init_carousel_combat_tracker(){
     		left: 50%;
       }
      #combat_carousel_container tr {
-          display: flex !important;
+          display: flex;
   				min-height:105px !important;
       }
       #combat_carousel_container tr img {
@@ -715,7 +718,7 @@ function update_carousel_combat_tracker(){
     	carouselContainer.empty();
     }
     else{
-	    table.find('td:not(:first-of-type, :last-of-type)').remove();
+	    table.find('td:not(:first-of-type, :last-of-type), tr[skipturn], .expandgroup').remove();
 	    const currentTurnToken = table.find('tr[data-current="1"]');
 	    if(currentTurnToken.length == 0){
 	    	table.find('tr:gt(7)').remove()
@@ -724,18 +727,21 @@ function update_carousel_combat_tracker(){
 	    	const prevRows = currentTurnToken.prevAll('tr');
 	    	const nextRows = currentTurnToken.nextAll('tr');
 
-	    	const prevRowsRemove = currentTurnToken.prev().prev().prev().prevUntil(':not(tr)');
-	    	const nextRowsRemove = currentTurnToken.next().next().next().nextUntil(':not(tr)');
+	    	const prevRowsRemove = currentTurnToken.prevUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index)); // Filters by index.;
+	    	const nextRowsRemove = currentTurnToken.nextUntil(':not(tr)').filter((index) => ![0, 1, 2].includes(index));
+	    	
+	    	const originalTable = table.clone(true, true);
 
-	    	if(prevRows.length < 4){
-	    	    for(let i = 0; i < 4-prevRows.length; i++){
-	    	        table.prepend(table.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-	    	    }
+
+	    	if(prevRows.length < 4){    		
+    	    for(let i = 1; i < 4-prevRows.length; i++){
+    	        table.prepend(originalTable.find(`tr:nth-last-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+    	    }   	  
 	    	}
-	    	if(nextRows.length < 4){
-	    	    for(let i = 1; i < 4-nextRows.length; i++){
-	    	        table.append(table.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
-	    	    }
+	    	if(nextRows.length < 4){		
+    	    for(let i = 1; i < 4-nextRows.length; i++){
+    	        table.append(originalTable.find(`tr:nth-of-type(${i})`).clone(true, true).removeAttr('data-current'));
+    	    }  
 	    	}
 
 	    	prevRowsRemove.remove();
