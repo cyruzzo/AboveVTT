@@ -7652,7 +7652,7 @@ button span.onedrive-btn-status{
 .border-color-wrapper {
     display: block !important;
 }
-.border-color-wrapper,
+
 .token-config-aura-wrapper{
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
@@ -7790,7 +7790,7 @@ button span.onedrive-btn-status{
     height: 20px;
 }
 
-#adjustments-flyout button#changeTokenImage:before{
+button#changeTokenImage:before{
    content: "\e413"; 
 }
 

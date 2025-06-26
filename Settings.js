@@ -14,7 +14,8 @@ function token_setting_options() {
 				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` }
 				
 			],
-			defaultValue: "circle"
+			defaultValue: "circle",
+			menuPosition: '1'
 		},
 		{
 			name: 'tokenBaseStyleSelect',
@@ -29,7 +30,8 @@ function token_setting_options() {
 				{ value: "rock", label: "Rock", description: "A rock base." },
 				{ value: "water", label: "Water", description: "A water base." }
 			],
-			defaultValue: "default"
+			defaultValue: "default",
+			menuPosition: '2'
 		},
 		{
 			name: "healthauratype",
@@ -41,7 +43,8 @@ function token_setting_options() {
 				{ value: "bar", label: "HP Meter", description: "How this meter is displayed depends on token type. Color blind alternative to auras." },
 				{ value: "none", label: "None", description: "Tokens will not have a health visual" }
 			],
-			defaultValue: "aura"
+			defaultValue: "aura",
+			menuPosition: '3'
       	},
       	{
 			name: 'lockRestrictDrop',
@@ -116,7 +119,8 @@ function token_setting_options() {
 				{ value: true, label: "Below darkness", description: "The token will appear below darkness/light." },
 				{ value: false, label: "Above darkness", description: "The token will appear above darkness/light" }
 			],
-			defaultValue: false
+			defaultValue: false,
+			menuPosition: '12'
 		},
 		{
 			name: 'disablestat',
@@ -156,7 +160,8 @@ function token_setting_options() {
 				{ value: true, label: 'No Border', description: "The token does not have a border around it." },
 				{ value: false, label: 'Border', description: "The token has a border around it." }
 			],
-			defaultValue: false
+			defaultValue: false,
+			menuPosition: '11'
 		},
 		{
 			name: 'disableaura',
