@@ -517,6 +517,7 @@ function init_carousel_combat_tracker(){
     table.attr('id', 'combat_area_carousel');
     table.find('td:not(:first-of-type, :last-of-type), tr[skipturn], .expandgroup').remove();
 	  const currentTurnToken = table.find('tr[data-current="1"]');
+	  table.find('td video').removeAttr('disableremoteplayback').attr('autoplay', true).attr('loop', true);
 	  const firstTokenId = $('#combat_area tr:first-of-type').attr('data-target');
 	  if(currentTurnToken.length == 0){
 	    table.find('tr:gt(7)').remove()
@@ -577,7 +578,7 @@ function init_carousel_combat_tracker(){
           display: flex;
   				min-height:105px !important;
       }
-      #combat_carousel_container tr img {
+      #combat_carousel_container tr :is(img, video) {
           width:80px;
           height: 80px;   
       }
@@ -593,7 +594,7 @@ function init_carousel_combat_tracker(){
 			  border:1px dashed #fff;
 			  border-radius:5px;
 			}
-      #combat_carousel_container tr[data-current="1"] img{
+      #combat_carousel_container tr[data-current="1"] :is(img, video){
           width:100px;
           height:100px;
       }
@@ -735,6 +736,7 @@ function update_carousel_combat_tracker(){
     carouselContainer.find('#combat_area_carousel').remove();
     const table = $('#combat_area').clone(true, true);
     table.attr('id', 'combat_area_carousel');
+    table.find('td video').removeAttr('disableremoteplayback').attr('autoplay', true).attr('loop', true);
     if(table.find('tr').length == 0){
     	carouselContainer.empty();
     }
