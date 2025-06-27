@@ -745,7 +745,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
+		}	else if(uniqueSettings.length === 0){
+			currentValue = undefined;
 		}
+
 		let lockDropdown = build_dropdown_input(lockSettings, currentValue, function(name, newValue) {
 			tokens.forEach(token => {
 				token.options[name] = newValue;
@@ -1180,7 +1183,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
+		}	else if(uniqueSettings.length === 0){
+			currentValue = undefined;
 		}
+
 		let lockDropdown = build_dropdown_input(lockSettings, currentValue, function(name, newValue) {
 			tokens.forEach(token => {
 				token.options[name] = newValue;
@@ -1360,62 +1366,68 @@ function token_context_menu_expanded(tokenIds, e) {
 		$(".acMenuInput").prop('readonly', true);
 		$(".hpMenuInput").prop('readonly', true);
 	}	
-	let tokenNames = tokens.map(t => t.options.name);
-	let uniqueNames = [...new Set(tokenNames)];
-	let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
-	if (uniqueNames.length === 1) {
-		nameInput.val(tokenNames[0]);
-	} else {
-		nameInput.attr("placeholder", "Multiple Values");
+	if(window.DM || (tokens.length == 1 && (tokens[0].options.player_owned == true || tokens[0].isPlayer()))){
+		let tokenNames = tokens.map(t => t.options.name);
+		let uniqueNames = [...new Set(tokenNames)];
+		let nameInput = $(`<input title="Token Name" placeholder="Token Name" name="name" type="text" />`);
+		if (uniqueNames.length === 1) {
+			nameInput.val(tokenNames[0]);
+		} else {
+			nameInput.attr("placeholder", "Multiple Values");
+		}
+
+		nameInput.on('keyup', function(event) {
+			let newName = event.target.value;
+			if (event.key == "Enter" && newName !== undefined && newName.length > 0) {
+				tokens.forEach(token => {
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = newName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = newName;
+					token.place_sync_persist();
+
+				});
+			}
+		});
+		nameInput.on('focusout', function(event) {
+			let newName = event.target.value;
+			if (newName !== undefined && newName.length > 0) {
+				tokens.forEach(token => {
+					if(window.JOURNAL.notes[token.options.id]){
+						window.JOURNAL.notes[token.options.id].title = newName;
+						window.JOURNAL.persist();
+					}
+					token.options.name = newName;
+					token.place_sync_persist();		
+				});
+
+			}
+		});
+		let nameWrapper = $(`
+			<div class="token-image-modal-url-label-wrapper">
+				<div class="token-image-modal-footer-title">Name</div>
+			</div>
+		`);
+		nameWrapper.append(nameInput); // input below label
+
+
+		
+		body.append(nameWrapper);
+		let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
+		body.append(changeImageMenuButton)
+		changeImageMenuButton.off().on("click", function() {
+			close_token_context_menu();
+			id = tokens[0].options.id;
+			if (!(id in window.TOKEN_OBJECTS)) {
+				return;
+			}
+			let tok = window.TOKEN_OBJECTS[id];
+			display_change_image_modal(tok);
+		});
 	}
 
-	nameInput.on('keyup', function(event) {
-		let newName = event.target.value;
-		if (event.key == "Enter" && newName !== undefined && newName.length > 0) {
-			tokens.forEach(token => {
-				if(window.JOURNAL.notes[token.options.id]){
-					window.JOURNAL.notes[token.options.id].title = newName;
-					window.JOURNAL.persist();
-				}
-				token.options.name = newName;
-				token.place_sync_persist();
 
-			});
-		}
-	});
-	nameInput.on('focusout', function(event) {
-		let newName = event.target.value;
-		if (newName !== undefined && newName.length > 0) {
-			tokens.forEach(token => {
-				if(window.JOURNAL.notes[token.options.id]){
-					window.JOURNAL.notes[token.options.id].title = newName;
-					window.JOURNAL.persist();
-				}
-				token.options.name = newName;
-				token.place_sync_persist();		
-			});
-
-		}
-	});
-	let nameWrapper = $(`
-		<div class="token-image-modal-url-label-wrapper">
-			<div class="token-image-modal-footer-title">Name</div>
-		</div>
-	`);
-	nameWrapper.append(nameInput); // input below label
-	body.append(nameWrapper);
-	let changeImageMenuButton = $("<button id='changeTokenImage' class='material-icons'>Change Token Image</button>")
-	body.append(changeImageMenuButton)
-
-	changeImageMenuButton.off().on("click", function() {
-		close_token_context_menu();
-		id = tokens[0].options.id;
-		if (!(id in window.TOKEN_OBJECTS)) {
-			return;
-		}
-		let tok = window.TOKEN_OBJECTS[id];
-		display_change_image_modal(tok);
-	});
 	let conditionsRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Conditions / Markers</div></div>`);	
 	conditionsRow.hover(function (hoverEvent) {
 		context_menu_flyout("conditions-flyout", hoverEvent, function(flyout) {
@@ -2952,6 +2964,7 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 		"flex-direction": "row"
 	});
 	let editNoteButton = $(`<button class="icon-note material-icons">Create Note</button>`)
+
 	if(tokenIds.length=1){
 		let has_note=id in window.JOURNAL.notes;
 		if(has_note){
@@ -2990,6 +3003,21 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 		}
 		else {
 			body.append(editNoteButton);
+			let editSharedNoteButton = $(`<button class="icon-note material-icons">Create Shared Note</button>`)
+			editSharedNoteButton.off().on("click", function(){
+				if (!(id in window.JOURNAL.notes)) {
+					let title = window.TOKEN_OBJECTS[id] ? window.TOKEN_OBJECTS[id].options.name : `Note`
+					window.JOURNAL.notes[id] = {
+						title: title,
+						text: '',
+						plain: '',
+						player: true
+					}
+				}
+				$('#tokenOptionsClickCloseDiv').click();
+				window.JOURNAL.edit_note(id);
+			});	
+			body.append(editSharedNoteButton);
 		}
 
 		editNoteButton.off().on("click", function(){
@@ -3416,11 +3444,14 @@ function build_adjustments_flyout_menu(tokenIds) {
 		}
 
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
-		let uniqueSettings = [...new Set(tokenSettings)];
+		let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
+		}	else if(uniqueSettings.length === 0){
+			currentValue = undefined;
 		}
+
 
 		if (setting.type === "dropdown") {
 			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
@@ -3433,7 +3464,7 @@ function build_adjustments_flyout_menu(tokenIds) {
 						let setting = token_settings[j];
 						if(setting.type === "toggle"){
 							let tokenSettings = tokens.map(t => t.options[setting.name]);
-							let uniqueSettings = [...new Set(tokenSettings)];
+							let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
 							let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 							if (uniqueSettings.length === 1) {
 								currentValue = uniqueSettings[0];
@@ -3498,35 +3529,6 @@ function build_adjustments_flyout_menu(tokenIds) {
 	});
 
 
-	/*let resetToDefaults = $(`<button class='token-image-modal-remove-all-button' title="Reset all token settings back to their default values." style="width:100%;padding:8px;margin:10px 0px;">Reset Token Settings to Defaults</button>`);
-	resetToDefaults.on("click", function (clickEvent) {
-		let formContainer = $(clickEvent.currentTarget).parent();
-
-		// disable all toggle switches
-		formContainer
-			.find(".rc-switch")
-			.removeClass("rc-switch-checked")
-			.removeClass("rc-switch-unknown");
-
-		// set all dropdowns to their default values
-		formContainer
-			.find("select")
-			.each(function () {
-				let el = $(this);
-				let matchingOption = token_settings.find(o => o.name === el.attr("name"));
-				el.find(`option[value=${matchingOption.defaultValue}]`).attr('selected','selected');
-			});
-
-		// This is why we want multiple callback functions.
-		// We're about to call updateValue a bunch of times and only need to update the UI (or do anything else really) one time
-		token_settings.forEach(option => {
-			tokens.forEach(token => token.options[option.name] = option.defaultValue);
-		});
-		tokens.forEach(token => token.place_sync_persist());
-
-
-	});
-	body.append(resetToDefaults);*/
 	return body;
 }
 
@@ -3808,10 +3810,15 @@ function build_options_flyout_menu(tokenIds) {
 		}
 
 		let tokenSettings = tokens.map(t => t.options[setting.name]);
-		let uniqueSettings = [...new Set(tokenSettings)];
+		let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
+		if(uniqueSettings.length = 0)
+			uniqueSettings = [undefined]
 		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
 		if (uniqueSettings.length === 1) {
 			currentValue = uniqueSettings[0];
+		}
+		else if(uniqueSettings.length === 0){
+			currentValue = undefined;
 		}
 
 		if (setting.type === "dropdown") {
