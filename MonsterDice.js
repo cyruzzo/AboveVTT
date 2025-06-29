@@ -383,7 +383,7 @@ function scan_player_creature_pane(target) {
 	container.find(".avtt-roll-button").off('click.roller').on('click.roller', clickHandler);
 	container.find(".avtt-roll-button").on("contextmenu", rightClickHandler);
 
-	container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
+	container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("contextmenu.sendToGamelog").on("contextmenu.sendToGamelog", function (e) {
     e.preventDefault();
     if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
       return;
@@ -410,7 +410,7 @@ function scan_player_creature_pane(target) {
     
   })
 
-  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong").off("click.roll").on("click.roll", function (e) {
+  container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
     e.preventDefault();
     if($(event.target).text().includes('Recharge'))
       return;
@@ -452,10 +452,10 @@ function scan_player_creature_pane(target) {
       }
     }
   })
-  let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong");
+  let abilities= container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em");
 
   for(let i = 0; i<abilities.length; i++){
-    if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button')){
+    if($(abilities[i]).closest('em:has(strong), strong:has(em)').nextUntil('em:has(strong), strong:has(em)').is('.avtt-roll-button, :has(.avtt-roll-button)')){
       $(abilities[i]).toggleClass('avtt-ability-roll-button', true);
     }
   }
