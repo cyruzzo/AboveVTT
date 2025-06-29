@@ -581,8 +581,8 @@ function general_statblock_formating(input){
   input = input.replace(/'/g, '’');
   // e.g. Divine Touch. Melee Spell Attack:
   input = input.replace(
-      /^(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
-        '<em><strong>$1$4</strong></em><em>$3$5$6</em>'
+      /^(<span.+?>)?(([a-z0-9]+[\s]?){1,7})(\([^\)]+\))?(\.)([\s]+)?((Melee|Ranged|Melee or Ranged) (Weapon Attack:|Spell Attack:|Attack Roll:))?/gi,
+        '$1<em><strong>$2$5</strong></em><em>$4$6$7</em>'
   ).replace(/[\s]+\./gi, '.');
 
   // Find actions requiring saving throws
