@@ -204,6 +204,7 @@ const debounceSendNote = mydebounce(function(id, note){
 const delayedClear = mydebounce(() => clearFrame());
 
 function setupMBIntervals(){
+	window.reconnectDelay = 250;
 	if(window.pingInterval!=undefined)
 		clearInterval(window.pingInterval);
 	if(window.reconInterval!=undefined)
@@ -276,13 +277,7 @@ class MessageBroker {
 			this.abovews = new WebSocket(url);
 			
 		}
-		this.abovews.onopen=function(){
 
-		}
-		
-
-
-		
 		
 		this.abovews.onerror = function(errorEvent) {
 			self.loadingAboveWS = false;
@@ -291,6 +286,7 @@ class MessageBroker {
 			} catch (err) { // this is probably overkill, but just in case
 				console.error("MB.onerror failed to log event", err);
 			}
+			self.abovews.close();
 		};
 
 		this.abovews.onmessage=this.onmessage;
@@ -309,7 +305,18 @@ class MessageBroker {
 			if (recovered && (!window.DM)) {
 				console.log('asking the DM for recovery!');
 				self.sendMessage("custom/myVTT/syncmeup");
-			}
+	 		}
+			setupMBIntervals();
+		};
+
+		this.abovews.onclose = function() {
+		  if(self.reconnectTimeout != undefined){
+		  	clearTimeout(self.reconnectTimeout);
+		  }	
+		  console.log('Attempting reconnect to Above Websocket');
+		  self.reconnectTimeout = setTimeout(function() {
+		    self.loadAboveWS();	
+		  }, Math.min(10000,window.reconnectDelay+=window.reconnectDelay));
 		};
 	}
 
@@ -1520,10 +1527,6 @@ class MessageBroker {
 		});
 
 		self.loadAboveWS();
-
-		setupMBIntervals();
-
-
 	}
 
   	handleCT(data){
