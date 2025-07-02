@@ -1557,6 +1557,7 @@ function redraw_fog() {
 			}
 		}
 	}
+	fogContext.filter='blur(3px)'
 	fogContext.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
@@ -4077,13 +4078,12 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 		ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		p1 = points[i];
 		p2 = points[i+1];
-	}
+	}	
 	// Draw last line as a straight line
 	ctx.lineTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 	ctx.stroke();
-		
-	ctx.restore();
 
+	ctx.restore();
 }
 
 function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor, fill = [])
