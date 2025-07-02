@@ -7670,6 +7670,9 @@ button span.onedrive-btn-status{
     height: 24px !important;
     margin-bottom: 2px !important;
 }
+.sp-cf:after, .sp-cf:before{
+    display:none;
+}
 .sp-replacer.sp-light{
     float:  right;
     width: 48px;
