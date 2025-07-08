@@ -1198,7 +1198,7 @@ const debounce_pc_token_update = mydebounce(() => {
       }
     }
     token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
-    if(token){
+    if(token && pc){
       let currentImage = token.options.imgsrc;
       token.options = {
         ...token.options,
