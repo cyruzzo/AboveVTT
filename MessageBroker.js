@@ -219,8 +219,7 @@ function setupMBIntervals(){
 
 	window.reconInterval = setInterval(function() {
    		forceDdbWsReconnect();
-		window.MB.reconnectDisconnectedAboveWs();
-	}, 4000)
+	}, 15000)
 	
 }
 
@@ -310,13 +309,28 @@ class MessageBroker {
 		};
 
 		this.abovews.onclose = function() {
-		  if(self.reconnectTimeout != undefined){
-		  	clearTimeout(self.reconnectTimeout);
-		  }	
-		  console.log('Attempting reconnect to Above Websocket');
-		  self.reconnectTimeout = setTimeout(function() {
-		    self.loadAboveWS();	
-		  }, Math.min(10000,window.reconnectDelay+=window.reconnectDelay));
+			if(is_gamelog_popout())
+				return;
+			if(self.reconnectTimeout != undefined){
+				clearTimeout(self.reconnectTimeout);
+			}	
+			console.log('Attempting reconnect to Above Websocket');
+			if(window.reconnectAttemptAbovews == undefined){
+				window.reconnectAttemptAbovews = 0;
+			}
+			window.reconnectAttemptAbovews++;
+			if(window.onCloseNumberPerPopup == undefined){
+				window.onCloseNumberPerPopup = 0;
+			}
+			window.onCloseNumberPerPopup++;
+			if(window.onCloseNumberPerPopup > 5 && !get_avtt_setting_value('autoReconnect')){
+				self.showDisconnectWarning();
+			}	
+			else{
+				self.reconnectTimeout = setTimeout(function() {
+					self.loadAboveWS();	
+				}, Math.min(10000,2**window.onCloseNumberPerPopup*window.reconnectDelay));
+			}
 		};
 	}
 
@@ -2374,6 +2388,7 @@ class MessageBroker {
 	  	window.close();
 	  });
 	  $("#reconnect-button").on("click", function(){
+	  	window.onCloseNumberPerPopup = 5;
 	  	window.MB.loadAboveWS(function(){ 
 	  		AboveApi.getScene(window.CURRENT_SCENE_DATA.id).then((response) => {
 	  			window.MB.handleScene(response, true);
@@ -2402,7 +2417,6 @@ class MessageBroker {
 			if(window.reconnectAttemptAbovews == undefined){
 				window.reconnectAttemptAbovews = 0;
 			}	
-			window.reconnectAttemptAbovews++;
 			if(get_avtt_setting_value('autoReconnect')){
 				this.loadAboveWS();	
 			}
