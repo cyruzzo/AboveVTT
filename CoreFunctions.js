@@ -1215,9 +1215,6 @@ const debounce_pc_token_update = mydebounce(() => {
         delete token.options[unusedPlayerData[i]];
       }
     }     
-    if(token){
-
-    }
   });
   if (window.DM) {
     update_pc_token_rows();
