@@ -259,7 +259,10 @@ function getRollData(rollButton){
     let rollTitle = 'AboveVTT';
     let damageType = undefined;
     if($(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').length>0){
-      expression = $(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text().replace(/\s/g, '');
+      expression = $(rollButton).find('.ddbc-damage__value, .ct-spell-caster__modifier-amount').text();
+      const damageRollRegex = /([:\s>]|^)(([0-9]+d[0-9]+)\s?([+-]\s?[0-9]+)?)([\.\):\s<,]|$)/gi
+      expression = `${expression.match(damageRollRegex)[0].replace(/\s*/gi, '')}`
+
       if($(rollButton).find('.ct-spell-caster__modifier-amount').length>0){
         rollType ='damage';
         rollTitle = $(rollButton).closest('[class*="styles_content"]')?.find('[class*="styles_spellName"]')?.text() || rollTitle;
