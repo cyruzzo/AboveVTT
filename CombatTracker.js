@@ -166,7 +166,6 @@ function init_combat_tracker(){
 	let reset_rounds=$("<button style='font-size: 10px;'>RESET</button>");
 	
 	reset_rounds.click(function (){
-		$(e.target).select();
 		window.ROUND_NUMBER = 1;
 		document.getElementById('round_number').value = window.ROUND_NUMBER;
 		let tokenID = $("#combat_area tr[data-current]").attr('data-target');
