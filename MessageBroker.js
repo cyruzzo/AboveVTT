@@ -2388,7 +2388,7 @@ class MessageBroker {
 	  	window.close();
 	  });
 	  $("#reconnect-button").on("click", function(){
-	  	window.onCloseNumberPerPopup = 5;
+	  	window.onCloseNumberPerPopup = 0;
 	  	window.MB.loadAboveWS(function(){ 
 	  		AboveApi.getScene(window.CURRENT_SCENE_DATA.id).then((response) => {
 	  			window.MB.handleScene(response, true);
