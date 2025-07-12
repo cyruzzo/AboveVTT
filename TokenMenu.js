@@ -3415,118 +3415,120 @@ function build_adjustments_flyout_menu(tokenIds) {
 
 
 	}
-
-	let token_settings = token_setting_options();
-	if (tokens.length === 1 && !tokens[0].isPlayer()){
-		let removename = "hidestat";
-		token_settings = $.grep(token_settings, function(e){
-		     return e.name != removename;
-		});
-	}
-	for (let i = 0; i < tokens.length; i++) {
-	    if(tokens[i].isPlayer()){
-	    	player_selected = true;
-	    	break;
-	    }
-	}
-	if (player_selected){
-		let removename = "player_owned";
-		token_settings = $.grep(token_settings, function(e){
-		     return e.name != removename;
-		});
-	}
-	for(let i = 0; i < token_settings.length; i++) {
-		let setting = token_settings[i];
-		if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
-			continue;
-		} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly || setting.name == 'lockRestrictDrop' || setting.name == 'hidden' ) {
-			continue;
+	if(window.DM){
+		let token_settings = token_setting_options();
+		if (tokens.length === 1 && !tokens[0].isPlayer()){
+			let removename = "hidestat";
+			token_settings = $.grep(token_settings, function(e){
+			     return e.name != removename;
+			});
 		}
-
-		let tokenSettings = tokens.map(t => t.options[setting.name]);
-		let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
-		let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
-		if (uniqueSettings.length === 1) {
-			currentValue = uniqueSettings[0];
-		}	else if(uniqueSettings.length === 0){
-			currentValue = undefined;
+		for (let i = 0; i < tokens.length; i++) {
+		    if(tokens[i].isPlayer()){
+		    	player_selected = true;
+		    	break;
+		    }
 		}
+		if (player_selected){
+			let removename = "player_owned";
+			token_settings = $.grep(token_settings, function(e){
+			     return e.name != removename;
+			});
+		}
+		for(let i = 0; i < token_settings.length; i++) {
+			let setting = token_settings[i];
+			if (allTokensAreAoe && !availableToAoe.includes(setting.name)) {
+				continue;
+			} else if(setting.hiddenSetting || setting.name == 'maxAge' || setting.name == 'defaultmaxhptype' || setting.name == 'placeType' || setting.globalSettingOnly || setting.name == 'lockRestrictDrop' || setting.name == 'hidden' ) {
+				continue;
+			}
+
+			let tokenSettings = tokens.map(t => t.options[setting.name]);
+			let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
+			let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
+			if (uniqueSettings.length === 1) {
+				currentValue = uniqueSettings[0];
+			}	else if(uniqueSettings.length === 0){
+				currentValue = undefined;
+			}
 
 
-		if (setting.type === "dropdown") {
-			let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
-				tokens.forEach(token => {
-					token.options[name] = newValue;
-					token.place_sync_persist();
-				});
-				if(setting.name =='tokenStyleSelect'){		
-					for(let j=0; j<token_settings.length; j++){
-						let setting = token_settings[j];
-						if(setting.type === "toggle"){
-							let tokenSettings = tokens.map(t => t.options[setting.name]);
-							let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
-							let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
-							if (uniqueSettings.length === 1) {
-								currentValue = uniqueSettings[0];
+			if (setting.type === "dropdown") {
+				let inputWrapper = build_dropdown_input(setting, currentValue, function(name, newValue) {
+					tokens.forEach(token => {
+						token.options[name] = newValue;
+						token.place_sync_persist();
+					});
+					if(setting.name =='tokenStyleSelect'){		
+						for(let j=0; j<token_settings.length; j++){
+							let setting = token_settings[j];
+							if(setting.type === "toggle"){
+								let tokenSettings = tokens.map(t => t.options[setting.name]);
+								let uniqueSettings = [...new Set(tokenSettings)].filter(d => d != undefined);
+								let currentValue = null; // passing null will set the switch as unknown; undefined is the same as false
+								if (uniqueSettings.length === 1) {
+									currentValue = uniqueSettings[0];
+								}
+								$(`#adjustments-flyout button[name='${setting.name}']`).toggleClass('rc-switch-checked', currentValue == '1')
 							}
-							$(`#adjustments-flyout button[name='${setting.name}']`).toggleClass('rc-switch-checked', currentValue == '1')
+							
 						}
-						
 					}
-				}
-			});
-			if(setting.menuPosition != undefined){
-				body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
-			}
-			else{
-				body.append(inputWrapper);
-			}
-			
-		} else if (setting.type === "toggle") {
-			let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
-				tokens.forEach(token => {
-					token.options[name] = newValue;
-					token.place_sync_persist(true);
 				});
-			});
-			if(setting.menuPosition != undefined){
-				body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
+				if(setting.menuPosition != undefined){
+					body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
+				}
+				else{
+					body.append(inputWrapper);
+				}
+				
+			} else if (setting.type === "toggle") {
+				let inputWrapper = build_toggle_input(setting, currentValue, function (name, newValue) {
+					tokens.forEach(token => {
+						token.options[name] = newValue;
+						token.place_sync_persist(true);
+					});
+				});
+				if(setting.menuPosition != undefined){
+					body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
+				}
+				else{
+					body.append(inputWrapper);
+				}
+			} else {
+				console.warn("build_options_flyout_menu failed to handle token setting option with type", setting.type);
 			}
-			else{
-				body.append(inputWrapper);
-			}
-		} else {
-			console.warn("build_options_flyout_menu failed to handle token setting option with type", setting.type);
 		}
-	}
-	
-	let tokenMaxAges = [];
-	let tokenAges = [];
-	tokens.forEach(t => {
-		tokenMaxAges.push(t.options.maxAge);
-		tokenAges.push(t.options.age);
-	});
-	let uniqueMaxAges = [...new Set(tokenMaxAges)]
-	let uniqueAges = [...new Set(tokenAges)]
-	body.append(build_age_inputs(uniqueAges, uniqueMaxAges, 
-		function(age){
-			tokens.forEach(token => {
-				token.options.age = age;
-				token.place_sync_persist();
-			});
 		
-		}, 
-		function(maxAge, updateToken){
-
-			tokens.forEach(token => {
-				token.options.maxAge = maxAge;
-				if(updateToken)
+		let tokenMaxAges = [];
+		let tokenAges = [];
+		tokens.forEach(t => {
+			tokenMaxAges.push(t.options.maxAge);
+			tokenAges.push(t.options.age);
+		});
+		let uniqueMaxAges = [...new Set(tokenMaxAges)]
+		let uniqueAges = [...new Set(tokenAges)]
+		body.append(build_age_inputs(uniqueAges, uniqueMaxAges, 
+			function(age){
+				tokens.forEach(token => {
+					token.options.age = age;
 					token.place_sync_persist();
-			});
-		}));	
-	$(".ageMenuInput").on('focus', function(event){
-		event.target.select();
-	});
+				});
+			
+			}, 
+			function(maxAge, updateToken){
+
+				tokens.forEach(token => {
+					token.options.maxAge = maxAge;
+					if(updateToken)
+						token.place_sync_persist();
+				});
+			}));	
+		$(".ageMenuInput").on('focus', function(event){
+			event.target.select();
+		});
+	}
+
 
 
 	return body;
