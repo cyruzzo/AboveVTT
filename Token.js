@@ -1450,7 +1450,7 @@ class Token {
 		else if(window.DM){ // in all the other cases.. the DM should always see HP/AC
 			showthem=true;
 		}
-		else if(this.options.player_owned || this.isCurrentPlayer()){ // if it's player_owned.. always showthem
+		else if((this.options.player_owned && !this.isPlayer()) || this.isCurrentPlayer()){ // if it's player_owned.. always showthem
 			showthem=true;
 		}
 		else if(this.isPlayer() && (!this.options.hidestat)){
