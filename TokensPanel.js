@@ -3047,8 +3047,12 @@ function build_override_token_options_button(sidebarPanel, listItem, placedToken
     let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
     tokenOptionsButton.on("click", function (clickEvent) {
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-            const overrideOptions = listItem.isTypeAoe() ? token_setting_options().filter(option=> availableToAoe.includes(option.name))
-                .map(option => convert_option_to_override_dropdown(option)) : token_setting_options().map(option => convert_option_to_override_dropdown(option));
+            const overrideOptions = listItem.isTypeAoe() ? 
+                token_setting_options().filter(option=> availableToAoe.includes(option.name))
+                 .map(option => convert_option_to_override_dropdown(option)) 
+                : (listItem.type === ItemType.PC || listItem.folderType === ItemType.PC)
+                ? token_setting_options().filter(option => !['player_owned'].includes(option.name)).map(option => convert_option_to_override_dropdown(option))
+                : token_setting_options().map(option => convert_option_to_override_dropdown(option));
             let optionsContainer = build_sidebar_token_options_flyout(overrideOptions, options, function(name, value) {
                 updateValue(name, value);
             }, didChange);
