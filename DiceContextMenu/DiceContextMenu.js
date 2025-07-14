@@ -35,7 +35,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
             })
         )
     }
-    
+
 
 
     menu.onRollClick(dcm => {
@@ -60,7 +60,7 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
             diceRoll = new DiceRoll(expression.replace(/^1d20/g, '3d20kl1'));
         }
         else { // advantage/disadvantage options were not displayed. This will happen any time the expression is not 1d20
-            diceRoll = new DiceRoll(`${expression}${modifierString}`);
+            diceRoll = new DiceRoll(`${expression}`);
         }
 
         diceRoll.action = action;

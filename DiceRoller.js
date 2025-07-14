@@ -14,7 +14,7 @@ class DiceRoll {
     // don't allow changing these. They can only be set from within the constructor.
     #fullExpression = "";
     get expression() { return this.#fullExpression; }
-
+    set expression(fullExpression) {this.#fullExpression = fullExpression}
     #individualDiceExpressions = [];
     get diceExpressions() { return this.#individualDiceExpressions; }
 
@@ -554,6 +554,7 @@ class DiceRoller {
                 self.#resetVariables();
             }, this.timeoutDuration);
             let msgdata = {}
+            diceRoll.expression = diceRoll.expression.replace(/$\+0|\+0(\D)/gi, '$1')
             let roll = new rpgDiceRoller.DiceRoll(diceRoll.expression); 
             let regExpression = new RegExp(`${diceRoll.expression.replace(/[+-]/g, '\\$&')}:\\s`);
             let rollType = (diceRoll.rollType) ? diceRoll.rollType : 'Custom';
