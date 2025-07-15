@@ -326,6 +326,7 @@ async function start_above_vtt_common() {
   window.PC_TOKENS_NEEDING_UPDATES = [];
   window.PC_NEEDS_API_CALL = {};
 
+  
   await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");
 

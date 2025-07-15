@@ -113868,7 +113868,7 @@ function get_ddb_extras() {
 }
 
 
-var CONDITIONS = {};
+
 
 function get_avtt_scene_import_data() {
 	return [
