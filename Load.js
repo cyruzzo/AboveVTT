@@ -1,6 +1,9 @@
 const isVttGamePage = window.location.search.includes("abovevtt=true");
-const isPlainCharacterPage = !isVttGamePage && window.location.pathname.match("/characters"); //character, builder, or listing
+const isPlayerPage = window.location.pathname.match("/characters");
+const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
 const isCampaignPage = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi); //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude
+const isPopoutGameLog = window.location.search.includes("popoutgamelog=true");
+
 console.log("Load.js is executing", isVttGamePage, isPlainCharacterPage, isCampaignPage);
 function getExtURL(url) {
 	return (chrome || browser).runtime.getURL(url);
@@ -43,9 +46,9 @@ if (isPlainCharacterPage) {
 		let loadingBg = document.createElement('div');
 		loadingBg.setAttribute("id", "loading_overlay_bg");
 		loadingOverlay.appendChild(loadingBg);
-		if (window.location.pathname.includes("/encounters/")) {
+		if (!isPlayerPage) {
 			loadingBg.setAttribute("class", "dm");
-		} else if (window.location.pathname.includes("/characters/")) {
+		} else if (isPlayerPage) {
 			loadingBg.setAttribute("class", "player");
 		}
 	}
@@ -107,25 +110,6 @@ if (isPlainCharacterPage) {
 		{ src: "MessageBroker.js" },
 		{ src: "MonsterDice.js" },
 		{ src: "PlayerPanel.js" },
-		{ src: "SceneData.js" },
-		{ src: "scenedata/bgdia-scene-data.js" },
-		{ src: "scenedata/tod-scene-data.js" },
-		{ src: "scenedata/toa-scene-data.js" },
-		{ src: "scenedata/doip-scene-data.js" },
-		{ src: "scenedata/lmop-scene-data.js" },
-		{ src: "scenedata/pbtso-scene-data.js" },
-		{ src: "scenedata/loe-scene-data.js" },
-		{ src: "scenedata/veor-scene-data.js" },
-		{ src: "scenedata/hcs-scene-data.js" },
-		{ src: "scenedata/dosi-scene-data.js" },
-		{ src: "scenedata/sdw-scene-data.js" },
-		{ src: "scenedata/hgtmh1-scene-data.js" },
-		{ src: "scenedata/dilct-scene-data.js" },
-		{ src: "scenedata/uhlh-scene-data.js" },
-		{ src: "scenedata/gotsf-scene-data.js" },
-		{ src: "scenedata/gos-scene-data.js" },
-		{ src: "scenedata/hbtd-scene-data.js" },
-		{ src: "scenedata/ottg-scene-data.js" },
 		{ src: "ScenesHandler.js" },
 		{ src: "ScenesPanel.js" },
 		{ src: "Settings.js" },
@@ -146,18 +130,69 @@ if (isPlainCharacterPage) {
 		{ src: "DiceRoller.js" },
 		{ src: "Main.js" },
 		{ src: "MonsterStatBlock.js" },
-		// AboveVTT files that execute when loaded
-		{ src: "CampaignPage.js" },
+		// AboveVTT files that execute when loaded	
 		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
 	]
 	//Do not load characterPage.js for DM or on campaign page
-	if(window.location.pathname.includes("/characters")){ 
-		window.scripts.push({ src: "CharactersPage.js" })
+	if(isPlayerPage){ 
+		window.scripts.push(
+			{ src: "CharactersPage.js" }
+		)
 	}
-	// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
-	window.scripts.push({ src: "Startup.js", type: "module" })
+	else if(isPopoutGameLog){
+		window.scripts = [
+			{ src: "jquery.magnific-popup.min.js" },
+			{ src: "purify.min.js" },
+			{ src: "environment.js" },
+			{ src: "CoreFunctions.js" }, 		
+			{ src: "DDBApi.js" }, 
+			{ src: "Settings.js" },
+			{ src: "MessageBroker.js" },
+			{ src: "Journal.js" },
+			{ src: "ChatObserver.js" },
+			{ src: "MonsterStatBlock.js" },
+			{ src: "CampaignPage.js" }
+		]
+	}
+	else if(isCampaignPage){
+
+		window.scripts = [
+			{ src: "CoreFunctions.js" }, 		
+			{ src: "DDBApi.js" }, 
+			{ src: "Settings.js" },
+			{ src: "CampaignPage.js" }
+		]
+
+	}
+	else{//dm
+  		window.scripts.push(
+	  		{ src: "SceneData.js" },
+			{ src: "scenedata/bgdia-scene-data.js" },
+			{ src: "scenedata/tod-scene-data.js" },
+			{ src: "scenedata/toa-scene-data.js" },
+			{ src: "scenedata/doip-scene-data.js" },
+			{ src: "scenedata/lmop-scene-data.js" },
+			{ src: "scenedata/pbtso-scene-data.js" },
+			{ src: "scenedata/loe-scene-data.js" },
+			{ src: "scenedata/veor-scene-data.js" },
+			{ src: "scenedata/hcs-scene-data.js" },
+			{ src: "scenedata/dosi-scene-data.js" },
+			{ src: "scenedata/sdw-scene-data.js" },
+			{ src: "scenedata/hgtmh1-scene-data.js" },
+			{ src: "scenedata/dilct-scene-data.js" },
+			{ src: "scenedata/uhlh-scene-data.js" },
+			{ src: "scenedata/gotsf-scene-data.js" },
+			{ src: "scenedata/gos-scene-data.js" },
+			{ src: "scenedata/hbtd-scene-data.js" },
+			{ src: "scenedata/ottg-scene-data.js" }
+		)
+	}
+	if(isVttGamePage) {
+		// Startup must be the last file to execute. This is what actually loads the app. It requires all the previous files to be loaded first
+		window.scripts.push({ src: "Startup.js", type: "module" })
+	}
 }
 
 
