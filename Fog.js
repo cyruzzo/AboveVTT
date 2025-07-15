@@ -5771,8 +5771,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     	y1 = tokenIsDoor ? parseFloat(token.attr('data-y1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
     	y2 = tokenIsDoor ? parseFloat(token.attr('data-y2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
     }
-    let notBlockVision = [1, 3, 6, 7, 12, 13];
-    let notBlockMove = [8, 9, 10, 11, 12, 13];
+    let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
+    let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
 	    let pt;
 	    let closestLight = null;
@@ -5787,11 +5787,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	      	let wallTop = Infinity;
 			if(walls[j].wallTop !== undefined && walls[j].wallTop !== '')
-	    		wallTop = parseInt(walls[j].wallTop)
+	    		wallTop = walls[j].wallTop
 
 	  		let wallBottom = -Infinity;
 			if(walls[j].wallBottom !== undefined && walls[j].wallBottom !== '')
-	    		wallBottom = parseInt(walls[j].wallBottom)
+	    		wallBottom = walls[j].wallBottom
 	    	
 
 			if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
@@ -5807,7 +5807,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					dist = pointDistance;
 			
 				
-				if (dist < recordLight && !notBlockVision.includes(parseInt(walls[j].c))) {
+				if (dist < recordLight && !notBlockVision.includes(walls[j].c)) {
 				  	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
 						{
 				      	recordLight = dist;         
@@ -5827,7 +5827,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				}
 
 				if(canSeeDarkness === true && walls[j].darkness !== true){
-				    if (dist < recordNoDarkness && !notBlockMove.includes(parseInt(walls[j].c))) {
+				    if (dist < recordNoDarkness && !notBlockMove.includes(walls[j].c)) {
 				      	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
 						{
 
@@ -5847,7 +5847,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			       		}
 			   	 	}
 				}
-				if(walls[j].darkness !== true && !notBlockMove.includes(parseInt(walls[j].c))){
+				if(walls[j].darkness !== true && !notBlockMove.includes(walls[j].c)){
 
 
 				    if(dist < recordMove){
