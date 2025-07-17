@@ -458,6 +458,33 @@ function token_context_menu_expanded(tokenIds, e) {
 					});
 				});
 				body.append(teleportTwoWayButton);
+
+				let copyPortalId = $(`<button class=" context-menu-icon-hidden door-open material-icons">Copy Portal ID</button>`)
+				copyPortalId.off().on("click", function(clickEvent){
+					const copyLink = `${tokenIds};${window.CURRENT_SCENE_DATA.id}`
+			        navigator.clipboard.writeText(copyLink);
+				});
+				body.append(copyPortalId);
+
+				let crossSceneIdInput = $(`
+				<div class="token-image-modal-footer-select-wrapper" style="display:flex">
+	 				<div class="token-image-modal-footer-title">Cross Scene Portal ID</div>
+	 				<input style='width:80px;' title="Cross Scene Linked Portal" placeholder="Cross Scene Linked Portal ID" type="text" />
+	 			</div>`);
+				crossSceneIdInput.find('input').off().on("change", function(event){
+					const values = $(this).val().split(';')
+					const portalTokenId = values[0];
+					const sceneId = values[1];
+					window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
+					if(window.all_token_objects[tokenIds] != undefined){
+						window.all_token_objects[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
+					}
+					window.TOKEN_OBJECTS[tokenIds].place(0);
+					window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+				})
+
+				body.append(crossSceneIdInput);
+
 			}
 
 
