@@ -2191,7 +2191,7 @@ function redraw_light_walls(clear=true){
 		window.walls.push(drawnWall);
 	}
 
-	if($('#edit_wall').hasClass('button-enabled')){
+	if(displayWalls && $('#edit_wall').hasClass('button-enabled')){
 		if(window.wallsBeingDragged?.length > 0){
 			for(let i in window.wallsBeingDragged){
 				const drawIndex = window.wallsBeingDragged[i].drawingIndex;
@@ -2845,6 +2845,7 @@ function drawing_mousemove(e) {
 
 							if(wallData){
 								window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
+								wallData.drawIndex = j;
 							}
 							if(pt1 != undefined){
 								window.DRAWINGS[j][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
@@ -3702,78 +3703,97 @@ function drawing_mouseup(e) {
 		sync_drawings();
 	}
 	else if(window.DRAWFUNCTION === "wall-edit"){
-		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
-		let rectLine = {
-			rx: window.BEGIN_MOUSEX,
-			ry: window.BEGIN_MOUSEY,		
-			rw: width,
-			rh: height
-		};
-		let intersectingWalls = [];
-		let wallLine = [];
-		let eraserToRight  = rectLine.rw > 0;
-		let eraserToBottom = rectLine.rh > 0;
-		if(!eraserToRight){
-			rectLine.rx = rectLine.rx + rectLine.rw;
-			rectLine.rw = Math.abs(rectLine.rw);
-		}
-		if(!eraserToBottom){
-			rectLine.ry = rectLine.ry + rectLine.rh;
-			rectLine.rh = Math.abs(rectLine.rh);
-		}
-		window.selectedWalls = [];	
-		for(let i=0; i<walls.length; i++){
-			if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
-				continue;
-			let wallInitialScale = walls[i][8];
-			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
-
-			
-
-			
-			wallLine = [{
-				a: {
-					x: walls[i][3]/adjustedScale,
-					y: walls[i][4]/adjustedScale
-				},
-				b: {
-					x: walls[i][5]/adjustedScale,
-					y: walls[i][6]/adjustedScale
-				}			
-			}]
-			
-
-			
-			let left;
-			let right;
-			let top;
-			let bottom;
-
-	
-
-			let pt1 = wallLine[0].a;
-			let pt2 = wallLine[0].b;
-
-			
-			const pt1Inside = (rectLine.rx <= pt1.x) && (rectLine.rx+rectLine.rw >= pt1.x) && (rectLine.ry <= pt1.y) && (rectLine.ry+rectLine.rh >= pt1.y); 
-			const pt2Inside = (rectLine.rx <= pt2.x) && (rectLine.rx+rectLine.rw >= pt2.x) && (rectLine.ry <= pt2.y) && (rectLine.ry+rectLine.rh >= pt2.y);
-			
-			pt1 = pt1Inside ? pt1 : undefined;
-			pt2 = pt2Inside ? pt2 : undefined;
-
-			
-			
-			
-			
-			if(pt1Inside || pt2Inside){
-				window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i]})
+		if(window.DraggingWallPoints == undefined || window.DraggingWallPoints == false){
+			let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+			let rectLine = {
+				rx: window.BEGIN_MOUSEX,
+				ry: window.BEGIN_MOUSEY,		
+				rw: width,
+				rh: height
+			};
+			let intersectingWalls = [];
+			let wallLine = [];
+			let eraserToRight  = rectLine.rw > 0;
+			let eraserToBottom = rectLine.rh > 0;
+			if(!eraserToRight){
+				rectLine.rx = rectLine.rx + rectLine.rw;
+				rectLine.rw = Math.abs(rectLine.rw);
 			}
-    	}
+			if(!eraserToBottom){
+				rectLine.ry = rectLine.ry + rectLine.rh;
+				rectLine.rh = Math.abs(rectLine.rh);
+			}
+			window.selectedWalls = [];	
+			for(let i=0; i<walls.length; i++){
+				if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
+					continue;
+				let wallInitialScale = walls[i][8];
+				let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+				let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 
+				
+
+				
+				wallLine = [{
+					a: {
+						x: walls[i][3]/adjustedScale,
+						y: walls[i][4]/adjustedScale
+					},
+					b: {
+						x: walls[i][5]/adjustedScale,
+						y: walls[i][6]/adjustedScale
+					}			
+				}]
+				
+
+				
+				let left;
+				let right;
+				let top;
+				let bottom;
+
+		
+
+				let pt1 = wallLine[0].a;
+				let pt2 = wallLine[0].b;
+
+				
+				const pt1Inside = (rectLine.rx <= pt1.x) && (rectLine.rx+rectLine.rw >= pt1.x) && (rectLine.ry <= pt1.y) && (rectLine.ry+rectLine.rh >= pt1.y); 
+				const pt2Inside = (rectLine.rx <= pt2.x) && (rectLine.rx+rectLine.rw >= pt2.x) && (rectLine.ry <= pt2.y) && (rectLine.ry+rectLine.rh >= pt2.y);
+				
+				pt1 = pt1Inside ? pt1 : undefined;
+				pt2 = pt2Inside ? pt2 : undefined;
+
+				
+				
+				
+				
+				if(pt1Inside || pt2Inside){
+					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i]})
+				}
+	    	}
+
+
+		}
+		else{
+			for(let i in window.selectedWalls){
+				const wall = window.selectedWalls[i];
+				const index = wall.drawIndex;
+				const pt1 = wall.pt1;
+				const pt2 = wall.pt2;
+				if(pt1 != undefined){
+					window.selectedWalls[i].pt1 = {'x':window.DRAWINGS[index][3], 'y':window.DRAWINGS[index][4]};
+				}
+				if(pt2 != undefined){
+					window.selectedWalls[i].pt2 = {'x':window.DRAWINGS[index][5], 'y':window.DRAWINGS[index][6]}
+				}
+				
+			}
+		}
 		redraw_light_walls();
 		redraw_light();
 		sync_drawings();
+	
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
 		data[0] = "text";
