@@ -469,13 +469,14 @@ function token_context_menu_expanded(tokenIds, e) {
 				let crossSceneIdInputContainer = $(`
 				<div class="token-image-modal-footer-select-wrapper" style="display:flex">
 	 				<div class="token-image-modal-footer-title">Cross Scene Portal ID</div>
-	 				<input style='width:80px;' title="Cross Scene Linked Portal" placeholder="Cross Scene Linked Portal ID" type="text" />
+	 				<input style='width:80px;' title="Cross Scene Linked Portal" onclick="this.select();" placeholder="Cross Scene Linked Portal ID" type="text" />
 	 			</div>`);
 	 			const crossSceneInput = crossSceneIdInputContainer.find('input');
 	 			if(window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords?.linkedPortalId != undefined){
 	 				crossSceneInput.val(`${window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.linkedPortalId};${window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.sceneId}`)
 	 			}
-				crossSceneInput.off().on("change focusout", function(event){
+
+				crossSceneInput.off().on("change.edit focusout.edit", function(event){
 					const values = $(this).val().split(';')
 					const portalTokenId = values[0];
 					const sceneId = values[1];
