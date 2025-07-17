@@ -186,7 +186,8 @@ if (isPlainCharacterPage) {
 			{ src: "scenedata/gotsf-scene-data.js" },
 			{ src: "scenedata/gos-scene-data.js" },
 			{ src: "scenedata/hbtd-scene-data.js" },
-			{ src: "scenedata/ottg-scene-data.js" }
+			{ src: "scenedata/ottg-scene-data.js" },
+			{ src: "scenedata/wel-scene-data.js" }
 		)
 	}
 	if(isVttGamePage) {
