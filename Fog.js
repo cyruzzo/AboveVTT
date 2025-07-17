@@ -2587,7 +2587,7 @@ function drawing_mousedown(e) {
 			const wallCanvas = $('#walls_layer')[0];
 			const wallCtx = wallCanvas.getContext('2d')
 			let pixeldata = wallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
-			window.wallsBeingDragged = [];
+			
 			if (pixeldata[0] >= 255 && pixeldata[1] >= 255 && pixeldata[2] >= 255){
 				window.DraggingWallPoints = true;
 			}
@@ -2835,26 +2835,26 @@ function drawing_mousemove(e) {
 						undefined,
 						true);
 			}
-			else if(window.DraggingWallPoints == true){
+			else if(window.DraggingWallPoints == true && window.DRAWFUNCTION == 'wall-edit'){
 				
 
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
-							const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
-							const [pt1, pt2] = [wallData?.pt1, wallData?.pt2]
+						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
+						const [pt1, pt2] = [wallData?.pt1, wallData?.pt2]
 
-							if(wallData){
-								window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
-								wallData.drawIndex = j;
-							}
-							if(pt1 != undefined){
-								window.DRAWINGS[j][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
-								window.DRAWINGS[j][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
-							}
-							if(pt2 != undefined){
-								window.DRAWINGS[j][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
-								window.DRAWINGS[j][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
-							}
+						if(wallData){
+							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
+							wallData.drawIndex = j;
+						}
+						if(pt1 != undefined){
+							window.DRAWINGS[j][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
+							window.DRAWINGS[j][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
+						}
+						if(pt2 != undefined){
+							window.DRAWINGS[j][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
+							window.DRAWINGS[j][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
+						}
 					}
 				}
 				else{
@@ -3789,7 +3789,9 @@ function drawing_mouseup(e) {
 				}
 				
 			}
+
 		}
+		window.wallsBeingDragged = [];
 		redraw_light_walls();
 		redraw_light();
 		sync_drawings();
