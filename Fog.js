@@ -3769,7 +3769,9 @@ function drawing_mouseup(e) {
 				
 				
 				if(pt1Inside || pt2Inside){
-					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i]})
+					const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
+					const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId})
 				}
 	    	}
 
@@ -3781,11 +3783,30 @@ function drawing_mouseup(e) {
 				const index = wall.drawIndex;
 				const pt1 = wall.pt1;
 				const pt2 = wall.pt2;
+				const tokenId = wall.tokenId;
+				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3], window.DRAWINGS[index][4], window.DRAWINGS[index][5], window.DRAWINGS[index][6]]
 				if(pt1 != undefined){
-					window.selectedWalls[i].pt1 = {'x':window.DRAWINGS[index][3], 'y':window.DRAWINGS[index][4]};
+					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
 				}
 				if(pt2 != undefined){
-					window.selectedWalls[i].pt2 = {'x':window.DRAWINGS[index][5], 'y':window.DRAWINGS[index][6]}
+					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+				}
+				if(window.TOKEN_OBJECTS[tokenId] !== undefined){
+					const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
+					const newId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+					const scale = window.DRAWINGS[index][8];
+					const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+					const midX = Math.floor((x1+x2)/2) / scale * currentSceneScale;
+					const midY = Math.floor((y1+y2)/2) / scale * currentSceneScale;
+					let options = {
+						...newOptions,
+						left: `${parseFloat(midX) - 25}px`,
+						top: `${parseFloat(midY) - 25}px`,
+						id: newId,
+					};
+					window.ScenesHandler.create_update_token(options)
+					window.TOKEN_OBJECTS[tokenId].delete();
+					window.selectedWalls[i].tokenId = newId;
 				}
 				
 			}
