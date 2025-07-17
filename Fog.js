@@ -2034,36 +2034,70 @@ function redraw_light_walls(clear=true){
 						
 
 						let alreadyHighlighted = false;
-						for(let i in window.CURRENTLY_SELECTED_TOKENS){
+						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 
-							let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
-							if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
-								continue;
-							}
+							
+						if(tokenObject.options.teleporterCoords?.linkedPortalId != undefined){
+							copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
 
+	                        if(!window.DM){
+	                        	async function teleportScene(tokenObject){
+	                        		let currentScene = await AboveApi.getCurrentScene();
+		                        	let sceneIds = {}
+		                        	let playerId = window.PLAYER_ID;
+		                        	if(currentScene.playerscene && currentScene.playerscene.players){
+		                        	    sceneIds = {
+		                        	        ...currentScene.playerscene,         
+		                        	    };
+		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+		                        	}
+		                        	else if(typeof currentScene.playerscene == 'string'){
+		                        	    sceneIds = {
+		                        	        players: currentScene.playerscene,
+		                        	    };
+		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+		                        	}
+		                        	window.splitPlayerScenes = sceneIds;
+		                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+		                        	window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
+	                        	}
+	                        	teleportScene(tokenObject);
+	                        }
+	                        else{
+	                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
+	                        }
+						}
+						else if(tokenObject.options.teleporterCoords != undefined){
 
-							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+						
+							for(let i in window.CURRENTLY_SELECTED_TOKENS){
 
-							if(tokenObject.options.teleporterCoords != undefined){
+								let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
+								if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
+									continue;
+								}
+									
 								const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
 								curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
 								curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
-							}
-
-							curr.place(0);
-							let optionsClone = $.extend(true, {}, curr.options);
-							if(shiftHeld){
-								optionsClone.speedAnim = true;
-							}
 							
-							if(!alreadyHighlighted){
-								if(shiftHeld){					
-									optionsClone.highlightCenter = true;
+
+								curr.place(0);
+								let optionsClone = $.extend(true, {}, curr.options);
+								if(shiftHeld){
+									optionsClone.speedAnim = true;
 								}
-								alreadyHighlighted = true;
-								curr.highlight();
+								
+								if(!alreadyHighlighted){
+									if(shiftHeld){					
+										optionsClone.highlightCenter = true;
+									}
+									alreadyHighlighted = true;
+									curr.highlight();
+								}
+								curr.sync(optionsClone);
+							
 							}
-							curr.sync(optionsClone);
 						}
 						return;
 					}
@@ -2138,7 +2172,7 @@ function redraw_light_walls(clear=true){
 			doorButton.removeAttr('removeAfterDraw');
 
 			door_note_icon(id);
-			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined){
+			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
 				doorButton.toggleClass('linked', true);
 			}
 		}

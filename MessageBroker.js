@@ -656,6 +656,13 @@ class MessageBroker {
 				delete window.startupSceneId; // we only want to prevent a double load of the initial scene, so we want to delete this no matter what.
 			}
 
+			if(msg.eventType == "custom/myVTT/update_dm_player_scenes"){
+				if(window.DM){
+					window.splitPlayerScenes = msg.data.splitPlayerScenes;
+					did_update_scenes();
+				}
+				
+			}
 			if (msg.eventType == "custom/myVTT/scene") {
 				self.handleScene(msg);
 			}
@@ -1872,7 +1879,7 @@ class MessageBroker {
 				window.wallUndo = [];
 				$('#exploredCanvas').remove();
 				window.sceneRequestTime = Date.now();
-		    let lastSceneRequestTime = window.sceneRequestTime;   
+		    	let lastSceneRequestTime = window.sceneRequestTime;   
 				window.TOKEN_OBJECTS = {};
 				window.videoTokenOld = {};
 				let data = msg.data;
@@ -2082,9 +2089,12 @@ class MessageBroker {
 									$('.import-loading-indicator .percentageLoaded').css('width', `${20 + count/tokensLength*75}%`)
 									
 								}
+								return true;
 							}
 			
 						await tokenLoop(data, count, tokensLength);
+
+
 						if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
 							return;
 						}
@@ -2096,11 +2106,25 @@ class MessageBroker {
 							}
 						}
 						let audioTokens = $('.audio-token');
-		        if(audioTokens.length > 0){
-		            for(let i = 0; i < audioTokens.length; i++){
-		                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
-		            }
-		        }
+				        if(audioTokens.length > 0){
+				            for(let i = 0; i < audioTokens.length; i++){
+				                setTokenAudio($(audioTokens[i]), window.TOKEN_OBJECTS[$(audioTokens[i]).attr('data-id')]);
+				            }
+				        }
+						if(window.TELEPORTER_PASTE_BUFFER != undefined){
+							try{
+								const teleporterTokenId = window.TELEPORTER_PASTE_BUFFER.targetToken
+								const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
+								const top = parseInt(targetPortal.options.top)+25;
+								const left = parseInt(targetPortal.options.left)+25;
+								const isTeleporter = true;
+								paste_selected_tokens(left, top, isTeleporter);
+							}
+							catch{
+								window.TELEPORTER_PASTE_BUFFER = undefined;
+							}
+							
+						}
 						ct_load({
 							loading: true,
 							current: $("#combat_area [data-current]").attr('data-target')

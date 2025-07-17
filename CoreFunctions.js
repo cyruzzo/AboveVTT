@@ -726,7 +726,35 @@ function add_aoe_statblock_click(target, tokenId = undefined){
     }
   })
 }
+function create_update_token(options, save = true) {
+  console.log("create_update_token");
+  let self = this;
+  let id = options.id;
+  options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 
+  if (!(id in window.TOKEN_OBJECTS)) {
+    window.TOKEN_OBJECTS[id] = new Token(options);
+
+    window.TOKEN_OBJECTS[id].sync = mydebounce(function(options) {
+      window.MB.sendMessage('custom/myVTT/token', options);
+    }, 300);
+  }
+
+  if(options.repositionAoe != undefined){
+    window.TOKEN_OBJECTS[id].place(0);
+    let origin, dx, dy;   
+    origin = getOrigin(window.TOKEN_OBJECTS[id]);
+    dx = origin.x - options.repositionAoe.x;
+    dy = origin.y - options.repositionAoe.y;        
+    options.left = `${parseFloat(options.left) - dx}px`;
+    options.top = `${parseFloat(options.top) - dy}px`;
+    delete options.repositionAoe;
+  }
+  
+  window.TOKEN_OBJECTS[id].place(0);
+  window.TOKEN_OBJECTS[id].sync($.extend(true, {}, options));
+
+}
 function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undefined, specificName=undefined){
   console.group("add_journal_roll_buttons")
   

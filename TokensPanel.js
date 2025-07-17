@@ -188,6 +188,15 @@ function list_item_from_player_id(playerId) {
     let pc = window.pcs.find(p => p.sheet.includes(playerId));
     if (pc === undefined) return undefined;
     let fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
+    const pcCustomization = window.TOKEN_CUSTOMIZATIONS.find(d => d.id.includes(playerId))
+    if(pcCustomization){
+        fullPath = sanitize_folder_path(pcCustomization.fullPath());
+    }
+    else{
+        fullPath = sanitize_folder_path(`${RootFolder.Players.path}/${pc.name}`);
+    }
+   
+    
     return find_sidebar_list_item_from_path(fullPath);
 }
 
