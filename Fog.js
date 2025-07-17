@@ -2157,6 +2157,39 @@ function redraw_light_walls(clear=true){
 		window.walls.push(drawnWall);
 	}
 
+	if($('#edit_wall').hasClass('button-enabled')){
+		if(window.wallsBeingDragged?.length > 0){
+			for(let i in window.wallsBeingDragged){
+				const drawIndex = window.wallsBeingDragged[i].drawingIndex;
+				const pt1 = window.wallsBeingDragged[i].pt1;
+				const pt2 = window.wallsBeingDragged[i].pt2;
+
+				if(pt1 !== undefined){
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3], window.DRAWINGS[drawIndex][4], 20, '#FFF', true, 0)
+				}
+				if(pt2 !== undefined){
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5], window.DRAWINGS[drawIndex][6], 20, '#FFF', true, 0)
+				
+				}
+			}
+		}
+		else if(window.selectedWalls != undefined){
+			for(let i in window.selectedWalls){
+				
+				const pt1 = window.selectedWalls[i].pt1;
+				const pt2 = window.selectedWalls[i].pt2;
+
+				if(pt1 !== undefined){
+					drawCircle(ctx, pt1.x, pt1.y, 20, '#FFF', true, 0)
+				}
+				if(pt2 !== undefined){
+					drawCircle(ctx, pt2.x, pt2.y, 20, '#FFF', true, 0)
+				
+				}
+			}
+		}
+	}
+
 	check_darkness_value();
 
 		
@@ -2515,6 +2548,19 @@ function drawing_mousedown(e) {
 		window.DRAWTYPE = (window.DRAWFUNCTION === "door-door-convert") ? 'border' : "filled"
 		window.LINEWIDTH = 12;
 	}
+	else if(window.DRAWFUNCTION === "wall-edit"){
+			const [pointX, pointY] = get_event_cursor_position(e)
+			const wallCanvas = $('#walls_layer')[0];
+			const wallCtx = wallCanvas.getContext('2d')
+			let pixeldata = wallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+			window.wallsBeingDragged = [];
+			if (pixeldata[0] >= 255 && pixeldata[1] >= 255 && pixeldata[2] >= 255){
+				window.DraggingWallPoints = true;
+			}
+			else{
+				window.DraggingWallPoints = false;
+			}
+	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
 		context.setLineDash([10, 5])
@@ -2530,18 +2576,18 @@ function drawing_mousedown(e) {
 		maxHeight = Math.max(Math.abs(minHeight), maxHeight);
 		window.DRAWCOLOR = numToColor(window.mapElev, 0.8, maxHeight);
 	}
-	// figure out what these 3 returns are supposed to be for.
+	
 	if ($(".context-menu-list.context-menu-root ~ .context-menu-list.context-menu-root:visible, .body-rpgcharacter-sheet .context-menu-list.context-menu-root").length>0){
-		return;
+		return; // if context menu open as we are interacting with that, causes drawing behind if no return
 	}
 
 	if (window.DRAGGING && window.DRAWSHAPE != 'align')
 		return;
 	if (!e.touches && e.button != 0 && window.DRAWFUNCTION != "measure" && window.DRAWFUNCTION != "wall" && window.DRAWFUNCTION != "wall-door" && window.DRAWFUNCTION != "wall-window" )
-		return;
+		return; // right click for tools other than measure/wall drawings that have right click waypoints
 
 	if (!e.touches && e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
-		return;
+		return; // ends shift way point on left click
 
 	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.MOUSEDOWN && window.wallToStore != undefined){
 		if(window.StoredWalls == undefined){
@@ -2549,13 +2595,13 @@ function drawing_mousedown(e) {
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((!e.touches && e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
-		return;
+	if ((!e.touches && e.button != 0 && (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
+		return; // right click when holding shift without left click being down, for waypointing functonality while using shift
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
 		deselect_all_tokens();
 	}
-	// end of wtf is this return block doing?
+	
 	const [pointX, pointY] = get_event_cursor_position(e)
 
 	if(window.DRAWSHAPE === "brush"){
@@ -2754,6 +2800,44 @@ function drawing_mousemove(e) {
 						3,
 						undefined,
 						true);
+			}
+			else if(window.DraggingWallPoints == true){
+				
+
+				if(window.wallsBeingDragged.length == 0){
+					for(let j = 0; j < window.DRAWINGS.length; j++){
+							const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
+							const [pt1, pt2] = [wallData?.pt1, wallData?.pt2]
+
+							if(wallData){
+								window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
+							}
+							if(pt1 != undefined){
+								window.DRAWINGS[j][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
+								window.DRAWINGS[j][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
+							}
+							if(pt2 != undefined){
+								window.DRAWINGS[j][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
+								window.DRAWINGS[j][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
+							}
+					}
+				}
+				else{
+					for(let i in window.wallsBeingDragged){
+						const [pt1, pt2, drawIndex] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex]
+						if(pt1 != undefined){
+							window.DRAWINGS[drawIndex][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
+							window.DRAWINGS[drawIndex][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
+						}
+						if(pt2 != undefined){
+							window.DRAWINGS[drawIndex][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
+							window.DRAWINGS[drawIndex][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
+						}
+
+					}
+				}
+				
+				redraw_light_walls();
 			}
 			else{
 				drawRect(window.temp_context,
@@ -3578,6 +3662,80 @@ function drawing_mouseup(e) {
 			undo: [...undoArray],
 			redo: [...redoArray]
 		});
+
+		redraw_light_walls();
+		redraw_light();
+		sync_drawings();
+	}
+	else if(window.DRAWFUNCTION === "wall-edit"){
+		let walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+		let rectLine = {
+			rx: window.BEGIN_MOUSEX,
+			ry: window.BEGIN_MOUSEY,		
+			rw: width,
+			rh: height
+		};
+		let intersectingWalls = [];
+		let wallLine = [];
+		let eraserToRight  = rectLine.rw > 0;
+		let eraserToBottom = rectLine.rh > 0;
+		if(!eraserToRight){
+			rectLine.rx = rectLine.rx + rectLine.rw;
+			rectLine.rw = Math.abs(rectLine.rw);
+		}
+		if(!eraserToBottom){
+			rectLine.ry = rectLine.ry + rectLine.rh;
+			rectLine.rh = Math.abs(rectLine.rh);
+		}
+		window.selectedWalls = [];	
+		for(let i=0; i<walls.length; i++){
+			if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
+				continue;
+			let wallInitialScale = walls[i][8];
+			let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+			let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+
+			
+
+			
+			wallLine = [{
+				a: {
+					x: walls[i][3]/adjustedScale,
+					y: walls[i][4]/adjustedScale
+				},
+				b: {
+					x: walls[i][5]/adjustedScale,
+					y: walls[i][6]/adjustedScale
+				}			
+			}]
+			
+
+			
+			let left;
+			let right;
+			let top;
+			let bottom;
+
+	
+
+			let pt1 = wallLine[0].a;
+			let pt2 = wallLine[0].b;
+
+			
+			const pt1Inside = (rectLine.rx <= pt1.x) && (rectLine.rx+rectLine.rw >= pt1.x) && (rectLine.ry <= pt1.y) && (rectLine.ry+rectLine.rh >= pt1.y); 
+			const pt2Inside = (rectLine.rx <= pt2.x) && (rectLine.rx+rectLine.rw >= pt2.x) && (rectLine.ry <= pt2.y) && (rectLine.ry+rectLine.rh >= pt2.y);
+			
+			pt1 = pt1Inside ? pt1 : undefined;
+			pt2 = pt2Inside ? pt2 : undefined;
+
+			
+			
+			
+			
+			if(pt1Inside || pt2Inside){
+				window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i]})
+			}
+    	}
 
 		redraw_light_walls();
 		redraw_light();
@@ -5147,6 +5305,13 @@ function init_walls_menu(buttons){
 			</button>
 		</div>`);
 	wall_menu.append("<div class='menu-subtitle'>Controls</div>");
+	wall_menu.append(
+		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
+			<button id='edit_wall' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='rect' data-function="wall-edit" data-unique-with="draw">
+				 	Edit Points
+			</button>
+		</div>`);
 	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_erase' class='drawbutton menu-option  ddbc-tab-options__header-heading'
