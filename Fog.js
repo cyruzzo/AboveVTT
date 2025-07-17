@@ -2037,7 +2037,7 @@ function redraw_light_walls(clear=true){
 						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
 
 							
-						if(tokenObject.options.teleporterCoords?.linkedPortalId != undefined){
+						if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
 							copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
 
 	                        if(!window.DM){
@@ -2067,7 +2067,7 @@ function redraw_light_walls(clear=true){
 	                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
 	                        }
 						}
-						else if(tokenObject.options.teleporterCoords != undefined){
+						else if(tokenObject?.options?.teleporterCoords != undefined){
 
 						
 							for(let i in window.CURRENTLY_SELECTED_TOKENS){

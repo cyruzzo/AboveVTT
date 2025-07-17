@@ -466,12 +466,16 @@ function token_context_menu_expanded(tokenIds, e) {
 				});
 				body.append(copyPortalId);
 
-				let crossSceneIdInput = $(`
+				let crossSceneIdInputContainer = $(`
 				<div class="token-image-modal-footer-select-wrapper" style="display:flex">
 	 				<div class="token-image-modal-footer-title">Cross Scene Portal ID</div>
 	 				<input style='width:80px;' title="Cross Scene Linked Portal" placeholder="Cross Scene Linked Portal ID" type="text" />
 	 			</div>`);
-				crossSceneIdInput.find('input').off().on("change", function(event){
+	 			const crossSceneInput = crossSceneIdInputContainer.find('input');
+	 			if(window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords?.linkedPortalId != undefined){
+	 				crossSceneInput.val(`${window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.linkedPortalId};${window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.sceneId}`)
+	 			}
+				crossSceneInput.off().on("change focusout", function(event){
 					const values = $(this).val().split(';')
 					const portalTokenId = values[0];
 					const sceneId = values[1];
@@ -483,7 +487,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
 				})
 
-				body.append(crossSceneIdInput);
+				body.append(crossSceneIdInputContainer);
 
 			}
 
