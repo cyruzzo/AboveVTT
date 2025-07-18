@@ -1055,19 +1055,100 @@ function token_context_menu_expanded(tokenIds, e) {
 				clickedButton.html(removeButtonInternals);
 				const reset_init = getCombatTrackersettings().remove_init;
 
-				tokens.forEach(t => {
-					if(window.all_token_objects[t.options.id] == undefined)
-						window.all_token_objects[t.options.id] = t;
-					t.options.combatGroup = undefined;
-					window.all_token_objects[t.options.id].options.combatGroup = undefined;
+				const autoGroup = getCombatTrackersettings().autoGroup;
 
-					if(reset_init == true){
-						t.options.init = undefined;
-						window.all_token_objects[t.options.id].options.init = undefined;
+				if(autoGroup === '1'){
+					const groupedByStat = tokens.reduce((acc, token) => {
+						//split  into groups based on statblock - players get added individually
+						const key = token.options.statBlock ? `SB-${token.options.statBlock}` : token.options.sheet ? token.options.sheet : token.options.stat;
+						if (!acc[key]) {
+							acc[key] = [];
+						}
+						acc[key].push(token);
+						return acc;
+					}, {});
+
+					for(let i in groupedByStat){		
+						let group = uuid();
+						let allHidden = true;
+						let allVisibleNames = true
+						const reset_init = getCombatTrackersettings().remove_init;
+						
+						groupedByStat[i].forEach(t => {
+							if(t.isPlayer()){
+								if(window.all_token_objects[t.options.id] == undefined)
+									window.all_token_objects[t.options.id] = t;
+								t.options.combatGroup = undefined;
+								window.all_token_objects[t.options.id].options.combatGroup = undefined;
+
+								if(reset_init == true){
+									t.options.init = undefined;
+									window.all_token_objects[t.options.id].options.init = undefined;
+								}
+								ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
+								t.update_and_sync();
+								return;
+							}
+							ct_remove_token(t, false);
+							if(t.options.combatGroup != undefined && Object.values(window.TOKEN_OBJECTS)?.filter(d=>d.options.combatGroup == t.options.combatGroup)?.length == 2 && window.TOKEN_OBJECTS[t.options.combatGroup]){
+								window.TOKEN_OBJECTS[t.options.combatGroup].delete()
+							}
+							if(t.options.hidden !== true){
+								allHidden = false
+							}
+							if(!t.isPlayer() && t.options.revealname == false){
+								allVisibleNames = false;
+							}
+							if(window.all_token_objects[t.options.id] == undefined)
+								window.all_token_objects[t.options.id] = t;
+							if(reset_init == true){
+								t.options.init = undefined;
+								window.all_token_objects[t.options.id].options.init = undefined;
+							}
+							t.options.combatGroup = group;
+							window.all_token_objects[t.options.id].options.combatGroup = group;
+
+							ct_add_token(t, false, undefined, clickEvent.shiftKey,  clickEvent.ctrlKey);
+							t.update_and_sync();
+						});
+						if(i.includes('/character')) // player was added invidiually don't put a group in the combat tracker
+							continue;
+						let t = new Token({
+							...groupedByStat[i][0].options,
+							id: group,
+							combatGroupToken: group,
+							ct_show: !allHidden,
+							revealname: allVisibleNames,
+							name: `${groupedByStat[i][0].options.name} Group`,
+						});
+						delete t.options.groupId; 
+						window.TOKEN_OBJECTS[group] = t;
+						if(window.all_token_objects[group] == undefined){
+							window.all_token_objects[group] = t;
+						}
+						t.sync = mydebounce(function(options) { // VA IN FUNZIONE SOLO SE IL TOKEN NON ESISTE GIA					
+							window.MB.sendMessage('custom/myVTT/token', options);
+						}, 300);
+						t.place_sync_persist();
+						ct_add_token(window.TOKEN_OBJECTS[group], false, clickEvent.shiftKey, clickEvent.ctrlKey)	
+					
 					}
-					ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
-					t.update_and_sync();
-				});
+				}
+				else{
+					tokens.forEach(t => {
+						if(window.all_token_objects[t.options.id] == undefined)
+							window.all_token_objects[t.options.id] = t;
+						t.options.combatGroup = undefined;
+						window.all_token_objects[t.options.id].options.combatGroup = undefined;
+
+						if(reset_init == true){
+							t.options.init = undefined;
+							window.all_token_objects[t.options.id].options.init = undefined;
+						}
+						ct_add_token(t, false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
+						t.update_and_sync();
+					});
+				}
 			}
 
 			debounceCombatReorder();
