@@ -2202,9 +2202,11 @@ class JournalManager{
 		
 		const debounceNoteSave = mydebounce(function(e, editor){
 		    if(editor.isDirty()){
-		    	self.notes[id].text = editor.getContent();
-		    	self.notes[id].plain= editor.getContent({ format: 'text' });
-		    	self.notes[id].statBlock=statBlock;
+				let parser = new DOMParser()
+				let html = parser.parseFromString(editor.getContent(), 'text/html');
+				self.notes[id].text = $(html).find('body').html();
+		    	self.notes[id].plain = editor.getContent({ format: 'text' });
+		    	self.notes[id].statBlock = statBlock;
 		    	self.persist();
 		    }
 		}, 800)
@@ -3185,7 +3187,7 @@ class JournalManager{
 			    {
 			    	"title": "2024 Monster Sheet",
 			    	"description": "Add a monster sheet template",
-			    	"content": `<style>${contentStyles}</style><div class="stat-block">
+			    	"content": `<style id='contentStyles'>${contentStyles}</style><div class="stat-block">
 						<div class="monster-header">Skeleton</div>
 						<p>Medium Undead, Lawful Evil</p>
 						<p><strong>AC</strong> 13 <strong>Initiative</strong> +3 (13)</p>
@@ -3271,7 +3273,7 @@ class JournalManager{
 			    {
 			    	"title": "Caster Spell List",
 			    	"description": "Add a spell block for casters.",
-			    	"content": `<style>${contentStyles}</style><p>Spellcasting. The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:</p>
+			    	"content": `<style id='contentStyles'>${contentStyles}</style><p>Spellcasting. The mage is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). The mage has the following wizard spells prepared:</p>
 <p>Cantrips (at will): fire bolt, light, mage hand, prestidigitation</p>
 <p>1st level (4 slots): detect magic, mage armor, magic missile, shield</p>
 <p>2nd level (3 slots): misty step, suggestion</p>
@@ -3352,9 +3354,11 @@ class JournalManager{
 			save_onsavecallback: function(e) {
 				// @todo !IMPORTANT grab the id somewhere from the form, so that you can use this safely
 				let note_id = $(this.getElement()).attr('data-note-id');
-				self.notes[note_id].text =tinymce.activeEditor.getContent();
-				self.notes[note_id].plain=tinymce.activeEditor.getContent({ format: 'text' });
-				self.notes[note_id].statBlock=statBlock;
+				let parser = new DOMParser();
+				let html = parser.parseFromString(tinymce.activeEditor.getContent(), 'text/html');
+				self.notes[note_id].text = $(html).find('body').html(); // we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
+				self.notes[note_id].plain = tinymce.activeEditor.getContent({ format: 'text' });
+				self.notes[note_id].statBlock = statBlock;
 				self.persist();
 				if(note_id in window.TOKEN_OBJECTS){
 					window.TOKEN_OBJECTS[note_id].place(); // trigger display of the "note" condition
