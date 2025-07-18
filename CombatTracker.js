@@ -809,7 +809,8 @@ function getCombatTrackersettings(){
 			select_next: 0,
 			auto_init: 0,
 			remove_init: 0,
-			carousel: 0
+			carousel: 0,
+			autoGroup: 0
 		}
 	}else{
 		combatSettingData = $.parseJSON(localStorage.getItem(`abovevtt-combat-tracker-settings-${window.DM}`));
@@ -930,6 +931,16 @@ function openCombatTrackerSettings(){
 	});
 	let carouselRow = form_row(`carousel`, `${window.DM ? 'Display Combat Tracker Carousel' : 'Always displays some combat data as a carousel'}`, carouselToggle)
 	form.append(carouselRow);
+
+	if(window.DM){
+		let autoGroupToggle = form_toggle('autoGroup', `Auto Group Tokens by stat block when using the 'Add to Combat Tracker' button. Players will be added individually. You can still create custom groups using the add a group button.`, combatSettingData['autoGroup'] == '1', function(e){
+			handle_basic_form_toggle_click(e);
+		});
+		let autoGroupRow = form_row(`autoGroup`, `Auto Group Tokens by Stat Block`, autoGroupToggle)
+		form.append(autoGroupRow);
+	}
+
+
 
 	const cancel = $("<button type='button' id='cancel_importer'>Cancel</button>");
 	cancel.click(function() {
