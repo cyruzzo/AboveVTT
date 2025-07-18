@@ -6411,8 +6411,8 @@ function redraw_light(darknessMoved = false){
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
 		if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
-			tokenPos.x /= window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
-			tokenPos.y /= window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
+			tokenPos.x = tokenPos.x / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
+			tokenPos.y = tokenPos.y / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
 		}
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
