@@ -999,11 +999,12 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		});
 	}
 
-	create_update_token(options, save = true) {
+	create_update_token(options, noScale = false ) {
 		console.log("create_update_token");
 		let self = this;
 		let id = options.id;
-		options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
+		if(!noScale)
+			options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
 		this.scene.tokens[id]=options;
 
 		if (!(id in window.TOKEN_OBJECTS)) {

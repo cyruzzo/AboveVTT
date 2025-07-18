@@ -2191,19 +2191,27 @@ function redraw_light_walls(clear=true){
 		window.walls.push(drawnWall);
 	}
 
-	if(displayWalls && $('#edit_wall').hasClass('button-enabled')){
+	if($('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
+		const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1
+		const circleSize = 15*window.CURRENT_SCENE_DATA.scale_factor;
+		const centerDotSize = 4*window.CURRENT_SCENE_DATA.scale_factor;
 		if(window.wallsBeingDragged?.length > 0){
 			for(let i in window.wallsBeingDragged){
 				const drawIndex = window.wallsBeingDragged[i].drawingIndex;
 				const pt1 = window.wallsBeingDragged[i].pt1;
 				const pt2 = window.wallsBeingDragged[i].pt2;
-
+				const scale = window.DRAWINGS[drawIndex][8];
 				if(pt1 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3], window.DRAWINGS[drawIndex][4], 20, '#FFF', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+				
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFFDD', true, 0)
+					
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5], window.DRAWINGS[drawIndex][6], 20, '#FFF', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
 				
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFFDD', true, 0)
+					
 				}
 			}
 		}
@@ -2212,13 +2220,14 @@ function redraw_light_walls(clear=true){
 				
 				const pt1 = window.selectedWalls[i].pt1;
 				const pt2 = window.selectedWalls[i].pt2;
-
-				if(pt1 !== undefined){
-					drawCircle(ctx, pt1.x, pt1.y, 20, '#FFF', true, 0)
+				const scale = window.selectedWalls[i].wall[8];
+				if(pt1 !== undefined){			
+					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)		
+					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFFDD', true, 0)
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, pt2.x, pt2.y, 20, '#FFF', true, 0)
-				
+					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFFDD', true, 0)
 				}
 			}
 		}
@@ -2588,7 +2597,7 @@ function drawing_mousedown(e) {
 			const wallCtx = wallCanvas.getContext('2d')
 			let pixeldata = wallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 			
-			if (pixeldata[0] >= 255 && pixeldata[1] >= 255 && pixeldata[2] >= 255){
+			if (pixeldata[0] >= 200 && pixeldata[1] >= 200 && pixeldata[2] >= 200){
 				window.DraggingWallPoints = true;
 			}
 			else{
@@ -2837,7 +2846,8 @@ function drawing_mousemove(e) {
 			}
 			else if(window.DraggingWallPoints == true && window.DRAWFUNCTION == 'wall-edit'){
 				
-
+				const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+					
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
@@ -2847,26 +2857,30 @@ function drawing_mousemove(e) {
 							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
 							wallData.drawIndex = j;
 						}
+						const scale = window.DRAWINGS[j][8];
 						if(pt1 != undefined){
-							window.DRAWINGS[j][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
-							window.DRAWINGS[j][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
+							window.DRAWINGS[j][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+							window.DRAWINGS[j][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
 						}
 						if(pt2 != undefined){
-							window.DRAWINGS[j][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
-							window.DRAWINGS[j][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
+							window.DRAWINGS[j][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+							window.DRAWINGS[j][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
 						}
 					}
 				}
 				else{
+					
+					
 					for(let i in window.wallsBeingDragged){
 						const [pt1, pt2, drawIndex] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex]
+						const scale = window.DRAWINGS[drawIndex][8];
 						if(pt1 != undefined){
-							window.DRAWINGS[drawIndex][3] = pt1.x + (mouseX - window.BEGIN_MOUSEX);
-							window.DRAWINGS[drawIndex][4] = pt1.y + (mouseY - window.BEGIN_MOUSEY);
+							window.DRAWINGS[drawIndex][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+							window.DRAWINGS[drawIndex][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
 						}
 						if(pt2 != undefined){
-							window.DRAWINGS[drawIndex][5] = pt2.x + (mouseX - window.BEGIN_MOUSEX);
-							window.DRAWINGS[drawIndex][6] = pt2.y + (mouseY - window.BEGIN_MOUSEY);
+							window.DRAWINGS[drawIndex][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+							window.DRAWINGS[drawIndex][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
 						}
 
 					}
@@ -3724,6 +3738,7 @@ function drawing_mouseup(e) {
 				rectLine.rh = Math.abs(rectLine.rh);
 			}
 			window.selectedWalls = [];	
+			
 			for(let i=0; i<walls.length; i++){
 				if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
 					continue;
@@ -3778,13 +3793,15 @@ function drawing_mouseup(e) {
 
 		}
 		else{
+			
 			for(let i in window.selectedWalls){
 				const wall = window.selectedWalls[i];
 				const index = wall.drawIndex;
 				const pt1 = wall.pt1;
 				const pt2 = wall.pt2;
 				const tokenId = wall.tokenId;
-				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3], window.DRAWINGS[index][4], window.DRAWINGS[index][5], window.DRAWINGS[index][6]]
+				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
 				if(pt1 != undefined){
 					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
 				}
@@ -3793,18 +3810,18 @@ function drawing_mouseup(e) {
 				}
 				if(window.TOKEN_OBJECTS[tokenId] !== undefined){
 					const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
-					const newId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+					const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
 					const scale = window.DRAWINGS[index][8];
 					const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-					const midX = Math.floor((x1+x2)/2) / scale * currentSceneScale;
-					const midY = Math.floor((y1+y2)/2) / scale * currentSceneScale;
+					const midX = Math.floor((x1+x2)/2)*adjustedScale;
+					const midY = Math.floor((y1+y2)/2)*adjustedScale;
 					let options = {
 						...newOptions,
 						left: `${parseFloat(midX) - 25}px`,
 						top: `${parseFloat(midY) - 25}px`,
-						id: newId,
+						id: newId
 					};
-					window.ScenesHandler.create_update_token(options)
+					window.ScenesHandler.create_update_token(options, noScale=true)
 					window.TOKEN_OBJECTS[tokenId].delete();
 					window.selectedWalls[i].tokenId = newId;
 				}
@@ -3812,10 +3829,12 @@ function drawing_mouseup(e) {
 			}
 
 		}
-		window.wallsBeingDragged = [];
-		redraw_light_walls();
-		redraw_light();
+
+      	redraw_light_walls();
+        redraw_drawn_light();
+        redraw_light(true);
 		sync_drawings();
+		window.wallsBeingDragged = [];
 	
 	}
 	else if (window.DRAWFUNCTION === "draw_text"){
@@ -6391,7 +6410,10 @@ function redraw_light(darknessMoved = false){
 			x: (parseInt(window.TOKEN_OBJECTS[auraId].options.left)+tokenHalfWidth)/ window.CURRENT_SCENE_DATA.scale_factor,
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
-
+		if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
+			tokenPos.x = tokenPos.x / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
+			tokenPos.y = tokenPos.y / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
+		}
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
 		}
@@ -6424,7 +6446,7 @@ function redraw_light(darknessMoved = false){
 				y: tokenPos.y,
 				numberofwalls: walls.length+darknessBoundarys.length,
 				clippath: path,
-				visionType: window.TOKEN_OBJECTS[auraId].options.sight
+				visionType: window.TOKEN_OBJECTS[auraId].options.sight,
 			}
 
 		
