@@ -312,6 +312,9 @@ class TokenCustomization {
         }
     }
     folderPath() {
+        if(this.parentId == '_'){
+            return '/';
+        }
         const parent = this.findParent();
         if (parent && parent.parentId != this.id && parent.parentId != '') {
             return sanitize_folder_path(parent.findAncestors().reverse().map(tc => tc.name()).join("/"));
