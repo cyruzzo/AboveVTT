@@ -75,7 +75,7 @@ function sync_drawings(newDraw = true){
 			window.playerDrawUndo = [];
 		window.playerDrawUndo.push(window.DRAWINGS[window.DRAWINGS.length-1]);
 	}
-
+	
 	window.MB.sendMessage("custom/myVTT/drawdata",window.DRAWINGS);
 }
 
@@ -1998,10 +1998,10 @@ function redraw_light_walls(clear=true){
 		
         let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
         let open;
-        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}']`);
+        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}'][data-scale='${scale}']`);
         let hiddenDoor = hidden ? ` hiddenDoor` : ``;
         let dataHidden = hidden;
-        let notVisible = doorButton?.hasClass('notVisible') ? true : false;
+        let notVisible = doorButton?.hasClass('notVisible') ? true : doorButton.length > 0 ? false : undefined;
 
         let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
 
@@ -2023,7 +2023,7 @@ function redraw_light_walls(clear=true){
 		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			
-			let openCloseDoorButton = $(`<div class='door-button${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+			let openCloseDoorButton = $(`<div class='door-button notVisible${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
 												<div class='${doorType} background'><div></div></div>
 												<div class='${doorType} foreground'><div></div></div>
 												<div class='door-icon'></div>
@@ -2157,8 +2157,8 @@ function redraw_light_walls(clear=true){
 	
 			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			if(doorButton.attr('class') != `door-button${locked}${secret}${open}${hiddenDoor}`){
-				doorButton.attr('class', `door-button${locked}${secret}${open}${hiddenDoor}`)
+			if(doorButton.attr('class') != `door-button notVisible${locked}${secret}${open}${hiddenDoor}`){
+				doorButton.attr('class', `door-button notVisible${locked}${secret}${open}${hiddenDoor}`)
 				doorButton.toggleClass('ignore-hover', true);
 			}
 			
@@ -2167,8 +2167,8 @@ function redraw_light_walls(clear=true){
 		if(doorButton.length ==1){
 			let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
 			doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
-			
-        	doorButton.toggleClass('notVisible', notVisible)
+			if(notVisible != undefined)
+        		doorButton.toggleClass('notVisible', notVisible)
 			doorButton.removeAttr('removeAfterDraw');
 
 			door_note_icon(id);
@@ -2426,6 +2426,7 @@ function stop_drawing() {
 	target.off('contextmenu', drawing_contextmenu);
 	window.StoredWalls = [];
 	window.wallToStore = [];
+	window.selectedWalls = [];
 }
 
 /**
@@ -2847,44 +2848,71 @@ function drawing_mousemove(e) {
 			else if(window.DraggingWallPoints == true && window.DRAWFUNCTION == 'wall-edit'){
 				
 				const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-					
+				const deltaY = window.BEGIN_MOUSEY - mouseY;
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
 						const [pt1, pt2] = [wallData?.pt1, wallData?.pt2]
-
+						const scale = window.DRAWINGS[j][8];
 						if(wallData){
-							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2})
+							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': scale})
 							wallData.drawIndex = j;
 						}
-						const scale = window.DRAWINGS[j][8];
-						if(pt1 != undefined){
-							window.DRAWINGS[j][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-							window.DRAWINGS[j][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+			
+						if(window.shiftHeld){
+							if(pt1 != undefined || pt2 != undefined){
+
+								const changeScaleFactor = Math.min(deltaY*scale*0.001, 0.5);
+								window.DRAWINGS[j][8] += changeScaleFactor;
+								window.DRAWINGS[j][8] = Math.max(window.DRAWINGS[j][8], 0.1);
+							}
 						}
-						if(pt2 != undefined){
-							window.DRAWINGS[j][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-							window.DRAWINGS[j][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+						else{
+							if(pt1 != undefined){
+								window.DRAWINGS[j][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+								window.DRAWINGS[j][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+							}
+							if(pt2 != undefined){
+								window.DRAWINGS[j][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+								window.DRAWINGS[j][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+							}
 						}
+						
 					}
 				}
 				else{
-					
+					const mousePt1 = new Vector(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
+					const mousePt2 = new Vector(mouseX, mouseY);
+					const mouseDist = Vector.dist(mousePt1, mousePt2);
+					const angleDir = Math.atan2(mouseY - window.BEGIN_MOUSEY, mouseX - window.BEGIN_MOUSEX);
 					
 					for(let i in window.wallsBeingDragged){
 						const [pt1, pt2, drawIndex] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex]
 						const scale = window.DRAWINGS[drawIndex][8];
-						if(pt1 != undefined){
-							window.DRAWINGS[drawIndex][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-							window.DRAWINGS[drawIndex][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+						if(window.shiftHeld){	
+							const changeScaleFactor =  Math.min(deltaY*scale*0.001, 0.5);
+							window.DRAWINGS[drawIndex][8] += changeScaleFactor;
+							window.DRAWINGS[drawIndex][8] = Math.max(window.DRAWINGS[drawIndex][8], 0.1);
 						}
-						if(pt2 != undefined){
-							window.DRAWINGS[drawIndex][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-							window.DRAWINGS[drawIndex][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+						else{
+							if(pt1 != undefined){
+								window.DRAWINGS[drawIndex][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+							}
+							if(pt2 != undefined){
+								window.DRAWINGS[drawIndex][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+							}
 						}
 
 					}
 				}
+				if(window.shiftHeld){
+					window.BEGIN_MOUSEX = mouseX;
+					window.BEGIN_MOUSEY = mouseY;
+				}
+
+				
 				
 				redraw_light_walls();
 			}
@@ -3740,37 +3768,18 @@ function drawing_mouseup(e) {
 			window.selectedWalls = [];	
 			
 			for(let i=0; i<walls.length; i++){
-				if(walls[i][2].startsWith('rgba(0, 255, 0') && window.DRAWFUNCTION === "door-door-convert")
-					continue;
 				let wallInitialScale = walls[i][8];
 				let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
-				let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+				let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;				
 
-				
-
-				
-				wallLine = [{
-					a: {
+				let pt1 = {
 						x: walls[i][3]/adjustedScale,
 						y: walls[i][4]/adjustedScale
-					},
-					b: {
+					};
+				let pt2 =  {
 						x: walls[i][5]/adjustedScale,
 						y: walls[i][6]/adjustedScale
-					}			
-				}]
-				
-
-				
-				let left;
-				let right;
-				let top;
-				let bottom;
-
-		
-
-				let pt1 = wallLine[0].a;
-				let pt2 = wallLine[0].b;
+					};
 
 				
 				const pt1Inside = (rectLine.rx <= pt1.x) && (rectLine.rx+rectLine.rw >= pt1.x) && (rectLine.ry <= pt1.y) && (rectLine.ry+rectLine.rh >= pt1.y); 
@@ -3779,10 +3788,6 @@ function drawing_mouseup(e) {
 				pt1 = pt1Inside ? pt1 : undefined;
 				pt2 = pt2Inside ? pt2 : undefined;
 
-				
-				
-				
-				
 				if(pt1Inside || pt2Inside){
 					const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
 					const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
@@ -3827,7 +3832,6 @@ function drawing_mouseup(e) {
 				}
 				
 			}
-
 		}
 
       	redraw_light_walls();
