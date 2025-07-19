@@ -681,7 +681,40 @@ Mousetrap.bind('mod+v', function(e) {
         paste_selected_tokens(center.x, center.y);
     }
 });
+Mousetrap.bind('mod+a', function (e) {    
+    if($('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
+        e.preventDefault();
+        window.selectedWalls = [];  
+        const walls = window.DRAWINGS.filter(d => (d[1] == "wall" && d[0].includes("line")));
+        for(let i=0; i<walls.length; i++){
 
+            let wallInitialScale = walls[i][8];
+            let scale_factor = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+            let adjustedScale = walls[i][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;                
+
+            let pt1 = {
+                x: walls[i][3]/adjustedScale,
+                y: walls[i][4]/adjustedScale
+            };
+            let pt2 =  {
+                x: walls[i][5]/adjustedScale,
+                y: walls[i][6]/adjustedScale
+            };
+
+
+        
+            const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
+            const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+            window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId})
+        
+        }
+        redraw_light_walls();
+        redraw_drawn_light();
+        redraw_light(true);
+        sync_drawings();
+        window.wallsBeingDragged = [];
+    }
+});
 
 document.onmousemove = function(event)
 {

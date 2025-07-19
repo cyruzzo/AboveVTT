@@ -3176,6 +3176,10 @@ function init_help_menu() {
 							<dd>Create Segemented Wall. This keeps walls from having pin point holes.</dd>
 						</dl>
 						<dl>
+							<dt>Hold ${getShiftKeyName()} while editting wall points</dt>
+							<dd>Instead of moving all selected points, it will rescale all lines that have a point selected.</dd>
+						</dl>
+						<dl>
 							<dt>${getModKeyName()}+click scenes/tokens while reordering (DM only)</dt>
 							<dd>While reordering the scenes listing or token listing this will to add/remove scenes to multi-selection</dd>
 						</dl>
