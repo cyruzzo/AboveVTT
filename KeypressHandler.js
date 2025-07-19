@@ -295,7 +295,11 @@ Mousetrap.bind(["1","2","3","4","5","6","7","8","9","shift+1","shift+2","shift+3
 
 
 Mousetrap.bind("n", function (e) {
-    $('#combat_next_button').click();
+    if(window.DM)
+        $('#combat_next_button').click();
+    else
+        $('#combat_tracker_inside #endplayerturn').click();
+
 });
 Mousetrap.bind("p", function (e) {
     $('#combat_prev_button').click();
