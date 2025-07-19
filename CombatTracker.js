@@ -674,13 +674,13 @@ function init_carousel_combat_tracker(){
     	}
 
     	#combat_carousel_container tr td:last-of-type button svg{
-    	    filter: drop-shadow(#000 0px 0px 2px)
+  	    filter: drop-shadow(#000 0px 0px 2px)
     	}
     	#combat_carousel_container tr td:last-of-type button:hover svg{
-    	    filter: drop-shadow(#fff 0px 0px 2px)
+    		filter: drop-shadow(#000 0px 0px 2px) drop-shadow(#ffffff 0px 0px 2px);
     	}
     	#combat_carousel_container{
-			    display:flex;
+		    display:flex;
 			}
 			#combat_carousel_container #combat_prev_button {
 			  left:10px;
