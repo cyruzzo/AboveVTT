@@ -2144,8 +2144,8 @@ class MessageBroker {
 						delete window.LOADING;
 						if(!window.DM) {
 						 	window.MB.sendMessage('custom/myVTT/syncmeup');
-							do_check_token_visibility();
 						}
+						do_check_token_visibility();
 						$('#loadingStyles').remove();
 						console.groupEnd()
 
