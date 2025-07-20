@@ -3172,7 +3172,7 @@ function init_help_menu() {
 							<dd>Force recenter camera and instant teleport token for those receiving the message. (Always does this for those clicking the portal)</dd>
 						</dl>
 						<dl>
-							<dt>${getModtKeyName()}+A while edit wall points tool is selected</dt>
+							<dt>${getModKeyName()}+A while edit wall points tool is selected</dt>
 							<dd>Select all wall points</dd>
 						</dl>
 						<dl>
