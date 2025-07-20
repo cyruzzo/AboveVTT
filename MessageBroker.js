@@ -712,6 +712,9 @@ class MessageBroker {
 				redraw_drawn_light();
 				redraw_light();
 			}
+			if(msg.eventType="custom/myVTT/forceRedrawLight"){
+				redraw_light(true);
+			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
 				if(!window.NOTIFIEDOLDVERSION){
 					alert('One of the player is using AboveTT 0.0.51 or less. Please update everyone to 0.0.52 or higher');
