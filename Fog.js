@@ -3814,36 +3814,37 @@ function drawing_mouseup(e) {
 				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
 					
-				if(window.rescalingWalls !== true){	
-					if(pt1 != undefined){
-						window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
-					}
-					if(pt2 != undefined){
-						window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
-					}
-					if(window.TOKEN_OBJECTS[tokenId] !== undefined){
-						const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
-						const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
-						const scale = window.DRAWINGS[index][8];
-						const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-						const midX = Math.floor((x1+x2)/2)*adjustedScale;
-						const midY = Math.floor((y1+y2)/2)*adjustedScale;
-						let options = {
-							...newOptions,
-							left: `${parseFloat(midX) - 25}px`,
-							top: `${parseFloat(midY) - 25}px`,
-							id: newId
-						};
-						window.ScenesHandler.create_update_token(options, noScale=true)
-						window.TOKEN_OBJECTS[tokenId].delete();
-						window.selectedWalls[i].tokenId = newId;
-					}
+			
+				if(pt1 != undefined){
+					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
 				}
-				else{
-					if(window.TOKEN_OBJECTS[tokenId] !== undefined){
-						window.TOKEN_OBJECTS[tokenId].options.scaleCreated = window.DRAWINGS[index][8];
-						window.TOKEN_OBJECTS[tokenId].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenId].options));
-					}
+				if(pt2 != undefined){
+					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+				}
+						
+				if(window.rescalingWalls !== true && window.TOKEN_OBJECTS[tokenId] !== undefined){
+					const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
+					const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+					const scale = window.DRAWINGS[index][8];
+					const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+					const midX = Math.floor((x1+x2)/2)*adjustedScale;
+					const midY = Math.floor((y1+y2)/2)*adjustedScale;
+					let options = {
+						...newOptions,
+						left: `${parseFloat(midX) - 25}px`,
+						top: `${parseFloat(midY) - 25}px`,
+						id: newId
+					};
+					window.ScenesHandler.create_update_token(options, noScale=true)
+					window.TOKEN_OBJECTS[tokenId].delete();
+					window.selectedWalls[i].tokenId = newId;
+				}
+				else if(window.TOKEN_OBJECTS[tokenId] !== undefined){
+					window.TOKEN_OBJECTS[tokenId].options.scaleCreated = window.DRAWINGS[index][8];
+					window.TOKEN_OBJECTS[tokenId].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenId].options));		
+
+					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
+					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
 				}
 				window.selectedWalls[i].wall = window.DRAWINGS[index];	
 			}	
@@ -5465,6 +5466,7 @@ function init_walls_menu(buttons){
 		r = confirm("DELETE ALL WALLS (cannot be undone!)");
 		if (r === true) {
 			// keep only non wall
+			window.selectedWalls = [];
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "wall");
 			for(let token in window.TOKEN_OBJECTS){
 				if(window.TOKEN_OBJECTS[token].options.type=='door'){
@@ -6430,7 +6432,10 @@ function redraw_light(darknessMoved = false){
 			x: (parseInt(window.TOKEN_OBJECTS[auraId].options.left)+tokenHalfWidth)/ window.CURRENT_SCENE_DATA.scale_factor,
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
-
+		if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
+			tokenPos.x = tokenPos.x / window.TOKEN_OBJECTS[auraId].options.scaleCreated;
+			tokenPos.y = tokenPos.y / window.TOKEN_OBJECTS[auraId].options.scaleCreated;
+		}
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
 		}
