@@ -2023,7 +2023,7 @@ function redraw_light_walls(clear=true){
 		
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
 			
-			let openCloseDoorButton = $(`<div class='door-button notVisible${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+			let openCloseDoorButton = $(`<div class='door-button ${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
 												<div class='${doorType} background'><div></div></div>
 												<div class='${doorType} foreground'><div></div></div>
 												<div class='door-icon'></div>
@@ -2157,8 +2157,8 @@ function redraw_light_walls(clear=true){
 	
 			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
 			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			if(doorButton.attr('class') != `door-button notVisible${locked}${secret}${open}${hiddenDoor}`){
-				doorButton.attr('class', `door-button notVisible${locked}${secret}${open}${hiddenDoor}`)
+			if(doorButton.attr('class') != `door-button ${locked}${secret}${open}${hiddenDoor}`){
+				doorButton.attr('class', `door-button ${locked}${secret}${open}${hiddenDoor}`)
 				doorButton.toggleClass('ignore-hover', true);
 			}
 			
@@ -2175,8 +2175,11 @@ function redraw_light_walls(clear=true){
 			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
 				doorButton.toggleClass('linked', true);
 			}
+			if(window.TOKEN_OBJECTS[id] != undefined){
+				setTokenLight(doorButton, window.TOKEN_OBJECTS[id].options);
+			}
+			
 		}
-		
 		
 
 		if((/rgba.*0\.5\)/g).test(color))
@@ -2597,9 +2600,11 @@ function drawing_mousedown(e) {
 			const wallCanvas = $('#walls_layer')[0];
 			const wallCtx = wallCanvas.getContext('2d')
 			let pixeldata = wallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
-			
+			window.rescalingWalls = false;
 			if (pixeldata[0] >= 200 && pixeldata[1] >= 200 && pixeldata[2] >= 200){
 				window.DraggingWallPoints = true;
+				if(window.shiftHeld)
+					window.rescalingWalls = true;
 			}
 			else{
 				window.DraggingWallPoints = false;
@@ -2852,14 +2857,14 @@ function drawing_mousemove(e) {
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
-						const [pt1, pt2] = [wallData?.pt1, wallData?.pt2]
+						const [pt1, pt2, tokenId] = [wallData?.pt1, wallData?.pt2, wallData?.tokenId]
 						const scale = window.DRAWINGS[j][8];
+
 						if(wallData){
-							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': scale})
-							wallData.drawIndex = j;
+							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': scale, 'tokenId': tokenId})
 						}
 			
-						if(window.shiftHeld){
+						if(window.rescalingWalls == true){
 							if(pt1 != undefined || pt2 != undefined){
 
 								const changeScaleFactor = Math.min(deltaY*scale*0.001, 0.5);
@@ -2887,9 +2892,9 @@ function drawing_mousemove(e) {
 					const angleDir = Math.atan2(mouseY - window.BEGIN_MOUSEY, mouseX - window.BEGIN_MOUSEX);
 					
 					for(let i in window.wallsBeingDragged){
-						const [pt1, pt2, drawIndex] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex]
+						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
 						const scale = window.DRAWINGS[drawIndex][8];
-						if(window.shiftHeld){	
+						if(window.rescalingWalls == true){	
 							const changeScaleFactor =  Math.min(deltaY*scale*0.001, 0.5);
 							window.DRAWINGS[drawIndex][8] += changeScaleFactor;
 							window.DRAWINGS[drawIndex][8] = Math.max(window.DRAWINGS[drawIndex][8], 0.1);
@@ -2907,7 +2912,7 @@ function drawing_mousemove(e) {
 
 					}
 				}
-				if(window.shiftHeld){
+				if(window.rescalingWalls == true){
 					window.BEGIN_MOUSEX = mouseX;
 					window.BEGIN_MOUSEY = mouseY;
 				}
@@ -3791,14 +3796,15 @@ function drawing_mouseup(e) {
 				if(pt1Inside || pt2Inside){
 					const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
 					const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
-					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId})
+					const drawIndex = window.DRAWINGS.findIndex(d => d==walls[i]);
+					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
 				}
 	    	}
 
 
 		}
 		else{
-			
+				
 			for(let i in window.selectedWalls){
 				const wall = window.selectedWalls[i];
 				const index = wall.drawIndex;
@@ -3807,37 +3813,47 @@ function drawing_mouseup(e) {
 				const tokenId = wall.tokenId;
 				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
 				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
-				if(pt1 != undefined){
-					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
+					
+				if(window.rescalingWalls !== true){	
+					if(pt1 != undefined){
+						window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
+					}
+					if(pt2 != undefined){
+						window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+					}
+					if(window.TOKEN_OBJECTS[tokenId] !== undefined){
+						const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
+						const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+						const scale = window.DRAWINGS[index][8];
+						const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
+						const midX = Math.floor((x1+x2)/2)*adjustedScale;
+						const midY = Math.floor((y1+y2)/2)*adjustedScale;
+						let options = {
+							...newOptions,
+							left: `${parseFloat(midX) - 25}px`,
+							top: `${parseFloat(midY) - 25}px`,
+							id: newId
+						};
+						window.ScenesHandler.create_update_token(options, noScale=true)
+						window.TOKEN_OBJECTS[tokenId].delete();
+						window.selectedWalls[i].tokenId = newId;
+					}
 				}
-				if(pt2 != undefined){
-					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+				else{
+					if(window.TOKEN_OBJECTS[tokenId] !== undefined){
+						window.TOKEN_OBJECTS[tokenId].options.scaleCreated = window.DRAWINGS[index][8];
+						window.TOKEN_OBJECTS[tokenId].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenId].options));
+					}
 				}
-				if(window.TOKEN_OBJECTS[tokenId] !== undefined){
-					const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
-					const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
-					const scale = window.DRAWINGS[index][8];
-					const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-					const midX = Math.floor((x1+x2)/2)*adjustedScale;
-					const midY = Math.floor((y1+y2)/2)*adjustedScale;
-					let options = {
-						...newOptions,
-						left: `${parseFloat(midX) - 25}px`,
-						top: `${parseFloat(midY) - 25}px`,
-						id: newId
-					};
-					window.ScenesHandler.create_update_token(options, noScale=true)
-					window.TOKEN_OBJECTS[tokenId].delete();
-					window.selectedWalls[i].tokenId = newId;
-				}
-				
-			}
+				window.selectedWalls[i].wall = window.DRAWINGS[index];	
+			}	
 		}
 
       	redraw_light_walls();
         redraw_drawn_light();
         redraw_light(true);
 		sync_drawings();
+		window.MB.sendMessage("custom/myVTT/forceRedrawLight");
 		window.wallsBeingDragged = [];
 	
 	}
@@ -6414,10 +6430,7 @@ function redraw_light(darknessMoved = false){
 			x: (parseInt(window.TOKEN_OBJECTS[auraId].options.left)+tokenHalfWidth)/ window.CURRENT_SCENE_DATA.scale_factor,
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
-		if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
-			tokenPos.x = tokenPos.x / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
-			tokenPos.y = tokenPos.y / window.TOKEN_OBJECTS[auraId].options.scaleCreated*window.CURRENT_SCENE_DATA.scale_factor;
-		}
+
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
 		}
@@ -6426,6 +6439,7 @@ function redraw_light(darknessMoved = false){
 			window.lineOfSightPolygons[auraId].y === tokenPos.y && 
 			window.lineOfSightPolygons[auraId].numberofwalls === allWalls.length  &&
 			window.lineOfSightPolygons[auraId].visionType === window.TOKEN_OBJECTS[auraId].options.sight &&
+			window.lineOfSightPolygons[auraId].scaleCreated === window.TOKEN_OBJECTS[auraId].options.scaleCreated &&
 			darknessMoved !== true){
 			lightPolygon = window.lineOfSightPolygons[auraId].polygon;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
 			movePolygon = window.lineOfSightPolygons[auraId].move;  // if the token hasn't moved and walls haven't changed don't look for a new poly.
@@ -6451,6 +6465,7 @@ function redraw_light(darknessMoved = false){
 				numberofwalls: walls.length+darknessBoundarys.length,
 				clippath: path,
 				visionType: window.TOKEN_OBJECTS[auraId].options.sight,
+				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated
 			}
 
 		
@@ -6892,6 +6907,10 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	darkvisionRadius += (window.TOKEN_OBJECTS[auraId].options.size / 2);
 	let horizontalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.left) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
 	let verticalTokenMiddle = (parseInt(window.TOKEN_OBJECTS[auraId].options.top) + (window.TOKEN_OBJECTS[auraId].options.size / 2));
+	if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
+		horizontalTokenMiddle /=  window.TOKEN_OBJECTS[auraId].options.scaleCreated;
+		verticalTokenMiddle /=  window.TOKEN_OBJECTS[auraId].options.scaleCreated;
+	}
 	if(window.lightAuraClipPolygon[auraId] !== undefined){
 		if(circleRadius === 0){
 			delete window.lightAuraClipPolygon[auraId];
