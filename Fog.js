@@ -2211,19 +2211,20 @@ function redraw_light_walls(clear=true){
 				const scale = window.DRAWINGS[drawIndex][8];
 				if(pt1 !== undefined){
 					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#000000', false, 1)	
 					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 						
-					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
-					
+					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)	
 				}
 				if(pt2 !== undefined){
 					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#000000', false, 1)
 					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 					
-					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
 					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
-					
 				}
 			}
 		}
@@ -2234,15 +2235,19 @@ function redraw_light_walls(clear=true){
 				const pt2 = window.selectedWalls[i].pt2;
 				const scale = window.selectedWalls[i].wall[8];
 				if(pt1 !== undefined){			
-					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)		
+					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#000000', false, 1)		
+					drawCircle(ctx, pt1.x, pt1.y, circleSize,  '#000000', false, 1)		
 					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
-					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)		
+
 					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 				}
 				if(pt2 !== undefined){
 					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#000000', false, 1)
+					drawCircle(ctx, pt2.x, pt2.y, circleSize,  '#000000', false, 1)
 					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
-					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+
 					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 				}
 			}
