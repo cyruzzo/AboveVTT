@@ -2609,6 +2609,8 @@ function drawing_mousedown(e) {
 			else{
 				window.DraggingWallPoints = false;
 			}
+			window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
+			context.setLineDash([10, 5])
 	}
 	else if (window.DRAWFUNCTION === "select"){
 		window.DRAWCOLOR = "rgba(255, 255, 255, 1)"
@@ -2869,7 +2871,6 @@ function drawing_mousemove(e) {
 			
 						if(window.rescalingWalls == true){
 							if(pt1 != undefined || pt2 != undefined){
-
 								const changeScaleFactor = Math.min(-mouseDifY*scale*0.001, 0.5);
 								window.DRAWINGS[j][8] += changeScaleFactor;
 								window.DRAWINGS[j][8] = Math.max(window.DRAWINGS[j][8], 0.1);
@@ -3799,7 +3800,7 @@ function drawing_mouseup(e) {
 				if(pt1Inside || pt2Inside){
 					const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
 					const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
-					const drawIndex = window.DRAWINGS.findIndex(d => d==walls[i]);
+					const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(walls[i]));
 					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
 				}
 	    	}
@@ -3814,7 +3815,7 @@ function drawing_mouseup(e) {
 				const pt1 = wall.pt1;
 				const pt2 = wall.pt2;
 				const tokenId = wall.tokenId;
-				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
 				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
 					
 			
@@ -6436,8 +6437,8 @@ function redraw_light(darknessMoved = false){
 			y: (parseInt(window.TOKEN_OBJECTS[auraId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
 		}
 		if(window.TOKEN_OBJECTS[auraId].options.type == 'door' && window.TOKEN_OBJECTS[auraId].options.scaleCreated){
-			tokenPos.x = tokenPos.x / window.TOKEN_OBJECTS[auraId].options.scaleCreated;
-			tokenPos.y = tokenPos.y / window.TOKEN_OBJECTS[auraId].options.scaleCreated;
+			tokenPos.x = tokenPos.x / (window.TOKEN_OBJECTS[auraId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
+			tokenPos.y = tokenPos.y / (window.TOKEN_OBJECTS[auraId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		if(window.lineOfSightPolygons === undefined){
 			window.lineOfSightPolygons = {};
