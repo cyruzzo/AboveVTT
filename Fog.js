@@ -2195,7 +2195,7 @@ function redraw_light_walls(clear=true){
 	}
 
 	if($('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
-		const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseInt(window.CURRENT_SCENE_DATA.scale_factor) : 1
+		const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor)*window.CURRENT_SCENE_DATA.conversion : 1
 		const circleSize = 15*window.CURRENT_SCENE_DATA.scale_factor;
 		const centerDotSize = 4*window.CURRENT_SCENE_DATA.scale_factor;
 		if(window.wallsBeingDragged?.length > 0){
@@ -2853,12 +2853,15 @@ function drawing_mousemove(e) {
 			else if(window.DraggingWallPoints == true && window.DRAWFUNCTION == 'wall-edit'){
 				
 				const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-				const deltaY = window.BEGIN_MOUSEY - mouseY;
+				
+				
+				const mouseDifX = mouseX - window.BEGIN_MOUSEX;
+				const mouseDifY = mouseY - window.BEGIN_MOUSEY;
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
 						const [pt1, pt2, tokenId] = [wallData?.pt1, wallData?.pt2, wallData?.tokenId]
-						const scale = window.DRAWINGS[j][8];
+						const scale = window.DRAWINGS[j][8]/window.CURRENT_SCENE_DATA.conversion;
 
 						if(wallData){
 							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': scale, 'tokenId': tokenId})
@@ -2867,19 +2870,19 @@ function drawing_mousemove(e) {
 						if(window.rescalingWalls == true){
 							if(pt1 != undefined || pt2 != undefined){
 
-								const changeScaleFactor = Math.min(deltaY*scale*0.001, 0.5);
+								const changeScaleFactor = Math.min(-mouseDifY*scale*0.001, 0.5);
 								window.DRAWINGS[j][8] += changeScaleFactor;
 								window.DRAWINGS[j][8] = Math.max(window.DRAWINGS[j][8], 0.1);
 							}
 						}
 						else{
 							if(pt1 != undefined){
-								window.DRAWINGS[j][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-								window.DRAWINGS[j][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+								window.DRAWINGS[j][3] = (pt1.x + mouseDifX)*scale/currentSceneScale;
+								window.DRAWINGS[j][4] = (pt1.y + mouseDifY)*scale/currentSceneScale;
 							}
 							if(pt2 != undefined){
-								window.DRAWINGS[j][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-								window.DRAWINGS[j][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+								window.DRAWINGS[j][5] = (pt2.x + mouseDifX)*scale/currentSceneScale;
+								window.DRAWINGS[j][6] = (pt2.y + mouseDifY)*scale/currentSceneScale;
 							}
 						}
 						
@@ -2893,20 +2896,20 @@ function drawing_mousemove(e) {
 					
 					for(let i in window.wallsBeingDragged){
 						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
-						const scale = window.DRAWINGS[drawIndex][8];
+						const scale = window.DRAWINGS[drawIndex][8]/window.CURRENT_SCENE_DATA.conversion;
 						if(window.rescalingWalls == true){	
-							const changeScaleFactor =  Math.min(deltaY*scale*0.001, 0.5);
+							const changeScaleFactor =  Math.min(-mouseDifY*scale*0.001, 0.5);
 							window.DRAWINGS[drawIndex][8] += changeScaleFactor;
 							window.DRAWINGS[drawIndex][8] = Math.max(window.DRAWINGS[drawIndex][8], 0.1);
 						}
 						else{
 							if(pt1 != undefined){
-								window.DRAWINGS[drawIndex][3] = (pt1.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-								window.DRAWINGS[drawIndex][4] = (pt1.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][3] = (pt1.x + mouseDifX)*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][4] = (pt1.y + mouseDifY)*scale/currentSceneScale;
 							}
 							if(pt2 != undefined){
-								window.DRAWINGS[drawIndex][5] = (pt2.x + (mouseX - window.BEGIN_MOUSEX))*scale/currentSceneScale;
-								window.DRAWINGS[drawIndex][6] = (pt2.y + (mouseY - window.BEGIN_MOUSEY))*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][5] = (pt2.x + mouseDifX)*scale/currentSceneScale;
+								window.DRAWINGS[drawIndex][6] = (pt2.y + mouseDifY)*scale/currentSceneScale;
 							}
 						}
 
