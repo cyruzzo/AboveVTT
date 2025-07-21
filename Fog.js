@@ -2880,9 +2880,9 @@ function drawing_mousemove(e) {
 				
 				const mouseDifX = mouseX - window.BEGIN_MOUSEX;
 				const mouseDifY = mouseY - window.BEGIN_MOUSEY;
-				const mouseScaleDifX = window.BEGIN_MOUSEX/mouseX
-				const mouseScaleDifY = window.BEGIN_MOUSEY/mouseY
-				const scaleAdjustFactor = Math.abs(mouseDifX) > Math.abs(mouseDifY) ? mouseScaleDifX : mouseScaleDifY;
+				
+				const scaleAdjustFactor = window.BEGIN_MOUSEY/mouseY
+			
 						
 
 
@@ -2892,7 +2892,7 @@ function drawing_mousemove(e) {
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
 						const [pt1, pt2, tokenId] = [wallData?.pt1, wallData?.pt2, wallData?.tokenId]
 						const scale = window.DRAWINGS[j][8]/window.CURRENT_SCENE_DATA.conversion;
-						const newScale = Math.abs(mouseScaleDifX) > Math.abs(mouseScaleDifY) ? window.DRAWINGS[j][8]/mouseScaleDifX : window.DRAWINGS[j][8]/mouseScaleDifY;
+						const newScale = window.DRAWINGS[j][8]/scaleAdjustFactor;
 						if(wallData){
 							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': window.DRAWINGS[j][8], 'tokenId': tokenId})
 						}
