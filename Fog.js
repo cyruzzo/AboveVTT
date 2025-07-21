@@ -2194,7 +2194,12 @@ function redraw_light_walls(clear=true){
 		window.walls.push(drawnWall);
 	}
 
-	if($('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
+	if(window.DM && $('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
+		const selectedWallCanvas = document.createElement('canvas');
+		selectedWallCanvas.width = canvas.width;
+		selectedWallCanvas.height = canvas.height;
+		window.selectedWallCtx = selectedWallCanvas.getContext('2d')
+		window.selectedWallCtx.clearRect(0, 0, canvas.width, canvas.height);
 		const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor)*window.CURRENT_SCENE_DATA.conversion : 1
 		const circleSize = 15*window.CURRENT_SCENE_DATA.scale_factor;
 		const centerDotSize = 4*window.CURRENT_SCENE_DATA.scale_factor;
@@ -2206,14 +2211,18 @@ function redraw_light_walls(clear=true){
 				const scale = window.DRAWINGS[drawIndex][8];
 				if(pt1 !== undefined){
 					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-				
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFFDD', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+						
+					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 					
 				}
 				if(pt2 !== undefined){
 					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-				
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFFDD', true, 0)
+					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+					
+					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 					
 				}
 			}
@@ -2226,14 +2235,22 @@ function redraw_light_walls(clear=true){
 				const scale = window.selectedWalls[i].wall[8];
 				if(pt1 !== undefined){			
 					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)		
-					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFFDD', true, 0)
+					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)		
+					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 				}
 				if(pt2 !== undefined){
 					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
-					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFFDD', true, 0)
+					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 				}
 			}
 		}
+	}
+	else if(window.DM){
+		delete window.selectedWallCanvas;
+		delete window.selectedWallCtx;
 	}
 
 	check_darkness_value();
@@ -2430,6 +2447,7 @@ function stop_drawing() {
 	window.StoredWalls = [];
 	window.wallToStore = [];
 	window.selectedWalls = [];
+	window.wallsBeingDragged = [];
 }
 
 /**
@@ -2597,9 +2615,7 @@ function drawing_mousedown(e) {
 	}
 	else if(window.DRAWFUNCTION === "wall-edit"){
 			const [pointX, pointY] = get_event_cursor_position(e)
-			const wallCanvas = $('#walls_layer')[0];
-			const wallCtx = wallCanvas.getContext('2d')
-			let pixeldata = wallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
+			let pixeldata = window.selectedWallCtx.getImageData(pointX/window.CURRENT_SCENE_DATA.scale_factor, pointY/window.CURRENT_SCENE_DATA.scale_factor, 1, 1).data;
 			window.rescalingWalls = false;
 			if (pixeldata[0] >= 200 && pixeldata[1] >= 200 && pixeldata[2] >= 200){
 				window.DraggingWallPoints = true;
@@ -2871,7 +2887,7 @@ function drawing_mousemove(e) {
 			
 						if(window.rescalingWalls == true){
 							if(pt1 != undefined || pt2 != undefined){
-								const changeScaleFactor = Math.min(-mouseDifY*scale*0.001, 0.5);
+								const changeScaleFactor = Math.min(-mouseDifY*scale*0.001, 0.05);
 								window.DRAWINGS[j][8] += changeScaleFactor;
 								window.DRAWINGS[j][8] = Math.max(window.DRAWINGS[j][8], 0.1);
 							}
@@ -2899,7 +2915,7 @@ function drawing_mousemove(e) {
 						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
 						const scale = window.DRAWINGS[drawIndex][8]/window.CURRENT_SCENE_DATA.conversion;
 						if(window.rescalingWalls == true){	
-							const changeScaleFactor =  Math.min(-mouseDifY*scale*0.001, 0.5);
+							const changeScaleFactor =  Math.min(-mouseDifY*scale*0.001, 0.05);
 							window.DRAWINGS[drawIndex][8] += changeScaleFactor;
 							window.DRAWINGS[drawIndex][8] = Math.max(window.DRAWINGS[drawIndex][8], 0.1);
 						}
@@ -3815,7 +3831,7 @@ function drawing_mouseup(e) {
 				const pt1 = wall.pt1;
 				const pt2 = wall.pt2;
 				const tokenId = wall.tokenId;
-				let adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+				const adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;					
 				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
 					
 			
@@ -3829,10 +3845,10 @@ function drawing_mouseup(e) {
 				if(window.rescalingWalls !== true && window.TOKEN_OBJECTS[tokenId] !== undefined){
 					const newOptions = $.extend(true, [], window.TOKEN_OBJECTS[tokenId].options);
 					const newId = `${x1*adjustedScale}${y1*adjustedScale}${x2*adjustedScale}${y2*adjustedScale}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
-					const scale = window.DRAWINGS[index][8];
-					const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
-					const midX = Math.floor((x1+x2)/2)*adjustedScale;
-					const midY = Math.floor((y1+y2)/2)*adjustedScale;
+	
+	
+					const midX = Math.floor((x1+x2)*adjustedScale/2);
+					const midY = Math.floor((y1+y2)*adjustedScale/2);
 					let options = {
 						...newOptions,
 						left: `${parseFloat(midX) - 25}px`,
@@ -3847,8 +3863,8 @@ function drawing_mouseup(e) {
 					window.TOKEN_OBJECTS[tokenId].options.scaleCreated = window.DRAWINGS[index][8];
 					window.TOKEN_OBJECTS[tokenId].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenId].options));		
 
-					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
-					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+					window.selectedWalls[i].pt1 = {'x':x1*adjustedScale, 'y':y1*adjustedScale};
+					window.selectedWalls[i].pt2 = {'x':x2*adjustedScale, 'y':y2*adjustedScale}
 				}
 				window.selectedWalls[i].wall = window.DRAWINGS[index];	
 			}	
