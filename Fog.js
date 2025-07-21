@@ -2877,7 +2877,7 @@ function drawing_mousemove(e) {
 				const mouseDifY = mouseY - window.BEGIN_MOUSEY;
 				const mouseScaleDifX = window.BEGIN_MOUSEX/mouseX
 				const mouseScaleDifY = window.BEGIN_MOUSEY/mouseY
-				const scaleAdjustFactor = Math.abs(mouseScaleDifX) > Math.abs(mouseScaleDifY) ? mouseScaleDifX : mouseScaleDifY;
+				const scaleAdjustFactor = Math.abs(mouseDifX) > Math.abs(mouseDifY) ? mouseScaleDifX : mouseScaleDifY;
 						
 
 
