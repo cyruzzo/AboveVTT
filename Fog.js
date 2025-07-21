@@ -2875,20 +2875,26 @@ function drawing_mousemove(e) {
 				
 				const mouseDifX = mouseX - window.BEGIN_MOUSEX;
 				const mouseDifY = mouseY - window.BEGIN_MOUSEY;
+				const mouseScaleDifX = window.BEGIN_MOUSEX/mouseX
+				const mouseScaleDifY = window.BEGIN_MOUSEY/mouseY
+				const scaleAdjustFactor = Math.abs(mouseScaleDifX) > Math.abs(mouseScaleDifY) ? mouseScaleDifX : mouseScaleDifY;
+						
+
+
+
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
 						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
 						const [pt1, pt2, tokenId] = [wallData?.pt1, wallData?.pt2, wallData?.tokenId]
 						const scale = window.DRAWINGS[j][8]/window.CURRENT_SCENE_DATA.conversion;
-
+						const newScale = Math.abs(mouseScaleDifX) > Math.abs(mouseScaleDifY) ? window.DRAWINGS[j][8]/mouseScaleDifX : window.DRAWINGS[j][8]/mouseScaleDifY;
 						if(wallData){
-							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': scale, 'tokenId': tokenId})
+							window.wallsBeingDragged.push({'drawingIndex': j, 'pt1': pt1, 'pt2': pt2, 'wallScale': window.DRAWINGS[j][8], 'tokenId': tokenId})
 						}
 			
 						if(window.rescalingWalls == true){
 							if(pt1 != undefined || pt2 != undefined){
-								const changeScaleFactor = Math.min(-mouseDifY*scale*0.001, 0.05);
-								window.DRAWINGS[j][8] += changeScaleFactor;
+								window.DRAWINGS[j][8] *= scaleAdjustFactor;
 								window.DRAWINGS[j][8] = Math.max(window.DRAWINGS[j][8], 0.1);
 							}
 						}
@@ -2905,18 +2911,13 @@ function drawing_mousemove(e) {
 						
 					}
 				}
-				else{
-					const mousePt1 = new Vector(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY);
-					const mousePt2 = new Vector(mouseX, mouseY);
-					const mouseDist = Vector.dist(mousePt1, mousePt2);
-					const angleDir = Math.atan2(mouseY - window.BEGIN_MOUSEY, mouseX - window.BEGIN_MOUSEX);
-					
+				else{					
 					for(let i in window.wallsBeingDragged){
 						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
 						const scale = window.DRAWINGS[drawIndex][8]/window.CURRENT_SCENE_DATA.conversion;
+						const originalScale = window.wallsBeingDragged[i].wallScale;
 						if(window.rescalingWalls == true){	
-							const changeScaleFactor =  Math.min(-mouseDifY*scale*0.001, 0.05);
-							window.DRAWINGS[drawIndex][8] += changeScaleFactor;
+							window.DRAWINGS[drawIndex][8] = originalScale*scaleAdjustFactor;
 							window.DRAWINGS[drawIndex][8] = Math.max(window.DRAWINGS[drawIndex][8], 0.1);
 						}
 						else{
@@ -2932,10 +2933,7 @@ function drawing_mousemove(e) {
 
 					}
 				}
-				if(window.rescalingWalls == true){
-					window.BEGIN_MOUSEX = mouseX;
-					window.BEGIN_MOUSEY = mouseY;
-				}
+	
 
 				
 				
