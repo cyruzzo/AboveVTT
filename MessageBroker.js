@@ -712,7 +712,7 @@ class MessageBroker {
 				redraw_drawn_light();
 				redraw_light();
 			}
-			if(msg.eventType="custom/myVTT/forceRedrawLight"){
+			if(msg.eventType=="custom/myVTT/forceRedrawLight"){
 				redraw_light(true);
 			}
 			if (msg.eventType == "custom/myVTT/chat") { // DEPRECATED!!!!!!!!!
