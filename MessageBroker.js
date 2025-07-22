@@ -1809,6 +1809,13 @@ class MessageBroker {
 	async handleScene(msg, forceRefresh=false) {
 		console.debug("handlescene", msg);
 		try{
+
+			if(window.LOADING){
+				if(window.handleSceneQueue == undefined){
+					window.handleSceneQueue = [];
+				}
+				window.handleSceneQueue.push(msg);
+			}
 			if(msg.data.scale_factor == undefined || msg.data.scale_factor == ''){
 				msg.data.scale_factor = 1;
 			}
@@ -2099,6 +2106,13 @@ class MessageBroker {
 
 
 						if(msg.data.id != window.CURRENT_SCENE_DATA.id || lastSceneRequestTime != window.sceneRequestTime){
+							delete window.LOADING;
+							$('#loadingStyles').remove();
+							if(window.handleSceneQueue?.length>0){
+								const msg = window.handleSceneQueue.pop(); // get most recent item and load it
+								window.MB.handleScene(msg);
+								window.handleSceneQueue = [];
+							}
 							return;
 						}
 
@@ -2150,7 +2164,9 @@ class MessageBroker {
 						}
 						do_check_token_visibility();
 						$('#loadingStyles').remove();
+
 						console.groupEnd()
+
 
 					});
 					
@@ -2159,6 +2175,7 @@ class MessageBroker {
 
 			
 			}
+
 		}
 		catch (e) {
 			showError(e);
