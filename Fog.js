@@ -2136,7 +2136,8 @@ function redraw_light_walls(clear=true){
 							redo: [[...doors[0]]]
 						})
 						redraw_light_walls();
-						redraw_light();
+				        redraw_drawn_light();
+				        redraw_light();
 
 
 						sync_drawings();
@@ -3769,7 +3770,8 @@ function drawing_mouseup(e) {
 		});
 
 		redraw_light_walls();
-		redraw_light();
+        redraw_drawn_light();
+        redraw_light();
 		sync_drawings();
 	}
 	else if(window.DRAWFUNCTION === "wall-edit"){
@@ -4727,7 +4729,8 @@ function save3PointRect(e){
 
 		window.MOUSEDOWN = false;
 		redraw_light_walls();
-		redraw_light();
+        redraw_drawn_light();
+        redraw_light();
 	}
 	else if(window.DRAWFUNCTION === "elev"){
 		data = [
@@ -5497,6 +5500,7 @@ function init_walls_menu(buttons){
 				}
 			}
 			redraw_light_walls();
+			redraw_drawn_light();
 			redraw_light();
 			sync_drawings();
 		}
@@ -5621,7 +5625,8 @@ function init_elev_menu(buttons){
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
 			redraw_elev();
 			redraw_light_walls();
-			redraw_light();
+	        redraw_drawn_light();
+	        redraw_light();
 			sync_drawings();
 		}
 	});
@@ -5635,7 +5640,8 @@ function init_elev_menu(buttons){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_elev();
                 redraw_light_walls();
-				redraw_light();
+		        redraw_drawn_light();
+		        redraw_light();
 				sync_drawings()
                 break
             }
