@@ -3795,7 +3795,8 @@ function drawing_mouseup(e) {
 				rectLine.ry = rectLine.ry + rectLine.rh;
 				rectLine.rh = Math.abs(rectLine.rh);
 			}
-			window.selectedWalls = [];	
+			if(!window.shiftHeld)
+				window.selectedWalls = [];	
 			
 			for(let i=0; i<walls.length; i++){
 				let wallInitialScale = walls[i][8];
@@ -3822,7 +3823,22 @@ function drawing_mouseup(e) {
 					const [x1,y1,x2,y2] = [walls[i][3], walls[i][4], walls[i][5], walls[i][6]];
 					const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
 					const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(walls[i]));
-					window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
+					if(window.shiftHeld){
+						const currentWall = window.selectedWalls.find(d => d.drawIndex == drawIndex);
+					    if(currentWall){
+					    	if(pt1 != undefined)
+					    		currentWall.pt1 = pt1;
+					    	if(pt2 != undefined)
+					    		currentWall.pt2 = pt2;
+					    }
+					    else{
+					    	window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
+					    }
+
+					}	
+					else{
+						window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
+					}
 				}
 	    	}
 
