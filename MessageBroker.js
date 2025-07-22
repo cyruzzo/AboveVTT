@@ -1883,10 +1883,9 @@ class MessageBroker {
 
 							if(window.handleSceneQueue?.length>0){	
 								const msg = window.handleSceneQueue.pop(); // get most recent item and load it
-								const forceReload = true;
 								window.handleSceneQueue = [];
 								AboveApi.getScene(msg.data.sceneid).then((response) => {
-									self.handleScene(response, forceReload);
+									self.handleScene(response);
 								}).catch((error) => {
 									console.error("Failed to download scene", error);
 								});
