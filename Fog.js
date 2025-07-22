@@ -2136,7 +2136,8 @@ function redraw_light_walls(clear=true){
 							redo: [[...doors[0]]]
 						})
 						redraw_light_walls();
-						redraw_light();
+				        redraw_drawn_light();
+				        redraw_light();
 
 
 						sync_drawings();
@@ -2659,7 +2660,7 @@ function drawing_mousedown(e) {
 		return; // right click for tools other than measure/wall drawings that have right click waypoints
 
 	if (!e.touches && e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
-		return; // ends shift way point on left click
+		return; // final point on waypointed wall - return and finish drawing
 
 	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.MOUSEDOWN && window.wallToStore != undefined){
 		if(window.StoredWalls == undefined){
@@ -2667,8 +2668,8 @@ function drawing_mousedown(e) {
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((!e.touches && e.button != 0 && (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
-		return; // right click when holding shift without left click being down, for waypointing functonality while using shift
+	if ((!e.touches && e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
+		return; // right click or shift click without left click being down
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
 		deselect_all_tokens();
@@ -3769,7 +3770,8 @@ function drawing_mouseup(e) {
 		});
 
 		redraw_light_walls();
-		redraw_light();
+        redraw_drawn_light();
+        redraw_light();
 		sync_drawings();
 	}
 	else if(window.DRAWFUNCTION === "wall-edit"){
@@ -4727,7 +4729,8 @@ function save3PointRect(e){
 
 		window.MOUSEDOWN = false;
 		redraw_light_walls();
-		redraw_light();
+        redraw_drawn_light();
+        redraw_light();
 	}
 	else if(window.DRAWFUNCTION === "elev"){
 		data = [
@@ -5497,6 +5500,7 @@ function init_walls_menu(buttons){
 				}
 			}
 			redraw_light_walls();
+			redraw_drawn_light();
 			redraw_light();
 			sync_drawings();
 		}
@@ -5621,7 +5625,8 @@ function init_elev_menu(buttons){
 			window.DRAWINGS = window.DRAWINGS.filter(d => d[1] !== "elev");
 			redraw_elev();
 			redraw_light_walls();
-			redraw_light();
+	        redraw_drawn_light();
+	        redraw_light();
 			sync_drawings();
 		}
 	});
@@ -5635,7 +5640,8 @@ function init_elev_menu(buttons){
                 window.DRAWINGS.splice(currentElement, 1)
                 redraw_elev();
                 redraw_light_walls();
-				redraw_light();
+		        redraw_drawn_light();
+		        redraw_light();
 				sync_drawings()
                 break
             }
