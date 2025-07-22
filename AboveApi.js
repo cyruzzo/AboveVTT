@@ -65,10 +65,10 @@ class AboveApi {
     }
   }
 
-  static async getCurrentScene() {
+  static async getCurrentScene(forceFullResponse=false) {
     const response = await this.fetchJson("getCurrentScene");
     console.log("AboveApi.getCurrentScene", response);
-    if(!window.DM && response.playerscene.players){
+    if(!window.DM && response.playerscene.players && !forceFullResponse){
       if(response.playerscene[window.PLAYER_ID])
         response.playerscene = response.playerscene[window.PLAYER_ID];
       else
