@@ -2660,7 +2660,7 @@ function drawing_mousedown(e) {
 		return; // right click for tools other than measure/wall drawings that have right click waypoints
 
 	if (!e.touches && e.button == 0 && !shiftHeld && window.StoredWalls.length > 0 && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window" ))
-		return; // ends shift way point on left click
+		return; // final point on waypointed wall - return and finish drawing
 
 	if((window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && window.MOUSEDOWN && window.wallToStore != undefined){
 		if(window.StoredWalls == undefined){
@@ -2668,8 +2668,8 @@ function drawing_mousedown(e) {
 		}
 		window.StoredWalls.push(window.wallToStore);
 	}
-	if ((!e.touches && e.button != 0 && (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
-		return; // right click when holding shift without left click being down, for waypointing functonality while using shift
+	if ((!e.touches && e.button != 0 || (shiftHeld && window.StoredWalls.length > 0)) && (window.DRAWFUNCTION == "wall" || window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == "wall-window") && !window.MOUSEDOWN)
+		return; // right click or shift click without left click being down
 
 	if (shiftHeld == false || window.DRAWFUNCTION != 'select') {
 		deselect_all_tokens();
