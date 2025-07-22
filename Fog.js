@@ -2042,7 +2042,7 @@ function redraw_light_walls(clear=true){
 
 	                        if(!window.DM){
 	                        	async function teleportScene(tokenObject){
-	                        		let currentScene = await AboveApi.getCurrentScene();
+	                        		let currentScene = await AboveApi.getCurrentScene(true);
 		                        	let sceneIds = {}
 		                        	let playerId = window.PLAYER_ID;
 		                        	if(currentScene.playerscene && currentScene.playerscene.players){
