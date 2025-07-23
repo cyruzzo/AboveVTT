@@ -1503,6 +1503,7 @@ function redraw_fog() {
 		let d = window.REVEALED[i];
 		let adjustedArray = [];
 		let revealedScale = (d[6] != undefined) ? d[6]/window.CURRENT_SCENE_DATA.conversion : window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+		const revealedRatio = (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
 		if (d.length == 4) { // SIMPLE CASE OF RECT TO REVEAL
 			ctx.clearRect(d[0]/window.CURRENT_SCENE_DATA.scale_factor, d[1]/window.CURRENT_SCENE_DATA.scale_factor, d[2]/window.CURRENT_SCENE_DATA.scale_factor, d[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			continue;
@@ -1511,13 +1512,13 @@ function redraw_fog() {
 
 			if (d[4] == 0) { // REVEAL SQUARE
 				for(let adjusted = 0; adjusted < 4; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / revealedRatio;
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 			}
 			if (d[4] == 1) { // REVEAL CIRCLE
 				for(let adjusted = 0; adjusted < 3; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / revealedRatio;
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
 			}
@@ -1551,7 +1552,7 @@ function redraw_fog() {
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
-						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
+						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
@@ -1570,7 +1571,7 @@ function redraw_fog() {
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
 				for(let adjusted = 0; adjusted < 4; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / revealedRatio;
 				}
 				ctx.clearRect(adjustedArray[0]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[1]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[2]/window.CURRENT_SCENE_DATA.scale_factor, adjustedArray[3]/window.CURRENT_SCENE_DATA.scale_factor);
 				ctx.fillStyle = fogStyle;
@@ -1578,7 +1579,7 @@ function redraw_fog() {
 			}
 			if (d[4] == 1) { // HIDE CIRCLE
 				for(let adjusted = 0; adjusted < 3; adjusted++){
-					adjustedArray[adjusted] = d[adjusted] / (revealedScale/window.CURRENT_SCENE_DATA.scale_factor);
+					adjustedArray[adjusted] = d[adjusted] / revealedRatio;
 				}
 				clearCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2]);
 				drawCircle(ctx, adjustedArray[0], adjustedArray[1], adjustedArray[2], fogStyle);
@@ -1610,7 +1611,7 @@ function redraw_fog() {
 				
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
-						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
+						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
@@ -1628,7 +1629,7 @@ function redraw_fog() {
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
-						drawRect(ctx, d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+						drawRect(ctx, d[0][i][0]/revealedRatio, d[0][i][1]/revealedRatio, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
 					}
 				}
 				else{
@@ -3564,7 +3565,7 @@ function drawing_mouseup(e) {
 				data[3] = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
 				data[4] = null
 				data[5] = null
-				data[6] = null
+				data[6] = window.CURRENT_SCENE_DATA.scale_factor
 			case "paint-bucket":
 				data[0] = "paint-bucket"
 				data[7] = 0
