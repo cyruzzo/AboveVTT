@@ -1468,6 +1468,37 @@ function redraw_fog() {
 	ctx.fillStyle = fogStyle;
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+	function drawHexagon(ctx, x, y) {
+		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(window.CURRENT_SCENE_DATA.gridType == 3){
+		  ctx.beginPath();
+		  ctx.moveTo(x + hexSize, y);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.cos(angle);
+		    let dy = hexSize * Math.sin(angle);
+		    ctx.lineTo(x + dx, y + dy);
+		  }
+		  ctx.closePath();
+		  ctx.fill();
+		}
+		else{
+		  ctx.beginPath();
+		  ctx.moveTo(x, y + hexSize);
+		  for (let i = 1; i <= 6; i++) {
+		    let angle = i * Math.PI / 3;
+		    let dx = hexSize * Math.sin(angle);
+		    let dy = hexSize * Math.cos(angle);
+		    ctx.lineTo(x + dx, y + dy);
+		  }
+		  ctx.closePath();
+		  ctx.fill();
+		}
+	}
+
 	for (let i = 0; i < window.REVEALED.length; i++) {
 		let d = window.REVEALED[i];
 		let adjustedArray = [];
@@ -1515,6 +1546,24 @@ function redraw_fog() {
 
 				ctx.globalCompositeOperation = 'source-over';
 			}
+			if(d[4] == 7){
+				ctx.globalCompositeOperation = 'destination-out';
+				if(window.CURRENT_SCENE_DATA.gridType == '1'){
+					for(let i in d[0]){
+						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+					}
+ 				}
+				else{
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+	 				for(let i in d[0]){
+	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
+	 				}
+	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
+	 			}
+			
+
+				ctx.globalCompositeOperation = 'source-over';
+			}
 		}
 		if (d[5] == 1) { // HIDE
 			if (d[4] == 0) { // HIDE SQUARE
@@ -1554,6 +1603,39 @@ function redraw_fog() {
 				drawBrushstroke(ctx, d[0], "#000", d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);				
 				ctx.globalCompositeOperation = 'source-over';
 				drawBrushstroke(ctx, d[0], fogStyle, d[1], d[6]/window.CURRENT_SCENE_DATA.conversion);
+			}
+			if(d[4] == 7){
+				
+				if(window.CURRENT_SCENE_DATA.gridType == '1'){
+					for(let i in d[0]){
+						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+					}
+ 				}
+				else{
+					ctx.globalCompositeOperation = 'destination-out';
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+	 				ctx.fillStyle = "#000000";
+	 				for(let i in d[0]){
+	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
+	 				}
+	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
+	 			}				
+
+				ctx.globalCompositeOperation = 'source-over';
+				ctx.fillStyle = fogStyle;
+
+				if(window.CURRENT_SCENE_DATA.gridType == '1'){
+					for(let i in d[0]){
+						drawRect(ctx, d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+					}
+				}
+				else{
+					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+	 				for(let i in d[0]){
+	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
+	 				}
+	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
+	 			}
 			}
 		}
 	}
@@ -2701,6 +2783,14 @@ function drawing_mousedown(e) {
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
 		drawBrushArrow(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH, undefined, window.DRAWTYPE);
 	}
+	else if (window.DRAWSHAPE == "grid-brush"){
+		window.BEGIN_MOUSEX = pointX
+		window.BEGIN_MOUSEY = pointY
+		window.MOUSEDOWN = true;
+		window.BRUSHWAIT = false;
+		window.BRUSHPOINTS = [];
+		window.DRAWCOLOR = 'rgba(255,0,0,0.6)'
+	}
 	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 			if (
@@ -2800,7 +2890,7 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
-	if (window.MOUSEMOVEWAIT || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
+	if ((window.MOUSEMOVEWAIT && window.DRAWSHAPE != "grid-brush") || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
 	// don't perform any drawing when dragging a token
@@ -2829,7 +2919,7 @@ function drawing_mousemove(e) {
 	}
 
 	if (window.MOUSEDOWN) {
-		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING)
+		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING && window.DRAWSHAPE != "grid-brush")
 			clear_temp_canvas()
 		const width = mouseX - window.BEGIN_MOUSEX;
 		const height = mouseY - window.BEGIN_MOUSEY;
@@ -3070,7 +3160,121 @@ function drawing_mousemove(e) {
 				}
 			}
 		}
+		else if (window.DRAWSHAPE == "grid-brush"){
+			
+				window.temp_context.fillStyle = window.DRAWCOLOR;
+				const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+				const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+				function drawHexagon(ctx, x, y) {
+					if(window.CURRENT_SCENE_DATA.gridType == 3){
+					  ctx.beginPath();
+					  ctx.moveTo(x + hexSize, y);
+					  for (let i = 1; i <= 6; i++) {
+					    let angle = i * Math.PI / 3;
+					    let dx = hexSize * Math.cos(angle);
+					    let dy = hexSize * Math.sin(angle);
+					    ctx.lineTo(x + dx, y + dy);
+					  }
+					  ctx.closePath();
+					  ctx.fill();
+					}
+					else{
+					  ctx.beginPath();
+					  ctx.moveTo(x, y + hexSize);
+					  for (let i = 1; i <= 6; i++) {
+					    let angle = i * Math.PI / 3;
+					    let dx = hexSize * Math.sin(angle);
+					    let dy = hexSize * Math.cos(angle);
+					    ctx.lineTo(x + dx, y + dy);
+					  }
+					  ctx.closePath();
+					  ctx.fill();
+					}
+				}
+				
+
+				const gridArray = [];
+
+				clear_temp_canvas()
+
+				const offscreen_canvas = document.createElement('canvas');
+				const offcreen_context = offscreen_canvas.getContext('2d');
+				offscreen_canvas.width = $('#scene_map')[0].width;
+				offscreen_canvas.height = $('#scene_map')[0].height;
+				offcreen_context.fillStyle = "#FFF";
+
+				const [scaledX,scaledY] = [mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor];
+				
+
+				if(window.CURRENT_SCENE_DATA.gridType != '1')
+					offcreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+			
+
+ 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
+ 					const {x,y} = snap_point_to_grid(mouseX, mouseY, true);
+ 					window.BRUSHPOINTS.push([x, y])
+ 				}
+ 				else{
+					let startX = window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+					let startY = window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
+
+	
+				
+					const a = 2 * Math.PI / 6;
+					const gridCanvasWidth = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+					const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+					if(window.CURRENT_SCENE_DATA.gridType == 2){
+						for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+						    	offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
+						    	drawHexagon(offcreen_context, x, y);
+						    	const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
+						        if(pixeldata[1] > 200){
+						        	window.BRUSHPOINTS.push([x,y]);
+						        }
+						  }
+						}	
+					}
+					else{
+						for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+					    		offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
+					    		drawHexagon(offcreen_context, x, y);
+					    		const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
+					    		if(pixeldata[1] > 200){
+					    			window.BRUSHPOINTS.push([x,y]);
+					    		}	
+						  	}
+						}
+					}
+ 				}
+				
+ 				window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
+				
+				
+				if(window.CURRENT_SCENE_DATA.gridType == '1'){
+					for(let i in window.BRUSHPOINTS){
+						drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+ 					}
+ 				}
+				else{
+					window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+	 				for(let i in window.BRUSHPOINTS){
+	 					drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+	 				}
+	 				window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
+	 			}
+					
+				
+					
+				
+		
+		}
+			
 	}
+
 	else if (window.DRAWSHAPE === "polygon" &&
 		window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
 		clear_temp_canvas()
@@ -3232,6 +3436,12 @@ function drawing_mouseup(e) {
 				data[5] = null
 				data[6] = null
 				break;
+			case "grid-brush":
+				data[0] = "grid-brush"
+				data[3] = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
+				data[4] = null
+				data[5] = null
+				data[6] = null
 			case "paint-bucket":
 				data[0] = "paint-bucket"
 				data[7] = 0
@@ -4081,6 +4291,20 @@ function finalise_drawing_fog(mouseX, mouseY, width, height) {
 			window.REVEALED.push(data);
 			sync_fog();
 			redraw_fog();
+	}
+	else if(window.DRAWSHAPE == 'grid-brush'){
+		data = [
+			window.BRUSHPOINTS,
+			window.LINEWIDTH,
+			null,
+			null,
+			7,
+			fog_type_to_int(), 
+			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion
+		];
+		window.REVEALED.push(data);
+		sync_fog();
+		redraw_fog();
 	}
 }
 
@@ -5020,6 +5244,13 @@ function init_fog_menu(buttons){
 		</div>`);
 	fog_menu.append(
 		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_grid_brush_r' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='grid-brush' data-function="reveal" data-unique-with="fog">
+					Grid Brush
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
 			<button id='fog_polygon_r' class='ddbc-tab-options__header-heading drawbutton menu-option fog-option'
 				data-shape='polygon' data-function="reveal" data-unique-with="fog">
 					Polygon
@@ -5073,6 +5304,13 @@ function init_fog_menu(buttons){
 			<button id='draw_brush' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='brush' data-function="hide" data-unique-with="fog">
 					Brush
+			</button>
+		</div>`);
+	fog_menu.append(
+		`<div class='ddbc-tab-options--layout-pill'>
+			<button id='draw_grid_brush_h' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+				data-shape='grid-brush' data-function="hide" data-unique-with="fog">
+					Grid Brush
 			</button>
 		</div>`);
 	fog_menu.append(
