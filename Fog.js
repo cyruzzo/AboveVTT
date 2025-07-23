@@ -1548,12 +1548,14 @@ function redraw_fog() {
 			}
 			if(d[4] == 7){
 				ctx.globalCompositeOperation = 'destination-out';
+
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
 						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
 					}
  				}
 				else{
+					ctx.fillStyle = "#000"
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i in d[0]){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
@@ -2790,6 +2792,117 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.DRAWCOLOR = 'rgba(255,0,0,0.6)'
+
+		window.temp_context.fillStyle = window.DRAWCOLOR;
+		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+		function drawHexagon(ctx, x, y) {
+			if(window.CURRENT_SCENE_DATA.gridType == 3){
+			  ctx.beginPath();
+			  ctx.moveTo(x + hexSize, y);
+			  for (let i = 1; i <= 6; i++) {
+			    let angle = i * Math.PI / 3;
+			    let dx = hexSize * Math.cos(angle);
+			    let dy = hexSize * Math.sin(angle);
+			    ctx.lineTo(x + dx, y + dy);
+			  }
+			  ctx.closePath();
+			  ctx.fill();
+			}
+			else{
+			  ctx.beginPath();
+			  ctx.moveTo(x, y + hexSize);
+			  for (let i = 1; i <= 6; i++) {
+			    let angle = i * Math.PI / 3;
+			    let dx = hexSize * Math.sin(angle);
+			    let dy = hexSize * Math.cos(angle);
+			    ctx.lineTo(x + dx, y + dy);
+			  }
+			  ctx.closePath();
+			  ctx.fill();
+			}
+		}
+
+
+		clear_temp_canvas()
+
+		const offscreen_canvas = document.createElement('canvas');
+		const offcreen_context = offscreen_canvas.getContext('2d');
+		offscreen_canvas.width = $('#scene_map')[0].width;
+		offscreen_canvas.height = $('#scene_map')[0].height;
+		offcreen_context.fillStyle = "#FFF";
+
+		const [scaledX,scaledY] = [window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor];
+	
+
+		if(window.CURRENT_SCENE_DATA.gridType != '1')
+			offcreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+
+
+		if(window.CURRENT_SCENE_DATA.gridType == '1'){
+			const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
+			window.BRUSHPOINTS.push([x, y])
+		}
+		else{
+		let startX = window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
+		let startY = window.CURRENT_SCENE_DATA.offsety / window.CURRENT_SCENE_DATA.scale_factor;
+
+
+	
+		const a = 2 * Math.PI / 6;
+		const gridCanvasWidth = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+		const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+			if(window.CURRENT_SCENE_DATA.gridType == 2){
+				for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(x-scaledX) > hexSize)
+				   	continue;
+				   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+				    	if(Math.abs(y-scaledY) > hexSize)
+				   			continue;
+				    	offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
+				    	drawHexagon(offcreen_context, x, y);
+				    	const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
+				        if(pixeldata[1] > 200){
+				        	window.BRUSHPOINTS.push([x,y]);
+				        }
+				  }
+				}	
+			}
+			else{
+				for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(y-scaledY) > hexSize)
+				   		continue;
+				   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+			    		if(Math.abs(x-scaledX) > hexSize)
+				   			continue;
+			    		offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
+			    		drawHexagon(offcreen_context, x, y);
+			    		const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
+			    		if(pixeldata[1] > 200){
+			    			window.BRUSHPOINTS.push([x,y]);
+			    		}	
+				  	}
+				}
+			}
+		}
+	
+		window.BRUSHPOINTS = Array.from(new Set(window.BRUSHPOINTS.map(JSON.stringify)), JSON.parse)
+	
+	
+		if(window.CURRENT_SCENE_DATA.gridType == '1'){
+			for(let i in window.BRUSHPOINTS){
+				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+				}
+			}
+		else{
+		window.temp_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
+			for(let i in window.BRUSHPOINTS){
+				drawHexagon(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1])
+			}
+			window.temp_context.setTransform(1, 0, 0, 1, 0, 0);
+		}
 	}
 	else if (window.DRAWSHAPE === "polygon") {
 		if (window.BEGIN_MOUSEX && window.BEGIN_MOUSEX.length > 0) {
@@ -3193,9 +3306,7 @@ function drawing_mousemove(e) {
 					  ctx.fill();
 					}
 				}
-				
-
-				const gridArray = [];
+			
 
 				clear_temp_canvas()
 
@@ -3227,7 +3338,11 @@ function drawing_mousemove(e) {
 					const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 					if(window.CURRENT_SCENE_DATA.gridType == 2){
 						for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						  if(Math.abs(x-scaledX) > hexSize)
+				   			continue;
 						   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+						    	if(Math.abs(y-scaledY) > hexSize)
+				   					continue;
 						    	offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 						    	drawHexagon(offcreen_context, x, y);
 						    	const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
@@ -3239,7 +3354,11 @@ function drawing_mousemove(e) {
 					}
 					else{
 						for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						   if(Math.abs(y-scaledY) > hexSize)
+				   					continue;
 						   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+					    		if(Math.abs(x-scaledX) > hexSize)
+				   					continue;
 					    		offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 					    		drawHexagon(offcreen_context, x, y);
 					    		const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
