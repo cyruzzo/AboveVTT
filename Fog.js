@@ -1548,12 +1548,14 @@ function redraw_fog() {
 			}
 			if(d[4] == 7){
 				ctx.globalCompositeOperation = 'destination-out';
+
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
 						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
 					}
  				}
 				else{
+					ctx.fillStyle = "#000"
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				for(let i in d[0]){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
