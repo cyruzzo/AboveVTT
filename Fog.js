@@ -2854,7 +2854,11 @@ function drawing_mousedown(e) {
 		const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 			if(window.CURRENT_SCENE_DATA.gridType == 2){
 				for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(x-scaledX) > hexSize)
+				   	continue;
 				   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+				    	if(Math.abs(y-scaledY) > hexSize)
+				   			continue;
 				    	offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 				    	drawHexagon(offcreen_context, x, y);
 				    	const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
@@ -2866,7 +2870,11 @@ function drawing_mousedown(e) {
 			}
 			else{
 				for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(y-scaledY) > hexSize)
+				   		continue;
 				   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+			    		if(Math.abs(x-scaledX) > hexSize)
+				   			continue;
 			    		offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 			    		drawHexagon(offcreen_context, x, y);
 			    		const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
@@ -3328,7 +3336,11 @@ function drawing_mousemove(e) {
 					const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 					if(window.CURRENT_SCENE_DATA.gridType == 2){
 						for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						  if(Math.abs(x-scaledX) > hexSize)
+				   			continue;
 						   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+						    	if(Math.abs(y-scaledY) > hexSize)
+				   					continue;
 						    	offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 						    	drawHexagon(offcreen_context, x, y);
 						    	const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
@@ -3340,7 +3352,11 @@ function drawing_mousemove(e) {
 					}
 					else{
 						for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						   if(Math.abs(y-scaledY) > hexSize)
+				   					continue;
 						   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+					    		if(Math.abs(x-scaledX) > hexSize)
+				   					continue;
 					    		offcreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 					    		drawHexagon(offcreen_context, x, y);
 					    		const pixeldata = offcreen_context.getImageData(scaledX, scaledY, 1, 1).data;
