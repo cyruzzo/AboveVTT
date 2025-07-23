@@ -1551,7 +1551,7 @@ function redraw_fog() {
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
-						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
@@ -1610,7 +1610,7 @@ function redraw_fog() {
 				
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
 					for(let i in d[0]){
-						ctx.clearRect(d[0][i][0], d[0][i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
+						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
