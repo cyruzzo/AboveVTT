@@ -2840,7 +2840,7 @@ function drawing_mousedown(e) {
 		
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			const {x,y} = snap_point_to_grid(window.BEGIN_MOUSEX, window.BEGIN_MOUSEY, true);
-			window.BRUSHPOINTS.push([x, y])
+			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		}
 		else{
 		let startX = window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
@@ -2849,14 +2849,14 @@ function drawing_mousedown(e) {
 
 	
 		const a = 2 * Math.PI / 6;
-		const gridCanvasWidth = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
-		const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+		const gridCanvasWidth = ($('#scene_map').width()+1000) / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+		const gridCanvasHeight = ($('#scene_map').height()+1000) / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 			if(window.CURRENT_SCENE_DATA.gridType == 2){
-				for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-				   if(Math.abs(x-scaledX) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+				for (let x = startX-(2*(hexSize * Math.sin(a))), j = 0; x + hexSize * Math.sin(a) < (gridCanvasWidth+hexSize+startX)*2; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(x-scaledX) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   	continue;
-				   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
-				    	if(Math.abs(y-scaledY) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+				   for (let y = startY-(2*(hexSize * (1 + Math.cos(a)))); y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+				    	if(Math.abs(y-scaledY) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   			continue;
 				    	
 				    	offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
@@ -2865,17 +2865,17 @@ function drawing_mousedown(e) {
 				    	const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
 				        offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
 				        if(pixeldata[1] > 200){
-				        	window.BRUSHPOINTS.push([x,y]);
+				        	window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
 				        }
 				  }
 				}	
 			}
 			else{
-				for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-				   if(Math.abs(y-scaledY) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+				for (let y = startY-(2*(hexSize * Math.sin(a))), j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+				   if(Math.abs(y-scaledY) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 				   		continue;
-				   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
-			    		if(Math.abs(x-scaledX) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+				   for (let x = startX-(2*(hexSize * (1 + Math.cos(a)))); x + hexSize * (1 + Math.cos(a)) < (gridCanvasWidth+startX+hexSize)*2; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+			    		if(Math.abs(x-scaledX) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.scaleAdjustment.x)
 				   			continue;
 			    		offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 			    		offscreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
@@ -2883,7 +2883,7 @@ function drawing_mousedown(e) {
 			    		offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
 			    		const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
 			    		if(pixeldata[1] > 200){
-			    			window.BRUSHPOINTS.push([x,y]);
+			    			window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
 			    		}	
 				  	}
 				}
@@ -2895,7 +2895,7 @@ function drawing_mousedown(e) {
 	
 		if(window.CURRENT_SCENE_DATA.gridType == '1'){
 			for(let i in window.BRUSHPOINTS){
-				drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
+					drawRect(window.temp_context, window.BRUSHPOINTS[i][0], window.BRUSHPOINTS[i][1], window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, window.DRAWCOLOR, true, window.DRAWTYPE);
 				}
 			}
 		else{
@@ -3325,7 +3325,7 @@ function drawing_mousemove(e) {
 
  				if(window.CURRENT_SCENE_DATA.gridType == '1'){
  					const {x,y} = snap_point_to_grid(mouseX, mouseY, true);
- 					window.BRUSHPOINTS.push([x, y])
+ 					window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
  				}
  				else{
 					let startX = window.CURRENT_SCENE_DATA.offsetx / window.CURRENT_SCENE_DATA.scale_factor;
@@ -3334,14 +3334,14 @@ function drawing_mousemove(e) {
 	
 				
 					const a = 2 * Math.PI / 6;
-					const gridCanvasWidth = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
-					const gridCanvasHeight = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+					const gridCanvasWidth = ($('#scene_map').width()+1000) / window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+					const gridCanvasHeight = ($('#scene_map').height()+1000) / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
 					if(window.CURRENT_SCENE_DATA.gridType == 2){
-						for (let x = startX, j = 0; x + hexSize * Math.sin(a) < gridCanvasWidth+hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-						  if(Math.abs(x-scaledX) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+						for (let x = startX-(2*(hexSize * Math.sin(a))), j = 0; x + hexSize * Math.sin(a) < (gridCanvasWidth+hexSize+startX)*2; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						  if(Math.abs(x-scaledX) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   			continue;
-						   for (let y = startY; y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
-						    	if(Math.abs(y-scaledY) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+						   for (let y = startY-(2*(hexSize * (1 + Math.cos(a)))); y + hexSize * (1 + Math.cos(a)) < gridCanvasHeight+hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+						    	if(Math.abs(y-scaledY) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   					continue;
 						    	offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 					    		offscreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
@@ -3349,17 +3349,17 @@ function drawing_mousemove(e) {
 					    		offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
 						    	const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
 						        if(pixeldata[1] > 200){
-						        	window.BRUSHPOINTS.push([x,y]);
+						        	window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
 						        }
 						  }
 						}	
 					}
 					else{
-						for (let y = startY, j = 0; y + hexSize * Math.sin(a) < gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-						   if(Math.abs(y-scaledY) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+						for (let y = startY-(2*(hexSize * Math.sin(a))), j = 0; y + hexSize * Math.sin(a) <  gridCanvasHeight+startY+hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+						   if(Math.abs(y-scaledY) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   					continue;
-						   for (let x = startX; x + hexSize * (1 + Math.cos(a)) < gridCanvasWidth+startX+hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
-					    		if(Math.abs(x-scaledX) > 2*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
+						   for (let x = startX-(2*(hexSize * (1 + Math.cos(a)))); x + hexSize * (1 + Math.cos(a)) < (gridCanvasWidth+startX+hexSize)*2; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+					    		if(Math.abs(x-scaledX) > 4*hexSize*window.CURRENT_SCENE_DATA.scale_factor)
 				   					continue;
 					    		offscreen_context.clearRect(0, 0, offscreen_canvas.width, offscreen_canvas.height); 
 					    		offscreen_context.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
@@ -3367,7 +3367,7 @@ function drawing_mousemove(e) {
 					    		offscreen_context.setTransform(1, 0, 0, 1, 0, 0);
 					    		const pixeldata = offscreen_context.getImageData(scaledX, scaledY, 1, 1).data;
 					    		if(pixeldata[1] > 200){
-					    			window.BRUSHPOINTS.push([x,y]);
+					    			window.BRUSHPOINTS.push([Math.round(x),Math.round(y)]);
 					    		}	
 						  	}
 						}
