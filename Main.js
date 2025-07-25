@@ -3129,11 +3129,11 @@ function init_help_menu() {
 						</dl>
 						<dl>
 							<dt>${getModKeyName()}+C</dt>
-							<dd>Copy Selected Token</dd>
+							<dd>Copy Selected Token/Walls</dd>
 						</dl>
 						<dl>
 							<dt>${getModKeyName()}+V</dt>
-							<dd>Paste Selected Tokens</dd>
+							<dd>Paste Selected Tokens/Walls</dd>
 						</dl>
 						<dl>
 							<dt>${getShiftKeyName()}+L</dt>
