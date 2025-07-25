@@ -3096,7 +3096,7 @@ function drawing_mousemove(e) {
 
 				if(window.wallsBeingDragged.length == 0){
 					for(let j = 0; j < window.DRAWINGS.length; j++){
-						const wallData = window.selectedWalls.find(d=> d.wall == window.DRAWINGS[j]);
+						const wallData = window.selectedWalls.find(d => JSON.stringify(d.wall)==JSON.stringify(window.DRAWINGS[j]));
 						const [pt1, pt2, tokenId] = [wallData?.pt1, wallData?.pt2, wallData?.tokenId]
 						const scale = window.DRAWINGS[j][8]/window.CURRENT_SCENE_DATA.conversion;
 						const newScale = window.DRAWINGS[j][8]/scaleAdjustFactor;
@@ -4166,12 +4166,12 @@ function drawing_mouseup(e) {
 					    		currentWall.pt2 = pt2;
 					    }
 					    else{
-					    	window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
+					    	window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: [...walls[i]], tokenId: doorTokenId, drawIndex: drawIndex})
 					    }
 
-					}	
+					}		
 					else{
-						window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: walls[i], tokenId: doorTokenId, drawIndex: drawIndex})
+						window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: [...walls[i]], tokenId: doorTokenId, drawIndex: drawIndex})
 					}
 				}
 	    	}
@@ -4179,7 +4179,8 @@ function drawing_mouseup(e) {
 
 		}
 		else{
-				
+			const undoArray = [], redoArray = [];
+			const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
 			for(let i in window.selectedWalls){
 				const wall = window.selectedWalls[i];
 				const index = wall.drawIndex;
@@ -4188,13 +4189,14 @@ function drawing_mouseup(e) {
 				const tokenId = wall.tokenId;
 				const adjustedScale = window.DRAWINGS[index][8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;					
 				const [x1, y1, x2, y2] = [window.DRAWINGS[index][3]/adjustedScale, window.DRAWINGS[index][4]/adjustedScale, window.DRAWINGS[index][5]/adjustedScale, window.DRAWINGS[index][6]/adjustedScale]
-					
+				
+				redoArray.push([...wall.wall]);	
 			
 				if(pt1 != undefined){
-					window.selectedWalls[i].pt1 = {'x':x1, 'y':y1};
+					wall.pt1 = {'x':x1, 'y':y1};
 				}
 				if(pt2 != undefined){
-					window.selectedWalls[i].pt2 = {'x':x2, 'y':y2}
+					wall.pt2 = {'x':x2, 'y':y2}
 				}
 						
 				if(window.rescalingWalls !== true && window.TOKEN_OBJECTS[tokenId] !== undefined){
@@ -4221,8 +4223,10 @@ function drawing_mouseup(e) {
 					window.selectedWalls[i].pt1 = {'x':x1*adjustedScale, 'y':y1*adjustedScale};
 					window.selectedWalls[i].pt2 = {'x':x2*adjustedScale, 'y':y2*adjustedScale}
 				}
-				window.selectedWalls[i].wall = window.DRAWINGS[index];	
+				undoArray.push([...window.DRAWINGS[index]])
+				window.selectedWalls[i].wall = [...window.DRAWINGS[index]];	
 			}	
+			window.wallUndo.push({undo: [...undoArray], redo:[...redoArray], selectedWalls: originalSelected});
 		}
 
       	redraw_light_walls();
@@ -5907,6 +5911,9 @@ function init_walls_menu(buttons){
 	        	for(let i in wallUndo.redo){
 	        		window.DRAWINGS.push(wallUndo.redo[i])
 	        	}
+	        }
+	        if(wallUndo.selectedWalls != undefined){
+	        	window.selectedWalls = [...wallUndo.selectedWalls]
 	        }
           	redraw_light_walls();
 	        redraw_drawn_light();
