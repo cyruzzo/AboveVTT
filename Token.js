@@ -4994,6 +4994,109 @@ function remove_selected_token_bounding_box() {
 
 }
 
+function copy_selected_walls(teleporterTokenId=undefined) {
+	
+	if (!window.DM) return;
+	window.TOKEN_PASTE_BUFFER = [];
+	let bounds = {
+		top: Infinity,
+		left: Infinity,
+		bottom: -Infinity,
+		right: -Infinity,
+		hpps: window.CURRENT_SCENE_DATA.hpps,
+		vpps: window.CURRENT_SCENE_DATA.vpps
+	};
+	for (let i in window.selectedWalls) {
+		let wall = window.selectedWalls[i].wall;
+		const pt1 ={ 
+			x: wall[3],
+			y:wall[4],
+		}
+		const pt2 ={ 
+			x: wall[5],
+			y:wall[6],
+		}
+		
+		bounds = {
+			...bounds,
+			top: pt1.y < bounds.top ? pt1.y : bounds.top,
+			left: pt1.x < bounds.left ? pt1.x : bounds.left,
+			bottom: pt1.y  > bounds.bottom ? pt1.y : bounds.bottom,
+			right: pt1.x > bounds.right ? pt1.x : bounds.right
+		}
+		bounds = {
+			...bounds,
+			top: pt2.y < bounds.top ? pt2.y : bounds.top,
+			left: pt2.x < bounds.left ? pt2.x : bounds.left,
+			bottom: pt2.y  > bounds.bottom ? pt2.y : bounds.bottom,
+			right: pt2.x > bounds.right ? pt2.x : bounds.right
+		}
+
+
+		window.TOKEN_PASTE_BUFFER.push({wall:wall});
+		
+	}
+	window.TOKEN_PASTE_BOUNDS = bounds;
+	
+	
+}
+function paste_selected_walls(x, y) {
+	if (!window.DM) return;
+	if (window.TOKEN_PASTE_BUFFER == undefined) {
+		window.TOKEN_PASTE_BUFFER = [];
+	}
+	deselect_all_tokens();
+	window.selectedWalls = [];
+	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
+		const wall = [...window.TOKEN_PASTE_BUFFER[i].wall]
+		const pt1 ={
+			x: wall[3],
+			y: wall[4]
+
+		};
+		const pt2 = {
+			x: wall[5],
+			y: wall[6]
+		}
+
+
+		
+		let mapView = convert_point_from_view_to_map(x, y, false);
+
+		let bounds = window.TOKEN_PASTE_BOUNDS;
+		let newX1 = (pt1.x - (bounds.right + bounds.left)/2)/bounds.hpps;
+		let newY1 = (pt1.y - (bounds.bottom + bounds.top)/2)/bounds.vpps;
+
+		let newX2 = (pt2.x - (bounds.right + bounds.left)/2)/bounds.hpps;
+		let newY2 = (pt2.y - (bounds.bottom + bounds.top)/2)/bounds.vpps;
+
+
+		wall[3] = Math.round(mapView.x + newX1*window.CURRENT_SCENE_DATA.hpps)
+		wall[4] = Math.round(mapView.y + newY1*window.CURRENT_SCENE_DATA.vpps)
+		wall[5] = Math.round(mapView.x + newX2*window.CURRENT_SCENE_DATA.hpps)
+		wall[6] = Math.round(mapView.y + newY2*window.CURRENT_SCENE_DATA.vpps)
+
+		window.DRAWINGS.push(wall);
+		const adjustedScale = window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
+		pt1.x = wall[3];
+		pt1.y = wall[4];
+		pt2.x = wall[5];
+		pt2.y = wall[6];
+		const [x1,y1,x2,y2] = [wall[3], wall[4], wall[5], wall[6]];
+		const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
+		const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));
+		
+		window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: wall, tokenId: doorTokenId, drawIndex: drawIndex})
+		
+
+
+	}
+	redraw_light_walls();
+	redraw_drawn_light();
+	redraw_light();
+	sync_drawings();
+
+}
 function copy_selected_tokens(teleporterTokenId=undefined) {
 	if(teleporterTokenId){
 		window.TELEPORTER_PASTE_BUFFER = {
@@ -5110,7 +5213,22 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 
 	draw_selected_token_bounding_box();
 }
-
+function delete_selected_walls() {
+	if(window.DM && window.selectedWalls?.length>0){
+		for(let i in window.selectedWalls){
+			const wall = window.selectedWalls[i].wall;
+			const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));
+			if (drawIndex > -1) { 
+			  window.DRAWINGS.splice(drawIndex, 1); 
+			}
+		}
+		window.selectedWalls =[];
+		redraw_light_walls();
+		redraw_drawn_light();
+		redraw_light();
+		sync_drawings();
+	}
+}
 function delete_selected_tokens() {
 	// move all the tokens into a separate list so the DM can "undo" the deletion
 	let tokensToDelete = [];
