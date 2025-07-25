@@ -5032,8 +5032,12 @@ function copy_selected_walls(teleporterTokenId=undefined) {
 			right: pt2.x > bounds.right ? pt2.x : bounds.right
 		}
 
-
-		window.TOKEN_PASTE_BUFFER.push({wall:wall});
+		const tokenId = window.selectedWalls[i].tokenId;
+		let token;
+		if(window.TOKEN_OBJECTS[tokenId] != undefined){
+			token = $.extend(true, {}, window.TOKEN_OBJECTS[tokenId]);
+		}
+		window.TOKEN_PASTE_BUFFER.push({wall:wall, token:token});
 		
 	}
 	window.TOKEN_PASTE_BOUNDS = bounds;
@@ -5046,9 +5050,12 @@ function paste_selected_walls(x, y) {
 		window.TOKEN_PASTE_BUFFER = [];
 	}
 	deselect_all_tokens();
+	const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
 	window.selectedWalls = [];
+	const undoArray =[];
 	for (let i = 0; i < window.TOKEN_PASTE_BUFFER.length; i++) {
 		const wall = [...window.TOKEN_PASTE_BUFFER[i].wall]
+		
 		const pt1 ={
 			x: wall[3],
 			y: wall[4]
@@ -5076,21 +5083,39 @@ function paste_selected_walls(x, y) {
 		wall[5] = Math.round(mapView.x + newX2*window.CURRENT_SCENE_DATA.hpps)
 		wall[6] = Math.round(mapView.y + newY2*window.CURRENT_SCENE_DATA.vpps)
 
-		window.DRAWINGS.push(wall);
-		const adjustedScale = window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;
-		pt1.x = wall[3];
-		pt1.y = wall[4];
-		pt2.x = wall[5];
-		pt2.y = wall[6];
-		const [x1,y1,x2,y2] = [wall[3], wall[4], wall[5], wall[6]];
+		window.DRAWINGS.push([...wall]);
+		undoArray.push([...wall]);
+
+		const scale = wall[8];
+		const adjustedScale = wall[8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;					
+				
+		
+		pt1.x = wall[3]/scale;
+		pt1.y = wall[4]/scale;
+		pt2.x = wall[5]/scale;
+		pt2.y = wall[6]/scale;
+		const [x1,y1,x2,y2] = [wall[3]/scale, wall[4]/scale, wall[5]/scale, wall[6]/scale];
 		const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
 		const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));
-		
+		const token = window.TOKEN_PASTE_BUFFER[i].token;
+
+		if(token != undefined){
+			const newOptions = $.extend(true, [], token.options);
+			const midX = Math.floor((x1+x2)*adjustedScale/2);
+			const midY = Math.floor((y1+y2)*adjustedScale/2);
+			let options = {
+				...newOptions,
+				left: `${parseFloat(midX) - 25}px`,
+				top: `${parseFloat(midY) - 25}px`,
+				id: doorTokenId
+			};
+			window.ScenesHandler.create_update_token(options, noScale=true)
+		}
 		window.selectedWalls.push({pt1: pt1, pt2: pt2, wall: wall, tokenId: doorTokenId, drawIndex: drawIndex})
-		
-
-
 	}
+
+	window.wallUndo.push({undo: [...undoArray], selectedWalls: originalSelected});
+	
 	redraw_light_walls();
 	redraw_drawn_light();
 	redraw_light();
@@ -5215,13 +5240,21 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 }
 function delete_selected_walls() {
 	if(window.DM && window.selectedWalls?.length>0){
+		const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
+		const redoArray = [];
 		for(let i in window.selectedWalls){
 			const wall = window.selectedWalls[i].wall;
+			redoArray.push([...wall]);
 			const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));
 			if (drawIndex > -1) { 
 			  window.DRAWINGS.splice(drawIndex, 1); 
 			}
+			const tokenId = window.selectedWalls.tokenId;
+			if(window.TOKEN_OBJECTS[tokenId] != undefined){
+				window.TOKEN_OBJECTS[tokenId].delete();
+			}
 		}
+		window.wallUndo.push({redo: [...redoArray], selectedWalls: originalSelected});
 		window.selectedWalls =[];
 		redraw_light_walls();
 		redraw_drawn_light();
