@@ -813,6 +813,14 @@ class MessageBroker {
 			
 			if(msg.eventType=="custom/myVTT/note"){
 				if(!window.DM || (msg.data.from && msg.data.from != window.PLAYER_ID)){
+					if(msg.data.delete == true){
+						delete window.JOURNAL.notes[msg.data.id]
+						window.JOURNAL.build_journal();
+						if(msg.data.id in window.TOKEN_OBJECTS){
+							window.TOKEN_OBJECTS[msg.data.id].place();			
+						}
+						return;
+					}
 					window.JOURNAL.notes[msg.data.id]=msg.data.note;
 					
 					window.JOURNAL.build_journal();

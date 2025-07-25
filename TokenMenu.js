@@ -3106,10 +3106,15 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 					if(id in window.JOURNAL.notes){
 						delete window.JOURNAL.notes[id];
 						window.JOURNAL.persist();
-						window.TOKEN_OBJECTS[id].place();	
+						window.TOKEN_OBJECTS[id].place_sync_persist();	
 						body.remove();
 						if(flyout != undefined)
-							flyout.append(build_notes_flyout_menu(tokenIds, flyout))		
+							flyout.append(build_notes_flyout_menu(tokenIds, flyout))	
+						window.MB.sendMessage("custom/myVTT/note", {
+							note: window.JOURNAL.notes[id],
+							id: id,
+							delete: true
+						})		
 					}
 				}
 			});
@@ -3127,8 +3132,14 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 						player: true
 					}
 				}
+				window.MB.sendMessage("custom/myVTT/note", {
+					note: window.JOURNAL.notes[id],
+					id: id
+				})
+				window.TOKEN_OBJECTS[id].place_sync_persist();
 				$('#tokenOptionsClickCloseDiv').click();
 				window.JOURNAL.edit_note(id);
+
 			});	
 			body.append(editSharedNoteButton);
 		}
@@ -3142,6 +3153,12 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 					plain: '',
 					player: false
 				}
+				window.MB.sendMessage("custom/myVTT/note", {
+					note: window.JOURNAL.notes[id],
+					id: id
+				})
+				window.TOKEN_OBJECTS[id].place_sync_persist();
+
 			}
 			$('#tokenOptionsClickCloseDiv').click();
 			window.JOURNAL.edit_note(id);
