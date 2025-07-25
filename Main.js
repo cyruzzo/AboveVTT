@@ -2395,6 +2395,10 @@ function init_ui() {
 	black_layer.animate({ opacity: "1" }, 1000);
 	black_layer.css("z-index", "1");
 
+	black_layer.off('contextmenu').on('contextmenu', function(e){
+		e.preventDefault();
+	})
+
 	init_controls();
 	init_sheet();
 	init_my_dice_details()
