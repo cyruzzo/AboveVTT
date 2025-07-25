@@ -104,9 +104,10 @@ const debounceHandleInjected = mydebounce(() => {
 					
 					li.find(`[class*='MessageContainer-Flex']`).append(damageButtonContainer);
 				}					
-				
-				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${((current.data.injected_data.whisper == window.PLAYER_NAME || current.data.injected_data.whisper == window.myUser) && current.data.player_name == window.PLAYER_NAME) ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
+				const toSelf = ((current.data.injected_data.whisper == window.PLAYER_NAME || current.data.injected_data.whisper == window.myUser) && current.data.player_name == window.PLAYER_NAME)
+				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${toSelf ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
+				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 
 				let img = li.find(".magnify");
 				for(let i=0; i<img.length; i++){
@@ -177,14 +178,19 @@ const debounceHandleInjected = mydebounce(() => {
 				li.height(newheight);
 				
 
-				if (injection_data.dmonly && window.DM) { // ADD THE "Send To Player Buttons"
-					let btn = $("<button>Show to Players</button>")
-					li.append(btn);
-					btn.click(() => {
-						li.css("display", "none");
-						delete injection_data.dmonly;
-						self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
-					});
+
+				if ((injection_data.dmonly && window.DM) || toSelf) {
+					
+					if (li.find(".gamelog-to-everyone-button").length === 0) {
+						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+						sendToEveryone.click(function (clickEvent) {
+							li.css("display", "none");
+							delete injection_data.dmonly;
+							injection_data.whisper = '';
+							self.inject_chat(injection_data); // RESEND THE MESSAGE REMOVING THE "injection only"
+						});
+						li.find("time").before(sendToEveryone);
+					 }
 				}
 			}
 		});
