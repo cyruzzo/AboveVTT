@@ -3106,7 +3106,7 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 					if(id in window.JOURNAL.notes){
 						delete window.JOURNAL.notes[id];
 						window.JOURNAL.persist();
-						window.TOKEN_OBJECTS[id].place();	
+						window.TOKEN_OBJECTS[id].place_sync_persist();	
 						body.remove();
 						if(flyout != undefined)
 							flyout.append(build_notes_flyout_menu(tokenIds, flyout))		
@@ -3127,6 +3127,7 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 						player: true
 					}
 				}
+				window.TOKEN_OBJECTS[id].place_sync_persist();
 				$('#tokenOptionsClickCloseDiv').click();
 				window.JOURNAL.edit_note(id);
 			});	
@@ -3142,6 +3143,7 @@ function build_notes_flyout_menu(tokenIds, flyout) {
 					plain: '',
 					player: false
 				}
+				window.TOKEN_OBJECTS[id].place_sync_persist();
 			}
 			$('#tokenOptionsClickCloseDiv').click();
 			window.JOURNAL.edit_note(id);
