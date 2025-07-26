@@ -8851,6 +8851,11 @@ div.note[id^="ui-id"] .mce-btn button {
     font-size:12px;
     min-width:65px;
 }
+.sidebar-flyout .token-image-modal-footer-select-wrapper input.styled-number-input {
+    position:absolute;
+    right:0px;
+    width:100px;
+}
 .peerCursorPosition {
     height: 16px;
     width: 16px;
