@@ -663,6 +663,84 @@ function avtt_settings() {
 	return settings;
 }
 
+function scene_setting_options(){
+	return [	
+		{
+			name: 'dm_map_usable',
+			label: 'DM Map',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "DM Map Enabled", description: "Will enable a DM map field to have a DM only version of the map." },
+				{ value: false, label: "DM Map Disabled", description: "DM and Players will see the same map" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'grid',
+			label: 'Display Grid',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Display Grid", description: "Grid is visible" },
+				{ value: false, label: "Hide Grid", description: "Grid is not drawn" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'snap',
+			label: 'Snap to Grid',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Snap to Grid", description: "Tokens will be snapped to the grid" },
+				{ value: false, label: "Disable Snap to Grid", description: "Tokens will not snap to grid" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'disableSceneVision',
+			label: 'Disable token vision/light',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Disable token vision/light", description: "Tokens vision checks won't be run, walls will be ignored" },
+				{ value: false, label: "Enabled token vision/light", description: "Tokens will run vision checks" }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'darkness_filter',
+			label: 'Line of Sight/Darkness Opacity',
+			type: 'rangeInput',
+			options: [
+				{ min: 0, max: 100, step: 1, description: "Darkness and line of sight opacity. At 100% areas out of vision will be opaque black." },
+			],
+			defaultValue: 0
+		},
+		{
+			name: 'visionTrail',
+			label: 'Player Explored Vision Trail',
+			type: 'toggle',
+			options: [
+				{ value: true, label: "Enable Player Explored Vision Trail", description: "Explored areas out of line of sight will remain visible. Tokens will still be hidden when out of line of sight unless line of sight checks are disabled on that token." },
+				{ value: false, label: "Disable Player Explored Vision Trail", description: "Explored areas out of line of sight won't be visible." }
+			],
+			defaultValue: false
+		},
+		{
+			name: 'daylight',
+			label: 'Daylight Color',
+			type: 'colorSelect',
+			defaultValue: '#fff'
+		},
+	];
+}
+
+function get_custom_scene_settings(){
+	const settings = {}; 
+	for(let i in window.SCENE_DEFAULT_SETTINGS){
+		settings[i] = window.SCENE_DEFAULT_SETTINGS[i] === true ? "1" : window.SCENE_DEFAULT_SETTINGS[i] === false ? "0" : window.SCENE_DEFAULT_SETTINGS[i]
+	}
+	return settings;
+}
+
 function get_avtt_setting_default_value(name) {
 	return avtt_settings().find(s => s.name === name)?.defaultValue;
 }
@@ -893,8 +971,61 @@ function init_settings() {
 
 		body.append(`<br />`);
 
-	}
+		body.append(`
+			<br />
+			<h3 class="token-image-modal-footer-title">Default Scene Options</h3>
+			<div class="sidebar-panel-header-explanation">Every time you create a scene, these settings will be used.</div>
+		`);
 
+		let sceneOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Scene Options</button>`);
+		sceneOptionsButton.on("click", function (clickEvent) {
+			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+				let optionsContainer = build_sidebar_token_options_flyout(scene_setting_options(), window.SCENE_DEFAULT_SETTINGS, function (name, value) {
+					if (value === true || value === false || typeof value === 'string' || typeof value === 'object' || typeof value === 'number') {
+						window.SCENE_DEFAULT_SETTINGS[name] = value;
+					} else { 
+						delete window.SCENE_DEFAULT_SETTINGS[name];
+					}
+				}, function() {
+					persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
+				}, false, true);
+				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+				flyout.append(optionsContainer);
+				position_flyout_left_of(body, flyout);
+			});
+		});
+		body.append(sceneOptionsButton);
+
+		const clearAllSceneDefaultWarning = `Are you sure you want to reset your scene defaults?`;
+		let clearAllSceneDefault = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear Scene Default Customizations</button>`);
+		clearAllSceneDefault.on("click", function() {
+			if (confirm(clearAllOverridesWarning)) {
+				window.SCENE_DEFAULT_SETTINGS = {};
+				persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
+			}
+		});
+		body.append(clearAllSceneDefault);
+
+
+		body.append(`<br />`);
+
+
+	}
+	function persist_default_scene_settings(settings, callback) {
+	    if (typeof callback !== 'function') {
+	        callback = function(){};
+	    }	    
+	    console.log("persist_default_scene_settings", settings, JSON.stringify(settings));
+	    try{
+	        localStorage.setItem(`SceneDefaults-${window.gameId}`, JSON.stringify(settings));
+	        
+	    }    
+	    catch(e){
+	        console.warn('localStorage saving Scene Defaults Failed', e)
+	    }
+	    window.SCENE_DEFAULT_SETTINGS = settings;
+	    callback();
+	}
 	let experimental_features = avtt_settings();
 	body.append(`
 		<br />
@@ -1131,7 +1262,17 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 					updateValue(name, newValue);
 					didChange();
 				})
-
+			case "rangeInput":
+				inputWrapper = build_rangeInput_input(option, currentValue, function(name, newValue){
+					updateValue(name, newValue);
+					didChange();
+				})
+				break;
+			case "colorSelect":
+				inputWrapper = build_color_select_input(option, currentValue, function(name, newValue){
+					updateValue(name, newValue);
+					didChange();
+				})
 				break;
 			case "default":
 				console.warn("build_sidebar_token_options_flyout failed to handle token setting option with type", option.type);

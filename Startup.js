@@ -381,6 +381,8 @@ async function start_above_vtt_for_dm() {
   window.EncounterHandler = new EncounterHandler(avttId);
   await window.EncounterHandler.fetchAllEncounters();
 
+  window.SCENE_DEFAULT_SETTINGS = $.parseJSON(localStorage.getItem(`SceneDefaults-${window.gameId}`)) || {};
+
   startup_step("Setting up UI");
   // This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
   $("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
