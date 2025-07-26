@@ -673,7 +673,9 @@ function scene_setting_options(){
 				{ value: true, label: "DM Map Enabled", description: "Will enable a DM map field to have a DM only version of the map." },
 				{ value: false, label: "DM Map Disabled", description: "DM and Players will see the same map" }
 			],
-			defaultValue: false
+			defaultValue: false,
+			convertToDropdownInSettings: true,
+			notOverridenLabeleLabel: 'DM Map Enabled if link already exists in scene data'
 		},
 		{
 			name: 'grid',
@@ -736,7 +738,7 @@ function scene_setting_options(){
 function get_custom_scene_settings(){
 	const settings = {}; 
 	for(let i in window.SCENE_DEFAULT_SETTINGS){
-		settings[i] = window.SCENE_DEFAULT_SETTINGS[i] === true ? "1" : window.SCENE_DEFAULT_SETTINGS[i] === false ? "0" : window.SCENE_DEFAULT_SETTINGS[i]
+		settings[i] = window.SCENE_DEFAULT_SETTINGS[i] === true || window.SCENE_DEFAULT_SETTINGS[i] === 'true' ? "1" : window.SCENE_DEFAULT_SETTINGS[i] == false || window.SCENE_DEFAULT_SETTINGS[i] === 'false' ? "0" : window.SCENE_DEFAULT_SETTINGS[i]
 	}
 	return settings;
 }
@@ -836,7 +838,7 @@ function is_valid_token_option_value(tokenOptionName, value) {
 	return token_setting_options().find(o => o.name === tokenOptionName)?.options?.map(value).includes(value);
 }
 
-function convert_option_to_override_dropdown(tokenOption) {
+function convert_option_to_override_dropdown(tokenOption, notOverridenLabel = 'Not Overridden') {
 	// Note: Spread syntax effectively goes one level deep while copying an array/object. Therefore, it may be unsuitable for copying multidimensional arrays or objects
 	// we are explicitly not using the spread operator at this level because we need to deep copy the object
 	let converted = {
@@ -847,7 +849,7 @@ function convert_option_to_override_dropdown(tokenOption) {
 		defaultValue: undefined,
 		hiddenSetting: tokenOption.hiddenSetting
 	};
-	converted.options.push({ value: undefined, label: "Not Overridden", description: "Changing this setting will override the default settings" });
+	converted.options.push({ value: undefined, label: notOverridenLabel, description: "Changing this setting will override the default settings" });
 	return converted;
 }
 
@@ -981,14 +983,14 @@ function init_settings() {
 		sceneOptionsButton.on("click", function (clickEvent) {
 			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
 				let optionsContainer = build_sidebar_token_options_flyout(scene_setting_options(), window.SCENE_DEFAULT_SETTINGS, function (name, value) {
-					if (value === true || value === false || typeof value === 'string' || typeof value === 'object' || typeof value === 'number') {
+					if (value != 'undefined' && (value === true || value === false || typeof value === 'string' || typeof value === 'object' || typeof value === 'number')) {
 						window.SCENE_DEFAULT_SETTINGS[name] = value;
 					} else { 
 						delete window.SCENE_DEFAULT_SETTINGS[name];
 					}
 				}, function() {
 					persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
-				}, false, true);
+				}, false, true, true);
 				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
 				flyout.append(optionsContainer);
 				position_flyout_left_of(body, flyout);
@@ -1215,7 +1217,7 @@ function build_example_token(options) {
 // used for settings tab, and tokens tab configuration modals. For placed tokens, see `build_options_flyout_menu`
 // updateValue: function(name, newValue) {} // only update the data here
 // didChange: function() {} // do ui things here
-function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false, genericFlyout=false) {
+function build_sidebar_token_options_flyout(availableOptions, setValues, updateValue, didChange, showExtraOptions=false, genericFlyout=false, convertToDropdowns=false) {
 	if (typeof updateValue !== 'function') {
 		updateValue = function(name, newValue){
 			console.warn("build_sidebar_token_options_flyout was not given an updateValue function so we can't set ", name, "to", value);
@@ -1238,6 +1240,9 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 	// };
 	let inputWrapper;
 	availableOptions.forEach(option => {
+		if(convertToDropdowns == true  && option.convertToDropdownInSettings == true){
+			option = convert_option_to_override_dropdown(option, option.notOverridenLabeleLabel);
+		}
 		if(option.hiddenSetting == true)
 			return;
 		if(option.dmOnly == true && !window.DM)
