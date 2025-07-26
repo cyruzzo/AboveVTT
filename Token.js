@@ -5068,7 +5068,7 @@ function paste_selected_walls(x, y) {
 
 
 		
-		let mapView = convert_point_from_view_to_map(x, y, false);
+		let mapView = convert_point_from_view_to_map(x, y, true);
 
 		let bounds = window.TOKEN_PASTE_BOUNDS;
 		let newX1 = (pt1.x - (bounds.right + bounds.left)/2)/bounds.hpps;
@@ -5148,8 +5148,8 @@ function copy_selected_tokens(teleporterTokenId=undefined) {
 					...bounds,
 					top: parseInt(token.options.top) < bounds.top ? parseInt(token.options.top) : bounds.top,
 					left: parseInt(token.options.left) < bounds.left ? parseInt(token.options.left) : bounds.left,
-					bottom: parseInt(token.options.top) > bounds.bottom ? parseInt(token.options.top) : bounds.bottom,
-					right: parseInt(token.options.left) > bounds.right ? parseInt(token.options.left) : bounds.right
+					bottom: parseInt(token.options.top)+parseInt(token.options.size) > bounds.bottom ? parseInt(token.options.top)+parseInt(token.options.size) : bounds.bottom,
+					right: parseInt(token.options.left)+parseInt(token.options.size) > bounds.right ? parseInt(token.options.left)+parseInt(token.options.size) : bounds.right
 				}
 				window.TOKEN_PASTE_BUFFER.push({id: id, left: token.options.left, top: token.options.top});
 			}
@@ -5195,12 +5195,12 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 			options.ct_show = token.isPlayer() ? options.ct_show : undefined;
 			options.combatGroup = token.isPlayer() ? options.combatGroup : undefined;
 			options.selected = true;
-			let center = center_of_view(); 
-			let mapView = convert_point_from_view_to_map(x, y, false);
+			
+			let mapView = convert_point_from_view_to_map(x, y, true);
 
 			let bounds = window.TOKEN_PASTE_BOUNDS;
-			let left = (parseInt(window.TOKEN_PASTE_BUFFER[i]?.left) - (bounds.right + bounds.left)/2)/bounds.hpps;
-			let top = (parseInt(window.TOKEN_PASTE_BUFFER[i]?.top) - (bounds.bottom + bounds.top)/2)/bounds.vpps;
+			let left = (parseFloat(window.TOKEN_PASTE_BUFFER[i]?.left) - (bounds.right+bounds.left)/2)/bounds.hpps;
+			let top = (parseFloat(window.TOKEN_PASTE_BUFFER[i]?.top) - (bounds.bottom+bounds.top)/2)/bounds.vpps;
 
 
 			options.top = `${mapView.y + top*window.CURRENT_SCENE_DATA.vpps}px`;
