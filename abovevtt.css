@@ -1385,7 +1385,7 @@ input {
     #sources-import-content-container .card-listing .listing-card,
     #mega_importer .card-listing .listing-card {
         width: 50%;
-
+        min-width: 250px;
     }
     #sources-import-content-container .listing-card__title,
     #mega_importer .listing-card__title{
