@@ -2277,6 +2277,7 @@ function redraw_light_walls(clear=true){
 		drawnWall.scaleAdjustment = adjustedScale;
 		drawnWall.wallBottom = wallBottom;
 		drawnWall.wallTop = wallTop;
+		drawnWall.terrainWall = color === 'rgba(0, 180, 80, 1)'
 		window.walls.push(drawnWall);
 	}
 
@@ -2694,6 +2695,8 @@ function drawing_mousedown(e) {
 	else if(window.DRAWFUNCTION === "wall"){
 		// semi transparent black
 		window.DRAWCOLOR = "rgba(0, 255, 0, 1)"
+		if(data.type == 'terrain')
+			window.DRAWCOLOR = "rgba(0, 180, 80, 1)"
 		if(window.DRAWSHAPE == 'line')
 			window.DRAWTYPE = "filled"
 		window.LINEWIDTH = 6;
@@ -4478,6 +4481,7 @@ function get_draw_data(button, menu){
 		const selectedInMenu = $(menu).find(".ddbc-tab-options__header-heading--is-active")
 		const selectedShape = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-shape]").attr("data-shape")
 		const selectedFunction = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-function]").attr("data-function")
+		const selectedType = $(menu).find(".ddbc-tab-options__header-heading--is-active[data-type]")?.attr("data-type");
 
 		const requiredOptions = $(requiredValuesInMenu).map(function() {
 			const key = $(this).attr("id")
@@ -4500,6 +4504,7 @@ function get_draw_data(button, menu){
 			shape:selectedShape,
 			function:selectedFunction,
 			from:menu.attr("id"),
+			type: selectedType,
 			...options
 		}
 	}
@@ -5771,6 +5776,13 @@ function init_walls_menu(buttons){
 		</button>
 	</div>`);
 	wall_menu.append(
+	`<div class='ddbc-tab-options--layout-pill'>
+		<button id='draw_line' class='drawbutton menu-option  ddbc-tab-options__header-heading'
+			data-shape='line' data-function="wall" data-type="terrain" data-unique-with="draw">
+				Object Wall
+		</button>
+	</div>`);
+	wall_menu.append(
 		`<div class='ddbc-tab-options--layout-pill menu-option data-skip='true''>
 			<button id='draw_height_convert' class='drawbutton menu-option  ddbc-tab-options__header-heading'
 				data-shape='rect' data-function="wall-height-convert" data-unique-with="draw">
@@ -6452,6 +6464,11 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let closestWall = null;
     let closestBarrier = null;
     let closestNoDarknessWall = null;
+
+    let secondClosestWall = null;
+    let secondClosestBarrier = null;
+    let secondClosestNoDarknessWall = null;
+
     let token;
     let x1;
     let x2;
@@ -6471,6 +6488,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    let recordMove = Infinity;
 	    let closestNoDarkness = null;
 	    let recordNoDarkness = Infinity;
+
+	    let secondClosestLight = null;
+	    let secondClosestMove = null;
+	    let secondClosestNoDarkness = null;
+	    let secondRecordLight = Infinity;
+	    let secondRecordMove = Infinity;
+	    let secondRecordNoDarkness = Infinity;
 
 
 	    for (let j = 0; j < walls.length; j++) {
@@ -6500,6 +6524,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				if (dist < recordLight && !notBlockVision.includes(walls[j].c)) {
 				  	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
+						secondRecordLight = recordLight;
 				      	recordLight = dist;         
 				      	
 				        if(dist == lightRadius){
@@ -6507,20 +6532,41 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
 					          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
 					          }
-				   		}	           	
+				   		}	       
+				   		    	
+			   			secondClosestLight = closestLight;
 				      	closestLight = pt;
 
-				        if(dist != lightRadius){    	
+				        if(dist != lightRadius){    
+				        	
+			        		secondClosestWall = closestWall;	
 				          	closestWall = walls[j];
 				        }      
 			       }
+				}
+				else if(dist < secondRecordLight && !notBlockVision.includes(walls[j].c)){
+					secondRecordLight = dist;       
+			     	
+			        if(dist == lightRadius){
+			          	pt = {
+				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+				          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+				          }
+			   		}	           	
+			   		
+		      		secondClosestLight = pt;
+
+			           
+		        	
+	        		secondClosestWall = walls[j];	
+			        
 				}
 
 				if(canSeeDarkness === true && walls[j].darkness !== true){
 				    if (dist < recordNoDarkness && !notBlockMove.includes(walls[j].c)) {
 				      	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
-
+							sconedRecordNoDarkness = recordNoDarkness;
 				          	recordNoDarkness = dist;         
 				          	
 					        if(dist == lightRadius){
@@ -6528,19 +6574,43 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
 						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
 						          }
-				       		}	           	
+				       		}	 
+				       		
+			       			secondClosestNoDarkness = closestNoDarkness;          	
 				          	closestNoDarkness = pt;
 
 					        if(dist != lightRadius){    	
+					        	
+				        		secondClosestNoDarknessWall = closestNoDarknessWall;
 					          	closestNoDarknessWall = walls[j];
 				       	 	}      
 			       		}
 			   	 	}
+	   	 		    else if (dist < secondRecordNoDarkness && !notBlockMove.includes(walls[j].c)) {
+	   	 		      	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+	   	 				{
+	   	 					sconedRecordNoDarkness = dist;       
+	   	 		          	
+	   	 			        if(dist == lightRadius){
+	   	 			          	pt = {
+	   	 				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+	   	 				          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+	   	 				          }
+	   	 		       		}	 
+	   	 		       		secondClosestNoDarkness = pt;          	
+
+
+	   	 			        if(dist != lightRadius){    	
+	   	 			        	secondClosestNoDarknessWall = walls[j];
+	   	 		       	 	}      
+	   	 	       		}
+	   	 	   	 	}
 				}
 				if(walls[j].darkness !== true && !notBlockMove.includes(walls[j].c)){
 
 
 				    if(dist < recordMove){
+				    	secondRecordMove = recordMove;
 				    	recordMove = dist;
 			    		if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
@@ -6550,9 +6620,29 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
 						          }
 					   		}
+					   		
+				   			secondClosestMove = closestMove;
 					   		closestMove = pt;
 					   		if(dist != lightRadius){
+					   			
+				   				secondClosestBarrier = closestBarrier;
 					          	closestBarrier = walls[j];
+					        }	
+				    	}
+				    }
+				    else if(dist < secondRecordMove){
+				    	secondRecordMove = dist;
+			    		if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+						{
+				    	 	if(dist == lightRadius){
+					          	pt = {
+						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+						          }
+					   		}
+					   		secondClosestMove = pt;
+					   		if(dist != lightRadius){
+					   			secondClosestBarrier = walls[j];
 					        }	
 				    	}
 				    }
@@ -6562,6 +6652,21 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	    }	    
 	   
+	    if(closestWall?.terrainWall == true && secondClosestWall != null){
+	    	closestWall = secondClosestWall;
+	    	closestLight = secondClosestLight;
+	    }
+
+    	if(closestNoDarknessWall?.terrainWall == true && secondClosestNoDarknessWall != null){
+    		closestNoDarknessWall = secondClosestNoDarknessWall;
+    		closestNoDarkness = secondClosestNoDarkness;
+    	}
+
+	 	if(closestBarrier?.terrainWall == true && secondClosestBarrier != null){
+	 		closestBarrier = secondClosestBarrier;
+	 		closestMove = secondClosestMove;
+	 	}
+
     	if (closestLight !== null && (closestWall != prevClosestWall || i === 359 || closestWall?.radius !== undefined)) {
     		if(closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null){	    		
     			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
