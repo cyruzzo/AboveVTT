@@ -6457,17 +6457,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let x2;
     let y1;
     let y2;
-    let tokenIsDoor;
+    let tokenIsDoor = window.TOKEN_OBJECTS[auraId].options.type =='door';
 
 
-    if(auraId){
-    	let token = $(`#tokens [data-id='${auraId}']`)
-    	tokenIsDoor = token.hasClass('door-button');
-    	x1 = tokenIsDoor ? parseFloat(token.attr('data-x1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
-    	x2 = tokenIsDoor ? parseFloat(token.attr('data-x2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
-    	y1 = tokenIsDoor ? parseFloat(token.attr('data-y1')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
-    	y2 = tokenIsDoor ? parseFloat(token.attr('data-y2')) / window.CURRENT_SCENE_DATA.scale_factor : 0;
-    }
+    
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
 	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
@@ -6505,7 +6498,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			
 				
 				if (dist < recordLight && !notBlockVision.includes(walls[j].c)) {
-				  	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
+				  	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
 				      	recordLight = dist;         
 				      	
@@ -6525,7 +6518,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 				if(canSeeDarkness === true && walls[j].darkness !== true){
 				    if (dist < recordNoDarkness && !notBlockMove.includes(walls[j].c)) {
-				      	if(!tokenIsDoor || walls[j].a.x*walls[j].scaleAdjustment != x1 || walls[j].a.y*walls[j].scaleAdjustment != y1 || walls[j].b.x*walls[j].scaleAdjustment != x2 || walls[j].b.y*walls[j].scaleAdjustment != y2)
+				      	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
 
 				          	recordNoDarkness = dist;         
@@ -6549,16 +6542,19 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 				    if(dist < recordMove){
 				    	recordMove = dist;
-				    	 if(dist == lightRadius){
-				          	pt = {
-					          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-					          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
-					          }
-				   		}
-				   		closestMove = pt;
-				   		if(dist != lightRadius){
-				          	closestBarrier = walls[j];
-				        }	
+			    		if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
+						{
+				    	 	if(dist == lightRadius){
+					          	pt = {
+						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
+						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+						          }
+					   		}
+					   		closestMove = pt;
+					   		if(dist != lightRadius){
+					          	closestBarrier = walls[j];
+					        }	
+				    	}
 				    }
 				}
 
