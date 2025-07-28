@@ -4379,7 +4379,7 @@ function setTokenLight (token, options) {
 		}
 	}
 
-	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed') && $(`.door-button[data-id='${options.id}'] .door`).length > 0){
+	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed') && $(`.door-button[data-id='${options.id}'] :is(.door, .curtain)`).length > 0){
 		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "none")
 	}
 	else if(options.type == 'door'){
