@@ -6469,7 +6469,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     let secondClosestBarrier = null;
     let secondClosestNoDarknessWall = null;
 
-    const tokenIsDoor = window.TOKEN_OBJECTS[auraId].options.type =='door';
+    const tokenIsDoor = window.TOKEN_OBJECTS[auraId]?.options?.type =='door';
 
 	const diffNeedForTerrainWalls = 5;
     
