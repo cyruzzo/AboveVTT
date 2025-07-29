@@ -676,7 +676,7 @@ class Token {
 		this.prepareWalkableArea()
 		
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
-		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken)
+		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken, this.options.size)
 
 		// Stop movement if new position is outside of the scene
 		if (
@@ -3124,7 +3124,7 @@ class Token {
 							tokenY +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 4) ;
 						}
 						
-						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken);
+						let tokenPosition = snap_point_to_grid(tokenX, tokenY, undefined, tinyToken, self.options.size);
 
 						if(self.walkableArea.bottom != null && self.walkableArea.right != null){ // need to figure out what's causing these to be null but this is a workaround for the error for now
 							// Constrain token within scene
@@ -3667,7 +3667,7 @@ function should_snap_to_grid() {
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
-function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0) {
 	if (forceSnap || should_snap_to_grid()) {
 		// adjust to the nearest square coordinate
 		let startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
@@ -3685,11 +3685,18 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false) {
 		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
 			currentGridX += 0.5;
 		} 
+		const gridSquaresWide = Math.floor(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
+		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
 
 		if(window.CURRENT_SCENE_DATA.gridType == 3){
-			startX = startX + window.hexGridSize.width/2 * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
+			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight/2 - tokenWidth/2;
+			
 		}else if(window.CURRENT_SCENE_DATA.gridType == 2){
-			startY = startY + window.hexGridSize.height/2 * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth/2 - tokenWidth/2;
+			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
 		}
 		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),
