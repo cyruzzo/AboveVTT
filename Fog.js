@@ -1011,7 +1011,9 @@ function clear_grid(){
 	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 }
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
-	window.gridCentersArray = [];
+	if(window.DM)
+		window.gridCentersArray = [];
+	
 	const gridCanvas = document.getElementById("grid_overlay");
 	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
 	gridCanvas.height = $('#scene_map').height() / window.CURRENT_SCENE_DATA.scaleAdjustment.y;
@@ -1094,7 +1096,8 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		  gridContext.closePath();
 		  gridContext.stroke();
 		}
-		window.gridCentersArray.push([x,y]);
+		if(window.DM)
+			window.gridCentersArray.push([x,y]);
 	}
 	$('#grid_overlay').css('transform', `scale(calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.x}), calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.y}))`)
 
