@@ -1039,13 +1039,13 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 
 
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
-		if(drawGrid == 1 || window.WIZARDING){
-			for (let x = startX-2*(hexSize * Math.sin(a)), j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+4*hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-			   for (let y = startY-2*(hexSize * (1 + Math.cos(a))); y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+4*hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
-			    drawHexagon(x, y);
-			  }
-			}	
-		}
+		
+		for (let x = startX-2*(hexSize * Math.sin(a)), j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+4*hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let y = startY-2*(hexSize * (1 + Math.cos(a))); y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+4*hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+		    drawHexagon(x, y);
+		  }
+		}	
+		
 			
 
 		let hexWidth = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
@@ -1056,13 +1056,13 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 		}
 	}
 	else{
-		if(drawGrid == 1 || window.WIZARDING){
-			for (let y = startY-2*(hexSize * Math.sin(a)), j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+4*hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-			   for (let x = startX-2*(hexSize * (1 + Math.cos(a))); x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+4*hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
-			    drawHexagon(x, y);
-			  }
-			}
+		
+		for (let y = startY-2*(hexSize * Math.sin(a)), j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+4*hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let x = startX-2*(hexSize * (1 + Math.cos(a))); x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+4*hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+		    drawHexagon(x, y);
+		  }
 		}
+		
 		let hexWidth = hexSize * (1 + Math.cos(a)) * window.CURRENT_SCENE_DATA.scale_factor;
 		let hexHeight = hexSize * Math.sin(a) * 2 * window.CURRENT_SCENE_DATA.scale_factor;
 		window.hexGridSize = {
@@ -1072,29 +1072,31 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 	}
 
 	function drawHexagon(x, y) {
-		if(window.CURRENT_SCENE_DATA.gridType == 3){
-		  gridContext.beginPath();
-		  gridContext.moveTo(x + hexSize, y);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.cos(angle);
-		    let dy = hexSize * Math.sin(angle);
-		    gridContext.lineTo(x + dx, y + dy);
-		  }
-		  gridContext.closePath();
-		  gridContext.stroke();
-		}
-		else{
-		  gridContext.beginPath();
-		  gridContext.moveTo(x, y + hexSize);
-		  for (let i = 1; i <= 6; i++) {
-		    let angle = i * Math.PI / 3;
-		    let dx = hexSize * Math.sin(angle);
-		    let dy = hexSize * Math.cos(angle);
-		    gridContext.lineTo(x + dx, y + dy);
-		  }
-		  gridContext.closePath();
-		  gridContext.stroke();
+		if(drawGrid == 1 || window.WIZARDING){
+			if(window.CURRENT_SCENE_DATA.gridType == 3){
+			  gridContext.beginPath();
+			  gridContext.moveTo(x + hexSize, y);
+			  for (let i = 1; i <= 6; i++) {
+			    let angle = i * Math.PI / 3;
+			    let dx = hexSize * Math.cos(angle);
+			    let dy = hexSize * Math.sin(angle);
+			    gridContext.lineTo(x + dx, y + dy);
+			  }
+			  gridContext.closePath();
+			  gridContext.stroke();
+			}
+			else{
+			  gridContext.beginPath();
+			  gridContext.moveTo(x, y + hexSize);
+			  for (let i = 1; i <= 6; i++) {
+			    let angle = i * Math.PI / 3;
+			    let dx = hexSize * Math.sin(angle);
+			    let dy = hexSize * Math.cos(angle);
+			    gridContext.lineTo(x + dx, y + dy);
+			  }
+			  gridContext.closePath();
+			  gridContext.stroke();
+			}
 		}
 		if(window.DM)
 			window.gridCentersArray.push([x,y]);
