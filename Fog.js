@@ -1011,8 +1011,8 @@ function clear_grid(){
 	gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
 }
 function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color=null, lineWidth=null, subdivide=null, dash=[], columns=true, drawGrid = window.CURRENT_SCENE_DATA.grid){
-	if(window.DM)
-		window.gridCentersArray = [];
+	
+	window.gridCentersArray = [];
 	
 	const gridCanvas = document.getElementById("grid_overlay");
 	gridCanvas.width = $('#scene_map').width() / window.CURRENT_SCENE_DATA.scaleAdjustment.x
@@ -1098,8 +1098,8 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 			  gridContext.stroke();
 			}
 		}
-		if(window.DM)
-			window.gridCentersArray.push([x,y]);
+		
+		window.gridCentersArray.push([x,y]);
 	}
 	$('#grid_overlay').css('transform', `scale(calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.x}), calc(var(--scene-scale) * ${window.CURRENT_SCENE_DATA.scaleAdjustment.y}))`)
 
@@ -2854,7 +2854,11 @@ function drawing_mousedown(e) {
 			window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 		}
 		else{
-			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]-scaledX) < window.hexGridSize.width/window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x && Math.abs(d[1]-scaledY)< window.hexGridSize.height*window.CURRENT_SCENE_DATA.scaleAdjustment.y);
+			const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+			const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-scaledX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-scaledY)< hexSize);
 
 			for(let i in closeHexes){
 				const hexCenter = closeHexes[i];
@@ -3308,8 +3312,11 @@ function drawing_mousemove(e) {
 				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 			}
 			else{
-			
-				const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-scaledX) < window.hexGridSize.width && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-scaledY)< window.hexGridSize.height);
+				const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+				const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+				const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-scaledX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-scaledY)< hexSize);
 
 				for(let i in closeHexes){
 					const hexCenter = closeHexes[i];

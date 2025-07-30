@@ -676,7 +676,12 @@ class Token {
 		this.prepareWalkableArea()
 		
 		let tinyToken = (Math.round(this.options.gridSquares*2)/2 < 1) || this.isAoe();
-		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken, this.options.size)
+
+
+		
+		let tokenPosition = snap_point_to_grid(left, top, true, tinyToken, this.options.size, true)
+		
+		
 
 		// Stop movement if new position is outside of the scene
 		if (
@@ -3667,8 +3672,33 @@ function should_snap_to_grid() {
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
-function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0) {
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0, arrowKeys=false) {
 	if (forceSnap || should_snap_to_grid()) {
+		const gridSquaresWide = Math.floor(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
+		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
+
+		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
+
+		if(!arrowKeys && (window.CURRENT_SCENE_DATA.gridType == 3 || window.CURRENT_SCENE_DATA.gridType == 2)){
+			//to do: improve arrow key movement for hex
+			
+		
+			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-mapX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-mapY)< hexSize);
+			if(window.CURRENT_SCENE_DATA.gridType == 3){
+				return {
+					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize),
+					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 
+				}
+
+				
+			}else if(window.CURRENT_SCENE_DATA.gridType == 2){
+				return {
+					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2,
+					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize) 
+				}
+			}
+
+		}
 		// adjust to the nearest square coordinate
 		let startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
 		let startY = parseFloat(window.CURRENT_SCENE_DATA.offsety); 
@@ -3685,15 +3715,9 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
 			currentGridX += 0.5;
 		} 
-		const gridSquaresWide = Math.floor(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
-		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
-
-		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
 		if(window.CURRENT_SCENE_DATA.gridType == 3){
 			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
 			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight/2 - tokenWidth/2;
-			
 		}else if(window.CURRENT_SCENE_DATA.gridType == 2){
 			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth/2 - tokenWidth/2;
 			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
