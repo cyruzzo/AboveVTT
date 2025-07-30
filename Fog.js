@@ -1372,7 +1372,7 @@ function check_darkness_value(){
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
-
+	$('#raycastingCanvas').css('visibility', '');
 	if(selectedTokens.length>0){
 		if(window.SelectedTokenVision === true){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
@@ -1424,7 +1424,19 @@ function check_darkness_value(){
 		}
 
 
-		
+		if(!parseInt(darknessfilter) && window.walls.length>4){
+			$('#outer_light_container').css({
+				'mix-blend-mode': 'unset',
+				'background':  '#FFF',
+				'opacity': '0.3'
+			});
+		} else{
+			$('#outer_light_container').css({
+				'mix-blend-mode': '',
+				'background': '',
+				'opacity': ''
+			});
+		}
 		$('#VTT').css('--darkness-filter', darknessPercent + "%");
   		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
 		 	$('#light_container').css({
@@ -1437,19 +1449,6 @@ function check_darkness_value(){
 	 		});
   		}
   		$('#exploredCanvas').css('opacity', '');
-  	}
-  	if(!parseInt(darknessfilter) && window.walls.length>4){
-  		$('#outer_light_container').css({
-  			'mix-blend-mode': 'unset',
-  			'background':  '#FFF',
-  			'opacity': '0.3'
-  		});
-  	} else{
-  		$('#outer_light_container').css({
-  			'mix-blend-mode': '',
-  			'background': '',
-  			'opacity': ''
-  		});
   	}
 }
 
