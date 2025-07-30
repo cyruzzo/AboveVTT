@@ -1040,8 +1040,8 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 
 	if(window.CURRENT_SCENE_DATA.gridType == 2){
 		
-		for (let x = startX-2*(hexSize * Math.sin(a)), j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+4*hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let y = startY-2*(hexSize * (1 + Math.cos(a))); y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+4*hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
+		for (let x = startX-4*(hexSize * Math.sin(a)), j = 0; x + hexSize * Math.sin(a) < gridCanvas.width+4*hexSize+startX; x += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let y = startY-4*(hexSize * (1 + Math.cos(a))); y + hexSize * (1 + Math.cos(a)) < gridCanvas.height+4*hexSize+startY; y += hexSize * (1 + Math.cos(a)), x += (-1) ** j++ * hexSize * Math.sin(a)){		    
 		    drawHexagon(x, y);
 		  }
 		}	
@@ -1057,8 +1057,8 @@ function redraw_hex_grid(hpps=null, vpps=null, offsetX=null, offsetY=null, color
 	}
 	else{
 		
-		for (let y = startY-2*(hexSize * Math.sin(a)), j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+4*hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
-		   for (let x = startX-2*(hexSize * (1 + Math.cos(a))); x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+4*hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
+		for (let y = startY-4*(hexSize * Math.sin(a)), j = 0; y + hexSize * Math.sin(a) < gridCanvas.height+startY+4*hexSize; y += 2 ** ((j + 1) % 2) * hexSize * Math.sin(a), j = 0){
+		   for (let x = startX-4*(hexSize * (1 + Math.cos(a))); x + hexSize * (1 + Math.cos(a)) < gridCanvas.width+startX+4*hexSize; x += hexSize * (1 + Math.cos(a)), y += (-1) ** j++ * hexSize * Math.sin(a)){
 		    drawHexagon(x, y);
 		  }
 		}
@@ -1424,19 +1424,7 @@ function check_darkness_value(){
 		}
 
 
-		if(!parseInt(darknessfilter) && window.walls.length>4){
-			$('#outer_light_container').css({
-				'mix-blend-mode': 'unset',
-				'background':  '#FFF',
-				'opacity': '0.3'
-			});
-		} else{
-			$('#outer_light_container').css({
-				'mix-blend-mode': '',
-				'background': '',
-				'opacity': ''
-			});
-		}
+		
 		$('#VTT').css('--darkness-filter', darknessPercent + "%");
   		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
 		 	$('#light_container').css({
@@ -1449,6 +1437,19 @@ function check_darkness_value(){
 	 		});
   		}
   		$('#exploredCanvas').css('opacity', '');
+  	}
+  	if(!parseInt(darknessfilter) && window.walls.length>4){
+  		$('#outer_light_container').css({
+  			'mix-blend-mode': 'unset',
+  			'background':  '#FFF',
+  			'opacity': '0.3'
+  		});
+  	} else{
+  		$('#outer_light_container').css({
+  			'mix-blend-mode': '',
+  			'background': '',
+  			'opacity': ''
+  		});
   	}
 }
 
