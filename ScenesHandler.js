@@ -1082,6 +1082,14 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 		sceneData.isnewscene=false;
 		window.MB.sendMessage("custom/myVTT/update_scene",sceneData,dontswitch);
+		const currentPlayerScenes = Object.values(window.splitPlayerScenes);
+		if(window.DM && dontswitch == false && currentPlayerScenes.includes(sceneData.id)){
+			setTimeout(function(){
+				window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.splitPlayerScenes});
+			}, 100)
+		}
+		
+		
 	}
 
 	delete_scene(sceneId, reloadUI = true) { // not the index, but the actual id
