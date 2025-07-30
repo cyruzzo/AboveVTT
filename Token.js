@@ -3683,18 +3683,18 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			
 			
 		
-			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x-mapX) < hexSize && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y-mapY)< hexSize);
+			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x-mapX) < hexSize*window.CURRENT_SCENE_DATA.scale_factor && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y-mapY)< hexSize*window.CURRENT_SCENE_DATA.scale_factor);
 			if(window.CURRENT_SCENE_DATA.gridType == 3){
 				return {
-					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize),
-					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 
+					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize),
+					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 
 				}
 
 				
 			}else if(window.CURRENT_SCENE_DATA.gridType == 2){
 				return {
-					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2,
-					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize) 
+					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2,
+					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize) 
 				}
 			}
 
