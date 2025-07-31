@@ -2272,6 +2272,9 @@ class JournalManager{
 			.ignore-abovevtt-formating{
 				 border: 2px dotted #b100ff;
 			}
+			.ignore-abovevtt-formating.no-border{
+				border: none;
+			}
 			.note-tracker{
 				 border: 1px dotted #bb5600;
 			}
@@ -3291,9 +3294,9 @@ class JournalManager{
 				'image': "/content/1-0-1688-0/js/tinymce/tiny_mce/plugins/image/plugin.min.js",
 			},
 			link_class_list: [
-			   {title: 'External Link', value: 'ext_link'},
-			   {title: 'DDB Sourcebook Link', value: 'int_source_link'},
-			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover'}
+			   {title: 'External Link', value: 'ext_link no-border ignore-abovevtt-formating'},
+			   {title: 'DDB Sourcebook Link', value: 'int_source_link no-border ignore-abovevtt-formating'},
+			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover no-border ignore-abovevtt-formating'}
 			],
 			valid_children : '+body[style]',
 			setup: function (editor) { 

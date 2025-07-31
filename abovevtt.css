@@ -10998,9 +10998,7 @@ button#editAnimations {
 #qrm_apply_conditions-button{
     width: 26% !important;
 }
-.ui-front {
-    z-index: 50010 !important;
-}
+
 .ui-selectmenu-text{
     top: 1px;
     position: relative;
