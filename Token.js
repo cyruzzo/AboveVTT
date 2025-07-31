@@ -5109,23 +5109,24 @@ function paste_selected_walls(x, y) {
 		let newX2 = (pt2.x - (bounds.right + bounds.left)/2)/bounds.hpps;
 		let newY2 = (pt2.y - (bounds.bottom + bounds.top)/2)/bounds.vpps;
 
-
-		wall[3] = Math.round(mapView.x + newX1*window.CURRENT_SCENE_DATA.hpps)
-		wall[4] = Math.round(mapView.y + newY1*window.CURRENT_SCENE_DATA.vpps)
-		wall[5] = Math.round(mapView.x + newX2*window.CURRENT_SCENE_DATA.hpps)
-		wall[6] = Math.round(mapView.y + newY2*window.CURRENT_SCENE_DATA.vpps)
-
-		window.DRAWINGS.push([...wall]);
-		undoArray.push([...wall]);
-
 		const scale = wall[8];
 		const adjustedScale = wall[8]/window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion;					
 				
 		
-		pt1.x = wall[3]/scale;
-		pt1.y = wall[4]/scale;
-		pt2.x = wall[5]/scale;
-		pt2.y = wall[6]/scale;
+
+		wall[3] = Math.round(mapView.x*adjustedScale + newX1*window.CURRENT_SCENE_DATA.hpps)
+		wall[4] = Math.round(mapView.y*adjustedScale + newY1*window.CURRENT_SCENE_DATA.vpps)
+		wall[5] = Math.round(mapView.x*adjustedScale + newX2*window.CURRENT_SCENE_DATA.hpps)
+		wall[6] = Math.round(mapView.y*adjustedScale + newY2*window.CURRENT_SCENE_DATA.vpps)
+
+		window.DRAWINGS.push([...wall]);
+		undoArray.push([...wall]);
+
+
+		pt1.x = wall[3]/scale*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+		pt1.y = wall[4]/scale*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+		pt2.x = wall[5]/scale*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+		pt2.y = wall[6]/scale*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
 		const [x1,y1,x2,y2] = [wall[3]/scale, wall[4]/scale, wall[5]/scale, wall[6]/scale];
 		const doorTokenId = `${x1}${y1}${x2}${y2}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','');
 		const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));
