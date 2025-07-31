@@ -680,7 +680,7 @@ Mousetrap.bind('mod+c', function(e) {
 
 Mousetrap.bind('mod+v', function(e) {
     if($('#temp_overlay:hover').length>0){
-        if(window.TOKEN_PASTE_BUFFER?[0]?.wall == undefined){
+        if(window.TOKEN_PASTE_BUFFER?.[0]?.wall == undefined){
             paste_selected_tokens(window.cursor_x, window.cursor_y);
         }else{
             paste_selected_walls(window.cursor_x, window.cursor_y);
@@ -690,7 +690,7 @@ Mousetrap.bind('mod+v', function(e) {
     else {
 
         let center = center_of_view();
-        if(window.TOKEN_PASTE_BUFFER?[0]?.wall == undefined){
+        if(window.TOKEN_PASTE_BUFFER?.[0]?.wall == undefined){
             paste_selected_tokens(center.x, center.y);
         }else{
             paste_selected_walls(center.x, center.y);
