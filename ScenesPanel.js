@@ -1561,6 +1561,9 @@ function edit_scene_dialog(scene_id) {
 			if(sceneData.UVTTFile==1){
 				container.append(build_combat_tracker_loading_indicator('One moment while we load the UVTT File'));
 			}
+			else{
+				container.append(build_combat_tracker_loading_indicator('Loading Wizard'));
+			}
 			window.ScenesHandler.scenes[scene_id] = sceneData;
 
 
