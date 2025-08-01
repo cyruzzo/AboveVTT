@@ -459,7 +459,7 @@ function token_context_menu_expanded(tokenIds, e) {
 				});
 				body.append(teleportTwoWayButton);
 
-				let copyPortalId = $(`<button class=" context-menu-icon-hidden door-open material-icons">Copy Portal ID</button>`)
+				let copyPortalId = $(`<button class=" context-menu-icon-hidden link material-icons">Copy Portal ID</button>`)
 				copyPortalId.off().on("click", function(clickEvent){
 					const copyLink = `${tokenIds};${window.CURRENT_SCENE_DATA.id}`
 			        navigator.clipboard.writeText(copyLink);
