@@ -1293,7 +1293,7 @@ class JournalManager{
 					            flyout.append(buttonFooter);
 					            buttonFooter.append(sendToGamelogButton);
 					            flyout.find("a").attr("target","_blank");
-					      		flyout.off('click').on('click', '.int_source_link', function(event){
+					      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
 									event.preventDefault();
 									render_source_chapter_in_iframe(event.target.href);
 								});
@@ -1520,7 +1520,7 @@ class JournalManager{
 				
 				$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
 			});
-			note.off('click').on('click', '.int_source_link', function(event){
+			note.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
 			});
@@ -1608,7 +1608,7 @@ class JournalManager{
 						            flyout.append(buttonFooter);
 						            buttonFooter.append(sendToGamelogButton);
 						            flyout.find("a").attr("target","_blank");
-						      		flyout.off('click').on('click', '.int_source_link', function(event){
+						      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
 										event.preventDefault();
 										render_source_chapter_in_iframe(event.target.href);
 									});
@@ -1831,6 +1831,7 @@ class JournalManager{
     translateHtmlAndBlocks(target, displayNoteId) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
+		
 		for(let i=0; i<pastedButtons.length; i++){
 			$(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
 		}
@@ -1839,7 +1840,7 @@ class JournalManager{
 			if($(emStrong[i]).text().match(/recharge/gi))
 				$(emStrong[i]).replaceWith($(emStrong[i]).text());
 		}
-		
+		target.find('a.ignore-abovevtt-formating').wrap('<span class="ignore-abovevtt-formating"></span>')
 
 		const trackerSpans = target.find('.note-tracker');
 		for(let i=0; i<trackerSpans.length; i++){
@@ -1856,6 +1857,8 @@ class JournalManager{
 			}
 			$(iframes[i]).replaceWith(`<iframe class='journal-site-embed' src='${url}'></iframe>`);
 		}
+
+
     	let data = $(target).clone().html();
 
 
@@ -3295,7 +3298,6 @@ class JournalManager{
 			},
 			link_class_list: [
 			   {title: 'External Link', value: 'ext_link no-border ignore-abovevtt-formating'},
-			   {title: 'DDB Sourcebook Link', value: 'int_source_link no-border ignore-abovevtt-formating'},
 			   {title: 'DDB Tooltip Link (Spells, Monsters, Magic Items, Source)', value: 'tooltip-hover no-border ignore-abovevtt-formating'}
 			],
 			valid_children : '+body[style]',
@@ -3426,7 +3428,7 @@ function render_source_chapter_in_iframe(url) {
 	const iframeId = 'sourceChapterIframe';
 	const containerId = `${iframeId}_resizeDrag`;
 	const container = find_or_create_generic_draggable_window(containerId, 'Source Book', true, true, `#${iframeId}`);
-
+	frame_z_index_when_click(container);
 	let iframe = $(`#${iframeId}`);
 	if (iframe.length > 0) {
 
@@ -3505,7 +3507,7 @@ function render_source_chapter_in_iframe(url) {
 		iframeContents.find("body").append($(`<style id='ddbSourceStyles'>
 
 		body, html body.responsive-enabled{
-			background: var(--theme-page-bg-image-1024, url('')) no-repeat center 0px, var(--theme-page-bg-color,#f9f9f9) !important;
+			background: var(--theme-page-bg-color,#f9f9f9) !important;
 			background-position: center 0px !important;
 		}
 		#site-main header.main[role="banner"]{

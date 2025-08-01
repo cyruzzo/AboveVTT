@@ -1317,7 +1317,7 @@ function init_controls() {
 		sidebarControls.addClass("player");
 	}
 	addGamelogPopoutButton()
-	$('ol[class*="GameLogEntries"]').off('click').on('click', '.int_source_link', function(event){
+	$('ol[class*="GameLogEntries"]').off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
 		event.preventDefault();
 		render_source_chapter_in_iframe(event.target.href);
 	});

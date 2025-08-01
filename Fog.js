@@ -2474,7 +2474,7 @@ function door_note_icon(id){
 				            flyout.append(buttonFooter);
 				            buttonFooter.append(sendToGamelogButton);
 				            flyout.find("a").attr("target","_blank");
-				      		flyout.off('click').on('click', '.int_source_link', function(event){
+				      		flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function(event){
 								event.preventDefault();
 								render_source_chapter_in_iframe(event.target.href);
 							});
