@@ -2185,11 +2185,19 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
   $("#site").append(container);
 
   if (addLoadingIndicator) {
-    container.append(build_combat_tracker_loading_indicator(`Loading ${titleBarText}`));
-    const loadingIndicator = container.find(".sidebar-panel-loading-indicator");
+    const loadingIndicator = build_combat_tracker_loading_indicator(`Loading ${titleBarText}`)
+
+    container.append(loadingIndicator);
     loadingIndicator.css({
+      'height': 'calc(100% - 26px)',
+      'width': 'calc(100% - 4px)',
+      'top': '24px',
+      'left': '2px',
+    });
+    loadingIndicator.find('svg').css({
       "top": "25px",
-      "height": "calc(100% - 25px)"
+      "margin": '0px',
+      "max-height": "calc(100% - 25px)"
     });
   }
   if(showSlow){
