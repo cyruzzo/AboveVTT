@@ -480,12 +480,21 @@ function token_context_menu_expanded(tokenIds, e) {
 					const values = $(this).val().split(';')
 					const portalTokenId = values[0];
 					const sceneId = values[1];
-					window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
-					if(window.all_token_objects[tokenIds] != undefined){
-						window.all_token_objects[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
+					if(sceneId == undefined || portalTokenId == undefined){
+						delete window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords;
+						if(window.all_token_objects[tokenIds] != undefined){
+							delete window.all_token_objects[tokenIds].options.teleporterCoords;
+						}
+					} else{
+						window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
+						if(window.all_token_objects[tokenIds] != undefined){
+							window.all_token_objects[tokenIds].options.teleporterCoords = {'linkedPortalId': portalTokenId, 'sceneId': sceneId}
+						}
 					}
+					
 					window.TOKEN_OBJECTS[tokenIds].place(0);
 					window.TOKEN_OBJECTS[tokenIds].sync($.extend(true, {}, window.TOKEN_OBJECTS[tokenIds].options));
+					redraw_light_walls();
 				})
 
 				body.append(crossSceneIdInputContainer);
