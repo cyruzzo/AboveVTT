@@ -1607,7 +1607,10 @@ div#combat-tracker-settings form > div {
     content:"\eb4f"; 
     padding: 2px 0px;
 }
-
+.link.material-icons:before{
+    content:"\e157"; 
+    padding: 2px 0px;
+}
 .spatial-audio-off.material-icons:before{
     content:"\ebe8"; 
     padding: 2px 0px;
