@@ -8252,18 +8252,18 @@ button#changeTokenImage:before{
     border-radius: 50%;
     color: #fff;
     display: flex;
-    align-items: center;
-    justify-content: center;
     background: #1c1c1c;
     container-type: inline-size;
-    align-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
 }
 .duration-badge.expired span{
     color: #F00;
 }
 .duration-badge span{
-    font-size: 70cqw;
+    font-size: 110cqw;
+    line-height: 100%;
 }
 
 .button-loading::after {
