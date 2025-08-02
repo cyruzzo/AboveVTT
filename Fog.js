@@ -5137,6 +5137,7 @@ function savePolygon(e) {
 	else if(window.DRAWFUNCTION === 'audio-polygon'){
 		const token = window.TOKEN_OBJECTS[window.drawingAudioTokenId];
 		token.options.audioChannel.audioArea = polygonPoints;
+		token.options.audioChannel.audioAreaOrigScale = window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
 		token.place_sync_persist();
 		debounceAudioChecks();
 		delete window.drawingAudioTokenId 
