@@ -1730,7 +1730,7 @@ class MessageBroker {
 							window.DRAWINGS = [];
 						}
 						window.LOADING = true;
-						if(!window.DM){
+						if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
 							data.map = data.player_map;
 							data.is_video = data.player_map_is_video;
 						}
@@ -1811,7 +1811,21 @@ class MessageBroker {
 							}
 
 
-
+							if(!window.DM && data.dm_map_usable=="1" && data.UVTTFile != 1 && !data.is_video){
+		
+								$("#scene_map").stop();
+								$("#scene_map").css("opacity","0");
+								console.log("switching back to player map");
+								$("#scene_map").off("load");
+								$("#scene_map").on("load", () => {
+									$("#scene_map").css('opacity', 1)
+									$("#darkness_layer").show();
+								});
+								
+							
+								$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
+								$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
+							}
 							reset_canvas();
 			        		set_default_vttwrapper_size();
 							
