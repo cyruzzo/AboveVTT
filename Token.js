@@ -4093,7 +4093,7 @@ function checkAudioVolume(){
 		let attenuate = currAudioToken.options.audioChannel.attenuate;
 		let wallsBlocked = currAudioToken.options.audioChannel.wallsBlocked;
 		let range = currAudioToken.options.audioChannel.range/parseFloat(window.CURRENT_SCENE_DATA.fpsq) * parseFloat(window.CURRENT_SCENE_DATA.hpps);
-
+		const audioPolygon = currAudioToken.options.audioChannel.audioArea;
 
 		let currAudioPosition ={
 			x: parseInt(currAudioToken.options.left) + currAudioToken.sizeWidth()/2,
@@ -4110,8 +4110,14 @@ function checkAudioVolume(){
 			audioCanvas.width = $("#raycastingCanvas").width();
 			audioCanvas.height =  $("#raycastingCanvas").height();
 			
-			
-			if(tokenMovePolygon != undefined){
+			if(audioPolygon != undefined){
+				drawPolygon(audioCanvasCtx, audioPolygon, 'rgba(255, 255, 255, 1)', true); 
+				if(wallsBlocked){
+					audioCanvasCtx.globalCompositeOperation = "destination-in";
+					drawPolygon(audioCanvasCtx, tokenMovePolygon, 'rgba(255, 255, 255, 1)', true);
+					audioCanvasCtx.globalCompositeOperation = "source-over";
+				}
+			} else if(tokenMovePolygon != undefined){
 				drawPolygon(audioCanvasCtx, tokenMovePolygon, 'rgba(255, 255, 255, 1)', true); 	
 			}
 
@@ -4126,12 +4132,15 @@ function checkAudioVolume(){
 		    let distanceApart = Math.sqrt(dx * dx + dy * dy) 
 		 	let inRange =  distanceApart <= range;
 
-		 	
-		 	
-		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange) ? 1 : 0
-		 	 
 
-			let setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
+		 	let tempCalcVolume = (attenuate && inRange) ? ((range-distanceApart)/range) : (inRange || (!attenuate && audioPolygon != undefined)) ? 1 : 0
+	 	 
+	 	 	let setAudio;
+	 	 	if(audioPolygon != undefined){
+	 	 		setAudio = is_token_in_raycasting_context(tokensToCheck[checkedTokenId], audioCanvasCtx) && (!wallsBlocked || (tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx)));
+		 	} else if(tokenMovePolygon != undefined){
+				setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
+		 	}
 			if(setAudio){
 			//set volume to calculated volume
 				calcVolume = (tempCalcVolume > calcVolume) ? tempCalcVolume : calcVolume
@@ -4167,7 +4176,6 @@ function setAudioAura (token, options){
 							`;
 
 		token.find('.audio-radius').attr('style', auraStyles)
-
 }
 
 
@@ -4658,6 +4666,7 @@ function draw_selected_token_bounding_box(){
 
 /// draws a rectangle around every selected token, and adds a rotation grabber
 async function do_draw_selected_token_bounding_box() {
+	clear_temp_canvas();
 	remove_selected_token_bounding_box()
 	// hold a separate list of selected ids so we don't have to iterate all tokens during bulk token operations like rotation
 	window.CURRENTLY_SELECTED_TOKENS = [];
@@ -4742,8 +4751,11 @@ async function do_draw_selected_token_bounding_box() {
 				} else {
 					right = Math.max(right, tokenRight);
 				}
+				if(token.options.audioChannel?.audioArea != undefined){
+					drawPolygon(temp_context, token.options.audioChannel.audioArea, 'rgba(255, 0, 0, 0.3)', true);
+				}
 			}
-
+			
 			// add 10px to each side of out bounding box to give the tokens a little space
 			let borderOffset = 10;
 			top = (top - borderOffset);
