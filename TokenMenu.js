@@ -717,6 +717,13 @@ function token_context_menu_expanded(tokenIds, e) {
 	if(audioToken != undefined){
 		if(!window.DM)
 			return;
+		
+		
+		if(window.TOKEN_OBJECTS[tokenIds].options.audioChannel?.audioArea != undefined){
+			clear_temp_canvas();
+			drawPolygon(temp_context, window.TOKEN_OBJECTS[tokenIds].options.audioChannel.audioArea, 'rgba(255, 0, 0, 0.3)', true);
+		}
+		
 		if (tokens.length > 1 || (tokens.length == 1 && tokens[0].options.groupId != undefined)) {
 			let addButtonInternals = `Group Tokens<span class="material-icons add-link"></span>`;
 			let removeButtonInternals = `Remove From Group<span class="material-icons link-off"></span>`;
@@ -747,6 +754,22 @@ function token_context_menu_expanded(tokenIds, e) {
 			});
 			body.append(groupTokens);
 		}
+		let polygonAudioButton = $(`<button class="context-menu-icon-hidden spatial-tracking material-icons">${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.audioArea == undefined ? 'Draw Polygon Audio Area' : 'Remove Polygon Audio Area'}</button>`)
+		polygonAudioButton.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			if(window.TOKEN_OBJECTS[tokenIds].options.audioChannel.audioArea == undefined){
+				window.drawingAudioTokenId = tokenIds[0];
+				window.drawAudioPolygon = true;
+				close_token_context_menu();
+			}
+			else{
+				$(this).text('Draw Polygon Audio Area')
+				delete window.TOKEN_OBJECTS[tokenIds].options.audioChannel.audioArea;
+				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+				clear_temp_canvas();
+			}
+
+		});
 		let toTopMenuButton = $("<button class='material-icons to-top'>Move to Top</button>");
 		let toBottomMenuButton = $("<button class='material-icons to-bottom'>Move to Bottom</button>")
 
@@ -820,28 +843,27 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 		body.append(hiddenMenuButton);
 
-
 		let attenuateButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden spatial-audio-off material-icons">Distance based volume</button>`)
-			attenuateButton.off().on("click", function(clickEvent){
-				let clickedItem = $(this);
-				
-				window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate;
-				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition context-menu-icon-hidden spatial-audio-off material-icons' : 'none-active context-menu-icon-hidden spatial-audio-off material-icons';
-				$(this).attr('class', `${classes}`)
-				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
-			});
+		attenuateButton.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			
+			window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate;
+			let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.attenuate ? 'single-active active-condition context-menu-icon-hidden spatial-audio-off material-icons' : 'none-active context-menu-icon-hidden spatial-audio-off material-icons';
+			$(this).attr('class', `${classes}`)
+			window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+		});
 
 
 		body.append(attenuateButton);
 		let wallsBlockedButton = $(`<button class="${window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked ? 'single-active active-condition' : 'none-active'} context-menu-icon-hidden select-to-speak material-icons">Blocked by Walls</button>`)
-			wallsBlockedButton.off().on("click", function(clickEvent){
-				let clickedItem = $(this);
-				
-				window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked;
-				let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked ? 'single-active active-condition context-menu-icon-hidden select-to-speak material-icons' : 'none-active context-menu-icon-hidden select-to-speak material-icons';
-				$(this).attr('class', `${classes}`)
-				window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
-			});
+		wallsBlockedButton.off().on("click", function(clickEvent){
+			let clickedItem = $(this);
+			
+			window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked = !window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked;
+			let classes = window.TOKEN_OBJECTS[tokenIds].options.audioChannel.wallsBlocked ? 'single-active active-condition context-menu-icon-hidden select-to-speak material-icons' : 'none-active context-menu-icon-hidden select-to-speak material-icons';
+			$(this).attr('class', `${classes}`)
+			window.TOKEN_OBJECTS[tokenIds].place_sync_persist();
+		});
 
 		body.append(wallsBlockedButton);
 		let upsq = window.CURRENT_SCENE_DATA.upsq;
@@ -863,6 +885,10 @@ function token_context_menu_expanded(tokenIds, e) {
 		});
 
 		body.append(audioRangeInput);
+
+
+
+		body.append(polygonAudioButton);
 
 		if (tokens.length === 1) {
 			let notesRow = $(`<div class="token-image-modal-footer-select-wrapper flyout-from-menu-item"><div class="token-image-modal-footer-title">Token Note</div></div>`);

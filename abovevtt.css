@@ -1615,6 +1615,10 @@ div#combat-tracker-settings form > div {
     content:"\ebe8"; 
     padding: 2px 0px;
 }
+.spatial-tracking.material-icons:before{
+    content:"\ebea"; 
+    padding: 2px 0px;
+}
 #tokenOptionsContainer .select-to-speak.material-icons:before{
     font-family: 'Material Symbols Outlined' !important;
     content:"\f7cf";

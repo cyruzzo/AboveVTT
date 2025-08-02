@@ -1730,7 +1730,7 @@ class MessageBroker {
 							window.DRAWINGS = [];
 						}
 						window.LOADING = true;
-						if(!window.DM && (data.player_map_is_video == '1' || data.player_map?.includes('youtube.com') || data.player_map?.includes("youtu.be") || data.is_video == '1')){
+						if(!window.DM){
 							data.map = data.player_map;
 							data.is_video = data.player_map_is_video;
 						}

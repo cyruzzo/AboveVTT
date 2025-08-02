@@ -2662,8 +2662,8 @@ function drawing_mousedown(e) {
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
 	window.DRAWLOCATION = data.location
-	window.DRAWSHAPE = data.shape;
-	window.DRAWFUNCTION = data.function;
+	window.DRAWSHAPE = window.drawAudioPolygon ? 'polygon' : data.shape;
+	window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : data.function;
 
 	//these are used with walls or elevation tool
 	window.wallTop = data.wall_top_height;
@@ -3433,7 +3433,8 @@ function drawing_mouseup(e) {
 		window.DRAWFUNCTION == "hide" ||
 		window.DRAWFUNCTION == "draw_text" ||
 		window.DRAWFUNCTION === "select" || 
-		window.DRAWFUNCTION == "elev") && e.which !== 1 && !e.touches)
+		window.DRAWFUNCTION == "elev" || 
+		window.DRAWFUNCTION == "audio-polygon") && e.which !== 1 && !e.touches)
 	{
 		return;
 	}
@@ -5132,6 +5133,14 @@ function savePolygon(e) {
 		redraw_elev();
 		redraw_drawn_light();
 		redraw_drawings();
+	}
+	else if(window.DRAWFUNCTION === 'audio-polygon'){
+		const token = window.TOKEN_OBJECTS[window.drawingAudioTokenId];
+		token.options.audioChannel.audioArea = polygonPoints;
+		token.place_sync_persist();
+		debounceAudioChecks();
+		delete window.drawingAudioTokenId 
+		delete window.drawAudioPolygon
 	}
 	else{
 		data = [
