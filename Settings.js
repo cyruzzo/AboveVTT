@@ -929,7 +929,6 @@ function init_settings() {
 		body.append(`
 			<br />
 			<h3 class="token-image-modal-footer-title">Default Token Options</h3>
-			<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>
 		`);
 
 		let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
@@ -976,7 +975,6 @@ function init_settings() {
 		body.append(`
 			<br />
 			<h3 class="token-image-modal-footer-title">Default Scene Options</h3>
-			<div class="sidebar-panel-header-explanation">Every time you create a scene, these settings will be used.</div>
 		`);
 
 		let sceneOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Scene Options</button>`);
@@ -991,7 +989,7 @@ function init_settings() {
 				}, function() {
 					persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
 				}, false, true, true);
-				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you create a scene these settings will be used</div>`);
 				flyout.append(optionsContainer);
 				position_flyout_left_of(body, flyout);
 			});

@@ -803,12 +803,47 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				return;
 			}
 
+			const mapButtonDetails = {};
+			const mapButtons = iframe.contents().find(".map-button");
+			const frameBody = iframe.contents().find('body');
+			mapButtons.each(function(){
+				const id = this.id;
+				const href = this.href;
+				const mapImg = $(this).parent().find('img')
+				const mapImgSrc = mapImg.attr('src');
+				const naturalWidth = mapImg[0]?.naturalWidth;
+				const naturalHeight = mapImg[0]?.naturalHeight;
+				const left = parseFloat($(this).css('left'))/100;
+				const top = parseFloat($(this).css('top'))/100;
+				const text = $(this).text();
+			    const body = frameBody.clone();
+				const bodyClass = body.attr('class');
+				const subClasses = ['p-article-a', 'p-article-content'] 
+
+				const section = body.find(href.match(/#.*$/gi)[0]);
+				if(section.length == 0)
+					return // linking to another scene so return, don't add note or token
+				const sectionElementType = section[0].tagName;
+
+				const sectionHtml = $('<div>').append(section.nextUntil(`${sectionElementType}`).addBack());
+
+				if(mapButtonDetails[mapImgSrc] == undefined)
+					mapButtonDetails[mapImgSrc] = {};
+				mapButtonDetails[mapImgSrc][id] ={
+					'left': left*naturalWidth,
+					'top': top*naturalHeight,
+					'text': text,
+					'href': href,
+					'sectionHtml': sectionHtml.html()
+				}
+			})	
 
 			iframe.contents().find("figure").each(function(idx) { // FIGURE + FIGCAPTION. 
 				let id = $(this).attr('id');
 				if (typeof id == typeof undefined)
 					return;
-				let img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right").attr("href");
+				let img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right, .compendium-center-banner-img").attr("href") || $(this).children('img').attr('src');
+
 				let links = $(this).find("figcaption a");
 				let player_map = '';
 				let dm_map = '';
@@ -820,7 +855,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					.text();
 
 				let thumb = $(this).find("img").attr('src');
-
+				const tokens = {};
+				const notes = {};
 				dm_map = img1;
 				if (links.length > 0) {
 					if(links.filter('[data-title*="Tokens"]').length>0){
@@ -835,6 +871,38 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				else {
 					player_map = img1;
 				}
+				if(mapButtonDetails[player_map] != undefined){
+					for(let i in mapButtonDetails[player_map]){
+						const currButton = mapButtonDetails[player_map][i]
+
+
+						const newTokenId = uuid();
+						const options = {
+							...default_options(),
+							...window.TOKEN_SETTINGS,
+							id: newTokenId,
+							name: currButton.text,
+							left: `${currButton.left}px`,
+							top: `${currButton.top}px`,
+							imgsrc: `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/${parseInt(currButton.text.replaceAll(/\D/gi, ''))}.png`,
+							hidden: true,
+							locked: true,
+							disableborder: true
+
+						}
+						const newToken = new Token(options);
+						tokens[newTokenId] = newToken.options;
+
+						notes[newTokenId] = {
+							plain: '',
+							title: currButton.text,
+							statBlock: false,
+							text: currButton.sectionHtml,
+							player: false
+						}
+					}
+
+				}
 				self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
 					id: id,
 					uuid: source_keyword + "/" + chapter_keyword + "/" + id,
@@ -846,7 +914,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 					thumb: thumb,
 					scale: "100",
 					dm_map_usable: dm_map ? "1" : '0',
-					tokens: {},
+					tokens: tokens,
+					notes: notes
 				});
 			});
 

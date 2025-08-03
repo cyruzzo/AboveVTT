@@ -3153,16 +3153,15 @@ function build_tutorial_import_list_item(scene, logo, allowMagnific = true) {
 			}	
 			importData.tokens = tokensObject;
 		}
-
+		if(importData.notes != undefined){
+			for(let id in importData.notes){
+				window.JOURNAL.notes[id] = {...importData.notes[id]};
+			}
+			window.JOURNAL.persist();
+			delete importData.notes;
+		}
 		AboveApi.migrateScenes(window.gameId, [importData])
 			.then(() => {
-				if(importData.notes != undefined){
-					for(let id in importData.notes){
-						window.JOURNAL.notes[id] = {...importData.notes[id]};
-					}
-					window.JOURNAL.persist();
-					delete importData.notes;
-				}
 				window.ScenesHandler.scenes.push(importData);
 				did_update_scenes();
 				$(`.scene-item[data-scene-id='${importData.id}'] .dm_scenes_button`).click();
