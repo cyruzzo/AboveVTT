@@ -45,6 +45,7 @@ $(function() {
       .then(() => {
 
         if (is_encounters_page()) {
+          inject_dice();
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
         } else if (is_characters_page()) {
@@ -249,10 +250,14 @@ $(function() {
           rpgRoller: window.EXPERIMENTAL_SETTINGS['rpgRoller']
         })
         sendBeyond20Event('register-generic-tab', {action:'register-generic-tab'});
+        if (is_encounters_page()) {
+          window.dispatchEvent(new Event('resize'));
+        }
       })
       .catch((error) => {
         showError(error, `Failed to start AboveVTT on ${window.location.href}`);
       });  
+     
   }
 });
 
@@ -367,7 +372,7 @@ async function start_above_vtt_for_dm() {
   window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = dm_id;
   window.PLAYER_SHEET = false;
-
+  $(".gamelog-button, button[class*='gamelog-button']").click();
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
@@ -387,6 +392,7 @@ async function start_above_vtt_for_dm() {
   // This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
   $("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
   $("#site-main").css({"display": "block", "visibility": "hidden"});
+  $('.page-header, .ddb-campaigns-detail-body, .ddb-campaigns-detail-header').remove();
   $(".dice-rolling-panel").css({"visibility": "visible"});
   $("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
   $("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
@@ -412,6 +418,37 @@ async function start_above_vtt_for_dm() {
   })
   $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
   remove_loading_overlay();
+  inject_chat_buttons();
+  $('.glc-game-log>[class*="-Container-Flex"]>[class*="-Title"]').after(`<div class="tss-ko5p4u-Flex"><span class="tss-l9t796-SendToLabel">Send To (Default):</span><button class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary tss-pbe4l0-Button ddb-character-app-bk8fa3" tabindex="0" type="button"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 13.75C6.66 13.75 2 14.92 2 17.25V19H16V17.25C16 14.92 11.34 13.75 9 13.75ZM4.34 17C5.18 16.42 7.21 15.75 9 15.75C10.79 15.75 12.82 16.42 13.66 17H4.34ZM9 12C10.93 12 12.5 10.43 12.5 8.5C12.5 6.57 10.93 5 9 5C7.07 5 5.5 6.57 5.5 8.5C5.5 10.43 7.07 12 9 12ZM9 7C9.83 7 10.5 7.67 10.5 8.5C10.5 9.33 9.83 10 9 10C8.17 10 7.5 9.33 7.5 8.5C7.5 7.67 8.17 7 9 7ZM16.04 13.81C17.2 14.65 18 15.77 18 17.25V19H22V17.25C22 15.23 18.5 14.08 16.04 13.81V13.81ZM15 12C16.93 12 18.5 10.43 18.5 8.5C18.5 6.57 16.93 5 15 5C14.46 5 13.96 5.13 13.5 5.35C14.13 6.24 14.5 7.33 14.5 8.5C14.5 9.67 14.13 10.76 13.5 11.65C13.96 11.87 14.46 12 15 12Z" fill="currentColor"></path></svg></span>Everyone<span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10L12 15L17 10H7Z" fill="currentColor"></path></svg></span></button></div>`)
+  $('body').append(`
+    <style>
+      .glc-game-log [class*="ddb-character-app"] svg{
+       font-size: 20px !important;
+       user-select: none;
+       width: 1em;
+       height: 1em;
+       display: inline-block;
+       fill: currentcolor;
+       flex-shrink: 0;
+       font-size: 1.5rem;
+       transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .glc-game-log [class*="-SendToLabel"] ~ button,
+      .glc-game-log [class*="-SendToLabel"] ~ button>span{
+          display:flex;
+          align-items:center;
+          align-content: center;
+      }
+
+      .sidebar{
+        height: 100% !important;
+      }
+      .stream-dice-button{
+        top: 40px;
+      }
+    </style>
+    `)
+  
 }
 const debounceResizeUI = mydebounce(function(){
   init_character_page_sidebar();
@@ -490,7 +527,7 @@ async function lock_character_gamelog_open() {
   }
 
   // Open the gamelog, and lock it open
-  let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button");
+  let gameLogButton = $("div.ct-character-header__group--game-log.ct-character-header__group--game-log-last, [data-original-title='Game Log'] button, button[class*='-gamelog-button']");
   if(gameLogButton.length == 0){
     $(`[d='M243.9 7.7c-12.4-7-27.6-6.9-39.9 .3L19.8 115.6C7.5 122.8 0 135.9 0 150.1V366.6c0 14.5 7.8 27.8 20.5 34.9l184 103c12.1 6.8 26.9 6.8 39.1 0l184-103c12.6-7.1 20.5-20.4 20.5-34.9V146.8c0-14.4-7.7-27.7-20.3-34.8L243.9 7.7zM71.8 140.8L224.2 51.7l152 86.2L223.8 228.2l-152-87.4zM48 182.4l152 87.4V447.1L48 361.9V182.4zM248 447.1V269.7l152-90.1V361.9L248 447.1z']`).closest('[role="button"]'); // this is a fall back to look for the gamelog svg icon and look for it's button.
   }

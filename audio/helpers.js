@@ -19,6 +19,7 @@ function playerID() {
     const parts = window.location.pathname.split('/').filter(i => i);
     switch (parts[0]) {
         case 'encounters':
+        case 'campaigns':
             return 'DM';
         case 'characters':
             if (!parts[1]) {

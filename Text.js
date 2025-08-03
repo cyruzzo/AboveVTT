@@ -736,7 +736,7 @@ function draw_text(
             stop: function (event, ui) {
                 $('.iframeResizeCover').remove();
                 
-                for(let drawing in window.DRAWINGS){
+                for(let drawing=0; drawing<window.DRAWINGS.length; drawing++){
                     if(window.DRAWINGS[drawing][9] != id)
                         continue;
                     window.DRAWINGS[drawing][1] = parseInt($(this).css('left'))*adjustScale;
@@ -749,7 +749,7 @@ function draw_text(
 
         textSVG.on('contextmenu', function(e){
             $(this).remove();
-            for(let drawing in window.DRAWINGS){
+            for(let drawing=0; drawing<window.DRAWINGS.length; drawing++){
                 if(window.DRAWINGS[drawing][9] == this.id){
                     if(!window.DRAWINGS[drawing][11]){
                         window.DRAWINGS[drawing][11] = true;
