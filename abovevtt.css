@@ -1678,8 +1678,9 @@ div#combat-tracker-settings form > div {
     line-height: 1.1;
     margin: 0px 2px;
 }
-.encounter-builder{
-    displayt:none;
+.encounter-builder,
+.encounter-details{
+    display:none !important;
 }
 #scene_selector {
     position: fixed;

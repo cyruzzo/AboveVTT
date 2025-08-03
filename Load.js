@@ -160,6 +160,7 @@ if (isPlainCharacterPage) {
 	else if(isCampaignPage && !isDM){
 
 		window.scripts = [
+			{ src: "environment.js" },
 			{ src: "CoreFunctions.js" }, 		
 			{ src: "DDBApi.js" }, 
 			{ src: "Settings.js" },

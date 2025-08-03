@@ -439,12 +439,10 @@ async function start_above_vtt_for_dm() {
           align-items:center;
           align-content: center;
       }
-      .glc-game-log{
-        top: 25px;
-        position:absolute;
-        calc(100% - 24px);
-      }
 
+      .sidebar{
+        height: 100% !important;
+      }
     
     </style>
     `)
