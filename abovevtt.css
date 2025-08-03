@@ -1678,7 +1678,9 @@ div#combat-tracker-settings form > div {
     line-height: 1.1;
     margin: 0px 2px;
 }
-
+.encounter-builder{
+    displayt:none;
+}
 #scene_selector {
     position: fixed;
     left: 50%;
@@ -7132,21 +7134,21 @@ input.max_hp[disabled]{
 }
 
 /*one button*/
-.encounter-builder-app :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
+.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.encounter-builder-app :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
+.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.encounter-builder-app :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
+.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
     margin-right:0px;
 }
 /* four buttons */
-.encounter-builder-app :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
+.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
 
     margin-right:0px;
 }
@@ -12001,12 +12003,12 @@ div#playlistFields {
 
 .more-info,.RPGMonster-listing .more-info,.RPGMagicItem-listing .more-info,.ihomebrewable-listing .more-info,.RPGSpell-listing .more-info,.IGear-listing .more-info,.RPGFeat-listing .more-info,.RPGBackground-listing .more-info,.RPGSubclass-listing .more-info {
     position: relative;
-    top: -10px;
-    background-color: #fff;
+    top: -10px !important;
+    background-color: #fff !important;
     border: none;
-    width: calc(100% - 2px);
+    width: calc(100% - 2px) !important;
     margin: 0 auto;
-    padding: 5px 5px 0
+    padding: 5px 5px 0 !important;
 }
 
 
@@ -14051,56 +14053,56 @@ button#displayedDiceFormulaExit:hover {
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansOffc-BoldIta.ttf") format("truetype");
     font-weight: bold;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansOffc-Ita.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansOffc-Ita.ttf") format("truetype");
     font-weight: normal;
     font-style: italic
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansScOffc.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
 
 @font-face {
     font-family: 'Scala Sans SC Offc';
-    src: url("https://www.dndbeyond.com//fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/ScalaSansScOffc-Bold.ttf") format("truetype");
     font-weight: bold;
     font-style: normal
 }
 
 @font-face {
     font-family: 'MrsEavesSmallCaps';
-    src: url("https://www.dndbeyond.com//fonts/MrsEavesSmallCaps.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/MrsEavesSmallCaps.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }
 
 @font-face {
     font-family: 'DearSarahPro';
-    src: url("https://www.dndbeyond.com//fonts/DearSarahPro.ttf") format("truetype");
+    src: url("https://www.dndbeyond.com/fonts/DearSarahPro.ttf") format("truetype");
     font-weight: 100;
     font-style: normal
 }

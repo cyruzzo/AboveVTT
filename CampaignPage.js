@@ -26,8 +26,9 @@ $(function() {
           } else {
 
             inject_instructions();
-            inject_dm_join_button();  
             inject_player_join_buttons();
+            inject_dm_join_button();  
+            inject_dice();
           }
          });
       })
@@ -169,36 +170,34 @@ function inject_dm_join_button() {
       sendTo: false
     });
     $(e.currentTarget).addClass("button-loading");
-    DDBApi.fetchAllEncounters()         	    // Fetch all encounters, so we can delete all the old AboveVTT encounters in the next step
-      .then(DDBApi.deleteAboveVttEncounters)	// Delete any AboveVTT encounters that we've created in the past because we don't want to bloat the user's encounters with a bunch of AboveVTT encounters
-      .then(DDBApi.createAboveVttEncounter)  	// Create a new AboveVTT encounter that's tied to this campaign. We need an encounter tied to this campaign so that the dice rolling feature is tied to the current campaign.
-      .then((avttEncounter) => {
-        console.log("About to start AboveVTT for DM using a fresh encounter", avttEncounter);
-        window.open(`https://www.dndbeyond.com/encounters/${avttEncounter.id}?abovevtt=true`, '_blank');
-        // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
-        let oldText = $(".joindm").text();
-        $(".joindm").removeClass("button-loading");
-        $(".joindm").text("Check for blocked pop ups!");
-        // reset our join button text, so it looks normal the next time they're on this tab
-        setTimeout(function () {
-          $(".joindm").text(oldText);
-        }, 2000);
-      })
-      .catch((error) => {
-        if (error.message && error.message.includes("EncounterLimitException")) {
-          showErrorMessage(
-            error,
-            "It looks like you have too many encounters. DndBeyond limits free accounts to 8 encounters, and AboveVTT requires 1 encounter to run. Try deleting a few encounters, and then try again.",
-            `<a href="https://www.dndbeyond.com/my-encounters" target="_blank">My Encounters</a>`
-          );
-        } else {
-          showError(error, "Failed to start AboveVTT from dm join button");
-        }
-      })
-      .finally(() => {
-        $(e.currentTarget).removeClass("button-loading");
-      });
+    
+    try{
+      window.open(`${window.document.location.href}?abovevtt=true&dm=true`, '_blank');
+      // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
+      let oldText = $(".joindm").text();
+      $(".joindm").removeClass("button-loading");
+      $(".joindm").text("Check for blocked pop ups!");
+      // reset our join button text, so it looks normal the next time they're on this tab
+      setTimeout(function () {
+        $(".joindm").text(oldText);
+      }, 2000);
+    }   
+    catch(error) {
+      if (error.message && error.message.includes("EncounterLimitException")) {
+        showErrorMessage(
+          error,
+          "It looks like you have too many encounters. DndBeyond limits free accounts to 8 encounters, and AboveVTT requires 1 encounter to run. Try deleting a few encounters, and then try again.",
+          `<a href="https://www.dndbeyond.com/my-encounters" target="_blank">My Encounters</a>`
+        );
+      } else {
+        showError(error, "Failed to start AboveVTT from dm join button");
+      }
+    }
+      
+      
+    $(e.currentTarget).removeClass("button-loading");
   });
+
 }
 
 function inject_player_join_buttons() {
@@ -211,4 +210,109 @@ function inject_player_join_buttons() {
       characterCard.prepend(`<a style='color:white;background: #1b9af0;padding: 2px;' href='https://www.dndbeyond.com${characterPagePathname}?abovevtt=true' target='_blank' class='button ddb-campaigns-character-card-footer-links-item'>JOIN AboveVTT</a>`);
     }
   });
+}
+
+function inject_dice(){
+  window.encounterObserver = new MutationObserver(function(mutationList, observer) {
+
+    mutationList.forEach(mutation => {
+      try {
+        let mutationTarget = $(mutation.target);
+        //Remove beyond20 popup and swtich to gamelog
+        if(mutationTarget.hasClass('encounter-details') || mutationTarget.hasClass('encounter-builder')){
+          mutationTarget.remove();
+         
+        }
+        if($(mutation.addedNodes).is('.encounter-builder')){
+          $(mutation.addedNodes).remove();
+        }
+        window.encounterObserver.disconnect();
+      } catch{
+        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
+      }
+    });
+  })
+
+
+  const mutation_target = $('body')[0];
+  //observers changes to body direct children being removed/added
+  const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+  window.encounterObserver.observe(mutation_target, mutation_config) 
+
+  $('body').append(`<div class="container">
+     
+        <div id="encounter-builder-root" data-config="{&quot;analyticsEventDelay&quot;:500,&quot;autoSaveTimeFrame&quot;:3000,&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;branchName&quot;:&quot;refs/tags/v1.0.26&quot;,&quot;buildKey&quot;:&quot;5ae3809f24498ec4c7eeb928446e52f2efde2261&quot;,&quot;buildNumber&quot;:&quot;34&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;dateMessageUpdateInterval&quot;:60000,&quot;saveUpdateEncounterSpinnerDelay&quot;:3000,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;environment&quot;:&quot;production&quot;,&quot;fetchThrottleDelay&quot;:250,&quot;launchDarkylyClientId&quot;:&quot;5c63387e40bda9329a652b74&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;marketplaceUrl&quot;:&quot;https://www.dndbeyond.com/marketplace&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;production&quot;:true,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;,&quot;tagName&quot;:&quot;v1.0.26&quot;,&quot;toastAutoDeleteInterval&quot;:3000,&quot;tooltipUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;version&quot;:&quot;1.0.26&quot;}" data-environment="production" data-branch-name="refs/tags/v1.0.26" data-build-number="34" data-build-key="5ae3809f24498ec4c7eeb928446e52f2efde2261" data-debug="false" data-tag-name="v1.0.26" data-version="1.0.26">
+           <div class="encounter-details">
+           </div>
+           <div class="dice-rolling-panel">
+              <div class="dice-toolbar  ">
+                 <div class="dice-toolbar__dropdown ">
+                    <div class=" dice-toolbar__dropdown-die"><span class="dice-icon-die dice-icon-die--d20"></span></div>
+                    <div role="group" class="MuiButtonGroup-root MuiButtonGroup-outlined dice-toolbar__target css-3fjwge" aria-label="roll actions">
+                       <button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedOutlined MuiButtonGroup-groupedOutlinedHorizontal MuiButtonGroup-groupedOutlinedPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButtonGroup-grouped MuiButtonGroup-groupedHorizontal MuiButtonGroup-groupedOutlined MuiButtonGroup-groupedOutlinedHorizontal MuiButtonGroup-groupedOutlinedPrimary css-79xub" tabindex="0" type="button">
+                          <div class="MuiBox-root css-dgzhqv">
+                             <p class="MuiTypography-root MuiTypography-body1 dice-toolbar__target-roll css-9l3uo3">Roll</p>
+                          </div>
+                       </button>
+                    </div>
+                    <div class="dice-toolbar__dropdown-top" style="display: none;">
+                       <div class="dice-die-button" data-dice="d20">
+                          <span class="dice-icon-die dice-icon-die--d20"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d20
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d12">
+                          <span class="dice-icon-die dice-icon-die--d12"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d12
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d10">
+                          <span class="dice-icon-die dice-icon-die--d10"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d10
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d100">
+                          <span class="dice-icon-die dice-icon-die--d100"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d100
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d8">
+                          <span class="dice-icon-die dice-icon-die--d8"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d8
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d6">
+                          <span class="dice-icon-die dice-icon-die--d6"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d6
+                          </div>
+                       </div>
+                       <div class="dice-die-button" data-dice="d4">
+                          <span class="dice-icon-die dice-icon-die--d4"></span>
+                          <div class="dice-die-button__tooltip">
+                             <div class="dice-die-button__tooltip__pip"></div>
+                             d4
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <canvas class="dice-rolling-panel__container" width="1917" height="908" data-engine="Babylon.js v6.3.0" touch-action="none" tabindex="1" style="touch-action: none; -webkit-tap-highlight-color: transparent;"></canvas>
+           </div>
+        </div>
+        <script src="https://media.dndbeyond.com/encounter-builder/static/js/main.221d749b.js"></script>
+  </div>
+  `);
+
 }
