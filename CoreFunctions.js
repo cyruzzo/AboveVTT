@@ -1039,7 +1039,8 @@ function inject_dice(){
   const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
   window.encounterObserver.observe(mutation_target, mutation_config) 
 
-  $('body').append(`<div name="message-broker-client">
+  $('body').append(`<div name="message-broker-client">    
+  <div id="message-broker-client" data-source="web" data-connecturl="wss://game-log-api-live.dndbeyond.com/v1" data-getmessagesurl="https://game-log-rest-live.dndbeyond.com/v1/getmessages" data-gameid="0" data-userid="100666635" data-config="{&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;baseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;diceServiceUrl&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;diceThumbnailsUrl&quot;:&quot;https://www.dndbeyond.com/dice/images/thumbnails&quot;,&quot;debug&quot;:false,&quot;environment&quot;:&quot;production&quot;,&quot;launchDarkylyClientId&quot;:&quot;5c63387e40bda9329a652b74&quot;,&quot;production&quot;:true,&quot;version&quot;:&quot;2.2.0&quot;}" data-environment="production">
 
     </div>
         <script src="https://media.dndbeyond.com/message-broker-client/_dndbeyond_message_broker_client.00a081b659ffc6309334.bundle.js"></script>
