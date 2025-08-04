@@ -426,6 +426,84 @@ function avtt_settings() {
 				],
 				defaultValue: false,
 				class: 'ui'
+			},
+			{	
+				name: "tokenDefaults",
+				label: "Token Settings Defaults",
+				buttonText: "Edit",
+				type: "customButton",
+				customFunction: function (clickEvent, body) {
+					build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+						let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
+							if (value === true || value === false || typeof value === 'string' || typeof value === 'object') {
+								window.TOKEN_SETTINGS[name] = value;
+							} else {
+								delete window.TOKEN_SETTINGS[name];
+							}
+						}, function() {
+							let visionInput = $("input[name='visionColor']").spectrum("get");
+			   				let light1Input = $("input[name='light1Color']").spectrum("get");
+			    			let light2Input = $("input[name='light2Color']").spectrum("get");
+			        		
+			        		window.TOKEN_SETTINGS.vision.color= `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
+			   				window.TOKEN_SETTINGS.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
+			    			window.TOKEN_SETTINGS.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
+
+							persist_token_settings(window.TOKEN_SETTINGS);
+							redraw_settings_panel_token_examples();
+						}, true);
+						optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
+						
+						const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
+						let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
+						clearAllTokenOverrides.on("click", function() {
+							if (confirm(clearAllOverridesWarning)) {
+								window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
+								persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+								redraw_settings_panel_token_examples();
+							}
+						});
+						optionsContainer.append(clearAllTokenOverrides);
+
+						flyout.append(optionsContainer);
+						position_flyout_left_of(body, flyout);
+					});
+				},
+				class: 'defaults'
+			},
+			{	
+				name: "sceneDefaults",
+				label: "Scene Settings Defaults",
+				buttonText: "Edit",
+				type: "customButton",
+				customFunction: function (clickEvent, body) {
+					const self=this;
+					build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+						let optionsContainer = build_sidebar_token_options_flyout(scene_setting_options(), window.SCENE_DEFAULT_SETTINGS, function (name, value) {
+							if (value != 'undefined' && (value === true || value === false || typeof value === 'string' || typeof value === 'object' || typeof value === 'number')) {
+								window.SCENE_DEFAULT_SETTINGS[name] = value;
+							} else { 
+								delete window.SCENE_DEFAULT_SETTINGS[name];
+							}
+						}, function() {
+							persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
+						}, false, true, true);
+						optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you create a scene these settings will be used</div>`);
+						const clearAllSceneDefaultWarning = `Are you sure you want to reset your scene defaults?`;
+						let clearAllSceneDefault = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllSceneDefaultWarning}" style="width:100%;padding:8px;margin:10px 0px;">Reset Scene Defaults</button>`);
+						clearAllSceneDefault.on("click", function() {
+							if (confirm(clearAllSceneDefaultWarning)) {
+								window.SCENE_DEFAULT_SETTINGS = {};
+								persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
+								self.customFunction(clickEvent, body);
+							}
+						});
+						optionsContainer.append(clearAllSceneDefault);
+						flyout.append(optionsContainer);
+						position_flyout_left_of(body, flyout);
+					});
+				},
+				class: 'defaults'
 			}
 		);
 	} else {
@@ -575,55 +653,55 @@ function avtt_settings() {
 			},
 			{
 		        name: 'customDieRoll1',
-			        label: 'Custom Roll 1 Key',
+		        label: 'Custom Roll 1 Key',
 				type: 'text',
 		        defaultValue: '1d4'
 			},
 			{
 		        name: 'customDieRoll2',
-			        label: 'Custom Roll 2 Key',
+		        label: 'Custom Roll 2 Key',
 				type: 'text',
 		        defaultValue: '1d6'
 			},
 			{
 		        name: 'customDieRoll3',
-			        label: 'Custom Roll 3 Key',
+		        label: 'Custom Roll 3 Key',
 				type: 'text',
 		        defaultValue: '1d8'
 			},
 			{
 		        name: 'customDieRoll4',
-			        label: 'Custom Roll 4 Key',
+		        label: 'Custom Roll 4 Key',
 				type: 'text',
 		        defaultValue: '1d100'
 			},
 			{
 		        name: 'customDieRoll5',
-			        label: 'Custom Roll 5 Key',
+		        label: 'Custom Roll 5 Key',
 				type: 'text',
 		        defaultValue: '1d10'
 			},
 			{
 		        name: 'customDieRoll6',
-			        label: 'Custom Roll 6 Key',
+		        label: 'Custom Roll 6 Key',
 				type: 'text',
 		        defaultValue: '1d12'
 			},
 			{
 		        name: 'customDieRoll7',
-			        label: 'Custom Roll 7 Key',
+		        label: 'Custom Roll 7 Key',
 				type: 'text',
 		        defaultValue: '1d20'
 			},
 			{
 		        name: 'customDieRoll8',
-			        label: 'Custom Roll 8 Key',
+		        label: 'Custom Roll 8 Key',
 				type: 'text',
 		        defaultValue: '2d20kl1'
 			},
 			{
 		        name: 'customDieRoll9',
-			        label: 'Custom Roll 9 Key',
+		        label: 'Custom Roll 9 Key',
 				type: 'text',
 		        defaultValue: '2d20kh1'
 			},
@@ -889,7 +967,21 @@ function download(data, filename, type) {
         }, 0);
     }
 }
-
+function persist_default_scene_settings(settings, callback) {
+    if (typeof callback !== 'function') {
+        callback = function(){};
+    }	    
+    console.log("persist_default_scene_settings", settings, JSON.stringify(settings));
+    try{
+        localStorage.setItem(`SceneDefaults-${window.gameId}`, JSON.stringify(settings));
+        
+    }    
+    catch(e){
+        console.warn('localStorage saving Scene Defaults Failed', e)
+    }
+    window.SCENE_DEFAULT_SETTINGS = settings;
+    callback();
+}
 
 function init_settings() {
 
@@ -925,112 +1017,17 @@ function init_settings() {
 		`);
 
 		$("#input_file").change(import_readfile);
-
-		body.append(`
-			<br />
-			<h3 class="token-image-modal-footer-title">Default Token Options</h3>
-		`);
-
-		let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Token Options</button>`);
-		tokenOptionsButton.on("click", function (clickEvent) {
-			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-				let optionsContainer = build_sidebar_token_options_flyout(token_setting_options(), window.TOKEN_SETTINGS, function (name, value) {
-					if (value === true || value === false || typeof value === 'string' || typeof value === 'object') {
-						window.TOKEN_SETTINGS[name] = value;
-					} else {
-						delete window.TOKEN_SETTINGS[name];
-					}
-				}, function() {
-					let visionInput = $("input[name='visionColor']").spectrum("get");
-	   				let light1Input = $("input[name='light1Color']").spectrum("get");
-	    			let light2Input = $("input[name='light2Color']").spectrum("get");
-	        		
-	        		window.TOKEN_SETTINGS.vision.color= `rgba(${visionInput._r}, ${visionInput._g}, ${visionInput._b}, ${visionInput._a})`;
-	   				window.TOKEN_SETTINGS.light1.color = `rgba(${light1Input._r}, ${light1Input._g}, ${light1Input._b}, ${light1Input._a})`;
-	    			window.TOKEN_SETTINGS.light2.color = `rgba(${light2Input._r}, ${light2Input._g}, ${light2Input._b}, ${light2Input._a})`;
-
-					persist_token_settings(window.TOKEN_SETTINGS);
-					redraw_settings_panel_token_examples();
-				}, true);
-				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you place a token on the scene, these settings will be used. You can override these settings on a per-token basis by clicking the gear on a specific token row in the tokens tab.</div>`);
-				flyout.append(optionsContainer);
-				position_flyout_left_of(body, flyout);
-			});
-		});
-		body.append(tokenOptionsButton);
-
-		const clearAllOverridesWarning = `This will remove ALL overridden token options from every player, monster, custom token, and folder in the Tokens Panel. This shouldn't remove any custom images from those tokens. This will not update any tokens that have been placed on a scene. This cannot be undone.`;
-		let clearAllTokenOverrides = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear All Token Option Overrides</button>`);
-		clearAllTokenOverrides.on("click", function() {
-			if (confirm(clearAllOverridesWarning)) {
-				window.TOKEN_CUSTOMIZATIONS.forEach(tc => tc.clearTokenOptions());
-				persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
-			}
-		});
-		body.append(clearAllTokenOverrides);
-
-
-		body.append(`<br />`);
-
-		body.append(`
-			<br />
-			<h3 class="token-image-modal-footer-title">Default Scene Options</h3>
-		`);
-
-		let sceneOptionsButton = $(`<button class="sidebar-panel-footer-button">Change The Default Scene Options</button>`);
-		sceneOptionsButton.on("click", function (clickEvent) {
-			build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
-				let optionsContainer = build_sidebar_token_options_flyout(scene_setting_options(), window.SCENE_DEFAULT_SETTINGS, function (name, value) {
-					if (value != 'undefined' && (value === true || value === false || typeof value === 'string' || typeof value === 'object' || typeof value === 'number')) {
-						window.SCENE_DEFAULT_SETTINGS[name] = value;
-					} else { 
-						delete window.SCENE_DEFAULT_SETTINGS[name];
-					}
-				}, function() {
-					persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
-				}, false, true, true);
-				optionsContainer.prepend(`<div class="sidebar-panel-header-explanation">Every time you create a scene these settings will be used</div>`);
-				flyout.append(optionsContainer);
-				position_flyout_left_of(body, flyout);
-			});
-		});
-		body.append(sceneOptionsButton);
-
-		const clearAllSceneDefaultWarning = `Are you sure you want to reset your scene defaults?`;
-		let clearAllSceneDefault = $(`<button class='token-image-modal-remove-all-button sidebar-hover-text' data-hover="${clearAllOverridesWarning}" style="width:100%;padding:8px;margin:10px 0px;">Clear Scene Default Customizations</button>`);
-		clearAllSceneDefault.on("click", function() {
-			if (confirm(clearAllOverridesWarning)) {
-				window.SCENE_DEFAULT_SETTINGS = {};
-				persist_default_scene_settings(window.SCENE_DEFAULT_SETTINGS);
-			}
-		});
-		body.append(clearAllSceneDefault);
-
-
 		body.append(`<br />`);
 
 
 	}
-	function persist_default_scene_settings(settings, callback) {
-	    if (typeof callback !== 'function') {
-	        callback = function(){};
-	    }	    
-	    console.log("persist_default_scene_settings", settings, JSON.stringify(settings));
-	    try{
-	        localStorage.setItem(`SceneDefaults-${window.gameId}`, JSON.stringify(settings));
-	        
-	    }    
-	    catch(e){
-	        console.warn('localStorage saving Scene Defaults Failed', e)
-	    }
-	    window.SCENE_DEFAULT_SETTINGS = settings;
-	    callback();
-	}
+
 	let experimental_features = avtt_settings();
 	body.append(`
 		<br />
-		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >Above VTT Settings</h3>
-		<div class="sidebar-panel-header-explanation"><b>Enabling these can have an impact on performance.</b></div>
+		<h3 class="token-image-modal-footer-title no-bottom-margin-setting" >AboveVTT Settings</h3>
+		<div class="sidebar-panel-header-explanation"><b>Some settings can have an impact on performance.</b></div>
+		<div class='avtt-settings-section avtt-settings-defaults'><h4 class="token-image-modal-footer-title">Default Settings</h4></div>
 		<div class='avtt-settings-section avtt-settings-ui'><h4 class="token-image-modal-footer-title">UI</h4></div>
 		<div class='avtt-settings-section avtt-settings-stream'><h4 class="token-image-modal-footer-title">Streaming/P2P</h4></div>
 		<div class='avtt-settings-section avtt-settings-performance'><h4 class="token-image-modal-footer-title">Performance</h4><div class="sidebar-panel-header-explanation"><b>These settings can improve performance</b></div></div>
@@ -1093,6 +1090,9 @@ function init_settings() {
 				inputWrapper = build_text_input(setting, currentValue, function(name, newValue){
 					set_avtt_setting_value(name, newValue);
 				})
+				break;
+			case "customButton":
+				inputWrapper = build_custom_button_input(setting);
 				break;
 		}
 		if (inputWrapper) {
@@ -1265,6 +1265,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 					updateValue(name, newValue);
 					didChange();
 				})
+				break; 
 			case "rangeInput":
 				inputWrapper = build_rangeInput_input(option, currentValue, function(name, newValue){
 					updateValue(name, newValue);
