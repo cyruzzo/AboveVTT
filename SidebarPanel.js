@@ -488,7 +488,20 @@ function build_flyout_input(settingOption, currentValue, changeHandler){
     wrapper.append(flyoutButton)
     return wrapper;
 }
-
+function build_custom_button_input(settingOption) {
+  if (typeof clickHandler !== 'function') {
+    changeHandler = function(){};
+  }
+  let wrapper = $(`
+     <div class="token-image-modal-footer-select-wrapper" data-option-name="${settingOption.name}">
+       <div class="token-image-modal-footer-title">${settingOption.label}</div>
+     </div>
+  `);
+  let flyoutButton = $(`<button class='sidebar-panel-footer-button avtt-small-settings-edit'>${settingOption.buttonText}</button>`);
+  flyoutButton.on("click", function(e){settingOption.customFunction(e, $('#settings-panel .sidebar-panel-body'))});
+  wrapper.append(flyoutButton)
+  return wrapper;
+}
 function build_text_input(settingOption, currentValue, changeHandler) {
   if (typeof changeHandler !== 'function') {
     changeHandler = function(){};
