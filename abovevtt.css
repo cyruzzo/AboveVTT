@@ -8749,7 +8749,9 @@ div.note[id^="ui-id"] .mce-listbox button{
 div.note[id^="ui-id"] .mce-btn button {
     padding: 1px 4px;
 }
-
+.ui-dialog{
+    padding: 0px !important;
+}
 .ui-dialog .ui-dialog-titlebar .ui-dialog-title {
     line-height: 18px;
 }
@@ -8923,9 +8925,13 @@ input[name='upsq'] {
 
 /*Start note ddb styling*/
 button.journal-view-button.journal-button {
-    top: 5px;
+    top: 5px !important;
     right: 27px;
-    padding: 2px;
+    padding: 0px;
+}
+button.journal-view-button.journal-button img {
+    height: 14px;
+    opacity: 0.6;
 }
 :root .note-text{
     --theme-page-fg-color: #242527;

@@ -423,9 +423,100 @@ async function start_above_vtt_for_dm() {
   $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
   remove_loading_overlay();
   inject_chat_buttons();
-  $('.glc-game-log>[class*="-Container-Flex"]>[class*="-Title"]').after(`<div class="tss-ko5p4u-Flex"><span class="tss-l9t796-SendToLabel">Send To (Default):</span><button class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary tss-pbe4l0-Button ddb-character-app-bk8fa3" tabindex="0" type="button"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 13.75C6.66 13.75 2 14.92 2 17.25V19H16V17.25C16 14.92 11.34 13.75 9 13.75ZM4.34 17C5.18 16.42 7.21 15.75 9 15.75C10.79 15.75 12.82 16.42 13.66 17H4.34ZM9 12C10.93 12 12.5 10.43 12.5 8.5C12.5 6.57 10.93 5 9 5C7.07 5 5.5 6.57 5.5 8.5C5.5 10.43 7.07 12 9 12ZM9 7C9.83 7 10.5 7.67 10.5 8.5C10.5 9.33 9.83 10 9 10C8.17 10 7.5 9.33 7.5 8.5C7.5 7.67 8.17 7 9 7ZM16.04 13.81C17.2 14.65 18 15.77 18 17.25V19H22V17.25C22 15.23 18.5 14.08 16.04 13.81V13.81ZM15 12C16.93 12 18.5 10.43 18.5 8.5C18.5 6.57 16.93 5 15 5C14.46 5 13.96 5.13 13.5 5.35C14.13 6.24 14.5 7.33 14.5 8.5C14.5 9.67 14.13 10.76 13.5 11.65C13.96 11.87 14.46 12 15 12Z" fill="currentColor"></path></svg></span>Everyone<span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10L12 15L17 10H7Z" fill="currentColor"></path></svg></span></button></div>`)
+  inject_dm_roll_default_menu();
+  
+}
+const debounceResizeUI = mydebounce(function(){
+  init_character_page_sidebar();
+  reposition_player_sheet();
+  if(!window.showPanel){
+    hide_sidebar(false);
+  }
+}, 100)
+
+function inject_dm_roll_default_menu(){
+  const gamelogTitle = $('.glc-game-log>[class*="-Container-Flex"]>[class*="-Title"]');
+  const flexContainer = $('<div class="tss-ko5p4u-Flex"></div>');
+  
+  const sendToLabel = $(`<span class="tss-l9t796-SendToLabel">Send To (Default):</span>`)
+  const sendToButton = $(`<button class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary tss-pbe4l0-Button ddb-character-app-bk8fa3" tabindex="0" type="button">
+    <span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
+      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M9 13.75C6.66 13.75 2 14.92 2 17.25V19H16V17.25C16 14.92 11.34 13.75 9 13.75ZM4.34 17C5.18 16.42 7.21 15.75 9 15.75C10.79 15.75 12.82 16.42 13.66 17H4.34ZM9 12C10.93 12 12.5 10.43 12.5 8.5C12.5 6.57 10.93 5 9 5C7.07 5 5.5 6.57 5.5 8.5C5.5 10.43 7.07 12 9 12ZM9 7C9.83 7 10.5 7.67 10.5 8.5C10.5 9.33 9.83 10 9 10C8.17 10 7.5 9.33 7.5 8.5C7.5 7.67 8.17 7 9 7ZM16.04 13.81C17.2 14.65 18 15.77 18 17.25V19H22V17.25C22 15.23 18.5 14.08 16.04 13.81V13.81ZM15 12C16.93 12 18.5 10.43 18.5 8.5C18.5 6.57 16.93 5 15 5C14.46 5 13.96 5.13 13.5 5.35C14.13 6.24 14.5 7.33 14.5 8.5C14.5 9.67 14.13 10.76 13.5 11.65C13.96 11.87 14.46 12 15 12Z" fill="currentColor"></path>
+      </svg>
+    </span>
+    Everyone
+    <span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d">
+      <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10L12 15L17 10H7Z" fill="currentColor">
+        </path>
+      </svg>
+    </span>
+  </button>`)
+  const selectMenu = $(`
+  <div class="gameLogSendToMenu MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 tss-13wrc40-menuPaper MuiMenu-paper MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 tss-13wrc40-menuPaper MuiPopover-paper css-1os3rtf" tabindex="-1" >
+   <ul class="MuiList-root MuiList-padding MuiMenu-list css-r8u8y9" role="menu" tabindex="-1">
+      <li class="tss-3a46y9-menuItemRoot MuiMenuItem-root MuiButtonBase-root css-qn0kvh" tabindex="0" role="menuitem" value="0">
+       <div class="tss-67466g-listItemIconRoot MuiListItemIcon-root css-17lvc79">
+          <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+             <path d="M9 13.75C6.66 13.75 2 14.92 2 17.25V19H16V17.25C16 14.92 11.34 13.75 9 13.75ZM4.34 17C5.18 16.42 7.21 15.75 9 15.75C10.79 15.75 12.82 16.42 13.66 17H4.34ZM9 12C10.93 12 12.5 10.43 12.5 8.5C12.5 6.57 10.93 5 9 5C7.07 5 5.5 6.57 5.5 8.5C5.5 10.43 7.07 12 9 12ZM9 7C9.83 7 10.5 7.67 10.5 8.5C10.5 9.33 9.83 10 9 10C8.17 10 7.5 9.33 7.5 8.5C7.5 7.67 8.17 7 9 7ZM16.04 13.81C17.2 14.65 18 15.77 18 17.25V19H22V17.25C22 15.23 18.5 14.08 16.04 13.81V13.81ZM15 12C16.93 12 18.5 10.43 18.5 8.5C18.5 6.57 16.93 5 15 5C14.46 5 13.96 5.13 13.5 5.35C14.13 6.24 14.5 7.33 14.5 8.5C14.5 9.67 14.13 10.76 13.5 11.65C13.96 11.87 14.46 12 15 12Z" fill="currentColor"></path>
+          </svg>
+       </div>
+       <div class="tss-1us1e8t-listItemTextRoot MuiListItemText-root css-1tsvksn">Everyone</div>
+       <div class="tss-67466g-listItemIconRoot MuiListItemIcon-root css-17lvc79">            
+        <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+         <path d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z" fill="currentColor"></path>
+        </svg></div>
+      </li>
+      <li class="tss-3a46y9-menuItemRoot MuiMenuItem-root MuiButtonBase-root css-qn0kvh" tabindex="-1" role="menuitem" value="1">
+         <div class="tss-67466g-listItemIconRoot MuiListItemIcon-root css-17lvc79">
+            <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+               <path d="M12 5.9C13.16 5.9 14.1 6.84 14.1 8C14.1 9.16 13.16 10.1 12 10.1C10.84 10.1 9.9 9.16 9.9 8C9.9 6.84 10.84 5.9 12 5.9ZM12 14.9C14.97 14.9 18.1 16.36 18.1 17V18.1H5.9V17C5.9 16.36 9.03 14.9 12 14.9ZM12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4ZM12 13C9.33 13 4 14.34 4 17V20H20V17C20 14.34 14.67 13 12 13Z" fill="currentColor"></path>
+            </svg>
+         </div>
+         <div class="tss-1us1e8t-listItemTextRoot MuiListItemText-root css-1tsvksn">Self</div>
+         <div class="tss-67466g-listItemIconRoot MuiListItemIcon-root css-17lvc79">
+            <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24">
+               <path d="M9.00016 16.17L4.83016 12L3.41016 13.41L9.00016 19L21.0002 7.00003L19.5902 5.59003L9.00016 16.17Z" fill="currentColor"></path>
+            </svg>
+         </div>
+      </li>
+   </ul>
+</div>`)
+  flexContainer.append(sendToLabel, sendToButton, selectMenu);
+  gamelogTitle.append(flexContainer);
+  flexContainer.off('click.swapRollDefault').on('click.swapRollDefault', '.gameLogSendToMenu li', function(e){
+    e.stopPropagation();
+    const target = $(e.target);
+    const selectedText = target.text().replaceAll(/\s+/gi, '');
+    const selectedSvg = target.find('div:first-of-type svg')?.[0]?.outerHTML;
+    sendToButton.html(`
+      <span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium ddb-character-app-1l6c7y9">
+        ${selectedSvg}
+      </span>
+      ${selectedText}
+      <span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium ddb-character-app-pt151d">
+        <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium ddb-character-app-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 10L12 15L17 10H7Z" fill="currentColor">
+          </path>
+        </svg>
+      </span>
+    `);
+    selectMenu.find('li.selected').toggleClass('selected');
+    target.toggleClass('selected', true);
+  })
+
+  
   $('body').append(`
     <style>
+      .glc-game-log .gameLogSendToMenu li div:last-of-type svg{
+        visibility: hidden;
+      }
+      .glc-game-log .gameLogSendToMenu li.selected div:last-of-type svg{
+        visibility: visible;
+      }
+      .glc-game-log .gameLogSendToMenu li *{
+        pointer-events: none;
+      }
+
       .glc-game-log [class*="ddb-character-app"] svg{
        font-size: 20px !important;
        user-select: none;
@@ -450,7 +541,48 @@ async function start_above_vtt_for_dm() {
       .stream-dice-button{
         top: 40px;
       }
+    .gameLogSendToMenu {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        display: flex;
+        z-index: 100000000;
+        width: 155px !important;
+        opacity: 1;
+        transform: none;
+        transition: opacity 241ms cubic-bezier(0.4, 0, 0.2, 1), transform 161ms cubic-bezier(0.4, 0, 0.2, 1) 50ms;
+        transform-origin: 75.8906px 0px;
+        padding: 0px !important;
+        transform: scale(0);
+        border-radius: 5px;
+      }
 
+      .MuiButtonBase-root:focus ~ .gameLogSendToMenu
+      {
+         transition: opacity 241ms cubic-bezier(0.4, 0, 0.2, 1), transform 161ms cubic-bezier(0.4, 0, 0.2, 1);
+         transform: scale(1);
+      }
+
+    .gameLogSendToMenu ul{
+        width: 100%;
+    }
+    .gameLogSendToMenu ul li {
+        width: 100%;
+        padding: 0px 5px;
+        display: flex !important;
+        align-items: center;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 40px;
+        color: rgb(60 60 60);
+        -webkit-box-align: center;
+        align-items: center;
+    }
+    .gameLogSendToMenu ul li:hover {
+      backdrop-filter: brightness(0.9)
+    }
 
     .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
         position: absolute !important;
@@ -480,10 +612,33 @@ async function start_above_vtt_for_dm() {
     .ui-dialog .ui-dialog-content {
      height: 500px !important;
     }
+    .ui-dialog .ui-dialog-titlebar {
+      border: 1px solid rgba(0,0,0,0.25) !important;
+    }
+    .journal-button{
+      top: 6px !important;
+    }
+    h3.token-image-modal-footer-title{
+      font-size:14px;
+    }
     .mce-btn {
       margin-right: 3px !important;
     }
-
+    .mce-btn {
+        border: 1px solid #b1b1b1 !important;
+        border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25) rgba(0,0,0,0.25) !important;
+        position: relative !important;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.75) !important;
+        display: inline-block !important;
+        *display: inline !important;
+        *zoom:1;-webkit-border-radius: 3px !important;
+        -moz-border-radius: 3px !important;
+        border-radius: 3px !important;
+        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        background-color: #f0f0f0 !important;
+    }
 
     .mce-i-save:before {
         content: "\\e000" !important;
@@ -713,15 +868,8 @@ async function start_above_vtt_for_dm() {
 
     </style>
     `)
-  
 }
-const debounceResizeUI = mydebounce(function(){
-  init_character_page_sidebar();
-  reposition_player_sheet();
-  if(!window.showPanel){
-    hide_sidebar(false);
-  }
-}, 100)
+
 async function start_above_vtt_for_players() {
   if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
     throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);

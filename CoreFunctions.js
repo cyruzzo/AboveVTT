@@ -20,7 +20,7 @@ $(function() {
   $("head").append('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />');
   if (is_encounters_page()) {
     window.DM = true; // the DM plays from the encounters page
-    dmAvatarUrl = $('#site-bar').attr('user-avatar');
+    dmAvatarUrl = $('#site-bar').attr('user-avatar') != undefined ? $('#site-bar').attr('user-avatar') : $('.site-bar .user-interactions-profile-img').attr('src');
   } else if (is_campaign_page()) {
     // The owner of the campaign (the DM) is the only one with private notes on the campaign page
     window.DM = $(".ddb-campaigns-detail-body-dm-notes-private").length === 1;
@@ -1004,7 +1004,7 @@ function process_monitored_logs() {
           logString += `      ${logItem}`;
         }
         messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
-      } catch (err) {A
+      } catch (err) {
         console.debug("failed to process log value", err);
       }
     })
@@ -1039,13 +1039,13 @@ function inject_dice(){
   const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
   window.encounterObserver.observe(mutation_target, mutation_config) 
 
-  $('body').append(`<div name="message-broker-client">    
-  <div id="message-broker-client" data-source="web" data-connecturl="wss://game-log-api-live.dndbeyond.com/v1" data-getmessagesurl="https://game-log-rest-live.dndbeyond.com/v1/getmessages" data-gameid="0" data-userid="100666635" data-config="{&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;baseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;diceServiceUrl&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;diceThumbnailsUrl&quot;:&quot;https://www.dndbeyond.com/dice/images/thumbnails&quot;,&quot;debug&quot;:false,&quot;environment&quot;:&quot;production&quot;,&quot;launchDarkylyClientId&quot;:&quot;5c63387e40bda9329a652b74&quot;,&quot;production&quot;:true,&quot;version&quot;:&quot;2.2.0&quot;}" data-environment="production">
-
+  $('body').append(`
+  <div name="message-broker-client">    
+    <div id="message-broker-client" data-source="web" data-connecturl="wss://game-log-api-live.dndbeyond.com/v1" data-getmessagesurl="https://game-log-rest-live.dndbeyond.com/v1/getmessages" data-gameid="0" data-userid="100666635" data-config="{&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;baseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;diceServiceUrl&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;diceThumbnailsUrl&quot;:&quot;https://www.dndbeyond.com/dice/images/thumbnails&quot;,&quot;debug&quot;:false,&quot;environment&quot;:&quot;production&quot;,&quot;launchDarkylyClientId&quot;:&quot;5c63387e40bda9329a652b74&quot;,&quot;production&quot;:true,&quot;version&quot;:&quot;2.2.0&quot;}" data-environment="production">
     </div>
         <script src="https://media.dndbeyond.com/message-broker-client/_dndbeyond_message_broker_client.00a081b659ffc6309334.bundle.js"></script>
-</div><div class="container">
-     
+  </div>
+  <div class="container">
         <div id="encounter-builder-root" data-config="{&quot;analyticsEventDelay&quot;:500,&quot;autoSaveTimeFrame&quot;:3000,&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;branchName&quot;:&quot;refs/tags/v1.0.26&quot;,&quot;buildKey&quot;:&quot;5ae3809f24498ec4c7eeb928446e52f2efde2261&quot;,&quot;buildNumber&quot;:&quot;34&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;dateMessageUpdateInterval&quot;:60000,&quot;saveUpdateEncounterSpinnerDelay&quot;:3000,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;environment&quot;:&quot;production&quot;,&quot;fetchThrottleDelay&quot;:250,&quot;launchDarkylyClientId&quot;:&quot;5c63387e40bda9329a652b74&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;marketplaceUrl&quot;:&quot;https://www.dndbeyond.com/marketplace&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;production&quot;:true,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;,&quot;tagName&quot;:&quot;v1.0.26&quot;,&quot;toastAutoDeleteInterval&quot;:3000,&quot;tooltipUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;version&quot;:&quot;1.0.26&quot;}" data-environment="production" data-branch-name="refs/tags/v1.0.26" data-build-number="34" data-build-key="5ae3809f24498ec4c7eeb928446e52f2efde2261" data-debug="false" data-tag-name="v1.0.26" data-version="1.0.26">
 
            <div class="dice-rolling-panel">
@@ -1117,8 +1117,25 @@ function inject_dice(){
         </div>
         <script src="https://media.dndbeyond.com/encounter-builder/static/js/main.221d749b.js"></script>
         <script src="https://media.dndbeyond.com/character-app/static/js/main.f2a3926d.js"></script>
-    
-  </div>
+        <style>
+          .dice-rolling-panel,.dice-rolling-panel__container {
+              width: 100%;
+              height: 100%;
+              position: fixed;
+              top: 0;
+              pointer-events: none;
+              left: 0;
+          }
+
+          .dice-rolling-panel .dice-toolbar {
+              position: fixed;
+              z-index: 1;
+              bottom: 10px;
+              left: 10px;
+              pointer-events: all
+          }
+        </style>
+    </div>
   `);
   
 }
