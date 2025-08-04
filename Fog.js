@@ -1660,7 +1660,8 @@ function redraw_fog() {
 function redraw_text() {
 
 	$('#text_div').empty();
-	for(let drawing in window.DRAWINGS){
+	for(let drawing=0; drawing<window.DRAWINGS.length; drawing++){
+		
 		const [shape, x, y, width, height, text, font, stroke, rectColor, textid, scale, hidden] = window.DRAWINGS[drawing]
 
 		if(shape == 'text' && textid == undefined){
