@@ -176,7 +176,7 @@ class DiceRoll {
 
         this.action = action;
         this.rollType = rollType;
-        this.sendToOverride = sendToOverride;
+        this.sendToOverride = sendToOverride == undefined && window.DM ? gamelog_send_to_text() : sendToOverride;
         this.damageType = damageType;
         if (name) this.name = name;
         if (avatarUrl) this.avatarUrl = avatarUrl;
@@ -897,7 +897,9 @@ class DiceRoller {
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
         }
+
         if (!this.#waitingForRoll) {
+
             if(message.source == 'Beyond20'){
                 this.ddbDispatch(message);
                 return;
@@ -910,6 +912,7 @@ class DiceRoller {
             else if(window.pcs?.filter(d => d.characterId == ddbMessage.entityId)?.length>0 && ddbMessage?.data?.context != undefined){
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
             } 
+
             if((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled"){
                 if(this.#pendingSpellSave != undefined )
                     ddbMessage.avttSpellSave = this.#pendingSpellSave;
@@ -919,6 +922,17 @@ class DiceRoller {
                 this.#resetVariables();
             }       
             else{
+                if(window.DM && window.modifiySendToDDBDiceClicked == true){
+                   
+
+                    if(gamelog_send_to_text() == 'Self'){
+                         ddbMessage.messageScope = "userId";
+                         ddbMessage.messageTarget = `${window.CAMPAIGN_INFO.dmId}`;
+                         ddbMessage.data.context.messageScope = "userId";
+                         ddbMessage.data.context.messageTarget = `${window.CAMPAIGN_INFO.dmId}`;
+                    }
+                    delete window.modifiySendToDDBDiceClicked;
+                }
                 this.ddbDispatch(ddbMessage);
             }
         } else if (message.eventType === "dice/roll/pending") {
