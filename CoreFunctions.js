@@ -1018,12 +1018,12 @@ function inject_dice(){
     mutationList.forEach(mutation => {
       try {
         let mutationTarget = $(mutation.target);
-        //Remove beyond20 popup and swtich to gamelog
-        if(mutationTarget.hasClass('encounter-details') || mutationTarget.hasClass('encounter-builder')){
+        
+        if(mutationTarget.hasClass(['encounter-details', 'encounter-builder', 'release-indicator'])){
           mutationTarget.remove();
-         
+
         }
-        if($(mutation.addedNodes).is('.encounter-builder')){
+        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
           $(mutation.addedNodes).remove();
         }
         
