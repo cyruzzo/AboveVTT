@@ -4953,8 +4953,8 @@ button.block-send-to-game-log span {
 .sidebar-token-options-flyout-container {
     width: 400px;
     max-height: 90vH;
-    padding: 5px;
-    overflow: scroll;
+    padding: 10px;
+    overflow: auto;
     background-color: rgb(235, 241, 245);
 }
 #scenes-panel .sidebar-list-item-row.scene-item .scene-item-footer {
@@ -8861,8 +8861,8 @@ div.note[id^="ui-id"] .mce-btn button {
 }
 .sidebar-flyout .token-image-modal-footer-select-wrapper input.styled-number-input {
     position:absolute;
-    right:0px;
-    width:100px;
+    right: 25px;
+    width: 50px;
 }
 .peerCursorPosition {
     height: 16px;
