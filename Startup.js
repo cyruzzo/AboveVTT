@@ -515,7 +515,7 @@ function inject_dm_roll_default_menu(){
   $('.dice-rolling-panel').off('click.sendTo').on('click.sendTo', '.dice-toolbar__target>button:first-of-type', function(e){
     window.modifiySendToDDBDiceClicked = true;
   })
-  
+  //dm only css for campaign page use
   $('body').append(`
     <style>
       .glc-game-log .gameLogSendToMenu li div:last-of-type svg{
@@ -545,7 +545,9 @@ function inject_dm_roll_default_menu(){
           align-items:center;
           align-content: center;
       }
-
+      body>img {
+        display: revert !important;
+      }
       .sidebar{
         height: 100% !important;
       }
