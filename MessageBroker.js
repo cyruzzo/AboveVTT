@@ -225,7 +225,7 @@ function setupMBIntervals(){
 
 	window.reconInterval = setInterval(function() {
    		forceDdbWsReconnect();
-	}, 15000)
+	}, 4000)
 	
 }
 
@@ -366,6 +366,7 @@ class MessageBroker {
 
 		this.ws.onerror = function() {
 			self.loadingWS = false;
+			self.ws.close();
 		};
 
 		this.ws.onopen = function() {
@@ -376,7 +377,21 @@ class MessageBroker {
 				cb();
 			};
 		};
-
+		this.ws.onclose = function() {
+			if(is_gamelog_popout())
+				return;
+			if(self.ddbReconnectTimeout != undefined){
+				clearTimeout(self.ddbReconnectTimeout);
+			}	
+			console.log('Attempting reconnect to Above Websocket');
+			if(window.reconnectAttemptDDBWs == undefined){
+				window.reconnectAttemptDDBWs = 0;
+			}
+			window.reconnectAttemptDDBWs++;
+			self.ddbReconnectTimeout = setTimeout(function() {
+				self.loadAboveWS();	
+			}, Math.min(10000,2**window.reconnectAttemptDDBWs*window.reconnectDelay));
+		};
 		
 	}
 
