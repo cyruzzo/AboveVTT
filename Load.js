@@ -1,4 +1,5 @@
 const isVttGamePage = window.location.search.includes("abovevtt=true");
+const isDM = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi) && window.location.search.includes("dm=true");
 const isPlayerPage = window.location.pathname.match("/characters");
 const isPlainCharacterPage = !isVttGamePage && isPlayerPage //character, builder, or listing
 const isCampaignPage = window.location.pathname.match(/\/campaigns\/[0-9]+$/gi); //match campaign page exactly in case other pages ever get added like campaigns/join that we want to exclude
@@ -136,12 +137,12 @@ if (isPlainCharacterPage) {
 		{ src: "onedrive/onedrivepicker.js" },
 	]
 	//Do not load characterPage.js for DM or on campaign page
-	if(isPlayerPage){ 
+	if(isPlayerPage && !isDM){ 
 		window.scripts.push(
 			{ src: "CharactersPage.js" }
 		)
 	}
-	else if(isPopoutGameLog){
+	else if(isPopoutGameLog && !isDM){
 		window.scripts = [
 			{ src: "jquery.magnific-popup.min.js" },
 			{ src: "purify.min.js" },
@@ -156,9 +157,10 @@ if (isPlainCharacterPage) {
 			{ src: "CampaignPage.js" }
 		]
 	}
-	else if(isCampaignPage){
+	else if(isCampaignPage && !isDM){
 
 		window.scripts = [
+			{ src: "environment.js" },
 			{ src: "CoreFunctions.js" }, 		
 			{ src: "DDBApi.js" }, 
 			{ src: "Settings.js" },

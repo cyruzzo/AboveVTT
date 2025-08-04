@@ -805,7 +805,7 @@ class JournalManager{
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
 			
-			for(let source in window.ddbConfigJson.sources){
+			for(let source=0; source<window.ddbConfigJson.sources.length; source++){
 				const currentSource = window.ddbConfigJson.sources[source]
 				if(currentSource.sourceURL == '' || currentSource.name == 'HotDQ' || currentSource.name == 'RoT')
 					continue;

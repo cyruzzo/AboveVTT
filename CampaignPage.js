@@ -26,8 +26,9 @@ $(function() {
           } else {
 
             inject_instructions();
-            inject_dm_join_button();  
             inject_player_join_buttons();
+            inject_dm_join_button();  
+            inject_dice();
           }
          });
       })
@@ -164,41 +165,39 @@ function inject_dm_join_button() {
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
-    tabCommunicationChannel.postMessage({
+/*    tabCommunicationChannel.postMessage({
       msgType: 'DMOpenAlready',
       sendTo: false
-    });
+    });*/
     $(e.currentTarget).addClass("button-loading");
-    DDBApi.fetchAllEncounters()         	    // Fetch all encounters, so we can delete all the old AboveVTT encounters in the next step
-      .then(DDBApi.deleteAboveVttEncounters)	// Delete any AboveVTT encounters that we've created in the past because we don't want to bloat the user's encounters with a bunch of AboveVTT encounters
-      .then(DDBApi.createAboveVttEncounter)  	// Create a new AboveVTT encounter that's tied to this campaign. We need an encounter tied to this campaign so that the dice rolling feature is tied to the current campaign.
-      .then((avttEncounter) => {
-        console.log("About to start AboveVTT for DM using a fresh encounter", avttEncounter);
-        window.open(`https://www.dndbeyond.com/encounters/${avttEncounter.id}?abovevtt=true`, '_blank');
-        // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
-        let oldText = $(".joindm").text();
-        $(".joindm").removeClass("button-loading");
-        $(".joindm").text("Check for blocked pop ups!");
-        // reset our join button text, so it looks normal the next time they're on this tab
-        setTimeout(function () {
-          $(".joindm").text(oldText);
-        }, 2000);
-      })
-      .catch((error) => {
-        if (error.message && error.message.includes("EncounterLimitException")) {
-          showErrorMessage(
-            error,
-            "It looks like you have too many encounters. DndBeyond limits free accounts to 8 encounters, and AboveVTT requires 1 encounter to run. Try deleting a few encounters, and then try again.",
-            `<a href="https://www.dndbeyond.com/my-encounters" target="_blank">My Encounters</a>`
-          );
-        } else {
-          showError(error, "Failed to start AboveVTT from dm join button");
-        }
-      })
-      .finally(() => {
-        $(e.currentTarget).removeClass("button-loading");
-      });
+    
+    try{
+      window.open(`${window.document.location.href}?abovevtt=true&dm=true`, '_blank');
+      // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
+      let oldText = $(".joindm").text();
+      $(".joindm").removeClass("button-loading");
+      $(".joindm").text("Check for blocked pop ups!");
+      // reset our join button text, so it looks normal the next time they're on this tab
+      setTimeout(function () {
+        $(".joindm").text(oldText);
+      }, 2000);
+    }   
+    catch(error) {
+      if (error.message && error.message.includes("EncounterLimitException")) {
+        showErrorMessage(
+          error,
+          "It looks like you have too many encounters. DndBeyond limits free accounts to 8 encounters, and AboveVTT requires 1 encounter to run. Try deleting a few encounters, and then try again.",
+          `<a href="https://www.dndbeyond.com/my-encounters" target="_blank">My Encounters</a>`
+        );
+      } else {
+        showError(error, "Failed to start AboveVTT from dm join button");
+      }
+    }
+      
+      
+    $(e.currentTarget).removeClass("button-loading");
   });
+
 }
 
 function inject_player_join_buttons() {
@@ -212,3 +211,4 @@ function inject_player_join_buttons() {
     }
   });
 }
+
