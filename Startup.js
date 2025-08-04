@@ -438,6 +438,8 @@ const debounceResizeUI = mydebounce(function(){
 }, 100)
 
 function inject_dm_roll_default_menu(){
+  if(!window.DM)
+    return;
   const gamelogTitle = $('.glc-game-log>[class*="-Container-Flex"]>[class*="-Title"]');
   const flexContainer = $('<div class="tss-ko5p4u-Flex"></div>');
   
@@ -505,8 +507,14 @@ function inject_dm_roll_default_menu(){
     `);
     selectMenu.find('li.selected').toggleClass('selected');
     target.toggleClass('selected', true);
+    const ddbDiceButton = $('.dice-toolbar__target-user');
+    ddbDiceButton.text(`To: ${selectedText}`)
   })
 
+
+  $('.dice-rolling-panel').off('click.sendTo').on('click.sendTo', '.dice-toolbar__target>button:first-of-type', function(e){
+    window.modifiySendToDDBDiceClicked = true;
+  })
   
   $('body').append(`
     <style>
@@ -553,7 +561,7 @@ function inject_dm_roll_default_menu(){
         width: 155px !important;
         opacity: 1;
         transform: none;
-        transition: opacity 241ms cubic-bezier(0.4, 0, 0.2, 1), transform 161ms cubic-bezier(0.4, 0, 0.2, 1) 50ms;
+        transition: opacity 241ms cubic-bezier(0.4, 0, 0.2, 1), transform 161ms cubic-bezier(0.4, 0, 0.2, 1) 150ms;
         transform-origin: 75.8906px 0px;
         padding: 0px !important;
         transform: scale(0);
