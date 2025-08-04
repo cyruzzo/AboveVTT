@@ -372,7 +372,10 @@ async function start_above_vtt_for_dm() {
   window.PLAYER_IMG = dmAvatarUrl;
   window.PLAYER_NAME = dm_id;
   window.PLAYER_SHEET = false;
-  $(".gamelog-button, button[class*='gamelog-button']").click();
+  $(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
+  $(".sidebar__control--lock").closest("button").click(); // lock it open immediately. This is safe to call multiple times
+  
+  
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
@@ -385,7 +388,7 @@ async function start_above_vtt_for_dm() {
   const avttId = window.location.pathname.split("/").pop();
   window.EncounterHandler = new EncounterHandler(avttId);
   await window.EncounterHandler.fetchAllEncounters();
-
+  
   window.SCENE_DEFAULT_SETTINGS = $.parseJSON(localStorage.getItem(`SceneDefaults-${window.gameId}`)) || {};
 
   startup_step("Setting up UI");
@@ -446,6 +449,267 @@ async function start_above_vtt_for_dm() {
       .stream-dice-button{
         top: 40px;
       }
+
+
+    .ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close {
+        position: absolute !important;
+        width: 14px !important;
+        padding: 2px !important;
+        height: 14px !important;
+        top: 15px !important;
+        right: 4px !important;
+    }
+    .mce-container .mce-btn i.mce-ico:not(.mce-i-resize) {
+        font-size: 16px !important;
+        line-height: 20px !important;
+        margin: 0px !important;
+    }
+
+    .mce-container .mce-btn i.mce-ico:not(.mce-i-resize)::before{
+        font-family: 'tinymce', Arial !important;
+    }
+
+
+
+    .ui-dialog .ui-dialog-titlebar-close::before {
+        color: white!important;
+        font-size: 25px!important
+    }
+
+    .ui-dialog .ui-dialog-content {
+     height: 500px !important;
+    }
+    .mce-btn {
+      margin-right: 3px !important;
+    }
+
+
+    .mce-i-save:before {
+        content: "\\e000" !important;
+    }
+
+    .mce-i-newdocument:before {
+        content: "\\e001" !important;
+    }
+
+    .mce-i-fullpage:before {
+        content: "\\e002" !important;
+    }
+
+    .mce-i-alignleft:before {
+        content: "\\e003" !important;
+    }
+
+    .mce-i-aligncenter:before {
+        content: "\\e004" !important;
+    }
+
+    .mce-i-alignright:before {
+        content: "\\e005" !important;
+    }
+
+    .mce-i-alignjustify:before {
+        content: "\\e006" !important;
+    }
+
+    .mce-i-cut:before {
+        content: "\\e007" !important;
+    }
+
+    .mce-i-paste:before {
+        content: "\\e008" !important;
+    }
+
+    .mce-i-searchreplace:before {
+        content: "\\e009" !important;
+    }
+
+    .mce-i-bullist:before {
+        content: "\\e00a" !important;
+    }
+
+    .mce-i-numlist:before {
+        content: "\\e00b" !important;
+    }
+
+    .mce-i-indent:before {
+        content: "\\e00c" !important;
+    }
+
+    .mce-i-outdent:before {
+        content: "\\e00d" !important;
+    }
+
+    .mce-i-blockquote:before {
+        content: "\\e00e" !important;
+    }
+
+    .mce-i-undo:before {
+        content: "\\e00f" !important;
+    }
+
+    .mce-i-redo:before {
+        content: "\\e010" !important;
+    }
+
+    .mce-i-link:before {
+        content: "\\e011" !important;
+    }
+
+    .mce-i-unlink:before {
+        content: "\\e012" !important;
+    }
+
+    .mce-i-anchor:before {
+        content: "\\e013" !important;
+    }
+
+    .mce-i-image:before {
+        content: "\\e014" !important;
+    }
+
+    .mce-i-media:before {
+        content: "\\e015" !important;
+    }
+
+    .mce-i-help:before {
+        content: "\\e016" !important;
+    }
+
+    .mce-i-code:before {
+        content: "\\e017" !important;
+    }
+
+    .mce-i-insertdatetime:before {
+        content: "\\e018" !important;
+    }
+
+    .mce-i-preview:before {
+        content: "\\e019" !important;
+    }
+
+    .mce-i-forecolor:before {
+        content: "\\e01a" !important;
+    }
+
+    .mce-i-backcolor:before {
+        content: "\\e01a" !important;
+    }
+
+    .mce-i-table:before {
+        content: "\\e01b" !important;
+    }
+
+    .mce-i-hr:before {
+        content: "\\e01c" !important;
+    }
+
+    .mce-i-removeformat:before {
+        content: "\\e01d" !important;
+    }
+
+    .mce-i-subscript:before {
+        content: "\\e01e" !important;
+    }
+
+    .mce-i-superscript:before {
+        content: "\\e01f" !important;
+    }
+
+    .mce-i-charmap:before {
+        content: "\\e020" !important;
+    }
+
+    .mce-i-emoticons:before {
+        content: "\e021" !important;
+    }
+
+    .mce-i-print:before {
+        content: "\e022" !important;
+    }
+
+    .mce-i-fullscreen:before {
+        content: "\\e023" !important;
+    }
+
+    .mce-i-spellchecker:before {
+        content: "\\e024" !important;
+    }
+
+    .mce-i-nonbreaking:before {
+        content: "\\e025" !important;
+    }
+
+    .mce-i-template:before {
+        content: "\\e026" !important;
+    }
+
+    .mce-i-pagebreak:before {
+        content: "\\e027" !important;
+    }
+
+    .mce-i-restoredraft:before {
+        content: "\\e028" !important;
+    }
+
+    .mce-i-untitled:before {
+        content: "\\e029" !important;
+    }
+
+    .mce-i-bold:before {
+        content: "\\e02a" !important;
+    }
+
+    .mce-i-italic:before {
+        content: "\\e02b" !important;
+    }
+
+    .mce-i-underline:before {
+        content: "\\e02c" !important;
+    }
+
+    .mce-i-strikethrough:before {
+        content: "\\e02d" !important;
+    }
+
+    .mce-i-visualchars:before {
+        content: "\\e02e" !important;
+    }
+
+    .mce-i-visualblocks:before {
+        content: "\\e02e" !important;
+    }
+
+    .mce-i-ltr:before {
+        content: "\\e02f" !important;
+    }
+
+    .mce-i-rtl:before {
+        content: "\\e030" !important;
+    }
+
+    .mce-i-copy:before {
+        content: "\\e031" !important;
+    }
+
+    .mce-i-resize:before {
+        content: "\\e032" !important;
+    }
+
+    .mce-i-browse:before {
+        content: "\\e034" !important;
+    }
+
+    .mce-i-pastetext:before {
+        content: "\\e035" !important;
+    }
+
+    .mce-i-checkbox:before,.mce-i-selected:before {
+        content: "\\e033" !important;
+    }
+
+
+
     </style>
     `)
   
