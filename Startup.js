@@ -443,7 +443,9 @@ async function start_above_vtt_for_dm() {
       .sidebar{
         height: 100% !important;
       }
-    
+      .stream-dice-button{
+        top: 40px;
+      }
     </style>
     `)
   

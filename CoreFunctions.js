@@ -1004,7 +1004,7 @@ function process_monitored_logs() {
           logString += `      ${logItem}`;
         }
         messageString += logString.replaceAll(MYCOBALT_TOKEN, '[REDACTED]').replaceAll(window.CAMPAIGN_SECRET, '[REDACTED]');
-      } catch (err) {
+      } catch (err) {A
         console.debug("failed to process log value", err);
       }
     })
@@ -1026,7 +1026,7 @@ function inject_dice(){
         if($(mutation.addedNodes).is('.encounter-builder')){
           $(mutation.addedNodes).remove();
         }
-        window.encounterObserver.disconnect();
+        
       } catch{
         console.warn("non_sheet_observer failed to parse mutation", error, mutation);
       }

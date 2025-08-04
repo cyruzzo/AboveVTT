@@ -3928,11 +3928,11 @@ function popoutGamelogCleanup(){
 		img.magnify{
 			pointer-events:none;
 		}
-		.body-rpgcampaign-details .sidebar {
+		.encounter-builder .sidebar {
 		    top: 0 !important;
 		    height: 100% !important;
 		}
-		.body-rpgcampaign select#chat-language {
+		.body-rpgcampaign:not(.encounter-builder) select#chat-language {
 	    bottom:0px;
 	    right: 20px;
 		}

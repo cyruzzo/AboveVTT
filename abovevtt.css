@@ -1680,7 +1680,7 @@ div#combat-tracker-settings form > div {
 }
 .encounter-builder,
 .encounter-details{
-    display:none !important;
+    visibility:hidden !important;
 }
 #scene_selector {
     position: fixed;
@@ -2527,7 +2527,7 @@ body>[class*='styles_mobileNav']>button{
 }*/
 
 /* .ct-sidebar__pane-content, */
-body:not(.body-rpgcampaign-details) .sidebar__pane-content {
+body:not(.encounter-builder-page) .sidebar__pane-content {
     position: absolute;
     right: 0;
     top: 28px;
@@ -5721,7 +5721,7 @@ span.exhaustion-pip.last{
     opacity: 0;
     color: #fff;
 }
-.body-rpgcampaign .chat-text-wrapper.sidebar-hover-text:before  {
+.body-rpgcampaign:not(.encounter-builder-page) .chat-text-wrapper.sidebar-hover-text:before  {
     bottom:35px;
 }
 .chat-text-wrapper.sidebar-hover-text:hover:before {
@@ -7135,21 +7135,21 @@ input.max_hp[disabled]{
 }
 
 /*one button*/
-.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
+.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
+.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
+.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
     margin-right:0px;
 }
 /* four buttons */
-.body-rpgcampaign-details :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
+.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
 
     margin-right:0px;
 }
@@ -8305,7 +8305,7 @@ button#changeTokenImage:before{
 .video-listing{
     width: 38px;
 }
-.body-rpgcampaign .ddb-campaigns-invite-primary {
+.body-rpgcampaign:not(.encounter-builder-page) .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;
 }
@@ -8324,7 +8324,7 @@ button#changeTokenImage:before{
     padding-right: 30px !important;
 }
 
-.body-rpgcampaign .ddb-campaigns-invite-primary:active {
+.body-rpgcampaign:not(.encounter-builder-page) .ddb-campaigns-invite-primary:active {
     filter: none;
     transition-delay: 0;
 }
