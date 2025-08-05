@@ -1679,8 +1679,13 @@ div#combat-tracker-settings form > div {
     margin: 0px 2px;
 }
 .encounter-builder,
-.encounter-details{
+.encounter-details,
+.release-indicator
+{
+    scale:0 !important;
     visibility:hidden !important;
+    height:0;
+    pointer-events: none;
 }
 #scene_selector {
     position: fixed;
