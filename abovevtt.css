@@ -8310,7 +8310,7 @@ button#changeTokenImage:before{
 .video-listing{
     width: 38px;
 }
-.body-rpgcampaign:not(.encounter-builder-page) .ddb-campaigns-invite-primary {
+.body-rpgcampaign .ddb-campaigns-invite-primary {
     filter: blur(6px);
     transition: 0ms filter 200ms;
 }
@@ -8329,7 +8329,7 @@ button#changeTokenImage:before{
     padding-right: 30px !important;
 }
 
-.body-rpgcampaign:not(.encounter-builder-page) .ddb-campaigns-invite-primary:active {
+.body-rpgcampaign .ddb-campaigns-invite-primary:active {
     filter: none;
     transition-delay: 0;
 }
