@@ -213,20 +213,10 @@ function setupMBIntervals(){
 	window.reconnectDelay = 250;
 	if(window.pingInterval!=undefined)
 		clearInterval(window.pingInterval);
-	if(window.reconInterval!=undefined)
-		clearInterval(window.reconInterval);
-
-	
 	window.pingInterval = setInterval(function() {
 		window.MB.sendPing();
 		window.MB.sendAbovePing();
 	}, 480000);
-
-
-	window.reconInterval = setInterval(function() {
-   		forceDdbWsReconnect();
-	}, 4000)
-	
 }
 
 function resizeCanvasChromeBug(){
@@ -383,13 +373,15 @@ class MessageBroker {
 			if(self.ddbReconnectTimeout != undefined){
 				clearTimeout(self.ddbReconnectTimeout);
 			}	
-			console.log('Attempting reconnect to Above Websocket');
+			console.log('Attempting reconnect to DDB Websocket');
 			if(window.reconnectAttemptDDBWs == undefined){
 				window.reconnectAttemptDDBWs = 0;
 			}
 			window.reconnectAttemptDDBWs++;
 			self.ddbReconnectTimeout = setTimeout(function() {
-				self.loadAboveWS();	
+				get_cobalt_token(function(token) {
+					self.loadWS(token, null);
+				});
 			}, Math.min(10000,2**window.reconnectAttemptDDBWs*window.reconnectDelay));
 		};
 		
