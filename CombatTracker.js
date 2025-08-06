@@ -332,14 +332,14 @@ function init_combat_tracker(){
 
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
 				delete window.TOKEN_OBJECTS[currentTarget].options.round;
-				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+				window.TOKEN_OBJECTS[currentTarget].place_sync_persist();
 				window.TOKEN_OBJECTS[currentTarget].build_conditions(current, true);
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
 				adjust_reaction_condition(window.TOKEN_OBJECTS[newTarget]);
-				window.TOKEN_OBJECTS[newTarget].update_and_sync();
+				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				let combatSettingData = getCombatTrackersettings();
 				let group = false;
 				if(window.TOKEN_OBJECTS[newTarget].options.combatGroupToken){
@@ -397,14 +397,14 @@ function init_combat_tracker(){
 			if(window.TOKEN_OBJECTS[currentTarget] != undefined){
 				delete window.TOKEN_OBJECTS[currentTarget].options.current;
 				delete window.TOKEN_OBJECTS[currentTarget].options.round;
-				window.TOKEN_OBJECTS[currentTarget].update_and_sync();
+				window.TOKEN_OBJECTS[currentTarget].place_sync_persist();;
 			}
 			if(window.TOKEN_OBJECTS[newTarget] != undefined){
 				adjust_age(window.TOKEN_OBJECTS[newTarget], 1)
 				adjust_condition_duration(window.TOKEN_OBJECTS[newTarget], 1)
 				window.TOKEN_OBJECTS[newTarget].options.current = true;
 				window.TOKEN_OBJECTS[newTarget].options.round = window.ROUND_NUMBER;
-				window.TOKEN_OBJECTS[newTarget].update_and_sync();
+				window.TOKEN_OBJECTS[newTarget].place_sync_persist();
 				window.TOKEN_OBJECTS[newTarget].build_conditions(prev, true);
 				let combatSettingData = getCombatTrackersettings();
 				let group = false;

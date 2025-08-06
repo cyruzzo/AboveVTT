@@ -1706,7 +1706,7 @@ function build_token_auras_inputs(tokenIds) {
 	})
 
 	let allTokensArePlayer = true;
-	for(let token in tokens){
+	for(let token = 0; token < tokens.length; token++){
 		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
 			allTokensArePlayer=false;
 			break;
@@ -1895,7 +1895,7 @@ function build_token_auras_inputs(tokenIds) {
 			token.place_sync_persist();
 		});
 	});
-	for(let i in window.AURA_PRESETS){
+	for(let i = 0; i<window.AURA_PRESETS.length; i++){
 		wrapper.find('.token-config-aura-preset').append(`<option value="${window.AURA_PRESETS[i].name}">${window.AURA_PRESETS[i].name}</option>`)
 	}
 
@@ -1912,7 +1912,7 @@ function build_token_auras_inputs(tokenIds) {
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
-	for(let i in window.ANIMATION_PRESETS){
+	for(let i = 0; i<window.ANIMATION_PRESETS.length; i++){
 		let allTokenSelected = tokens.map(t => t.options.animation?.aura);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
@@ -2079,7 +2079,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 	})
 
 	let allTokensArePlayer = true;
-	for(let token in tokens){
+	for(let token = 0; token<tokens.length; token++){
 		if(!window.TOKEN_OBJECTS[tokens[token].options.id].isPlayer()){
 			allTokensArePlayer=false;
 			break;
@@ -2297,7 +2297,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		'Truesight': 'truesight'	
 	}
 
-	for(let i in window.LIGHT_PRESETS){
+	for(let i=0; i<window.LIGHT_PRESETS.length; i++){
 		wrapper.find('.token-config-aura-preset').append(`<option value="${window.LIGHT_PRESETS[i].name}">${window.LIGHT_PRESETS[i].name}</option>`)
 	}
 
@@ -2307,7 +2307,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		wrapper.find('.token-config-animation-preset').append(`<option ${animationPresets[option] == selected ? `selected=true` : ''} value="${animationPresets[option]}">${option}</option>`)
 	}
 
-	for(let i in window.ANIMATION_PRESETS){
+	for(let i=0; i<window.ANIMATION_PRESETS.length; i++){
 		let allTokenSelected = tokens.map(t => t.options.animation?.light);
 		let selected = allTokenSelected.length === 1 ? allTokenSelected[0] : "";
 		wrapper.find('.token-config-animation-preset').append(`<option ${window.ANIMATION_PRESETS[i].name == selected ? `selected=true` : ''} value="${window.ANIMATION_PRESETS[i].name}">${window.ANIMATION_PRESETS[i].name}</option>`)
@@ -2361,7 +2361,7 @@ function build_token_light_inputs(tokenIds, door=false) {
 		defaultValue: false
 	};
 
-	for(let i in window.playerUsers){
+	for(let i=0; i<window.playerUsers.length; i++){
 		if(!revealvisionOption.options.some(d => d.value == window.playerUsers[i].userId)){
 			let option = {value: window.playerUsers[i].userId, label: window.playerUsers[i].userName, desciption: `Token vision is shared with ${window.playerUsers[i].userName}`}
 			revealvisionOption.options.push(option)
@@ -2596,7 +2596,7 @@ function create_aura_presets_edit(){
 			</tr>
 			`)
 	aura_presets.append(titleRow);
-	for(let i in window.AURA_PRESETS){
+	for(let i=0; i<window.AURA_PRESETS.length; i++){
 		let row = $(`
 			<tr class='aura_preset_row' data-index='${i}'>
 				<td>
@@ -2715,7 +2715,7 @@ function create_light_presets_edit(){
 			</tr>
 			`)
 	light_presets.append(titleRow);
-	for(let i in window.LIGHT_PRESETS){
+	for(let i=0; i<window.LIGHT_PRESETS.length; i++){
 		let row = $(`
 			<tr class='light_preset_row' data-index='${i}'>
 				<td>
@@ -2844,7 +2844,7 @@ function create_animation_presets_edit(isVision = false){
 			</tr>
 			`)
 	animation_presets.append(titleRow);
-	for(let i in window.ANIMATION_PRESETS){
+	for(let i=0; i<window.ANIMATION_PRESETS.length; i++){
 		
 
 		let row = $(`
