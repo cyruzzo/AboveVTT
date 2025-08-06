@@ -633,7 +633,7 @@ function avtt_settings() {
 			], },
 		],
 		defaultValue: {},
-		class: 'ui'
+		class: 'defaults'
 	})
 
 	settings.push({
