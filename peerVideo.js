@@ -269,7 +269,7 @@ function getMediaDevice(){
             window.MB.sendMessage("custom/myVTT/videoPeerConnect", {id: window.myVideoPeerID});  
         }
         else{
-            for(let i in window.currentPeers){
+            for(let i=0; i<window.currentPeers.length; i++){
               let call = window.videoPeer.call(window.currentPeers[i].peer, window.myLocalVideostream)
               call.on('stream', (stream) => {
                 setRemoteStream(stream, call.peer);   
@@ -308,7 +308,7 @@ function startScreenShare() {
         }
 
         screenStream.addTrack(window.myLocalVideostream.getAudioTracks()[0])
-        for(let i in window.currentPeers){
+        for(let i=0; i<window.currentPeers.length; i++){
           let call = window.videoPeer.call(window.currentPeers[i].peer, screenStream)
           call.on('stream', (stream) => {
             setRemoteStream(stream, call.peer);   

@@ -1121,11 +1121,11 @@ class Token {
 			durationBadge.find('span').text(condition.duration);
 		}
 
-		for(let i in this.options.conditions){
+		for(let i=0; i<this.options.conditions.length; i++){
 			const condition = this.options.conditions[i]
 			setDurationBadgeText(this, condition);
 		}	
-		for(let i in this.options.custom_conditions){
+		for(let i=0; i<this.options.custom_conditions.length; i++){
 			const condition = this.options.custom_conditions[i];
 			setDurationBadgeText(this, condition);
 		}
@@ -2037,7 +2037,7 @@ class Token {
 			}
 			if(this.isPlayer() && this.options.campaign != undefined){ // put this here so it's removed from existing tokens for now
 				const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
-				for(let i in unusedPlayerData){
+				for(let i =0; i<unusedPlayerData.length; i++){
 					delete this.options[unusedPlayerData[i]];
 				}
 			}
@@ -4101,7 +4101,7 @@ function checkAudioVolume(){
 			x: parseInt(currAudioToken.options.left) + currAudioToken.sizeWidth()/2,
 			y: parseInt(currAudioToken.options.top) + currAudioToken.sizeHeight()/2
 		}
-		for(let checkedTokenId in tokensToCheck){
+		for(let checkedTokenId=0; checkedTokenId<tokensToCheck.length; checkedTokenId++){
 			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
 
 			
@@ -4696,7 +4696,7 @@ async function do_draw_selected_token_bounding_box() {
 									
 	}
 
-	for(let index in groupIDs){
+	for(let index=0; index<groupIDs.length; index++){
 		let tokens = $(`.token[data-group-id='${groupIDs[index]}']`)
 		tokens.each(function(){
 			if(window.CURRENTLY_SELECTED_TOKENS.includes($(this).attr('data-id')))
@@ -5052,7 +5052,7 @@ function copy_selected_walls(teleporterTokenId=undefined) {
 		hpps: window.CURRENT_SCENE_DATA.hpps,
 		vpps: window.CURRENT_SCENE_DATA.vpps
 	};
-	for (let i in window.selectedWalls) {
+	for (let i=0; i<window.selectedWalls.length; i++) {
 		let wall = window.selectedWalls[i].wall;
 		const pt1 ={ 
 			x: wall[3],
@@ -5289,7 +5289,7 @@ function delete_selected_walls() {
 	if(window.DM && window.selectedWalls?.length>0){
 		const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
 		const redoArray = [];
-		for(let i in window.selectedWalls){
+		for(let i=0; i<window.selectedWalls.length; i++){
 			const wall = window.selectedWalls[i].wall;
 			redoArray.push([...wall]);
 			const drawIndex = window.DRAWINGS.findIndex(d => JSON.stringify(d)==JSON.stringify(wall));

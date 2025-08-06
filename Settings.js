@@ -1644,7 +1644,7 @@ async function export_scenes_folder_context(folderId){
 	const getIds = function(folderId){
 		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
 
-		for(let scene in scenesInFolder){
+		for(let scene=0; scene<scenesInFolder.length; scene++){
 			ids.push(scenesInFolder[scene].id)
 			if(scenesInFolder[scene].itemType != 'scene'){
 				getIds(scenesInFolder[scene].id)
@@ -1661,7 +1661,7 @@ async function export_scenes_folder_context(folderId){
 		journalchapters: [],
 		soundpads: {}
 	};
-	for(let id in ids){
+	for(let id=0; id<ids.length; id++){
 		let scene = await AboveApi.getScene(ids[id]);
 		let currentSceneData = {
 			...scene.data
@@ -1702,7 +1702,7 @@ async function export_main_scenes_folder_backup(){
 	const getIds = function(folderId){
 		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
 
-		for(let scene in scenesInFolder){
+		for(let scene=0; scene<scenesInFolder.length; scene++){
 			ids.push(scenesInFolder[scene].id)
 			if(scenesInFolder[scene].itemType != 'scene'){
 				getIds(scenesInFolder[scene].id)
@@ -1713,7 +1713,7 @@ async function export_main_scenes_folder_backup(){
 	getIds(folderId);
 	let scenes = []
 		
-	for(let id in ids){
+	for(let id=0; id<ids.length; id++){
 		let scene = await AboveApi.getScene(ids[id]);
 		let currentSceneData = {
 			...scene.data

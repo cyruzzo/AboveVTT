@@ -1669,7 +1669,7 @@ function ct_load(data=null){
 	data=$.parseJSON(localStorage.getItem(itemkey));
 	if(data !== undefined && data !== null){
 		if(!(data[0]['already-loaded'])){
-			for(let i in data){
+			for(let i=0; i<data.length; i++){
 				if (data[i]['data-target'] === 'round'){
 					window.ROUND_NUMBER = data[i]['round_number'];
 					document.getElementById('round_number').value = window.ROUND_NUMBER;

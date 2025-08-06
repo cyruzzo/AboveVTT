@@ -2852,7 +2852,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 
 	import_chapter.off('click.importChap').on('click.importChap', function(){
 		build_import_loading_indicator(`Importing Chapter`);
-		for(let i in sceneData){
+		for(let i=0; i<sceneData.length; i++){
 			sceneData[i] = {
 				...default_scene_data(),
 				...sceneData[i],
@@ -2876,7 +2876,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 		AboveApi.migrateScenes(window.gameId, sceneData)
 			.then(() => {
 				let journalUpdated = false;
-				for(let i in sceneData){
+				for(let i=0; i<sceneData.length; i++){
 					if(sceneData[i].notes != undefined){
 						journalUpdated = true;
 						for(let id in sceneData[i].notes){

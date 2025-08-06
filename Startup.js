@@ -35,7 +35,7 @@ $(function() {
         window.diceRoller = new DiceRoller();  
         localStorage.removeItem("ScenesHandler" + gameId);
         let scenesKeys = Object.entries(localStorage).filter(key => key[0].includes('ScenesHandler'));
-        for(let i in scenesKeys){
+        for(let i=0; i<scenesKeys.length; i++){
           localStorage.removeItem(scenesKeys[i][0]);
         }
       })
@@ -140,7 +140,7 @@ $(function() {
               showTempMessage('No non-player tokens selected');
             }
                 
-            for(let i in window.CURRENTLY_SELECTED_TOKENS){
+            for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
               let id = window.CURRENTLY_SELECTED_TOKENS[i];
               let token = window.TOKEN_OBJECTS[id];
