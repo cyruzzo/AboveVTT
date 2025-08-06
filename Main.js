@@ -2503,24 +2503,21 @@ function init_ui() {
 	// do token dragging operations with measure paths
 	window.disable_window_mouse_handlers = function () {
 
-		$(window).off("mousemove", mousemove);
-		$(window).off("mousedown", mousedown);
-		$(window).off("mouseup", mouseup);
+		$(window.document).off("mousemove.mouseHandler", mousemove);
+		$(window.document).off("mousedown.mouseHandler", mousedown);
+		$(window.document).off("mouseup.mouseHandler", mouseup);
 	}
 
 	// Helper function to enable mouse handlers, required when we
 	// do token dragging operations with measure paths
 	window.enable_window_mouse_handlers = function () {
 
-		$(window).on("mousemove", mousemove);
-		$(window).on("mousedown", mousedown);
-		$(window).on("mouseup", mouseup);
+		$(window.document).on("mousemove.mouseHandler", mousemove);
+		$(window.document).on("mousedown.mouseHandler", mousedown);
+		$(window.document).on("mouseup.mouseHandler", mouseup);
 	}
 
-	// Set basic mouse event handlers
-	$(window).mousemove(mousemove);
-	$(window).mousedown(mousedown);
-	$(window).mouseup(mouseup);
+	window.enable_window_mouse_handlers();
 
 	$("#temp_overlay").bind("contextmenu", function (e) {
 		return false;

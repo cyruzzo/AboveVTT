@@ -2886,7 +2886,7 @@ class Token {
 				tok.draggable({
 					stop: function (event) {
 							event.stopPropagation();
-							
+							window.enable_window_mouse_handlers();
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
 								self.place_sync_persist();
 							}
@@ -2942,6 +2942,7 @@ class Token {
 						},
 					start: function (event) {
 						event.stopPropagation();
+						window.disable_window_mouse_handlers();
 						pauseCursorEventListener = true; // we're going to send events from drag, so we don't need the eventListener sending events, too
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
