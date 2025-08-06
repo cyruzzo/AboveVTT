@@ -3943,7 +3943,8 @@ input.condition-duration-input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+    box-sizing: border-box;
+}   
 
 #conditions-flyout li span:not(.condition-lock) {
     flex-shrink: 1;
