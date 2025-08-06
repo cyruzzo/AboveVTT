@@ -158,7 +158,7 @@ $(function() {
               }   
             }
           }
-          if(event.data.msgType=='DMOpenAlready' && window.DM){  
+          if(event.data.msgType=='DMOpenAlready' && window.DM && window.location.href.includes(event.data.url)){  
             window.close();
           }
           if(event.data.msgType=='dropExtra' && (event.data.sendTo == window.PLAYER_ID || (window.DM && event.data.sendTo == false))){    
