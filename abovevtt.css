@@ -33,6 +33,13 @@ body > button,
     border: 1px solid lightgray;
     font-size: 12px;
 }
+.top_menu input,
+.top_menu select{
+    box-sizing: border-box;
+}
+.top_menu select {
+    font-family: Roboto Condensed, Roboto, Helvetica, sans-serif !important;
+}
 table:is(#combat_area, #combat_area_carousel) .ac{
     position: absolute;
     top: 21px;
