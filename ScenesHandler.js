@@ -871,9 +871,11 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				else {
 					player_map = img1;
 				}
-				if(mapButtonDetails[player_map] != undefined){
-					for(let i in mapButtonDetails[player_map]){
-						const currButton = mapButtonDetails[player_map][i]
+
+				const currentMapNotes = mapButtonDetails[player_map] != undefined ? mapButtonDetails[player_map] :  mapButtonDetails[dm_map] != undefined ? mapButtonDetails[dm_map] : null;
+				if(currentMapNotes != null){
+					for(let i in currentMapNotes){
+						const currButton = currentMapNotes[i]
 
 
 						const newTokenId = uuid();
@@ -902,8 +904,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 							player: false
 						}
 					}
-
-				}
+				}	
 				self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
 					id: id,
 					uuid: source_keyword + "/" + chapter_keyword + "/" + id,
