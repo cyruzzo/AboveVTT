@@ -165,10 +165,11 @@ function inject_dm_join_button() {
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
     e.preventDefault();
-/*    tabCommunicationChannel.postMessage({
+    tabCommunicationChannel.postMessage({
       msgType: 'DMOpenAlready',
-      sendTo: false
-    });*/
+      sendTo: false,
+      url: window.gameId
+    });
     $(e.currentTarget).addClass("button-loading");
     
     try{
