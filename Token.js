@@ -3674,7 +3674,7 @@ function should_snap_to_grid() {
 
 function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0, arrowKeys=false) {
 	if (forceSnap || should_snap_to_grid()) {
-		const gridSquaresWide = Math.floor(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
+		const gridSquaresWide = Math.round(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
@@ -3686,7 +3686,7 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x-mapX) < hexSize*window.CURRENT_SCENE_DATA.scale_factor && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y-mapY)< hexSize*window.CURRENT_SCENE_DATA.scale_factor);
 			if(window.CURRENT_SCENE_DATA.gridType == 3){
 				return {
-					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize),
+					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.x*window.CURRENT_SCENE_DATA.scale_factor),
 					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 
 				}
 
@@ -3694,7 +3694,7 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			}else if(window.CURRENT_SCENE_DATA.gridType == 2){
 				return {
 					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2,
-					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize) 
+					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.y*window.CURRENT_SCENE_DATA.scale_factor) 
 				}
 			}
 
@@ -3708,11 +3708,11 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		const gridHeight = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? parseFloat(window.hexGridSize.height) * parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : (!tinyToken) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps/2);
 		
 		if(window.CURRENT_SCENE_DATA.gridType == 3){
-			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
+			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.x*window.CURRENT_SCENE_DATA.scale_factor);
 			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight/2 - tokenWidth/2;
 		}else if(window.CURRENT_SCENE_DATA.gridType == 2){
 			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth/2 - tokenWidth/2;
-			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize);
+			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.y*window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		
 		let currentGridX = Math.floor((mapX - startX) / gridWidth);
@@ -3723,7 +3723,7 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
 			currentGridX += 0.5;
 		} 
-			return {
+		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),
 			y: Math.ceil((currentGridY * gridHeight) + startY)
 		}

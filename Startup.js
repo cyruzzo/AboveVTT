@@ -542,11 +542,19 @@ function inject_dm_roll_default_menu(){
        font-size: 1.5rem;
        transition: fill 200ms cubic-bezier(0.4, 0, 0.2, 1);
       }
+      .glc-game-log [class*="-SendToLabel"]{
+        width: 60px
+      }
+      .glc-game-log [class*="-SendToLabel"] ~ button{
+        width: 130px
+      }
       .glc-game-log [class*="-SendToLabel"] ~ button,
       .glc-game-log [class*="-SendToLabel"] ~ button>span{
-          display:flex;
-          align-items:center;
-          align-content: center;
+              display: flex;
+              line-height: 21px;
+              flex-wrap: nowrap;
+              justify-content: center;
+              align-items: center;
       }
       body>img {
         display: revert !important;
