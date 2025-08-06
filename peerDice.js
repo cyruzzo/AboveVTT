@@ -154,7 +154,7 @@ function getDiceMedia(){
         window.MB.sendMessage("custom/myVTT/diceVideoPeerConnect", {id: diceplayer_id});  
     }
     else{
-        for(let i in window.diceCurrentPeers){
+        for(let i=0; i<window.diceCurrentPeers.length; i++){
           let call = window.diceVideoPeer.call(window.diceCurrentPeers[i].peer, window.MYMEDIASTREAM)
           call.on('stream', (stream) => {
             setDiceRemoteStream(stream, call.peer);   

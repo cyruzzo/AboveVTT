@@ -1819,7 +1819,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             }); 
           });
           functionArray.reverse();
-           for(let i in functionArray){
+           for(let i =0; i<functionArray.length; i++){
             await functionArray[i]();
            }
 

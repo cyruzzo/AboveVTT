@@ -1693,7 +1693,7 @@ const debounce_pc_token_update = mydebounce(() => {
         imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
         id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
       };  
-      for(let i in unusedPlayerData){
+      for(let i =0; i<unusedPlayerData.length; i++){
         delete token.options[unusedPlayerData[i]];
       }    
       if (window.DM) {
@@ -1712,7 +1712,7 @@ const debounce_pc_token_update = mydebounce(() => {
         imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
         id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
       };
-      for(let i in unusedPlayerData){
+      for(let i =0; i<unusedPlayerData.length; i++){
         delete token.options[unusedPlayerData[i]];
       }
     }     

@@ -1558,14 +1558,14 @@ function redraw_fog() {
 				ctx.globalCompositeOperation = 'destination-out';
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
 					ctx.fillStyle = "#000"
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1617,7 +1617,7 @@ function redraw_fog() {
 			if(d[4] == 7){
 				
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
@@ -1625,7 +1625,7 @@ function redraw_fog() {
 					ctx.globalCompositeOperation = 'destination-out';
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				ctx.fillStyle = "#000000";
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1635,13 +1635,13 @@ function redraw_fog() {
 				ctx.fillStyle = fogStyle;
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						drawRect(ctx, d[0][i][0]/revealedRatio, d[0][i][1]/revealedRatio, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
 					}
 				}
 				else{
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -2163,7 +2163,7 @@ function redraw_light_walls(clear=true){
 						else if(tokenObject?.options?.teleporterCoords != undefined){
 
 						
-							for(let i in window.CURRENTLY_SELECTED_TOKENS){
+							for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
 								let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
 								if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
@@ -2299,7 +2299,7 @@ function redraw_light_walls(clear=true){
 		const circleSize = 15*window.CURRENT_SCENE_DATA.scale_factor;
 		const centerDotSize = 4*window.CURRENT_SCENE_DATA.scale_factor;
 		if(window.wallsBeingDragged?.length > 0){
-			for(let i in window.wallsBeingDragged){
+			for(let i=0; i<window.wallsBeingDragged.length; i++){
 				const drawIndex = window.wallsBeingDragged[i].drawingIndex;
 				const pt1 = window.wallsBeingDragged[i].pt1;
 				const pt2 = window.wallsBeingDragged[i].pt2;
@@ -2324,7 +2324,7 @@ function redraw_light_walls(clear=true){
 			}
 		}
 		else if(window.selectedWalls != undefined){
-			for(let i in window.selectedWalls){
+			for(let i=0; i<window.selectedWalls.length; i++){
 				
 				const pt1 = window.selectedWalls[i].pt1;
 				const pt2 = window.selectedWalls[i].pt2;
@@ -3108,7 +3108,7 @@ function drawing_mousemove(e) {
 					}
 				}
 				else{					
-					for(let i in window.wallsBeingDragged){
+					for(let i=0; i<window.wallsBeingDragged.length; i++){
 						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
 						const scale = window.DRAWINGS[drawIndex][8]/window.CURRENT_SCENE_DATA.conversion;
 						const originalScale = window.wallsBeingDragged[i].wallScale;
@@ -3631,7 +3631,7 @@ function drawing_mouseup(e) {
 			if ( e.button == 2) {
 				return;
 			}
-			for(let walls in window.StoredWalls){
+			for(let walls=0; walls<window.StoredWalls.length; walls++){
 					data = ['line',
 						"wall",
 						window.DRAWCOLOR,
@@ -4137,7 +4137,7 @@ function drawing_mouseup(e) {
 		else{
 			const undoArray = [], redoArray = [];
 			const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
-			for(let i in window.selectedWalls){
+			for(let i=0; i<window.selectedWalls.length; i++){
 				const wall = window.selectedWalls[i];
 				const index = wall.drawIndex;
 				const pt1 = wall.pt1;
@@ -5866,7 +5866,7 @@ function init_walls_menu(buttons){
         let wallUndo = window.wallUndo.pop();
         if(wallUndo){
         	if(wallUndo.undo != undefined){
-				for(let i in wallUndo.undo){
+				for(let i=0; i<wallUndo.undo.length; i++){
 					let x = wallUndo.undo[i][3],
 					y = wallUndo.undo[i][4],
 					width = wallUndo.undo[i][5],
@@ -5882,7 +5882,7 @@ function init_walls_menu(buttons){
 	        	}
 	        }
 	        if(wallUndo.redo != undefined){
-	        	for(let i in wallUndo.redo){
+	        	for(let i=0; i<wallUndo.redo.length; i++){
 	        		window.DRAWINGS.push(wallUndo.redo[i])
 	        	}
 	        }

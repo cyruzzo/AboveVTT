@@ -74,7 +74,7 @@ const debounceHandleInjected = mydebounce(() => {
 							showTempMessage('No non-player tokens selected');
 						}
 						
-						for(let i in window.CURRENTLY_SELECTED_TOKENS){
+						for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
 							let id = window.CURRENTLY_SELECTED_TOKENS[i];
 							let token = window.TOKEN_OBJECTS[id];
@@ -1401,7 +1401,7 @@ class MessageBroker {
 										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
 											showTempMessage('No non-player tokens selected');
 										}
-										for(let i in window.CURRENTLY_SELECTED_TOKENS){
+										for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
 											let token = window.TOKEN_OBJECTS[id];

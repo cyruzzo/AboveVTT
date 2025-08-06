@@ -631,7 +631,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
             let row = build_sidebar_list_row(item);
 
             if(item.encounterData?.tokenItems != undefined){
-                for(let i in item.encounterData.tokenItems){
+                for(let i=0; i<item.encounterData.tokenItems.length; i++){
                     if(item.encounterData.tokenItems[i].type != 'pc'){
                         if(item.encounterData.tokenItems[i].quantity != undefined){
                             for(let j = 0; j<item.encounterData.tokenItems[i].quantity; j++){
@@ -1021,7 +1021,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 .filter(item => item.folderPath === fullPath);
 
             if(listItem.encounterData?.tokenItems != undefined){
-                for(let i in listItem.encounterData.tokenItems){
+                for(let i=0; i<listItem.encounterData.tokenItems.length; i++){
                     if(listItem.encounterData.tokenItems[i].type != 'pc'){
                         if(listItem.encounterData.tokenItems[i].quantity != undefined){
                             for(let j = 0; j<listItem.encounterData.tokenItems[i].quantity; j++){

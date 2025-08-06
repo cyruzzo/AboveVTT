@@ -479,7 +479,7 @@ class Mixer extends EventTarget {
      */
     addMultiChannels(channelData = []) {
         const state = this.state();
-        for(let i in channelData){
+        for(let i=0; i<channelData.length; i++){
             state.channels[uuid()] = channelData[i];
         }
 
