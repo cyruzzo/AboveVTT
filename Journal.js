@@ -1353,7 +1353,7 @@ class JournalManager{
 				});
 
 
-				for(let i in window.playerUsers){
+				for(let i =0; i<window.playerUsers.length; i++){
 					if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
 						let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
 						let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
@@ -1718,7 +1718,7 @@ class JournalManager{
 
 	    const whisper_container=$("<div class='whisper-container'/>");
 
-        for(let i in window.playerUsers){
+        for(let i=0; i<window.playerUsers; i++){
 			if(whisper_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
 				const randomId = uuid();
 				let whisper_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);

@@ -2834,7 +2834,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         defaultValue: false
     };
     let auraRevealVisionEnabled = (customization.tokenOptions.share_vision != undefined) ? customization.tokenOptions.share_vision : false;
-    for(let i in window.playerUsers){
+    for(let i=0; i<window.playerUsers.length; i++){
         if(!revealvisionOption.options.some(d => d.value == window.playerUsers[i].userId)){
             let option = {value: window.playerUsers[i].userId, label: window.playerUsers[i].userName, desciption: `Token vision is shared with ${window.playerUsers[i].userName}`};
             revealvisionOption.options.push(option);
