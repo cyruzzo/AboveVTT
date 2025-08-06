@@ -887,7 +887,8 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 							imgsrc: `https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/${parseInt(currButton.text.replaceAll(/\D/gi, ''))}.png`,
 							hidden: true,
 							locked: true,
-							disableborder: true
+							disableborder: true,
+							revealInFog: true
 
 						}
 						const newToken = new Token(options);
