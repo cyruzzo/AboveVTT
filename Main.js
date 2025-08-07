@@ -3543,12 +3543,12 @@ function show_player_sheet() {
 	});
 	$(".ct-character-sheet__inner, [class*='styles_mobileNav']>div>button[class*='styles_navToggle']").css({
 		"display": "",
-		"z-index": 110
+		"z-index": 21000
 	});
 	$("[class*='styles_mobileNav']").toggleClass('visibleMobileNav', true);
 	$(".site-bar").css({
 		"display": "",
-		"z-index": 110
+		"z-index": 21000
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead
