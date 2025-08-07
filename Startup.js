@@ -47,11 +47,20 @@ $(function() {
       })
       .then(() => {
 
-        if (is_encounters_page()) {
+
+        const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid');
+        const isDmPage = is_encounters_page();
+
+
+        if (isDmPage && window.CAMPAIGN_INFO.dmId == userId) {
           inject_dice();
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
-        } else if (is_characters_page()) {
+        } 
+        else if(isDmPage){
+          startup_step("Player joining as DM")
+          return start_player_joining_as_dm();
+        }else if (is_characters_page()) {
           startup_step("Starting AboveVTT for character");
           return start_above_vtt_for_players();
         } else {
@@ -368,7 +377,49 @@ async function start_above_vtt_common() {
   create_peerVideo_button();
   return true;
 }
+function start_player_joining_as_dm(){
+  if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
+    throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
+  }
+  //This is not supported at the moment, if supported the DM should have to choose who can be co-dm - judge people trying to cheat
+  const crow = $(`
+    <div style="
+      width: 400px;
+        height: fit-content;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: fixed;
+        z-index: 1000000;
+        top: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        flex-wrap: wrap;
+        text-align: center;
+        border: 2px solid #fff;
+        background: #000d;
+        border-radius:5px;
+    ">
 
+      <img style="
+        border-radius:5px;
+      "
+      src="https://media.tenor.com/OkemOcHZVugAAAAM/crow-judging.gif"/>
+      <span style="
+      font-size: 25px;
+      text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000, 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000; 
+      ">As a player it is not currently possible to join as DM</span>
+    </div>`);
+
+  $('body').append(crow)
+  remove_loading_overlay();
+  $('#splash').remove();
+  $(window).one('click.crowRremove', function(){
+    crow.remove();
+  })
+
+}
 async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
