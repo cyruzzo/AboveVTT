@@ -804,9 +804,9 @@ class JournalManager{
 			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
-			
-			for(let source=0; source<window.ddbConfigJson.sources.length; source++){
-				const currentSource = window.ddbConfigJson.sources[source]
+			const sortedSources = window.ddbConfigJson.sources.sort((a, b) => a.description.localeCompare(b.description));
+			for(let source=0; source<sortedSources.length; source++){
+				const currentSource = sortedSources[source]
 				if(currentSource.sourceURL == '' || currentSource.name == 'HotDQ' || currentSource.name == 'RoT')
 					continue;
 				const sourcetitle = currentSource.description;
@@ -818,60 +818,67 @@ class JournalManager{
 			
 			chapterImport.on('change', function(){
 				let source = this.value;
-				
-				if (source == '/magic-items' || source == '/feats' || source == '/spells'){
-					let new_noteid=uuid();
-					let new_note_title = source.replaceAll(/-/g, ' ')
-											.replaceAll(/\//g, '')
-											.replaceAll(/\b\w/g, l => l.toUpperCase());
+				journalPanel.display_sidebar_loading_indicator('Loading Chapters');
+				try{
+					if (source == '/magic-items' || source == '/feats' || source == '/spells'){
+						let new_noteid=uuid();
+						let new_note_title = source.replaceAll(/-/g, ' ')
+												.replaceAll(/\//g, '')
+												.replaceAll(/\b\w/g, l => l.toUpperCase());
 
-					self.notes[new_noteid]={
-						title: new_note_title,
-						text: "",
-						player: false,
-						plain: "",
-						ddbsource: `https://dndbeyond.com${source}`
-					};
-					let chapter = self.chapters.find(x => x.title == 'Compendium')
-					if(!chapter){
+						self.notes[new_noteid]={
+							title: new_note_title,
+							text: "",
+							player: false,
+							plain: "",
+							ddbsource: `https://dndbeyond.com${source}`
+						};
+						let chapter = self.chapters.find(x => x.title == 'Compendium')
+						if(!chapter){
+							self.chapters.push({
+								title: 'Compendium',
+								collapsed: false,
+								notes: [],
+							});
+							chapter = self.chapters[self.chapters.length-1];
+						}
+						
+						chapter.notes.push(new_noteid);
+						self.persist();
+						self.build_journal(searchText);
+					}
+					else{
 						self.chapters.push({
-							title: 'Compendium',
+							title: window.ddbConfigJson.sources.find(d=> d.sourceURL.includes(source))?.description,
 							collapsed: false,
 							notes: [],
-						});
-						chapter = self.chapters[self.chapters.length-1];
-					}
-					
-					chapter.notes.push(new_noteid);
-					self.persist();
-					self.build_journal(searchText);
-				}
-				else{
-					self.chapters.push({
-						title: window.ddbConfigJson.sources.find(d=> d.sourceURL.includes(source))?.description,
-						collapsed: false,
-						notes: [],
-					});	
+						});	
 
-					window.ScenesHandler.build_adventures(function() {
-						window.ScenesHandler.build_chapters(source, function(){
-							for(let chapter in window.ScenesHandler.sources[source].chapters){
-								let new_noteid=uuid();
-								let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
-								self.notes[new_noteid]={
-									title: new_note_title,
-									text: "",
-									player: false,
-									plain: "",
-									ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
-								};
-								self.chapters[self.chapters.length-1].notes.push(new_noteid);
-							}
-							self.persist();
-							self.build_journal(searchText);
+						window.ScenesHandler.build_adventures(function() {
+							window.ScenesHandler.build_chapters(source, function(){
+								for(let chapter in window.ScenesHandler.sources[source].chapters){
+									let new_noteid=uuid();
+									let new_note_title = window.ScenesHandler.sources[source].chapters[chapter].title;
+									self.notes[new_noteid]={
+										title: new_note_title,
+										text: "",
+										player: false,
+										plain: "",
+										ddbsource: window.ScenesHandler.sources[source].chapters[chapter].url
+									};
+									self.chapters[self.chapters.length-1].notes.push(new_noteid);
+								}
+								self.persist();
+								self.build_journal(searchText);
+								journalPanel.remove_sidebar_loading_indicator();
+							});
 						});
-					});
+					}
 				}
+				catch {
+					journalPanel.remove_sidebar_loading_indicator();
+				}
+				
 			})
 
 			$('#journal-panel .sidebar-panel-body').prepend(sort_button, chapterImport);
