@@ -688,7 +688,7 @@ class JournalManager{
 						'top': e.clientY + 'px',
 						'left': e.clientX + 'px'
 					});
-					create_context_background([toggle_container]);
+					create_context_background(['.note-visibility-toggle-container']);
 				})
 
 				
@@ -898,7 +898,7 @@ class JournalManager{
 								'top': e.clientY + 'px',
 								'left': e.clientX + 'px'
 							});
-							create_context_background([toggle_container]);
+							create_context_background(['.note-visibility-toggle-container']);
 						})
 						entry.append(share_note_btn);
 					}

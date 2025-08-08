@@ -1140,26 +1140,28 @@ function inject_dice(){
  }, 20000);
  
 }
-
+/**
+ * Creates a transparent context background that can be clicked to close items
+ * @param {String[]} closeItemTargets - An array of jQuery selectors for items to close when the background is clicked
+ * @param {function} callback - A callback function to execute after the items are closed
+ * @returns 
+ */
 function create_context_background(closeItemTargets = [], callback = function(){}) {
-  const contextBackground = $('<div class="avtt-context-background"></div>');
-  contextBackground.on('click', function(e){
+  
+  const removeItems = function(e, eventElement) {
     e.stopPropagation();
     e.preventDefault();
-    closeItemTargets.forEach(target => {
-      $(target).remove();
-    })
-    $(this).remove();
+    const selectors = closeItemTargets.join(',');
+    $(selectors).remove();
+    $(eventElement).remove();
     callback();
+  }
+  const contextBackground = $('<div class="avtt-context-background"></div>');
+  contextBackground.on('click', function(e){
+    removeItems(e, this);
   });
   contextBackground.on('contextmenu', function(e){
-    e.stopPropagation(); 
-    e.preventDefault();
-    closeItemTargets.forEach(target => {
-      $(target).remove();
-    })
-    $(this).remove();
-    callback();
+    removeItems(e, this);
   })
   $('body').append(contextBackground);
   return contextBackground;
