@@ -424,6 +424,14 @@ async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
+
+  //These functions are removed to stop issues with running on the campaign page and loops/extending objects via $.extend. 
+  //We can look at other ways to fix our code so this isn't needed. I've already moved off for...in loops I could find that were targeting arrays.
+  delete Array.prototype.clean
+  delete Array.prototype.distinct
+  delete Array.prototype.each
+  delete Array.prototype.sortBy
+
   window.document.title = `AVTT DM ${window.document.title}`
   $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_ID = false;
