@@ -156,20 +156,14 @@ function token_context_menu_expanded(tokenIds, e) {
 
 
 	$("#tokenOptionsPopup").remove();
-	let tokenOptionsClickCloseDiv = $("<div id='tokenOptionsClickCloseDiv'></div>");
-	tokenOptionsClickCloseDiv.off("click").on("click", function(){
-		$("#tokenOptionsPopup").remove();
+
+	create_context_background(['#tokenOptionsPopup', '.context-menu-flyout'], function(){
 		$('.context-menu-list').trigger('contextmenu:hide')
-		tokenOptionsClickCloseDiv.remove();
 		$("#tokenOptionsContainer .sp-container").spectrum("destroy");
 		$("#tokenOptionsContainer .sp-container").remove();
-		$(`.context-menu-flyout`).remove(); 
 		clear_temp_canvas();
 	});
 
-	tokenOptionsClickCloseDiv.off("contextmenu").on("contextmenu", function(e){
-		e.preventDefault();
-	})
 
 	let moveableTokenOptions = $("<div id='tokenOptionsPopup'></div>");
 
@@ -178,7 +172,7 @@ function token_context_menu_expanded(tokenIds, e) {
 	moveableTokenOptions.append(body);
 
 	$('body').append(moveableTokenOptions);
-	$('body').append(tokenOptionsClickCloseDiv);
+
 	$("#tokenOptionsPopup").addClass("moveableWindow");
 	$("#tokenOptionsPopup").draggable({
 		addClasses: false,

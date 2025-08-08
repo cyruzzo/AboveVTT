@@ -1140,6 +1140,30 @@ function inject_dice(){
  }, 20000);
  
 }
+
+function create_context_background(closeItemTargets = [], callback = function(){}) {
+  const contextBackground = $('<div class="avtt-context-background"></div>');
+  contextBackground.on('click', function(e){
+    e.stopPropagation();
+    e.preventDefault();
+    closeItemTargets.forEach(target => {
+      $(target).remove();
+    })
+    $(this).remove();
+    callback();
+  });
+  contextBackground.on('contextmenu', function(e){
+    e.stopPropagation(); 
+    e.preventDefault();
+    closeItemTargets.forEach(target => {
+      $(target).remove();
+    })
+    $(this).remove();
+    callback();
+  })
+  $('body').append(contextBackground);
+  return contextBackground;
+}
 function is_release_build() {
   return (!is_beta_build() && !is_local_build());
 }

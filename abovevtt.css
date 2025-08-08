@@ -2985,6 +2985,33 @@ button.roll-button-mod.minus {
     justify-content: center;
     align-items: center; 
 }
+body .note-visibility-toggle-container {
+    position:fixed;
+    background:#fff;
+    flex-wrap: wrap;
+    flex-direction: column;
+    border-radius:5px;
+    padding: 5px;
+    display:flex;
+    z-index: 100000;
+    transform:translateX(-100%);
+    border: 1px solid #ddd;
+}
+.note-visibility-toggle-container .visibility_toggle_row label{
+    margin: 1px 10px;
+}
+.note-list .token-row-button.share span.material-icons {
+    font-size: 21px;
+}
+.avtt-context-background{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 10000;
+}
 
 .row-chapter {
     display: flex;

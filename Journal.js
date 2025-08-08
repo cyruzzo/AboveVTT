@@ -194,8 +194,8 @@ class JournalManager{
 			
 		}
 	}
-
 	sendNotes(sendNotes){
+
 		let self=this;
 		if(sendNotes.length > 1 && JSON.stringify(sendNotes).length > 120000) {
 			let sendNotes1 = sendNotes.slice(0, parseInt(sendNotes.length/2))
@@ -211,7 +211,20 @@ class JournalManager{
 
 
 	}
-	
+	/**
+	 * Sets the chapter to be shared with the set of players
+	 * 
+	 * @param {number} chapterIndex - Folder index to share
+	 * @param {Array|Boolean} shareWithPlayer - Array of player userIds to share with, or true to share with all players
+	 */
+	share_chapter(chapterIndex, shareWithPlayer){
+		this.chapters[chapterIndex].shareWithPlayer = shareWithPlayer || false;
+		this.persist();
+		this.build_journal();
+		window.MB.sendMessage('custom/myVTT/JournalChapters',{
+			chapters: this.chapters
+		});
+	}
 	build_journal(searchText){
 		console.log('build_journal');
 		let self=this;
@@ -532,7 +545,8 @@ class JournalManager{
 					
 				let row_chapter_title=$("<div class='row-chapter'></div>");
 				
-				
+				let prependIcon = (self.chapters[i].shareWithPlayer && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px; margin-right: 5px;'>share</span>`) : '';
+					
 				let chapter_title=$(`<div class='journal-chapter-title' title='${self.chapters[i].title}'/>`);
 				chapter_title.text(self.chapters[i].title);
 
@@ -613,10 +627,75 @@ class JournalManager{
 					});
 
 				});
-				row_chapter_title.append(folderIcon);	
-				row_chapter_title.append(chapter_title);
+
+				
+	
+
+				
+				const share_fold_btn=$("<button class='token-row-button share'><span class='material-icons'>share</span></button>");
+			
+				
+				share_fold_btn.click(function(e){
+					
+			
+
+					let toggle_container = $(`<div class='note-visibility-toggle-container'></div`)
+
+					let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
+					let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
+					visibility_row.append(visibility_toggle)
+					toggle_container.append(visibility_row);
+					visibility_toggle.change(function(){
+						
+						window.JOURNAL.share_chapter(i,visibility_toggle.is(":checked"));
+
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+						
+					
+					});
+
+
+					for(let i =0; i<window.playerUsers.length; i++){
+						if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+							let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+							let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+							
+							visibility_row.append(visibility_toggle)
+
+							visibility_toggle.prop("checked",(self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.playerUsers[i].userId}`)));
+							
+							visibility_toggle.change(function(){
+								let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
+								if(sharedUsers.length == 0)
+									sharedUsers = false;
+								window.JOURNAL.share_chapter(i,sharedUsers);
+							});
+							
+							toggle_container.append(visibility_row);
+						}
+					}
+
+					visibility_toggle.prop("checked",self.chapters[i].shareWithPlayer == true);
+						
+					if(visibility_toggle.is(":checked"))
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
+					else
+						toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
+					
+					$('body').append(toggle_container);
+					toggle_container.css({
+						'top': e.clientY + 'px',
+						'left': e.clientX + 'px'
+					});
+					create_context_background([toggle_container]);
+				})
+
+				
+				
+				row_chapter_title.append(folderIcon, prependIcon, chapter_title);	
 				if(window.DM) {
-					row_chapter_title.append(add_note_btn, add_fold_btn);
+					row_chapter_title.append(add_note_btn, add_fold_btn, share_fold_btn);
 				}	
 
 				let containsPlayerNotes = false;
@@ -624,17 +703,19 @@ class JournalManager{
 					let note_id=self.chapters[i].notes[n];
 					if(self.notes[note_id]?.player == true || (self.notes[note_id]?.player instanceof Array && self.notes[note_id].player?.includes(`${window.myUser}`))){
 						containsPlayerNotes = true;
+						break;
 					} 
 				}
-
-				if(window.DM || containsPlayerNotes) {
+				const sharedFolder = (self.chapters[i].shareWithPlayer == true || (self.chapters[i].shareWithPlayer instanceof Array && self.chapters[i].shareWithPlayer.includes(`${window.myUser}`)));
+				section_chapter.toggleClass('shared-folder', sharedFolder);
+				if(window.DM || containsPlayerNotes || sharedFolder) {
 					section_chapter.append(row_chapter_title);
 				} else {
 					section_chapter.append(row_chapter_title);
 					section_chapter.hide();
 				}
 
-				
+				let sharedParentFolder = false;
 
 				if(!self.chapters[i].parentID){
 					chapter_list.append(section_chapter);
@@ -642,6 +723,7 @@ class JournalManager{
 				else{		
 					let parentFolder = chapter_list.find(`.folder[data-id='${self.chapters[i].parentID}']`);
 					let parentID = self.chapters[i]?.parentID
+					sharedParentFolder = parentFolder.closest('.shared-folder').length>0;
 					if(self.chapters[i].id == self.chapters.filter(d => d.id == parentID)[0].parentID){
 						delete self.chapters[i].parentID
 					}
@@ -658,16 +740,19 @@ class JournalManager{
 						} 
 					}
 
-					if(window.DM || containsPlayerNotes) {
+							
+
+					if(window.DM || containsPlayerNotes || sharedFolder || sharedParentFolder) {
 						parentFolder.append(section_chapter);
 						parentFolder.show();
 						parentFolder.parents().show();
+						section_chapter.show();
 					} else {
 						parentFolder.append(section_chapter);
 						section_chapter.hide();
 					}
 				}
-
+				
 				journalPanel.body.append(chapter_list);
 
 
@@ -679,7 +764,7 @@ class JournalManager{
 					if(! (note_id in self.notes && note_id in relevantNotes ))
 						continue;
 						
-					if( (! window.DM) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) )
+					if( (! window.DM) && (!sharedParentFolder) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) && (self.chapters[i]?.shareWithPlayer == false || self.chapters[i]?.shareWithPlayer instanceof Array && !self.chapters[i]?.shareWithPlayer.includes(`${window.myUser}`)))
 						continue;
 					
 					let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
@@ -758,8 +843,66 @@ class JournalManager{
 						if(!self.notes[note_id].ddbsource){
 							entry.append(edit_btn);	
 						}
-					}
+						entry.append(rename_btn);
+						
+						
+						const share_note_btn=$("<button class='token-row-button share'><span class='material-icons'>share</span></button>");
+					
+						
+						share_note_btn.click(function(e){
 
+							let toggle_container = $(`<div class='note-visibility-toggle-container'></div`)
+
+							let visibility_toggle=$("<input type='checkbox' name='allPlayers'/>");
+							let visibility_row = $(`<div class='visibility_toggle_row'><label for='allPlayers'>All Players</label></div>`)
+							visibility_row.append(visibility_toggle)
+							toggle_container.append(visibility_row);
+							visibility_toggle.change(function(){						
+								window.JOURNAL.note_visibility(note_id,visibility_toggle.is(":checked"));
+								window.JOURNAL.build_journal();
+								toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', visibility_toggle.is(":checked"));
+								toggle_container.find(`input:not([name='allPlayers'])`).prop('checked', visibility_toggle.is(":checked"));
+							});
+
+
+							for(let i =0; i<window.playerUsers.length; i++){
+								if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
+									let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
+									let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+									
+									visibility_row.append(visibility_toggle)
+
+									visibility_toggle.prop("checked",(self.notes[note_id].player instanceof Array && self.notes[note_id].player.includes(`${window.playerUsers[i].userId}`)));
+									
+									visibility_toggle.change(function(){
+										let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
+										if(sharedUsers.length == 0)
+											sharedUsers = false;
+										window.JOURNAL.note_visibility(note_id,visibility_toggle.is(":checked"));
+										window.JOURNAL.build_journal();
+									});
+									
+									toggle_container.append(visibility_row);
+								}
+							}
+
+							visibility_toggle.prop("checked",self.notes[note_id].player == true);
+								
+							if(visibility_toggle.is(":checked"))
+								toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', true);
+							else
+								toggle_container.find(`input:not([name='allPlayers'])`).prop('disabled', false);
+							
+							$('body').append(toggle_container);
+							toggle_container.css({
+								'top': e.clientY + 'px',
+								'left': e.clientX + 'px'
+							});
+							create_context_background([toggle_container]);
+						})
+						entry.append(share_note_btn);
+					}
+					
 					note_list.append(entry);
 					
 				}
