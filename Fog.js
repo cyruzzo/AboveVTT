@@ -2780,9 +2780,8 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-		// draw a dot
-		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
 	}
 	else if(window.DRAWSHAPE === 'brush-arrow'){
@@ -2990,7 +2989,7 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
-	if ((window.MOUSEMOVEWAIT && window.DRAWSHAPE != "grid-brush") || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
+	if ((window.MOUSEMOVEWAIT && !['grid-brush'].includes(window.DRAWSHAPE)) || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
 	// don't perform any drawing when dragging a token
@@ -3018,7 +3017,7 @@ function drawing_mousemove(e) {
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
 
-	if (window.MOUSEDOWN) {
+	if (window.MOUSEDOWN || window.DRAWSHAPE === "brush") {
 		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING && window.DRAWSHAPE != "grid-brush")
 			clear_temp_canvas()
 		const width = mouseX - window.BEGIN_MOUSEX;
@@ -3223,24 +3222,33 @@ function drawing_mousemove(e) {
 
 		}
 		else if (window.DRAWSHAPE == "brush"){
+		
 			// Only add a new point every 75ms to keep the drawing size low
 			// Subtract mouseMoveFps from 75ms to avoid waiting too much
-			if(!window.BRUSHWAIT)
-			{
-				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
-				let clonePoints = [...window.BRUSHPOINTS]
-				// cap with a dot
-				clonePoints.push({x:mouseX+1, y:mouseY+1});
-				clonePoints.push({x:mouseX-1, y:mouseY-1});
-				drawBrushstroke(window.temp_context, clonePoints, window.DRAWCOLOR, window.LINEWIDTH);
-
-				window.BRUSHWAIT = true;
-				if (mouseMoveFps < 75) {
-					setTimeout(function() {
-						window.BRUSHWAIT = false;
-					}, (75 - mouseMoveFps));
+			if(Array.isArray(window.BRUSHPOINTS)) {
+				const clonePoints = [...window.BRUSHPOINTS];
+				if(window.MOUSEDOWN){
+					clonePoints.push({x:mouseX, y:mouseY});
+					clonePoints.push({x:mouseX-1, y:mouseY-1});
+					clonePoints.push({x:mouseX+1, y:mouseY+1});
 				}
+					
+				drawBrushstroke(window.temp_context, clonePoints, window.DRAWCOLOR, window.LINEWIDTH);
 			}
+			drawCircle(window.temp_context, mouseX, mouseY, window.LINEWIDTH/2*window.CURRENT_SCENE_DATA.scale_factor, '#fff8', true, 1);
+			drawCircle(window.temp_context, mouseX, mouseY, window.LINEWIDTH/2*window.CURRENT_SCENE_DATA.scale_factor, '#000000ff', false, 1);
+			
+
+			if(!window.MOUSEDOWN || window.BRUSHWAIT)
+				return;
+			
+			window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
+			window.BRUSHWAIT = true
+			setTimeout(function() {
+				window.BRUSHWAIT = false;
+			}, 75);
+		
+			
 		}
 		else if(window.DRAWSHAPE == "brush-arrow"){
 			// Only add a new point every 75ms to keep the drawing size low
@@ -3257,7 +3265,7 @@ function drawing_mousemove(e) {
 					setTimeout(function() {
 						window.BRUSHWAIT = false;
 					}, (75 - mouseMoveFps));
-				}
+				}	
 			}
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
@@ -3413,10 +3421,10 @@ function drawing_mouseup(e) {
 	}
 
 	const mousePosition = {
-		clientX: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientX : event.changedTouches[0].clientX) : event.clientX,
-		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
-		clientY: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientY : event.changedTouches[0].clientY) : event.clientY,
-		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
+		clientX: (e.touches) ? ((e.touches[0]) ? e.touches[0].clientX : e.changedTouches[0].clientX) : e.clientX,
+		pageX: (e.touches) ? ((e.touches[0]) ? e.touches[0].pageX : e.changedTouches[0].pageX) : e.pageX,
+		clientY: (e.touches) ? ((e.touches[0]) ? e.touches[0].clientY : e.changedTouches[0].clientY) : e.clientY,
+		pageY: (e.touches) ? ((e.touches[0]) ? e.touches[0].pageY : e.changedTouches[0].pageY) : e.pageY,
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
@@ -3500,9 +3508,8 @@ function drawing_mouseup(e) {
 				break;
 			case "brush":
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
-				// cap with a dot
-				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
 				window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
+				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
 				data[0] = "brush"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
@@ -4253,7 +4260,7 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "measure") {
 		WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 	}
-
+	window.BRUSHPOINTS = null;
 }
 
 function drawing_contextmenu(e) {
@@ -4475,6 +4482,11 @@ function get_draw_data(button, menu){
  * data-function - the drawing function, draw/erase/text-erase/measure/select/hide/reveal
  */
 function handle_drawing_button_click() {
+
+	$(".drawWidthSlider").on("input change blur", function() {
+		window.LINEWIDTH = parseInt($(this).val());
+	});
+
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
 		const clicked = this;
@@ -4572,10 +4584,20 @@ function handle_drawing_button_click() {
 		else{
 			$("#temp_overlay").css("mix-blend-mode", "")
 		}
+		const drawData = get_draw_data(data.clicked,  data.menu)
+
+		window.LINEWIDTH = drawData.draw_line_width
+		window.DRAWTYPE = (drawData.from == 'vision_menu') ? 'light' : drawData.fill
+		window.DRAWCOLOR = drawData.background_color
+		window.DRAWLOCATION = drawData.location
+		window.DRAWSHAPE = window.drawAudioPolygon ? 'polygon' : drawData.shape;
+		window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : drawData.function;
+
 		target.on('mousedown touchstart', data, drawing_mousedown);
 		target.on('mouseup touchend',  data, drawing_mouseup);
 		target.on('mousemove touchmove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
+		
 	})
 	$("#door_types").click(function(){
 		if(!$(`#draw_door`).hasClass('button-enabled') && !$(`#draw_door_convert`).hasClass('button-enabled') && !$(`#draw_door_erase`).hasClass('button-enabled')  && !$(`#draw_door_hidden`).hasClass('button-enabled')){
@@ -4685,9 +4707,10 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
-	ctx.save();
 	let p1 = points[0];
 	let p2 = points[1];
+	ctx.save();
+
 
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
@@ -4698,9 +4721,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (let i = 1, len = points.length; i < len; i++) {
-		// we pick the point between pi+1 & pi+2 as the
-		// end point and p1 as our control point
-		let midPoint = midPointBtw(p1, p2);
+		let midPoint = midPointBtw(p1, p2);	
 		ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		p1 = points[i];
 		p2 = points[i+1];
@@ -4710,6 +4731,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.stroke();
 
 	ctx.restore();
+	
 }
 
 function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor, fill = [])
