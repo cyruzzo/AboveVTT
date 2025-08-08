@@ -1013,34 +1013,12 @@ function process_monitored_logs() {
   return processedLogs.join('\n');
 }
 function inject_dice(){
-  window.encounterObserver = new MutationObserver(function(mutationList, observer) {
 
-    mutationList.forEach(mutation => {
-      try {
-        let mutationTarget = $(mutation.target);
-        
-        if(mutationTarget.hasClass(['encounter-details', 'encounter-builder', 'release-indicator'])){
-          mutationTarget.remove();
+  const initialSetupTime = Date.now();
 
-        }
-        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
-          $(mutation.addedNodes).remove();
-        }
-        
-      } catch{
-        console.warn("non_sheet_observer failed to parse mutation", error, mutation);
-      }
-    });
-  })
-
-
-  const mutation_target = $('body')[0];
-  //observers changes to body direct children being removed/added
-  const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
-  window.encounterObserver.observe(mutation_target, mutation_config) 
 
   $('body .container').append(`
-        <div id="encounter-builder-root" data-config="{&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;}" >
+        <div id="encounter-builder-root" data-config="{&quot;assetBasePath&quot;:&quot;https://media.dndbeyond.com/encounter-builder&quot;,&quot;authUrl&quot;:&quot;https://auth-service.dndbeyond.com/v1/cobalt-token&quot;,&quot;campaignDetailsPageBaseUrl&quot;:&quot;https://www.dndbeyond.com/campaigns&quot;,&quot;campaignServiceUrlBase&quot;:&quot;https://www.dndbeyond.com/api/campaign&quot;,&quot;characterServiceUrlBase&quot;:&quot;https://character-service-scds.dndbeyond.com/v2/characters&quot;,&quot;diceApi&quot;:&quot;https://dice-service.dndbeyond.com&quot;,&quot;gameLogBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbApiUrl&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;ddbBaseUrl&quot;:&quot;https://www.dndbeyond.com&quot;,&quot;ddbConfigUrl&quot;:&quot;https://www.dndbeyond.com/api/config/json&quot;,&quot;debug&quot;:false,&quot;encounterServiceUrl&quot;:&quot;https://encounter-service.dndbeyond.com/v1&quot;,&quot;featureFlagsDomain&quot;:&quot;https://api.dndbeyond.com&quot;,&quot;mediaBucket&quot;:&quot;https://media.dndbeyond.com&quot;,&quot;monsterServiceUrl&quot;:&quot;https://monster-service.dndbeyond.com/v1/Monster&quot;,&quot;sourceUrlBase&quot;:&quot;https://www.dndbeyond.com/sources/&quot;,&quot;subscriptionUrl&quot;:&quot;https://www.dndbeyond.com/subscribe&quot;,&quot;toastAutoDeleteInterval&quot;:3000000}" >
            <div class="dice-rolling-panel">
               <div class="dice-toolbar  ">
                  <div class="dice-toolbar__dropdown ">
@@ -1131,7 +1109,36 @@ function inject_dice(){
         </style>
 
   `);
-  
+ window.encounterObserver = new MutationObserver(function(mutationList, observer) {
+
+  mutationList.forEach(mutation => {
+     try {
+       let mutationTarget = $(mutation.target);
+       
+       if(mutationTarget.hasClass(['encounter-details', 'encounter-builder', 'release-indicator'])){
+         mutationTarget.remove();
+
+       }
+       if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
+         $(mutation.addedNodes).remove();
+       }
+     } catch{
+       console.warn("non_sheet_observer failed to parse mutation", error, mutation);
+     }
+   });
+ })
+
+ 
+ const mutation_target = $('#encounter-builder-root')[0];
+ //observers changes to body direct children being removed/added
+ const mutation_config = { attributes: false, childList: true, characterData: false, subtree: true };
+ window.encounterObserver.observe(mutation_target, mutation_config);
+
+ setTimeout(function(){
+   window.encounterObserver.disconnect();
+   delete window.encounterObserver;
+ }, 20000);
+ 
 }
 function is_release_build() {
   return (!is_beta_build() && !is_local_build());
