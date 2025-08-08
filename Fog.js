@@ -2633,7 +2633,7 @@ function numToColor(num, alpha, max) {
  * @returns
  */
 function drawing_mousedown(e) {
-	if($(e.target).is('#context-menu-layer'))
+	if($(e.target).is('#context-menu-layer, .context-menu-list'))
 		return;
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){

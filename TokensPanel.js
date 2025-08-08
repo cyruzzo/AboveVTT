@@ -3927,7 +3927,8 @@ function find_token_options_for_list_item(listItem) {
 }
 function duplicate_my_token(listItem){
     if (!listItem) return {};
-    let foundOptions = find_token_options_for_list_item(listItem);
+    let foundOptions = $.extend(true, {}, find_token_options_for_list_item(listItem));
+    delete foundOptions.id;
     if(window.JOURNAL.notes[listItem.id] != undefined){
         create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
     }
