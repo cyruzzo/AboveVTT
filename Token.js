@@ -2888,19 +2888,19 @@ class Token {
 							event.stopPropagation();
 							window.enable_window_mouse_handlers();
 							if(window.TOKEN_OBJECTS[self.options.id] != undefined){
-								self.place_sync_persist();
+								self.sync($.extend(true, {}, self.options));
 							}
 							
 							let darknessMoved = self.options.darkness;
 							if (self.selected ) {
 								for (let tok of window.dragSelectedTokens){
-									let id = $(tok).attr("data-id");
+									let id = $(tok).attr("data-id");	
 									if (id == self.options.id)
 										continue;
 									let curr = window.TOKEN_OBJECTS[id];
 									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
 									if(window.TOKEN_OBJECTS[curr.options.id] != undefined){
-										curr.place_sync_persist();
+										curr.sync($.extend(true, {}, curr.options));
 									}
 									
 									if(curr.options.darkness === true)
@@ -3188,7 +3188,7 @@ class Token {
 						/*$(event.target).css("left",ui.position.left);
 						$(event.target).css("top",ui.position.top);*/
 						// END OF HACK TEST
-						requestAnimationFrame(() => {
+						
 							const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 							
 							if (allowTokenMeasurement) {
@@ -3209,6 +3209,7 @@ class Token {
 
 
 							}
+						requestAnimationFrame(() => {
 							if (!self.options.hidden) {
 								sendTokenPositionToPeers(tokenPosition.x, tokenPosition.y, self.options.id, allowTokenMeasurement);
 							}

@@ -4843,10 +4843,10 @@ function drawPolygon (
 		
 		tempoffContext.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		tempoffContext.lineWidth = lineWidth;
-			
-		points.forEach((vertice) => {
+		
+		for(let vertice of points){
 			tempoffContext.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		})
+		}
 
 		if (mouseX !== null && mouseY !== null) {
 			tempoffContext.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);

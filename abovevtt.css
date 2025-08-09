@@ -495,8 +495,7 @@ button .ddbc-tab-options__header-heading .menu-option{
 .door-button:hover .portal.foreground{
     background: linear-gradient(#fffc, #fffc), radial-gradient(ellipse at center, #00F 20%, transparent) !important;
 }
-.door-button:hover .door.foreground,
-{
+.door-button:hover .door.foreground{
     background: #fff;
 }
 
@@ -9345,7 +9344,7 @@ button.journal-view-button.journal-button img {
 /** END TEMP new .text--quote-box type **/
 
 
-.note-text h6, {
+.note-text h6 {
     font-size: 14px !important;
     font-weight: bold !important;
 }
@@ -9856,7 +9855,7 @@ button.journal-view-button.journal-button img {
 /** END TEMP new .text--quote-box type **/
 
 
-.custom-stat-block h6, {
+.custom-stat-block h6 {
     font-size: 14px !important;
     font-weight: bold !important;
 }
@@ -10067,10 +10066,7 @@ button.resistanceButton.qrm_buttons_bar span {
     justify-content: center;
     position:relative;
 }
-[class*="glc-game-log"] .qrm_name_line{
-    max-width:;
 
-}
 [class*="glc-game-log"] span.save-fail{
     color: #A00;
 }
