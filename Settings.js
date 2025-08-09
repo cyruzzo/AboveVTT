@@ -598,6 +598,20 @@ function avtt_settings() {
 		defaultValue: false,
 		class: 'ui'
 	})
+	settings.push(
+	{
+		name: "monsterCritType",
+		label: "Monster Ability Title Roll Crit Type",
+		type: "dropdown",
+		options: [
+                { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
+                { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
+                { value: "3", label: "Double total damage", description: "Rolls the original dice adds modifier then doubles it" },
+                { value: "2", label: "Manual", description: "Rolls are not modified based on crit" },
+		],
+		defaultValue: 0,
+		class: 'ui'
+	})
 	settings.push({
 		name: 'quickToggleDefaults',
 		label: 'Quick Toggle Defaults on Load',
