@@ -409,10 +409,10 @@ function start_player_joining_as_dm(){
       <span style="
       font-size: 25px;
       text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000, 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000; 
-      ">As a player it is not currently possible to join as DM</span>
+      ">It is not currently possible to join as DM from a player account.</span>
     </div>`);
 
-  $('body').append(crow)
+  $('body').append(crow);
   remove_loading_overlay();
   $('#splash').remove();
   $(window).one('click.crowRremove', function(){
