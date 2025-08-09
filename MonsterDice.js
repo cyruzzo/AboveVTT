@@ -412,12 +412,12 @@ function scan_player_creature_pane(target) {
 
   container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
     e.preventDefault();
-    if($(event.target).text().includes('Recharge'))
+    if($(e.target).text().includes('Recharge'))
       return;
     let rollButtons = $(event.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)').closest('.avtt-roll-button:not([data-rolltype="recharge"])');
     
 
-    $(event.target.closest('p, div')).find('.avtt-aoe-button')?.click();
+    $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
     for(let i = 0; i<rollButtons.length; i++){      
       let data = getRollData(rollButtons[i]);
       let diceRoll;
