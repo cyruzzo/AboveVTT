@@ -99,7 +99,8 @@
 			"PeerCommunication.js",
 			"peerVideo.js",
 			"peerDice.js",
-			"onedrive/*"
+			"onedrive/*",
+			"WeatherOverlay.js"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
