@@ -1997,9 +1997,10 @@ function redraw_drawn_light(){
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
-function redraw_light_walls(clear=true){
+function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
+
 	$(`[id*='wallHeight']`).remove();
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
@@ -2043,7 +2044,10 @@ function redraw_light_walls(clear=true){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-
+	const offscreenCanvas = document.createElement('canvas');
+	offscreenCanvas.width = canvas.width;
+	offscreenCanvas.height = canvas.height;
+	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale, hidden, wallBottom, wallTop] = drawing_clone;
@@ -2059,7 +2063,7 @@ function redraw_light_walls(clear=true){
 		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
 		if (displayWalls) {
 				
-			if((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != '')){
+			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
 				draw_text(
 				    ctx,
 				    undefined,
@@ -2085,212 +2089,208 @@ function redraw_light_walls(clear=true){
 				    undefined,
 				    true
 				);
-				drawLine(ctx, x, y, width, height, color, lineWidth, scale, true);
+				drawLine(offscreenContext, x, y, width, height, color, lineWidth, scale, true);
 			}
 			else{
-				drawLine(ctx, x, y, width, height, color, lineWidth, scale);
+				drawLine(offscreenContext, x, y, width, height, color, lineWidth, scale);
 			}
 			
 		}
-		
-        let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
-        let open;
-        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}'][data-scale='${scale}']`);
-        let hiddenDoor = hidden ? ` hiddenDoor` : ``;
-        let dataHidden = hidden;
-        let notVisible = doorButton?.hasClass('notVisible') ? true : doorButton.length > 0 ? false : undefined;
-
-        let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
-
-        if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
-        	doorButton.remove();
-        }
-
-
-		if(doorButton.length==0 && doorColorsArray.includes(color)){
-			
-			let midX = Math.floor((x+width)/2) / scale * currentSceneScale;
-			let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
-
+		if(!editingWallPoints){
+			let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
+			let open;
+			let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}'][data-scale='${scale}']`);
+			let hiddenDoor = hidden ? ` hiddenDoor` : ``;
+			let dataHidden = hidden;
+			let notVisible = doorButton?.hasClass('notVisible') ? true : doorButton.length > 0 ? false : undefined;
 
 			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
+
+			if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
+				doorButton.remove();
+			}
+
+
+			if(doorButton.length==0 && doorColorsArray.includes(color)){
+				
+				let midX = Math.floor((x+width)/2) / scale * currentSceneScale;
+				let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
+
+
+				let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
+				
+				let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
+				let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 			
-			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
-		
-			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			
-			let openCloseDoorButton = $(`<div class='door-button ${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
-												<div class='${doorType} background'><div></div></div>
-												<div class='${doorType} foreground'><div></div></div>
-												<div class='door-icon'></div>
-										</div>`)
-			openCloseDoorButton.off('click.doors').on('click.doors', function(){
+				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+				
+				let openCloseDoorButton = $(`<div class='door-button ${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+													<div class='${doorType} background'><div></div></div>
+													<div class='${doorType} foreground'><div></div></div>
+													<div class='door-icon'></div>
+											</div>`)
+				openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
-					if(doorType == `teleporter`){
-						
-
-						let alreadyHighlighted = false;
-						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
-
-							
-						if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
-							copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
-
-	                        if(!window.DM){
-	                        	async function teleportScene(tokenObject){
-	                        		let currentScene = await AboveApi.getCurrentScene(true);
-		                        	let sceneIds = {}
-		                        	let playerId = window.PLAYER_ID;
-		                        	if(currentScene.playerscene && currentScene.playerscene.players){
-		                        	    sceneIds = {
-		                        	        ...currentScene.playerscene,         
-		                        	    };
-		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
-		                        	}
-		                        	else if(typeof currentScene.playerscene == 'string'){
-		                        	    sceneIds = {
-		                        	        players: currentScene.playerscene,
-		                        	    };
-		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
-		                        	}
-		                        	window.splitPlayerScenes = sceneIds;
-		                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
-		                        	window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
-	                        	}
-	                        	teleportScene(tokenObject);
-	                        }
-	                        else{
-	                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
-	                        }
-						}
-						else if(tokenObject?.options?.teleporterCoords != undefined){
-
-						
-							for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
-
-								let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
-								if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
-									continue;
-								}
-									
-								const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
-								curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
-								curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
+						if(doorType == `teleporter`){
 							
 
-								curr.place(0);
-								let optionsClone = $.extend(true, {}, curr.options);
-								if(shiftHeld){
-									optionsClone.speedAnim = true;
-								}
+							let alreadyHighlighted = false;
+							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+
 								
-								if(!alreadyHighlighted){
-									if(shiftHeld){					
-										optionsClone.highlightCenter = true;
+							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
+								copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
+
+								if(!window.DM){
+									async function teleportScene(tokenObject){
+										let currentScene = await AboveApi.getCurrentScene(true);
+										let sceneIds = {}
+										let playerId = window.PLAYER_ID;
+										if(currentScene.playerscene && currentScene.playerscene.players){
+											sceneIds = {
+												...currentScene.playerscene,         
+											};
+											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+										}
+										else if(typeof currentScene.playerscene == 'string'){
+											sceneIds = {
+												players: currentScene.playerscene,
+											};
+											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+										}
+										window.splitPlayerScenes = sceneIds;
+										window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+										window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
 									}
-									alreadyHighlighted = true;
-									curr.highlight();
+									teleportScene(tokenObject);
 								}
-								curr.sync(optionsClone);
-							
+								else{
+									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
+								}
 							}
+							else if(tokenObject?.options?.teleporterCoords != undefined){
+
+							
+								for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
+
+									let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
+									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
+										continue;
+									}
+										
+									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
+									curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
+									curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
+								
+
+									curr.place(0);
+									let optionsClone = $.extend(true, {}, curr.options);
+									if(shiftHeld){
+										optionsClone.speedAnim = true;
+									}
+									
+									if(!alreadyHighlighted){
+										if(shiftHeld){					
+											optionsClone.highlightCenter = true;
+										}
+										alreadyHighlighted = true;
+										curr.highlight();
+									}
+									curr.sync(optionsClone);
+								
+								}
+							}
+							return;
 						}
-						return;
-					}
 
-					let locked = $(this).hasClass('locked');
-					let secret = $(this).hasClass('secret');
-					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
-					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
-						open_close_door(x, y, width, height, type)
-					}
-					else if(shiftHeld && window.DM){
-						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
-						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
-						openCloseDoorButton.toggleClass('locked', !locked);
-						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
-		            
-		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		        		
+						let locked = $(this).hasClass('locked');
+						let secret = $(this).hasClass('secret');
+						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
+						if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
+							open_close_door(x, y, width, height, type)
+						}
+						else if(shiftHeld && window.DM){
+							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
+							const isOpen = $(this).hasClass('open') ? `open` : `closed`;
+							openCloseDoorButton.toggleClass('locked', !locked);
+							let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
+						
+							window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+							
 
-		                let data = ['line',
-									 'wall',
-									 doorColors[type][isOpen],
-									 x,
-									 y,
-									 width,
-									 height,
-									 12,
-									 doors[0][8],
-									 doors[0][9],
-									 (doors[0][10] != undefined ? doors[0][10] : ""),
-									 (doors[0][11] != undefined ? doors[0][11] : "")
-						];	
-						window.DRAWINGS.push(data);
-						window.wallUndo.push({
-							undo: [[...data]],
-							redo: [[...doors[0]]]
-						})
-						redraw_light_walls();
-				        redraw_drawn_light();
-				        redraw_light();
+							let data = ['line',
+										'wall',
+										doorColors[type][isOpen],
+										x,
+										y,
+										width,
+										height,
+										12,
+										doors[0][8],
+										doors[0][9],
+										(doors[0][10] != undefined ? doors[0][10] : ""),
+										(doors[0][11] != undefined ? doors[0][11] : "")
+							];	
+							window.DRAWINGS.push(data);
+							window.wallUndo.push({
+								undo: [[...data]],
+								redo: [[...doors[0]]]
+							})
+							redraw_light_walls();
+							redraw_drawn_light();
+							redraw_light();
 
 
-						sync_drawings();
-					}
+							sync_drawings();
+						}
+					});
+				openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
+					$(this).toggleClass('ignore-hover', false);
 				});
-			openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
-				$(this).toggleClass('ignore-hover', false);
-			});
 
-			
-			$('#tokens').append(openCloseDoorButton);
-			doorButton = openCloseDoorButton;
-			
-		}
-		else if (doorColorsArray.includes(color)){		
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
-
-	
-			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
-			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			if(doorButton.attr('class') != `door-button ${locked}${secret}${open}${hiddenDoor}`){
-				doorButton.attr('class', `door-button ${locked}${secret}${open}${hiddenDoor}`)
-				doorButton.toggleClass('ignore-hover', true);
+				
+				$('#tokens').append(openCloseDoorButton);
+				doorButton = openCloseDoorButton;
+				
 			}
-			
-			doorButton.find('.condition-container').remove();		
-		}
-		if(doorButton.length ==1){
-			let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
-			doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
-			if(notVisible != undefined)
-        		doorButton.toggleClass('notVisible', notVisible)
-			doorButton.removeAttr('removeAfterDraw');
+			else if (doorColorsArray.includes(color)){		
+				let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 
-			door_note_icon(id);
-			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
-				doorButton.toggleClass('linked', true);
+		
+				let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
+				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+				if(doorButton.attr('class') != `door-button ${locked}${secret}${open}${hiddenDoor}`){
+					doorButton.attr('class', `door-button ${locked}${secret}${open}${hiddenDoor}`)
+					doorButton.toggleClass('ignore-hover', true);
+				}
+				
+				doorButton.find('.condition-container').remove();		
 			}
-			if(window.TOKEN_OBJECTS[id] != undefined){
-				setTokenLight(doorButton, window.TOKEN_OBJECTS[id].options);
+			if(doorButton.length ==1){
+				let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+				doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
+				if(notVisible != undefined)
+					doorButton.toggleClass('notVisible', notVisible)
+				doorButton.removeAttr('removeAfterDraw');
+
+				door_note_icon(id);
+				if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
+					doorButton.toggleClass('linked', true);
+				}
+				if(window.TOKEN_OBJECTS[id] != undefined){
+					setTokenLight(doorButton, window.TOKEN_OBJECTS[id].options);
+				}
+				
 			}
-			
+			if((/rgba.*0\.5\)/g).test(color))
+				continue;
+			let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
+			drawnWall.scaleAdjustment = adjustedScale;
+			drawnWall.wallBottom = wallBottom;
+			drawnWall.wallTop = wallTop;
+			drawnWall.terrainWall = color === 'rgba(0, 180, 80, 1)'
+			window.walls.push(drawnWall);
 		}
-		
-
-		if((/rgba.*0\.5\)/g).test(color))
-			continue;
-		
-		
-
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
-		drawnWall.scaleAdjustment = adjustedScale;
-		drawnWall.wallBottom = wallBottom;
-		drawnWall.wallTop = wallTop;
-		drawnWall.terrainWall = color === 'rgba(0, 180, 80, 1)'
-		window.walls.push(drawnWall);
 	}
 
 	if(window.DM && $('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
@@ -2309,19 +2309,19 @@ function redraw_light_walls(clear=true){
 				const pt2 = window.wallsBeingDragged[i].pt2;
 				const scale = window.DRAWINGS[drawIndex][8];
 				if(pt1 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
 					
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#000000', false, 1)	
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#000000', false, 1)	
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 						
 					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)	
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#000000', false, 1)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 					
 					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 				}
@@ -2334,18 +2334,18 @@ function redraw_light_walls(clear=true){
 				const pt2 = window.selectedWalls[i].pt2;
 				const scale = window.selectedWalls[i].wall[8];
 				if(pt1 !== undefined){			
-					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)
-					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#000000', false, 1)		
-					drawCircle(ctx, pt1.x, pt1.y, circleSize,  '#000000', false, 1)		
-					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(offscreenContext, pt1.x, pt1.y, centerDotSize, '#000000', false, 1)		
+					drawCircle(offscreenContext, pt1.x, pt1.y, circleSize,  '#000000', false, 1)		
+					drawCircle(offscreenContext, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 
 					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
-					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#000000', false, 1)
-					drawCircle(ctx, pt2.x, pt2.y, circleSize,  '#000000', false, 1)
-					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(offscreenContext, pt2.x, pt2.y, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, pt2.x, pt2.y, circleSize,  '#000000', false, 1)
+					drawCircle(offscreenContext, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 
 					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 				}
@@ -2357,31 +2357,37 @@ function redraw_light_walls(clear=true){
 		delete window.selectedWallCtx;
 	}
 
-	check_darkness_value();
+	ctx.drawImage(offscreenCanvas, 0, 0); 
+	if(!editingWallPoints){
+		check_darkness_value();
+		if(window.DM){
+			let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
+			let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
 
-		
-	if(window.DM){
-		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
-		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
+			for(journal in sceneDoorJournal){
+				if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
+					delete window.JOURNAL.notes[sceneDoorJournal[journal]]
+					window.JOURNAL.persist();
+				}
 
-		for(journal in sceneDoorJournal){
-			if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
-				delete window.JOURNAL.notes[sceneDoorJournal[journal]]
-				window.JOURNAL.persist();
 			}
-
+		}
+		$('.door-button[removeAfterDraw]').remove();
+		if(displayWalls){
+			$('.hiddenDoor').css('display', 'block');
+		}
+		else{
+			$('.hiddenDoor').css('display', '');
 		}
 	}
+		
+
+		
+	
 
 	
 
-	$('.door-button[removeAfterDraw]').remove();
-	if(displayWalls){
-		$('.hiddenDoor').css('display', 'block');
-	}
-	else{
-		$('.hiddenDoor').css('display', '');
-	}
+	
 }
 
 function door_note_icon(id){
@@ -3136,7 +3142,7 @@ function drawing_mousemove(e) {
 
 				
 				
-				redraw_light_walls();
+				redraw_light_walls(true, true);
 			}
 			else{
 				drawRect(window.temp_context,
