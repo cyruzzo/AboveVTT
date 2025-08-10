@@ -19,6 +19,7 @@ class WeatherOverlay {
         let count;
         if (this.type === 'fog') count = 28;
         else if (this.type === 'rain') count = 120;
+
         else if (this.type === 'snow') count = 120;
         else if (this.type === 'embers') count = 40;
         else if (this.type === 'cherryBlossoms') count = 40;
@@ -36,7 +37,9 @@ class WeatherOverlay {
             this._windDy = Math.sin(angle) * this._windSpeed;
         }
 
+
         const fadeInFrames = 60;
+
     if (this.type === 'rain' || this.type === 'lightning') {
             for (let i = 0; i < count; i++) {
                 const id = i + '_' + Math.floor(Math.random() * 1000000);
