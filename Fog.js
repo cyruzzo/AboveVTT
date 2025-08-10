@@ -1285,7 +1285,7 @@ function reset_canvas(apply_zoom=true) {
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-
+	
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
 	ctxScale('draw_overlay_under_fog_darkness', true);
@@ -1295,6 +1295,8 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('walls_layer');
 	ctxScale('elev_overlay');
 	ctxScale('weather_overlay');
+
+	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
