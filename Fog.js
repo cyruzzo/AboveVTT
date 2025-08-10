@@ -735,16 +735,14 @@ function check_single_token_visibility(id){
 	const lightContext = lightCanvas.getContext('2d');
 
 
-	const raycastingCanvas = document.getElementById('raycastingCanvas');
-	const rayContext = raycastingCanvas.getContext('2d');
+
 	const offScreenCanvas = document.createElement('canvas');
 
-	offScreenCanvas.width = raycastingCanvas.width;
-	offScreenCanvas.height = raycastingCanvas.height;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
 	offScreenCtx = offScreenCanvas.getContext('2d');
 
-	offScreenCtx.drawImage(raycastingCanvas, 0, 0);
-	offScreenCtx.globalCompositeOperation = 'destination-in';
+
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -759,17 +757,20 @@ function check_single_token_visibility(id){
 	else
 		playerTokenHasVision = false;
 
+	const sharedVision = playerTokenId == id ||  window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser;
 
 	const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 	
-	const inVisibleLight = (playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
+	const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || sharedVision || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
 
-	const dmSelected = window.DM === true && $(tokenSelector).hasClass('tokenselected');
+	const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
+	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && !sharedVision
+
+
 	
-	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name === 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
@@ -847,16 +848,13 @@ function do_check_token_visibility() {
 		playerTokenHasVision = false;
 	
 
-	const raycastingCanvas = document.getElementById('raycastingCanvas');
-	let rayContext = raycastingCanvas.getContext('2d');
 	
 	const offScreenCanvas = document.createElement('canvas');
-	offScreenCanvas.width = raycastingCanvas.width;
-	offScreenCanvas.height = raycastingCanvas.height;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
 	offScreenCtx = offScreenCanvas.getContext('2d');
 
-	offScreenCtx.drawImage(raycastingCanvas, 0, 0);
-	offScreenCtx.globalCompositeOperation = 'destination-in';
+
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -880,16 +878,17 @@ function do_check_token_visibility() {
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
 			//Combining some and filter cut down about 140ms for average sized picture
-			
+			const sharedVision = playerTokenId == id ||  window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser;
+
 			const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 			
-			const inVisibleLight = (playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
+			const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || sharedVision || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
 
 			const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
-			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && !sharedVision
 
 
 			let inTruesight = false;
@@ -1410,8 +1409,24 @@ function check_darkness_value(){
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
 	$('#raycastingCanvas').css('visibility', '');
+
+	let tokenHasSharedVision = false;
 	if(selectedTokens.length>0){
-		if(window.SelectedTokenVision === true){
+		for(let j = 0; j < selectedTokens.length; j++){
+		  	let tokenId = $(selectedTokens[j]).attr('data-id');
+
+			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc')){
+				tokenHasSharedVision = true;
+				break;
+			}
+		}	  
+	}	
+
+
+
+	if(selectedTokens.length>0){
+		
+		if(window.SelectedTokenVision === true && tokenHasSharedVision){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
 				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
 			}
@@ -6933,7 +6948,7 @@ function redraw_light(darknessMoved = false){
 	}
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	
-	check_darkness_value();
+	
 
 	if(selectedTokens.length>0){
 		for(let j = 0; j < selectedTokens.length; j++){
@@ -6943,8 +6958,8 @@ function redraw_light(darknessMoved = false){
 		  		selectedIds.push(tokenId)
 		}	  
 	}	
-
-
+	if(selectedIds.length > 0 || selectedTokens.length == 0)
+		check_darkness_value();
 
 	const promises = []
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
@@ -7044,7 +7059,7 @@ function redraw_light(darknessMoved = false){
 
 	
 
-		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys);
+		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 
 		if(window.lightAuraClipPolygon[auraId]?.canvas !== undefined){
 			lightInLosContext.globalCompositeOperation='source-over';
@@ -7389,7 +7404,7 @@ function draw_darkness_aoe_to_canvas(ctx){
 	ctx.globalCompositeOperation='source-over';
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
-function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys()){
+function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys(), numberOfSharedVisionTokens = 0){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
@@ -7439,7 +7454,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
-	const selectedTokenCheck = (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
+	const selectedTokenCheck = numberOfSharedVisionTokens == 0 || (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
 
 	let circleRadius = 0
 
@@ -7462,7 +7477,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 			delete window.lightAuraClipPolygon[auraId];
 			return; // remove 0 range light and return
 		}
-		if(window.lightAuraClipPolygon[auraId].numberOfWalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+		if(!window.SelectedTokenVision && window.lightAuraClipPolygon[auraId].numberOfWalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
 			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
 	}
 	else if(circleRadius === 0){
