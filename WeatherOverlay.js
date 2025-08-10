@@ -1,5 +1,5 @@
 class WeatherOverlay {
-    constructor(canvas, type = 'rain') {
+    constructor(canvas, lightCanvas, type = 'rain') {
         
         this.offscreenCanvas = document.createElement('canvas');
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
@@ -7,6 +7,8 @@ class WeatherOverlay {
         this.offscreenCanvas.height = canvas.height;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
+        this.lightCanvas = lightCanvas;
+        this.lightCtx = lightCanvas.getContext('2d');  
         this.type = type;
         this.particles = [];
         this.animationId = null;
@@ -372,6 +374,11 @@ class WeatherOverlay {
         }
         this._lastFrameTime = now;
         this.offscreenCtx.clearRect(0, 0, this.width, this.height);
+        const typesWithLight = ['lightning'];
+        if(typesWithLight.includes(this.type)){
+            this.lightCtx.clearRect(0, 0, this.width, this.height);
+        }
+
         if (this.type === 'rain') {
             this._drawRain();
         } else if (this.type === 'snow') {
@@ -391,6 +398,8 @@ class WeatherOverlay {
         } else if (this.type === 'leaves' || this.type === 'greenLeaves') {
             this._drawLeaves();
         }
+
+
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.offscreenCanvas, 0, 0);
         this.animationId = requestAnimationFrame(this._animate);
@@ -624,12 +633,35 @@ class WeatherOverlay {
             };
         }
         if (this._lightningFlashFrames && this._lightningFlashFrames > 0 && this._lightningStrike) {
-            this.offscreenCtx.save();
             const glowAlpha = this._lightningAlpha * 0.7;
             const glowRadiusX = this.width * (0.45 + Math.random() * 0.25);
             const glowRadiusY = this.height * (0.28 + Math.random() * 0.18);
+            
+            this.lightCtx.save();
+            this.lightCtx.globalAlpha = 0.5;
+            this.lightCtx.beginPath();
+            this.lightCtx.filter = 'blur(15px)';
+            this.lightCtx.ellipse(
+                this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
+                this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
+                glowRadiusX,
+                glowRadiusY,
+                this._lightningStrike.angle,
+                0,
+                Math.PI * 2
+            );
+            this.lightCtx.fillStyle = 'rgba(255,255,255,0.22)';
+            this.lightCtx.shadowColor = '#fff';
+            this.lightCtx.shadowBlur = 120;
+            this.lightCtx.fill();
+            this.lightCtx.filter = '';
+            this.lightCtx.restore();
+
+
+            this.offscreenCtx.save();
             this.offscreenCtx.globalAlpha = glowAlpha;
             this.offscreenCtx.beginPath();
+            this.offscreenCtx.filter = 'blur(14px)';
             this.offscreenCtx.ellipse(
                 this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
                 this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
@@ -643,6 +675,8 @@ class WeatherOverlay {
             this.offscreenCtx.shadowColor = '#fff';
             this.offscreenCtx.shadowBlur = 120;
             this.offscreenCtx.fill();
+            this.offscreenCtx.filter = '';
+            this.offscreenCtx.restore();
             this.offscreenCtx.globalAlpha = this._lightningAlpha * 0.7;
             this.offscreenCtx.save();
             this.offscreenCtx.translate(this._lightningStrike.x, this._lightningStrike.y);
@@ -677,12 +711,12 @@ class WeatherOverlay {
                     p.fadeIn++;
                 }
                 const progress = p.life / p.maxLife;
-                this.offscreenCtx.globalAlpha = 0.25 * (1 - progress) * fade;
+                this.offscreenCtx.globalAlpha = 0.4 * (1 - progress) * fade;
                 this.offscreenCtx.beginPath();
                 this.offscreenCtx.arc(p.x, p.y, p.r * (1 + progress * 1.5), 0, Math.PI * 2);
-                this.offscreenCtx.strokeStyle = 'rgba(180,220,255,0.7)';
+                this.offscreenCtx.strokeStyle = 'rgba(255, 255, 255, 1)';
                 this.offscreenCtx.lineWidth = 1.2 + 1.5 * (1 - progress);
-                this.offscreenCtx.shadowColor = '#40acffff';
+                this.offscreenCtx.shadowColor = '#00aeff80';
                 this.offscreenCtx.shadowBlur = 8;
                 this.offscreenCtx.stroke();
                 this.offscreenCtx.restore();
@@ -710,13 +744,13 @@ class WeatherOverlay {
                 p.y = (1 - p.z) * p.startY + p.z * p.groundY;
                 const streakLen = 18 + 22 * (1 - p.z);
                 this.offscreenCtx.save();
-                this.offscreenCtx.globalAlpha = 0.7 * (1 - p.z) * fade;
-                this.offscreenCtx.strokeStyle = 'rgba(180,220,255,0.85)';
+                this.offscreenCtx.globalAlpha = 2 * (1 - p.z) * fade;
+                this.offscreenCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
                 this.offscreenCtx.lineWidth = 1.1 + 1.7 * (1 - p.z);
                 this.offscreenCtx.beginPath();
                 this.offscreenCtx.moveTo(p.x, p.y);
                 this.offscreenCtx.lineTo(p.x, p.y + streakLen);
-                this.offscreenCtx.shadowColor = '#52b4ffff';
+                this.offscreenCtx.shadowColor = '#00aeff80';
                 this.offscreenCtx.shadowBlur = 10 * (1 - p.z);
                 this.offscreenCtx.stroke();
                 this.offscreenCtx.restore();
@@ -848,7 +882,8 @@ function set_weather(){
     const currentWeather = window.CURRENT_SCENE_DATA.weather || 'none';
     if(window.WeatherOverlay == undefined){
         const weatherCanvas = $('#weather_overlay');
-        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], currentWeather);
+        const weatherLightCanvas = $('#weather_light');
+        window.WeatherOverlay = new WeatherOverlay(weatherCanvas[0], weatherLightCanvas[0], currentWeather);
     }
 
     if(!currentWeather || currentWeather == 'none' || currentWeather == '0'){

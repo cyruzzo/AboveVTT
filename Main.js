@@ -2255,6 +2255,11 @@ function init_ui() {
 	weather.css("left", "0");
 	weather.css("z-index", "55");
 
+	const weatherLight = $("<canvas id='weather_light'></canvas>");
+	weatherLight.css("position", "absolute");
+	weatherLight.css("top", "0");
+	weatherLight.css("left", "0");
+	weatherLight.css("z-index", "10000000");
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2359,7 +2364,7 @@ function init_ui() {
 	mapContainer.append(darknessLayer);
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
-	lightContainer.append(lightOverlay);
+	lightContainer.append(lightOverlay, weatherLight);
 
 
 	mapItems.append(background);
