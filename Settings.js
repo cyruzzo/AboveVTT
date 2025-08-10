@@ -601,7 +601,7 @@ function avtt_settings() {
 	settings.push(
 	{
 		name: "monsterCritType",
-		label: "Monster Ability Title Roll Crit Type",
+		label: "Monster Action Crit Type",
 		type: "dropdown",
 		options: [
                 { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },

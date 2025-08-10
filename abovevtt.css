@@ -4654,8 +4654,8 @@ h3.no-bottom-margin-setting ~ .sidebar-panel-header-explanation{
     margin-bottom:20px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 35%;
-    max-width: 35%;
+    min-width: 34%;
+    max-width: 34%;
 }
 .footer-input-wrapper {
     width: 100%;
