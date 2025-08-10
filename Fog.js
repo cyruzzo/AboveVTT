@@ -735,16 +735,14 @@ function check_single_token_visibility(id){
 	const lightContext = lightCanvas.getContext('2d');
 
 
-	const raycastingCanvas = document.getElementById('raycastingCanvas');
-	const rayContext = raycastingCanvas.getContext('2d');
+
 	const offScreenCanvas = document.createElement('canvas');
 
-	offScreenCanvas.width = raycastingCanvas.width;
-	offScreenCanvas.height = raycastingCanvas.height;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
 	offScreenCtx = offScreenCanvas.getContext('2d');
 
-	offScreenCtx.drawImage(raycastingCanvas, 0, 0);
-	offScreenCtx.globalCompositeOperation = 'destination-in';
+
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -762,7 +760,7 @@ function check_single_token_visibility(id){
 
 	const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 	
-	const inVisibleLight = (playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
+	const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
 
 	const dmSelected = window.DM === true && $(tokenSelector).hasClass('tokenselected');
 
@@ -847,16 +845,13 @@ function do_check_token_visibility() {
 		playerTokenHasVision = false;
 	
 
-	const raycastingCanvas = document.getElementById('raycastingCanvas');
-	let rayContext = raycastingCanvas.getContext('2d');
 	
 	const offScreenCanvas = document.createElement('canvas');
-	offScreenCanvas.width = raycastingCanvas.width;
-	offScreenCanvas.height = raycastingCanvas.height;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
 	offScreenCtx = offScreenCanvas.getContext('2d');
 
-	offScreenCtx.drawImage(raycastingCanvas, 0, 0);
-	offScreenCtx.globalCompositeOperation = 'destination-in';
+
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -883,7 +878,7 @@ function do_check_token_visibility() {
 			
 			const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 			
-			const inVisibleLight = (playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
+			const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || playerTokenId == id || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
 
 			const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
