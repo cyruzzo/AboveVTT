@@ -14,6 +14,13 @@ class WeatherOverlay {
         this._initParticles();
     }
 
+    setSize(width, height) {
+        this.width = width;
+        this.height = height;
+
+        this._initParticles();
+    }
+
     _initParticles() {
         this.particles = [];
         let count;
