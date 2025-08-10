@@ -878,6 +878,9 @@ select#doorTypeSelectUVTT{
 #elev_overlay{
     opacity: 0.5;
 }
+#weather_overlay{
+    pointer-events:none;
+}
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
 #combat_tracker_inside .ui-resizable-sw {
@@ -4654,8 +4657,8 @@ h3.no-bottom-margin-setting ~ .sidebar-panel-header-explanation{
     margin-bottom:20px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 35%;
-    max-width: 35%;
+    min-width: 34%;
+    max-width: 34%;
 }
 .footer-input-wrapper {
     width: 100%;

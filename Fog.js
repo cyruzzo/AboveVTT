@@ -1294,6 +1294,7 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('draw_overlay');
 	ctxScale('walls_layer');
 	ctxScale('elev_overlay');
+	ctxScale('weather_overlay');
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -1319,6 +1320,7 @@ function reset_canvas(apply_zoom=true) {
 	redraw_light();
 	redraw_fog();
 	redraw_elev();
+	set_weather();
 
 
  	delete window.lightAuraClipPolygon;
