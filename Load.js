@@ -135,6 +135,7 @@ if (isPlainCharacterPage) {
 		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
+		{ src: "WeatherOverlay.js" },
 	]
 	//Do not load characterPage.js for DM or on campaign page
 	if(isPlayerPage && !isDM){ 

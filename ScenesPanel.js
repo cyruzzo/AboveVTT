@@ -1453,6 +1453,25 @@ function edit_scene_dialog(scene_id) {
 	const playlistRow = form_row('playlistRow', 'Load Playlist', playlistSelect)
 	playlistRow.attr('title', `This playlist will load when the DM moves players to this scene. The playlist will not change if 'None' is selected.`)
 	form.append(playlistRow);
+
+	const weatherSelect = $(`<select id='weatherSceneSelect'><option value='0'>None</option></select>`)
+	for(const [weatherType, weatherName] of Object.entries(getWeatherTypes())){
+		weatherSelect.append($(`<option value='${weatherType}'>${weatherName}</option>`));
+	
+	}
+
+	
+
+	const weatherValue = scene.weather || 0;
+	weatherSelect.val(weatherValue);
+	weatherSelect.find(`option`).removeAttr('selected');
+	weatherSelect.find(`option[value='${weatherValue}']`).attr('selected', 'selected');
+	
+
+	const weatherRow = form_row('weatherRow', 'Select Weather Overlay', weatherSelect)
+	weatherRow.attr('title', `Applies a weather overlay to the scene. The weather overlay will persist until changed by the DM.`)
+	form.append(weatherRow);
+	
 	let initialPosition = form_row('initialPosition',
 			'Initial Position',
 			$(`<div>X:<input name='initial_x' step="any" type='number' value='${scene.initial_x || ''}'/> Y:<input type='number' step="any" name='initial_y' value='${scene.initial_y || ''}'/> Zoom:<input name='initial_zoom' step="any" type='number' value='${scene.initial_zoom || ''}'/><button id='initialPosition'>Set initial x,y and zoom to current view</button></div>`)
@@ -1512,7 +1531,7 @@ function edit_scene_dialog(scene_id) {
 			scene[key] = formData[key];
 		}
 		scene['playlist'] = playlistSelect.val();
-
+		scene['weather'] = weatherSelect.val();
 
 		const isNew = false;
 		window.ScenesHandler.persist_scene(scene_id, isNew);

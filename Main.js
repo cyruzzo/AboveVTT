@@ -2249,6 +2249,12 @@ function init_ui() {
 	elev.css("left", "0");
 	elev.css("z-index", "19");
 
+	const weather = $("<canvas id='weather_overlay'></canvas>");
+	weather.css("position", "absolute");
+	weather.css("top", "0");
+	weather.css("left", "0");
+	weather.css("z-index", "55");
+
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2346,6 +2352,7 @@ function init_ui() {
 	VTT.append(tempOverlay);
 	VTT.append(walls);
 	VTT.append(elev);
+	VTT.append(weather);
 	mapItems.append(tokenMapItems);
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
