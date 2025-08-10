@@ -19,7 +19,8 @@ class WeatherOverlay {
         let count;
         if (this.type === 'fog') count = 28;
         else if (this.type === 'rain') count = 120;
-        else if (this.type === 'snow') count = 80;
+
+        else if (this.type === 'snow') count = 120;
         else if (this.type === 'embers') count = 40;
         else if (this.type === 'cherryBlossoms') count = 40;
         else if (this.type === 'lightning') count = 60;
@@ -36,7 +37,9 @@ class WeatherOverlay {
             this._windDy = Math.sin(angle) * this._windSpeed;
         }
 
-        const fadeInFrames = 16;
+
+        const fadeInFrames = 60;
+
     if (this.type === 'rain' || this.type === 'lightning') {
             for (let i = 0; i < count; i++) {
                 const id = i + '_' + Math.floor(Math.random() * 1000000);
@@ -105,12 +108,12 @@ class WeatherOverlay {
                     z: Math.random(),
                     r: 3 + Math.random() * 5,
                     alpha: 0.7 + Math.random() * 0.3,
-                    drift: -0.5 + Math.random(),
-                    speed: 0.04 + Math.random() * 0.07,
+                    drift: 1 + Math.random() * 100, 
+                    speed: 0.0001 + Math.random() * 0.0002, 
                     phase: Math.random() * Math.PI * 2,
                     angle: Math.random() * Math.PI * 2,
                     spin: -0.01 + Math.random() * 0.02,
-                    wind: -0.3 + Math.random() * 0.6,
+                    wind: 0.001 + Math.random() * 0.025,
                     fadeIn: 0,
                     fadeInFrames
                 });
@@ -347,6 +350,14 @@ class WeatherOverlay {
     }
 
     _animate = () => {
+        const now = performance.now();
+        if (!this._lastFrameTime) this._lastFrameTime = now;
+        const elapsed = now - this._lastFrameTime;
+        if (elapsed < 1000/60) {
+            this.animationId = requestAnimationFrame(this._animate);
+            return;
+        }
+        this._lastFrameTime = now;
         this.ctx.clearRect(0, 0, this.width, this.height);
         if (this.type === 'rain') {
             this._drawRain();
@@ -725,10 +736,10 @@ class WeatherOverlay {
                 fade = p.fadeIn / (p.fadeInFrames || 16);
                 p.fadeIn++;
             }
-            p.z += 0.001 + 0.002 * Math.random();
+            p.z += p.speed;
             if (p.z > 1) p.z = 1;
-            p.drift += (-0.002 + 0.004 * Math.random());
-            const windOffset = ((Math.sin(t * 0.7 + p.phase) * (p.drift ?? 0.5) * 0.7) + p.wind * 0.08) * p.z;
+            p.drift += (-0.003 + 0.006 * Math.random());
+            const windOffset = ((Math.sin(t * 0.7 + p.phase) * (p.drift ?? 0.5) * 1.2) + p.wind * 0.16) * p.z;
             p.angle += p.spin;
             p.x = (1 - p.z) * p.startX + p.z * p.groundX + windOffset;
             p.y = (1 - p.z) * p.startY + p.z * p.groundY;
@@ -759,13 +770,13 @@ class WeatherOverlay {
                 p.z = 0;
                 p.r = 3 + Math.random() * 5;
                 p.alpha = 0.7 + Math.random() * 0.3;
-                p.drift = -0.5 + Math.random();
-                p.speed = 0.04 + Math.random() * 0.07;
+                p.drift = 1 + Math.random() * 100;
+                p.speed = 0.0001 + Math.random() * 0.0002; 
                 p.phase = Math.random() * Math.PI * 2;
                 p.angle = Math.random() * Math.PI * 2;
                 p.spin = -0.01 + Math.random() * 0.02;
-                p.wind = -0.3 + Math.random() * 0.6;
-                p.fadeIn = 0;
+                p.wind = 0.001 + Math.random() * 0.025;
+                p.fadeIn = 1;
             }
         }
     }
