@@ -548,19 +548,39 @@ class WeatherOverlay {
             this.offscreenCtx.rotate(p.angle);
             for (let petal = 0; petal < 5; petal++) {
                 this.offscreenCtx.save();
-                this.offscreenCtx.rotate((Math.PI * 2 / 5) * petal);
-                let grad = this.offscreenCtx.createLinearGradient(0, 0, 0, p.r);
+                const petalAngle = (Math.PI * 2 / 5) * petal + (Math.random() - 0.5) * 0.10;
+                this.offscreenCtx.rotate(petalAngle);
+                this.offscreenCtx.beginPath();
+                this.offscreenCtx.moveTo(0, 0);
+                this.offscreenCtx.bezierCurveTo(
+                    p.r * 0.28, -p.r * 0.18,
+                    p.r * 0.38, -p.r * 0.55,
+                    0, -p.r * 0.62
+                );
+                this.offscreenCtx.bezierCurveTo(
+                    -p.r * 0.38, -p.r * 0.55,
+                    -p.r * 0.28, -p.r * 0.18,
+                    0, 0
+                );
+                let grad = this.offscreenCtx.createLinearGradient(0, 0, 0, -p.r);
                 grad.addColorStop(0, p.petalColor);
                 grad.addColorStop(0.7, p.tipColor);
-                grad.addColorStop(1, 'rgba(255,255,255,0.1)');
-                this.offscreenCtx.beginPath();
-                this.offscreenCtx.ellipse(0, p.r * 0.45, p.r * 0.45, p.r * 0.18, 0, 0, Math.PI * 2);
+                grad.addColorStop(1, 'rgba(255,255,255,0.13)');
                 this.offscreenCtx.fillStyle = grad;
                 this.offscreenCtx.shadowColor = p.tipColor;
-                this.offscreenCtx.shadowBlur = 6;
+                this.offscreenCtx.shadowBlur = 7;
                 this.offscreenCtx.fill();
                 this.offscreenCtx.restore();
             }
+            this.offscreenCtx.save();
+            this.offscreenCtx.beginPath();
+            this.offscreenCtx.arc(0, 0, p.r * 0.22, Math.PI * 0.15, Math.PI * 0.85);
+            this.offscreenCtx.lineWidth = p.r * 0.09;
+            this.offscreenCtx.strokeStyle = 'rgba(255,255,255,0.18)';
+            this.offscreenCtx.shadowColor = 'rgba(255,255,255,0.18)';
+            this.offscreenCtx.shadowBlur = 2;
+            this.offscreenCtx.stroke();
+            this.offscreenCtx.restore();
             this.offscreenCtx.beginPath();
             this.offscreenCtx.arc(0, 0, p.r * 0.18, 0, Math.PI * 2);
             this.offscreenCtx.fillStyle = p.centerColor;

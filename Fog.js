@@ -7076,7 +7076,7 @@ function redraw_light(darknessMoved = false){
 
 		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 
-		if(window.lightAuraClipPolygon[auraId]?.canvas !== undefined){
+		if(window.lightAuraClipPolygon[auraId] !== undefined){
 			lightInLosContext.globalCompositeOperation='source-over';
 			lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 		}
