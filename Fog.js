@@ -7085,7 +7085,7 @@ function redraw_light(darknessMoved = false){
 
 
 
-		if(selectedIds.length === 0 || found || window.SelectedTokenVision !== true){	
+		if(window.lightAuraClipPolygon[auraId] !== undefined  && (selectedIds.length === 0 || found || window.SelectedTokenVision !== true)){	
 			
 			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && window.TOKEN_OBJECTS[auraId].options.share_vision === undefined && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 			if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
@@ -7098,8 +7098,7 @@ function redraw_light(darknessMoved = false){
 				continue; //we don't want to draw this tokens vision - go next token.
 
 				
-				
-			if(window.DM !== true || window.SelectedTokenVision === true){
+			if (window.DM !== true || window.SelectedTokenVision === true){
 				if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
 					tempDarkvisionCtx.globalCompositeOperation='source-over';
 					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
@@ -7117,12 +7116,15 @@ function redraw_light(darknessMoved = false){
 					truesightCanvasContext.globalCompositeOperation='source-over';
 					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
+			}	
+			
 
-			}
+
+			
 
 			
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
-			offscreenContext.globalCompositeOperation='lighten';
+			
 			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
 			

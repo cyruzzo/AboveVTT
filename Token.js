@@ -5019,7 +5019,7 @@ async function do_draw_selected_token_bounding_box() {
 		}
 	)
 	
-	debounceLightChecks();
+	throttleLight();
 }
 
 /// removes everything that draw_selected_token_bounding_box added
