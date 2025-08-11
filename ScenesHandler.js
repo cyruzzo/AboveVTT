@@ -601,6 +601,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			set_default_vttwrapper_size()
 			align_grid(false, false, copiedSceneData);
+			window.WeatherOverlay.stop();
 		});
 
 
