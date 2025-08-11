@@ -700,7 +700,11 @@ class Token {
 			left > this.walkableArea.right + this.options.size 
 		) { return; }
 		let halfWidth = parseFloat(this.options.size)/2;
-		let inLos = this.isAoe() ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth) ;
+		
+		
+		let inLos = this.isAoe() || window.DM ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth, window.lineOfSightPolygons[this.options.id].move); ;
+		
+		
 		const self = this;
 
 		if(window.CURRENT_SCENE_DATA.disableSceneVision == 1 || !this.options.auraislight || inLos){
