@@ -4260,7 +4260,13 @@ function setTokenAuras (token, options) {
 }
 
 function setTokenLight (token, options) {
-	if ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')){
+	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
+	const playerNoVision = options.id != playerTokenId && options.share_vision != true && options.share_vision != window.myUser
+	const playerNoTokenIsPc = playerTokenId == undefined && options.itemType == 'pc'
+
+
+	if ((playerNoVision && !playerNoTokenIsPc) && ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
+		(options.light1.feet == 0 && options.light2.feet == 0 && options.vision.feet == 0))) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
 	} 
@@ -4404,18 +4410,18 @@ function setTokenLight (token, options) {
 	} else {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 	}
-	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	if(!window.DM){		
-		let vision = $("[id*='vision_']");
-		for(let i = 0; i < vision.length; i++){
-			if(!vision[i].id.endsWith(window.PLAYER_ID) && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != true && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.share_vision != window.myUser){
-				$(vision[i]).css("visibility", "hidden");
-			}		
-			if(playerTokenId == undefined && window.TOKEN_OBJECTS[$(vision[i]).attr("data-id")].options.itemType == 'pc'){
-				$(vision[i]).css("visibility", "visible");
-			}	
-		}
-	}
+	
+
+		
+		
+	if(playerNoVision){
+		token.parent().parent().find("#vision_" + tokenId).toggleClass("notVisible", true);
+	}		
+	if(playerNoTokenIsPc){
+		token.parent().parent().find("#vision_" + tokenId).toggleClass("notVisible", false);
+	}	
+		
+
 
 	if(options.type == 'door' && $(`.door-button[data-id='${options.id}']`).hasClass('closed') && $(`.door-button[data-id='${options.id}'] :is(.door, .curtain)`).length > 0){
 		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "none")
