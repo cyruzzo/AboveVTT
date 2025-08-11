@@ -61,12 +61,13 @@ var debounceLightChecks = mydebounce((darknessMoved = false) => {
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
-		if(darknessMoved === true){
-			requestAnimationFrame(()=>{
+		
+		requestAnimationFrame(()=>{
+			if(darknessMoved === true)
 				redraw_drawn_light();
-				redraw_light(darknessMoved)
-			});
-		}
+			redraw_light(darknessMoved)
+		});
+		
 		debounceAudioChecks();
 		
 }, 20);
@@ -82,7 +83,11 @@ var longDebounceLightChecks = mydebounce((darknessMoved = false) => {
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		requestAnimationFrame(()=>{redraw_light(darknessMoved)});
+		requestAnimationFrame(()=>{
+			if(darknessMoved === true)
+				redraw_drawn_light();
+			redraw_light(darknessMoved)
+		});
 		debounceAudioChecks();
 }, 300);
 
