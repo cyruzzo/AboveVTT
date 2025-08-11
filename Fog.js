@@ -4893,44 +4893,30 @@ function drawPolygon (
 	canvasHeight = undefined
 ) {
 	if(fill && islight && replacefog){
-		if(canvasWidth === undefined){
-			[canvasWidth, canvasHeight] = [getSceneMapSize().sceneWidth, getSceneMapSize().sceneHeight];
-		}
-
-		if(window.tempoffCanvas == undefined){
-			window.tempoffCanvas = document.createElement('canvas');
-			window.tempoffContext = tempoffCanvas.getContext('2d');
-		}
-		if(tempoffCanvas.width != canvasWidth || tempoffCanvas.height != canvasHeight){
-			tempoffCanvas.width = canvasWidth;
-			tempoffCanvas.height = canvasHeight;
-			tempoffContext.lineWidth = 6;
-			tempoffContext.fillStyle = 'rgba(255,255,255,1)';
-			tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
-		}
-		tempoffContext.clearRect(0, 0, tempoffCanvas.width, tempoffCanvas.height)
 		
-
-		tempoffContext.beginPath();
+		ctx.lineWidth = 6;
+		ctx.fillStyle = 'rgba(255,255,255,1)';
+		ctx.strokeStyle = 'rgba(0,0,0,1)';
+		
+		ctx.beginPath();
 		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
 		
-		tempoffContext.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		tempoffContext.lineWidth = lineWidth;
+		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineWidth = lineWidth;
 		
 		for(let vertice of points){
-			tempoffContext.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
 
 		if (mouseX !== null && mouseY !== null) {
-			tempoffContext.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		tempoffContext.closePath();
+		ctx.closePath();
 		
 	
-		tempoffContext.fill();
-		tempoffContext.stroke();
+		ctx.fill();
+		ctx.stroke();
 
-		ctx.drawImage(tempoffCanvas, 0, 0);
 	}
 	else{
 		ctx.save();
@@ -7085,7 +7071,7 @@ function redraw_light(darknessMoved = false){
 
 
 
-		if(selectedIds.length === 0 || found || window.SelectedTokenVision !== true){	
+		if(selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)){	
 			
 			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && window.TOKEN_OBJECTS[auraId].options.share_vision === undefined && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 			if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
@@ -7122,9 +7108,11 @@ function redraw_light(darknessMoved = false){
 
 			
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
-			offscreenContext.globalCompositeOperation='lighten';
+			
 			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			
+			
 			
 		}
 				
