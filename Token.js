@@ -702,7 +702,7 @@ class Token {
 		let halfWidth = parseFloat(this.options.size)/2;
 		
 		
-		let inLos = this.isAoe() || window.DM ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth, window.lineOfSightPolygons[this.options.id].move); ;
+		let inLos = this.isAoe() || window.DM ? true : detectInLos(tokenPosition.x + halfWidth, tokenPosition.y + halfWidth); ;
 		
 		
 		const self = this;
