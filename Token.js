@@ -61,8 +61,12 @@ var debounceLightChecks = mydebounce((darknessMoved = false) => {
 		if(window.walls?.length < 5){
 			redraw_light_walls();	
 		}
-		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
-		requestAnimationFrame(()=>{redraw_light(darknessMoved)});
+		if(darknessMoved === true){
+			requestAnimationFrame(()=>{
+				redraw_drawn_light();
+				redraw_light(darknessMoved)
+			});
+		}
 		debounceAudioChecks();
 		
 }, 20);
@@ -2921,9 +2925,7 @@ class Token {
 							if (get_avtt_setting_value("allowTokenMeasurement")){
 								WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 							}	
-							if(darknessMoved === true)
-								redraw_drawn_light();	
-							redraw_light(darknessMoved);
+							
 
 							window.DRAGGING = false;
 							draw_selected_token_bounding_box();
