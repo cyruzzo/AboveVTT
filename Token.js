@@ -4012,23 +4012,7 @@ function deselect_all_tokens(ignoreVisionUpdate = false) {
 	window.CURRENTLY_SELECTED_TOKENS = [];
 
 	if(ignoreVisionUpdate == false){
-		let darknessFilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
-		let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessFilter)) : 100 - parseInt(darknessFilter); 	
-
-	 	if(window.DM && darknessPercent < 40){
-	 		darknessPercent = 40;
-	 		$('#raycastingCanvas').css('opacity', '0');
-	 	}
-	 	else if(window.DM){
-	 		$('#raycastingCanvas').css('opacity', '');
-	 	}
-		$('#VTT').css('--darkness-filter', darknessPercent + "%");
-	   	if(window.DM){
-	   		$("#light_container [id^='light_']").css('visibility', "visible");
-	   		$(`.token`).show();
-			$(`.door-button`).css('visibility', '');
-			$(`.aura-element`).show();
-	   	}
+		check_darkness_value();
 	   	if($('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
 	   		if(window.SelectedTokenVision == true){
 	   			window.SelectedTokenVision = false;

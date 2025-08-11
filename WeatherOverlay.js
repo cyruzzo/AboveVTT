@@ -365,7 +365,7 @@ class WeatherOverlay {
     }
 
     _animate = () => {
-        const now = performance.now();
+        const now = Date.now();
         if (!this._lastFrameTime) this._lastFrameTime = now;
         const elapsed = now - this._lastFrameTime;
         if (elapsed < 1000/60) {

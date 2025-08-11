@@ -259,15 +259,22 @@ Mousetrap.bind('v', function () {       //video toggle
     $('#peerVideo_switch').click()
 });
 
-Mousetrap.bind('shift+v', function () {       //check token vision
-    if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
-        window.SelectedTokenVision = false;
-        if(window.DM)
-            do_check_token_visibility();       
+Mousetrap.bind('shift+v', function () {    
+    
+    if(window.DM && window.CURRENTLY_SELECTED_TOKENS.length == 0){
+        window.disableDmMinDarkness = !window.disableDmMinDarkness;
+        check_darkness_value();
+    }else{
+        if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
+            window.SelectedTokenVision = false;
+            if(window.DM)
+                do_check_token_visibility();       
+        }
+        else{
+            window.SelectedTokenVision = true;
+        }
     }
-    else{
-        window.SelectedTokenVision = true;
-    }
+
 
    redraw_light();
 });
