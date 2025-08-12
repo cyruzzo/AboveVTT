@@ -4098,13 +4098,14 @@ function checkAudioVolume(){
 			y: parseInt(currAudioToken.options.top) + currAudioToken.sizeHeight()/2
 		}
 		for(let checkedTokenId=0; checkedTokenId<tokensToCheck.length; checkedTokenId++){
-			let checkedToken = window.TOKEN_OBJECTS[tokensToCheck[checkedTokenId]];	
+			const tokenId = tokensToCheck[checkedTokenId];
+			const checkedToken = window.TOKEN_OBJECTS[tokenId];	
 
 			
 
-			let tokenMovePolygon = window.lineOfSightPolygons[tokensToCheck[checkedTokenId]]?.move
-			let audioCanvas = document.createElement('canvas');
-			let audioCanvasCtx = audioCanvas.getContext('2d');
+			const tokenMovePolygon = getTokenVision(tokenId).move
+			const audioCanvas = document.createElement('canvas');
+			const audioCanvasCtx = audioCanvas.getContext('2d');
 			audioCanvas.width = $("#raycastingCanvas").width();
 			audioCanvas.height =  $("#raycastingCanvas").height();
 			
@@ -4135,7 +4136,7 @@ function checkAudioVolume(){
 	 	 
 	 	 	let setAudio;
 	 	 	if(audioPolygon != undefined){
-	 	 		setAudio = is_token_in_raycasting_context(tokensToCheck[checkedTokenId], audioCanvasCtx) && (!wallsBlocked || (tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx)));
+	 	 		setAudio = is_token_in_raycasting_context(tokenId, audioCanvasCtx) && (!wallsBlocked || (tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx)));
 		 	} else if(tokenMovePolygon != undefined){
 				setAudio = (inRange && !wallsBlocked) || (inRange && wallsBlocked && tokenMovePolygon != undefined && is_token_in_raycasting_context($(audioTokens[i]).attr('data-id'), audioCanvasCtx))
 		 	}
