@@ -1156,7 +1156,7 @@ function create_context_background(closeItemTargets = [], callback = function(){
     $(eventElement).remove();
     callback();
   }
-  const contextBackground = $('<div class="avtt-context-background"></div>');
+  const contextBackground = $('<div id="tokenOptionsClickCloseDiv" class="avtt-context-background"></div>');
   contextBackground.on('click', function(e){
     removeItems(e, this);
   });
