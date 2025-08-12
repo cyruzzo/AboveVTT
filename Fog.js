@@ -5219,7 +5219,7 @@ function savePolygon(e) {
 	else if(window.DRAWFUNCTION === 'audio-polygon'){
 		const token = window.TOKEN_OBJECTS[window.drawingAudioTokenId];
 		token.options.audioChannel.audioArea = polygonPoints;
-		token.options.audioChannel.audioAreaOrigScale = window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+		token.options.audioChannel.audioAreaOrigScale = window.CURRENT_SCENE_DATA.scale_factor;
 		token.place_sync_persist();
 		debounceAudioChecks();
 		delete window.drawingAudioTokenId 
@@ -7230,7 +7230,61 @@ function redraw_light(darknessMoved = false){
 	
 
 }
+function getTokenVision(tokenId, darknessMoved){
+	if(window.lineOfSightPolygons[tokenId] !== undefined)
+		return window.lineOfSightPolygons[tokenId];
 
+
+
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
+	const darknessBoundarys = getDarknessBoundarys();
+	const allWalls = [...walls, ...darknessBoundarys];
+	
+	const tokenHalfWidth = window.TOKEN_OBJECTS[tokenId].sizeWidth()/2;
+	const tokenHalfHeight = window.TOKEN_OBJECTS[tokenId].sizeHeight()/2;
+	let tokenPos = {
+		x: (parseInt(window.TOKEN_OBJECTS[tokenId].options.left)+tokenHalfWidth)/ window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt(window.TOKEN_OBJECTS[tokenId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
+	}
+	if(window.TOKEN_OBJECTS[tokenId].options.type == 'door' && window.TOKEN_OBJECTS[tokenId].options.scaleCreated){
+		tokenPos.x = tokenPos.x / (window.TOKEN_OBJECTS[tokenId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
+		tokenPos.y = tokenPos.y / (window.TOKEN_OBJECTS[tokenId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
+	}	
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
+	check_token_elev(tokenId);
+	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+	particleLook(undefined, allWalls, 100000, undefined, undefined, undefined, false, false, tokenId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	let path = "";
+	for(let i = 0; i < lightPolygon.length; i++){
+		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+	}
+	window.lineOfSightPolygons[tokenId] = {
+		polygon: lightPolygon,
+		move: movePolygon,
+		noDarkness: noDarknessPolygon,
+		x: tokenPos.x,
+		y: tokenPos.y,
+		numberofwalls: walls.length+darknessBoundarys.length,
+		clippath: path,
+		visionType: window.TOKEN_OBJECTS[tokenId].options.sight,
+		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated
+	}
+	if(window.lineOfSightPolygons[tokenId] !== undefined &&(window.TOKEN_OBJECTS[tokenId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[tokenId].options.sight === 'truesight')){
+		let path = "";
+		for(let i = 0; i < noDarknessPolygon.length; i++){
+			path += (i && "L" || "M") + noDarknessPolygon[i].x/adjustScale+','+noDarknessPolygon[i].y/adjustScale
+		}
+		window.lineOfSightPolygons[tokenId].devilsightClip = path;
+	}
+
+	return window.lineOfSightPolygons[tokenId];
+		
+}
 function rotatePoint(px, py, cx, cy, R) {
         const cosA = Math.cos(R);
         const sinA = Math.sin(R);
