@@ -6871,7 +6871,7 @@ function redraw_light(darknessMoved = false){
 	if(window.moveOffscreenCanvasMask == undefined){
 		window.moveOffscreenCanvasMask = document.createElement('canvas');
 	}
-	let moveOffscreenContext = moveOffscreenCanvasMask.getContext('2d');
+	let moveOffscreenContext = moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
 
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;

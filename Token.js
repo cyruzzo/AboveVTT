@@ -726,7 +726,7 @@ class Token {
 					if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
 						throttleLight(darknessMoved);
 					else
-						debounceLightChecks(darknessMoved)
+						longDebounceLightChecks(darknessMoved)
 					}
 			});
 			if(!this.options.id.includes('exampleToken') && !this.options.combatGroupToken){
@@ -826,10 +826,6 @@ class Token {
 				}
 			}
 
-			if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
-				throttleLight();
-			else
-				longDebounceLightChecks();
 		
 			this.sync($.extend(true, {}, this.options));
 		}
@@ -4266,7 +4262,7 @@ function setTokenLight (token, options) {
 	const playerNoTokenIsPc = playerTokenId == undefined && options.itemType == 'pc'
 
 
-	if ((playerNoVision && !playerNoTokenIsPc) && ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
+	if ((!window.DM && playerNoVision && !playerNoTokenIsPc) && ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
 		(options.light1.feet == 0 && options.light2.feet == 0 && options.vision.feet == 0))) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
@@ -4415,10 +4411,10 @@ function setTokenLight (token, options) {
 
 		
 		
-	if(playerNoVision){
+	if (!window.DM && playerNoVision){
 		token.parent().parent().find("#vision_" + tokenId).toggleClass("notVisible", true);
 	}		
-	if(playerNoTokenIsPc){
+	if (!window.DM && playerNoTokenIsPc){
 		token.parent().parent().find("#vision_" + tokenId).toggleClass("notVisible", false);
 	}	
 		
