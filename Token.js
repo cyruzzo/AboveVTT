@@ -4260,10 +4260,10 @@ function setTokenLight (token, options) {
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	const playerNoVision = options.id != playerTokenId && options.share_vision != true && options.share_vision != window.myUser
 	const playerNoTokenIsPc = playerTokenId == undefined && options.itemType == 'pc'
+	const zeroLight = (options.light1?.feet == 0 && options.light2?.feet == 0) || (!options.light1?.feet || !options.light2?.feet)
+	const zeroVision = options.vision?.feet == 0 || !options.vision?.feet;
 
-
-	if ((!window.DM && playerNoVision && !playerNoTokenIsPc && !options.light1 && !options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
-		(options.light1.feet == 0 && options.light2.feet == 0 && options.vision.feet == 0)) {
+	if ( (zeroLight && zeroVision) || (!window.DM && playerNoVision && !playerNoTokenIsPc && zeroLight) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
 	} 
