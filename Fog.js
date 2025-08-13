@@ -6940,7 +6940,12 @@ function redraw_light(darknessMoved = false){
 		moveOffscreenContext.fillStyle = "white";
 	}
 
-	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
+	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`).map(function () {
+		return $(this).attr("data-id");
+	}).get();
+
+
+	
 	let selectedIds = [];
 	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
 
@@ -6956,6 +6961,9 @@ function redraw_light(darknessMoved = false){
 		  		selectedIds.push(tokenId)
 		}	  
 	}	
+	if (window.SelectedTokenVision == true && selectedIds.length>0){
+		light_auras = [...new Set(light_auras.concat(selectedIds))];
+	}
 	if(selectedIds.length > 0 || selectedTokens.length == 0)
 		check_darkness_value();
 
@@ -6979,8 +6987,7 @@ function redraw_light(darknessMoved = false){
 	}
 	for(let i = 0; i < light_auras.length; i++){
 		
-		let currentLightAura = $(light_auras[i]);
-		let auraId = currentLightAura.attr('data-id');
+		let auraId = light_auras[i];
 
 		let found = selectedIds.includes(auraId);
 		let tokenHalfWidth = window.TOKEN_OBJECTS[auraId].sizeWidth()/2;
@@ -7083,7 +7090,7 @@ function redraw_light(darknessMoved = false){
 				
 				
 			if(window.DM !== true || window.SelectedTokenVision === true){
-				if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
+				if (window.lightAuraClipPolygon[auraId] != undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')){
 					tempDarkvisionCtx.globalCompositeOperation='source-over';
 					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 
@@ -7092,11 +7099,11 @@ function redraw_light(darknessMoved = false){
 					offscreenContext.globalCompositeOperation='source-over';
 					offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
 				}
-				if(currentLightAura.parent().hasClass('devilsight')){
+				if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight'){
 					devilsightCtx.globalCompositeOperation='source-over';
 					devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
-				if(currentLightAura.parent().hasClass('truesight')){
+				if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight'){
 					truesightCanvasContext.globalCompositeOperation='source-over';
 					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
