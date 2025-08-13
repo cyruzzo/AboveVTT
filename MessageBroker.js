@@ -107,7 +107,7 @@ const debounceHandleInjected = mydebounce(() => {
 				const toSelf = ((current.data.injected_data.whisper == window.PLAYER_NAME || current.data.injected_data.whisper == window.myUser) && current.data.player_name == window.PLAYER_NAME)
 				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${toSelf ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
-				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+				
 
 				let img = li.find(".magnify");
 				for(let i=0; i<img.length; i++){
@@ -178,7 +178,7 @@ const debounceHandleInjected = mydebounce(() => {
 				li.height(newheight);
 				
 
-
+				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if ((injection_data.dmonly && window.DM) || toSelf) {
 					
 					if (li.find(".gamelog-to-everyone-button").length === 0) {
