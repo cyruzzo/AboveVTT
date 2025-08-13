@@ -4262,8 +4262,8 @@ function setTokenLight (token, options) {
 	const playerNoTokenIsPc = playerTokenId == undefined && options.itemType == 'pc'
 
 
-	if ((!window.DM && playerNoVision && !playerNoTokenIsPc) && ((!options.light1&&!options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
-		(options.light1.feet == 0 && options.light2.feet == 0 && options.vision.feet == 0))) {
+	if ((!window.DM && playerNoVision && !playerNoTokenIsPc) || (!options.light1 && !options.light2) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken') ||
+		(options.light1.feet == 0 && options.light2.feet == 0 && options.vision.feet == 0)) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
 	} 
