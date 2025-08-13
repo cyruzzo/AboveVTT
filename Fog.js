@@ -6943,9 +6943,7 @@ function redraw_light(darknessMoved = false){
 	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
 	let selectedIds = [];
 	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
-	if(window.SelectedTokenVision){
-		light_auras = light_auras.add(selectedTokens)
-	}
+
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	
 	
