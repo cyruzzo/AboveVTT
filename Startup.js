@@ -44,15 +44,16 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {
         window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
+        return window.CAMPAIGN_INFO.dmId;
       })
-      .then(() => {
+      .then((campaignDmId) => {
 
 
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid');
         const isDmPage = is_encounters_page();
 
 
-        if (isDmPage && window.CAMPAIGN_INFO.dmId == userId) {
+        if (isDmPage && campaignDmId == userId) {
           inject_dice();
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
@@ -382,7 +383,7 @@ function start_player_joining_as_dm(){
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
   //This is not supported at the moment, if supported the DM should have to choose who can be co-dm - judge people trying to cheat
-  const crow = $(`
+  const message = $(`
     <div style="
       width: 400px;
         height: fit-content;
@@ -401,22 +402,17 @@ function start_player_joining_as_dm(){
         background: #000d;
         border-radius:5px;
     ">
-
-      <img style="
-        border-radius:5px;
-      "
-      src="https://media.tenor.com/OkemOcHZVugAAAAM/crow-judging.gif"/>
       <span style="
       font-size: 25px;
       text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000, 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000; 
       ">It is not currently possible to join as DM from a player account.</span>
     </div>`);
 
-  $('body').append(crow);
+  $('body').append(message);
   remove_loading_overlay();
   $('#splash').remove();
-  $(window).one('click.crowRremove', function(){
-    crow.remove();
+  $(window).one('click.messageRremove', function(){
+    message.remove();
   })
 
 }
