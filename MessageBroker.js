@@ -1246,12 +1246,13 @@ class MessageBroker {
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
-				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
-					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
+				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first(); 
+				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {	
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
 				}
+
 
 				if(msg.data.rolls != undefined){
 					let critSuccess = {};
@@ -1267,11 +1268,11 @@ class MessageBroker {
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
 								let reduceCrit = 0;
 								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20){
-                  reduceCrit = 20 - msg.data.critRange;
+                  					reduceCrit = 20 - msg.data.critRange;
 								}
-                else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
-                	continue;
-                }
+								else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
+									continue;
+								}
 								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
 									if(roll.rollKind == 'advantage'){
 										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
@@ -1434,13 +1435,27 @@ class MessageBroker {
 									
 									
 								}
+								// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+								if (msg.messageScope === "userId" && target.find(".gamelog-to-everyone-button").length === 0) {
+									const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+									sendToEveryone.click(function (clickEvent) {
+										let resendMessage = msg;
+										resendMessage.id = uuid();
+										resendMessage.data.rollId = uuid();
+										resendMessage.messageScope = "gameId";
+										resendMessage.messageTarget = find_game_id();
+										resendMessage.dateTime = Date.now();
+										window.diceRoller.ddbDispatch(resendMessage);
+									});
+									target.find("time").before(sendToEveryone);
+								}
 							}
 
 						}
 						
 					}, 100)
 				}
-
+				
 				
 				if (!window.DM)
 					return;
@@ -1510,25 +1525,9 @@ class MessageBroker {
 					}
 					
 				}
-				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
-				if (msg.messageScope === "userId") {
-					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
-					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
-						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-						sendToEveryone.click(function (clickEvent) {
-							let resendMessage = msg;
-							resendMessage.id = uuid();
-							resendMessage.data.rollId = uuid();
-							resendMessage.messageScope = "gameId";
-							resendMessage.messageTarget = find_game_id();
-							resendMessage.dateTime = Date.now();
-							window.diceRoller.ddbDispatch(resendMessage);
-						});
-						gamelogItem.find("time").before(sendToEveryone);
-					 }
-				}
+				
 			}
-
+			
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			}
@@ -1538,15 +1537,15 @@ class MessageBroker {
 			if (msg.eventType === "custom/myVTT/videoPeerConnect") {
 				if(msg.data.id != window.myVideoPeerID){
 					let call = window.videoPeer.call(msg.data.id, window.myLocalVideostream)
-          call.on('stream', (stream) => {
-              window.videoConnectedPeers.push(msg.data.id);
-              setRemoteStream(stream, call.peer);   
-              call.on('close', () => {
-                $(`.video-meet-area video#${call.peer}`).remove();
-            	})   
-          })
-          window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
-          window.currentPeers.push(call);
+					call.on('stream', (stream) => {
+						window.videoConnectedPeers.push(msg.data.id);
+						setRemoteStream(stream, call.peer);   
+						call.on('close', () => {
+							$(`.video-meet-area video#${call.peer}`).remove();
+							})   
+					})
+					window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
+					window.currentPeers.push(call);
 				}
 			}
 			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
