@@ -6878,7 +6878,6 @@ function redraw_light(darknessMoved = false){
 
 
 
-	delete window.lightInLos;
 	window.lightInLos = document.createElement('canvas');
 	window.lightInLos.width = canvasWidth;
 	window.lightInLos.height = canvasHeight;
