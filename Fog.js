@@ -4926,9 +4926,9 @@ function drawPolygon (
 		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.lineWidth = lineWidth;
 			
-		points.forEach((vertice) => {
+		for(let vertice of points) {
 			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		})
+		}
 
 		if (mouseX !== null && mouseY !== null) {
 			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
@@ -7052,24 +7052,18 @@ function redraw_light(darknessMoved = false){
 				$(`.aura-element-container-clip[id='${auraId}'].vision`).css('clip-path', `path('${path}')`)
 			
 			}
-			
 
+			if (window.lightAuraClipPolygon === undefined)
+				window.lightAuraClipPolygon = {};
+			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 
 	
-
-		if(window.lightAuraClipPolygon === undefined)
-			window.lightAuraClipPolygon = {};
-			
-
-	
-
-		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
-
-		if(window.lightAuraClipPolygon[auraId] !== undefined){
-			lightInLosContext.globalCompositeOperation='source-over';
+		if (window.lightAuraClipPolygon[auraId] !== undefined) {
+			lightInLosContext.globalCompositeOperation = 'source-over';
 			lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 		}
+		
 		
 		
 
@@ -7469,6 +7463,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
+	
 	let visionColor = `rgba(0,0,0,0)`;
 	let visionRange = 0;
 	let light1Color = `rgba(0,0,0,0)`;
