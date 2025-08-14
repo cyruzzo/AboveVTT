@@ -1823,13 +1823,13 @@ function init_ddb_importer(target, selectedSource, selectedChapter) {
 
 }
 
-function fill_importer(scene_set, start, searchState = '') {
+async function fill_importer(scene_set, start, searchState = '') {
 	area = $("#importer_area");
+	const chapterImports = await build_source_book_chapter_import_section(scene_set);
 	area.empty();
 	area.css("opacity", "0");
 	area.animate({ opacity: "1" }, 300);
-
-	area.append(build_source_book_chapter_import_section(scene_set));
+	area.append(chapterImports);
 
 	return;
 }
@@ -2829,13 +2829,20 @@ function build_free_map_importer() {
 	container.find(".ddb-collapsible-filter__input").focus();
 }
 
-function build_source_book_chapter_import_section(sceneSet) {
+async function build_source_book_chapter_import_section(sceneSet) {
 	const container = build_import_container();
 	const sectionHtml = build_import_collapsible_section("test", "");
 	container.find(".no-results").before(sectionHtml);
 	sectionHtml.find(".ddb-collapsible__header").hide();
 	sectionHtml.css("border", "none");
-	let DDB_EXTRAS = get_ddb_extras();
+	
+
+	
+
+	let module = await import('./scenedata/ddb-extras.js');
+
+
+	let DDB_EXTRAS = module.get_ddb_extras();
 	let sceneData = [];
 
 	sceneSet.forEach(scene => {
@@ -2865,6 +2872,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 		}
 	});
 	DDB_EXTRAS = null;
+	module = null;
 
 	const import_chapter = $(`<div class='listing-card__callout-button import-button'>Import Chapter</button>`)
 	const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");

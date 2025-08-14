@@ -1,4 +1,4 @@
-function get_scene_data_gos() {
+export default function get_scene_data_gos() {
 	return {
 		"dnd/gos/the-sinister-secret-of-saltmarsh/map22hauntedhousecellarandcaverns": {
 			"gridSubdividedToggle": "0",

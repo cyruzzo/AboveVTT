@@ -1,4 +1,4 @@
-function get_scene_data_doip() {
+export default function get_scene_data_doip() {
 	return{
 		"doip/axeholm/MapAxeholm": {
 			

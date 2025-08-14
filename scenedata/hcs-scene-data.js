@@ -1,4 +1,4 @@
-function get_scene_data_hcs() {
+export default function get_scene_data_hcs() {
 	return {
 		"dnd/hcs/the-adventure-begins/Map502mokkdencaverns": {
 			"vpps": 165,

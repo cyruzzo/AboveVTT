@@ -1,4 +1,4 @@
-function get_scene_data_dilct() {
+export default function get_scene_data_dilct() {
 	return {
 		"dnd/dilct/descent-into-the-lost-caverns-of-tsojcanth/Map11LesserCaverns": {
 			"scale": 53.57142857142857,

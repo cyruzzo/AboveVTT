@@ -1,4 +1,4 @@
-function get_scene_data_wel() {
+export default function get_scene_data_wel() {
 	return {
 		"dnd/wel/shtriga-nonnas-hut/ShtrigaNonnasHutMap": {
 			"vpps": 117.66666666666667,

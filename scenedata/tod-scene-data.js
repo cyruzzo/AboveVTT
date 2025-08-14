@@ -1,4 +1,4 @@
-function get_scene_data_tod() {
+export default function get_scene_data_tod() {
 	return {
  	"tod/dragon-hatchery/Map31DragonHatchery": {
 		
