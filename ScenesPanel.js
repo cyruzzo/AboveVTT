@@ -1835,8 +1835,8 @@ function fill_importer(scene_set, start, searchState = '') {
 }
 
 function mega_importer(DDB = false, ddbSource, ddbChapter) {
-	container = $("<div id='mega_importer'/>");
-	toggles = $("<div id='importer_toggles'/>");
+	const container = $("<div id='mega_importer'/>");
+	const toggles = $("<div id='importer_toggles'/>");
 	container.append(toggles);
 	area = $("<div id='importer_area'/>");
 	container.append(area);
@@ -2854,7 +2854,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 
  		const uuidString = scene.uuid.replace('dnd/', '');
  		const regEx = new RegExp(`v[0-9]+\/${uuidString}`, "gi");
-		const otherVersions = Object.keys(get_ddb_extras()).filter(d=>d.match(regEx));
+		const otherVersions = Object.keys(DDB_EXTRAS).filter(d=>d.match(regEx));
 		if(otherVersions.length > 0){
 			for(let i = 0; i<otherVersions.length; i++){
 				scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid], ...DDB_EXTRAS[otherVersions[i]]}
@@ -2864,6 +2864,7 @@ function build_source_book_chapter_import_section(sceneSet) {
 			}
 		}
 	});
+	DDB_EXTRAS = null;
 
 	const import_chapter = $(`<div class='listing-card__callout-button import-button'>Import Chapter</button>`)
 	const folderPath = decode_full_path($(`#sources-import-main-container`).attr("data-folder-path")).replace(RootFolder.Scenes.path, "");
