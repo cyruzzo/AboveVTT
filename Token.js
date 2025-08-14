@@ -4263,7 +4263,10 @@ function setTokenLight (token, options) {
 	const zeroLight = (options.light1?.feet == 0 && options.light2?.feet == 0) || (!options.light1?.feet && !options.light2?.feet)
 	const zeroVision = options.vision?.feet == 0 || !options.vision?.feet;
 
-	if ( (zeroLight && zeroVision) || (!window.DM && playerNoVision && !playerNoTokenIsPc && zeroLight) || window.CURRENT_SCENE_DATA.disableSceneVision == true || options.id.includes('exampleToken')) {
+	if ((window.DM && zeroLight && zeroVision) || 
+			(!window.DM && playerNoVision && !playerNoTokenIsPc && zeroLight) || 
+			window.CURRENT_SCENE_DATA.disableSceneVision == true || 
+			options.id.includes('exampleToken')) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
 	} 
