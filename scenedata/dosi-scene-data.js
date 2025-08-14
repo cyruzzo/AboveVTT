@@ -1,4 +1,4 @@
-function get_scene_data_dosi() {
+export default function get_scene_data_dosi() {
 	return{
 		"dnd/dosi/dragons-rest/Map101dragonsrest": {
 			"vpps": 29.666666666666668,

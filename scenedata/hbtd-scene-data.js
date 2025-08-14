@@ -1,4 +1,4 @@
-function get_scene_data_hbtd() {
+export default function get_scene_data_hbtd() {
 	return {
 		"dnd/hbtd/hold-back-the-dead/Map11IronspineKeep": {
 			"vpps": 58.666666666666664,

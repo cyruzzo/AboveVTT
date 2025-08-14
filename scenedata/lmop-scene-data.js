@@ -1,4 +1,4 @@
-function get_scene_data_lmop() {
+export default function get_scene_data_lmop() {
 	return {
 		"lmop/goblin-arrows/Map11CragmawHideout": {},
 		"lmop/phandalin/MapRedbrandHideout": {},

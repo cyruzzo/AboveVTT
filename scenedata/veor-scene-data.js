@@ -1,4 +1,4 @@
-function get_scene_data_veor() {
+export default function get_scene_data_veor() {
 	return {
  	"veor/return-from-neverdeath-graveyard/Map11NeverdeathCatacombs": {
  		"itemType": "scene",

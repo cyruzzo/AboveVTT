@@ -1,4 +1,4 @@
-function get_scene_data_sdw() {
+export default function get_scene_data_sdw() {
 	return{
 		"dnd/sdw/bronze-shrine/Map3CavernswithBahamutShrine": {
 			"vpps": "86",

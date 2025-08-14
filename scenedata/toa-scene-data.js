@@ -1,4 +1,4 @@
-function get_scene_data_toa() {
+export default function get_scene_data_toa() {
 	return {
  	"toa/port-nyanzaru/Map12MerchantPrincesVilla":	{
 		"reveals": [

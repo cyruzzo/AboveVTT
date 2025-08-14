@@ -1,4 +1,4 @@
-function get_scene_data_bgdia() {
+export default function get_scene_data_bgdia() {
 	return {
 	"bgdia/a-tale-of-two-cities/087113dc-fe8c-42a5-b51f-b423f36f9006": {
 	    "gridSubdividedToggle": "0",

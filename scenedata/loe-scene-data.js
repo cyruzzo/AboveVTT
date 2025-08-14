@@ -1,4 +1,4 @@
-function get_scene_data_loe() {
+export default function get_scene_data_loe() {
 	return {
 		"loe/boulderwood-path/Map601boulderwoodpath": {
 			"itemType": "scene",

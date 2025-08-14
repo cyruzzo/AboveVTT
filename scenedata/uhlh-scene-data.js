@@ -1,4 +1,4 @@
-function get_scene_data_uhlh() {
+export default function get_scene_data_uhlh() {
 	return {
 		"dnd/uhlh/uni-and-the-hunt-for-the-lost-horn/Map11WoodlandPool": {
 			"vpps": 51,

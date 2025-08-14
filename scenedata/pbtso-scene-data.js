@@ -1,4 +1,4 @@
-function get_scene_data_pbtso() {
+export default function get_scene_data_pbtso() {
 	return {
 		"pbtso/a-dangerous-journey/Map101GoblinAmbush": {
 			

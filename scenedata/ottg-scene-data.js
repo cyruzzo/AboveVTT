@@ -1,4 +1,4 @@
-function get_scene_data_ottg() {
+export default function get_scene_data_ottg() {
 	return {
 		"dnd/ottg/adventures/MapTheSunkenTown": {
 			"vpps": 120.23333333333333,

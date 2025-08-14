@@ -1,4 +1,4 @@
-function get_scene_data_gotsf() {
+export default function get_scene_data_gotsf() {
 	return {
 		"dnd/gotsf/giants-of-the-star-forge/Map001starforge": {
 			"scale": 857.1428571428571,
