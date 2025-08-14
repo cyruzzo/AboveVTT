@@ -41,7 +41,7 @@ const availableToAoe = [
 
 
 const throttleLight = throttle((darknessMoved = false) => {requestAnimationFrame(()=>{redraw_light(darknessMoved)})}, 1000/16);
-const throttleTokenCheck = throttle(() => {requestAnimationFrame(()=>{do_check_token_visibility()})}, 1000/4);
+const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
@@ -3611,24 +3611,6 @@ function toggle_player_selectable(tokenInstance, token){
 	}
 }
 
-// Stop the right click mouse down from cancelling our drag
-function dragging_right_click_mousedown(event) {
-
-	event.preventDefault();
-	event.stopPropagation();
-}
-
-// This is called when we right-click mouseup during a drag operation
-function dragging_right_click_mouseup(event) {
-
-	if (window.DRAGGING && event.button == 2) {
-		event.preventDefault();
-		event.stopPropagation();
-		let mousex = (event.pageX - window.VTTMargin) * (1.0 / window.ZOOM);
-		let mousey = (event.pageY - window.VTTMargin) * (1.0 / window.ZOOM);
-		WaypointManager.checkNewWaypoint(mousex, mousey);
-	}
-}
 
 function default_options() {
 	return {
@@ -4579,27 +4561,7 @@ function setTokenBase(token, options) {
 
 }
 
-function get_custom_monster_images(monsterId) {
-	return find_token_customization(ItemType.Monster, monsterId)?.tokenOptions?.alternativeImages || [];
-}
 
-function add_custom_monster_image_mapping(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolder.Monsters.id, RootFolder.Monsters.id);
-	customization.addAlternativeImage(imgsrc);
-	persist_token_customization(customization);
-}
-
-function remove_custom_monster_image(monsterId, imgsrc) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolder.Monsters.id, RootFolder.Monsters.id);
-	customization.removeAlternativeImage(imgsrc);
-	persist_token_customization(customization);
-}
-
-function remove_all_custom_monster_images(monsterId) {
-	let customization = find_or_create_token_customization(ItemType.Monster, monsterId, RootFolder.Monsters.id, RootFolder.Monsters.id);
-	customization.removeAllAlternativeImages();
-	persist_token_customization(customization);
-}
 
 // deprecated, but still required for migrations
 function load_custom_monster_image_mapping() {

@@ -2842,7 +2842,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 	let module = await import('./scenedata/ddb-extras.js');
 
 
-	let DDB_EXTRAS = module.get_ddb_extras();
+	let DDB_EXTRAS = module.get_ddb_extras;
 	let sceneData = [];
 
 	sceneSet.forEach(scene => {
