@@ -876,7 +876,7 @@ function openCombatTrackerSettings(){
 
 
 	$("#scene_selector").attr('disabled', 'disabled');
-	dialog = $(`<div id='edit_dialog'></div>`);
+	const dialog = $(`<div id='edit_dialog'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 

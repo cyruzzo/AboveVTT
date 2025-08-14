@@ -440,7 +440,7 @@ function open_grid_wizard_controls(scene_id, aligner1, aligner2, regrid=function
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
-	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
+	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 
@@ -931,7 +931,7 @@ function edit_scene_vision_settings(scene_id){
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
-	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
+	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 
@@ -1217,7 +1217,7 @@ function edit_scene_dialog(scene_id) {
 	scene.fog_of_war = "1"; // ALWAYS ON since 0.0.18
 	console.log('edit_scene_dialog');
 	$("#scene_selector").attr('disabled', 'disabled');
-	dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
+	const dialog = $(`<div id='edit_dialog' data-scene-id='${scene.id}'></div>`);
 	dialog.css('background', "url('/content/1-0-1487-0/skins/waterdeep/images/mon-summary/paper-texture.png')");
 
 	template_section = $("<div id='template_section'/>");
