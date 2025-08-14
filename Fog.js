@@ -935,25 +935,25 @@ function do_check_token_visibility() {
 	}
 
 	Promise.all(promises);
-	requestAnimationFrame(() => {
+	
 		
-		hideIds = hideIds.join(',');
-		showTokenIds = showTokenIds.join(',');
-		showAuraIds = showAuraIds.join(',');	
-		dmSelectedTokens = dmSelectedTokens.join(',');
+	hideIds = hideIds.join(',');
+	showTokenIds = showTokenIds.join(',');
+	showAuraIds = showAuraIds.join(',');	
+	dmSelectedTokens = dmSelectedTokens.join(',');
 
-		$(hideIds).hide();
-		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
-		$(showAuraIds).show();
-		$(dmSelectedTokens).css({'display': 'flex'});
-		
+	$(hideIds).hide();
+	$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
+	$(showAuraIds).show();
+	$(dmSelectedTokens).css({'display': 'flex'});
+	
 
-		hideDoors = hideDoors.join(',');
-		showDoors = showDoors.join(',');
-		
-		$(showDoors).toggleClass('notVisible', false);
-		$(hideDoors).toggleClass('notVisible', true);
-	})
+	hideDoors = hideDoors.join(',');
+	showDoors = showDoors.join(',');
+	
+	$(showDoors).toggleClass('notVisible', false);
+	$(hideDoors).toggleClass('notVisible', true);
+	
 
 	console.log("finished");
 }
