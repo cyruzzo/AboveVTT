@@ -2287,30 +2287,6 @@ function open_github_issue(title, body) {
   window.open(url, '_blank');
 }
 
-function areArraysEqualSets(a1, a2) {
-  // canbax, https://stackoverflow.com/a/55614659
-  const superSet = {};
-  for (const i of a1) {
-    const e = i + typeof i;
-    superSet[e] = 1;
-  }
-
-  for (const i of a2) {
-    const e = i + typeof i;
-    if (!superSet[e]) {
-      return false;
-    }
-    superSet[e] = 2;
-  }
-
-  for (let e in superSet) {
-    if (superSet[e] === 1) {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 
 function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='') {

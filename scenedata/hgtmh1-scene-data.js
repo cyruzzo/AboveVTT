@@ -1,5 +1,4 @@
-export default function get_scene_data_hgtmh1() {
-	return {
+export const get_scene_data_hgtmh1 = {
 		"dnd/hgtmh1/polyhedrooze/Map0801thebigbadbase": {
 			"reveals": [
 				[
@@ -28213,4 +28212,3 @@ export default function get_scene_data_hgtmh1() {
 			}
 		},
 	}
-}

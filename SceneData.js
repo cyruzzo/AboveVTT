@@ -1,37 +1,3 @@
-
-function export_free() {
-	console.log("----" + window.CURRENT_SCENE_DATA.title + "-----");
-
-
-	let data = "";
-	data += "\t\tsnap: \"" + window.CURRENT_SCENE_DATA.snap + "\",\n";
-	data += "\t\thpps: \"" + window.CURRENT_SCENE_DATA.hpps + "\",\n";
-	data += "\t\tvpps: \"" + window.CURRENT_SCENE_DATA.vpps + "\",\n";
-	data += "\t\tfpsq: \"" + window.CURRENT_SCENE_DATA.fpsq + "\",\n";
-	data += "\t\toffsetx: \"" + window.CURRENT_SCENE_DATA.offsetx + "\",\n";
-	data += "\t\toffsety: \"" + window.CURRENT_SCENE_DATA.offsety + "\",\n";
-	data += "\t\tgrid: \"" + window.CURRENT_SCENE_DATA.grid + "\",\n";
-	data += "\t\tgrid_subdivided: \"" + window.CURRENT_SCENE_DATA.grid_subdivided + "\",\n";
-	console.log(data);
-}
-
-function export_ddb() {
-
-	let data = "\t\"" + window.CURRENT_SCENE_DATA.uuid + "\": {\n";
-	data += "\t\tdm_map_usable: \"" + window.CURRENT_SCENE_DATA.dm_map_usable + "\",\n";
-	data += "\t\tsnap: \"" + window.CURRENT_SCENE_DATA.snap + "\",\n";
-	data += "\t\thpps: \"" + window.CURRENT_SCENE_DATA.hpps + "\",\n";
-	data += "\t\tvpps: \"" + window.CURRENT_SCENE_DATA.vpps + "\",\n";
-	data += "\t\tfpsq: \"" + window.CURRENT_SCENE_DATA.fpsq + "\",\n";
-	data += "\t\toffsetx: \"" + window.CURRENT_SCENE_DATA.offsetx + "\",\n";
-	data += "\t\toffsety: \"" + window.CURRENT_SCENE_DATA.offsety + "\",\n";
-	data += "\t\tgrid: \"" + window.CURRENT_SCENE_DATA.grid + "\",\n";
-	data += "\t\tgrid_subdivided: \"" + window.CURRENT_SCENE_DATA.grid_subdivided + "\",\n";
-	data += "\t\tscale_factor: \"" + window.CURRENT_SCENE_DATA.scale_factor + "\",\n";
-	data += "\t},";
-	console.log(data);
-}
-
 //Used for adding to scene data files.
 async function export_scene_import_data(){
 	let currentSceneData = await export_scene_data();

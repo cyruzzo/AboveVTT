@@ -219,15 +219,7 @@ function setupMBIntervals(){
 	}, 480000);
 }
 
-function resizeCanvasChromeBug(){
-	let diceRollCanvas = $(".dice-rolling-panel__container");
-	if(parseInt(diceRollCanvas.attr("width")) % 2 != 0){
-		diceRollCanvas.attr("width", parseInt(diceRollCanvas.attr("width"))+1);
-	}
-	if(parseInt(diceRollCanvas.attr("height")) % 2 != 0){
-		diceRollCanvas.attr("height", parseInt(diceRollCanvas.attr("height"))+1);
-	}
-}
+
 
 function addFloatingCombatText(id, damageValue, heal = false){
 	if(get_avtt_setting_value('disableCombatText'))
@@ -1569,12 +1561,12 @@ class MessageBroker {
 
 
 		};
-		
+
 		get_cobalt_token(function(token) {
-			self.loadWS(token);
+			self.loadWS(token, report_connection);
 		});
 
-		self.loadAboveWS();
+		self.loadAboveWS(notify_player_join);
 	}
 
 	async handleScene (msg, forceRefresh=false) {

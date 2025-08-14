@@ -85,35 +85,6 @@ function update_old_discord_link(link){
   }
   return link;
 }
-/**
- * Waits for a global variable to be set.
- * Then triggers the callback function.
- * @param {String} name a global variable name
- * @param {Function} callback
- */
-function whenAvailable(name, callback) {
-    let interval = 10; // ms
-    window.setTimeout(function() {
-        if (window[name]) {
-            callback(window[name]);
-        } else {
-            whenAvailable(name, callback);
-        }
-    }, interval);
-}
-
-/**
- * Returns a random color in hex format.
- * @returns String
- */
-function getRandomColorOLD() {
-	let letters = '0123456789ABCDEF';
-	let color = '#';
-	for (let i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-}
 
 
 
@@ -1730,38 +1701,7 @@ function  init_sheet() {
 	}
 }
 
-/**
- * Loads the given URL in the character sheet window.
- * @param {String} pc_sheet URL to a player character on DDB
- * @param {Boolean} loadWait
- * @returns
- */
-function init_player_sheet(pc_sheet, loadWait = 0) {
 
-	if (is_characters_page()) {
-		// characters page manipulates the html on the page instead of loading an iframe
-		return;
-	}
-	if (pc_sheet === undefined || pc_sheet.length == 0) {
-		// This happens for the DM representation.
-		return;
-	}
-
-	let container = $("#sheet");
-	let iframe = container.find("iframe");
-	iframe.attr('src', '');
-	iframe.attr('data-sheet_url', pc_sheet);
-	iframe.attr('data-init_load', 0);
-
-	if((!window.DM) || (window.KEEP_PLAYER_SHEET_LOADED)) {
-		console.error('here');
-		let  loadSheet = function (sheetFrame, sheet_url) {
-			sheetFrame.attr('src', sheet_url);
-		};
-		// TODO: these parameters are not correct: iframe, pc_sheet
-		setTimeout(loadSheet, loadWait, iframe, pc_sheet);
-	}
-}
 
 
 /**
@@ -1973,6 +1913,8 @@ function close_player_sheet()
  * Notifie about player joining the game.
  */
 function notify_player_join() {
+	if(window.DM)
+		return;
 	const playerdata = {
 		abovevtt_version: window.AVTT_VERSION,
 		player_id: window.PLAYER_ID,
@@ -2404,16 +2346,13 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
-	init_my_dice_details()
-	setTimeout(function() {
-		find_and_set_player_color();
-		if(!window.DM) {
-			notify_player_join();
-			init_player_sheet(window.PLAYER_SHEET);
-			report_connection();
-		}
-		configure_peer_manager_from_settings();
-	}, 5000);
+	init_my_dice_details();
+	
+	window.WaypointManager = new WaypointManagerClass();
+
+	find_and_set_player_color();
+	configure_peer_manager_from_settings();
+	
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
 
@@ -2423,18 +2362,7 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
-	load_custom_monster_image_mapping();
-
-
-	window.WaypointManager=new WaypointManagerClass();
-
-	// TODO: I don't think this needs to be a timeout any more. Figure what window.STARTING does and make this better
-	setTimeout(function() {
-		window.STARTING = false;
-	}, 6000);
-
-
-
+	
 
 	// EXPERRIMENTAL DRAG TO MOVE
 	let  curDown = false,

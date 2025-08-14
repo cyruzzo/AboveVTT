@@ -1,5 +1,4 @@
-export default function get_scene_data_pbtso() {
-	return {
+export const get_scene_data_pbtso = {
 		"pbtso/a-dangerous-journey/Map101GoblinAmbush": {
 			
 			"reveals": [
@@ -145115,4 +145114,3 @@ export default function get_scene_data_pbtso() {
 			}
 		}
 	}
-}

@@ -70,8 +70,6 @@ function setDiceRemoteStream(stream, peerId) {
     let startTime = then;
     let now, elapsed;
     let updateCanvas=function(){
-        //resize canvas due to Chrome bug - this may be fixed in chrome later
-        //resizeCanvasChromeBug()    - looks like this is fixed, will keep comment here in case needed 
         if(tmpcanvas.width<=0){
             diceStreamThrottle(updateCanvas);
             return;
