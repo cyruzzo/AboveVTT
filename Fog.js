@@ -877,7 +877,7 @@ function do_check_token_visibility() {
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
 			continue;
-		promises.push(new Promise(function(resolve) {
+		
 			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let tokenSelector = "div.token[data-id='" + id + "']";
@@ -913,8 +913,8 @@ function do_check_token_visibility() {
 			}
 			
 			
-			resolve();
-		}));
+		
+		
 	}
 	
 	
@@ -923,7 +923,7 @@ function do_check_token_visibility() {
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
 		const doorId = $(door).attr('data-id');
-		promises.push(new Promise(function(resolve) {
+		
 
 			const inFog = (is_door_under_fog(door, fogContext)); // this token is in fog and not the players token
 
@@ -935,29 +935,31 @@ function do_check_token_visibility() {
 			else {
 				showDoors.push(`[data-id='${doorId}']`)
 			}
-			resolve();
-		}));
+			
+		
 	}
 
-	Promise.all(promises);
+
 	
-		
+	
 	hideIds = hideIds.join(',');
 	showTokenIds = showTokenIds.join(',');
-	showAuraIds = showAuraIds.join(',');	
+	showAuraIds = showAuraIds.join(',');
 	dmSelectedTokens = dmSelectedTokens.join(',');
 
 	$(hideIds).hide();
-	$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
+	$(showTokenIds).css({ 'opacity': 1, 'display': 'flex' });
 	$(showAuraIds).show();
-	$(dmSelectedTokens).css({'display': 'flex'});
-	
+	$(dmSelectedTokens).css({ 'display': 'flex' });
+
 
 	hideDoors = hideDoors.join(',');
 	showDoors = showDoors.join(',');
-	
+
 	$(showDoors).toggleClass('notVisible', false);
 	$(hideDoors).toggleClass('notVisible', true);
+		
+
 	
 
 	console.log("finished");

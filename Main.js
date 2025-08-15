@@ -441,6 +441,8 @@ function map_load_error_cb(e) {
 			}
 		}
 	}
+	window.LOADING = false
+	window.MB.loadNextScene();
 }
 
 /**

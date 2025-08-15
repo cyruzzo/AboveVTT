@@ -1915,38 +1915,39 @@ class MessageBroker {
 						
 						$('#loadingStyles').remove();
 
-						if(window.handleSceneQueue?.length>0){	
-							const msg = window.handleSceneQueue.pop(); // get most recent item and load it
-							window.handleSceneQueue = [];
-							AboveApi.getScene(msg.data.sceneid).then((response) => {
-								self.handleScene(response);
-							}).catch((error) => {
-								console.error("Failed to download scene", error);
-							});
-							return;
-						}
-							
-						
 						console.groupEnd()
+
+						
+						window.MB.loadNextScene();	
+						
+						
 					});
 					
 					remove_loading_overlay();
 				}
-
-			
 			}
-
-
-	
-
 		}
 		catch (e) {
+			window.MB.loadNextScene();
 			showError(e);
 		}
 		
 		// console.groupEnd()
 	}
-
+	loadNextScene(){
+		if (window.handleSceneQueue == undefined || window.handleSceneQueue?.length == 0)
+			return;
+		const msg = window.handleSceneQueue.pop(); // get most recent item and load it
+		window.handleSceneQueue = [];
+		AboveApi.getScene(msg.data.sceneid).then((response) => {
+			window.MB.handleScene(response);
+		}).catch((error) => {
+			if (window.handleSceneQueue?.length > 0) {
+				setTimeout(loadNextScene, 100);
+			}
+			console.error("Failed to download scene", error);
+		});
+	}
   	handleCT(data){
 		ct_load(data);
 	}
