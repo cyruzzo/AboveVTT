@@ -725,7 +725,7 @@ class WeatherOverlay {
     _drawRain() {
         const t = Date.now() * 0.001;
         for (let p of this.particles) {
-            if (p.splash) {
+            if (p.splash && p.start == true) {
                 this.offscreenCtx.save();
                 let fade = 1;
                 if (p.fadeIn !== undefined && p.fadeIn < (p.fadeInFrames || 10)) {
@@ -752,6 +752,7 @@ class WeatherOverlay {
                         p.maxLife = 18 + Math.random() * 10;
                         p.fadeIn = 0;
                     }
+                    p.start = false;
                 }
             } else {
                 let fade = 1;
@@ -776,7 +777,16 @@ class WeatherOverlay {
                 this.offscreenCtx.shadowBlur = 10 * (1 - p.z);
                 this.offscreenCtx.stroke();
                 this.offscreenCtx.restore();
-                if (p.z >= 1) {
+                if (p.z>=1) {
+                    const splash = this.particles.find(s => s.splash && s.dropletId === p.id);
+                    if (splash) {
+                        splash.x = p.groundX;
+                        splash.y = p.groundY;
+                        splash.life = 0;
+                        splash.maxLife = 18 + Math.random() * 10;
+                        splash.fadeIn = 0;
+                        splash.start = true;
+                    }
                     const groundX = Math.random() * this.width;
                     const groundY = Math.random() * this.height;
                     p.startX = groundX;
@@ -786,14 +796,6 @@ class WeatherOverlay {
                     p.z = 0;
                     p.wind = -0.7 + Math.random() * 1.4;
                     p.fadeIn = 0;
-                    const splash = this.particles.find(s => s.splash && s.dropletId === p.id);
-                    if (splash) {
-                        splash.x = p.groundX;
-                        splash.y = p.groundY;
-                        splash.life = 0;
-                        splash.maxLife = 18 + Math.random() * 10;
-                        splash.fadeIn = 0;
-                    }
                 }
             }
         }
