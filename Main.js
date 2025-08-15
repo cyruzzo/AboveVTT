@@ -441,6 +441,8 @@ function map_load_error_cb(e) {
 			}
 		}
 	}
+	window.LOADING = false
+	window.MB.loadNextScene();
 }
 
 /**
@@ -1908,6 +1910,22 @@ function close_player_sheet()
 			observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
 	}
 }
+/**
+ * Waits for a global variable to be set.
+ * Then triggers the callback function.
+ * @param {String} name a global variable name
+ * @param {Function} callback
+ */
+function whenAvailable(name, callback) {
+	let interval = 1000; // ms
+	setTimeout(function () {
+		if (window[name]) {
+			callback(window[name]);
+		} else {
+			whenAvailable(name, callback);
+		}
+	}, interval);
+}
 
 /**
  * Notifie about player joining the game.
@@ -1922,7 +1940,7 @@ function notify_player_join() {
 	};
 
 	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
-	window.MB.sendMessage("custom/myVTT/playerjoin", playerdata);
+	whenAvailable('JOURNAL', function(){window.MB.sendMessage("custom/myVTT/playerjoin", playerdata)});
 }
 
 /**

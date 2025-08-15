@@ -555,9 +555,6 @@ class JournalManager{
 					section_chapter.toggleClass('collapsed');
 					self.chapters[i].collapsed = !self.chapters[i].collapsed;
 					self.persist();
-					window.MB.sendMessage('custom/myVTT/JournalChapters',{
-						chapters: self.chapters
-					});
 				});
 				
 		
