@@ -2137,7 +2137,7 @@ function init_ui() {
 	drawOverlayUnderFogDarkness.css("position", "absolute");
 	drawOverlayUnderFogDarkness.css("top", "0");
 	drawOverlayUnderFogDarkness.css("left", "0");
-	drawOverlayUnderFogDarkness.css("z-index", "18");
+	drawOverlayUnderFogDarkness.css("z-index", "11");
 
 	const mapItems = $("<div id='map_items'></div>");
 	mapItems.css("top", "0");
