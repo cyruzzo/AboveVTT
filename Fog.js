@@ -6869,6 +6869,8 @@ function redraw_light(darknessMoved = false){
 	const canvasWidth = getSceneMapSize().sceneWidth;
 	const canvasHeight = getSceneMapSize().sceneHeight;
 
+	context.clearRect(0, 0, canvasWidth, canvasHeight)
+
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
 		return; // prevent error if redraw is called before map initialized
@@ -6900,7 +6902,8 @@ function redraw_light(darknessMoved = false){
 	window.lightInLos.width = canvasWidth;
 	window.lightInLos.height = canvasHeight;
 
-	window.lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
+	const lightInLosContext = window.lightInLosContext;
+	lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -7005,7 +7008,10 @@ function redraw_light(darknessMoved = false){
 
 
 
-	const lightInLosContext = window.lightInLosContext;
+
+
+
+
 	if (window.elevContext == undefined) {
 		window.elevContext = $('#elev_overlay')[0].getContext('2d');
 	}
@@ -7094,9 +7100,10 @@ function redraw_light(darknessMoved = false){
 		}
 
 	
-		if (window.lightAuraClipPolygon[auraId] !== undefined) {
+		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
 			lightInLosContext.globalCompositeOperation = 'source-over';
-			lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
+			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light, 'white')
+
 		}
 		
 		
@@ -7574,21 +7581,9 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	else if(circleRadius === 0){
 		return; // don't make an object for 0 range light
 	}
-	let lightCanvas = document.createElement('canvas');
-	let lightAuraClipPolygonCtx = lightCanvas.getContext('2d');
-	lightCanvas.width = canvasWidth;
-	lightCanvas.height = canvasHeight;
 
-	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
-	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
-
-	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
-
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
-	
 
 	window.lightAuraClipPolygon[auraId] = {
-		canvas: lightCanvas,
 		light: lightRadius,
 		darkvision: darkvisionRadius,
 		middle: {
