@@ -767,9 +767,9 @@ class WeatherOverlay {
                 p.y = (1 - p.z) * p.startY + p.z * p.groundY;
                 const streakLen = 18 + 22 * (1 - p.z);
                 this.offscreenCtx.save();
-                this.offscreenCtx.globalAlpha = 2 * (1 - p.z) * fade;
+                this.offscreenCtx.globalAlpha = 0.2 + (2 * (1 - p.z) * fade*.8);
                 this.offscreenCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-                this.offscreenCtx.lineWidth = 1.1 + 1.7 * (1 - p.z);
+                this.offscreenCtx.lineWidth = 1.4 + 1.7 * (1 - p.z);
                 this.offscreenCtx.beginPath();
                 this.offscreenCtx.moveTo(p.x, p.y);
                 this.offscreenCtx.lineTo(p.x, p.y + streakLen);
