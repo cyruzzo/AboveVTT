@@ -735,14 +735,15 @@ function check_single_token_visibility(id){
 	const lightContext = lightCanvas.getContext('2d');
 
 
-
-	const offScreenCanvas = document.createElement('canvas');
-
+	if(window.tokenCheckOffscreenCanvas == undefined){
+		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
+	}
+	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
 	offScreenCanvas.width = fogCanvas.width;
 	offScreenCanvas.height = fogCanvas.height;
-	offScreenCtx = offScreenCanvas.getContext('2d');
-
-
+	const offScreenCtx = window.tokenCheckOffscreenContext;
+	offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -829,9 +830,10 @@ function do_check_token_visibility() {
 	let dmSelectedTokens = [];
 
 	const fogCanvas = document.getElementById('fog_overlay');
-	const lightCanvas = window.lightInLos;
 	let fogContext = fogCanvas.getContext('2d');
-	let lightContext = lightCanvas.getContext('2d');
+
+	const lightCanvas = window.lightInLos;
+	let lightContext = window.lightInLosContext;
 
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	
@@ -849,12 +851,15 @@ function do_check_token_visibility() {
 	
 
 	
-	const offScreenCanvas = document.createElement('canvas');
+	if (window.tokenCheckOffscreenCanvas == undefined) {
+		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
+	}
+	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
 	offScreenCanvas.width = fogCanvas.width;
 	offScreenCanvas.height = fogCanvas.height;
-	offScreenCtx = offScreenCanvas.getContext('2d');
-
-
+	const offScreenCtx = window.tokenCheckOffscreenContext;
+	offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 	offScreenCtx.drawImage(lightCanvas, 0, 0);
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
@@ -6845,10 +6850,22 @@ function detectInLos(x, y) {
 
 
 function redraw_light(darknessMoved = false){
+    if(window.rayContext == undefined){
+		window.rayCanvas = document.getElementById('raycastingCanvas');
+		window.rayContext = window.rayCanvas.getContext('2d');
 
-	let canvas = document.getElementById("raycastingCanvas");
-	let canvasWidth = getSceneMapSize().sceneWidth;
-	let canvasHeight = getSceneMapSize().sceneHeight;
+		window.offscreenCanvasMask = document.createElement('canvas');
+		window.offscreenContext = window.offscreenCanvasMask.getContext('2d');
+
+		window.moveOffscreenCanvasMask = document.createElement('canvas');
+		window.moveOffscreenContext = window.moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
+	}
+
+    const canvas = window.rayCanvas;
+	const context = window.rayContext;
+
+	const canvasWidth = getSceneMapSize().sceneWidth;
+	const canvasHeight = getSceneMapSize().sceneHeight;
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
@@ -6858,29 +6875,30 @@ function redraw_light(darknessMoved = false){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
-
-	let context = canvas.getContext("2d");
 	
-	let offscreenCanvasMask = document.createElement('canvas');
-	let offscreenContext = offscreenCanvasMask.getContext('2d');
-
+	const offscreenCanvasMask = window.offscreenCanvasMask;
+	const offscreenContext = window.offscreenContext;
+    
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
-	
+	offscreenContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	if(window.moveOffscreenCanvasMask == undefined){
-		window.moveOffscreenCanvasMask = document.createElement('canvas');
-	}
-	let moveOffscreenContext = moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
+	
+	const moveOffscreenContext = window.moveOffscreenContext;
 
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;
 
 
+	if(window.lightInLos == undefined){
+		window.lightInLos = document.createElement('canvas');
+		window.lightInLosContext = window.lightInLos.getContext('2d');
+	}
 
-	window.lightInLos = document.createElement('canvas');
 	window.lightInLos.width = canvasWidth;
 	window.lightInLos.height = canvasHeight;
+
+	window.lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -6893,38 +6911,51 @@ function redraw_light(darknessMoved = false){
 
 	if(window.truesightCanvas == undefined){
 		window.truesightCanvas = document.createElement('canvas');
+		window.truesightCanvasContext = window.truesightCanvas.getContext('2d');
 	}
-	let truesightCanvasContext = truesightCanvas.getContext('2d');
+	const truesightCanvasContext = window.truesightCanvasContext;
 
 	window.truesightCanvas.width = canvasWidth;
 	window.truesightCanvas.height = canvasHeight;
 
 	truesightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	
-	let devilsightCanvas = document.createElement('canvas');
-	
-	let devilsightCtx = devilsightCanvas.getContext('2d');
+	if (window.devilsightCanvas == undefined){
+		window.devilsightCanvas = document.createElement('canvas');
+		window.devilsightCtx = window.devilsightCanvas.getContext('2d');
+	}
+ 
+	const devilsightCanvas = window.devilsightCanvas;
+	const devilsightCtx = window.devilsightCtx;
 
 	devilsightCanvas.width = canvasWidth;
 	devilsightCanvas.height = canvasHeight;
 
 	devilsightCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
-
-	let tempDarkvisionCanvas = document.createElement('canvas');
-	let tempDarkvisionCtx = tempDarkvisionCanvas.getContext('2d');
+	if (window.tempDarkvisionCanvas == undefined){
+		window.tempDarkvisionCanvas = document.createElement('canvas');
+		window.tempDarkvisionCtx = window.tempDarkvisionCanvas.getContext('2d');
+	}
+	const tempDarkvisionCanvas = window.tempDarkvisionCanvas;
+	const tempDarkvisionCtx = window.tempDarkvisionCtx;
 
 	tempDarkvisionCanvas.width = canvasWidth;
 	tempDarkvisionCanvas.height = canvasHeight;
 
 	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
-	let tempDarknessCanvas = document.createElement('canvas');
-	let tempDarknessCtx = tempDarknessCanvas.getContext('2d');
+	if (window.tempDarknessCanvas == undefined) {
+		window.tempDarknessCanvas = document.createElement('canvas');
+		window.tempDarknessCtx = window.tempDarknessCanvas.getContext('2d');
+	}
+	const tempDarknessCanvas = window.tempDarknessCanvas;
+	const tempDarknessCtx = window.tempDarknessCtx;
 
 	tempDarknessCanvas.width = canvasWidth;
 	tempDarknessCanvas.height = canvasHeight;
+
+	tempDarknessCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
@@ -6972,9 +7003,11 @@ function redraw_light(darknessMoved = false){
 
 
 
-	const lightInLosContext = window.lightInLos.getContext('2d');
-
-	const elevContext = $('#elev_overlay')[0].getContext('2d');
+	const lightInLosContext = window.lightInLosContext;
+	if (window.elevContext == undefined) {
+		window.elevContext = $('#elev_overlay')[0].getContext('2d');
+	}
+	const elevContext = window.elevContext;
 
 	const allWalls = [...walls, ...darknessBoundarys];
 	const tokenVisionAuras = $(`.aura-element-container-clip [id*='vision_']`);
