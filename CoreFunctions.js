@@ -1651,7 +1651,9 @@ function find_pc_by_player_id(idOrSheet, useDefault = true) {
       console.error("window.pcs is undefined");
     return useDefault ? generic_pc_object(false) : undefined;
   }
-  const pc = window.pcs.find(pc => pc.sheet.includes(idOrSheet));
+  const regexStr = `characters/${idOrSheet}$`;
+  const regex = new RegExp(regexStr, 'gi');
+  const pc = window.pcs.find(pc => pc.sheet.match(regex) || pc.sheet == idOrSheet);
   if (pc) {
     return pc;
   }
@@ -1720,12 +1722,10 @@ const debounce_pc_token_update = mydebounce(() => {
     if (token && pc) {
       let currentImage = token.options.imgsrc;
       token.hp = pc.hitPointInfo.current;
-      token.options = {
-        ...token.options,
-        ...pc,
-        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-      };  
+      const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
+      token.options = $.extend(true, {}, token.options, token.options);
+      token.options.imgsrc = newImage;
+
       for(let i =0; i<unusedPlayerData.length; i++){
         delete token.options[unusedPlayerData[i]];
       }    
@@ -1738,13 +1738,10 @@ const debounce_pc_token_update = mydebounce(() => {
     }
     token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
     if(token && pc){
-      let currentImage = token.options.imgsrc;
-      token.options = {
-        ...token.options,
-        ...pc,
-        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-      };
+      const currentImage = token.options.imgsrc;
+      const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
+      token.options = $.extend(true, {}, token.options, token.options);
+      token.options.imgsrc = newImage;
       for(let i =0; i<unusedPlayerData.length; i++){
         delete token.options[unusedPlayerData[i]];
       }
