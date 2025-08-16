@@ -723,7 +723,6 @@ function persist_all_token_customizations(customizations, callback) {
     window.TOKEN_CUSTOMIZATIONS = customizations;
     callback(true);
 }
-const debounce_token_sync = mydebounce((token) => {token.sync($.extend(true, {}, token.options))}, 500)
 function persist_token_customization(customization, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
@@ -763,7 +762,7 @@ function persist_token_customization(customization, callback) {
             if(window.TOKEN_OBJECTS[customization.id]){
                 token.options = $.extend(true, {}, token.options, customization.tokenOptions);
                 token.place();
-                debounce_token_sync(token);
+                token.sync($.extend(true, {}, token.options));
             }
         }
         else if (customization.tokenType == ItemType.Folder && customization.rootId == RootFolder.Players.id){
@@ -783,7 +782,7 @@ function persist_token_customization(customization, callback) {
                if (window.TOKEN_OBJECTS[listItem.id]) {
                    token.options = $.extend(true, {}, token.options, newOptions);
                    token.place();
-                   debounce_token_sync(token);
+                   token.sync($.extend(true, {}, token.options));
                }
            }
         }

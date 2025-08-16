@@ -3055,7 +3055,9 @@ function build_token_border_color_input(initialColor, colorChangeCallback) {
 function build_override_token_options_button(sidebarPanel, listItem, placedToken, options, updateValue, didChange) {
     let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
     tokenOptionsButton.on("click", function (clickEvent) {
+
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+            const options = find_token_customization(listItem.type, listItem.id)?.tokenOptions;
             const overrideOptions = listItem.isTypeAoe() ? 
                 token_setting_options().filter(option=> availableToAoe.includes(option.name))
                  .map(option => convert_option_to_override_dropdown(option)) 
