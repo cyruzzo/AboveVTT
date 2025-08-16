@@ -8377,6 +8377,12 @@ button#changeTokenImage:before{
 .sp-palette-container {
     min-width: 176px;
 }
+[role='dialog'] .note.ui-dialog-content.ui-widget-content {
+    height: 100% !important;
+}
+[role='dialog'] .note-text {
+    min-height: 450px;
+}
 #combat_area tr.CTToken:before{
     content:  '???';
     font-size: 12px;
