@@ -712,7 +712,7 @@ function read_temp_hp(container = $(document)) {
   if(element.length){
     return parseInt(element.val())
   }
-  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], :is([class*='styles_hitPointsBox'], [styles='styles_pane']) [class*='styles_innerContainer']~[class*='styles_item'] button`)
+  element = container.find(`[class*='styles_hitPointsBox'] h2~[aria-label*='Temporary'], :is([class*='styles_hitPointsBox'], [styles='styles_pane']) [class*='styles_innerContainer']~[class*='styles_item'] button, [class*='styles_inputContainer']>[class*='styles_healingContainer']~[class*='styles_newValues'] span[class*='styles_value']`);
   if(element.length){
     return parseInt(element.text()) || 0
   }

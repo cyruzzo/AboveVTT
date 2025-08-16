@@ -1721,9 +1721,10 @@ const debounce_pc_token_update = mydebounce(() => {
     let token = window.TOKEN_OBJECTS[pc?.sheet];     
     if (token && pc) {
       let currentImage = token.options.imgsrc;
-      token.hp = pc.hitPointInfo.current;
+      token.options.hitPointInfo = pc.hitPointInfo;
+
       const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-      token.options = $.extend(true, {}, token.options, token.options);
+      token.options = $.extend(true, {}, token.options, pc);
       token.options.imgsrc = newImage;
 
       for(let i =0; i<unusedPlayerData.length; i++){
@@ -1740,7 +1741,7 @@ const debounce_pc_token_update = mydebounce(() => {
     if(token && pc){
       const currentImage = token.options.imgsrc;
       const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-      token.options = $.extend(true, {}, token.options, token.options);
+      token.options = $.extend(true, {}, token.options, pc);
       token.options.imgsrc = newImage;
       for(let i =0; i<unusedPlayerData.length; i++){
         delete token.options[unusedPlayerData[i]];
