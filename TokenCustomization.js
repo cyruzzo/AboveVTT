@@ -766,6 +766,27 @@ function persist_token_customization(customization, callback) {
                 debounce_token_sync(token);
             }
         }
+        else if (customization.tokenType == ItemType.Folder && customization.rootId == RootFolder.Players.id){
+            const listItem = window.tokenListItems.find(d=> d.id == customization.id);
+            let fullPath = listItem.fullPath();
+            // find and place all items in this folder... but not subfolders
+            tokensToPlace = window.tokenListItems
+                .filter(item => item.folderPath.startsWith(fullPath));
+
+           for(let listItem of tokensToPlace){
+               const newOptions = find_token_options_for_list_item(listItem);
+               const allToken = window.all_token_objects[listItem.id];
+               if (allToken) {
+                   allToken.options = $.extend(true, {}, allToken.options, newOptions)
+               }
+               const token = window.TOKEN_OBJECTS[listItem.id];
+               if (window.TOKEN_OBJECTS[listItem.id]) {
+                   token.options = $.extend(true, {}, token.options, newOptions);
+                   token.place();
+                   debounce_token_sync(token);
+               }
+           }
+        }
         
        
 
