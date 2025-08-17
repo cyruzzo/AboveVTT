@@ -42,7 +42,7 @@ const availableToAoe = [
 
 const throttleLight = throttle((darknessMoved = false) => {requestAnimationFrame(()=>{redraw_light(darknessMoved)})}, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
-const debounceStoreExplored = mydebounce((exploredCanvas) => {		
+ const debounceStoreExplored = mydebounce((exploredCanvas) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
 	let storeImage = gameIndexedDb.transaction([`exploredData`], "readwrite")
@@ -3675,19 +3675,94 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			
 			
 		
-			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x-mapX) < hexSize*window.CURRENT_SCENE_DATA.scale_factor && Math.abs(d[1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y-mapY)< hexSize*window.CURRENT_SCENE_DATA.scale_factor);
+			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - mapX) < hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x && Math.abs(d[1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - mapY) < hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y);
+
 			if(window.CURRENT_SCENE_DATA.gridType == 3){
-				return {
-					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.x*window.CURRENT_SCENE_DATA.scale_factor),
-					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 
+
+				
+				if (gridSquaresWide % 2 != 0){
+					return {
+						x: closeHexes[0][0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth / 2 + ((1 - (gridSquaresWide % 2)) * hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.x * window.CURRENT_SCENE_DATA.scale_factor),
+						y: closeHexes[0][1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth / 2
+					}
 				}
+				let dist = Infinity;
+				
+				let pt = {};
+				for(let i of closeHexes){
+					const centerX = i[0];
+					const centerY = i[1];
+					let x = (centerX + hexSize) * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+					let y = centerY * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+					const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+					if (dist > currDist) {
+						dist = currDist;
+						pt.x = x;
+						pt.y = y;
+					}
+					for (let i = 1; i <= 6; i++) {
+						const angle = i * Math.PI / 3;
+						const dx = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x) * Math.cos(angle);
+						const dy = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y) * Math.sin(angle);
+						x += dx;
+						y += dy;
+						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						if (dist > currDist) {
+							dist = currDist;
+							pt.x = x;
+							pt.y = y;
+						}
+					}
+				}
+				
+				return {
+					x: pt.x - tokenWidth / 2 + (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.x * window.CURRENT_SCENE_DATA.scale_factor),
+					y: pt.y - tokenWidth / 2
+				}
+
 
 				
 			}else if(window.CURRENT_SCENE_DATA.gridType == 2){
-				return {
-					x: closeHexes[0][0]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth/2,
-					y: closeHexes[0][1]*window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth/2 + ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.y*window.CURRENT_SCENE_DATA.scale_factor) 
+				
+				if (gridSquaresWide % 2!= 0) {
+					return {
+						x: closeHexes[0][0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth / 2,
+						y: closeHexes[0][1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth / 2
+					}
 				}
+				let dist = Infinity;
+				let pt = {};
+				for (let i of closeHexes) {
+					const centerX = i[0];
+					const centerY = i[1]; 
+					let x = centerX * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+					let y = (centerY + hexSize) * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+					const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+					if (dist > currDist) {
+						dist = currDist;
+						pt.x = x;
+						pt.y = y;
+					}
+					for (let i = 1; i <= 6; i++) {
+						const angle = i * Math.PI / 3;
+						const dx = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x) * Math.sin(angle);
+						const dy = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y) * Math.cos(angle);
+						x +=dx;
+						y +=dy;
+						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						if (dist > currDist) {
+							dist = currDist;
+							pt.x = x;
+							pt.y = y;
+						}
+					}
+				}
+				return {
+					x: pt.x - tokenWidth / 2,
+					y: pt.y - tokenWidth / 2 + (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.y * window.CURRENT_SCENE_DATA.scale_factor)
+				}
+				
+				
 			}
 
 		}
