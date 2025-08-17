@@ -1714,7 +1714,7 @@ function update_pc_with_data(playerId, data) {
 
 
 const debounce_pc_token_update = mydebounce(() => {  
-  const unusedPlayerData = ['attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
+  const unusedPlayerData = ['image', 'attacks', 'attunedItems', 'campaign', 'campaignSetting', 'castingInfo', 'classes', 'deathSaveInfo', 'decorations', 'extras', 'immunities', 'level', 'passiveInsight', 'passiveInvestigation', 'passivePerception', 'proficiencyBonus', 'proficiencyGroups', 'race', 'readOnlyUrl', 'resistances', 'senses', 'skills', 'speeds', 'vulnerabilities'];
       
   window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
     const pc = find_pc_by_player_id(playerId, false);
