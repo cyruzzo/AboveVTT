@@ -902,10 +902,8 @@ class WeatherOverlay {
             p.x += this._windDx * (0.7 + 0.6 * (p.r / 56));
             p.y += this._windDy * (0.7 + 0.6 * (p.r / 56));
             if (p.x < -p.r || p.x > this.width + p.r || p.y < -p.r || p.y > this.height + p.r) {
-                let baseX = Math.random() * this.width;
-                let baseY = Math.random() * this.height;
-                p.x = baseX + (Math.random() - 0.5) * 200;
-                p.y = baseY + (Math.random() - 0.5) * 120;
+                p.x = Math.random() * (this.width + 200) - 100;
+                p.y = Math.random() * (this.height + 200) - 100;
                 p.phase = Math.random() * Math.PI * 2;
                 p.fadeIn = 1;
             }
