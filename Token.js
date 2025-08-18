@@ -3133,7 +3133,7 @@ class Token {
 						let tokenY = (ui.position.top - ((zoom-parseFloat(window.orig_zoom)) * parseFloat(self.sizeHeight())/2)) / parseFloat(window.ZOOM);
 						let tinyToken = (Math.round(parseFloat(window.TOKEN_OBJECTS[this.dataset.id].options.gridSquares)*2)/2 < 1) || window.TOKEN_OBJECTS[this.dataset.id].isAoe();
 
-						if (should_snap_to_grid()) {
+						if (should_snap_to_grid() && (window.CURRENT_SCENE_DATA.gridType == '2' || window.CURRENT_SCENE_DATA.gridType == '3')) {
 							tokenX +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.hpps) / 4);
 							tokenY +=  !(tinyToken) ? (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 2) : (parseFloat(window.CURRENT_SCENE_DATA.vpps) / 4) ;
 						}
@@ -3670,43 +3670,54 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
 
 		const hexSize = hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor || window.CURRENT_SCENE_DATA.hpps/1.5 / window.CURRENT_SCENE_DATA.scale_factor;
-
+		let startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
+		let startY = parseFloat(window.CURRENT_SCENE_DATA.offsety); 
 		if(!arrowKeys && (window.CURRENT_SCENE_DATA.gridType == 3 || window.CURRENT_SCENE_DATA.gridType == 2)){
-			
-			
-		
-			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - mapX) < hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x && Math.abs(d[1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - mapY) < hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y);
+			const closeHexes = window.gridCentersArray.filter(d => Math.abs(d[0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - mapX) < hexSize * 4 * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x && Math.abs(d[1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - mapY) < hexSize * 4 * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y);
 
 			if(window.CURRENT_SCENE_DATA.gridType == 3){
-
-				
+				let dist = Infinity;
+				let pt = {};
 				if (gridSquaresWide % 2 != 0){
+					for (let i of closeHexes) {
+						const centerX = i[0];
+						const centerY = i[1];
+						let x = centerX * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+						let y = centerY * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						if (dist > currDist) {
+							dist = currDist;
+							pt.x = x;
+							pt.y = y;
+						}
+					}
 					return {
-						x: closeHexes[0][0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth / 2 + ((1 - (gridSquaresWide % 2)) * hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.x * window.CURRENT_SCENE_DATA.scale_factor),
-						y: closeHexes[0][1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth / 2
+						x: pt.x - tokenWidth / 2 ,
+						y: pt.y - tokenWidth / 2
 					}
 				}
-				let dist = Infinity;
 				
-				let pt = {};
+				
+				mapX += tokenWidth / 2 - (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.x * window.CURRENT_SCENE_DATA.scale_factor);
+				mapY += tokenWidth / 2;
 				for(let i of closeHexes){
 					const centerX = i[0];
 					const centerY = i[1];
 					let x = (centerX + hexSize) * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
 					let y = centerY * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-					const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+					const currDist = Math.sqrt((mapX - x ) ** 2 + (mapY - y) ** 2);
 					if (dist > currDist) {
 						dist = currDist;
 						pt.x = x;
 						pt.y = y;
 					}
-					for (let i = 1; i <= 6; i++) {
+					for (let i = 1; i <= 5; i++) {
 						const angle = i * Math.PI / 3;
 						const dx = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x) * Math.cos(angle);
 						const dy = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y) * Math.sin(angle);
 						x += dx;
 						y += dy;
-						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						const currDist = Math.sqrt((mapX  - x) ** 2 + (mapY - y) ** 2);
 						if (dist > currDist) {
 							dist = currDist;
 							pt.x = x;
@@ -3723,33 +3734,47 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 
 				
 			}else if(window.CURRENT_SCENE_DATA.gridType == 2){
-				
-				if (gridSquaresWide % 2!= 0) {
-					return {
-						x: closeHexes[0][0] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x - tokenWidth / 2,
-						y: closeHexes[0][1] * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y - tokenWidth / 2
-					}
-				}
 				let dist = Infinity;
 				let pt = {};
+				if (gridSquaresWide % 2 != 0) {
+					for (let i of closeHexes) {
+						const centerX = i[0];
+						const centerY = i[1];
+						let x = centerX * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
+						let y = centerY * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						if (dist > currDist) {
+							dist = currDist;
+							pt.x = x;
+							pt.y = y;
+						}
+						
+					}
+					return {
+						x: pt.x - tokenWidth / 2,
+						y: pt.y - tokenWidth / 2
+					}
+				}
+				mapX += tokenWidth / 2;
+				mapY += tokenWidth / 2 - (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.y * window.CURRENT_SCENE_DATA.scale_factor);
 				for (let i of closeHexes) {
 					const centerX = i[0];
 					const centerY = i[1]; 
 					let x = centerX * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x;
 					let y = (centerY + hexSize) * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-					const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+					const currDist = Math.sqrt((mapX  - x) ** 2 + (mapY - y) ** 2);
 					if (dist > currDist) {
 						dist = currDist;
 						pt.x = x;
 						pt.y = y;
-					}
-					for (let i = 1; i <= 6; i++) {
+					}	
+					for (let i = 1; i <= 5; i++) {
 						const angle = i * Math.PI / 3;
 						const dx = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.x) * Math.sin(angle);
 						const dy = (hexSize * window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.scaleAdjustment.y) * Math.cos(angle);
-						x +=dx;
-						y +=dy;
-						const currDist = Math.sqrt((mapX - x) ** 2 + (mapY - y) ** 2);
+						x += dx;
+						y += dy;
+						const currDist = Math.sqrt((mapX  - x) ** 2 + (mapY - y) ** 2);
 						if (dist > currDist) {
 							dist = currDist;
 							pt.x = x;
@@ -3759,7 +3784,7 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 				}
 				return {
 					x: pt.x - tokenWidth / 2,
-					y: pt.y - tokenWidth / 2 + (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.y * window.CURRENT_SCENE_DATA.scale_factor)
+					y: pt.y - tokenWidth / 2 + (hexSize * window.CURRENT_SCENE_DATA.scaleAdjustment.y * window.CURRENT_SCENE_DATA.scale_factor),
 				}
 				
 				
@@ -3767,10 +3792,6 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 
 		}
 		// adjust to the nearest square coordinate
-		let startX = parseFloat(window.CURRENT_SCENE_DATA.offsetx);
-		let startY = parseFloat(window.CURRENT_SCENE_DATA.offsety); 
-
-
 		const gridWidth = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? parseFloat(window.hexGridSize.width) * parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.x) : (!tinyToken) ? parseFloat(window.CURRENT_SCENE_DATA.hpps) : parseFloat(window.CURRENT_SCENE_DATA.hpps)/2;
 		const gridHeight = (window.CURRENT_SCENE_DATA.gridType && window.CURRENT_SCENE_DATA.gridType != 1) ? parseFloat(window.hexGridSize.height) * parseFloat(window.CURRENT_SCENE_DATA.scaleAdjustment.y) : (!tinyToken) ? parseFloat(window.CURRENT_SCENE_DATA.vpps) : parseFloat(window.CURRENT_SCENE_DATA.vpps/2);
 		
