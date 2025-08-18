@@ -32,7 +32,7 @@ class WeatherOverlay {
     _initParticles() {
         this.particles = [];
         let count;
-        if (this.type === 'fog') count = 35;
+        if (this.type === 'fog') count = 10;
         else if (this.type === 'rain') count = 120;
 
         else if (this.type === 'snow') count = 120;
@@ -47,7 +47,7 @@ class WeatherOverlay {
         if (this.type === 'fog' || this.type === 'embers' || this.type === 'cherryBlossoms') {
             const angle = Math.random() * Math.PI * 2;
             this._windAngle = angle;
-            this._windSpeed = 0.1 + Math.random() * 0.17;
+            this._windSpeed = 0.08 + Math.random() * 0.1;
             this._windDx = Math.cos(angle) * this._windSpeed;
             this._windDy = Math.sin(angle) * this._windSpeed;
         }
@@ -70,7 +70,6 @@ class WeatherOverlay {
                     endX,
                     endY,
                     z: 0,
-                    wind,
                     fadeIn: 0,
                     fadeInFrames,
                     splash: false,
@@ -135,7 +134,7 @@ class WeatherOverlay {
             }
         } else if (this.type === 'fog') {
             for (let i = 0; i < count; i++) {
-                const baseR = 120 + Math.random() * 90;
+                const baseR = 200 + Math.random() * 90;
                 const aspect = 0.6 + Math.random() * 0.8;
                 this.particles.push({
                     x: Math.random() * (this.width + 200) - 100,
