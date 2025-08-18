@@ -3189,7 +3189,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     function* addExampleToken(index) {
         
-        while(index < index+10 && index<alternativeImages.length){
+        while(index < index+8 && index<alternativeImages.length){
             setTimeout(function(){
                 if(index < alternativeImages.length){
                     let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
@@ -3204,20 +3204,21 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
        
     }
     let buildToken = addExampleToken(0);
-    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', function(){
-        if (modalBody.scrollTop() + 500 >= 
-            modalBody[0].scrollHeight) { 
-            for(let i = 0; i<10; i++){
+    const debounceExampleToken = mydebounce(() => {
+        if (modalBody.scrollTop() + 300 >=
+            modalBody[0].scrollHeight) {
+            for (let i = 0; i < 8; i++) {
                 buildToken.next()
             }
-        } 
-    });
+        }
+    }, 50)
+    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', debounceExampleToken);
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
-            if(i<10){
+            if(i<13){
                 buildToken.next();
             }
         }

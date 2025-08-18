@@ -1168,11 +1168,11 @@ function redraw_settings_panel_token_examples(settings) {
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
 		mergedSettings.imgsrc = item.find(".token-image").attr("src");
-		item.replaceWith(build_example_token(mergedSettings));
+		item.replaceWith(build_example_token(mergedSettings, 90));
 	}
 }
 
-function build_example_token(options) {
+function build_example_token(options, size=90) {
 	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
 	let hpnum;
 	switch (mergedOptions['defaultmaxhptype']) {
@@ -1193,7 +1193,7 @@ function build_example_token(options) {
 		temp: 0
 	}
 	mergedOptions.id = `exampleToken-${uuid()}`;
-	mergedOptions.size = 90;
+	mergedOptions.size = size;
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
 	mergedOptions.armorClass = 10;
