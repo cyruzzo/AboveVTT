@@ -142,7 +142,7 @@ class WeatherOverlay {
                     y: Math.random() * (this.height + 120) - 60,
                     r: baseR,
                     aspect: aspect,
-                    alpha: 0.07 + Math.random() * 0.04,
+                    alpha: 0.1 + Math.random() * 0.05,
                     phase: Math.random() * Math.PI * 2,
                     fadeIn: 0,
                     fadeInFrames
@@ -401,9 +401,16 @@ class WeatherOverlay {
             this._drawLeaves();
         }
 
-
+        if(this.type === 'fog')
+            this.ctx.filter = `blur(${window.CURRENT_SCENE_DATA.hpps * window.CURRENT_SCENE_DATA.scale_factor}px`;
+        else
+            this.ctx.filter = '';
+        
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.offscreenCanvas, 0, 0);
+
+
+        
         this.animationId = requestAnimationFrame(this._animate);
     }
 
@@ -857,7 +864,6 @@ class WeatherOverlay {
     _drawFog() {
         const t = Date.now() * 0.00018;
         this.offscreenCtx.save();
-        this.offscreenCtx.filter = `blur(${24*window.CURRENT_SCENE_DATA.scale_factor}px)`;
         this.offscreenCtx.globalCompositeOperation = 'lighter';
         for (let p of this.particles) {
             const cx = p.x + Math.sin(t * 0.7 + p.phase) * 18;
@@ -868,7 +874,7 @@ class WeatherOverlay {
             this.offscreenCtx.save();
             this.offscreenCtx.globalAlpha = p.alpha * 1.2 + 0.22;
             this.offscreenCtx.shadowColor = fogColor;
-            this.offscreenCtx.shadowBlur = 240;
+            this.offscreenCtx.shadowBlur = 1;
             this.offscreenCtx.beginPath();
             this.offscreenCtx.ellipse(cx, cy, baseR * (1.1 + 0.2 * Math.sin(t * 0.9 + p.phase)), baseR * baseAspect * (0.8 + 0.2 * Math.cos(t * 0.8 + p.phase)), 0, 0, Math.PI * 2);
             this.offscreenCtx.fillStyle = fogColor;
@@ -897,7 +903,6 @@ class WeatherOverlay {
                 p.phase = Math.random() * Math.PI * 2;
             }
         }
-        this.offscreenCtx.filter = '';
         this.offscreenCtx.restore();
     }
 }
