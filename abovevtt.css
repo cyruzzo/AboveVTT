@@ -11048,6 +11048,9 @@ button#editAnimations {
     width: 50px;
     margin: 1px !important;
 }
+.ui-selectmenu-menu.ui-front{
+    z-index: 100000000 !important;
+}
 .ui-selectmenu-menu .ui-menu-item-wrapper .ui-menu-item {
     height: 24px;
     width: 24px;
