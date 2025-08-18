@@ -1,5 +1,4 @@
-function get_scene_data_toa() {
-	return {
+export const get_scene_data_toa = {
  	"toa/port-nyanzaru/Map12MerchantPrincesVilla":	{
 		"reveals": [
 			[
@@ -88052,5 +88051,4 @@ function get_scene_data_toa() {
 		"grid_subdivided": "0",
 		"scale_factor": 2
 	},
-	}
 }

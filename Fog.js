@@ -603,12 +603,32 @@ function is_token_under_fog(tokenid, fogContext=undefined){
 	else
 		return false;
 }
+
+function in_fog_or_dark_image_data(tokenid, imageData) {
+	if (imageData == undefined) {
+		return false;
+	}
+
+	const centerX = (window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
+	const centerY = (window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeHeight() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
+	let pixeldata = getPixelFromImageData(imageData, centerX, centerY);
+
+	for (let i = 0; i < pixeldata.length; i += 4) {
+		if (pixeldata[i] > 4 || pixeldata[i + 1] > 4 || pixeldata[i + 2] > 4) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 function is_token_in_raycasting_context(tokenid, rayContext=undefined){
 	if(rayContext == undefined){
 		rayContext = $("#raycastingCanvas")[0].getContext('2d');
 	}
-
-	let pixeldata = rayContext.getImageData((parseInt(window.TOKEN_OBJECTS[tokenid].options.left)/ window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth()/2/ window.CURRENT_SCENE_DATA.scale_factor),(parseInt(window.TOKEN_OBJECTS[tokenid].options.top)/ window.CURRENT_SCENE_DATA.scale_factor)+(window.TOKEN_OBJECTS[tokenid].sizeHeight()/2/ window.CURRENT_SCENE_DATA.scale_factor), 1, 1).data;
+	const centerX = (window.TOKEN_OBJECTS[tokenid].options.left.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeWidth() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
+	const centerY = (window.TOKEN_OBJECTS[tokenid].options.top.replace('px', '') / window.CURRENT_SCENE_DATA.scale_factor) + (window.TOKEN_OBJECTS[tokenid].sizeHeight() / 2 / window.CURRENT_SCENE_DATA.scale_factor)
+	let pixeldata = rayContext.getImageData(centerX, centerY, 1, 1).data;
 	
 	for(let i=0; i<pixeldata.length; i+=4){
 		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4){
@@ -720,13 +740,33 @@ function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
 	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
 		return;	
-	let fogContext = $('#fog_overlay')[0].getContext('2d');
+	
 	let auraSelectorId = id.replaceAll("/", "").replaceAll('.', '');
 	let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 	let selector = "div.token[data-id='" + id + "']";
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 
 	let playerHasTruesight, playerTokenHasVision;
+
+	const fogCanvas = document.getElementById('fog_overlay');
+	const lightCanvas = window.lightInLos;
+
+	const fogContext = fogCanvas.getContext('2d');
+	const lightContext = lightCanvas.getContext('2d');
+
+
+	if(window.tokenCheckOffscreenCanvas == undefined){
+		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
+	}
+	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
+	const offScreenCtx = window.tokenCheckOffscreenContext;
+	offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
+	offScreenCtx.drawImage(lightCanvas, 0, 0);
+	offScreenCtx.globalCompositeOperation = 'multiply';
+	offScreenCtx.drawImage(fogCanvas, 0, 0);
 
 	if(playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.sight === 'truesight')
 		playerHasTruesight = true
@@ -738,24 +778,25 @@ function check_single_token_visibility(id){
 	else
 		playerTokenHasVision = false;
 
+	const sharedVision = playerTokenId == id ||  window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser;
 
 	const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 	
-	const inFog = playerTokenId !== id && is_token_under_fog(id, fogContext); // this token is in fog
-	
-	const notInLight = (inFog === true || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && is_token_in_raycasting_context(id) === false) || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision && is_token_under_light_aura(id) === false )); // this token is not in light, the player is using vision/light and darkness > 0
-	
-	const dmSelected = window.DM === true && $(tokenSelector).hasClass('tokenselected');
+	const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || sharedVision || is_token_in_raycasting_context(id, offScreenCtx) === true); // this token is in fog and not the players token
+
+	const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
 	const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
-	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name === 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+	const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && !sharedVision
 
+
+	
 	let inTruesight = false;
 	if(window.TOKEN_OBJECTS[id].conditions.includes('Invisible') && $(`.aura-element-container-clip.truesight`).length>0 ){
 		inTruesight = is_token_under_truesight_aura(id);
 	}
-	if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && notInLight === true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true) || (hideInvisible === true && inTruesight !== true))) {
+	if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && inVisibleLight !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true) || (hideInvisible === true && inTruesight !== true))) {
 		$(selector + "," + auraSelector).hide();
 	}
 	else if (window.TOKEN_OBJECTS[id].options.hidden !== true || inTruesight === true) {
@@ -788,7 +829,16 @@ async function check_token_visibility(){
 		return;
 	}
 }
+function getPixelFromImageData(imageData, x, y){
+	const index = (Math.round(x) + Math.round(y) * imageData.width) * 4;
+	return [
+		imageData.data[index + 0],
+		imageData.data[index + 1],
+		imageData.data[index + 2],
+		imageData.data[index + 3],
+	]
 
+}
 function do_check_token_visibility() {
 	console.log("do_check_token_visibility");
 	if(window.LOADING)
@@ -800,17 +850,25 @@ function do_check_token_visibility() {
 		return;
 	}
 
-	let promises = [];
-	let hideIds = [];
-	let showTokenIds = [];
-	let showAuraIds = [];
-	let showDoors =[];
-	let hideDoors =[];
-	let dmSelectedTokens = [];
 
-	let fogContext = $('#fog_overlay')[0].getContext('2d');
-	let lightContext = window.lightInLos.getContext('2d');
+	let hideIds = $('');
+	let showTokenIds = $('');
+	let showAuraIds = $('');
+	let showDoors = $('');
+	let hideDoors = $('');
+	let dmSelectedTokens = $('');
 
+	if(window.fogCanvas == undefined){
+		window.fogCanvas = document.getElementById('fog_overlay');
+		window.fogContext = window.fogCanvas.getContext('2d');
+	}
+	const fogCanvas = window.fogCanvas;
+	const fogContext = window.fogContext;
+
+	const lightCanvas = window.lightInLos;
+	let lightContext = window.lightInLosContext;
+
+	
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	
 	let playerTokenHasVision, playerHasTruesioght;
@@ -827,7 +885,20 @@ function do_check_token_visibility() {
 	
 
 	
-	let rayContext = $('#raycastingCanvas')[0].getContext('2d');
+	if (window.tokenCheckOffscreenCanvas == undefined) {
+		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
+	}
+	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
+	offScreenCanvas.width = fogCanvas.width;
+	offScreenCanvas.height = fogCanvas.height;
+	const offScreenCtx = window.tokenCheckOffscreenContext;
+	offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
+	offScreenCtx.drawImage(lightCanvas, 0, 0);
+	offScreenCtx.globalCompositeOperation = 'multiply';
+	offScreenCtx.drawImage(fogCanvas, 0, 0);
+
+	
 	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
 
 	let truesightContext;
@@ -835,29 +906,29 @@ function do_check_token_visibility() {
 	if(truesightAuraExists) 
 		truesightContext = window.truesightCanvas.getContext('2d');
 
-
+	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
+	
 
 	for (let id in window.TOKEN_OBJECTS) {
 		if(window.TOKEN_OBJECTS[id].options.combatGroupToken || window.TOKEN_OBJECTS[id].options.type != undefined)
 			continue;
-		promises.push(new Promise(function(resolve) {
+		
 			let auraSelectorId = id.replaceAll("/", "").replaceAll('.','');
 			let auraSelector = ".aura-element[id='aura_" + auraSelectorId + "']";
 			let tokenSelector = "div.token[data-id='" + id + "']";
 
 			//Combining some and filter cut down about 140ms for average sized picture
-			
+			const sharedVision = playerTokenId == id ||  window.TOKEN_OBJECTS[id].options.share_vision == true || window.TOKEN_OBJECTS[id].options.share_vision == window.myUser;
+
 			const hideThisTokenInFogOrDarkness = (window.TOKEN_OBJECTS[id].options.revealInFog !== true); //we want to hide this token in fog or darkness
 			
-			const inFog = (playerTokenId !== id && is_token_under_fog(id, fogContext) === true); // this token is in fog and not the players token
+			const inVisibleLight = (window.CURRENT_SCENE_DATA.disableSceneVision == 1 || sharedVision || in_fog_or_dark_image_data(id, offscreenImageData) === true); // this token is not in fog or darkness and not the players token
 
-			const notInLight = (inFog === true || (playerTokenId !== id && window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && (is_token_in_raycasting_context(id, rayContext) !== true || is_token_under_light_aura(id, lightContext) !== true))); // this token is not in light, the player is using vision/light and darkness > 0
-			
 			const dmSelected = window.DM === true && window.CURRENTLY_SELECTED_TOKENS.includes(id)
 
 			const showThisPlayerToken = window.TOKEN_OBJECTS[id].options.itemType === 'pc' && window.DM !== true && playerTokenId === undefined //show this token when logged in as a player without your own token
 
-			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && playerTokenId !== id && window.TOKEN_OBJECTS[id].options.share_vision !== true && window.TOKEN_OBJECTS[id].options.share_vision != window.myUser 
+			const hideInvisible = dmSelected !== true && window.TOKEN_OBJECTS[id].options.conditions.some(d=> d.name == 'Invisible') && !sharedVision
 
 
 			let inTruesight = false;
@@ -865,20 +936,20 @@ function do_check_token_visibility() {
 				inTruesight = is_token_under_truesight_aura(id, truesightContext);
 			}
 
-			if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && notInLight === true && dmSelected !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
-				hideIds.push(tokenSelector, auraSelector)
+			if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && inVisibleLight !== true && dmSelected !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
+				hideIds = hideIds.add(tokenSelector).add(auraSelector)
 			}
 			else if (window.TOKEN_OBJECTS[id].options.hidden !== true || inTruesight === true) {
-				showTokenIds.push(tokenSelector);
+				showTokenIds = showTokenIds.add(tokenSelector);
 				if(window.TOKEN_OBJECTS[id].options.hideaura !== true || id === playerTokenId)
-					showAuraIds.push(auraSelector);
+					showAuraIds = showAuraIds.add(auraSelector);
 			}else if(dmSelected === true){
-				dmSelectedTokens.push(tokenSelector);
+				dmSelectedTokens = dmSelectedTokens.add(tokenSelector);
 			}
 			
 			
-			resolve();
-		}));
+		
+		
 	}
 	
 	
@@ -887,42 +958,29 @@ function do_check_token_visibility() {
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
 		const doorId = $(door).attr('data-id');
-		promises.push(new Promise(function(resolve) {
+		
 
 			const inFog = (is_door_under_fog(door, fogContext)); // this token is in fog and not the players token
 
 			const notInLight = (inFog === true || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && is_door_under_light_aura(door, lightContext) !== true && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
 			
 			if (notInLight || $(door).hasClass('secret')) {
-				hideDoors.push(`[data-id='${doorId}']`)
+				hideDoors = hideDoors.add(`[data-id='${doorId}']`)
 			}
 			else {
-				showDoors.push(`[data-id='${doorId}']`)
+				showDoors = showDoors.add(`[data-id='${doorId}']`)
 			}
-			resolve();
-		}));
+			
+		
 	}
 
-	Promise.all(promises);
-	requestAnimationFrame(() => {
-		
-		hideIds = hideIds.join(',');
-		showTokenIds = showTokenIds.join(',');
-		showAuraIds = showAuraIds.join(',');	
-		dmSelectedTokens = dmSelectedTokens.join(',');
+	hideIds.hide();
+	showTokenIds.css({ 'opacity': 1, 'display': 'flex' });
+	showAuraIds.show();
+	dmSelectedTokens.css({ 'display': 'flex' });
 
-		$(hideIds).hide();
-		$(showTokenIds).css({'opacity': 1, 'display': 'flex'});
-		$(showAuraIds).show();
-		$(dmSelectedTokens).css({'display': 'flex'});
-		
-
-		hideDoors = hideDoors.join(',');
-		showDoors = showDoors.join(',');
-		
-		$(showDoors).toggleClass('notVisible', false);
-		$(hideDoors).toggleClass('notVisible', true);
-	})
+	showDoors.toggleClass('notVisible', false);
+	hideDoors.toggleClass('notVisible', true);
 
 	console.log("finished");
 }
@@ -1285,7 +1343,7 @@ function reset_canvas(apply_zoom=true) {
 
 	$('#darkness_layer').css({"width": sceneMapWidth, "height": sceneMapHeight});
 	$("#scene_map_container").css({"width": sceneMapWidth, "height": sceneMapHeight});
-
+	
 	ctxScale('peer_overlay');
 	ctxScale('temp_overlay');
 	ctxScale('draw_overlay_under_fog_darkness', true);
@@ -1294,6 +1352,10 @@ function reset_canvas(apply_zoom=true) {
 	ctxScale('draw_overlay');
 	ctxScale('walls_layer');
 	ctxScale('elev_overlay');
+	ctxScale('weather_overlay');
+	ctxScale('weather_light', true);
+
+	window.WeatherOverlay?.setSize(sceneMapWidth, sceneMapHeight);
 
 	let canvas = document.getElementById('raycastingCanvas');
 	canvas.width = $("#scene_map").width();
@@ -1319,6 +1381,7 @@ function reset_canvas(apply_zoom=true) {
 	redraw_light();
 	redraw_fog();
 	redraw_elev();
+	set_weather();
 
 
  	delete window.lightAuraClipPolygon;
@@ -1373,8 +1436,24 @@ function check_darkness_value(){
 	let darknessfilter = (window.CURRENT_SCENE_DATA.darkness_filter != undefined) ? window.CURRENT_SCENE_DATA.darkness_filter : 0;
 	let darknessPercent = window.DM ? Math.max(40, 100 - parseInt(darknessfilter)) : 100 - parseInt(darknessfilter);
 	$('#raycastingCanvas').css('visibility', '');
+
+	let tokenHasSharedVision = false;
 	if(selectedTokens.length>0){
-		if(window.SelectedTokenVision === true){
+		for(let j = 0; j < selectedTokens.length; j++){
+		  	let tokenId = $(selectedTokens[j]).attr('data-id');
+
+			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc')){
+				tokenHasSharedVision = true;
+				break;
+			}
+		}	  
+	}	
+
+
+
+	if(selectedTokens.length>0){
+		
+		if(window.disableDmMinDarkness || (window.SelectedTokenVision === true && tokenHasSharedVision)){
 			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
 				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
 			}
@@ -1415,40 +1494,55 @@ function check_darkness_value(){
   		}	
 	}
 	else {
-		if(window.DM && darknessPercent < 40){
-			darknessPercent = 40;
-			$('#raycastingCanvas').css('opacity', '0');
-		}
-		else if(window.DM){
-			$('#raycastingCanvas').css('opacity', '');
-		}
-
-
-		if(!parseInt(darknessfilter) && window.walls.length>4){
-			$('#outer_light_container').css({
-				'mix-blend-mode': 'unset',
-				'background':  '#FFF',
-				'opacity': '0.3'
-			});
-		} else{
-			$('#outer_light_container').css({
-				'mix-blend-mode': '',
-				'background': '',
-				'opacity': ''
-			});
-		}
-		$('#VTT').css('--darkness-filter', darknessPercent + "%");
-  		if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
+		if(window.disableDmMinDarkness){
+			if(window.CURRENT_SCENE_DATA.darkness_filter > 0){
+				$('#VTT').css('--darkness-filter', `${100 - window.CURRENT_SCENE_DATA.darkness_filter}%`)
+			}
+	  		$('#raycastingCanvas').css('opacity', '1');
+	  		
 		 	$('#light_container').css({
-	 			'opacity': '0.3'
-		 	});
-	  	}
-	  	else{
-	  		$('#light_container').css({
-	 			'opacity': ''
+	 			'opacity': '1'
 	 		});
-  		}
-  		$('#exploredCanvas').css('opacity', '');
+
+		 	$('#exploredCanvas').css('opacity', '0');
+	  	}
+		else{
+			if(window.DM && darknessPercent < 40){
+				darknessPercent = 40;
+				$('#raycastingCanvas').css('opacity', '0');
+			}
+			else if(window.DM){
+				$('#raycastingCanvas').css('opacity', '');
+			}
+
+
+			if(!parseInt(darknessfilter) && window.walls.length>4){
+				$('#outer_light_container').css({
+					'mix-blend-mode': 'unset',
+					'background':  '#FFF',
+					'opacity': '0.3'
+				});
+			} else{
+				$('#outer_light_container').css({
+					'mix-blend-mode': '',
+					'background': '',
+					'opacity': ''
+				});
+			}
+			$('#VTT').css('--darkness-filter', darknessPercent + "%");
+			if(!parseInt(window.CURRENT_SCENE_DATA.darkness_filter) && window.walls.length>4){
+				$('#light_container').css({
+					'opacity': '0.3'
+				});
+			}
+			else{
+				$('#light_container').css({
+					'opacity': ''
+				});
+			}
+			$('#exploredCanvas').css('opacity', '');
+		}
+		
   	}
 }
 
@@ -1558,14 +1652,14 @@ function redraw_fog() {
 				ctx.globalCompositeOperation = 'destination-out';
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
 				else{
 					ctx.fillStyle = "#000"
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1617,7 +1711,7 @@ function redraw_fog() {
 			if(d[4] == 7){
 				
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						ctx.clearRect(d[0][i][0]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, d[0][i][1]/window.CURRENT_SCENE_DATA.scale_factor/revealedRatio, window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor, window.CURRENT_SCENE_DATA.vpps/window.CURRENT_SCENE_DATA.scale_factor);
 					}
  				}
@@ -1625,7 +1719,7 @@ function redraw_fog() {
 					ctx.globalCompositeOperation = 'destination-out';
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
 	 				ctx.fillStyle = "#000000";
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1635,13 +1729,13 @@ function redraw_fog() {
 				ctx.fillStyle = fogStyle;
 
 				if(window.CURRENT_SCENE_DATA.gridType == '1'){
-					for(let i in d[0]){
+					for(let i=0; i<d[0].length; i++){
 						drawRect(ctx, d[0][i][0]/revealedRatio, d[0][i][1]/revealedRatio, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps);
 					}
 				}
 				else{
 					ctx.scale(window.CURRENT_SCENE_DATA.scaleAdjustment.x, window.CURRENT_SCENE_DATA.scaleAdjustment.y)
-	 				for(let i in d[0]){
+	 				for(let i=0; i<d[0].length; i++){
 	 					drawHexagon(ctx, d[0][i][0], d[0][i][1])
 	 				}
 	 				ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -1993,9 +2087,10 @@ function redraw_drawn_light(){
 	lightCtx.drawImage(offscreenDraw, 0, 0); // draw to visible canvas only once so we render this once
 }
 
-function redraw_light_walls(clear=true){
+function redraw_light_walls(clear=true, editingWallPoints = false){
 	let showWallsToggle = $('#show_walls').hasClass('button-enabled');
 	let canvas = document.getElementById("walls_layer");	
+
 	$(`[id*='wallHeight']`).remove();
 	let ctx = canvas.getContext("2d");
 	ctx.setLineDash([]);
@@ -2039,7 +2134,10 @@ function redraw_light_walls(clear=true){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-
+	const offscreenCanvas = document.createElement('canvas');
+	offscreenCanvas.width = canvas.width;
+	offscreenCanvas.height = canvas.height;
+	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
 		let [shape, fill, color, x, y, width, height, lineWidth, scale, hidden, wallBottom, wallTop] = drawing_clone;
@@ -2055,7 +2153,7 @@ function redraw_light_walls(clear=true){
 		lineWidth = Math.min(lineWidth, Math.max(lineWidth/window.ZOOM/scale, lineWidth/2));
 		if (displayWalls) {
 				
-			if((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != '')){
+			if(!editingWallPoints && ((wallBottom != undefined && wallBottom != '') || (wallTop != undefined && wallTop != ''))){
 				draw_text(
 				    ctx,
 				    undefined,
@@ -2081,212 +2179,208 @@ function redraw_light_walls(clear=true){
 				    undefined,
 				    true
 				);
-				drawLine(ctx, x, y, width, height, color, lineWidth, scale, true);
+				drawLine(offscreenContext, x, y, width, height, color, lineWidth, scale, true);
 			}
 			else{
-				drawLine(ctx, x, y, width, height, color, lineWidth, scale);
+				drawLine(offscreenContext, x, y, width, height, color, lineWidth, scale);
 			}
 			
 		}
-		
-        let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
-        let open;
-        let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}'][data-scale='${scale}']`);
-        let hiddenDoor = hidden ? ` hiddenDoor` : ``;
-        let dataHidden = hidden;
-        let notVisible = doorButton?.hasClass('notVisible') ? true : doorButton.length > 0 ? false : undefined;
-
-        let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
-
-        if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
-        	doorButton.remove();
-        }
-
-
-		if(doorButton.length==0 && doorColorsArray.includes(color)){
-			
-			let midX = Math.floor((x+width)/2) / scale * currentSceneScale;
-			let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
-
+		if(!editingWallPoints){
+			let type = Object.keys(doorColors).find(key => Object.keys(doorColors[key]).find(key2 => doorColors[key][key2] === color))
+			let open;
+			let doorButton = $(`.door-button[data-x1='${x}'][data-y1='${y}'][data-x2='${width}'][data-y2='${height}'][data-scale='${scale}']`);
+			let hiddenDoor = hidden ? ` hiddenDoor` : ``;
+			let dataHidden = hidden;
+			let notVisible = doorButton?.hasClass('notVisible') ? true : doorButton.length > 0 ? false : undefined;
 
 			let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
+
+			if(doorButton.find('.window').length > 0 && doorType != 'window' || doorButton.find('.window').length == 0 && doorType == 'window'){
+				doorButton.remove();
+			}
+
+
+			if(doorButton.length==0 && doorColorsArray.includes(color)){
+				
+				let midX = Math.floor((x+width)/2) / scale * currentSceneScale;
+				let midY = Math.floor((y+height)/2) / scale * currentSceneScale;
+
+
+				let doorType = (type == 1 || type == 3 || type == 6 || type == 7) ? `window` : (type == 8 || type == 9 || type == 10 || type == 11) ? `curtain` : (type == 12 || type == 13) ? `teleporter` : `door`;
+				
+				let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
+				let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 			
-			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
-		
-			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			
-			let openCloseDoorButton = $(`<div class='door-button ${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
-												<div class='${doorType} background'><div></div></div>
-												<div class='${doorType} foreground'><div></div></div>
-												<div class='door-icon'></div>
-										</div>`)
-			openCloseDoorButton.off('click.doors').on('click.doors', function(){
+				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+				
+				let openCloseDoorButton = $(`<div class='door-button ${locked}${secret}${open}${hiddenDoor}' ${dataHidden ? `data-hidden=true`: ''} data-x1='${x}' data-y1='${y}' data-x2='${width}' data-y2='${height}' data-scale='${scale}' style='--mid-x: ${midX}px; --mid-y: ${midY}px;'>
+													<div class='${doorType} background'><div></div></div>
+													<div class='${doorType} foreground'><div></div></div>
+													<div class='door-icon'></div>
+											</div>`)
+				openCloseDoorButton.off('click.doors').on('click.doors', function(){
 
-					if(doorType == `teleporter`){
-						
-
-						let alreadyHighlighted = false;
-						let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
-
-							
-						if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
-							copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
-
-	                        if(!window.DM){
-	                        	async function teleportScene(tokenObject){
-	                        		let currentScene = await AboveApi.getCurrentScene(true);
-		                        	let sceneIds = {}
-		                        	let playerId = window.PLAYER_ID;
-		                        	if(currentScene.playerscene && currentScene.playerscene.players){
-		                        	    sceneIds = {
-		                        	        ...currentScene.playerscene,         
-		                        	    };
-		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
-		                        	}
-		                        	else if(typeof currentScene.playerscene == 'string'){
-		                        	    sceneIds = {
-		                        	        players: currentScene.playerscene,
-		                        	    };
-		                        	    sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
-		                        	}
-		                        	window.splitPlayerScenes = sceneIds;
-		                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
-		                        	window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
-	                        	}
-	                        	teleportScene(tokenObject);
-	                        }
-	                        else{
-	                        	window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
-	                        }
-						}
-						else if(tokenObject?.options?.teleporterCoords != undefined){
-
-						
-							for(let i in window.CURRENTLY_SELECTED_TOKENS){
-
-								let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
-								if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
-									continue;
-								}
-									
-								const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
-								curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
-								curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
+						if(doorType == `teleporter`){
 							
 
-								curr.place(0);
-								let optionsClone = $.extend(true, {}, curr.options);
-								if(shiftHeld){
-									optionsClone.speedAnim = true;
-								}
+							let alreadyHighlighted = false;
+							let tokenObject = window.TOKEN_OBJECTS[`${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','')]
+
 								
-								if(!alreadyHighlighted){
-									if(shiftHeld){					
-										optionsClone.highlightCenter = true;
+							if(tokenObject?.options?.teleporterCoords?.linkedPortalId != undefined){
+								copy_selected_tokens(tokenObject.options.teleporterCoords.linkedPortalId);
+
+								if(!window.DM){
+									async function teleportScene(tokenObject){
+										let currentScene = await AboveApi.getCurrentScene(true);
+										let sceneIds = {}
+										let playerId = window.PLAYER_ID;
+										if(currentScene.playerscene && currentScene.playerscene.players){
+											sceneIds = {
+												...currentScene.playerscene,         
+											};
+											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+										}
+										else if(typeof currentScene.playerscene == 'string'){
+											sceneIds = {
+												players: currentScene.playerscene,
+											};
+											sceneIds[playerId] = tokenObject.options.teleporterCoords.sceneId
+										}
+										window.splitPlayerScenes = sceneIds;
+										window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: sceneIds});
+										window.MB.sendMessage("custom/myVTT/update_dm_player_scenes", {splitPlayerScenes: window.splitPlayerScenes});
 									}
-									alreadyHighlighted = true;
-									curr.highlight();
+									teleportScene(tokenObject);
 								}
-								curr.sync(optionsClone);
-							
+								else{
+									window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tokenObject.options.teleporterCoords.sceneId, switch_dm: true });
+								}
 							}
+							else if(tokenObject?.options?.teleporterCoords != undefined){
+
+							
+								for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
+
+									let curr = window.TOKEN_OBJECTS[window.CURRENTLY_SELECTED_TOKENS[i]];
+									if(!window.DM && (curr.options.restrictPlayerMove || curr.options.locked) && !curr.isCurrentPlayer() && curr.options.groupId == undefined){
+										continue;
+									}
+										
+									const scaleCoversion = window.CURRENT_SCENE_DATA.scale_factor != undefined ? window.CURRENT_SCENE_DATA.scale_factor / tokenObject.options.teleporterCoords.scale : 1 / tokenObject.options.teleporterCoords.scale;
+									curr.options.left = `${tokenObject.options.teleporterCoords.left*scaleCoversion - curr.options.size/2}px`;
+									curr.options.top = `${tokenObject.options.teleporterCoords.top*scaleCoversion - curr.options.size/2}px`
+								
+
+									curr.place(0);
+									let optionsClone = $.extend(true, {}, curr.options);
+									if(shiftHeld){
+										optionsClone.speedAnim = true;
+									}
+									
+									if(!alreadyHighlighted){
+										if(shiftHeld){					
+											optionsClone.highlightCenter = true;
+										}
+										alreadyHighlighted = true;
+										curr.highlight();
+									}
+									curr.sync(optionsClone);
+								
+								}
+							}
+							return;
 						}
-						return;
-					}
 
-					let locked = $(this).hasClass('locked');
-					let secret = $(this).hasClass('secret');
-					let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
-					if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
-						open_close_door(x, y, width, height, type)
-					}
-					else if(shiftHeld && window.DM){
-						const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
-						const isOpen = $(this).hasClass('open') ? `open` : `closed`;
-						openCloseDoorButton.toggleClass('locked', !locked);
-						let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
-		            
-		        		window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
-		        		
+						let locked = $(this).hasClass('locked');
+						let secret = $(this).hasClass('secret');
+						let type = $(this).children('.door').length > 0 ? (secret && locked  ?  5 : (locked ? 2 : (secret ? 4 : 0 ))) : $(this).children('.window').length > 0 ? (secret && locked  ?  7 : (locked ? 3 : (secret ? 6 : 1 ))) : $(this).children('.curtain').length > 0 ? (secret && locked  ?  11 : (locked ? 9 : (secret ? 10 : 8 ))) : secret ? 13 : 12
+						if(!$(this).hasClass('locked') && (!shiftHeld || !window.DM)){
+							open_close_door(x, y, width, height, type)
+						}
+						else if(shiftHeld && window.DM){
+							const type = doorType == `door` ? (secret ? (!locked ? 5 : 4) : (!locked ? 2 : 0)) : doorType == `window` ? (secret ? (!locked ? 7 : 6) : (!locked ? 3 : 1)) : doorType == `curtain` ? (secret ? (!locked ? 11 : 10) : (!locked ? 9 : 8)) : secret ? 13 : 12
+							const isOpen = $(this).hasClass('open') ? `open` : `closed`;
+							openCloseDoorButton.toggleClass('locked', !locked);
+							let doors = window.DRAWINGS.filter(d => (d[1] == "wall" && doorColorsArray.includes(d[2]) && d[3] == x && d[4] == y && d[5] == width && d[6] == height))  
+						
+							window.DRAWINGS = window.DRAWINGS.filter(d => d != doors[0]);
+							
 
-		                let data = ['line',
-									 'wall',
-									 doorColors[type][isOpen],
-									 x,
-									 y,
-									 width,
-									 height,
-									 12,
-									 doors[0][8],
-									 doors[0][9],
-									 (doors[0][10] != undefined ? doors[0][10] : ""),
-									 (doors[0][11] != undefined ? doors[0][11] : "")
-						];	
-						window.DRAWINGS.push(data);
-						window.wallUndo.push({
-							undo: [[...data]],
-							redo: [[...doors[0]]]
-						})
-						redraw_light_walls();
-				        redraw_drawn_light();
-				        redraw_light();
+							let data = ['line',
+										'wall',
+										doorColors[type][isOpen],
+										x,
+										y,
+										width,
+										height,
+										12,
+										doors[0][8],
+										doors[0][9],
+										(doors[0][10] != undefined ? doors[0][10] : ""),
+										(doors[0][11] != undefined ? doors[0][11] : "")
+							];	
+							window.DRAWINGS.push(data);
+							window.wallUndo.push({
+								undo: [[...data]],
+								redo: [[...doors[0]]]
+							})
+							redraw_light_walls();
+							redraw_drawn_light();
+							redraw_light();
 
 
-						sync_drawings();
-					}
+							sync_drawings();
+						}
+					});
+				openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
+					$(this).toggleClass('ignore-hover', false);
 				});
-			openCloseDoorButton.off('mouseleave.doors').on('mouseleave.doors', function(){
-				$(this).toggleClass('ignore-hover', false);
-			});
 
-			
-			$('#tokens').append(openCloseDoorButton);
-			doorButton = openCloseDoorButton;
-			
-		}
-		else if (doorColorsArray.includes(color)){		
-			let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
-
-	
-			let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
-			open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
-			if(doorButton.attr('class') != `door-button ${locked}${secret}${open}${hiddenDoor}`){
-				doorButton.attr('class', `door-button ${locked}${secret}${open}${hiddenDoor}`)
-				doorButton.toggleClass('ignore-hover', true);
+				
+				$('#tokens').append(openCloseDoorButton);
+				doorButton = openCloseDoorButton;
+				
 			}
-			
-			doorButton.find('.condition-container').remove();		
-		}
-		if(doorButton.length ==1){
-			let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
-			doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
-			if(notVisible != undefined)
-        		doorButton.toggleClass('notVisible', notVisible)
-			doorButton.removeAttr('removeAfterDraw');
+			else if (doorColorsArray.includes(color)){		
+				let secret = (type == 4 || type == 5 || type == 6 || type == 7 || type == 10 || type == 11 || type == 13) ? ` secret` : ``;
 
-			door_note_icon(id);
-			if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
-				doorButton.toggleClass('linked', true);
+		
+				let locked = (type == 2 || type == 3 || type == 5 || type == 7 || type == 9 || type == 11) ? ` locked` : ``;
+				open = (/rgba.*0\.5\)/g).test(color) ? ` open` : ` closed`;
+				if(doorButton.attr('class') != `door-button ${locked}${secret}${open}${hiddenDoor}`){
+					doorButton.attr('class', `door-button ${locked}${secret}${open}${hiddenDoor}`)
+					doorButton.toggleClass('ignore-hover', true);
+				}
+				
+				doorButton.find('.condition-container').remove();		
 			}
-			if(window.TOKEN_OBJECTS[id] != undefined){
-				setTokenLight(doorButton, window.TOKEN_OBJECTS[id].options);
+			if(doorButton.length ==1){
+				let id = `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.','') 
+				doorButton.attr('data-id', `${x}${y}${width}${height}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.',''))
+				if(notVisible != undefined)
+					doorButton.toggleClass('notVisible', notVisible)
+				doorButton.removeAttr('removeAfterDraw');
+
+				door_note_icon(id);
+				if(window.TOKEN_OBJECTS[id]?.options?.teleporterCoords != undefined || window.TOKEN_OBJECTS[id]?.options?.teleporterCoords?.linkedPortalId !== undefined){
+					doorButton.toggleClass('linked', true);
+				}
+				if(window.TOKEN_OBJECTS[id] != undefined){
+					setTokenLight(doorButton, window.TOKEN_OBJECTS[id].options);
+				}
+				
 			}
-			
+			if((/rgba.*0\.5\)/g).test(color))
+				continue;
+			let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
+			drawnWall.scaleAdjustment = adjustedScale;
+			drawnWall.wallBottom = wallBottom;
+			drawnWall.wallTop = wallTop;
+			drawnWall.terrainWall = color === 'rgba(0, 180, 80, 1)'
+			window.walls.push(drawnWall);
 		}
-		
-
-		if((/rgba.*0\.5\)/g).test(color))
-			continue;
-		
-		
-
-		let drawnWall = new Boundary(new Vector(x/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, y/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), new Vector(width/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor, height/adjustedScale/window.CURRENT_SCENE_DATA.scale_factor), type)
-		drawnWall.scaleAdjustment = adjustedScale;
-		drawnWall.wallBottom = wallBottom;
-		drawnWall.wallTop = wallTop;
-		drawnWall.terrainWall = color === 'rgba(0, 180, 80, 1)'
-		window.walls.push(drawnWall);
 	}
 
 	if(window.DM && $('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
@@ -2299,49 +2393,49 @@ function redraw_light_walls(clear=true){
 		const circleSize = 15*window.CURRENT_SCENE_DATA.scale_factor;
 		const centerDotSize = 4*window.CURRENT_SCENE_DATA.scale_factor;
 		if(window.wallsBeingDragged?.length > 0){
-			for(let i in window.wallsBeingDragged){
+			for(let i=0; i<window.wallsBeingDragged.length; i++){
 				const drawIndex = window.wallsBeingDragged[i].drawingIndex;
 				const pt1 = window.wallsBeingDragged[i].pt1;
 				const pt2 = window.wallsBeingDragged[i].pt2;
 				const scale = window.DRAWINGS[drawIndex][8];
 				if(pt1 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
 					
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#000000', false, 1)	
-					drawCircle(ctx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#000000', false, 1)	
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 						
 					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][3]/scale*currentSceneScale, window.DRAWINGS[drawIndex][4]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)	
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#000000', false, 1)
-					drawCircle(ctx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#FFF', true, 0)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#000000', false, 1)
+					drawCircle(offscreenContext, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 					
 					drawCircle(window.selectedWallCtx, window.DRAWINGS[drawIndex][5]/scale*currentSceneScale, window.DRAWINGS[drawIndex][6]/scale*currentSceneScale, circleSize, '#FFFFFF33', true, 0)
 				}
 			}
 		}
 		else if(window.selectedWalls != undefined){
-			for(let i in window.selectedWalls){
+			for(let i=0; i<window.selectedWalls.length; i++){
 				
 				const pt1 = window.selectedWalls[i].pt1;
 				const pt2 = window.selectedWalls[i].pt2;
 				const scale = window.selectedWalls[i].wall[8];
 				if(pt1 !== undefined){			
-					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)
-					drawCircle(ctx, pt1.x, pt1.y, centerDotSize, '#000000', false, 1)		
-					drawCircle(ctx, pt1.x, pt1.y, circleSize,  '#000000', false, 1)		
-					drawCircle(ctx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, pt1.x, pt1.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(offscreenContext, pt1.x, pt1.y, centerDotSize, '#000000', false, 1)		
+					drawCircle(offscreenContext, pt1.x, pt1.y, circleSize,  '#000000', false, 1)		
+					drawCircle(offscreenContext, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 
 					drawCircle(window.selectedWallCtx, pt1.x, pt1.y, circleSize, '#FFFFFF33', true, 0)
 				}
 				if(pt2 !== undefined){
-					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
-					drawCircle(ctx, pt2.x, pt2.y, centerDotSize, '#000000', false, 1)
-					drawCircle(ctx, pt2.x, pt2.y, circleSize,  '#000000', false, 1)
-					drawCircle(ctx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
+					drawCircle(offscreenContext, pt2.x, pt2.y, centerDotSize, '#FFFFFF', true, 0)
+					drawCircle(offscreenContext, pt2.x, pt2.y, centerDotSize, '#000000', false, 1)
+					drawCircle(offscreenContext, pt2.x, pt2.y, circleSize,  '#000000', false, 1)
+					drawCircle(offscreenContext, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 
 					drawCircle(window.selectedWallCtx, pt2.x, pt2.y, circleSize, '#FFFFFF33', true, 0)
 				}
@@ -2353,31 +2447,37 @@ function redraw_light_walls(clear=true){
 		delete window.selectedWallCtx;
 	}
 
-	check_darkness_value();
+	ctx.drawImage(offscreenCanvas, 0, 0); 
+	if(!editingWallPoints){
+		check_darkness_value();
+		if(window.DM){
+			let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
+			let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
 
-		
-	if(window.DM){
-		let regTest = new RegExp(window.CURRENT_SCENE_DATA.id,"g");
-		let sceneDoorJournal = Object.keys(window.JOURNAL.notes).filter(d => regTest.test(d));
+			for(journal in sceneDoorJournal){
+				if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
+					delete window.JOURNAL.notes[sceneDoorJournal[journal]]
+					window.JOURNAL.persist();
+				}
 
-		for(journal in sceneDoorJournal){
-			if($(`[data-id='${sceneDoorJournal[journal]}']`).length == 0){
-				delete window.JOURNAL.notes[sceneDoorJournal[journal]]
-				window.JOURNAL.persist();
 			}
-
+		}
+		$('.door-button[removeAfterDraw]').remove();
+		if(displayWalls){
+			$('.hiddenDoor').css('display', 'block');
+		}
+		else{
+			$('.hiddenDoor').css('display', '');
 		}
 	}
+		
+
+		
+	
 
 	
 
-	$('.door-button[removeAfterDraw]').remove();
-	if(displayWalls){
-		$('.hiddenDoor').css('display', 'block');
-	}
-	else{
-		$('.hiddenDoor').css('display', '');
-	}
+	
 }
 
 function door_note_icon(id){
@@ -2633,7 +2733,7 @@ function numToColor(num, alpha, max) {
  * @returns
  */
 function drawing_mousedown(e) {
-	if($(e.target).is('#context-menu-layer'))
+	if($(e.target).is('#context-menu-layer, .context-menu-list'))
 		return;
 	// perform some cleanup of the canvas/objects
 	if(e.button !== 2 && !window.MOUSEDOWN){
@@ -2780,9 +2880,8 @@ function drawing_mousedown(e) {
 		window.BRUSHWAIT = false;
 		window.BRUSHPOINTS = [];
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX, y:window.BEGIN_MOUSEY});
-		// draw a dot
-		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX-1, y:window.BEGIN_MOUSEY-1});
+		window.BRUSHPOINTS.push({x:window.BEGIN_MOUSEX+1, y:window.BEGIN_MOUSEY+1});
 		drawBrushstroke(context, window.BRUSHPOINTS,window.DRAWCOLOR,window.LINEWIDTH);
 	}
 	else if(window.DRAWSHAPE === 'brush-arrow'){
@@ -2990,7 +3089,7 @@ function drawing_mousedown(e) {
  */
 function drawing_mousemove(e) {
 
-	if ((window.MOUSEMOVEWAIT && window.DRAWSHAPE != "grid-brush") || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
+	if ((window.MOUSEMOVEWAIT && !['grid-brush'].includes(window.DRAWSHAPE)) || (window.DRAWFUNCTION === "select" && e.touches != undefined) ) {
 		return;
 	}
 	// don't perform any drawing when dragging a token
@@ -3018,7 +3117,7 @@ function drawing_mousemove(e) {
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
 
-	if (window.MOUSEDOWN) {
+	if (window.MOUSEDOWN || window.DRAWSHAPE === "brush") {
 		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING && window.DRAWSHAPE != "grid-brush")
 			clear_temp_canvas()
 		const width = mouseX - window.BEGIN_MOUSEX;
@@ -3108,7 +3207,7 @@ function drawing_mousemove(e) {
 					}
 				}
 				else{					
-					for(let i in window.wallsBeingDragged){
+					for(let i=0; i<window.wallsBeingDragged.length; i++){
 						const [pt1, pt2, drawIndex, tokenId] = [window.wallsBeingDragged[i].pt1, window.wallsBeingDragged[i].pt2, window.wallsBeingDragged[i].drawingIndex, window.wallsBeingDragged[i].tokenId]
 						const scale = window.DRAWINGS[drawIndex][8]/window.CURRENT_SCENE_DATA.conversion;
 						const originalScale = window.wallsBeingDragged[i].wallScale;
@@ -3133,7 +3232,7 @@ function drawing_mousemove(e) {
 
 				
 				
-				redraw_light_walls();
+				redraw_light_walls(true, true);
 			}
 			else{
 				drawRect(window.temp_context,
@@ -3223,24 +3322,33 @@ function drawing_mousemove(e) {
 
 		}
 		else if (window.DRAWSHAPE == "brush"){
+		
 			// Only add a new point every 75ms to keep the drawing size low
 			// Subtract mouseMoveFps from 75ms to avoid waiting too much
-			if(!window.BRUSHWAIT)
-			{
-				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
-				let clonePoints = [...window.BRUSHPOINTS]
-				// cap with a dot
-				clonePoints.push({x:mouseX+1, y:mouseY+1});
-				clonePoints.push({x:mouseX-1, y:mouseY-1});
-				drawBrushstroke(window.temp_context, clonePoints, window.DRAWCOLOR, window.LINEWIDTH);
-
-				window.BRUSHWAIT = true;
-				if (mouseMoveFps < 75) {
-					setTimeout(function() {
-						window.BRUSHWAIT = false;
-					}, (75 - mouseMoveFps));
+			if(Array.isArray(window.BRUSHPOINTS)) {
+				const clonePoints = [...window.BRUSHPOINTS];
+				if(window.MOUSEDOWN){
+					clonePoints.push({x:mouseX, y:mouseY});
+					clonePoints.push({x:mouseX-1, y:mouseY-1});
+					clonePoints.push({x:mouseX+1, y:mouseY+1});
 				}
+					
+				drawBrushstroke(window.temp_context, clonePoints, window.DRAWCOLOR, window.LINEWIDTH);
 			}
+			drawCircle(window.temp_context, mouseX, mouseY, window.LINEWIDTH/2*window.CURRENT_SCENE_DATA.scale_factor, '#fff8', true, 1);
+			drawCircle(window.temp_context, mouseX, mouseY, window.LINEWIDTH/2*window.CURRENT_SCENE_DATA.scale_factor, '#000000ff', false, 1);
+			
+
+			if(!window.MOUSEDOWN || window.BRUSHWAIT)
+				return;
+			
+			window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
+			window.BRUSHWAIT = true
+			setTimeout(function() {
+				window.BRUSHWAIT = false;
+			}, 75);
+		
+			
 		}
 		else if(window.DRAWSHAPE == "brush-arrow"){
 			// Only add a new point every 75ms to keep the drawing size low
@@ -3257,7 +3365,7 @@ function drawing_mousemove(e) {
 					setTimeout(function() {
 						window.BRUSHWAIT = false;
 					}, (75 - mouseMoveFps));
-				}
+				}	
 			}
 		}
 		else if (window.DRAWSHAPE == "grid-brush"){
@@ -3413,10 +3521,10 @@ function drawing_mouseup(e) {
 	}
 
 	const mousePosition = {
-		clientX: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientX : event.changedTouches[0].clientX) : event.clientX,
-		pageX: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageX : event.changedTouches[0].pageX) : event.pageX,
-		clientY: (event.touches) ? ((event.touches[0]) ? event.touches[0].clientY : event.changedTouches[0].clientY) : event.clientY,
-		pageY: (event.touches) ? ((event.touches[0]) ? event.touches[0].pageY : event.changedTouches[0].pageY) : event.pageY,
+		clientX: (e.touches) ? ((e.touches[0]) ? e.touches[0].clientX : e.changedTouches[0].clientX) : e.clientX,
+		pageX: (e.touches) ? ((e.touches[0]) ? e.touches[0].pageX : e.changedTouches[0].pageX) : e.pageX,
+		clientY: (e.touches) ? ((e.touches[0]) ? e.touches[0].clientY : e.changedTouches[0].clientY) : e.clientY,
+		pageY: (e.touches) ? ((e.touches[0]) ? e.touches[0].pageY : e.changedTouches[0].pageY) : e.pageY,
 	}
 	const [mouseX, mouseY] = get_event_cursor_position(e)
 	// Return early from this function if we are measuring and have hit the right mouse button
@@ -3500,9 +3608,8 @@ function drawing_mouseup(e) {
 				break;
 			case "brush":
 				window.BRUSHPOINTS.push({x:mouseX, y:mouseY});
-				// cap with a dot
-				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
 				window.BRUSHPOINTS.push({x:mouseX-1, y:mouseY-1});
+				window.BRUSHPOINTS.push({x:mouseX+1, y:mouseY+1});
 				data[0] = "brush"
 				data[3] = window.BRUSHPOINTS
 				data[4] = null
@@ -3631,7 +3738,7 @@ function drawing_mouseup(e) {
 			if ( e.button == 2) {
 				return;
 			}
-			for(let walls in window.StoredWalls){
+			for(let walls=0; walls<window.StoredWalls.length; walls++){
 					data = ['line',
 						"wall",
 						window.DRAWCOLOR,
@@ -4137,7 +4244,7 @@ function drawing_mouseup(e) {
 		else{
 			const undoArray = [], redoArray = [];
 			const originalSelected = JSON.parse(JSON.stringify(window.selectedWalls));
-			for(let i in window.selectedWalls){
+			for(let i=0; i<window.selectedWalls.length; i++){
 				const wall = window.selectedWalls[i];
 				const index = wall.drawIndex;
 				const pt1 = wall.pt1;
@@ -4253,7 +4360,7 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION == "measure") {
 		WaypointManager.fadeoutMeasuring(window.PLAYER_ID)
 	}
-
+	window.BRUSHPOINTS = null;
 }
 
 function drawing_contextmenu(e) {
@@ -4475,6 +4582,11 @@ function get_draw_data(button, menu){
  * data-function - the drawing function, draw/erase/text-erase/measure/select/hide/reveal
  */
 function handle_drawing_button_click() {
+
+	$(".drawWidthSlider").on("input change blur", function() {
+		window.LINEWIDTH = parseInt($(this).val());
+	});
+
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
 		const clicked = this;
@@ -4572,10 +4684,20 @@ function handle_drawing_button_click() {
 		else{
 			$("#temp_overlay").css("mix-blend-mode", "")
 		}
+		const drawData = get_draw_data(data.clicked,  data.menu)
+
+		window.LINEWIDTH = drawData.draw_line_width
+		window.DRAWTYPE = (drawData.from == 'vision_menu') ? 'light' : drawData.fill
+		window.DRAWCOLOR = drawData.background_color
+		window.DRAWLOCATION = drawData.location
+		window.DRAWSHAPE = window.drawAudioPolygon ? 'polygon' : drawData.shape;
+		window.DRAWFUNCTION = window.drawAudioPolygon ? 'audio-polygon' : drawData.function;
+
 		target.on('mousedown touchstart', data, drawing_mousedown);
 		target.on('mouseup touchend',  data, drawing_mouseup);
 		target.on('mousemove touchmove', data, drawing_mousemove);
 		target.on('contextmenu', data, drawing_contextmenu);
+		
 	})
 	$("#door_types").click(function(){
 		if(!$(`#draw_door`).hasClass('button-enabled') && !$(`#draw_door_convert`).hasClass('button-enabled') && !$(`#draw_door_erase`).hasClass('button-enabled')  && !$(`#draw_door_hidden`).hasClass('button-enabled')){
@@ -4685,9 +4807,10 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 {
 	// Copyright (c) 2021 by Limping Ninja (https://codepen.io/LimpingNinja/pen/qBmpvqj)
     // Fork of an original work  (https://codepen.io/kangax/pen/pxfCn
-	ctx.save();
 	let p1 = points[0];
 	let p2 = points[1];
+	ctx.save();
+
 
 	ctx.strokeStyle = style;
 	ctx.lineWidth = lineWidth;
@@ -4698,9 +4821,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.moveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 
 	for (let i = 1, len = points.length; i < len; i++) {
-		// we pick the point between pi+1 & pi+2 as the
-		// end point and p1 as our control point
-		let midPoint = midPointBtw(p1, p2);
+		let midPoint = midPointBtw(p1, p2);	
 		ctx.quadraticCurveTo(p1.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, p1.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, midPoint.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		p1 = points[i];
 		p2 = points[i+1];
@@ -4710,6 +4831,7 @@ function drawBrushstroke(ctx, points, style, lineWidth=6, scale=window.CURRENT_S
 	ctx.stroke();
 
 	ctx.restore();
+	
 }
 
 function drawBrushArrow(ctx, points, style, lineWidth=6, scale=window.CURRENT_SCENE_DATA.scale_factor, fill = [])
@@ -4798,44 +4920,30 @@ function drawPolygon (
 	canvasHeight = undefined
 ) {
 	if(fill && islight && replacefog){
-		if(canvasWidth === undefined){
-			[canvasWidth, canvasHeight] = [getSceneMapSize().sceneWidth, getSceneMapSize().sceneHeight];
-		}
-
-		if(window.tempoffCanvas == undefined){
-			window.tempoffCanvas = document.createElement('canvas');
-			window.tempoffContext = tempoffCanvas.getContext('2d');
-		}
-		if(tempoffCanvas.width != canvasWidth || tempoffCanvas.height != canvasHeight){
-			tempoffCanvas.width = canvasWidth;
-			tempoffCanvas.height = canvasHeight;
-			tempoffContext.lineWidth = 6;
-			tempoffContext.fillStyle = 'rgba(255,255,255,1)';
-			tempoffContext.strokeStyle = 'rgba(0,0,0,1)';
-		}
-		tempoffContext.clearRect(0, 0, tempoffCanvas.width, tempoffCanvas.height)
 		
-
-		tempoffContext.beginPath();
+		ctx.lineWidth = 6;
+		ctx.fillStyle = 'rgba(255,255,255,1)';
+		ctx.strokeStyle = 'rgba(0,0,0,1)';
+		
+		ctx.beginPath();
 		let adjustScale = (scale/window.CURRENT_SCENE_DATA.scale_factor)	
 		
-		tempoffContext.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		tempoffContext.lineWidth = lineWidth;
-			
-		points.forEach((vertice) => {
-			tempoffContext.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		})
+		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		ctx.lineWidth = lineWidth;
+		
+		for(let vertice of points){
+			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+		}
 
 		if (mouseX !== null && mouseY !== null) {
-			tempoffContext.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
+			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		tempoffContext.closePath();
+		ctx.closePath();
 		
 	
-		tempoffContext.fill();
-		tempoffContext.stroke();
+		ctx.fill();
+		ctx.stroke();
 
-		ctx.drawImage(tempoffCanvas, 0, 0);
 	}
 	else{
 		ctx.save();
@@ -4845,9 +4953,9 @@ function drawPolygon (
 		ctx.moveTo(points[0].x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, points[0].y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
 		ctx.lineWidth = lineWidth;
 			
-		points.forEach((vertice) => {
+		for(let vertice of points) {
 			ctx.lineTo(vertice.x/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, vertice.y/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
-		})
+		}
 
 		if (mouseX !== null && mouseY !== null) {
 			ctx.lineTo(mouseX/adjustScale/window.CURRENT_SCENE_DATA.scale_factor, mouseY/adjustScale/window.CURRENT_SCENE_DATA.scale_factor);
@@ -5138,7 +5246,7 @@ function savePolygon(e) {
 	else if(window.DRAWFUNCTION === 'audio-polygon'){
 		const token = window.TOKEN_OBJECTS[window.drawingAudioTokenId];
 		token.options.audioChannel.audioArea = polygonPoints;
-		token.options.audioChannel.audioAreaOrigScale = window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion;
+		token.options.audioChannel.audioAreaOrigScale = window.CURRENT_SCENE_DATA.scale_factor;
 		token.place_sync_persist();
 		debounceAudioChecks();
 		delete window.drawingAudioTokenId 
@@ -5866,7 +5974,7 @@ function init_walls_menu(buttons){
         let wallUndo = window.wallUndo.pop();
         if(wallUndo){
         	if(wallUndo.undo != undefined){
-				for(let i in wallUndo.undo){
+				for(let i=0; i<wallUndo.undo.length; i++){
 					let x = wallUndo.undo[i][3],
 					y = wallUndo.undo[i][4],
 					width = wallUndo.undo[i][5],
@@ -5882,7 +5990,7 @@ function init_walls_menu(buttons){
 	        	}
 	        }
 	        if(wallUndo.redo != undefined){
-	        	for(let i in wallUndo.redo){
+	        	for(let i=0; i<wallUndo.redo.length; i++){
 	        		window.DRAWINGS.push(wallUndo.redo[i])
 	        	}
 	        }
@@ -6764,10 +6872,24 @@ function detectInLos(x, y) {
 
 
 function redraw_light(darknessMoved = false){
+    if(window.rayContext == undefined){
+		window.rayCanvas = document.getElementById('raycastingCanvas');
+		window.rayContext = window.rayCanvas.getContext('2d');
 
-	let canvas = document.getElementById("raycastingCanvas");
-	let canvasWidth = getSceneMapSize().sceneWidth;
-	let canvasHeight = getSceneMapSize().sceneHeight;
+		window.offscreenCanvasMask = document.createElement('canvas');
+		window.offscreenContext = window.offscreenCanvasMask.getContext('2d');
+
+		window.moveOffscreenCanvasMask = document.createElement('canvas');
+		window.moveOffscreenContext = window.moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
+	}
+
+    const canvas = window.rayCanvas;
+	const context = window.rayContext;
+
+	const canvasWidth = getSceneMapSize().sceneWidth;
+	const canvasHeight = getSceneMapSize().sceneHeight;
+
+	context.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	if(canvasWidth == 0 || canvasHeight == 0){
 		console.warn("Draw light attempted before map load");
@@ -6777,30 +6899,31 @@ function redraw_light(darknessMoved = false){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
-
-	let context = canvas.getContext("2d");
 	
-	let offscreenCanvasMask = document.createElement('canvas');
-	let offscreenContext = offscreenCanvasMask.getContext('2d');
-
+	const offscreenCanvasMask = window.offscreenCanvasMask;
+	const offscreenContext = window.offscreenContext;
+    
 	offscreenCanvasMask.width = canvasWidth;
 	offscreenCanvasMask.height = canvasHeight;
-	
+	offscreenContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
-	if(window.moveOffscreenCanvasMask == undefined){
-		window.moveOffscreenCanvasMask = document.createElement('canvas');
-	}
-	let moveOffscreenContext = moveOffscreenCanvasMask.getContext('2d');
+	
+	const moveOffscreenContext = window.moveOffscreenContext;
 
 	window.moveOffscreenCanvasMask.width = canvasWidth;
 	window.moveOffscreenCanvasMask.height = canvasHeight;
 
 
+	if(window.lightInLos == undefined){
+		window.lightInLos = document.createElement('canvas');
+		window.lightInLosContext = window.lightInLos.getContext('2d');
+	}
 
-	delete window.lightInLos;
-	window.lightInLos = document.createElement('canvas');
 	window.lightInLos.width = canvasWidth;
 	window.lightInLos.height = canvasHeight;
+
+	const lightInLosContext = window.lightInLosContext;
+	lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -6813,38 +6936,51 @@ function redraw_light(darknessMoved = false){
 
 	if(window.truesightCanvas == undefined){
 		window.truesightCanvas = document.createElement('canvas');
+		window.truesightCanvasContext = window.truesightCanvas.getContext('2d');
 	}
-	let truesightCanvasContext = truesightCanvas.getContext('2d');
+	const truesightCanvasContext = window.truesightCanvasContext;
 
 	window.truesightCanvas.width = canvasWidth;
 	window.truesightCanvas.height = canvasHeight;
 
 	truesightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
-	
-	let devilsightCanvas = document.createElement('canvas');
-	
-	let devilsightCtx = devilsightCanvas.getContext('2d');
+	if (window.devilsightCanvas == undefined){
+		window.devilsightCanvas = document.createElement('canvas');
+		window.devilsightCtx = window.devilsightCanvas.getContext('2d');
+	}
+ 
+	const devilsightCanvas = window.devilsightCanvas;
+	const devilsightCtx = window.devilsightCtx;
 
 	devilsightCanvas.width = canvasWidth;
 	devilsightCanvas.height = canvasHeight;
 
 	devilsightCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
-
-	let tempDarkvisionCanvas = document.createElement('canvas');
-	let tempDarkvisionCtx = tempDarkvisionCanvas.getContext('2d');
+	if (window.tempDarkvisionCanvas == undefined){
+		window.tempDarkvisionCanvas = document.createElement('canvas');
+		window.tempDarkvisionCtx = window.tempDarkvisionCanvas.getContext('2d');
+	}
+	const tempDarkvisionCanvas = window.tempDarkvisionCanvas;
+	const tempDarkvisionCtx = window.tempDarkvisionCtx;
 
 	tempDarkvisionCanvas.width = canvasWidth;
 	tempDarkvisionCanvas.height = canvasHeight;
 
 	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
-	let tempDarknessCanvas = document.createElement('canvas');
-	let tempDarknessCtx = tempDarknessCanvas.getContext('2d');
+	if (window.tempDarknessCanvas == undefined) {
+		window.tempDarknessCanvas = document.createElement('canvas');
+		window.tempDarknessCtx = window.tempDarknessCanvas.getContext('2d');
+	}
+	const tempDarknessCanvas = window.tempDarknessCanvas;
+	const tempDarknessCtx = window.tempDarknessCtx;
 
 	tempDarknessCanvas.width = canvasWidth;
 	tempDarknessCanvas.height = canvasHeight;
+
+	tempDarknessCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
@@ -6860,15 +6996,18 @@ function redraw_light(darknessMoved = false){
 		moveOffscreenContext.fillStyle = "white";
 	}
 
-	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`)
+	let light_auras = $(`.light:not([style*='display: none'])>.aura-element.islight:not([style*='visibility: hidden'])`).map(function () {
+		return $(this).attr("data-id");
+	}).get();
+
+
+	
 	let selectedIds = [];
 	let selectedTokens = $('#tokens .tokenselected:not(.isAoe)');
-	if(window.SelectedTokenVision){
-		light_auras = light_auras.add(selectedTokens)
-	}
+
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 	
-	check_darkness_value();
+	
 
 	if(selectedTokens.length>0){
 		for(let j = 0; j < selectedTokens.length; j++){
@@ -6878,17 +7017,25 @@ function redraw_light(darknessMoved = false){
 		  		selectedIds.push(tokenId)
 		}	  
 	}	
-
-
+	if (window.SelectedTokenVision == true && selectedIds.length>0){
+		light_auras = [...new Set(light_auras.concat(selectedIds))];
+	}
+	if(selectedIds.length > 0 || selectedTokens.length == 0)
+		check_darkness_value();
 
 	const promises = []
 	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
 
 
 
-	const lightInLosContext = window.lightInLos.getContext('2d');
 
-	const elevContext = $('#elev_overlay')[0].getContext('2d');
+
+
+
+	if (window.elevContext == undefined) {
+		window.elevContext = $('#elev_overlay')[0].getContext('2d');
+	}
+	const elevContext = window.elevContext;
 
 	const allWalls = [...walls, ...darknessBoundarys];
 	const tokenVisionAuras = $(`.aura-element-container-clip [id*='vision_']`);
@@ -6901,8 +7048,7 @@ function redraw_light(darknessMoved = false){
 	}
 	for(let i = 0; i < light_auras.length; i++){
 		
-		let currentLightAura = $(light_auras[i]);
-		let auraId = currentLightAura.attr('data-id');
+		let auraId = light_auras[i];
 
 		let found = selectedIds.includes(auraId);
 		let tokenHalfWidth = window.TOKEN_OBJECTS[auraId].sizeWidth()/2;
@@ -6967,30 +7113,25 @@ function redraw_light(darknessMoved = false){
 				$(`.aura-element-container-clip[id='${auraId}'].vision`).css('clip-path', `path('${path}')`)
 			
 			}
-			
 
+			if (window.lightAuraClipPolygon === undefined)
+				window.lightAuraClipPolygon = {};
+			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 
 	
+		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
+			lightInLosContext.globalCompositeOperation = 'source-over';
+			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light, 'white')
 
-		if(window.lightAuraClipPolygon === undefined)
-			window.lightAuraClipPolygon = {};
-			
-
-	
-
-		clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys);
-
-		if(window.lightAuraClipPolygon[auraId]?.canvas !== undefined){
-			lightInLosContext.globalCompositeOperation='source-over';
-			lightInLosContext.drawImage(window.lightAuraClipPolygon[auraId].canvas, 0, 0);
 		}
+		
 		
 		
 
 
 
-		if(selectedIds.length === 0 || found || window.SelectedTokenVision !== true){	
+		if(selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)){	
 			
 			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && window.TOKEN_OBJECTS[auraId].options.share_vision === undefined && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 			if(hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
@@ -7005,7 +7146,7 @@ function redraw_light(darknessMoved = false){
 				
 				
 			if(window.DM !== true || window.SelectedTokenVision === true){
-				if(window.lightAuraClipPolygon[auraId] != undefined && (currentLightAura.parent().hasClass('devilsight') || currentLightAura.parent().hasClass('truesight'))){
+				if (window.lightAuraClipPolygon[auraId] != undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')){
 					tempDarkvisionCtx.globalCompositeOperation='source-over';
 					drawCircle(tempDarkvisionCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
 
@@ -7014,11 +7155,11 @@ function redraw_light(darknessMoved = false){
 					offscreenContext.globalCompositeOperation='source-over';
 					offscreenContext.drawImage(tempDarkvisionCanvas, 0, 0)
 				}
-				if(currentLightAura.parent().hasClass('devilsight')){
+				if (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight'){
 					devilsightCtx.globalCompositeOperation='source-over';
 					devilsightCtx.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
-				if(currentLightAura.parent().hasClass('truesight')){
+				if (window.TOKEN_OBJECTS[auraId].options.sight === 'truesight'){
 					truesightCanvasContext.globalCompositeOperation='source-over';
 					truesightCanvasContext.drawImage(tempDarkvisionCanvas, 0, 0);
 				}
@@ -7027,9 +7168,11 @@ function redraw_light(darknessMoved = false){
 
 			
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
-			offscreenContext.globalCompositeOperation='lighten';
+			offscreenContext.globalCompositeOperation="lighten";
 			drawPolygon(offscreenContext, lightPolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask	
 			drawPolygon(moveOffscreenContext, movePolygon, 'rgba(255, 255, 255, 1)', true, 6, undefined, undefined, undefined, true, true, undefined, canvasWidth, canvasHeight); //draw to offscreen canvas so we don't have to render every draw and use this for a mask
+			
+			
 			
 		}
 				
@@ -7082,9 +7225,6 @@ function redraw_light(darknessMoved = false){
 		offscreenContext.fillRect(0,0,canvasWidth,canvasHeight);		
 	}	
 
-	offscreenContext.globalCompositeOperation='multiply'; // fixes a darkness aoe issue when multiple tokens are inside but one is slightly out
-	offscreenContext.drawImage(window.lightInLos, 0, 0);
-	
 		
 	context.drawImage(offscreenCanvasMask, 0, 0); // draw to visible canvas only once so we render this once
 	
@@ -7150,7 +7290,61 @@ function redraw_light(darknessMoved = false){
 	
 
 }
+function getTokenVision(tokenId, darknessMoved){
+	if(window.lineOfSightPolygons[tokenId] !== undefined)
+		return window.lineOfSightPolygons[tokenId];
 
+
+
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
+	const darknessBoundarys = getDarknessBoundarys();
+	const allWalls = [...walls, ...darknessBoundarys];
+	
+	const tokenHalfWidth = window.TOKEN_OBJECTS[tokenId].sizeWidth()/2;
+	const tokenHalfHeight = window.TOKEN_OBJECTS[tokenId].sizeHeight()/2;
+	let tokenPos = {
+		x: (parseInt(window.TOKEN_OBJECTS[tokenId].options.left)+tokenHalfWidth)/ window.CURRENT_SCENE_DATA.scale_factor,
+		y: (parseInt(window.TOKEN_OBJECTS[tokenId].options.top)+tokenHalfHeight)/ window.CURRENT_SCENE_DATA.scale_factor
+	}
+	if(window.TOKEN_OBJECTS[tokenId].options.type == 'door' && window.TOKEN_OBJECTS[tokenId].options.scaleCreated){
+		tokenPos.x = tokenPos.x / (window.TOKEN_OBJECTS[tokenId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
+		tokenPos.y = tokenPos.y / (window.TOKEN_OBJECTS[tokenId].options.scaleCreated/ window.CURRENT_SCENE_DATA.scale_factor);
+	}	
+	if(window.PARTICLE == undefined){
+		initParticle(new Vector(200, 200), 1);
+	}
+	check_token_elev(tokenId);
+	particleUpdate(tokenPos.x, tokenPos.y); // moves particle
+	particleLook(undefined, allWalls, 100000, undefined, undefined, undefined, false, false, tokenId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
+	const adjustScale = (window.CURRENT_SCENE_DATA.scale_factor != undefined) ? window.CURRENT_SCENE_DATA.scale_factor : 1;
+	let path = "";
+	for(let i = 0; i < lightPolygon.length; i++){
+		path += (i && "L" || "M") + lightPolygon[i].x/adjustScale+','+lightPolygon[i].y/adjustScale
+	}
+	window.lineOfSightPolygons[tokenId] = {
+		polygon: lightPolygon,
+		move: movePolygon,
+		noDarkness: noDarknessPolygon,
+		x: tokenPos.x,
+		y: tokenPos.y,
+		numberofwalls: walls.length+darknessBoundarys.length,
+		clippath: path,
+		visionType: window.TOKEN_OBJECTS[tokenId].options.sight,
+		scaleCreated: window.TOKEN_OBJECTS[tokenId].options.scaleCreated
+	}
+	if(window.lineOfSightPolygons[tokenId] !== undefined &&(window.TOKEN_OBJECTS[tokenId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[tokenId].options.sight === 'truesight')){
+		let path = "";
+		for(let i = 0; i < noDarknessPolygon.length; i++){
+			path += (i && "L" || "M") + noDarknessPolygon[i].x/adjustScale+','+noDarknessPolygon[i].y/adjustScale
+		}
+		window.lineOfSightPolygons[tokenId].devilsightClip = path;
+	}
+
+	return window.lineOfSightPolygons[tokenId];
+		
+}
 function rotatePoint(px, py, cx, cy, R) {
         const cosA = Math.cos(R);
         const sinA = Math.sin(R);
@@ -7327,10 +7521,11 @@ function draw_darkness_aoe_to_canvas(ctx){
 	ctx.globalCompositeOperation='source-over';
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
-function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys()){
+function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys(), numberOfSharedVisionTokens = 0){
 	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
 	if(window.DM && !window.SelectedTokenVision)
 		return;
+	
 	let visionColor = `rgba(0,0,0,0)`;
 	let visionRange = 0;
 	let light1Color = `rgba(0,0,0,0)`;
@@ -7377,7 +7572,7 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
 	let darkvisionRadius = parseInt(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
-	const selectedTokenCheck = (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
+	const selectedTokenCheck = numberOfSharedVisionTokens == 0 || (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
 
 	let circleRadius = 0
 
@@ -7400,27 +7595,15 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 			delete window.lightAuraClipPolygon[auraId];
 			return; // remove 0 range light and return
 		}
-		if(window.lightAuraClipPolygon[auraId].numberOfWalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
+		if(!window.SelectedTokenVision && window.lightAuraClipPolygon[auraId].numberOfWalls == walls.length+darknessBoundarys.length && window.lightAuraClipPolygon[auraId].light == lightRadius && window.lightAuraClipPolygon[auraId].darkvision == darkvisionRadius && window.lightAuraClipPolygon[auraId].middle.x == horizontalTokenMiddle && window.lightAuraClipPolygon[auraId].middle.y == verticalTokenMiddle)
 			return; // token settings and position have not changed - a lot of light will be stationary do not redraw checker canvas
 	}
 	else if(circleRadius === 0){
 		return; // don't make an object for 0 range light
 	}
-	let lightCanvas = document.createElement('canvas');
-	let lightAuraClipPolygonCtx = lightCanvas.getContext('2d');
-	lightCanvas.width = canvasWidth;
-	lightCanvas.height = canvasHeight;
 
-	lightAuraClipPolygonCtx.globalCompositeOperation='source-over';
-	drawPolygon(lightAuraClipPolygonCtx, maskPolygon, 'rgba(255, 255, 255, 1)', true);
-
-	lightAuraClipPolygonCtx.globalCompositeOperation='source-in';
-
-	drawCircle(lightAuraClipPolygonCtx, horizontalTokenMiddle, verticalTokenMiddle, circleRadius+window.TOKEN_OBJECTS[auraId].sizeWidth()/2, 'rgba(255, 255, 255, 1)', true, 0)
-	
 
 	window.lightAuraClipPolygon[auraId] = {
-		canvas: lightCanvas,
 		light: lightRadius,
 		darkvision: darkvisionRadius,
 		middle: {

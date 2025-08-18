@@ -1,5 +1,4 @@
-function get_scene_data_hbtd() {
-	return {
+export const get_scene_data_hbtd = {
 		"dnd/hbtd/hold-back-the-dead/Map11IronspineKeep": {
 			"vpps": 58.666666666666664,
 			"title": "Map 1.1: Ironspine Keep ",
@@ -14999,4 +14998,3 @@ function get_scene_data_hbtd() {
 			}
 		},
 	}
-}

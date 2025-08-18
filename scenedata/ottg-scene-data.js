@@ -1,5 +1,4 @@
-function get_scene_data_ottg() {
-	return {
+export const get_scene_data_ottg = {
 		"dnd/ottg/adventures/MapTheSunkenTown": {
 			"vpps": 120.23333333333333,
 			"title": "Map: Sunken Town ",
@@ -3245,4 +3244,3 @@ function get_scene_data_ottg() {
 			}
 		}
 	}
-}

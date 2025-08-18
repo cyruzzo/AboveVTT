@@ -74,7 +74,7 @@ const debounceHandleInjected = mydebounce(() => {
 							showTempMessage('No non-player tokens selected');
 						}
 						
-						for(let i in window.CURRENTLY_SELECTED_TOKENS){
+						for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
 							let id = window.CURRENTLY_SELECTED_TOKENS[i];
 							let token = window.TOKEN_OBJECTS[id];
@@ -107,7 +107,7 @@ const debounceHandleInjected = mydebounce(() => {
 				const toSelf = ((current.data.injected_data.whisper == window.PLAYER_NAME || current.data.injected_data.whisper == window.myUser) && current.data.player_name == window.PLAYER_NAME)
 				let output = $(`${current.data.injected_data.whisper == '' ? '' : `<div class='above-vtt-roll-whisper'>To: ${toSelf ? `Self` : current.data.injected_data.whisper}</div>`}<div class='above-vtt-container-roll-output'>${li.find('.abovevtt-roll-container').attr('title')}</div>`);
 				li.find('.abovevtt-roll-container [class*="Result"]').append(output);
-				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+				
 
 				let img = li.find(".magnify");
 				for(let i=0; i<img.length; i++){
@@ -178,7 +178,7 @@ const debounceHandleInjected = mydebounce(() => {
 				li.height(newheight);
 				
 
-
+				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
 				if ((injection_data.dmonly && window.DM) || toSelf) {
 					
 					if (li.find(".gamelog-to-everyone-button").length === 0) {
@@ -219,15 +219,7 @@ function setupMBIntervals(){
 	}, 480000);
 }
 
-function resizeCanvasChromeBug(){
-	let diceRollCanvas = $(".dice-rolling-panel__container");
-	if(parseInt(diceRollCanvas.attr("width")) % 2 != 0){
-		diceRollCanvas.attr("width", parseInt(diceRollCanvas.attr("width"))+1);
-	}
-	if(parseInt(diceRollCanvas.attr("height")) % 2 != 0){
-		diceRollCanvas.attr("height", parseInt(diceRollCanvas.attr("height"))+1);
-	}
-}
+
 
 function addFloatingCombatText(id, damageValue, heal = false){
 	if(get_avtt_setting_value('disableCombatText'))
@@ -1246,12 +1238,13 @@ class MessageBroker {
 			
 			if (msg.eventType == "dice/roll/fulfilled") {
 				notify_gamelog();
-				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {
-					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
+				const gamelogItem = $(`ol[class*='-GameLogEntries'] li`).first(); 
+				if (msg.avttExpression !== undefined && msg.avttExpressionResult !== undefined) {	
 					gamelogItem.attr("data-avtt-expression", msg.avttExpression);
 					gamelogItem.attr("data-avtt-expression-result", msg.avttExpressionResult);
 					replace_gamelog_message_expressions(gamelogItem);
 				}
+
 
 				if(msg.data.rolls != undefined){
 					let critSuccess = {};
@@ -1267,11 +1260,11 @@ class MessageBroker {
 							for(let k=0; k<roll.diceNotation.set[j].dice.length; k++){
 								let reduceCrit = 0;
 								if(parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', '')) == 20){
-                  reduceCrit = 20 - msg.data.critRange;
+                  					reduceCrit = 20 - msg.data.critRange;
 								}
-                else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
-                	continue;
-                }
+								else if(msg.data.rolls[0].rollType == 'attack' || msg.data.rolls[0].rollType == 'to hit' || msg.data.rolls[0].rollType == 'tohit' ){
+									continue;
+								}
 								if(roll.diceNotation.set[j].dice[k].dieValue >= parseInt(roll.diceNotation.set[j].dice[k].dieType.replace('d', ''))-reduceCrit && roll.result.values.includes(roll.diceNotation.set[j].dice[k].dieValue)){
 									if(roll.rollKind == 'advantage'){
 										if(k>0 && roll.diceNotation.set[j].dice[k-1].dieValue <= roll.diceNotation.set[j].dice[k].dieValue){
@@ -1401,7 +1394,7 @@ class MessageBroker {
 										if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
 											showTempMessage('No non-player tokens selected');
 										}
-										for(let i in window.CURRENTLY_SELECTED_TOKENS){
+										for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
 											let id = window.CURRENTLY_SELECTED_TOKENS[i];
 											let token = window.TOKEN_OBJECTS[id];
@@ -1434,13 +1427,27 @@ class MessageBroker {
 									
 									
 								}
+								// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
+								if (msg.messageScope === "userId" && target.find(".gamelog-to-everyone-button").length === 0) {
+									const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
+									sendToEveryone.click(function (clickEvent) {
+										let resendMessage = msg;
+										resendMessage.id = uuid();
+										resendMessage.data.rollId = uuid();
+										resendMessage.messageScope = "gameId";
+										resendMessage.messageTarget = find_game_id();
+										resendMessage.dateTime = Date.now();
+										window.diceRoller.ddbDispatch(resendMessage);
+									});
+									target.find("time").before(sendToEveryone);
+								}
 							}
 
 						}
 						
 					}, 100)
 				}
-
+				
 				
 				if (!window.DM)
 					return;
@@ -1510,25 +1517,9 @@ class MessageBroker {
 					}
 					
 				}
-				// CHECK FOR SELF ROLLS ADD SEND TO EVERYONE BUTTON
-				if (msg.messageScope === "userId") {
-					let gamelogItem = $("ol[class*='-GameLogEntries'] li").first();
-					if (gamelogItem.find(".gamelog-to-everyone-button").length === 0) {
-						const sendToEveryone = $(`<button class="gamelog-to-everyone-button">Send To Everyone</button>`);
-						sendToEveryone.click(function (clickEvent) {
-							let resendMessage = msg;
-							resendMessage.id = uuid();
-							resendMessage.data.rollId = uuid();
-							resendMessage.messageScope = "gameId";
-							resendMessage.messageTarget = find_game_id();
-							resendMessage.dateTime = Date.now();
-							window.diceRoller.ddbDispatch(resendMessage);
-						});
-						gamelogItem.find("time").before(sendToEveryone);
-					 }
-				}
+				
 			}
-
+			
 			if (msg.eventType === "custom/myVTT/peerReady") {
 				window.PeerManager.receivedPeerReady(msg);
 			}
@@ -1538,15 +1529,15 @@ class MessageBroker {
 			if (msg.eventType === "custom/myVTT/videoPeerConnect") {
 				if(msg.data.id != window.myVideoPeerID){
 					let call = window.videoPeer.call(msg.data.id, window.myLocalVideostream)
-          call.on('stream', (stream) => {
-              window.videoConnectedPeers.push(msg.data.id);
-              setRemoteStream(stream, call.peer);   
-              call.on('close', () => {
-                $(`.video-meet-area video#${call.peer}`).remove();
-            	})   
-          })
-          window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
-          window.currentPeers.push(call);
+					call.on('stream', (stream) => {
+						window.videoConnectedPeers.push(msg.data.id);
+						setRemoteStream(stream, call.peer);   
+						call.on('close', () => {
+							$(`.video-meet-area video#${call.peer}`).remove();
+							})   
+					})
+					window.currentPeers = window.currentPeers.filter(d=> d.peer != call.peer)
+					window.currentPeers.push(call);
 				}
 			}
 			if (msg.eventType === "custom/myVTT/videoPeerDisconnect") {
@@ -1570,12 +1561,12 @@ class MessageBroker {
 
 
 		};
-		
+
 		get_cobalt_token(function(token) {
-			self.loadWS(token);
+			self.loadWS(token, report_connection);
 		});
 
-		self.loadAboveWS();
+		self.loadAboveWS(notify_player_join);
 	}
 
 	async handleScene (msg, forceRefresh=false) {
@@ -1924,38 +1915,39 @@ class MessageBroker {
 						
 						$('#loadingStyles').remove();
 
-						if(window.handleSceneQueue?.length>0){	
-							const msg = window.handleSceneQueue.pop(); // get most recent item and load it
-							window.handleSceneQueue = [];
-							AboveApi.getScene(msg.data.sceneid).then((response) => {
-								self.handleScene(response);
-							}).catch((error) => {
-								console.error("Failed to download scene", error);
-							});
-							return;
-						}
-							
-						
 						console.groupEnd()
+
+						
+						window.MB.loadNextScene();	
+						
+						
 					});
 					
 					remove_loading_overlay();
 				}
-
-			
 			}
-
-
-	
-
 		}
 		catch (e) {
+			window.MB.loadNextScene();
 			showError(e);
 		}
 		
 		// console.groupEnd()
 	}
-
+	loadNextScene(){
+		if (window.handleSceneQueue == undefined || window.handleSceneQueue?.length == 0)
+			return;
+		const msg = window.handleSceneQueue.pop(); // get most recent item and load it
+		window.handleSceneQueue = [];
+		AboveApi.getScene(msg.data.sceneid).then((response) => {
+			window.MB.handleScene(response);
+		}).catch((error) => {
+			if (window.handleSceneQueue?.length > 0) {
+				setTimeout(loadNextScene, 100);
+			}
+			console.error("Failed to download scene", error);
+		});
+	}
   	handleCT(data){
 		ct_load(data);
 	}

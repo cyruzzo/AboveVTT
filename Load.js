@@ -135,6 +135,7 @@ if (isPlainCharacterPage) {
 		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
+		{ src: "WeatherOverlay.js" },
 	]
 	//Do not load characterPage.js for DM or on campaign page
 	if(isPlayerPage && !isDM){ 
@@ -171,25 +172,6 @@ if (isPlainCharacterPage) {
 	else{//dm
   		window.scripts.push(
 	  		{ src: "SceneData.js" },
-			{ src: "scenedata/bgdia-scene-data.js" },
-			{ src: "scenedata/tod-scene-data.js" },
-			{ src: "scenedata/toa-scene-data.js" },
-			{ src: "scenedata/doip-scene-data.js" },
-			{ src: "scenedata/lmop-scene-data.js" },
-			{ src: "scenedata/pbtso-scene-data.js" },
-			{ src: "scenedata/loe-scene-data.js" },
-			{ src: "scenedata/veor-scene-data.js" },
-			{ src: "scenedata/hcs-scene-data.js" },
-			{ src: "scenedata/dosi-scene-data.js" },
-			{ src: "scenedata/sdw-scene-data.js" },
-			{ src: "scenedata/hgtmh1-scene-data.js" },
-			{ src: "scenedata/dilct-scene-data.js" },
-			{ src: "scenedata/uhlh-scene-data.js" },
-			{ src: "scenedata/gotsf-scene-data.js" },
-			{ src: "scenedata/gos-scene-data.js" },
-			{ src: "scenedata/hbtd-scene-data.js" },
-			{ src: "scenedata/ottg-scene-data.js" },
-			{ src: "scenedata/wel-scene-data.js" }
 		)
 	}
 	if(isVttGamePage) {

@@ -723,7 +723,6 @@ function persist_all_token_customizations(customizations, callback) {
     window.TOKEN_CUSTOMIZATIONS = customizations;
     callback(true);
 }
-
 function persist_token_customization(customization, callback) {
     if (typeof callback !== 'function') {
         callback = function(){};
@@ -751,19 +750,41 @@ function persist_token_customization(customization, callback) {
 
 
         if(customization.tokenType == 'pc'){
-            if(window.all_token_objects[customization.id]){
-                window.all_token_objects[customization.id].options = {
-                    ...window.all_token_objects[customization.id].options,
-                    ...customization.tokenOptions,
-                }
+            const allToken = window.all_token_objects[customization.id];
+            if (allToken){
+                allToken.options = $.extend(true, {}, allToken.options, customization.tokenOptions)
                 if(customization.tokenOptions.tokenSize) {
-                    window.all_token_objects[customization.id].options = {
-                        ...window.all_token_objects[customization.id].options,
-                        size: customization.tokenOptions.tokenSize * window.CURRENT_SCENE_DATA.hpps,
-                        gridSquares: customization.tokenOptions.tokenSize
-                    }
+                    allToken.size = customization.tokenOptions.tokenSize * window.CURRENT_SCENE_DATA.hpps,
+                    allToken.gridSquares= customization.tokenOptions.tokenSize
                 }
             }
+            const token = window.TOKEN_OBJECTS[customization.id];
+            if(window.TOKEN_OBJECTS[customization.id]){
+                token.options = $.extend(true, {}, token.options, customization.tokenOptions);
+                token.place();
+                token.sync($.extend(true, {}, token.options));
+            }
+        }
+        else if (customization.tokenType == ItemType.Folder && customization.rootId == RootFolder.Players.id){
+            const listItem = window.tokenListItems.find(d=> d.id == customization.id);
+            let fullPath = listItem.fullPath();
+            // find and place all items in this folder... but not subfolders
+            tokensToPlace = window.tokenListItems
+                .filter(item => item.folderPath.startsWith(fullPath));
+
+           for(let listItem of tokensToPlace){
+               const newOptions = find_token_options_for_list_item(listItem);
+               const allToken = window.all_token_objects[listItem.id];
+               if (allToken) {
+                   allToken.options = $.extend(true, {}, allToken.options, newOptions)
+               }
+               const token = window.TOKEN_OBJECTS[listItem.id];
+               if (window.TOKEN_OBJECTS[listItem.id]) {
+                   token.options = $.extend(true, {}, token.options, newOptions);
+                   token.place();
+                   token.sync($.extend(true, {}, token.options));
+               }
+           }
         }
         
        

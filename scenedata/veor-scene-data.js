@@ -1,5 +1,4 @@
-function get_scene_data_veor() {
-	return {
+export const get_scene_data_veor = {
  	"veor/return-from-neverdeath-graveyard/Map11NeverdeathCatacombs": {
  		"itemType": "scene",
  		
@@ -37802,6 +37801,5 @@ function get_scene_data_veor() {
 		"width": 1031,
 		"height": 1318,
 		"notes": {}
-	}
 	}
 }

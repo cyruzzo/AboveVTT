@@ -2228,7 +2228,7 @@ function edit_encounter(clickEvent) {
 
 
 
-      for(let i in customization.encounterData.tokenItems){
+      for(let i=0; i<customization.encounterData.tokenItems.length; i++){
         const item = customization.encounterData.tokenItems[i];
         const itemCustomization = find_token_customization(customization.encounterData.tokenItems[i].type, customization.encounterData.tokenItems[i].id);
         const hasCustomStatBlock = itemCustomization?.tokenOptions?.statBlock != undefined;

@@ -1,5 +1,4 @@
-function get_scene_data_hcs() {
-	return {
+export const get_scene_data_hcs = {
 		"dnd/hcs/the-adventure-begins/Map502mokkdencaverns": {
 			"vpps": 165,
 			"title": "Fig 1.2: Mokkden Caverns ",
@@ -33800,4 +33799,3 @@ function get_scene_data_hcs() {
 		}
 		
 	}
-}

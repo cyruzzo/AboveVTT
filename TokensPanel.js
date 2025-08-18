@@ -631,7 +631,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
             let row = build_sidebar_list_row(item);
 
             if(item.encounterData?.tokenItems != undefined){
-                for(let i in item.encounterData.tokenItems){
+                for(let i=0; i<item.encounterData.tokenItems.length; i++){
                     if(item.encounterData.tokenItems[i].type != 'pc'){
                         if(item.encounterData.tokenItems[i].quantity != undefined){
                             for(let j = 0; j<item.encounterData.tokenItems[i].quantity; j++){
@@ -1021,7 +1021,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 .filter(item => item.folderPath === fullPath);
 
             if(listItem.encounterData?.tokenItems != undefined){
-                for(let i in listItem.encounterData.tokenItems){
+                for(let i=0; i<listItem.encounterData.tokenItems.length; i++){
                     if(listItem.encounterData.tokenItems[i].type != 'pc'){
                         if(listItem.encounterData.tokenItems[i].quantity != undefined){
                             for(let j = 0; j<listItem.encounterData.tokenItems[i].quantity; j++){
@@ -2834,7 +2834,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         defaultValue: false
     };
     let auraRevealVisionEnabled = (customization.tokenOptions.share_vision != undefined) ? customization.tokenOptions.share_vision : false;
-    for(let i in window.playerUsers){
+    for(let i=0; i<window.playerUsers.length; i++){
         if(!revealvisionOption.options.some(d => d.value == window.playerUsers[i].userId)){
             let option = {value: window.playerUsers[i].userId, label: window.playerUsers[i].userName, desciption: `Token vision is shared with ${window.playerUsers[i].userName}`};
             revealvisionOption.options.push(option);
@@ -3055,7 +3055,9 @@ function build_token_border_color_input(initialColor, colorChangeCallback) {
 function build_override_token_options_button(sidebarPanel, listItem, placedToken, options, updateValue, didChange) {
     let tokenOptionsButton = $(`<button class="sidebar-panel-footer-button" style="margin: 10px 0px 10px 0px;">Override Token Options</button>`);
     tokenOptionsButton.on("click", function (clickEvent) {
+
         build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+            const options = find_token_customization(listItem.type, listItem.id)?.tokenOptions;
             const overrideOptions = listItem.isTypeAoe() ? 
                 token_setting_options().filter(option=> availableToAoe.includes(option.name))
                  .map(option => convert_option_to_override_dropdown(option)) 
@@ -3187,7 +3189,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
 
     function* addExampleToken(index) {
         
-        while(index < index+10 && index<alternativeImages.length){
+        while(index < index+8 && index<alternativeImages.length){
             setTimeout(function(){
                 if(index < alternativeImages.length){
                     let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[index], listItem, placedToken);
@@ -3202,20 +3204,21 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
        
     }
     let buildToken = addExampleToken(0);
-    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', function(){
-        if (modalBody.scrollTop() + 500 >= 
-            modalBody[0].scrollHeight) { 
-            for(let i = 0; i<10; i++){
+    const debounceExampleToken = mydebounce(() => {
+        if (modalBody.scrollTop() + 300 >=
+            modalBody[0].scrollHeight) {
+            for (let i = 0; i < 8; i++) {
                 buildToken.next()
             }
-        } 
-    });
+        }
+    }, 50)
+    modalBody.off('scroll.exampleToken').on('scroll.exampleToken', debounceExampleToken);
     for (let i = 0; i < alternativeImages.length; i++) {
         if (drawInline) {
             let tokenDiv = build_token_div_for_sidebar_modal(alternativeImages[i], listItem, placedToken);
             modalBody.append(tokenDiv);
         } else {
-            if(i<10){
+            if(i<13){
                 buildToken.next();
             }
         }
@@ -3927,7 +3930,8 @@ function find_token_options_for_list_item(listItem) {
 }
 function duplicate_my_token(listItem){
     if (!listItem) return {};
-    let foundOptions = find_token_options_for_list_item(listItem);
+    let foundOptions = $.extend(true, {}, find_token_options_for_list_item(listItem));
+    delete foundOptions.id;
     if(window.JOURNAL.notes[listItem.id] != undefined){
         create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
     }

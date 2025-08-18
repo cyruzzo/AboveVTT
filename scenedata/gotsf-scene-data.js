@@ -1,5 +1,4 @@
-function get_scene_data_gotsf() {
-	return {
+export const get_scene_data_gotsf = {
 		"dnd/gotsf/giants-of-the-star-forge/Map001starforge": {
 			"scale": 857.1428571428571,
 			"vpps": 30,
@@ -3416,4 +3415,3 @@ function get_scene_data_gotsf() {
 			}
 		}
 	}
-}

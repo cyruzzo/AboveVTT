@@ -1,5 +1,4 @@
-function get_scene_data_sdw() {
-	return{
+export const get_scene_data_sdw = {
 		"dnd/sdw/bronze-shrine/Map3CavernswithBahamutShrine": {
 			"vpps": "86",
 			"title": "Map 3: Caverns with Bahamut Shrine",
@@ -63446,4 +63445,3 @@ function get_scene_data_sdw() {
 			}
 		}
 	}
-}

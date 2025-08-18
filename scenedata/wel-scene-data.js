@@ -1,5 +1,4 @@
-function get_scene_data_wel() {
-	return {
+export const get_scene_data_wel = {
 		"dnd/wel/shtriga-nonnas-hut/ShtrigaNonnasHutMap": {
 			"vpps": 117.66666666666667,
 			"title": "Shtriga Nonna’s Hut Map ",
@@ -18500,5 +18499,3 @@ function get_scene_data_wel() {
 			}
 		}
 	}
-
-}

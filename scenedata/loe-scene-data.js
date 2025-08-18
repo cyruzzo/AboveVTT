@@ -1,5 +1,4 @@
-function get_scene_data_loe() {
-	return {
+export const get_scene_data_loe = {
 		"loe/boulderwood-path/Map601boulderwoodpath": {
 			"itemType": "scene",
 			
@@ -14922,4 +14921,3 @@ function get_scene_data_loe() {
 			}
 		}
 	}
-}

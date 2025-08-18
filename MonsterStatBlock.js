@@ -128,8 +128,8 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
       e.preventDefault();
       if(e.altKey || e.shiftKey || (!isMac() && e.ctrlKey) || e.metaKey)
         return;
-      let outerP = event.target.closest('p, div').outerHTML;
-      const regExFeature = new RegExp(`${event.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
+      let outerP = e.target.closest('p, div').outerHTML;
+      const regExFeature = new RegExp(`${e.target.outerHTML.replace(/([\(\)])/g,"\\$1")}[\\s\\S]+?(?=(<\/p>|<\/div>|<strong><em|<em><strong))`, 'gi');
       let match = outerP.match(regExFeature);
 
 
@@ -137,8 +137,8 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         let matched = `<p>${match[0]}</p>`;
         
 
-        if($(event.target.closest('p, div')).find('em>strong, strong>em').length == 1){
-          let nextParagraphs = $(event.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
+        if($(e.target.closest('p, div')).find('em>strong, strong>em').length == 1){
+          let nextParagraphs = $(e.target.closest('p, div')).nextUntil('p:has(>em>strong), p:has(>strong>em), div:has(>strong>em), div:has(>em>strong)');
           for(let i=0; i<nextParagraphs.length; i++){   
             matched = `${matched}${nextParagraphs[i].outerHTML.trim()}`;
           }
@@ -153,16 +153,16 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
 
     container.find("p>em>strong, p>strong>em, div>strong>em, div>em>strong, p>span>em>strong, p>span>strong>em").off("click.roll").on("click.roll", function (e) {
       e.preventDefault();
-      if($(event.target).text().includes('Recharge'))
+      if($(e.target).text().includes('Recharge'))
         return;
-      let rollButtons = $(event.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')
+      let rollButtons = $(e.currentTarget).closest('em:has(strong), strong:has(em)').nextUntil(':has(.avtt-ability-roll-button)')
       rollButtons = rollButtons.add(rollButtons.find('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button')).closest('.avtt-roll-button:not([data-rolltype="recharge"]), .avtt-roll-formula-button');
       
 
 
       const displayName = window.TOKEN_OBJECTS[tokenId] ? window.TOKEN_OBJECTS[tokenId].options?.revealname == true ? window.TOKEN_OBJECTS[tokenId].options.name : `` : target.find(".mon-stat-block__name-link").text(); // Wolf, Owl, etc
       const creatureAvatar = window.TOKEN_OBJECTS[tokenId]?.options.imgsrc || statBlock?.data?.avatarUrl;
-      $(event.target.closest('p, div')).find('.avtt-aoe-button')?.click();
+      $(e.target.closest('p, div')).find('.avtt-aoe-button')?.click();
       for(let i = 0; i<rollButtons.length; i++){      
         let data = getRollData(rollButtons[i]);
         let diceRoll;
@@ -192,7 +192,7 @@ function display_stat_block_in_container(statBlock, container, tokenId, customSt
         
 
  
-          window.diceRoller.roll(diceRoll, true, undefined, undefined, undefined, data.damageType);
+          window.diceRoller.roll(diceRoll, true, undefined, get_avtt_setting_value('monsterCritType'), undefined, data.damageType);
 
         }
       }
@@ -1819,7 +1819,7 @@ const fetch_tooltip = mydebounce(async (dataTooltipHref, name, callback) => {
             }); 
           });
           functionArray.reverse();
-           for(let i in functionArray){
+           for(let i =0; i<functionArray.length; i++){
             await functionArray[i]();
            }
 

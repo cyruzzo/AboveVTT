@@ -1,5 +1,4 @@
-function get_scene_data_tod() {
-	return {
+export const get_scene_data_tod = {
  	"tod/dragon-hatchery/Map31DragonHatchery": {
 		
 		"reveals": [
@@ -59092,6 +59091,6 @@ function get_scene_data_tod() {
 			}
 		},
 	},
- 	}
 }
+
 	

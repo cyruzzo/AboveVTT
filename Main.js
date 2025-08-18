@@ -85,35 +85,6 @@ function update_old_discord_link(link){
   }
   return link;
 }
-/**
- * Waits for a global variable to be set.
- * Then triggers the callback function.
- * @param {String} name a global variable name
- * @param {Function} callback
- */
-function whenAvailable(name, callback) {
-    let interval = 10; // ms
-    window.setTimeout(function() {
-        if (window[name]) {
-            callback(window[name]);
-        } else {
-            whenAvailable(name, callback);
-        }
-    }, interval);
-}
-
-/**
- * Returns a random color in hex format.
- * @returns String
- */
-function getRandomColorOLD() {
-	let letters = '0123456789ABCDEF';
-	let color = '#';
-	for (let i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-}
 
 
 
@@ -470,6 +441,8 @@ function map_load_error_cb(e) {
 			}
 		}
 	}
+	window.LOADING = false
+	window.MB.loadNextScene();
 }
 
 /**
@@ -1730,38 +1703,7 @@ function  init_sheet() {
 	}
 }
 
-/**
- * Loads the given URL in the character sheet window.
- * @param {String} pc_sheet URL to a player character on DDB
- * @param {Boolean} loadWait
- * @returns
- */
-function init_player_sheet(pc_sheet, loadWait = 0) {
 
-	if (is_characters_page()) {
-		// characters page manipulates the html on the page instead of loading an iframe
-		return;
-	}
-	if (pc_sheet === undefined || pc_sheet.length == 0) {
-		// This happens for the DM representation.
-		return;
-	}
-
-	let container = $("#sheet");
-	let iframe = container.find("iframe");
-	iframe.attr('src', '');
-	iframe.attr('data-sheet_url', pc_sheet);
-	iframe.attr('data-init_load', 0);
-
-	if((!window.DM) || (window.KEEP_PLAYER_SHEET_LOADED)) {
-		console.error('here');
-		let  loadSheet = function (sheetFrame, sheet_url) {
-			sheetFrame.attr('src', sheet_url);
-		};
-		// TODO: these parameters are not correct: iframe, pc_sheet
-		setTimeout(loadSheet, loadWait, iframe, pc_sheet);
-	}
-}
 
 
 /**
@@ -1968,11 +1910,29 @@ function close_player_sheet()
 			observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
 	}
 }
+/**
+ * Waits for a global variable to be set.
+ * Then triggers the callback function.
+ * @param {String} name a global variable name
+ * @param {Function} callback
+ */
+function whenAvailable(name, callback) {
+	let interval = 1000; // ms
+	setTimeout(function () {
+		if (window[name]) {
+			callback(window[name]);
+		} else {
+			whenAvailable(name, callback);
+		}
+	}, interval);
+}
 
 /**
  * Notifie about player joining the game.
  */
 function notify_player_join() {
+	if(window.DM)
+		return;
 	const playerdata = {
 		abovevtt_version: window.AVTT_VERSION,
 		player_id: window.PLAYER_ID,
@@ -1980,7 +1940,7 @@ function notify_player_join() {
 	};
 
 	console.log("Sending playerjoin msg, abovevtt version: " + playerdata.abovevtt_version + ", sheet ID:" + window.PLAYER_ID);
-	window.MB.sendMessage("custom/myVTT/playerjoin", playerdata);
+	whenAvailable('JOURNAL', function(){window.MB.sendMessage("custom/myVTT/playerjoin", playerdata)});
 }
 
 /**
@@ -2177,7 +2137,7 @@ function init_ui() {
 	drawOverlayUnderFogDarkness.css("position", "absolute");
 	drawOverlayUnderFogDarkness.css("top", "0");
 	drawOverlayUnderFogDarkness.css("left", "0");
-	drawOverlayUnderFogDarkness.css("z-index", "18");
+	drawOverlayUnderFogDarkness.css("z-index", "11");
 
 	const mapItems = $("<div id='map_items'></div>");
 	mapItems.css("top", "0");
@@ -2249,6 +2209,17 @@ function init_ui() {
 	elev.css("left", "0");
 	elev.css("z-index", "19");
 
+	const weather = $("<canvas id='weather_overlay'></canvas>");
+	weather.css("position", "absolute");
+	weather.css("top", "0");
+	weather.css("left", "0");
+	weather.css("z-index", "55");
+
+	const weatherLight = $("<canvas id='weather_light'></canvas>");
+	weatherLight.css("position", "absolute");
+	weatherLight.css("top", "0");
+	weatherLight.css("left", "0");
+	weatherLight.css("z-index", "10000000");
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
@@ -2346,13 +2317,14 @@ function init_ui() {
 	VTT.append(tempOverlay);
 	VTT.append(walls);
 	VTT.append(elev);
+	VTT.append(weather);
 	mapItems.append(tokenMapItems);
 	mapContainer.append(outer_light_container);
 	mapContainer.append(mapItems);
 	mapContainer.append(darknessLayer);
 	outer_light_container.append(rayCasting);
 	outer_light_container.append(lightContainer);
-	lightContainer.append(lightOverlay);
+	lightContainer.append(lightOverlay, weatherLight);
 
 
 	mapItems.append(background);
@@ -2392,16 +2364,13 @@ function init_ui() {
 
 	init_controls();
 	init_sheet();
-	init_my_dice_details()
-	setTimeout(function() {
-		find_and_set_player_color();
-		if(!window.DM) {
-			notify_player_join();
-			init_player_sheet(window.PLAYER_SHEET);
-			report_connection();
-		}
-		configure_peer_manager_from_settings();
-	}, 5000);
+	init_my_dice_details();
+	
+	window.WaypointManager = new WaypointManagerClass();
+
+	find_and_set_player_color();
+	configure_peer_manager_from_settings();
+	
 
 	$(".sidebar__pane-content").css("background", "rgba(255,255,255,1)");
 
@@ -2411,18 +2380,7 @@ function init_ui() {
 	init_combat_tracker();
 
 	token_menu();
-	load_custom_monster_image_mapping();
-
-
-	window.WaypointManager=new WaypointManagerClass();
-
-	// TODO: I don't think this needs to be a timeout any more. Figure what window.STARTING does and make this better
-	setTimeout(function() {
-		window.STARTING = false;
-	}, 6000);
-
-
-
+	
 
 	// EXPERRIMENTAL DRAG TO MOVE
 	let  curDown = false,
@@ -3543,12 +3501,12 @@ function show_player_sheet() {
 	});
 	$(".ct-character-sheet__inner, [class*='styles_mobileNav']>div>button[class*='styles_navToggle']").css({
 		"display": "",
-		"z-index": 110
+		"z-index": 21000
 	});
 	$("[class*='styles_mobileNav']").toggleClass('visibleMobileNav', true);
 	$(".site-bar").css({
 		"display": "",
-		"z-index": 110
+		"z-index": 21000
 	});
 	if (window.innerWidth > 1540) { // DDB resize point + sidebar width
 		// the reactive nature of the character sheet starts messing with our thin layout so don't allow the thin layout on smaller screens. Let DDB do their condensed/tablet/mobile view instead

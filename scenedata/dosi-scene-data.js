@@ -1,5 +1,4 @@
-function get_scene_data_dosi() {
-	return{
+export const get_scene_data_dosi = {
 		"dnd/dosi/dragons-rest/Map101dragonsrest": {
 			"vpps": 29.666666666666668,
 			"title": "Map 2: Dragons Rest ",
@@ -43314,4 +43313,3 @@ function get_scene_data_dosi() {
 			}
 		},
 	}
-}

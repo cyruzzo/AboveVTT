@@ -1,5 +1,4 @@
-function get_scene_data_doip() {
-	return{
+export const get_scene_data_doip = {
 		"doip/axeholm/MapAxeholm": {
 			
 			"reveals": [
@@ -117641,4 +117640,3 @@ function get_scene_data_doip() {
 			}
 		},
 	}
-}

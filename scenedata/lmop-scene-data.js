@@ -1,5 +1,4 @@
-function get_scene_data_lmop() {
-	return {
+export const get_scene_data_lmop = {
 		"lmop/goblin-arrows/Map11CragmawHideout": {},
 		"lmop/phandalin/MapRedbrandHideout": {},
 		"lmop/the-spiders-web/MapRuinsofThundertree": {},
@@ -19714,4 +19713,3 @@ function get_scene_data_lmop() {
 				"tags": ['2024 Tokens']
 		},
 	}
-}

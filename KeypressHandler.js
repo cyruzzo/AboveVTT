@@ -259,7 +259,7 @@ Mousetrap.bind('v', function () {       //video toggle
     $('#peerVideo_switch').click()
 });
 
-Mousetrap.bind('shift+v', function () {       //check token vision
+Mousetrap.bind('shift+v', function () {    
     if(window.SelectedTokenVision == true && $('#selected_token_vision .ddbc-tab-options__header-heading--is-active').length==0){
         window.SelectedTokenVision = false;
         if(window.DM)
@@ -268,7 +268,6 @@ Mousetrap.bind('shift+v', function () {       //check token vision
     else{
         window.SelectedTokenVision = true;
     }
-
    redraw_light();
 });
 

@@ -8,7 +8,6 @@ import { init_audio_mixer } from './audio/index.js'
 $(function() {
   if (is_abovevtt_page()) { // Only execute if the app is starting up
     console.log("startup calling init_splash");
-    window.STARTING = true; // TODO: clean up how this gets set to false
     init_loading_overlay_beholder();
     addBeyond20EventListener("rendered-roll", (request) => {$('.avtt-sidebar-controls #switch_gamelog').click();});
     $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
@@ -35,7 +34,7 @@ $(function() {
         window.diceRoller = new DiceRoller();  
         localStorage.removeItem("ScenesHandler" + gameId);
         let scenesKeys = Object.entries(localStorage).filter(key => key[0].includes('ScenesHandler'));
-        for(let i in scenesKeys){
+        for(let i=0; i<scenesKeys.length; i++){
           localStorage.removeItem(scenesKeys[i][0]);
         }
       })
@@ -44,14 +43,24 @@ $(function() {
       .then(set_campaign_secret)      // set it to window.CAMPAIGN_SECRET
       .then(async () => {
         window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId)
+        return window.CAMPAIGN_INFO.dmId;
       })
-      .then(() => {
+      .then((campaignDmId) => {
 
-        if (is_encounters_page()) {
+
+        const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid');
+        const isDmPage = is_encounters_page();
+
+
+        if (isDmPage && campaignDmId == userId) {
           inject_dice();
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
-        } else if (is_characters_page()) {
+        } 
+        else if(isDmPage){
+          startup_step("Player joining as DM")
+          return start_player_joining_as_dm();
+        }else if (is_characters_page()) {
           startup_step("Starting AboveVTT for character");
           return start_above_vtt_for_players();
         } else {
@@ -140,7 +149,7 @@ $(function() {
               showTempMessage('No non-player tokens selected');
             }
                 
-            for(let i in window.CURRENTLY_SELECTED_TOKENS){
+            for(let i=0; i<window.CURRENTLY_SELECTED_TOKENS.length; i++){
 
               let id = window.CURRENTLY_SELECTED_TOKENS[i];
               let token = window.TOKEN_OBJECTS[id];
@@ -368,11 +377,56 @@ async function start_above_vtt_common() {
   create_peerVideo_button();
   return true;
 }
+function start_player_joining_as_dm(){
+  if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
+    throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
+  }
+  //This is not supported at the moment, if supported the DM should have to choose who can be co-dm - judge people trying to cheat
+  const message = $(`
+    <div style="
+      width: 400px;
+        height: fit-content;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        position: fixed;
+        z-index: 1000000;
+        top: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        flex-wrap: wrap;
+        text-align: center;
+        border: 2px solid #fff;
+        background: #000d;
+        border-radius:5px;
+    ">
+      <span style="
+      font-size: 25px;
+      text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000, 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000; 
+      ">It is not currently possible to join as DM from a player account.</span>
+    </div>`);
 
+  $('body').append(message);
+  remove_loading_overlay();
+  $('#splash').remove();
+  $(window).one('click.messageRremove', function(){
+    message.remove();
+  })
+
+}
 async function start_above_vtt_for_dm() {
   if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
+
+  //These functions are removed to stop issues with running on the campaign page and loops/extending objects via $.extend. 
+  //We can look at other ways to fix our code so this isn't needed. I've already moved off for...in loops I could find that were targeting arrays.
+  delete Array.prototype.clean
+  delete Array.prototype.distinct
+  delete Array.prototype.each
+  delete Array.prototype.sortBy
+
   window.document.title = `AVTT DM ${window.document.title}`
   $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
   window.PLAYER_ID = false;

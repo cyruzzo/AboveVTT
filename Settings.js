@@ -598,6 +598,20 @@ function avtt_settings() {
 		defaultValue: false,
 		class: 'ui'
 	})
+	settings.push(
+	{
+		name: "monsterCritType",
+		label: "Monster Action Crit Type",
+		type: "dropdown",
+		options: [
+                { value: "0", label: "Double damage dice", description: "Doubles damage dice for crits." },
+                { value: "1", label: "Perfect Crits", description: "Rolls the original dice and adds a max roll" },
+                { value: "3", label: "Double total damage", description: "Rolls the original dice adds modifier then doubles it" },
+                { value: "2", label: "Manual", description: "Rolls are not modified based on crit" },
+		],
+		defaultValue: 0,
+		class: 'ui'
+	})
 	settings.push({
 		name: 'quickToggleDefaults',
 		label: 'Quick Toggle Defaults on Load',
@@ -1154,11 +1168,11 @@ function redraw_settings_panel_token_examples(settings) {
 	for (let i = 0; i < items.length; i++) {
 		let item = $(items[i]);
 		mergedSettings.imgsrc = item.find(".token-image").attr("src");
-		item.replaceWith(build_example_token(mergedSettings));
+		item.replaceWith(build_example_token(mergedSettings, 90));
 	}
 }
 
-function build_example_token(options) {
+function build_example_token(options, size=90) {
 	let mergedOptions = {...default_options(), ...window.TOKEN_SETTINGS, ...options};
 	let hpnum;
 	switch (mergedOptions['defaultmaxhptype']) {
@@ -1179,7 +1193,7 @@ function build_example_token(options) {
 		temp: 0
 	}
 	mergedOptions.id = `exampleToken-${uuid()}`;
-	mergedOptions.size = 90;
+	mergedOptions.size = size;
 	// mergedOptions.gridHeight = 1;
 	// mergedOptions.gridWidth = 1;
 	mergedOptions.armorClass = 10;
@@ -1644,7 +1658,7 @@ async function export_scenes_folder_context(folderId){
 	const getIds = function(folderId){
 		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
 
-		for(let scene in scenesInFolder){
+		for(let scene=0; scene<scenesInFolder.length; scene++){
 			ids.push(scenesInFolder[scene].id)
 			if(scenesInFolder[scene].itemType != 'scene'){
 				getIds(scenesInFolder[scene].id)
@@ -1661,7 +1675,7 @@ async function export_scenes_folder_context(folderId){
 		journalchapters: [],
 		soundpads: {}
 	};
-	for(let id in ids){
+	for(let id=0; id<ids.length; id++){
 		let scene = await AboveApi.getScene(ids[id]);
 		let currentSceneData = {
 			...scene.data
@@ -1702,7 +1716,7 @@ async function export_main_scenes_folder_backup(){
 	const getIds = function(folderId){
 		let scenesInFolder = window.ScenesHandler.scenes.filter(d => d.parentId == folderId);
 
-		for(let scene in scenesInFolder){
+		for(let scene=0; scene<scenesInFolder.length; scene++){
 			ids.push(scenesInFolder[scene].id)
 			if(scenesInFolder[scene].itemType != 'scene'){
 				getIds(scenesInFolder[scene].id)
@@ -1713,7 +1727,7 @@ async function export_main_scenes_folder_backup(){
 	getIds(folderId);
 	let scenes = []
 		
-	for(let id in ids){
+	for(let id=0; id<ids.length; id++){
 		let scene = await AboveApi.getScene(ids[id]);
 		let currentSceneData = {
 			...scene.data

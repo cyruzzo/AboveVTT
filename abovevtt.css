@@ -495,8 +495,7 @@ button .ddbc-tab-options__header-heading .menu-option{
 .door-button:hover .portal.foreground{
     background: linear-gradient(#fffc, #fffc), radial-gradient(ellipse at center, #00F 20%, transparent) !important;
 }
-.door-button:hover .door.foreground,
-{
+.door-button:hover .door.foreground{
     background: #fff;
 }
 
@@ -878,6 +877,9 @@ select#doorTypeSelectUVTT{
 }
 #elev_overlay{
     opacity: 0.5;
+}
+#weather_overlay{
+    pointer-events:none;
 }
 #combat_tracker_inside .ui-resizable-s,
 #combat_tracker_inside .ui-resizable-se,
@@ -2985,6 +2987,33 @@ button.roll-button-mod.minus {
     justify-content: center;
     align-items: center; 
 }
+body .note-visibility-toggle-container {
+    position:fixed;
+    background:#fff;
+    flex-wrap: wrap;
+    flex-direction: column;
+    border-radius:5px;
+    padding: 5px;
+    display:flex;
+    z-index: 100000;
+    transform:translateX(-100%);
+    border: 1px solid #ddd;
+}
+.note-visibility-toggle-container .visibility_toggle_row label{
+    margin: 1px 10px;
+}
+.note-list .token-row-button.share span.material-icons {
+    font-size: 21px;
+}
+.avtt-context-background{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 10000;
+}
 
 .row-chapter {
     display: flex;
@@ -3943,7 +3972,8 @@ input.condition-duration-input {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+    box-sizing: border-box;
+}   
 
 #conditions-flyout li span:not(.condition-lock) {
     flex-shrink: 1;
@@ -4627,8 +4657,8 @@ h3.no-bottom-margin-setting ~ .sidebar-panel-header-explanation{
     margin-bottom:20px;
 }
 .token-image-modal-footer-select-wrapper select {
-    min-width: 35%;
-    max-width: 35%;
+    min-width: 34%;
+    max-width: 34%;
 }
 .footer-input-wrapper {
     width: 100%;
@@ -4701,11 +4731,13 @@ div#importer_area>div>div:first-of-type {
     top: 0 !important;
     left: 0 !important;
     float: left !important;
-    width: 90px !important;
-    height: 90px !important;
-    margin: 5px !important;
+    margin: 2px !important;
     position: relative !important;
     opacity: 1 !important;
+}
+.token-change-image-modal .example-token{
+    width:90px;
+    height:90px;
 }
 .custom-token-image-item.ui-draggable-dragging {
     width: auto;
@@ -5075,17 +5107,15 @@ button.block-send-to-game-log span {
 .sidebar-list-item-row-details {
     text-overflow: ellipsis;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    color: #10161a;
+    display: block;
     flex-grow: 1;
+    color: #10161a;
     margin-left: 8px;
     margin-right: 8px;
     line-height: 1.4;
     font-family: Roboto, "Open Sans", Helvetica, sans-serif;
     text-align: left;
     white-space: nowrap;
-    width: 0px;
 }
 .sidebar-list-item-row-details div {
     display: flex;
@@ -5344,8 +5374,13 @@ button.token-row-button.token-row-edit-encounter{
     flex: auto;
 }
 #token-configuration-modal .sidebar-panel-body{
-    min-height:300px;
-    max-height:500px;
+    min-height: 265px;
+    max-height: 265px;
+    padding: 0px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    overflow-x: hidden;
 }
 #token-configuration-modal{
     height: unset;
@@ -8349,6 +8384,10 @@ button#changeTokenImage:before{
 .sp-palette-container {
     min-width: 176px;
 }
+
+[role='dialog'] .note-text {
+    min-height: 450px;
+}
 #combat_area tr.CTToken:before{
     content:  '???';
     font-size: 12px;
@@ -8728,7 +8767,7 @@ div.note[id^="ui-id"] {
     width: 100% !important;
     padding: 0px !important;
     max-height: calc(100% - 33px) !important;
-
+    position: unset;
 }
 
 .tooltip-body-description-text.note-text img{
@@ -9319,7 +9358,7 @@ button.journal-view-button.journal-button img {
 /** END TEMP new .text--quote-box type **/
 
 
-.note-text h6, {
+.note-text h6 {
     font-size: 14px !important;
     font-weight: bold !important;
 }
@@ -9459,7 +9498,8 @@ button.journal-view-button.journal-button img {
 }
 
 .visibility-container ~ .note-text iframe.journal-site-embed{
-    top: 42px;
+    top: 78px;
+    height: calc(100% - 78px);
 }
 
 
@@ -9830,7 +9870,7 @@ button.journal-view-button.journal-button img {
 /** END TEMP new .text--quote-box type **/
 
 
-.custom-stat-block h6, {
+.custom-stat-block h6 {
     font-size: 14px !important;
     font-weight: bold !important;
 }
@@ -10041,10 +10081,7 @@ button.resistanceButton.qrm_buttons_bar span {
     justify-content: center;
     position:relative;
 }
-[class*="glc-game-log"] .qrm_name_line{
-    max-width:;
 
-}
 [class*="glc-game-log"] span.save-fail{
     color: #A00;
 }

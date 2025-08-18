@@ -85,7 +85,7 @@ async function fetch_monsters(monsterIds, callback, open5e=false) {
 		const monsterData = await DDBApi.fetchMonsters(uniqueMonsterIds);
 		let promises = [];
 
-		for(let i in monsterData){
+		for(let i=0; i<monsterData.length; i++){
 		   if(monsterData[i].isReleased || monsterData[i].isHomebrew){
 		       promises.push(new Promise(async (resolve, reject) => {
 

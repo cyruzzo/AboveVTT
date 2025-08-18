@@ -1,52 +1,3 @@
-// Helper functions to check max map size - data from https://github.com/jhildenbiddle/canvas-size
-function get_canvas_max_length() {
-	let browser = get_browser();
-
-	if (browser.mozilla) {
-		// Firefox
-		return 32767;		
-	} else if (browser.msie) {
-		// IE
-		if (browser >= '11.0') {
-			return 16384;
-		} else {
-			return 8192;
-		}
-	} else if (!browser.opera) {
-		// Chrome
-		if (browser.version >= '73.0') {
-			return 65535;
-		} else {
-			return 32767;
-		}
-	} else {
-		// Unsupported
-		return 32767;
-	}
-}
-
-function get_canvas_max_area() {
-	let browser = get_browser();
-	let max_area = 0;
-
-	if (browser.mozilla) {
-		// Firefox
-		max_area = (11180 * 11180);
-	} else if (browser.msie) {
-		// IE
-		max_area = (8192 * 8192);		
-	} else if (!browser.opera) {
-		// Chrome
-		max_area = (16384 * 16384);
-	} else {
-		// Unsupported
-		max_area = (16384 * 16384);
-	}
-
-	console.log("Browser detected as " + browser.name + " with version " + browser.version);
-	return max_area;
-}
-
 class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	reload(callback = null) { //This is still used for grid wizard loading since we load so many times.
@@ -601,6 +552,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			reset_canvas();
 			set_default_vttwrapper_size()
 			align_grid(false, false, copiedSceneData);
+			window.WeatherOverlay.stop();
 		});
 
 

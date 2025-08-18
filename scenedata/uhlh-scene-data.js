@@ -1,5 +1,4 @@
-function get_scene_data_uhlh() {
-	return {
+export const get_scene_data_uhlh = {
 		"dnd/uhlh/uni-and-the-hunt-for-the-lost-horn/Map11WoodlandPool": {
 			"vpps": 51,
 			"title": "Map 1.1: Woodland Pool ",
@@ -3533,4 +3532,3 @@ function get_scene_data_uhlh() {
 			"hpps": "51",
 		}
 	}
-}
