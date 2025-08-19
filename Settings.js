@@ -1647,6 +1647,10 @@ async function export_scene_context(sceneId){
 	$(".import-loading-indicator").remove();
 }
 
+async function open_scene_note(sceneId){
+	window.JOURNAL.display_note(sceneId, false);
+}
+
 
 
 async function export_scenes_folder_context(folderId){

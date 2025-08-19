@@ -2327,6 +2327,40 @@ function register_scene_row_context_menu() {
 						export_scene_context(itemToEdit.id)
 					}
 				};
+				menuItems["openSceneNote"] = {
+					name: "Open Scene Note",
+					callback: function(itemKey, opt, originalEvent) {
+						let self=window.JOURNAL;
+						let item = find_sidebar_list_item(opt.$trigger);
+						let new_noteid=uuid();
+
+						if(item.noteData){
+							self.notes[new_noteid]={
+								...item.noteData,
+								isSceneNote: true, 
+								forScene: item.id,
+							};
+						}else {
+							self.notes[new_noteid]={
+								title: item.name,
+								text: "",
+								player: false,
+								plain: "",
+								isSceneNote: true, 
+								forScene: item.id,
+							};
+						}
+						self.edit_note(new_noteid, false, (note) => {
+							let sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id == item.id);
+							if (sceneIndex !== -1) {
+								let scene = window.ScenesHandler.scenes[sceneIndex];
+								scene.noteData = note;
+								window.ScenesHandler.persist_scene(sceneIndex, false);
+								rebuild_scene_items_list();
+							}
+						});
+					}
+				}
 			}
 			if(rowItem.isTypeFolder()){
 				menuItems["export"] = {

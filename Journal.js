@@ -2272,17 +2272,26 @@ class JournalManager{
 		this.persist();
 	}
 	
-	close_all_notes(){
+	close_all_notes(onSaveCallback, id){
 		$("textarea[data-note-id]").each(function(){
 			let taid=$(this).attr('id')
 			tinyMCE.get(taid)?.execCommand('mceSave');
+			const self = window.JOURNAL;
+			if (self.notes && onSaveCallback) {
+				Object.keys(self.notes).forEach(noteId => {
+					if (self.notes[noteId]?.isSceneNote ) {
+						onSaveCallback(self.notes[noteId]);
+						delete self.notes[noteId];
+					}
+				});
+			}
 			$(this).closest(".note")?.dialog("close");
 		});
 	}
 
-	edit_note(id, statBlock = false){
+	edit_note(id, statBlock = false, onSaveCallback){
 		$(`div.note[data-id='${id}']`)?.dialog("close");
-		this.close_all_notes();
+		this.close_all_notes(onSaveCallback, id);
 		let self=this;
 		
 		let note=$("<div class='note'></div>");
@@ -2315,7 +2324,11 @@ class JournalManager{
 				let btn_view=$(`<button class='journal-view-button journal-button'><img height="10" src="${window.EXTENSION_PATH}assets/icons/view.svg"></button>"`);
 				$(this).siblings('.ui-dialog-titlebar').prepend(btn_view);
 				btn_view.click(function(){	
-					self.close_all_notes();
+					if(onSaveCallback) {
+						self.close_all_notes(onSaveCallback, id);
+					}else {
+						self.close_all_notes();
+					}
 					self.display_note(id, statBlock);
 				});
 			},
@@ -2323,6 +2336,14 @@ class JournalManager{
 				// console.log(event);
 				let taid=$(event.target).find("textarea").attr('id');
 				tinyMCE.get(taid).execCommand('mceSave');
+				if (self.notes && onSaveCallback) {
+					Object.keys(self.notes).forEach(noteId => {
+						if (self.notes[noteId]?.isSceneNote ) {
+							onSaveCallback(self.notes[noteId]);
+							delete self.notes[noteId];
+						}
+					});
+				}
 				$(this).remove();
 			}
 		});

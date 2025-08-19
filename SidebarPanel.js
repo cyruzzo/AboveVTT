@@ -777,6 +777,7 @@ class SidebarListItem {
     let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
     console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
+    item.noteData = sceneData.noteData || undefined;
     return item;
   }
 
