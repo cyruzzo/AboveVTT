@@ -2331,7 +2331,6 @@ function register_scene_row_context_menu() {
 					name: "Open Scene Note",
 					callback: function(itemKey, opt, originalEvent) {
 						let self=window.JOURNAL;
-						console.log(self);
 						let item = find_sidebar_list_item(opt.$trigger);
 						let new_noteid=uuid();
 

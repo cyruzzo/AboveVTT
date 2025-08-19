@@ -2276,8 +2276,6 @@ class JournalManager{
 		$("textarea[data-note-id]").each(function(){
 			let taid=$(this).attr('id')
 			tinyMCE.get(taid)?.execCommand('mceSave');
-			console.log('Closing notes');
-			console.log(window.JOURNAL);
 			const self = window.JOURNAL;
 			if (self.notes && onSaveCallback) {
 				Object.keys(self.notes).forEach(noteId => {
@@ -2287,7 +2285,6 @@ class JournalManager{
 					}
 				});
 			}
-			console.log(window.JOURNAL);
 			$(this).closest(".note")?.dialog("close");
 		});
 	}
@@ -2340,7 +2337,6 @@ class JournalManager{
 				let taid=$(event.target).find("textarea").attr('id');
 				tinyMCE.get(taid).execCommand('mceSave');
 				if (self.notes && onSaveCallback) {
-					console.log(self.notes)
 					Object.keys(self.notes).forEach(noteId => {
 						if (self.notes[noteId]?.isSceneNote ) {
 							onSaveCallback(self.notes[noteId]);
@@ -2348,7 +2344,6 @@ class JournalManager{
 						}
 					});
 				}
-				console.log(self.notes)
 				$(this).remove();
 			}
 		});
