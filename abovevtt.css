@@ -4735,7 +4735,7 @@ div#importer_area>div>div:first-of-type {
     position: relative !important;
     opacity: 1 !important;
 }
-.token-change-image-modal .example-token{
+#token-change-image-modal .example-token{
     width:90px;
     height:90px;
 }
