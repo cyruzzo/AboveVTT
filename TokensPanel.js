@@ -1076,8 +1076,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     // set up whatever you need to. We'll override a few things after
     let foundOptions = find_token_options_for_list_item(listItem);
     options = {...options, ...foundOptions}; // we may need to put this in specific places within the switch statement below
-
-    options.imgsrc = random_image_for_item(listItem, specificImage);
+    const chosenImage = random_image_for_item(listItem, specificImage);
+    options.imgsrc = chosenImage;
 
 
     if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[options.imgsrc] != undefined){
@@ -1160,8 +1160,10 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 return;
             }
             options.id = listItem.sheet;
-            if(window.all_token_objects[options.id] != undefined){
+            if(window.all_token_objects[options.id] != undefined){           
                 options = {...options, ...window.all_token_objects[options.id].options}
+                if(specificImage)
+                    options.imgsrc = chosenImage;
             }
             tokenSizeSetting = options.tokenSize;
             tokenSize = parseInt(tokenSizeSetting);
@@ -2388,6 +2390,18 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         const didAdd = await customization.addAlternativeImage(newImageUrl);
         if (!didAdd) {
             return; // no need to do anything if the image wasn't added. This can happen if they accidentally hit enter a few times which would try to add the same url multiple times
+        }
+        if(listItem.type == ItemType.PC ){
+            const id = customization.tokenOptions.id;
+            let token = window.all_token_objects[id]
+            if (token)
+                window.all_token_objects[id].options.alternativeImages = customization.tokenOptions.alternativeImages;
+           
+            token = window.TOKEN_OBJECTS[id]
+            if (token){
+                token.options.alternativeImages = customization.tokenOptions.alternativeImages;
+                token.sync($.extend(true, {}, window.TOKEN_OBJECTS[id].options))
+            }
         }
         if(['.mp4', '.webm', '.m4v'].some(d => type.includes(d))){
             customization.tokenOptions.videoToken = true;
