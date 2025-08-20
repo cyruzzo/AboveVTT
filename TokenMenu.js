@@ -30,49 +30,53 @@ function context_menu_flyout(id, hoverEvent, buildFunction) {
 	if (contextMenu.length === 0) {
 		console.warn("context_menu_flyout, but #tokenOptionsPopup could not be found");
 		return;
+	}	
+	
+	if (hoverEvent.type === "mouseleave") {
+		clearTimeout(window.contextFlyoutTimeout)
 	}
-
 	if (hoverEvent.type === "mouseenter") {
-		let flyout = $(`<div id='${id}' class='context-menu-flyout'></div>`);
-		$(`.context-menu-flyout`).remove(); // never duplicate
+		window.contextFlyoutTimeout = setTimeout(() => {
+			let flyout = $(`<div id='${id}' class='context-menu-flyout'></div>`);
+			$(`.context-menu-flyout`).remove(); // never duplicate
 
-		buildFunction(flyout);
-		$("#tokenOptionsContainer").append(flyout);
-		observe_hover_text(flyout);
+			buildFunction(flyout);
+			$("#tokenOptionsContainer").append(flyout);
+			observe_hover_text(flyout);
 
-		let contextMenuCenter = (contextMenu.height() / 2);
-		let flyoutHeight = flyout.height();
-		let diff = (contextMenu.height() - flyoutHeight);
-		let flyoutTop = contextMenuCenter - (flyoutHeight / 2); // center alongside the contextmenu
+			let contextMenuCenter = (contextMenu.height() / 2);
+			let flyoutHeight = flyout.height();
+			let diff = (contextMenu.height() - flyoutHeight);
+			let flyoutTop = contextMenuCenter - (flyoutHeight / 2); // center alongside the contextmenu
 
 
-		if (diff > 0) {
-			// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
-			// align to the top of the row. 14 is half the height of the button
-			let buttonPosition = $(hoverEvent.currentTarget).closest('.flyout-from-menu-item')[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
-			if(buttonPosition < contextMenuCenter) {
-				flyoutTop =  buttonPosition - (flyoutHeight / 5)
+			if (diff > 0) {
+				// the flyout is smaller than the contextmenu. Make sure it's alongside the hovered row			
+				// align to the top of the row. 14 is half the height of the button
+				let buttonPosition = $(hoverEvent.currentTarget).closest('.flyout-from-menu-item')[0].getBoundingClientRect().y - $("#tokenOptionsPopup")[0].getBoundingClientRect().y + 14
+				if (buttonPosition < contextMenuCenter) {
+					flyoutTop = buttonPosition - (flyoutHeight / 5)
+				}
+				else {
+					flyoutTop = buttonPosition - (flyoutHeight / 2)
+				}
 			}
-			else{
-				flyoutTop =  buttonPosition - (flyoutHeight / 2)
-			}				
-		}	
 
-		flyout.css({
-			left: contextMenu.width(),
-			top: flyoutTop,
-		});
-
-		if ($(".context-menu-flyout")[0].getBoundingClientRect().top < 0) {
-			flyout.css("top", 0)
-		}
-		else if($(".context-menu-flyout")[0].getBoundingClientRect().bottom > window.innerHeight-15) {
 			flyout.css({
-				top: 'unset',
-				bottom: 0
+				left: contextMenu.width(),
+				top: flyoutTop,
 			});
-		}
-		
+
+			if ($(".context-menu-flyout")[0].getBoundingClientRect().top < 0) {
+				flyout.css("top", 0)
+			}
+			else if ($(".context-menu-flyout")[0].getBoundingClientRect().bottom > window.innerHeight - 15) {
+				flyout.css({
+					top: 'unset',
+					bottom: 0
+				});
+			}
+		}, 150)
 	} 
 }
 
