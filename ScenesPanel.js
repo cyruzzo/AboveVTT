@@ -2174,7 +2174,7 @@ async function redraw_scene_list(searchTerm) {
 						if(i != 'players' && window.splitPlayerScenes[i] == item.id){
 							let listItem = list_item_from_player_id(i);
 							let tokenOptions = find_token_options_for_list_item(listItem);
-							playerImage = tokenOptions.alternativeImages != undefined ? tokenOptions.alternativeImages[0] : listItem.image;
+							playerImage = tokenOptions.alternativeImages?.length>0 ? tokenOptions.alternativeImages[0] : listItem.image;
 							let tokenImg = $(`<img src='${playerImage}'></img>`)
 							tokenImg.css({
 								width: '15px',
