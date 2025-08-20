@@ -1062,6 +1062,10 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		window.MB.sendMessage("custom/myVTT/delete_scene",{ id: sceneId });
 		let sceneIndex = window.ScenesHandler.scenes.findIndex(s => s.id === sceneId);
 		window.ScenesHandler.scenes.splice(sceneIndex, 1);
+		if (window.JOURNAL.notes[sceneId] != undefined){
+			delete window.JOURNAL.notes[sceneId];
+			window.JOURNAL.persist();
+		}
 		if (reloadUI) {
 			did_update_scenes();
 		}
