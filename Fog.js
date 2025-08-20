@@ -7167,6 +7167,10 @@ function redraw_light(darknessMoved = false){
 
 			}
 
+			if (window.lightAuraClipPolygon[auraId]?.darkvision !== undefined) {
+				lightInLosContext.globalCompositeOperation = 'source-over';
+				drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+			}
 			
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);	
 			offscreenContext.globalCompositeOperation="lighten";
