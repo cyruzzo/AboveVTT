@@ -212,7 +212,7 @@ class WeatherOverlay {
             }
         } else if (this.type === 'faerieLight' ||  this.type === 'fireflies') {
             for (let i = 0; i < count; i++) {
-                const r = 1 + Math.random() * 1;
+                const r = 1 + Math.random() * 2;
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
@@ -357,6 +357,11 @@ class WeatherOverlay {
                     filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
                 })
             }
+            else if (this.type === 'faerieLight' || this.type === 'fireflies') {
+                $(this.canvas).css({
+                    filter: `blur(1px)`
+                })
+            }
             else {
                 $(this.canvas).css({
                     filter: ``
@@ -461,7 +466,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 1,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 hue: Math.random() * 360,
                 drift: -0.5 + Math.random(),
@@ -499,7 +504,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 1,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 blinkPhase: Math.random() * Math.PI * 2,
                 blinkSpeed: 1.2 + Math.random() * 0.8,
@@ -896,7 +901,7 @@ class WeatherOverlay {
             const cy = p.y + Math.cos(t * 0.5 + p.phase) * 12;
             const baseR = p.r;
             const baseAspect = p.aspect;
-            const fogColor = `rgba(${180 + Math.floor(Math.sin(p.phase + t * 0.7) * 18)},${180 + Math.floor(Math.cos(p.phase + t * 0.9) * 18)},${185 + Math.floor(Math.sin(p.phase + t * 1.1) * 22)},${(p.alpha * 1.2 + 0.22).toFixed(3)})`;
+            const fogColor = `rgba(120, 120, 120, ${(p.alpha * 1.2 + 0.22).toFixed(3)}`;
             let fade = 1;
             if (p.fadeIn !== undefined && p.fadeIn < (p.fadeInFrames || 10)) {
                 fade = p.fadeIn / (p.fadeInFrames || 10);
@@ -919,7 +924,7 @@ class WeatherOverlay {
                 const subR = baseR * (0.62 + 0.18 * Math.cos(t * 0.5 + p.phase + j));
                 const subAspect = baseAspect * (0.8 + 0.25 * Math.sin(t * 0.7 + p.phase + j));
                 this.offscreenCtx.beginPath();
-                this.offscreenCtx.ellipse(subCx, subCy, subR * (1.05 + 0.18 * Math.sin(t * 0.9 + p.phase + j)), subR * subAspect * (0.7 + 0.2 * Math.cos(t * 0.8 + p.phase + j)), 0, 0, Math.PI * 2);
+                this.offscreenCtx.ellipse(subCx, subCy, subR * (1 * (j + 1) + 0.18 * Math.sin(t * 0.9 + p.phase + j)), subR * subAspect * (0.7 * (j + 1) + 0.2 * Math.cos(t * 0.8 + p.phase + j)), 0, 0, Math.PI * 2);
                 this.offscreenCtx.fillStyle = fogColor;
                 this.offscreenCtx.globalAlpha = (p.alpha * 0.7 + 0.13) * (0.8 - 0.15 * j) * fade;
                 this.offscreenCtx.fill();
@@ -932,6 +937,7 @@ class WeatherOverlay {
                 p.y = Math.random() * (this.height + 200) - 100;
                 p.phase = Math.random() * Math.PI * 2;
                 p.fadeIn = 1;
+                p.r = 200 + Math.random() * this.width / 100;
             }
         }
         this.offscreenCtx.restore();
