@@ -352,6 +352,27 @@ class WeatherOverlay {
     start() {
         if (!this.animationId) {
             this._animate();
+            if (this.type === 'fog') {
+                $(this.canvas).css({
+                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                })
+            }
+            else {
+                $(this.canvas).css({
+                    filter: ``
+                })
+            }
+
+            if (this.type === 'lightning') {
+                $(this.lightCanvas).css({
+                    filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
+                })
+            }
+            else{
+                $(this.lightCanvas).css({
+                    filter: ``
+                })
+            }
         }
     }
 
@@ -400,10 +421,8 @@ class WeatherOverlay {
             this._drawLeaves();
         }
 
-        if (this.type === 'fog')
-            this.ctx.filter = `blur(${window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor}px`;
-        else
-            this.ctx.filter = '';
+
+            
         
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.offscreenCanvas, 0, 0);
@@ -680,7 +699,6 @@ class WeatherOverlay {
             this.lightCtx.save();
             this.lightCtx.globalAlpha = 0.5;
             this.lightCtx.beginPath();
-            this.lightCtx.filter = 'blur(15px)';
             this.lightCtx.ellipse(
                 this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
                 this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
@@ -694,14 +712,12 @@ class WeatherOverlay {
             this.lightCtx.shadowColor = '#fff';
             this.lightCtx.shadowBlur = 120;
             this.lightCtx.fill();
-            this.lightCtx.filter = '';
             this.lightCtx.restore();
 
 
             this.offscreenCtx.save();
             this.offscreenCtx.globalAlpha = glowAlpha;
             this.offscreenCtx.beginPath();
-            this.offscreenCtx.filter = 'blur(14px)';
             this.offscreenCtx.ellipse(
                 this._lightningStrike.x + Math.cos(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
                 this._lightningStrike.y + Math.sin(this._lightningStrike.angle) * this._lightningStrike.length * 0.5,
@@ -715,7 +731,6 @@ class WeatherOverlay {
             this.offscreenCtx.shadowColor = '#fff';
             this.offscreenCtx.shadowBlur = 120;
             this.offscreenCtx.fill();
-            this.offscreenCtx.filter = '';
             this.offscreenCtx.restore();
             this.offscreenCtx.globalAlpha = this._lightningAlpha * 0.7;
             this.offscreenCtx.save();
