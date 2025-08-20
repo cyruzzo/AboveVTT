@@ -212,7 +212,7 @@ class WeatherOverlay {
             }
         } else if (this.type === 'faerieLight' ||  this.type === 'fireflies') {
             for (let i = 0; i < count; i++) {
-                const r = 1 + Math.random() * 1;
+                const r = 1 + Math.random() * 2;
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
@@ -357,6 +357,11 @@ class WeatherOverlay {
                     filter: `blur(${window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.scale_factor}px`
                 })
             }
+            else if (this.type === 'faerieLight' || this.type === 'fireflies') {
+                $(this.canvas).css({
+                    filter: `blur(1px)`
+                })
+            }
             else {
                 $(this.canvas).css({
                     filter: ``
@@ -461,7 +466,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 1,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 hue: Math.random() * 360,
                 drift: -0.5 + Math.random(),
@@ -499,7 +504,7 @@ class WeatherOverlay {
             this.particles.push({
                 x: Math.random() * this.width,
                 y: Math.random() * this.height,
-                r: 1 + Math.random() * 1,
+                r: 1 + Math.random() * 2,
                 alpha: 0.7 + Math.random() * 0.3,
                 blinkPhase: Math.random() * Math.PI * 2,
                 blinkSpeed: 1.2 + Math.random() * 0.8,

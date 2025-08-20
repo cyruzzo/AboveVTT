@@ -1603,6 +1603,9 @@ function export_current_scene(){
 			DataFile.notes[tokenID] = window.JOURNAL.notes[tokenID];
 		}
 	}
+	if (window.JOURNAL.notes[currentSceneData.id]){
+		DataFile.notes[currentSceneData.id] = window.JOURNAL.notes[currentSceneData.id];
+	}
 	let currentdate = new Date(); 
 	let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth()+1)}-${currentdate.getDate()}`
 	download(b64EncodeUnicode(JSON.stringify(DataFile,null,"\t")),`${window.CURRENT_SCENE_DATA.title}-${datetime}.abovevtt`,"text/plain");
@@ -1638,6 +1641,9 @@ async function export_scene_context(sceneId){
 			DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
 		}
 		tokensObject[tokenId] = scene.data.tokens[token];		
+	}
+	if (window.JOURNAL.notes[currentSceneData.id]) {
+		DataFile.notes[currentSceneData.id] = window.JOURNAL.notes[currentSceneData.id];
 	}
 	DataFile.scenes[0].tokens = tokensObject;
 
@@ -1695,6 +1701,9 @@ async function export_scenes_folder_context(folderId){
 				DataFile.notes[tokenId] = window.JOURNAL.notes[tokenId];
 			}
 			tokensObject[tokenId] = scene.data.tokens[token];		
+		} 
+		if (window.JOURNAL.notes[ids[id]]) {
+			DataFile.notes[ids[id]] = window.JOURNAL.notes[ids[id]];
 		}
 		currentSceneData.tokens = tokensObject;
 		DataFile.scenes.push(currentSceneData)
