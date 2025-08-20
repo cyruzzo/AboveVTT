@@ -4,8 +4,10 @@ function init_sidebar_tabs() {
 
   let sidebarContent = is_characters_page() ? $(".ct-sidebar__inner [class*='styles_content']>div:first-of-type") : $(".sidebar__pane-content");
 
-  // gamelog doesn't use it yet, maybe never
-
+  // Journal needs to load before scenes for scene  notes
+  if (window.JOURNAL === undefined) {
+    init_journal(find_game_id());
+  }
   if (window.DM) {
     $("#tokens-panel").remove();
     tokensPanel = new SidebarPanel("tokens-panel", false);

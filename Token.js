@@ -2698,7 +2698,7 @@ class Token {
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
 						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
 					});
-					if(!(this.options.square)){
+					if(!(this.options.square)){	
 						tokenImage.addClass("token-round");
 					}
 					
