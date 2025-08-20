@@ -2250,7 +2250,7 @@ padding-top:10px;
     cursor: default;
 }
 
-.token .condition-img {
+:is(.token, .folder-item-list) .condition-img {
     padding: 0;
     margin: 0;
     background: #01ffff;
@@ -2263,7 +2263,7 @@ padding-top:10px;
     background: #F58231;
 }
 
-.token .note-condition.condition-img {
+:is(.token, .folder-item-list) .note-condition.condition-img {
     background: #e4c700;
 }
 

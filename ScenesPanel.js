@@ -2186,6 +2186,161 @@ async function redraw_scene_list(searchTerm) {
 					}
 					
 				}
+				if (window.JOURNAL.notes[item.id] != undefined){
+					const conditionName = "note"
+					const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
+					const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
+
+
+					conditionContainer.dblclick(function () {
+						window.JOURNAL.display_note(item.id);
+					})
+
+					
+
+
+
+					const noteId = item.id;
+					let hoverNoteTimer;
+					const sceneId = item.id;
+					conditionContainer.on({
+						'mouseover': function (e) {
+							hoverNoteTimer = setTimeout(function () {
+								build_and_display_sidebar_flyout(e.clientY, function (flyout) {
+									let noteHover = `<div>
+										<div class="tooltip-header">
+											<div class="tooltip-header-icon">
+											
+												</div>
+											<div class="tooltip-header-text">
+												${item.name}
+											</div>
+											<div class="tooltip-header-identifier tooltip-header-identifier-condition">
+											Note
+											</div>
+										</div>
+										<div class="tooltip-body note-text" style="max-height:calc(100vH - 100px)">
+											<div class="tooltip-body-description">
+												<div class="tooltip-body-description-text note-text">
+													${window.JOURNAL.notes[item.id].text}
+												</div>
+											</div>
+										</div>
+									</div>`
+									flyout.addClass("prevent-sidebar-modal-close"); // clicking inside the tooltip should not close the sidebar modal that opened it
+									flyout.addClass('note-flyout');
+									flyout.css('max-height', 'calc(100vH - 50px)')
+									const tooltipHtml = $(noteHover);
+									window.JOURNAL.translateHtmlAndBlocks(tooltipHtml, noteId);
+									add_journal_roll_buttons(tooltipHtml);
+									window.JOURNAL.add_journal_tooltip_targets(tooltipHtml);
+									add_stat_block_hover(tooltipHtml, sceneId);
+									add_aoe_statblock_click(tooltipHtml, sceneId);
+
+									$(tooltipHtml).find('.add-input').each(function () {
+										let numberFound = $(this).attr('data-number');
+										const spellName = $(this).attr('data-spell');
+										const remainingText = $(this).hasClass('each') ? '' : `${spellName} slots remaining`
+										const track_ability = function (key, updatedValue) {
+											if (window.JOURNAL.notes[noteId].abilityTracker === undefined) {
+												window.JOURNAL.notes[noteId].abilityTracker = {};
+											}
+											const asNumber = parseInt(updatedValue);
+											window.JOURNAL.notes[noteId].abilityTracker[key] = asNumber;
+											window.JOURNAL.persist();
+											debounceSendNote(noteId, window.JOURNAL.notes[noteId])
+										}
+										if (window.JOURNAL.notes[noteId].abilityTracker?.[spellName] >= 0) {
+											numberFound = window.JOURNAL.notes[noteId].abilityTracker[spellName]
+										}
+										else {
+											track_ability(spellName, numberFound)
+										}
+
+										let input = createCountTracker(window.JOURNAL.notes[noteId], spellName, numberFound, remainingText, "", track_ability);
+										$(this).find('p').remove();
+										$(this).after(input)
+									})
+									flyout.append(tooltipHtml);
+									let sendToGamelogButton = $(`<a class="ddbeb-button" href="#">Send To Gamelog</a>`);
+									sendToGamelogButton.css({ "float": "right" });
+									sendToGamelogButton.on("click", function (ce) {
+										ce.stopPropagation();
+										ce.preventDefault();
+
+										send_html_to_gamelog(noteHover);
+									});
+
+									flyout.css({
+										right: '350px',
+										width: '400px'
+									})
+
+									const buttonFooter = $("<div></div>");
+									buttonFooter.css({
+										height: "40px",
+										width: "100%",
+										position: "relative",
+										background: "#fff"
+									});
+									window.JOURNAL.block_send_to_buttons(flyout);
+									flyout.append(buttonFooter);
+									buttonFooter.append(sendToGamelogButton);
+									flyout.find("a").attr("target", "_blank");
+									flyout.off('click').on('click', '.tooltip-hover[href*="https://www.dndbeyond.com/sources/dnd/"], .int_source_link ', function (event) {
+										event.preventDefault();
+										render_source_chapter_in_iframe(event.target.href);
+									});
+
+
+									flyout.hover(function (hoverEvent) {
+										if (hoverEvent.type === "mouseenter") {
+											clearTimeout(removeToolTipTimer);
+											removeToolTipTimer = undefined;
+										} else {
+											remove_tooltip(500);
+										}
+									});
+
+									flyout.css("background-color", "#fff");
+								});
+							}, 500);
+
+						},
+						'mouseout': function (e) {
+							clearTimeout(hoverNoteTimer)
+							remove_tooltip(500);
+						}
+
+					});
+
+
+
+
+					conditionContainer.css({
+						"position": "absolute",
+						"top": "0px",
+						"left": "0px",
+						"height": "14px",
+						"width": "12px",
+						"border-radius": "2px 2px 50% 2px",
+						"overflow": "hidden",
+						"border-width": "0px 1px 1px 0px",
+						"border-color": "#000",
+						"border-style": "solid"
+					})
+
+					symbolImage.css({
+						'height': "22px",
+						'width': "22px",
+						'border-radius': "0px",
+						'left': "-4px",
+						'top': "-7px",
+						'position': "absolute"
+					})
+					conditionContainer.append(symbolImage);
+					row.append(conditionContainer);
+				}
 				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 				if (folder.length > 0) {
 					console.debug("appending scene item", item, folder);
@@ -2327,7 +2482,7 @@ function register_scene_row_context_menu() {
 						export_scene_context(itemToEdit.id)
 					}
 				};
-				if(window.JOURNAL.notes[rowItem.id]){
+				if (window.JOURNAL.notes[rowItem.id]) {
 					menuItems["openSceneNote"] = {
 						name: "Open Scene Note",
 						callback: function (itemKey, opt, originalEvent) {
@@ -2340,6 +2495,7 @@ function register_scene_row_context_menu() {
 				menuItems["editSceneNote"] = {
 					name: window.JOURNAL.notes[rowItem.id] ? "Edit Scene Note" : "Create Scene Note",
 					callback: function (itemKey, opt, originalEvent) {
+
 						let self = window.JOURNAL;
 						let item = find_sidebar_list_item(opt.$trigger);
 
@@ -2351,8 +2507,22 @@ function register_scene_row_context_menu() {
 								plain: "",
 								isSceneNote: true,
 							};
+							did_update_scenes();
 						}
 						self.edit_note(item.id, false);
+						
+					}
+				}
+				if (window.JOURNAL.notes[rowItem.id]) {
+					menuItems["deleteSceneNote"] = {
+						name: "Delete Scene Note",
+						callback: function (itemKey, opt, originalEvent) {
+							let self = window.JOURNAL;
+							let item = find_sidebar_list_item(opt.$trigger);
+							delete self.notes[item.id];
+							self.persist();
+							did_update_scenes();
+						}
 					}
 				}
 			}
