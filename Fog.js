@@ -7114,8 +7114,9 @@ function redraw_light(darknessMoved = false){
 			
 			}
 
-			if (window.lightAuraClipPolygon === undefined)
+			if (window.lightAuraClipPolygon === undefined){
 				window.lightAuraClipPolygon = {};
+			}
 			clipped_light(auraId, lightPolygon, playerTokenId, canvasWidth, canvasHeight, darknessBoundarys, selectedIds.length);
 		}
 
@@ -7522,9 +7523,7 @@ function draw_darkness_aoe_to_canvas(ctx){
 	draw_aoe_to_canvas(darknessAoes, ctx, true);
 }
 function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getSceneMapSize().sceneWidth, canvasHeight = getSceneMapSize().sceneHeight, darknessBoundarys = getDarknessBoundarys(), numberOfSharedVisionTokens = 0){
-	//this saves clipped light offscreen canvas' to a window object so we can check them later to see what tokens are visible to the players
-	if(window.DM && !window.SelectedTokenVision)
-		return;
+
 	
 	let visionColor = `rgba(0,0,0,0)`;
 	let visionRange = 0;
