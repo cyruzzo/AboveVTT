@@ -8412,7 +8412,7 @@ button#changeTokenImage:before{
     min-width: 176px;
 }
 
-[role='dialog'] .note-text {
+[role='dialog'] .note .note-text {
     min-height: 450px;
 }
 #combat_area tr.CTToken:before{
