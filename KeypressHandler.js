@@ -249,6 +249,8 @@ Mousetrap.bind('s', function () {       //select
 });
 
 Mousetrap.bind('e', function () {       //elev
+    if(shiftHeld)
+        return;
     $('#elev_button').click()
 });
 
