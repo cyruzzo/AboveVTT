@@ -8412,7 +8412,7 @@ button#changeTokenImage:before{
     min-width: 176px;
 }
 .mfp-wrap{
-    z-index: 1000000;
+    z-index: 1000000 !important;
 }
 [role='dialog'] .note .note-text {
     min-height: 450px;
