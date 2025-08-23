@@ -278,7 +278,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					let [endX, endY] = [window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.left*teleScale, window.TOKEN_OBJECTS[tokenIds].options.teleporterCoords.top*teleScale]
 
 					let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
-					context.setLineDash([30, 30])
+					context.setLineDash([5, 5])
 					drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
 
 
@@ -313,7 +313,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						let [endX, endY] = get_event_cursor_position(e);
 
 						let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
-						context.setLineDash([30, 30])
+						context.setLineDash([5, 5])
 						drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
 
 
@@ -372,7 +372,7 @@ function token_context_menu_expanded(tokenIds, e) {
 						let [endX, endY] = get_event_cursor_position(e);
 
 						let [rectX, rectY] = [endX - window.CURRENT_SCENE_DATA.hpps/2, endY-window.CURRENT_SCENE_DATA.vpps/2]
-						context.setLineDash([30, 30])
+						context.setLineDash([5, 5])
 						drawRect(context, rectX, rectY, window.CURRENT_SCENE_DATA.hpps, window.CURRENT_SCENE_DATA.vpps, '#fff', false)
 
 
