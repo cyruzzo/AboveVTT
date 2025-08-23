@@ -8411,7 +8411,9 @@ button#changeTokenImage:before{
 .sp-palette-container {
     min-width: 176px;
 }
-
+.mfp-wrap{
+    z-index: 1000000;
+}
 [role='dialog'] .note .note-text {
     min-height: 450px;
 }

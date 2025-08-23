@@ -1721,30 +1721,35 @@ const debounce_pc_token_update = mydebounce(() => {
     let token = window.TOKEN_OBJECTS[pc?.sheet];     
     if (token && pc) {
       let currentImage = token.options.imgsrc;
-      token.options.hitPointInfo = pc.hitPointInfo;
+      if (currentImage != undefined){
+        token.options.hitPointInfo = pc.hitPointInfo;
 
-      const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-      token.options = $.extend(true, {}, token.options, pc);
-      token.options.imgsrc = newImage;
+        const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
+        token.options = $.extend(true, {}, token.options, pc);
+        token.options.imgsrc = newImage;
 
-      for(let i =0; i<unusedPlayerData.length; i++){
-        delete token.options[unusedPlayerData[i]];
-      }    
-      if (window.DM) {
-        token.place_sync_persist(); // update it on the server
+        for (let i = 0; i < unusedPlayerData.length; i++) {
+          delete token.options[unusedPlayerData[i]];
+        }
+        if (window.DM) {
+          token.place_sync_persist(); // update it on the server
+        }
+        else {
+          token.place(); // update token for players even if dm isn't connected to websocket
+        }
       }
-      else{
-        token.place(); // update token for players even if dm isn't connected to websocket
-      }
+
     }
     token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
     if(token && pc){
       const currentImage = token.options.imgsrc;
-      const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-      token.options = $.extend(true, {}, token.options, pc);
-      token.options.imgsrc = newImage;
-      for(let i =0; i<unusedPlayerData.length; i++){
-        delete token.options[unusedPlayerData[i]];
+      if(currentImage != undefined){
+        const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
+        token.options = $.extend(true, {}, token.options, pc);
+        token.options.imgsrc = newImage;
+        for (let i = 0; i < unusedPlayerData.length; i++) {
+          delete token.options[unusedPlayerData[i]];
+        }
       }
     }     
   });

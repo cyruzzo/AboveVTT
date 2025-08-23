@@ -767,7 +767,7 @@ function persist_token_customization(customization, callback) {
         }
         else if (customization.tokenType == ItemType.Folder && customization.rootId == RootFolder.Players.id){
             const listItem = window.tokenListItems.find(d=> d.id == customization.id);
-            let fullPath = listItem.fullPath();
+            let fullPath = "/Players/"
             // find and place all items in this folder... but not subfolders
             tokensToPlace = window.tokenListItems
                 .filter(item => item.folderPath.startsWith(fullPath));
