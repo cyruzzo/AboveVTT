@@ -895,8 +895,6 @@ class WeatherOverlay {
 
     _drawFog() {
         const t = Date.now() * 0.00018;
-        this.offscreenCtx.save();
-        this.offscreenCtx.globalCompositeOperation = 'lighter';
         for (let p of this.particles) {
             const cx = p.x + Math.sin(t * 0.7 + p.phase) * 18;
             const cy = p.y + Math.cos(t * 0.5 + p.phase) * 12;
@@ -908,8 +906,6 @@ class WeatherOverlay {
                 fade = p.fadeIn / (p.fadeInFrames || 10);
                 p.fadeIn++;
             }
-
-            this.offscreenCtx.save();
             this.offscreenCtx.globalAlpha =(p.alpha * 1.2 + 0.22) * fade;
             this.offscreenCtx.shadowColor = fogColor;
             this.offscreenCtx.shadowBlur = 1;
@@ -930,7 +926,6 @@ class WeatherOverlay {
                 this.offscreenCtx.globalAlpha = (p.alpha * 0.7 + 0.13) * (0.8 - 0.15 * j) * fade;
                 this.offscreenCtx.fill();
             }
-            this.offscreenCtx.restore();
             p.x += this._windDx * (0.7 + 0.6 * (p.r / 56));
             p.y += this._windDy * (0.7 + 0.6 * (p.r / 56));
             if (p.x < -p.r || p.x > this.width + p.r || p.y < -p.r || p.y > this.height + p.r) {
@@ -941,7 +936,6 @@ class WeatherOverlay {
                 p.r = 200 + Math.random() * this.width / 100;
             }
         }
-        this.offscreenCtx.restore();
     }
 }
 
