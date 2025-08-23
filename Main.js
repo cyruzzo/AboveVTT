@@ -562,12 +562,9 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		}
 		let videoVolume = window.MIXER?.state()?.animatedMap?.volume != undefined ? window.MIXER?.state()?.animatedMap?.volume : $("#youtube_volume").val() != undefined ? $("#youtube_volume").val() : 0.25;
 		
-		if(window.DM){
-			videoVolume = videoVolume/100 * $("#master-volume input").val();
-		}
-		else{
-			videoVolume = videoVolume * $("#master-volume input").val()
-		}
+		
+		videoVolume = videoVolume * $("#master-volume input").val();
+		
 		if(url.includes('google')){
 	    if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0 ) {
 	        const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
@@ -590,7 +587,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		{
 		  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 		}
-		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.25' onloadstart="this.volume=${videoVolume/100}" id="scene_map" src="${url}" />`);
+		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.25' onplay="this.volume=${videoVolume/100}" id="scene_map" src="${url}" />`);
 		newmap.off("loadeddata").one("loadeddata", callback);
 		newmap.off("error").on("error", map_load_error_cb);
 
