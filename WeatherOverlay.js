@@ -386,9 +386,10 @@ class WeatherOverlay {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
             this.animationId = null;
-            this.ctx.clearRect(0, 0, this.width, this.height);
-            this.lightCtx.clearRect(0, 0, this.width, this.height);      
         }
+        this.offscreenCtx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.lightCtx.clearRect(0, 0, this.width, this.height);   
     }
 
     _animate = () => {
