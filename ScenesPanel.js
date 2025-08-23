@@ -2186,7 +2186,7 @@ async function redraw_scene_list(searchTerm) {
 					}
 					
 				}
-				if (window.JOURNAL.notes[item.id] != undefined){
+				if (window.JOURNAL.notes?.[item.id] != undefined){
 					const conditionName = "note"
 					const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 					const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
