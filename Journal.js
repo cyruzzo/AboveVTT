@@ -2002,6 +2002,8 @@ class JournalManager{
 			}
 			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
 				url = url.replace(/view\?usp=/gi, 'preview?usp=')
+			}else if(url.match(/youtube.com/gi){
+				url = url.replace("youtube.com", "youtube-nocookie.com")
 			}
 			encodeURI(url);
 			const newFrame = $(`<iframe class='journal-site-embed' src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'></iframe>`)			
