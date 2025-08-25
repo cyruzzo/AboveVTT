@@ -947,6 +947,7 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
 
   console.groupEnd()
 }
+
 function general_statblock_formating(input){
   input = input.replace(/&nbsp;/g,' ')
 
