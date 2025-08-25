@@ -1559,16 +1559,23 @@ function ct_load(data=null){
 			else if(data[i]['data-target'] !== undefined){
 				if (window.all_token_objects[data[i]['data-target']] == undefined) {
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
+					if (window.TOKEN_OBJECTS[data[i]['data-target']]) {
+						window.all_token_objects[data[i]['data-target']].options.alternativeImages = window.TOKEN_OBJECTS[data[i]['data-target']].alternativeImages;
+					}
 					window.all_token_objects[data[i]['data-target']].sync = mydebounce(function(options) {				
 						window.MB.sendMessage('custom/myVTT/token', options);
 					}, 300);
 				}
+				const currAltImage = window.all_token_objects[data[i]['data-target']].options.alternativeImages;
+				
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
+				window.all_token_objects[data[i]['data-target']].options.alternativeImages = currAltImage;
+				
 				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
 
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
-					if([data[i]['data-target']] in window.TOKEN_OBJECTS){
+					if (window.TOKEN_OBJECTS[data[i]['data-target']]){
 						window.TOKEN_OBJECTS[data[i]['data-target']].hp = window.all_token_objects[data[i]['data-target']].baseHp;
 						window.TOKEN_OBJECTS[data[i]['data-target']].maxHp = window.all_token_objects[data[i]['data-target']].maxHp;
 						window.TOKEN_OBJECTS[data[i]['data-target']].tempHp = window.all_token_objects[data[i]['data-target']].tempHp;

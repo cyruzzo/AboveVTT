@@ -2002,7 +2002,7 @@ class JournalManager{
 			}
 			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
 				url = url.replace(/view\?usp=/gi, 'preview?usp=')
-			}else if(url.match(/youtube.com/gi){
+			}else if(url.match(/youtube.com/gi)){
 				url = url.replace("youtube.com", "youtube-nocookie.com")
 			}
 			encodeURI(url);
