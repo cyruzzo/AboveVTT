@@ -233,7 +233,9 @@ function addFloatingCombatText(id, damageValue, heal = false){
 		combatText.remove();
 	}, 2000)
 }
-
+const debounceSyncMeUp = mydebounce(()=>{
+	window.MB.sendMessage("custom/myVTT/syncmeup");
+}, 2000)
 class MessageBroker {
 
 	loadAboveWS(callback=null){
@@ -291,7 +293,7 @@ class MessageBroker {
 			};
 			if (recovered && (!window.DM)) {
 				console.log('asking the DM for recovery!');
-				self.sendMessage("custom/myVTT/syncmeup");
+				debounceSyncMeUp();
 	 		}
 			setupMBIntervals();
 		};
@@ -1907,9 +1909,7 @@ class MessageBroker {
 						delete window.LOADING;
 						
 
-						if(!window.DM) {
-						 	window.MB.sendMessage('custom/myVTT/syncmeup');
-						}
+
 
 						do_check_token_visibility();
 						
