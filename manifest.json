@@ -100,10 +100,11 @@
 			"peerVideo.js",
 			"peerDice.js",
 			"onedrive/*",
-			"WeatherOverlay.js"
+			"WeatherOverlay.js",
+			"iframe.html",
+			"loadFrame.js"
 			],
 			"matches": [ "*://*.dndbeyond.com/*" ]	
 		}
 	]
 }
-

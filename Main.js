@@ -493,6 +493,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			height: height,
 			videoId: videoid,
 			playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0 },
+			host: 'https://www.youtube-nocookie.com',
 			events: {
 				'onStateChange': function(event) {  
 					if (event.data == 0) window.YTPLAYER.seekTo(0); 
@@ -3169,7 +3170,7 @@ function init_help_menu() {
 					<div id="tab12" class='googledoc bookmark' data-src="https://docs.google.com/document/d/e/2PACX-1vRSJ6Izvldq5c9z_d-9-Maa8ng1SUK2mGSQWkPjtJip0cy9dxAwAug58AmT9zRtJmiUx5Vhkp7hATSt/pub?embedded=true#h.mob2z6z5azn2"></div>
 
 					<div id="tab20">
-						<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+						<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/videoseries?list=PLW0tvNe3gIM00xQCReTWi8CPrXBJyDQmG&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 					</div>
 					<div id="tab21">
 						AboveVTT is an open source project. The developers build it in their free time, and rely on users to report and troubleshoot bugs. If you're experiencing a bug, here are a few options: 
@@ -3219,7 +3220,7 @@ function init_help_menu() {
 			$('.tabs-content>div#tab2').show();
 			let src = $(currentTab).attr('data-src');
 			$('.tabs-content>div#tab2').find('iframe').remove();
-			$('.tabs-content>div#tab2').append(`<iframe src='${src}'></iframe>`)
+			$('.tabs-content>div#tab2').append(`<iframe src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(src)}'></iframe>`)
 		}
 
 		$(currentTab).show();

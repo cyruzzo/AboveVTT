@@ -2003,7 +2003,9 @@ class JournalManager{
 			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
 				url = url.replace(/view\?usp=/gi, 'preview?usp=')
 			}
-			$(iframes[i]).replaceWith(`<iframe class='journal-site-embed' src='${url}'></iframe>`);
+			encodeURI(url);
+			const newFrame = $(`<iframe class='journal-site-embed' src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'></iframe>`)			
+			$(iframes[i]).replaceWith(newFrame);
 		}
 
 
