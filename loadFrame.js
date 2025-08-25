@@ -1,6 +1,7 @@
-setTimeout(function(){
-    const queryString = window.location.search;
-    const querys = new URLSearchParams(queryString);
-    const src = querys.get('src');
-    document.getElementById('targetFrame').src = src;
-}, 500)
+const targetFrame = document.getElementById('targetFrame');
+const queryString = window.location.search;
+const querys = new URLSearchParams(queryString);
+const src = querys.get('src');
+targetFrame.src = src;
+
+
