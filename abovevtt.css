@@ -4261,6 +4261,7 @@ audio::-webkit-media-controls-time-remaining-display{
 .note-text>p:first-of-type{
     margin-top: 0px !important;
 }
+
 .note .note-pin{
     background: url(https://drive.google.com/thumbnail?id=1excaNtaLfn_Hj5EHuH-h8iimpzC36i0M);
     position: absolute;
@@ -5198,10 +5199,7 @@ button.block-send-to-game-log span {
 .note-text ul{
     padding-inline-start: 40px;
 }
-.note-text{
-    position: relative;
-    height: 100%;
-}
+
 
 .note-text iframe.journal-site-embed{
     display:block;
@@ -5215,12 +5213,19 @@ button.block-send-to-game-log span {
     height: 100%;
     border: none;
 }
+.note-text>p:has(.journal-site-embed) {
+    height: calc(100% - 43px);
+    display: block;
+    position: absolute;
+    width: 100%;
+}
+.body-rpgcharacter-sheet .note-text>p:has(.journal-site-embed) {
+    height: 100%;
+}
 .body-rpgcharacter-sheet .note-text{
     top: 0px;
 }
-.body-rpgcharacter-sheet .note-pin {
-    transform: translateY(43px);
-}
+
 .body-rpgcharacter-sheet .note-text>p:first-of-type{
     margin:0px;
 }
@@ -8796,7 +8801,7 @@ div.note[id^="ui-id"] {
     width: 100% !important;
     padding: 0px !important;
     max-height: calc(100% - 33px) !important;
-    position: unset;
+    position: relative;
 }
 
 .tooltip-body-description-text.note-text img{
@@ -8828,6 +8833,10 @@ div.note[id^="ui-id"] .mce-listbox button{
 
 div.note[id^="ui-id"] .mce-btn button {
     padding: 1px 4px;
+}
+body .mce-abs-layout-item,
+.mce-abs-end{
+    position: absolute !important;
 }
 .ui-dialog{
     padding: 0px !important;
