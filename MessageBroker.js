@@ -1870,6 +1870,7 @@ class MessageBroker {
 								const left = parseInt(targetPortal.options.left)+25;
 								const isTeleporter = true;
 								await paste_selected_tokens(left, top, isTeleporter);
+								window.TOKEN_OBJECTS[teleporterTokenId].highlight();
 							}
 							catch{
 								window.TELEPORTER_PASTE_BUFFER = undefined;
