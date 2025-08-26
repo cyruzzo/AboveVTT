@@ -338,6 +338,7 @@ async function start_above_vtt_common() {
   window.REVEALED = [];
   window.TOKEN_CUSTOMIZATIONS = [];
   window.TOKEN_OBJECTS = {};
+  window.ON_SCREEN_TOKENS = {};
   window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
   window.TOKEN_PASTE_BUFFER = [];
   window.TOKEN_SETTINGS = $.parseJSON(localStorage.getItem(`TokenSettings${window.gameId}`)) || {};

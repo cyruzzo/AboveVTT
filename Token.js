@@ -531,6 +531,7 @@ class Token {
 
 		delete window.CURRENT_SCENE_DATA.tokens[id];
 		delete window.TOKEN_OBJECTS[id];
+		delete window.ON_SCREEN_TOKENS[id];
 		if(!is_player_id(this.options.id)){
 			delete window.all_token_objects[id];
 			if (id in window.JOURNAL.notes) {
@@ -2494,6 +2495,9 @@ class Token {
 							tokenClone.attr('data-name', old.attr('data-name'));
 							tokenClone.toggleClass('hasTooltip', $(old).hasClass('hasTooltip'));
 					        $('#token_map_items').append(tokenClone);
+							if(window.ON_SCREEN_TOKENS[this.options.id] == undefined)
+								window.ON_SCREEN_TOKENS[this.options.id] = {};
+							window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 						}
 						else{
 							let copyToken = $(`[data-notatoken='notatoken_${this.options.id}']`);
@@ -3491,6 +3495,9 @@ class Token {
 						tokenClone.attr('data-name', tok.attr('data-name'));
 						tokenClone.toggleClass('hasTooltip', $(tok).hasClass('hasTooltip'));
 				        $('#token_map_items').append(tokenClone);
+						if (window.ON_SCREEN_TOKENS[this.options.id] == undefined)
+							window.ON_SCREEN_TOKENS[this.options.id] = {};
+						window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
 					}	
 			    }
 
@@ -3501,6 +3508,10 @@ class Token {
 					throttleLight();
 				else
 					longDebounceLightChecks();
+
+				if (window.ON_SCREEN_TOKENS[this.options.id] == undefined)
+					window.ON_SCREEN_TOKENS[this.options.id] = {};
+				window.ON_SCREEN_TOKENS[this.options.id].onScreenToken = tok;
 				console.groupEnd()
 			}
 			// HEALTH AURA / DEAD CROSS
@@ -4309,23 +4320,27 @@ function setTokenAuras (token, options) {
 			(options.hidden || (options.hideaura && !token.attr("data-id").includes(window.PLAYER_ID)) || showAura == 'none') ? token.parent().parent().find("#aura_" + tokenId).hide()
 						: token.parent().parent().find("#aura_" + tokenId).show()
 		}
+		const currAura = token.parent().parent().find("#aura_" + tokenId);
+		if (window.ON_SCREEN_TOKENS[options.id] == undefined)
+			window.ON_SCREEN_TOKENS[options.id] = {};
+		window.ON_SCREEN_TOKENS[options.id].onScreenAura = currAura; 
 		if(options.animation?.aura && options.animation?.aura != 'none'){
 			if(options.animation.customAuraMask != undefined){
 				if(options.animation.customAuraRotate == true){
-					token.parent().parent().find("#aura_" + tokenId).attr('data-animation', 'aurafx-rotate')
+					currAura.attr('data-animation', 'aurafx-rotate')
 				}
 				else{
-					token.parent().parent().find("#aura_" + tokenId).attr('data-animation', '')
+					currAura.attr('data-animation', '')
 				}
-				token.parent().parent().find("#aura_" + tokenId).attr('data-custom-animation', 'true')
-				token.parent().parent().find("#aura_" + tokenId).css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
+				currAura.attr('data-custom-animation', 'true')
+				currAura.css('--custom-mask-image', `url('${parse_img(options.animation.customAuraMask)}')`)
 			}
 			else{
-				token.parent().parent().find("#aura_" + tokenId).attr('data-animation', options.animation.aura)
+				currAura.attr('data-animation', options.animation.aura)
 			}				
 		}
 		else{
-			token.parent().parent().find("#aura_" + tokenId).removeAttr('data-animation')
+			currAura.removeAttr('data-animation')
 		}
 
 		

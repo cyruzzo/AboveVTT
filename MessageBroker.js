@@ -1649,6 +1649,7 @@ class MessageBroker {
 				window.sceneRequestTime = Date.now();
 		    	let lastSceneRequestTime = window.sceneRequestTime;   
 				window.TOKEN_OBJECTS = {};
+				window.ON_SCREEN_TOKENS = {};
 				window.videoTokenOld = {};
 				let data = msg.data;
 				let self=this;

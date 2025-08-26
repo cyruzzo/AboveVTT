@@ -461,6 +461,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 		$('#scene_map_container').css('background', '#fff');
 		for (let i in window.TOKEN_OBJECTS) {
 			delete window.TOKEN_OBJECTS[i];
+			delete window.ON_SCREEN_TOKENS[i]
 		}
 		window.lineOfSightPolygons = {};
 
