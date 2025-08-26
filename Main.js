@@ -1343,7 +1343,7 @@ function init_mouse_zoom() {
 			}
 	        }
         }
-	setTimeout(() => {
+
 		document.addEventListener('touchstart', start_pinch, { passive: false });
 		document.addEventListener('touchmove', move_pinch, { passive: false });
 		document.addEventListener("touchend", function (e) {
@@ -1368,7 +1368,7 @@ function init_mouse_zoom() {
 		document.addEventListener("gesturestart", prevent);
 		document.addEventListener("gesturechange", prevent);
 		document.addEventListener("gestureend", prevent);
-}, 5000)
+
 
 }
 
