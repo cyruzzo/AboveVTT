@@ -1331,7 +1331,7 @@ function init_mouse_zoom() {
 		}
 	}
 	let suppressed = null;
-	function move_pinch(ev, busy) {
+	function move_pinch(ev) {
 		if(ev && touchMode == 2) {
 			ev.preventDefault()
 			ev.stopPropagation();
@@ -1343,30 +1343,33 @@ function init_mouse_zoom() {
 			}
 	        }
         }
-	window.addEventListener('touchstart', start_pinch, {passive: false});
-	window.addEventListener('touchmove', move_pinch, {passive: false});
-	window.addEventListener("touchend", function (e) {
-		if(touchTimeout) clearTimeout(touchTimeout);
-		if (e.touches.length === 0) {
-			touchTimeout = setTimeout(() => {
-				touchMode = 0;
-			}, 100);
-		}
-	});
-        window.addEventListener("touchcancel", function (e) {
-		//still needs to be tested - not sure how to trigger
-		if ((e.touches == undefined || e.touches.length === 0) && touchMode === 2) {
-			console.log("Touch interrupted. Resetting.");
-			touchMode = 0;
-			throttledZoom(start_scale,1); //todo: x,y?
-		}
-	});
 
-	//disable browser gestures (not sure: is there a more subtle way in CSS?)
-	function prevent(e) { e.preventDefault(); }
-	document.addEventListener("gesturestart", prevent);
-	document.addEventListener("gesturechange", prevent);
-	document.addEventListener("gestureend", prevent);
+		document.addEventListener('touchstart', start_pinch, { passive: false });
+		document.addEventListener('touchmove', move_pinch, { passive: false });
+		document.addEventListener("touchend", function (e) {
+			if (touchTimeout) clearTimeout(touchTimeout);
+			if (e.touches.length === 0) {
+				touchTimeout = setTimeout(() => {
+					touchMode = 0;
+				}, 100);
+			}
+		});
+		document.addEventListener("touchcancel", function (e) {
+			//still needs to be tested - not sure how to trigger
+			if ((e.touches == undefined || e.touches.length === 0) && touchMode === 2) {
+				console.log("Touch interrupted. Resetting.");
+				touchMode = 0;
+				throttledZoom(start_scale, 1); //todo: x,y?
+			}
+		});
+
+		//disable browser gestures (not sure: is there a more subtle way in CSS?)
+		function prevent(e) { e.preventDefault(); }
+		document.addEventListener("gesturestart", prevent);
+		document.addEventListener("gesturechange", prevent);
+		document.addEventListener("gestureend", prevent);
+
+
 }
 
 
