@@ -5294,10 +5294,9 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 			let token = window.TOKEN_OBJECTS[id] != undefined ? window.TOKEN_OBJECTS[id] : window.all_token_objects[id];
 			if(token == undefined) continue;
 			let options = $.extend(true, {}, token.options);
-			
-			options.selected = true;
 
-			place_token_at_map_point(options, x, y, forceSize=true);				
+			place_token_at_map_point(options, x, y, forceSize=true);	
+			window.TOKEN_OBJECTS[id].selected = true;			
 		}
 		window.TELEPORTER_PASTE_BUFFER = undefined;
 	}
