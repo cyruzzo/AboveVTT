@@ -1911,10 +1911,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -1948,12 +1944,6 @@ export const get_scene_data_wel = {
 				"top": "2234px",
 				"hidehpbar": true,
 				"stat": 4775808,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
 				"hitPointInfo": {
 					"maximum": 2,
 					"current": 2,
@@ -1994,10 +1984,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2032,10 +2018,6 @@ export const get_scene_data_wel = {
 				"top": "3764px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2061,10 +2043,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#200020",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -2119,10 +2097,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2156,10 +2130,6 @@ export const get_scene_data_wel = {
 				"top": "2352px",
 				"hidehpbar": true,
 				"stat": 4775808,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
 				"hitPointInfo": {
 					"maximum": 2,
 					"current": 2,
@@ -2200,10 +2170,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2238,10 +2204,6 @@ export const get_scene_data_wel = {
 				"top": "3764px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2282,10 +2244,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2320,10 +2278,6 @@ export const get_scene_data_wel = {
 				"top": "2352px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2364,10 +2318,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2402,10 +2352,6 @@ export const get_scene_data_wel = {
 				"top": "3882px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2446,10 +2392,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2484,10 +2426,6 @@ export const get_scene_data_wel = {
 				"top": "2470px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2528,10 +2466,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2566,10 +2500,6 @@ export const get_scene_data_wel = {
 				"top": "3764px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2610,10 +2540,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2648,10 +2574,6 @@ export const get_scene_data_wel = {
 				"top": "3882px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2692,10 +2614,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2730,9 +2648,6 @@ export const get_scene_data_wel = {
 				"top": "2823px",
 				"hidehpbar": true,
 				"stat": 4775808,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
 				"hitPointInfo": {
 					"maximum": 2,
 					"current": 2,
@@ -2773,10 +2688,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2811,10 +2722,6 @@ export const get_scene_data_wel = {
 				"top": "2352px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -2854,10 +2761,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2891,11 +2794,6 @@ export const get_scene_data_wel = {
 				"top": "1940px",
 				"hidehpbar": true,
 				"stat": 4775808,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
 				"hitPointInfo": {
 					"maximum": 2,
 					"current": 2,
@@ -2936,10 +2834,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -2974,10 +2868,6 @@ export const get_scene_data_wel = {
 				"top": "3882px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -3018,10 +2908,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -3056,10 +2942,6 @@ export const get_scene_data_wel = {
 				"top": "2587px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -3099,10 +2981,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -3178,10 +3056,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -3256,10 +3130,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -3294,10 +3164,6 @@ export const get_scene_data_wel = {
 				"top": "3764px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -3338,10 +3204,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 43
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -3376,10 +3238,6 @@ export const get_scene_data_wel = {
 				"top": "3882px",
 				"hidehpbar": true,
 				"stat": 4486029,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 250,
 				"hitPointInfo": {
 					"maximum": 12,
 					"current": 12,
@@ -3418,10 +3276,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -3479,7 +3333,7 @@ export const get_scene_data_wel = {
 		"dm_map_usable": "1",
 		"offsety": 115.99999999999993,
 		"daylight": "rgba(255, 255, 255, 1)",
-		"hpps": 117.59999999999998,
+		"hpps": 117.59999999999998
 	},
 	"dnd/wel/jagged-edge-hideaway/JaggedEdgeHideawayMap": {
 		"vpps": "173.73333333333338",
@@ -9539,7 +9393,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "01c7d630-5c2c-4de8-8841-e51f85d01899",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -9554,10 +9407,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -9619,10 +9468,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -9662,10 +9507,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -9725,10 +9566,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#006060",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -9769,10 +9606,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#00C0C0",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -9813,10 +9646,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#000060",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -9876,10 +9705,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -9955,10 +9780,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -10017,7 +9838,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "1c623580-6f09-4b46-a224-e8a544e3f0fb",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10032,10 +9852,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 61
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10074,10 +9890,6 @@ export const get_scene_data_wel = {
 				"top": "2182px",
 				"hidehpbar": true,
 				"stat": 4485866,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 320,
 				"hitPointInfo": {
 					"maximum": 36,
 					"current": 36,
@@ -10103,7 +9915,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "203857b5-7c85-4f00-ac3c-d874754a6eb9",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10118,10 +9929,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10183,10 +9990,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -10212,10 +10015,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#E00000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -10256,10 +10055,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#E000E0",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -10300,10 +10095,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#00E0E0",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -10345,10 +10136,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#404040",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -10389,7 +10176,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "246de296-781b-4c4d-81f0-3b278646e5c9",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10404,10 +10190,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10469,10 +10251,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -10498,7 +10276,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "26d53aaf-50d0-44df-a83e-e699b7200274",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10513,10 +10290,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10578,10 +10351,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -10621,10 +10390,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10688,7 +10453,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "310dbace-35e5-415b-bb69-f0d976bd9220",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10703,10 +10467,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 25
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10741,10 +10501,6 @@ export const get_scene_data_wel = {
 				"top": "3225px",
 				"hidehpbar": true,
 				"stat": 4485867,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 215,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -10770,7 +10526,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "435344ca-7615-4d5f-a016-4ada451e5e2b",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10785,10 +10540,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -10850,10 +10601,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -10895,10 +10642,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -10930,25 +10673,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/DDB/Goblin",
 				"top": "2877px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/25815/575/637883055474122600.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/25837/41/637883856078730825.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/27555/195/637944428036911685.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/17/291/636377867867167584.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/17/292/636377867957118136.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/17/293/636377868039540605.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/17/334/636377873921745739.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/17/335/636377873997756608.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/18/2/636378960438136837.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/8715/784/637170139211060975.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/8715/787/637170139508357484.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/8715/790/637170139865869229.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/8715/793/637170140014561458.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/9094/387/637195291989531645.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/9107/470/637196228289489674.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/20552/275/637680873755019135.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp",
-					"https://www.dndbeyond.com/avatars/24423/707/637829134247532114.jpeg?width=150&height=150&fit=crop&quality=95&auto=webp"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -10973,7 +10697,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "671b67c6-2fb1-47f3-9256-3d6974ac2cc1",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -10988,10 +10711,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11053,10 +10772,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -11082,7 +10797,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "7318d6a7-63b6-4851-a0da-aa08e942ef7b",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11097,10 +10811,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 25
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11135,10 +10845,6 @@ export const get_scene_data_wel = {
 				"top": "3225px",
 				"hidehpbar": true,
 				"stat": 4485867,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 215,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -11164,7 +10870,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "7db005b8-cb95-4bcd-915a-e97ee8fdf6bd",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11179,10 +10884,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11244,10 +10945,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -11287,10 +10984,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11350,7 +11043,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "acda4127-d4d6-4d7a-9893-c5e499dce2f5",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11365,10 +11057,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11430,10 +11118,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -11474,10 +11158,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11538,7 +11218,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "ce2bbc4a-290c-49d3-8953-fd434adb970e",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11553,10 +11232,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 25
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11595,10 +11270,6 @@ export const get_scene_data_wel = {
 				"top": "2182px",
 				"hidehpbar": true,
 				"stat": 4485867,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 215,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -11624,7 +11295,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "dd1a7648-a587-4c14-86d0-0c17d44578e6",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11639,10 +11309,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11704,10 +11370,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -11733,7 +11395,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "f868e0fd-561f-425b-ae0b-7b1e8f8a915e",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -11748,10 +11409,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 66
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11813,10 +11470,6 @@ export const get_scene_data_wel = {
 					}
 				},
 				"stat": 4485863,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 150,
 				"hitPointInfo": {
 					"maximum": 6,
 					"current": 6,
@@ -11856,10 +11509,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -11917,7 +11566,7 @@ export const get_scene_data_wel = {
 		"dm_map_usable": "1",
 		"offsety": "97.19999999999983",
 		"daylight": "rgba(255, 255, 255, 1)",
-		"hpps": "174.20000000000002",
+		"hpps": "174.20000000000002"
 	},
 	"dnd/wel/hanging-tree/HangingTreeMap": {
 		"scale": 73.17073170731707,
@@ -13002,10 +12651,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13081,10 +12726,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13118,19 +12759,6 @@ export const get_scene_data_wel = {
 				"top": "1045px",
 				"hidehpbar": true,
 				"imageSize": 1,
-				"alternativeImages": [
-					"https://i.imgur.com/4pWxSUn.png",
-					"https://i.imgur.com/OCrXvMz.png",
-					"https://i.imgur.com/DcDsPj1.png",
-					"https://i.imgur.com/mSZB6Xi.png",
-					"https://i.imgur.com/BjgMrNq.png",
-					"https://i.imgur.com/PSoXLYT.png",
-					"https://i.imgur.com/W27Ad8q.png",
-					"https://i.imgur.com/NChSGAp.png",
-					"https://i.imgur.com/l3AOJfN.png",
-					"https://i.imgur.com/sKQLsz5.png",
-					"https://i.imgur.com/i1taIwb.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13174,10 +12802,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13210,34 +12834,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Human [F]",
 				"top": "1127px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/NjP2sGL.png",
-					"https://i.imgur.com/H8Q36Zh.png",
-					"https://i.imgur.com/RZq8SBK.png",
-					"https://i.imgur.com/HHwopfD.png",
-					"https://i.imgur.com/XqxVZmK.png",
-					"https://i.imgur.com/CPAfuWB.png",
-					"https://i.imgur.com/74bpcvT.png",
-					"https://i.imgur.com/urg9Qhh.png",
-					"https://i.imgur.com/t4yQcY9.png",
-					"https://i.imgur.com/eymbYs8.png",
-					"https://i.imgur.com/HOgBuYA.png",
-					"https://i.imgur.com/FofhAaY.png",
-					"https://i.imgur.com/ftlyRz6.png",
-					"https://i.imgur.com/ufdYpaw.png",
-					"https://i.imgur.com/PZ0UHJV.png",
-					"https://i.imgur.com/6Ha5aDY.png",
-					"https://i.imgur.com/DOnKbPL.png",
-					"https://i.imgur.com/lbxFV6I.png",
-					"https://i.imgur.com/2U9nwqu.png",
-					"https://i.imgur.com/KcIaDqG.png",
-					"https://i.imgur.com/NDNovgG.png",
-					"https://i.imgur.com/RZkpx3l.png",
-					"https://i.imgur.com/fZKrYaJ.png",
-					"https://i.imgur.com/AuXrxtN.png",
-					"https://i.imgur.com/tG53u3r.png",
-					"https://i.imgur.com/9emKSJI.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13276,10 +12872,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -13356,10 +12948,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13392,26 +12980,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Elf [F]",
 				"top": "1127px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/5brExHK.png",
-					"https://i.imgur.com/97Ssvg7.png",
-					"https://i.imgur.com/Ql7WS0c.png",
-					"https://i.imgur.com/vv4dBMN.png",
-					"https://i.imgur.com/RBJ0P2K.png",
-					"https://i.imgur.com/BVyZapA.png",
-					"https://i.imgur.com/LyGbTHB.png",
-					"https://i.imgur.com/MvxHbId.png",
-					"https://i.imgur.com/S2taBOJ.png",
-					"https://i.imgur.com/gbu9vUX.png",
-					"https://i.imgur.com/6tSIQyq.png",
-					"https://i.imgur.com/Y4d6rzn.png",
-					"https://i.imgur.com/mo6XKpV.png",
-					"https://i.imgur.com/RdTPLng.png",
-					"https://i.imgur.com/CBwlgMF.png",
-					"https://i.imgur.com/8n7IpwR.png",
-					"https://i.imgur.com/rGbRzLw.png",
-					"https://i.imgur.com/2Lglcip.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13452,10 +13020,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -13516,10 +13080,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#200000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13561,10 +13121,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#202000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13606,10 +13162,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#00C0C0",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -13666,10 +13218,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13704,10 +13252,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -13747,10 +13291,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 54
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13784,10 +13324,6 @@ export const get_scene_data_wel = {
 				"top": "3098px",
 				"hidehpbar": true,
 				"stat": 4485968,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 465,
 				"hitPointInfo": {
 					"maximum": 22,
 					"current": 22,
@@ -13829,10 +13365,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -13868,10 +13400,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -13911,10 +13439,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -13989,10 +13513,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 4,
-					"y": 25
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14026,10 +13546,6 @@ export const get_scene_data_wel = {
 				"top": "2359px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -14072,10 +13588,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -14150,10 +13662,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14226,10 +13734,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14288,10 +13792,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#00E000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -14345,10 +13845,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -14425,10 +13921,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14461,34 +13953,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Human [F]",
 				"top": "1045px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/NjP2sGL.png",
-					"https://i.imgur.com/H8Q36Zh.png",
-					"https://i.imgur.com/RZq8SBK.png",
-					"https://i.imgur.com/HHwopfD.png",
-					"https://i.imgur.com/XqxVZmK.png",
-					"https://i.imgur.com/CPAfuWB.png",
-					"https://i.imgur.com/74bpcvT.png",
-					"https://i.imgur.com/urg9Qhh.png",
-					"https://i.imgur.com/t4yQcY9.png",
-					"https://i.imgur.com/eymbYs8.png",
-					"https://i.imgur.com/HOgBuYA.png",
-					"https://i.imgur.com/FofhAaY.png",
-					"https://i.imgur.com/ftlyRz6.png",
-					"https://i.imgur.com/ufdYpaw.png",
-					"https://i.imgur.com/PZ0UHJV.png",
-					"https://i.imgur.com/6Ha5aDY.png",
-					"https://i.imgur.com/DOnKbPL.png",
-					"https://i.imgur.com/lbxFV6I.png",
-					"https://i.imgur.com/2U9nwqu.png",
-					"https://i.imgur.com/KcIaDqG.png",
-					"https://i.imgur.com/NDNovgG.png",
-					"https://i.imgur.com/RZkpx3l.png",
-					"https://i.imgur.com/fZKrYaJ.png",
-					"https://i.imgur.com/AuXrxtN.png",
-					"https://i.imgur.com/tG53u3r.png",
-					"https://i.imgur.com/9emKSJI.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -14531,10 +13995,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14567,23 +14027,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Commoner",
 				"top": "963px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
-					"https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing",
-					"https://i.pinimg.com/564x/fa/93/fb/fa93fbf94a90d2068af62b5a34b48d2d.jpg",
-					"https://i.pinimg.com/564x/b1/88/10/b18810e3a419fe6c9666ec64c67fdb4f.jpg",
-					"https://i.pinimg.com/564x/b1/61/18/b16118b557ed8cd55a72631ff763fa97.jpg",
-					"https://i.pinimg.com/564x/f7/6c/e5/f76ce511507ceb4be5003507c4b3190e.jpg",
-					"https://i.pinimg.com/564x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
-					"https://i.pinimg.com/564x/55/22/96/55229604ec385c8c1bf442a187a3aeeb.jpg",
-					"https://i.pinimg.com/564x/da/56/f5/da56f50ba711df5b7c80e2fc240d9786.jpg",
-					"https://i.pinimg.com/236x/62/45/8e/62458effd9b3901aa220954d50410988.jpg",
-					"https://i.pinimg.com/236x/dc/39/e3/dc39e3e0edf1204d128565084146e221.jpg",
-					"https://i.pinimg.com/236x/5a/13/5f/5a135f30617868eb35a78c0c268bd069.jpg",
-					"https://i.pinimg.com/236x/6a/e2/51/6ae25147759cdf023dac43cdfeb68ef7.jpg",
-					"https://i.pinimg.com/236x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
-					"https://i.pinimg.com/236x/ec/24/81/ec2481a73c161cbbb70622e485bba1ae.jpg"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -14625,10 +14068,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14664,10 +14103,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -14708,10 +14143,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14746,10 +14177,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -14790,10 +14217,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14828,10 +14251,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -14872,10 +14291,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14910,10 +14325,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -14956,10 +14367,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -14995,10 +14402,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -15039,10 +14442,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15077,10 +14476,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -15121,10 +14516,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15159,10 +14550,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -15205,10 +14592,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15241,52 +14624,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Elf [M]",
 				"top": "881px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/KhyErAR.png",
-					"https://i.imgur.com/bh9ZIeg.png",
-					"https://i.imgur.com/K8U1b0h.png",
-					"https://i.imgur.com/T3LBvjm.png",
-					"https://i.imgur.com/06A68du.png",
-					"https://i.imgur.com/DF1dSy7.png",
-					"https://i.imgur.com/lG3wpol.png",
-					"https://i.imgur.com/JC0VwYz.png",
-					"https://i.imgur.com/iNaGb82.png",
-					"https://i.imgur.com/w4rZdMx.png",
-					"https://i.imgur.com/Eagxsqn.png",
-					"https://i.imgur.com/PN7rm5K.png",
-					"https://i.imgur.com/vkEGS5t.png",
-					"https://i.imgur.com/5cUJo1X.png",
-					"https://i.imgur.com/36nKnjL.png",
-					"https://i.imgur.com/zzVxVGA.png",
-					"https://i.imgur.com/f24uQF7.png",
-					"https://i.imgur.com/2d2apvN.png",
-					"https://i.imgur.com/ukdo8ds.png",
-					"https://i.imgur.com/F9r9k3P.png",
-					"https://i.imgur.com/dH30PNn.png",
-					"https://i.imgur.com/9zg0eK8.png",
-					"https://i.imgur.com/xQ0uII4.png",
-					"https://i.imgur.com/Yt6osn6.png",
-					"https://i.imgur.com/bNdE7DR.png",
-					"https://i.imgur.com/AF3fv3C.png",
-					"https://i.imgur.com/j3aX15i.png",
-					"https://i.imgur.com/X1GP2WM.png",
-					"https://i.imgur.com/v5FHlGi.png",
-					"https://i.imgur.com/LfbJzvb.png",
-					"https://i.imgur.com/V0rwmIX.png",
-					"https://i.imgur.com/hqSP2Rs.png",
-					"https://i.imgur.com/MNUuxZj.png",
-					"https://i.imgur.com/dl8Vf71.png",
-					"https://i.imgur.com/wSofg8Z.png",
-					"https://i.imgur.com/mxXCnY1.png",
-					"https://i.imgur.com/uwQOjqz.png",
-					"https://i.imgur.com/d8FvdaA.png",
-					"https://i.imgur.com/b3n8zEv.png",
-					"https://i.imgur.com/aiHUW1S.png",
-					"https://i.imgur.com/685hEZP.png",
-					"https://i.imgur.com/bO5teIc.png",
-					"https://i.imgur.com/4sbNTs1.png",
-					"https://i.imgur.com/x5PsGUD.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -15329,10 +14666,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15365,12 +14698,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Orc [F]",
 				"top": "1209px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/gmUUKun.png",
-					"https://i.imgur.com/L0lLPWH.png",
-					"https://i.imgur.com/Pwpr4Lp.png",
-					"https://i.imgur.com/Zz9cnLt.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -15410,10 +14737,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -15491,10 +14814,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15527,108 +14846,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Human [M]",
 				"top": "1127px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/vyeBFvg.png",
-					"https://i.imgur.com/iicVOSh.png",
-					"https://i.imgur.com/RXQvDzB.png",
-					"https://i.imgur.com/yMm3znX.png",
-					"https://i.imgur.com/ZLYlstS.png",
-					"https://i.imgur.com/E4aNjka.png",
-					"https://i.imgur.com/sJodY4T.png",
-					"https://i.imgur.com/cfsFqZk.png",
-					"https://i.imgur.com/XdXU7mn.png",
-					"https://i.imgur.com/GcNRFqx.png",
-					"https://i.imgur.com/zVfhSCK.png",
-					"https://i.imgur.com/0Hz1O3A.png",
-					"https://i.imgur.com/nEh1ufo.png",
-					"https://i.imgur.com/6XEUaP5.png",
-					"https://i.imgur.com/VSU5NHE.png",
-					"https://i.imgur.com/rYyd1h2.png",
-					"https://i.imgur.com/07ffel4.png",
-					"https://i.imgur.com/pyXlYqe.png",
-					"https://i.imgur.com/KS2Hybd.png",
-					"https://i.imgur.com/T6v1q7T.png",
-					"https://i.imgur.com/juJzfQr.png",
-					"https://i.imgur.com/RGzc7aD.png",
-					"https://i.imgur.com/9J2iKvp.png",
-					"https://i.imgur.com/2SaSS0Y.png",
-					"https://i.imgur.com/jJ4c6ba.png",
-					"https://i.imgur.com/k7Wx4mJ.png",
-					"https://i.imgur.com/Vo1U9cK.png",
-					"https://i.imgur.com/LVWkKVI.png",
-					"https://i.imgur.com/yMMA82P.png",
-					"https://i.imgur.com/f0N2oJa.png",
-					"https://i.imgur.com/XJR4m0s.png",
-					"https://i.imgur.com/8BKKghq.png",
-					"https://i.imgur.com/FBPr0Qx.png",
-					"https://i.imgur.com/zPJVZV9.png",
-					"https://i.imgur.com/Fxnv4ze.png",
-					"https://i.imgur.com/D3MfkZH.png",
-					"https://i.imgur.com/fXa8rTq.png",
-					"https://i.imgur.com/azyGhw3.png",
-					"https://i.imgur.com/QmmV63Y.png",
-					"https://i.imgur.com/r84pZVU.png",
-					"https://i.imgur.com/qQKIKnR.png",
-					"https://i.imgur.com/cDq8Vsr.png",
-					"https://i.imgur.com/CbANiCZ.png",
-					"https://i.imgur.com/roOhEoe.png",
-					"https://i.imgur.com/2cLWc3p.png",
-					"https://i.imgur.com/BgvoUWh.png",
-					"https://i.imgur.com/PXEx15g.png",
-					"https://i.imgur.com/GlG30ko.png",
-					"https://i.imgur.com/MilamyO.png",
-					"https://i.imgur.com/fnmpif1.png",
-					"https://i.imgur.com/LxSkBCv.png",
-					"https://i.imgur.com/BDWVEoG.png",
-					"https://i.imgur.com/H8gIrL2.png",
-					"https://i.imgur.com/Kz31l7I.png",
-					"https://i.imgur.com/URuYHUf.png",
-					"https://i.imgur.com/jpYQQCi.png",
-					"https://i.imgur.com/onBgm22.png",
-					"https://i.imgur.com/s86MIgN.png",
-					"https://i.imgur.com/AW2altj.png",
-					"https://i.imgur.com/gGag3hL.png",
-					"https://i.imgur.com/C184k7z.png",
-					"https://i.imgur.com/Q2EL6Zo.png",
-					"https://i.imgur.com/AqOra0V.png",
-					"https://i.imgur.com/NRowLmi.png",
-					"https://i.imgur.com/47levai.png",
-					"https://i.imgur.com/yDhhssO.png",
-					"https://i.imgur.com/1J3nNHm.png",
-					"https://i.imgur.com/S1uJBLa.png",
-					"https://i.imgur.com/QT918eT.png",
-					"https://i.imgur.com/FFLNXSA.png",
-					"https://i.imgur.com/98mmYIW.png",
-					"https://i.imgur.com/xi7maaE.png",
-					"https://i.imgur.com/XBzgh8w.png",
-					"https://i.imgur.com/pFW96Y2.png",
-					"https://i.imgur.com/d1Cnrja.png",
-					"https://i.imgur.com/fHSoonu.png",
-					"https://i.imgur.com/UltpGWb.png",
-					"https://i.imgur.com/wRUadat.png",
-					"https://i.imgur.com/MvMSm3r.png",
-					"https://i.imgur.com/eMfk7Zx.png",
-					"https://i.imgur.com/yMNo6I9.png",
-					"https://i.imgur.com/qjGsNn7.png",
-					"https://i.imgur.com/JnJiGoa.png",
-					"https://i.imgur.com/ZTSWn3Y.png",
-					"https://i.imgur.com/v4F4gjg.png",
-					"https://i.imgur.com/gJ9XBJI.png",
-					"https://i.imgur.com/D7tMAL2.png",
-					"https://i.imgur.com/hEQxRZy.png",
-					"https://i.imgur.com/4RZiadV.png",
-					"https://i.imgur.com/NYZJ8xP.png",
-					"https://i.imgur.com/alANUDw.png",
-					"https://i.imgur.com/3pxBGbD.png",
-					"https://i.imgur.com/DHfRth2.png",
-					"https://i.imgur.com/1bX4Qln.png",
-					"https://i.imgur.com/0rzf1SN.png",
-					"https://i.imgur.com/DFP9CIA.png",
-					"https://i.imgur.com/fBh4m9C.png",
-					"https://i.imgur.com/JqhtEZ0.png",
-					"https://i.imgur.com/6l2RDlv.png",
-					"https://i.imgur.com/FZmdqsr.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -15669,10 +14886,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15707,10 +14920,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -15751,10 +14960,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 4,
-					"y": 25
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15790,10 +14995,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -15834,10 +15035,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -15913,10 +15110,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -15951,10 +15144,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -15994,10 +15183,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 54
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16031,10 +15216,6 @@ export const get_scene_data_wel = {
 				"top": "3180px",
 				"hidehpbar": true,
 				"stat": 4485968,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 465,
 				"hitPointInfo": {
 					"maximum": 22,
 					"current": 22,
@@ -16073,10 +15254,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -16153,10 +15330,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16231,10 +15404,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16295,9 +15464,6 @@ export const get_scene_data_wel = {
 						"mod": "+3"
 					}
 				},
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/41759/554/638512254137477472.jpeg"
-				],
 				"hitPointInfo": {
 					"maximum": 30,
 					"current": 30,
@@ -16337,10 +15503,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -16414,10 +15576,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 4,
-					"y": 25
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16451,10 +15609,6 @@ export const get_scene_data_wel = {
 				"top": "2277px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -16496,10 +15650,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
@@ -16572,10 +15722,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -16652,10 +15798,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16691,10 +15833,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -16737,10 +15875,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16773,12 +15907,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Dragonborn [F]",
 				"top": "1209px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/92aaNuq.png",
-					"https://i.imgur.com/4WTK514.png",
-					"https://i.imgur.com/vV4mfTo.png",
-					"https://i.imgur.com/RdJKUBF.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -16817,10 +15945,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -16895,10 +16019,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -16933,10 +16053,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -16979,10 +16095,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17015,23 +16127,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Commoner",
 				"top": "799px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://drive.google.com/file/d/1H-5cCt03oIB43CnhmdaHM6P2Aw8T2n60/view?usp=sharing",
-					"https://drive.google.com/file/d/14sNpLcJlzOfL4A5Qb_zdrYmOTZk51GTM/view?usp=sharing",
-					"https://i.pinimg.com/564x/fa/93/fb/fa93fbf94a90d2068af62b5a34b48d2d.jpg",
-					"https://i.pinimg.com/564x/b1/88/10/b18810e3a419fe6c9666ec64c67fdb4f.jpg",
-					"https://i.pinimg.com/564x/b1/61/18/b16118b557ed8cd55a72631ff763fa97.jpg",
-					"https://i.pinimg.com/564x/f7/6c/e5/f76ce511507ceb4be5003507c4b3190e.jpg",
-					"https://i.pinimg.com/564x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
-					"https://i.pinimg.com/564x/55/22/96/55229604ec385c8c1bf442a187a3aeeb.jpg",
-					"https://i.pinimg.com/564x/da/56/f5/da56f50ba711df5b7c80e2fc240d9786.jpg",
-					"https://i.pinimg.com/236x/62/45/8e/62458effd9b3901aa220954d50410988.jpg",
-					"https://i.pinimg.com/236x/dc/39/e3/dc39e3e0edf1204d128565084146e221.jpg",
-					"https://i.pinimg.com/236x/5a/13/5f/5a135f30617868eb35a78c0c268bd069.jpg",
-					"https://i.pinimg.com/236x/6a/e2/51/6ae25147759cdf023dac43cdfeb68ef7.jpg",
-					"https://i.pinimg.com/236x/d5/9b/e6/d59be622749ea74ccbc88485783e679c.jpg",
-					"https://i.pinimg.com/236x/ec/24/81/ec2481a73c161cbbb70622e485bba1ae.jpg"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -17070,10 +16165,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -17152,10 +16243,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17231,10 +16318,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17269,10 +16352,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -17315,10 +16394,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17351,34 +16426,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Human [F]",
 				"top": "799px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/NjP2sGL.png",
-					"https://i.imgur.com/H8Q36Zh.png",
-					"https://i.imgur.com/RZq8SBK.png",
-					"https://i.imgur.com/HHwopfD.png",
-					"https://i.imgur.com/XqxVZmK.png",
-					"https://i.imgur.com/CPAfuWB.png",
-					"https://i.imgur.com/74bpcvT.png",
-					"https://i.imgur.com/urg9Qhh.png",
-					"https://i.imgur.com/t4yQcY9.png",
-					"https://i.imgur.com/eymbYs8.png",
-					"https://i.imgur.com/HOgBuYA.png",
-					"https://i.imgur.com/FofhAaY.png",
-					"https://i.imgur.com/ftlyRz6.png",
-					"https://i.imgur.com/ufdYpaw.png",
-					"https://i.imgur.com/PZ0UHJV.png",
-					"https://i.imgur.com/6Ha5aDY.png",
-					"https://i.imgur.com/DOnKbPL.png",
-					"https://i.imgur.com/lbxFV6I.png",
-					"https://i.imgur.com/2U9nwqu.png",
-					"https://i.imgur.com/KcIaDqG.png",
-					"https://i.imgur.com/NDNovgG.png",
-					"https://i.imgur.com/RZkpx3l.png",
-					"https://i.imgur.com/fZKrYaJ.png",
-					"https://i.imgur.com/AuXrxtN.png",
-					"https://i.imgur.com/tG53u3r.png",
-					"https://i.imgur.com/9emKSJI.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -17421,10 +16468,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -17502,10 +16545,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17538,108 +16577,6 @@ export const get_scene_data_wel = {
 				"listItemPath": "/AboveVTT Tokens/NPCs/Human [M]",
 				"top": "799px",
 				"hidehpbar": true,
-				"alternativeImages": [
-					"https://i.imgur.com/vyeBFvg.png",
-					"https://i.imgur.com/iicVOSh.png",
-					"https://i.imgur.com/RXQvDzB.png",
-					"https://i.imgur.com/yMm3znX.png",
-					"https://i.imgur.com/ZLYlstS.png",
-					"https://i.imgur.com/E4aNjka.png",
-					"https://i.imgur.com/sJodY4T.png",
-					"https://i.imgur.com/cfsFqZk.png",
-					"https://i.imgur.com/XdXU7mn.png",
-					"https://i.imgur.com/GcNRFqx.png",
-					"https://i.imgur.com/zVfhSCK.png",
-					"https://i.imgur.com/0Hz1O3A.png",
-					"https://i.imgur.com/nEh1ufo.png",
-					"https://i.imgur.com/6XEUaP5.png",
-					"https://i.imgur.com/VSU5NHE.png",
-					"https://i.imgur.com/rYyd1h2.png",
-					"https://i.imgur.com/07ffel4.png",
-					"https://i.imgur.com/pyXlYqe.png",
-					"https://i.imgur.com/KS2Hybd.png",
-					"https://i.imgur.com/T6v1q7T.png",
-					"https://i.imgur.com/juJzfQr.png",
-					"https://i.imgur.com/RGzc7aD.png",
-					"https://i.imgur.com/9J2iKvp.png",
-					"https://i.imgur.com/2SaSS0Y.png",
-					"https://i.imgur.com/jJ4c6ba.png",
-					"https://i.imgur.com/k7Wx4mJ.png",
-					"https://i.imgur.com/Vo1U9cK.png",
-					"https://i.imgur.com/LVWkKVI.png",
-					"https://i.imgur.com/yMMA82P.png",
-					"https://i.imgur.com/f0N2oJa.png",
-					"https://i.imgur.com/XJR4m0s.png",
-					"https://i.imgur.com/8BKKghq.png",
-					"https://i.imgur.com/FBPr0Qx.png",
-					"https://i.imgur.com/zPJVZV9.png",
-					"https://i.imgur.com/Fxnv4ze.png",
-					"https://i.imgur.com/D3MfkZH.png",
-					"https://i.imgur.com/fXa8rTq.png",
-					"https://i.imgur.com/azyGhw3.png",
-					"https://i.imgur.com/QmmV63Y.png",
-					"https://i.imgur.com/r84pZVU.png",
-					"https://i.imgur.com/qQKIKnR.png",
-					"https://i.imgur.com/cDq8Vsr.png",
-					"https://i.imgur.com/CbANiCZ.png",
-					"https://i.imgur.com/roOhEoe.png",
-					"https://i.imgur.com/2cLWc3p.png",
-					"https://i.imgur.com/BgvoUWh.png",
-					"https://i.imgur.com/PXEx15g.png",
-					"https://i.imgur.com/GlG30ko.png",
-					"https://i.imgur.com/MilamyO.png",
-					"https://i.imgur.com/fnmpif1.png",
-					"https://i.imgur.com/LxSkBCv.png",
-					"https://i.imgur.com/BDWVEoG.png",
-					"https://i.imgur.com/H8gIrL2.png",
-					"https://i.imgur.com/Kz31l7I.png",
-					"https://i.imgur.com/URuYHUf.png",
-					"https://i.imgur.com/jpYQQCi.png",
-					"https://i.imgur.com/onBgm22.png",
-					"https://i.imgur.com/s86MIgN.png",
-					"https://i.imgur.com/AW2altj.png",
-					"https://i.imgur.com/gGag3hL.png",
-					"https://i.imgur.com/C184k7z.png",
-					"https://i.imgur.com/Q2EL6Zo.png",
-					"https://i.imgur.com/AqOra0V.png",
-					"https://i.imgur.com/NRowLmi.png",
-					"https://i.imgur.com/47levai.png",
-					"https://i.imgur.com/yDhhssO.png",
-					"https://i.imgur.com/1J3nNHm.png",
-					"https://i.imgur.com/S1uJBLa.png",
-					"https://i.imgur.com/QT918eT.png",
-					"https://i.imgur.com/FFLNXSA.png",
-					"https://i.imgur.com/98mmYIW.png",
-					"https://i.imgur.com/xi7maaE.png",
-					"https://i.imgur.com/XBzgh8w.png",
-					"https://i.imgur.com/pFW96Y2.png",
-					"https://i.imgur.com/d1Cnrja.png",
-					"https://i.imgur.com/fHSoonu.png",
-					"https://i.imgur.com/UltpGWb.png",
-					"https://i.imgur.com/wRUadat.png",
-					"https://i.imgur.com/MvMSm3r.png",
-					"https://i.imgur.com/eMfk7Zx.png",
-					"https://i.imgur.com/yMNo6I9.png",
-					"https://i.imgur.com/qjGsNn7.png",
-					"https://i.imgur.com/JnJiGoa.png",
-					"https://i.imgur.com/ZTSWn3Y.png",
-					"https://i.imgur.com/v4F4gjg.png",
-					"https://i.imgur.com/gJ9XBJI.png",
-					"https://i.imgur.com/D7tMAL2.png",
-					"https://i.imgur.com/hEQxRZy.png",
-					"https://i.imgur.com/4RZiadV.png",
-					"https://i.imgur.com/NYZJ8xP.png",
-					"https://i.imgur.com/alANUDw.png",
-					"https://i.imgur.com/3pxBGbD.png",
-					"https://i.imgur.com/DHfRth2.png",
-					"https://i.imgur.com/1bX4Qln.png",
-					"https://i.imgur.com/0rzf1SN.png",
-					"https://i.imgur.com/DFP9CIA.png",
-					"https://i.imgur.com/fBh4m9C.png",
-					"https://i.imgur.com/JqhtEZ0.png",
-					"https://i.imgur.com/6l2RDlv.png",
-					"https://i.imgur.com/FZmdqsr.png"
-				],
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -17678,10 +16615,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -17755,10 +16688,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -17834,10 +16763,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 4,
-					"y": 25
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17871,10 +16796,6 @@ export const get_scene_data_wel = {
 				"top": "2441px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -17915,10 +16836,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -17953,10 +16870,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -17996,10 +16909,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": -8,
-					"y": 21
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -18033,10 +16942,6 @@ export const get_scene_data_wel = {
 				"top": "3016px",
 				"hidehpbar": true,
 				"stat": 4485972,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 350,
 				"hitPointInfo": {
 					"maximum": 37,
 					"current": 37,
@@ -18077,10 +16982,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -18115,10 +17016,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -18159,10 +17056,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 10,
-					"y": 26
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -18197,10 +17090,6 @@ export const get_scene_data_wel = {
 				"hidehpbar": true,
 				"imageSize": 1,
 				"stat": 4485964,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 7,
 					"current": 7,
@@ -18240,10 +17129,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -18318,10 +17203,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 4,
-					"y": 25
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -18355,10 +17236,6 @@ export const get_scene_data_wel = {
 				"top": "2277px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 340,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -18403,10 +17280,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -18499,11394 +17372,10582 @@ export const get_scene_data_wel = {
 		}
 	},
 	"dnd/wel/camp-firefield/CampFirefieldMap": {
-	"vpps": 77.56666666666669,
-	"title": "Camp Firefield Map ",
-	"upsq": "ft",
-	"drawings": [
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			809.0333333333333,
-			1144.1499999999999,
-			809.0333333333333,
-			1144.1499999999999,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
+		"vpps": 77.56666666666669,
+		"title": "Camp Firefield Map ",
+		"upsq": "ft",
+		"drawings": [
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				809.0333333333333,
+				1144.1499999999999,
+				809.0333333333333,
+				1144.1499999999999,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2824.9,
+				833.8833333333332,
+				2592.3,
+				833.8833333333332,
+				6,
+				0.9999999999999999,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2592.3,
+				833.8833333333332,
+				2592.3,
+				1260.4999999999998,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2592.3,
+				1260.4999999999998,
+				2824.9,
+				1260.4999999999998,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2824.9,
+				833.8833333333332,
+				2824.9,
+				999,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2824.9,
+				1260.4999999999998,
+				2824.9,
+				1089,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2786.133333333333,
+				1997.3833333333332,
+				2786.133333333333,
+				2734.2666666666664,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2786.133333333333,
+				2734.2666666666664,
+				3018.733333333333,
+				2734.2666666666664,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3018.733333333333,
+				1997.3833333333332,
+				2786.133333333333,
+				1997.3833333333332,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3018.733333333333,
+				1997.3833333333332,
+				3018.733333333333,
+				2245,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3018.733333333333,
+				2734.2666666666664,
+				3018.733333333333,
+				2456,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				3018.733333333333,
+				2456,
+				3018.733333333333,
+				2245,
+				12,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				907,
+				3726,
+				907,
+				4220,
+				6,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				907,
+				3726,
+				2026,
+				3726,
+				6,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				907,
+				4220,
+				2026,
+				4220,
+				6,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1018,
+				3723,
+				1017.912,
+				3734,
+				6,
+				0.9999999999999999,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				1017,
+				3819,
+				1017,
+				3734,
+				12,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2026,
+				3726,
+				2026,
+				3901,
+				6,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2026,
+				4220,
+				2026,
+				4053,
+				6,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"rect",
+				"elev",
+				"10",
+				925.3333333333334,
+				4208.033333333334,
+				77.5333333333333,
+				-387.8333333333335,
+				null,
+				0.9999999999999999,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(100, 0, 255, 1)",
+				910,
+				3825,
+				1024,
+				3826,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				1855.7333333333333,
+				1182.9333333333332,
+				1855.7333333333333,
+				1182.9333333333332,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				2737,
+				1447,
+				2737,
+				1447,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				3328,
+				2422,
+				3328,
+				2422,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				960,
+				4132,
+				960,
+				4132,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				3129,
+				3336,
+				3129,
+				3336,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				2129,
+				4560,
+				2139,
+				4560,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				3135,
+				4092,
+				3145,
+				4092,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				726.5,
+				2540.35,
+				736.5,
+				2540.35,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				1435,
+				2572,
+				1435,
+				2572,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				2357,
+				1145,
+				2367,
+				1145,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				2591,
+				2384,
+				2601,
+				2384,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				2310,
+				3972,
+				2320,
+				3972,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(10, 10, 50, 1)",
+				1706,
+				1652,
+				1716,
+				1652,
+				12,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 0.5)",
+				2026,
+				4053,
+				2026,
+				3901,
+				12,
+				0.9999999999999999,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2038,
+				4336,
+				2038,
+				4336,
+				6,
+				0.9999999999999999,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2542,
+				4233,
+				2292,
+				4304,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2292,
+				4304,
+				2143,
+				4404,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2143,
+				4404,
+				2074,
+				4534,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2074,
+				4534,
+				2125,
+				4692,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2125,
+				4692,
+				2297,
+				4828,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2297,
+				4828,
+				2557,
+				4886,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2557,
+				4886,
+				2789,
+				4881,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2789,
+				4881,
+				3033,
+				4794,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3033,
+				4794,
+				3163,
+				4685,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3163,
+				4685,
+				3201,
+				4547,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3201,
+				4547,
+				3149,
+				4417,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3149,
+				4417,
+				2972,
+				4293,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2972,
+				4293,
+				2749,
+				4239,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2749,
+				4239,
+				2540,
+				4233,
+				6,
+				0.9999999999999999,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3212.5666666666666,
+				1066.583333333333,
+				3212.5666666666666,
+				1066.583333333333,
+				6,
+				0.9999999999999999,
+				null,
+				"",
+				""
+			]
 		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2824.9,
-			833.8833333333332,
-			2592.3,
-			833.8833333333332,
-			6,
-			0.9999999999999999,
-			null,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2592.3,
-			833.8833333333332,
-			2592.3,
-			1260.4999999999998,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2592.3,
-			1260.4999999999998,
-			2824.9,
-			1260.4999999999998,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2824.9,
-			833.8833333333332,
-			2824.9,
-			999,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2824.9,
-			1260.4999999999998,
-			2824.9,
-			1089,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2786.133333333333,
-			1997.3833333333332,
-			2786.133333333333,
-			2734.2666666666664,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2786.133333333333,
-			2734.2666666666664,
-			3018.733333333333,
-			2734.2666666666664,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3018.733333333333,
-			1997.3833333333332,
-			2786.133333333333,
-			1997.3833333333332,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3018.733333333333,
-			1997.3833333333332,
-			3018.733333333333,
-			2245,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3018.733333333333,
-			2734.2666666666664,
-			3018.733333333333,
-			2456,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(255, 100, 255, 1)",
-			3018.733333333333,
-			2456,
-			3018.733333333333,
-			2245,
-			12,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			907,
-			3726,
-			907,
-			4220,
-			6,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			907,
-			3726,
-			2026,
-			3726,
-			6,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			907,
-			4220,
-			2026,
-			4220,
-			6,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			1018,
-			3723,
-			1017.912,
-			3734,
-			6,
-			0.9999999999999999,
-			null,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(100, 0, 255, 1)",
-			1017,
-			3819,
-			1017,
-			3734,
-			12,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2026,
-			3726,
-			2026,
-			3901,
-			6,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2026,
-			4220,
-			2026,
-			4053,
-			6,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"rect",
-			"elev",
-			"10",
-			925.3333333333334,
-			4208.033333333334,
-			77.5333333333333,
-			-387.8333333333335,
-			null,
-			0.9999999999999999,
-			null
-		],
-		[
-			"line",
-			"wall",
-			"rgba(100, 0, 255, 1)",
-			910,
-			3825,
-			1024,
-			3826,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			1855.7333333333333,
-			1182.9333333333332,
-			1855.7333333333333,
-			1182.9333333333332,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			2737,
-			1447,
-			2737,
-			1447,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			3328,
-			2422,
-			3328,
-			2422,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			960,
-			4132,
-			960,
-			4132,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			3129,
-			3336,
-			3129,
-			3336,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			2129,
-			4560,
-			2139,
-			4560,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			3135,
-			4092,
-			3145,
-			4092,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			726.5,
-			2540.35,
-			736.5,
-			2540.35,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			1435,
-			2572,
-			1435,
-			2572,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			2357,
-			1145,
-			2367,
-			1145,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			2591,
-			2384,
-			2601,
-			2384,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			2310,
-			3972,
-			2320,
-			3972,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(10, 10, 50, 1)",
-			1706,
-			1652,
-			1716,
-			1652,
-			12,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(255, 100, 255, 0.5)",
-			2026,
-			4053,
-			2026,
-			3901,
-			12,
-			0.9999999999999999,
-			0,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2038,
-			4336,
-			2038,
-			4336,
-			6,
-			0.9999999999999999,
-			null,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2542,
-			4233,
-			2292,
-			4304,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2292,
-			4304,
-			2143,
-			4404,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2143,
-			4404,
-			2074,
-			4534,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2074,
-			4534,
-			2125,
-			4692,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2125,
-			4692,
-			2297,
-			4828,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2297,
-			4828,
-			2557,
-			4886,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2557,
-			4886,
-			2789,
-			4881,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2789,
-			4881,
-			3033,
-			4794,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3033,
-			4794,
-			3163,
-			4685,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3163,
-			4685,
-			3201,
-			4547,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3201,
-			4547,
-			3149,
-			4417,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3149,
-			4417,
-			2972,
-			4293,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2972,
-			4293,
-			2749,
-			4239,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			2749,
-			4239,
-			2540,
-			4233,
-			6,
-			0.9999999999999999,
-			false,
-			"",
-			""
-		],
-		[
-			"line",
-			"wall",
-			"rgba(0, 255, 0, 1)",
-			3212.5666666666666,
-			1066.583333333333,
-			3212.5666666666666,
-			1066.583333333333,
-			6,
-			0.9999999999999999,
-			null,
-			"",
-			""
-		]
-	],
-	"fpsq": "5",
-	"tokens": {
-		"00905e51-b5d8-47ab-9187-80dbb06ca193": {
-			"disablestat": false,
-			"gridSquares": 3.0180567497850386,
-			"custom_conditions": [],
-			"hp": 138,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
+		"fpsq": "5",
+		"tokens": {
+			"00905e51-b5d8-47ab-9187-80dbb06ca193": {
+				"disablestat": false,
+				"gridSquares": 3.0180567497850386,
+				"custom_conditions": [],
+				"hp": 138,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "00905e51-b5d8-47ab-9187-80dbb06ca193",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/617/638512254252448568.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486002,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 233.99999999999997,
+				"left": "3019px",
+				"name": "Slaughter Demon",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 6,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 138,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Slaughter Demon",
+				"top": "3433px",
+				"hidehpbar": true,
+				"stat": 4486002,
+				"hitPointInfo": {
+					"maximum": 138,
+					"current": 138,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486002,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 6,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"id": "00905e51-b5d8-47ab-9187-80dbb06ca193",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/617/638512254252448568.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
+			"00b2d7b6-0a8c-4209-ab9d-cb8ebc19d064": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "00b2d7b6-0a8c-4209-ab9d-cb8ebc19d064",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1081px",
+				"name": "Hobgoblin Recruit 33",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#002000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
+			"0218a94a-e4f0-4347-854f-afb414136b5a": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "0218a94a-e4f0-4347-854f-afb414136b5a",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_05",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3672.4666666666667px",
+				"name": "C5. Field Hospital (Fifth Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/05",
+				"top": "2249.433333333333px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
+			"031eb2ac-e791-4047-ab9a-5816e5aec6e4": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "031eb2ac-e791-4047-ab9a-5816e5aec6e4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1469px",
+				"name": "Grilp 11",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#800000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "951px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"offset": {
-				"x": 0,
-				"y": 0
+			"048f540e-5d8f-465b-8ef7-9fa47122636e": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "048f540e-5d8f-465b-8ef7-9fa47122636e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2709px",
+				"name": "Hobgoblin Trooper 20",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#0000C0",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "4364px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
+			"05b35f21-ed11-419a-b759-4bf390912472": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "05b35f21-ed11-419a-b759-4bf390912472",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3484px",
+				"name": "Hobgoblin Trooper 12",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#008000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3510px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"itemId": 4486002,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 233.99999999999997,
-			"left": "3019px",
-			"name": "Slaughter Demon",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 6,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 138,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Slaughter Demon",
-			"top": "3433px",
-			"hidehpbar": true,
-			"stat": 4486002,
-			"hitPointInfo": {
-				"maximum": 138,
-				"current": 138,
-				"temp": 0
+			"0ea84700-3ecc-42b6-a665-c5cb2f812326": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "0ea84700-3ecc-42b6-a665-c5cb2f812326",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_08",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3285.4666666666667px",
+				"name": "C8. War Room (Eighth Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/08",
+				"top": "4732.433333333333px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4486002,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 6,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"00b2d7b6-0a8c-4209-ab9d-cb8ebc19d064": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
+			"0eaf827a-6f19-4938-8b3a-7a5b5b790492": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "0eaf827a-6f19-4938-8b3a-7a5b5b790492",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 30",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#004040",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"id": "00b2d7b6-0a8c-4209-ab9d-cb8ebc19d064",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1081px",
-			"name": "Hobgoblin Recruit 33",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
+			"10172323819101791237346f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00C0C0",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6444444444444444,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3750.9999999999995px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "992px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "10172323819101791237346f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
 				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#002000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
 			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"0218a94a-e4f0-4347-854f-afb414136b5a": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "0218a94a-e4f0-4347-854f-afb414136b5a",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_05",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3672.4666666666667px",
-			"name": "C5. Field Hospital (Fifth Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/05",
-			"top": "2249.433333333333px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"031eb2ac-e791-4047-ab9a-5816e5aec6e4": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "031eb2ac-e791-4047-ab9a-5816e5aec6e4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1469px",
-			"name": "Grilp 11",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#800000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "951px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"048f540e-5d8f-465b-8ef7-9fa47122636e": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "048f540e-5d8f-465b-8ef7-9fa47122636e",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2709px",
-			"name": "Hobgoblin Trooper 20",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#0000C0",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "4364px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"05b35f21-ed11-419a-b759-4bf390912472": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "05b35f21-ed11-419a-b759-4bf390912472",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3484px",
-			"name": "Hobgoblin Trooper 12",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#008000",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3510px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"0ea84700-3ecc-42b6-a665-c5cb2f812326": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "0ea84700-3ecc-42b6-a665-c5cb2f812326",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_08",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3285.4666666666667px",
-			"name": "C8. War Room (Eighth Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/08",
-			"top": "4732.433333333333px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"0eaf827a-6f19-4938-8b3a-7a5b5b790492": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "0eaf827a-6f19-4938-8b3a-7a5b5b790492",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 30",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
+			"10173819101737346f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#A0A000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6444444444444444,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3750.9999999999995px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "992px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "10173819101737346f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
 				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#004040",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
 			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"10172323819101791237346f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
+			"1159bb7c-8d91-417e-bf51-c612caab6331": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "1159bb7c-8d91-417e-bf51-c612caab6331",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1430px",
+				"name": "Grilp 7",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1494px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
+			"12f1e9ec-fc7f-4e50-89cc-0efb9810e61f": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "12f1e9ec-fc7f-4e50-89cc-0efb9810e61f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1895px",
+				"name": "Grilp 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "990px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"color": "#00C0C0",
-			"offset": {
-				"x": 0,
-				"y": 0
+			"140f00f6-65c5-4ef0-ba4f-6fb3a1459959": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "140f00f6-65c5-4ef0-ba4f-6fb3a1459959",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 19",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00C000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2347px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
+			"14352572143525726f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#002000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 1145,
+					"left": 2362,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2547px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1410px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "14352572143525726f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
 			},
-			"custom_conditions": [],
-			"type": "door",
-			"scaleCreated": 2.6444444444444444,
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
+			"15317a1f-2ff3-4cf4-85a3-9d0917d65031": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "15317a1f-2ff3-4cf4-85a3-9d0917d65031",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "926px",
+				"name": "Hobgoblin Recruit 7",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2037px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			},
-			"top": "3750.9999999999995px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "992px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
+			"17061652171616526f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#884DFF",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 1144,
+					"left": 809,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1627px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1686px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "17061652171616526f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
 			},
-			"id": "10172323819101791237346f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
+			"185573333333333331182933333333333218557333333333333118293333333333326f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#EC8AFF",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 2540.35,
+					"left": 731.5,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1157px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1830px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "185573333333333331182933333333333218557333333333333118293333333333326f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1ab2baba-1e1e-491c-931b-ff2574ba83b6": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1ab2baba-1e1e-491c-931b-ff2574ba83b6",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1081px",
+				"name": "Hobgoblin Recruit 49",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#A0A000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1c79d229-0978-453d-b68b-db66db50853d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1c79d229-0978-453d-b68b-db66db50853d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Incendiarist 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "4053px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1ccc2602-a983-4524-bc60-3d84251e32cd": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1ccc2602-a983-4524-bc60-3d84251e32cd",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1934px",
+				"name": "Hobgoblin Recruit 43",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#600060",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4053px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1fae7e2a-3dbe-4279-91e1-3711261a7dbb": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "1fae7e2a-3dbe-4279-91e1-3711261a7dbb",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 10",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2037px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"21294560213945606f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#911EB4",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 3335,
+					"left": 3129,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4535px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2109px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "21294560213945606f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"21669c6a-22dc-45b0-9337-1d3f3c86e58f": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "21669c6a-22dc-45b0-9337-1d3f3c86e58f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 36",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#200020",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3898px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"21b67588-990f-475d-ad29-a77a7b3879a1": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "21b67588-990f-475d-ad29-a77a7b3879a1",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1624px",
+				"name": "Grilp 8",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "873px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"21db32fb-5656-4b24-8852-613cbfdc4625": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "21db32fb-5656-4b24-8852-613cbfdc4625",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_01",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "383px",
+				"name": "C1. Nowhere Gate (First Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/01",
+				"top": "175px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"23103972232039726f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#808000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 2422,
+					"left": 3328,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3947px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2290px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "23103972232039726f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"23571145236711456f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#E000E0",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 2572,
+					"left": 1435,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1120px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2337px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "23571145236711456f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"25912384260123846f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#002020",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 1447,
+					"left": 2737,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2359px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2571px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "25912384260123846f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"27371447273714476f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#C0C0C0",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 2384,
+					"left": 2596,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1422px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2712px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "27371447273714476f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"28a65314-7a5d-4dd2-8413-54113af8d701": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "28a65314-7a5d-4dd2-8413-54113af8d701",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 38",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#202020",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"29482758-dc80-4283-a487-da50cfead123": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "29482758-dc80-4283-a487-da50cfead123",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 32",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#200000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2d42402b-36c5-4713-8004-193d0ad5b7d5": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2d42402b-36c5-4713-8004-193d0ad5b7d5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1895px",
+				"name": "Grilp 9",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1416px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2e2ea145-9d95-41f1-a2d7-eaa9542e6810": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2e2ea145-9d95-41f1-a2d7-eaa9542e6810",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 14",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#808000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"31293336312933366f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#606000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 4560,
+					"left": 2134,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3310.9999999999995px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3104px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "31293336312933366f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"31354092314540926f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#006000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 4132,
+					"left": 960,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4067px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3115px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "31354092314540926f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"33282422332824226f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#006060",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 3972,
+					"left": 2315,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2397px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3303px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "33282422332824226f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"34e4c795-6256-4235-b534-385a8e7218b2": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "34e4c795-6256-4235-b534-385a8e7218b2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin Recruit 29",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400040",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4053px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"353162e0-82e0-4eba-a5c1-14a105546ec6": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "353162e0-82e0-4eba-a5c1-14a105546ec6",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2347px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"36415ba7-2a82-493e-b3a1-ee035bb19584": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "36415ba7-2a82-493e-b3a1-ee035bb19584",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Brandbearer 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2269px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"36c9693a-26d4-4bad-a29b-9b31bb2e0834": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "36c9693a-26d4-4bad-a29b-9b31bb2e0834",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Incendiarist 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"380000af-38d9-4539-a4a7-799487a61f84": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "380000af-38d9-4539-a4a7-799487a61f84",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1546px",
+				"name": "Hobgoblin Recruit 28",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#404000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4053px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"39016b7f-1218-493a-8e31-282107910324": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "39016b7f-1218-493a-8e31-282107910324",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2011px",
+				"name": "Hobgoblin Recruit 10",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2269px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3d494f76-8e98-4dd1-8f6b-35a46bc37650": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "3d494f76-8e98-4dd1-8f6b-35a46bc37650",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2476px",
+				"name": "Hobgoblin Trooper 19",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00C000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "4519px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3da77049-0f2e-48b0-a88a-625e4ff5a7d2": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3da77049-0f2e-48b0-a88a-625e4ff5a7d2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1701px",
+				"name": "Hobgoblin Recruit 39",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#600000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3e3643ef-a529-4cb5-96fc-2c2c0f075944": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3e3643ef-a529-4cb5-96fc-2c2c0f075944",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Recruit",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3200px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4001cf25-8d69-4f61-b92b-346538fdfc3d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "4001cf25-8d69-4f61-b92b-346538fdfc3d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin Brandbearer 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2657px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"40bf5aa0-0209-43d6-8eba-9efbfd570f99": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "40bf5aa0-0209-43d6-8eba-9efbfd570f99",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 37",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#002020",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"443ee569-ed40-47a8-bcbf-1c1e217ec37c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "443ee569-ed40-47a8-bcbf-1c1e217ec37c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin Brandbearer 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2347px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4788e7ce-7164-4734-88ec-3a9c59411eb2": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "4788e7ce-7164-4734-88ec-3a9c59411eb2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1430px",
+				"name": "Oki",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#008000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1067px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4b1edaf8-47f4-4728-a587-6d4b49c39134": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "4b1edaf8-47f4-4728-a587-6d4b49c39134",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "926px",
+				"name": "Hobgoblin Recruit 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3045px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4b58ac57-fada-4006-b07c-e2a071c1df34": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "4b58ac57-fada-4006-b07c-e2a071c1df34",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_03",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "461px",
+				"name": "C3. Barracks (Third Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/03",
+				"top": "2735px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4b8d6a00-282a-4399-b08c-54442f1e5b61": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "4b8d6a00-282a-4399-b08c-54442f1e5b61",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 22",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#C000C0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4eb0b0b4-3d83-4be4-b7eb-16d608dfd584": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "4eb0b0b4-3d83-4be4-b7eb-16d608dfd584",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2476px",
+				"name": "Hobgoblin Trooper 17",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#808080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "4364px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"528c04df-eb5d-4909-8283-eff7ecbc0353": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "528c04df-eb5d-4909-8283-eff7ecbc0353",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Recruit 44",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#006060",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"52d31e58-11f5-4570-9612-293644f2f314": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "52d31e58-11f5-4570-9612-293644f2f314",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1003px",
+				"name": "Hobgoblin Recruit 42",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"52ea368b-b1ad-4693-827c-f684a3a28273": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "52ea368b-b1ad-4693-827c-f684a3a28273",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485884,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2554px",
+				"name": "Hobgoblin Firerunner 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Firerunner",
+				"top": "4441px",
+				"hidehpbar": true,
+				"stat": 4485884,
+				"hitPointInfo": {
+					"maximum": 78,
+					"current": 78,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485884,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5314bac2-3782-4794-8a0d-8b271e2815c2": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "5314bac2-3782-4794-8a0d-8b271e2815c2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin Recruit 26",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#004000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5355c49a-f935-4260-b9b9-ecce991ed97e": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5355c49a-f935-4260-b9b9-ecce991ed97e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2632px",
+				"name": "Hobgoblin Trooper 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "873px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"53ceb685-6041-403e-a042-a8943313bbd4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "53ceb685-6041-403e-a042-a8943313bbd4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2476px",
+				"name": "Hobgoblin Trooper 18",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#C00000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "4674px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5684bf0a-03df-41e3-8e0b-7b6d1e030ce8": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 90,
+				"armorClass": 20,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5684bf0a-03df-41e3-8e0b-7b6d1e030ce8",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/438/638512253932807441.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485883,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Death Captain 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 90,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Death Captain",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485883,
+				"hitPointInfo": {
+					"maximum": 90,
+					"current": 90,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485883,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"575b0f63-7a89-4400-aeba-572060d1ec93": {
+				"disablestat": true,
+				"gridSquares": 1,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "575b0f63-7a89-4400-aeba-572060d1ec93",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 77.53333333333333,
+				"left": "1158px",
+				"name": "Camp Firefield Features",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+				"top": "175px",
+				"hidehpbar": true,
+				"imageSize": 1,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"rotation": 0,
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"58a903c6-fb4c-4043-b37f-652509d84368": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "58a903c6-fb4c-4043-b37f-652509d84368",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Brandbearer 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2502px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5a91e02e-9f89-4a5a-8bd3-ef3ccff8d0d7": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "5a91e02e-9f89-4a5a-8bd3-ef3ccff8d0d7",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin Brandbearer 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2424px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6323a119-3368-44af-8dc5-b33be74e3ae9": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "6323a119-3368-44af-8dc5-b33be74e3ae9",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Trooper 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2890px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"637a3834-968e-4a85-b81a-ffa227497c8c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "637a3834-968e-4a85-b81a-ffa227497c8c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin Brandbearer 8",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2037px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"64e665ee-079f-449f-b6d4-f1ab7cb212dc": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "64e665ee-079f-449f-b6d4-f1ab7cb212dc",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 18",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#C00000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3200px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"650fd734-05fe-4e76-b23d-0952ca3e68eb": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "650fd734-05fe-4e76-b23d-0952ca3e68eb",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2011px",
+				"name": "Hobgoblin Incendiarist",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "2967px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"674fc607-f889-40a2-a0b8-6db78bc5803c": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "674fc607-f889-40a2-a0b8-6db78bc5803c",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_H",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2587.4666666666667px",
+				"name": "Varrox’s hoard",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/H",
+				"top": "5042.433333333333px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6c0807e2-5bf6-4109-a257-e0b540bea0e4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6c0807e2-5bf6-4109-a257-e0b540bea0e4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1469px",
+				"name": "Hobgoblin Incendiarist 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"721050e5-44ac-40be-a5e6-3ff3803b2d6d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 18,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "721050e5-44ac-40be-a5e6-3ff3803b2d6d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1779px",
+				"name": "Hobgoblin Trooper",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "1959px",
+				"hidehpbar": true,
+				"imageSize": 1,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"rotation": 0,
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"726525403573652540356f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#002020",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 1182,
+					"left": 1855,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2515.35px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "706.5px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "726525403573652540356f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"7368af9f-086a-4de1-b88d-32225903348b": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "7368af9f-086a-4de1-b88d-32225903348b",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1701px",
+				"name": "Hobgoblin Recruit 35",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#202000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3898px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"75956051-0261-4b24-b0ca-485d189099cb": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "75956051-0261-4b24-b0ca-485d189099cb",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3329px",
+				"name": "Hobgoblin Trooper 15",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3278px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7951f36b-b4a7-424d-b4e2-02ee5872553d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7951f36b-b4a7-424d-b4e2-02ee5872553d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 8",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2657px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"79baf635-4fde-4256-bd6c-532a64a2a5e5": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "79baf635-4fde-4256-bd6c-532a64a2a5e5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Recruit 47",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00A000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3898px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7a44515a-a0d7-4a8f-84ab-57e7cf35a07c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "7a44515a-a0d7-4a8f-84ab-57e7cf35a07c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 16",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#008080",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2812px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7f23e186-c906-4093-bbd1-c16fd755f282": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "7f23e186-c906-4093-bbd1-c16fd755f282",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin Recruit 9",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2269px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8090333333333333114414999999999998090333333333333114414999999999996f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#004000",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": 0,
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 1652,
+					"left": 1711,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1119px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "784px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8090333333333333114414999999999998090333333333333114414999999999996f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"8382a0ac-90a3-4645-9bd9-af0fde28435b": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8382a0ac-90a3-4645-9bd9-af0fde28435b",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin Brandbearer",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2114px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"85facb9d-a361-4358-8292-8a935c2ac820": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "85facb9d-a361-4358-8292-8a935c2ac820",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Recruit 13",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000080",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "1882px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"863eab75-558a-4053-ba2d-e392113495af": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "863eab75-558a-4053-ba2d-e392113495af",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 16",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#008080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3278px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"873af61a-af64-4df0-a694-eee79c0b37bc": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "873af61a-af64-4df0-a694-eee79c0b37bc",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1391px",
+				"name": "Grilp 10",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1183px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"87443752-83b8-48b5-9ff2-8d24706fc97c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "87443752-83b8-48b5-9ff2-8d24706fc97c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 9",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2192px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8780be2c-380c-4a14-9688-36d2b3ea2da4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8780be2c-380c-4a14-9688-36d2b3ea2da4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin Recruit 40",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#006000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"87ecc33d-5c25-4255-aa40-f263ff0a4a6f": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "87ecc33d-5c25-4255-aa40-f263ff0a4a6f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1934px",
+				"name": "Hobgoblin Recruit 24",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#C0C0C0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"88a11b3d-eb34-442f-a656-b7122a08e709": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 65,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "88a11b3d-eb34-442f-a656-b7122a08e709",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin War Mage 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 65,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "2580px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8a96e35c-64da-4370-93dc-0b99e9f4fb5d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8a96e35c-64da-4370-93dc-0b99e9f4fb5d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/356/638512253794592648.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "120"
+				},
+				"itemId": 4485821,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "771px",
+				"name": "Mixlax",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 13,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Devil Notary",
+				"top": "97px",
+				"hidehpbar": true,
+				"stat": 4485821,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485821,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8aa7f653-c275-4a8c-a30d-28c4db4d97c0": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8aa7f653-c275-4a8c-a30d-28c4db4d97c0",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 50",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#A000A0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8b870548-987d-44b5-a4e3-9170c7034298": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8b870548-987d-44b5-a4e3-9170c7034298",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Recruit 21",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#C0C000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8ba2bab4-2685-4a1f-9c78-25a5f8fec64c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 18,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8ba2bab4-2685-4a1f-9c78-25a5f8fec64c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/306/638512253711444896.jpeg",
+				"locked": false,
+				"abilityTracker": {
+					"InfernalSacrifice": 3
+				},
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485791,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2709px",
+				"name": "Bloodlord Varrox",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Bloodlord Varrox",
+				"top": "4519px",
+				"hidehpbar": true,
+				"stat": 4485791,
+				"hitPointInfo": {
+					"maximum": 119,
+					"current": 119,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485791,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8c255588-b739-4c2c-b6b5-e8f2abc246f0": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8c255588-b739-4c2c-b6b5-e8f2abc246f0",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1158px",
+				"name": "Hobgoblin Recruit 14",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#808000",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2114px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8c4f2732-8074-4ae2-a964-f7bfcfdad1a3": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8c4f2732-8074-4ae2-a964-f7bfcfdad1a3",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1934px",
+				"name": "Grilp 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1261px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8cd023b6-d01d-4132-8812-7257efe4eeba": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8cd023b6-d01d-4132-8812-7257efe4eeba",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_07",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3950px",
+				"name": "C7. Summoning Altar (Seventh Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/07",
+				"top": "3666px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8d0cabb9-e7ec-408f-b96e-0dca365900ae": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8d0cabb9-e7ec-408f-b96e-0dca365900ae",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2709px",
+				"name": "Hobgoblin Trooper 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "1106px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8e034be7-8795-4d88-a117-00c80c242b4f": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "8e034be7-8795-4d88-a117-00c80c242b4f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2502px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"960413296041326f004631-c7eb-41f6-9ca3-653b55cbc86b": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#1A6AFF",
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"mapElev": "10",
+				"scaleCreated": 2.6444444444444444,
+				"teleporterCoords": {
+					"top": 4092,
+					"left": 3140,
+					"scale": 2.6444444444444444
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4107px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "935px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "960413296041326f004631-c7eb-41f6-9ca3-653b55cbc86b",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"98d27998-893d-4d83-af0b-577dd1b8979a": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "98d27998-893d-4d83-af0b-577dd1b8979a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2709px",
+				"name": "Hobgoblin Trooper 11",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3510px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"995a16d7-3702-4993-bfb6-5a84decc0957": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 44,
+				"armorClass": 17,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "995a16d7-3702-4993-bfb6-5a84decc0957",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/440/638512253936083109.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485887,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3097px",
+				"name": "Hobgoblin Smokebinder",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Invisible"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 44,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Smokebinder",
+				"top": "3200px",
+				"hidehpbar": true,
+				"stat": 4485887,
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485887,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"99ea58bd-8c1c-43b5-b2b3-30142fe1b074": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "99ea58bd-8c1c-43b5-b2b3-30142fe1b074",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1081px",
+				"name": "Hobgoblin Incendiarist 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "1959px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9bb103e4-cfc2-4cc4-8960-87327e21b8c8": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 20,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "9bb103e4-cfc2-4cc4-8960-87327e21b8c8",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/438/638512253932807441.jpeg",
+				"locked": false,
+				"abilityTracker": {
+					"HiddenGift": 3,
+					"LeadtheCharge": 1
+				},
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485883,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2632px",
+				"name": "Hobgoblin Death Captain",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Death Captain",
+				"top": "1028px",
+				"hidehpbar": true,
+				"stat": 4485883,
+				"hitPointInfo": {
+					"maximum": 90,
+					"current": 90,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485883,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a23a6e3b-9448-43ff-850e-5520bb0a749c": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "a23a6e3b-9448-43ff-850e-5520bb0a749c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1701px",
+				"name": "Hobgoblin Recruit 34",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000020",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a65ccb06-668c-4261-aa00-011268729b33": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "a65ccb06-668c-4261-aa00-011268729b33",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1081px",
+				"name": "Hobgoblin Recruit 46",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#A00000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a85652d2-d1d5-4e21-923e-7c506039be1e": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "a85652d2-d1d5-4e21-923e-7c506039be1e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "848px",
+				"name": "Hobgoblin Recruit 8",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2269px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a9f0078a-ae3e-4779-89d6-5e6a50bd0056": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "a9f0078a-ae3e-4779-89d6-5e6a50bd0056",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2709px",
+				"name": "Hobgoblin War Mage 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "4674px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ad7ab3bc-d7da-46de-a4fc-a24855097840": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ad7ab3bc-d7da-46de-a4fc-a24855097840",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1469px",
+				"name": "Grilp 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1300px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"adcbb885-d4a4-4b41-93ae-f47bf9383758": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "adcbb885-d4a4-4b41-93ae-f47bf9383758",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1546px",
+				"name": "Hobgoblin Recruit 45",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#606060",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ae11a98d-496c-4be2-b372-a959a4136363": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "ae11a98d-496c-4be2-b372-a959a4136363",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1934px",
+				"name": "Hobgoblin Recruit 23",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00C0C0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b1aa7bc9-5123-448a-8490-87d267ae1746": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b1aa7bc9-5123-448a-8490-87d267ae1746",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_02",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1934px",
+				"name": "C2. Green Route (Second Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/02",
+				"top": "640px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b47e6eba-30c8-4109-a29c-ac5f49bf4339": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b47e6eba-30c8-4109-a29c-ac5f49bf4339",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1003px",
+				"name": "Hobgoblin Recruit 17",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#808080",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2580px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b759422a-e354-40f6-8555-bd060395e057": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b759422a-e354-40f6-8555-bd060395e057",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Recruit 15",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800080",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2812px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b7f15b0c-f093-4831-b2ed-f4fe44cdd62a": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "b7f15b0c-f093-4831-b2ed-f4fe44cdd62a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1003px",
+				"name": "Hobgoblin Recruit 31",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#404040",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3976px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b9667d88-aa04-447b-8179-2d169a2fbe87": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b9667d88-aa04-447b-8179-2d169a2fbe87",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2424px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"bec61be4-15e2-40c2-b9d2-9288986f489f": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "bec61be4-15e2-40c2-b9d2-9288986f489f",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_04",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3207.4666666666667px",
+				"name": "C4. Armory (Fourth Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/04",
+				"top": "1086.433333333333px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c3a6e9be-47e7-4efc-837a-72dc0399a6e4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "c3a6e9be-47e7-4efc-837a-72dc0399a6e4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1779px",
+				"name": "Hobgoblin Recruit 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2890px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c44ce0f8-998c-43b0-966c-ec077eec76d4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c44ce0f8-998c-43b0-966c-ec077eec76d4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"itemId": 17100,
+				"square": false,
+				"healthauratype": "aura",
+				"placeType": "count",
+				"size": 78,
+				"left": "3362.4666666666667px",
+				"name": "Aarakocra",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"alwaysshowname": false,
+				"restrictPlayerMove": false,
+				"listItemPath": "/Monsters/Aarakocra",
+				"top": "1551.433333333333px",
+				"hidehpbar": false,
+				"stat": 17100,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "none",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17100,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c5f0f745-e4e2-4f99-b4bd-4fff68e7e321": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "c5f0f745-e4e2-4f99-b4bd-4fff68e7e321",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 11",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#800000",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2037px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c9e6b59a-4100-4504-bc7f-e75c22b800f4": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c9e6b59a-4100-4504-bc7f-e75c22b800f4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3097px",
+				"name": "Hobgoblin War Mage 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"cab1d410-4d00-4d44-93aa-b74402c4f1ae": {
+				"disablestat": true,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "cab1d410-4d00-4d44-93aa-b74402c4f1ae",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_06",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "416.4666666666667px",
+				"name": "C6. Great Hall (Sixth Circle)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/06",
+				"top": "3956.433333333333px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6444444444444444,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ccfeba97-dda4-4787-86b4-951875be5796": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 65,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ccfeba97-dda4-4787-86b4-951875be5796",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin War Mage",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 65,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "2114px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"cdfaea21-252f-4836-86e0-b1c664b233ca": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 12,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "cdfaea21-252f-4836-86e0-b1c664b233ca",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485882,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Brandbearer 7",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 12,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Brandbearer",
+				"top": "2114px",
+				"hidehpbar": true,
+				"stat": 4485882,
+				"hitPointInfo": {
+					"maximum": 12,
+					"current": 12,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485882,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ce53fb89-c968-448d-ad79-0f3236432c6e": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ce53fb89-c968-448d-ad79-0f3236432c6e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1585px",
+				"name": "Grilp 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1183px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d1497cf5-8485-4c1d-88d6-814d6d070a78": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "d1497cf5-8485-4c1d-88d6-814d6d070a78",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Recruit 20",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#0000C0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2269px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d1decf9a-a31e-4793-aa83-5ea03034e4d7": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d1decf9a-a31e-4793-aa83-5ea03034e4d7",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2942px",
+				"name": "Hobgoblin War Mage 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "3510px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d3c8eb10-01d7-46ba-a0f0-b607bcac2350": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d3c8eb10-01d7-46ba-a0f0-b607bcac2350",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485889,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3252px",
+				"name": "Hobgoblin War Mage 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin War Mage",
+				"top": "3510px",
+				"hidehpbar": true,
+				"stat": 4485889,
+				"hitPointInfo": {
+					"maximum": 65,
+					"current": 65,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485889,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d6d981b1-57d3-4d29-b262-8da4b56de10d": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 9,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d6d981b1-57d3-4d29-b262-8da4b56de10d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Hobgoblin Trooper 7",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Prone"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 18,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "2580px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 9,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d93f1a93-5a9a-4f89-a5b7-fb14392f04de": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d93f1a93-5a9a-4f89-a5b7-fb14392f04de",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485888,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "3329px",
+				"name": "Hobgoblin Trooper 13",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000080",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Trooper",
+				"top": "3821px",
+				"hidehpbar": true,
+				"stat": 4485888,
+				"hitPointInfo": {
+					"maximum": 18,
+					"current": 18,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485888,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d9c59ff6-38b8-4f8a-a282-ba3c1218316d": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d9c59ff6-38b8-4f8a-a282-ba3c1218316d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1856px",
+				"name": "Grilp 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "834px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e0913921-f1b1-4b44-a678-8be15c1641d2": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "e0913921-f1b1-4b44-a678-8be15c1641d2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1856px",
+				"name": "Hobgoblin Recruit 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "2735px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e0a5f904-8d8c-4f35-9595-0006af1b5d38": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 78,
+				"armorClass": 16,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "e0a5f904-8d8c-4f35-9595-0006af1b5d38",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485884,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1391px",
+				"name": "Hobgoblin Firerunner",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 78,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Firerunner",
+				"top": "3045px",
+				"hidehpbar": true,
+				"stat": 4485884,
+				"hitPointInfo": {
+					"maximum": 78,
+					"current": 78,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485884,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e17bb958-4dca-47a2-aef5-ca56f15bd389": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "e17bb958-4dca-47a2-aef5-ca56f15bd389",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1236px",
+				"name": "Hobgoblin Recruit 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "1959px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e86d414a-4ebd-48cf-a369-713204c70242": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "e86d414a-4ebd-48cf-a369-713204c70242",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1469px",
+				"name": "Hobgoblin Recruit 41",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000060",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4131px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"eba1973f-c467-4df3-8bbf-385272b77ec1": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "eba1973f-c467-4df3-8bbf-385272b77ec1",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1081px",
+				"name": "Hobgoblin Recruit 48",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#0000A0",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3898px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"efff00a3-4c10-445f-babf-7d8f2172a353": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "efff00a3-4c10-445f-babf-7d8f2172a353",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1624px",
+				"name": "Hobgoblin Recruit 12",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Unconscious"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#008000",
+				"hidestat": false,
+				"hidden": true,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "1882px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f6967d5a-528f-44d7-9835-b1748c7177aa": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "f6967d5a-528f-44d7-9835-b1748c7177aa",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485885,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "2864px",
+				"name": "Narine",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Incendiarist",
+				"top": "1339px",
+				"hidehpbar": true,
+				"stat": 4485885,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485885,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f82cbb57-382c-40e0-b81e-ac03d60f75b2": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "f82cbb57-382c-40e0-b81e-ac03d60f75b2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1701px",
+				"name": "Hobgoblin Recruit 27",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000040",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "4209px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f8d6f6dd-0879-4e4b-9f49-6a27a6acb93f": {
+				"disablestat": false,
+				"gridSquares": 0.5030094582975064,
+				"custom_conditions": [],
+				"hp": 10,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f8d6f6dd-0879-4e4b-9f49-6a27a6acb93f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485872,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 39,
+				"left": "1973px",
+				"name": "Grilp",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 10,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Grilp",
+				"top": "1106px",
+				"hidehpbar": true,
+				"stat": 4485872,
+				"hitPointInfo": {
+					"maximum": 10,
+					"current": 10,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485872,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"fd8ee5d5-dcb5-473a-aafd-52743b09cac5": {
+				"disablestat": false,
+				"gridSquares": 1.0060189165950129,
+				"custom_conditions": [],
+				"hp": 7,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "fd8ee5d5-dcb5-473a-aafd-52743b09cac5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485886,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 78,
+				"left": "1003px",
+				"name": "Hobgoblin Recruit 25",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [
+					{
+						"name": "Poisoned"
+					}
+				],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#400000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 7,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hobgoblin Recruit",
+				"top": "3743px",
+				"hidehpbar": true,
+				"stat": 4485886,
+				"hitPointInfo": {
+					"maximum": 7,
+					"current": 7,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485886,
+				"scaleCreated": 2.6444444444444444,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
 			}
 		},
-		"10173819101737346f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#A0A000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"scaleCreated": 2.6444444444444444,
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "3750.9999999999995px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "992px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "10173819101737346f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"1159bb7c-8d91-417e-bf51-c612caab6331": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "1159bb7c-8d91-417e-bf51-c612caab6331",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1430px",
-			"name": "Grilp 7",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#00E5FF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1494px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"12f1e9ec-fc7f-4e50-89cc-0efb9810e61f": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "12f1e9ec-fc7f-4e50-89cc-0efb9810e61f",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1895px",
-			"name": "Grilp 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "990px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"140f00f6-65c5-4ef0-ba4f-6fb3a1459959": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "140f00f6-65c5-4ef0-ba4f-6fb3a1459959",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 19",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00C000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2347px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"14352572143525726f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#002000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 1145,
-				"left": 2362,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "2547px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "1410px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "14352572143525726f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"15317a1f-2ff3-4cf4-85a3-9d0917d65031": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "15317a1f-2ff3-4cf4-85a3-9d0917d65031",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "926px",
-			"name": "Hobgoblin Recruit 7",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00E5FF",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2037px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"17061652171616526f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#884DFF",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 1144,
-				"left": 809,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "1627px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "1686px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "17061652171616526f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"185573333333333331182933333333333218557333333333333118293333333333326f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#EC8AFF",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 2540.35,
-				"left": 731.5,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "1157px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "1830px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "185573333333333331182933333333333218557333333333333118293333333333326f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"1ab2baba-1e1e-491c-931b-ff2574ba83b6": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "1ab2baba-1e1e-491c-931b-ff2574ba83b6",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1081px",
-			"name": "Hobgoblin Recruit 49",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#A0A000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"1c79d229-0978-453d-b68b-db66db50853d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 33,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "1c79d229-0978-453d-b68b-db66db50853d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Incendiarist 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 33,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "4053px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"1ccc2602-a983-4524-bc60-3d84251e32cd": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "1ccc2602-a983-4524-bc60-3d84251e32cd",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1934px",
-			"name": "Hobgoblin Recruit 43",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#600060",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4053px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"1fae7e2a-3dbe-4279-91e1-3711261a7dbb": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "1fae7e2a-3dbe-4279-91e1-3711261a7dbb",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 10",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#911EB4",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2037px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"21294560213945606f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#911EB4",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 3335,
-				"left": 3129,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "4535px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "2109px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "21294560213945606f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"21669c6a-22dc-45b0-9337-1d3f3c86e58f": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "21669c6a-22dc-45b0-9337-1d3f3c86e58f",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 36",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#200020",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3898px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"21b67588-990f-475d-ad29-a77a7b3879a1": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "21b67588-990f-475d-ad29-a77a7b3879a1",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1624px",
-			"name": "Grilp 8",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#000000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "873px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"21db32fb-5656-4b24-8852-613cbfdc4625": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "21db32fb-5656-4b24-8852-613cbfdc4625",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_01",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "383px",
-			"name": "C1. Nowhere Gate (First Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/01",
-			"top": "175px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"23103972232039726f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#808000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 2422,
-				"left": 3328,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "3947px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "2290px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "23103972232039726f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"23571145236711456f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#E000E0",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 2572,
-				"left": 1435,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "1120px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "2337px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "23571145236711456f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"25912384260123846f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#002020",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 1447,
-				"left": 2737,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "2359px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "2571px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "25912384260123846f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"27371447273714476f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#C0C0C0",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 2384,
-				"left": 2596,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "1422px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "2712px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "27371447273714476f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"28a65314-7a5d-4dd2-8413-54113af8d701": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "28a65314-7a5d-4dd2-8413-54113af8d701",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 38",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#202020",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"29482758-dc80-4283-a487-da50cfead123": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "29482758-dc80-4283-a487-da50cfead123",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 32",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#200000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"2d42402b-36c5-4713-8004-193d0ad5b7d5": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "2d42402b-36c5-4713-8004-193d0ad5b7d5",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1895px",
-			"name": "Grilp 9",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#F032E6",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1416px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"2e2ea145-9d95-41f1-a2d7-eaa9542e6810": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "2e2ea145-9d95-41f1-a2d7-eaa9542e6810",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 14",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#808000",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"31293336312933366f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#606000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 4560,
-				"left": 2134,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "3310.9999999999995px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "3104px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "31293336312933366f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"31354092314540926f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#006000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 4132,
-				"left": 960,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "4067px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "3115px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "31354092314540926f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"33282422332824226f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#006060",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 3972,
-				"left": 2315,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "2397px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "3303px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "33282422332824226f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"34e4c795-6256-4235-b534-385a8e7218b2": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "34e4c795-6256-4235-b534-385a8e7218b2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin Recruit 29",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#400040",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4053px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"353162e0-82e0-4eba-a5c1-14a105546ec6": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "353162e0-82e0-4eba-a5c1-14a105546ec6",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2347px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"36415ba7-2a82-493e-b3a1-ee035bb19584": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "36415ba7-2a82-493e-b3a1-ee035bb19584",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Brandbearer 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2269px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"36c9693a-26d4-4bad-a29b-9b31bb2e0834": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 33,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "36c9693a-26d4-4bad-a29b-9b31bb2e0834",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Incendiarist 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 33,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"380000af-38d9-4539-a4a7-799487a61f84": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "380000af-38d9-4539-a4a7-799487a61f84",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1546px",
-			"name": "Hobgoblin Recruit 28",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#404000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4053px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"39016b7f-1218-493a-8e31-282107910324": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "39016b7f-1218-493a-8e31-282107910324",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2011px",
-			"name": "Hobgoblin Recruit 10",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#911EB4",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2269px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"3d494f76-8e98-4dd1-8f6b-35a46bc37650": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "3d494f76-8e98-4dd1-8f6b-35a46bc37650",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2476px",
-			"name": "Hobgoblin Trooper 19",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00C000",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "4519px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"3da77049-0f2e-48b0-a88a-625e4ff5a7d2": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "3da77049-0f2e-48b0-a88a-625e4ff5a7d2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1701px",
-			"name": "Hobgoblin Recruit 39",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#600000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"3e3643ef-a529-4cb5-96fc-2c2c0f075944": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "3e3643ef-a529-4cb5-96fc-2c2c0f075944",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Recruit",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3200px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4001cf25-8d69-4f61-b92b-346538fdfc3d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "4001cf25-8d69-4f61-b92b-346538fdfc3d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin Brandbearer 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2657px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"40bf5aa0-0209-43d6-8eba-9efbfd570f99": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "40bf5aa0-0209-43d6-8eba-9efbfd570f99",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 37",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#002020",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"443ee569-ed40-47a8-bcbf-1c1e217ec37c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "443ee569-ed40-47a8-bcbf-1c1e217ec37c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin Brandbearer 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2347px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4788e7ce-7164-4734-88ec-3a9c59411eb2": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "4788e7ce-7164-4734-88ec-3a9c59411eb2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1430px",
-			"name": "Oki",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#008000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1067px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4b1edaf8-47f4-4728-a587-6d4b49c39134": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "4b1edaf8-47f4-4728-a587-6d4b49c39134",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "926px",
-			"name": "Hobgoblin Recruit 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3045px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4b58ac57-fada-4006-b07c-e2a071c1df34": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "4b58ac57-fada-4006-b07c-e2a071c1df34",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_03",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "461px",
-			"name": "C3. Barracks (Third Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/03",
-			"top": "2735px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4b8d6a00-282a-4399-b08c-54442f1e5b61": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "4b8d6a00-282a-4399-b08c-54442f1e5b61",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 22",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#C000C0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"4eb0b0b4-3d83-4be4-b7eb-16d608dfd584": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "4eb0b0b4-3d83-4be4-b7eb-16d608dfd584",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2476px",
-			"name": "Hobgoblin Trooper 17",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#808080",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "4364px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"528c04df-eb5d-4909-8283-eff7ecbc0353": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "528c04df-eb5d-4909-8283-eff7ecbc0353",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Recruit 44",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#006060",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"52d31e58-11f5-4570-9612-293644f2f314": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "52d31e58-11f5-4570-9612-293644f2f314",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1003px",
-			"name": "Hobgoblin Recruit 42",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#606000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"52ea368b-b1ad-4693-827c-f684a3a28273": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "52ea368b-b1ad-4693-827c-f684a3a28273",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 3,
-				"y": 89
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485884,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2554px",
-			"name": "Hobgoblin Firerunner 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Firerunner",
-			"top": "4441px",
-			"hidehpbar": true,
-			"stat": 4485884,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 275,
-			"hitPointInfo": {
-				"maximum": 78,
-				"current": 78,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485884,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"5314bac2-3782-4794-8a0d-8b271e2815c2": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "5314bac2-3782-4794-8a0d-8b271e2815c2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin Recruit 26",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#004000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"5355c49a-f935-4260-b9b9-ecce991ed97e": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "5355c49a-f935-4260-b9b9-ecce991ed97e",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2632px",
-			"name": "Hobgoblin Trooper 3",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "873px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"53ceb685-6041-403e-a042-a8943313bbd4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "53ceb685-6041-403e-a042-a8943313bbd4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2476px",
-			"name": "Hobgoblin Trooper 18",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#C00000",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "4674px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"5684bf0a-03df-41e3-8e0b-7b6d1e030ce8": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 90,
-			"armorClass": 20,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "5684bf0a-03df-41e3-8e0b-7b6d1e030ce8",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/438/638512253932807441.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485883,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Death Captain 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 90,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Death Captain",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485883,
-			"hitPointInfo": {
-				"maximum": 90,
-				"current": 90,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485883,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"575b0f63-7a89-4400-aeba-572060d1ec93": {
-			"disablestat": true,
-			"gridSquares": 1,
-			"custom_conditions": [],
-			"hp": 0,
-			"folderPath": "/Letters",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "575b0f63-7a89-4400-aeba-572060d1ec93",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 77.53333333333333,
-			"left": "1158px",
-			"name": "Camp Firefield Features",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"max_hp": 0,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
-			"top": "175px",
-			"hidehpbar": true,
-			"imageSize": 1,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"rotation": 0,
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"58a903c6-fb4c-4043-b37f-652509d84368": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "58a903c6-fb4c-4043-b37f-652509d84368",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Brandbearer 3",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2502px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"5a91e02e-9f89-4a5a-8bd3-ef3ccff8d0d7": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "5a91e02e-9f89-4a5a-8bd3-ef3ccff8d0d7",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin Brandbearer 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2424px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"6323a119-3368-44af-8dc5-b33be74e3ae9": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "6323a119-3368-44af-8dc5-b33be74e3ae9",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Trooper 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2890px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"637a3834-968e-4a85-b81a-ffa227497c8c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "637a3834-968e-4a85-b81a-ffa227497c8c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin Brandbearer 8",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2037px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"64e665ee-079f-449f-b6d4-f1ab7cb212dc": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "64e665ee-079f-449f-b6d4-f1ab7cb212dc",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 18",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#C00000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3200px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"650fd734-05fe-4e76-b23d-0952ca3e68eb": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "650fd734-05fe-4e76-b23d-0952ca3e68eb",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2011px",
-			"name": "Hobgoblin Incendiarist",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "2967px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"674fc607-f889-40a2-a0b8-6db78bc5803c": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Letters",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "674fc607-f889-40a2-a0b8-6db78bc5803c",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Letters_H",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2587.4666666666667px",
-			"name": "Varrox’s hoard",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Letters/H",
-			"top": "5042.433333333333px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"6c0807e2-5bf6-4109-a257-e0b540bea0e4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 33,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "6c0807e2-5bf6-4109-a257-e0b540bea0e4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1469px",
-			"name": "Hobgoblin Incendiarist 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 33,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"721050e5-44ac-40be-a5e6-3ff3803b2d6d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 18,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "721050e5-44ac-40be-a5e6-3ff3803b2d6d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1779px",
-			"name": "Hobgoblin Trooper",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "1959px",
-			"hidehpbar": true,
-			"imageSize": 1,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"rotation": 0,
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"726525403573652540356f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#002020",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 1182,
-				"left": 1855,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "2515.35px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "706.5px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "726525403573652540356f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"7368af9f-086a-4de1-b88d-32225903348b": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "7368af9f-086a-4de1-b88d-32225903348b",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1701px",
-			"name": "Hobgoblin Recruit 35",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#202000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3898px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"75956051-0261-4b24-b0ca-485d189099cb": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "75956051-0261-4b24-b0ca-485d189099cb",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3329px",
-			"name": "Hobgoblin Trooper 15",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#800080",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3278px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"7951f36b-b4a7-424d-b4e2-02ee5872553d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "7951f36b-b4a7-424d-b4e2-02ee5872553d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 8",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2657px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"79baf635-4fde-4256-bd6c-532a64a2a5e5": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "79baf635-4fde-4256-bd6c-532a64a2a5e5",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Recruit 47",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00A000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3898px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"7a44515a-a0d7-4a8f-84ab-57e7cf35a07c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "7a44515a-a0d7-4a8f-84ab-57e7cf35a07c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 16",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#008080",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2812px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"7f23e186-c906-4093-bbd1-c16fd755f282": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "7f23e186-c906-4093-bbd1-c16fd755f282",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin Recruit 9",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#F032E6",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2269px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8090333333333333114414999999999998090333333333333114414999999999996f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#004000",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": 0,
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 1652,
-				"left": 1711,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "1119px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "784px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8090333333333333114414999999999998090333333333333114414999999999996f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"8382a0ac-90a3-4645-9bd9-af0fde28435b": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8382a0ac-90a3-4645-9bd9-af0fde28435b",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin Brandbearer",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2114px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"85facb9d-a361-4358-8292-8a935c2ac820": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "85facb9d-a361-4358-8292-8a935c2ac820",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Recruit 13",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000080",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "1882px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"863eab75-558a-4053-ba2d-e392113495af": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "863eab75-558a-4053-ba2d-e392113495af",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 16",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#008080",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3278px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"873af61a-af64-4df0-a694-eee79c0b37bc": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "873af61a-af64-4df0-a694-eee79c0b37bc",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1391px",
-			"name": "Grilp 10",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#911EB4",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1183px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"87443752-83b8-48b5-9ff2-8d24706fc97c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "87443752-83b8-48b5-9ff2-8d24706fc97c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 9",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#F032E6",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2192px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8780be2c-380c-4a14-9688-36d2b3ea2da4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8780be2c-380c-4a14-9688-36d2b3ea2da4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin Recruit 40",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#006000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"87ecc33d-5c25-4255-aa40-f263ff0a4a6f": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "87ecc33d-5c25-4255-aa40-f263ff0a4a6f",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1934px",
-			"name": "Hobgoblin Recruit 24",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#C0C0C0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"88a11b3d-eb34-442f-a656-b7122a08e709": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 65,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "88a11b3d-eb34-442f-a656-b7122a08e709",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin War Mage 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 65,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "2580px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8a96e35c-64da-4370-93dc-0b99e9f4fb5d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 13,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "8a96e35c-64da-4370-93dc-0b99e9f4fb5d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/356/638512253794592648.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "120"
-			},
-			"itemId": 4485821,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "771px",
-			"name": "Mixlax",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 13,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Devil Notary",
-			"top": "97px",
-			"hidehpbar": true,
-			"stat": 4485821,
-			"hitPointInfo": {
-				"maximum": 13,
-				"current": 13,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485821,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8aa7f653-c275-4a8c-a30d-28c4db4d97c0": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8aa7f653-c275-4a8c-a30d-28c4db4d97c0",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 50",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#A000A0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8b870548-987d-44b5-a4e3-9170c7034298": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8b870548-987d-44b5-a4e3-9170c7034298",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Recruit 21",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#C0C000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8ba2bab4-2685-4a1f-9c78-25a5f8fec64c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 18,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "8ba2bab4-2685-4a1f-9c78-25a5f8fec64c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/306/638512253711444896.jpeg",
-			"locked": false,
-			"abilityTracker": {
-				"InfernalSacrifice": 3
-			},
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485791,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2709px",
-			"name": "Bloodlord Varrox",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Bloodlord Varrox",
-			"top": "4519px",
-			"hidehpbar": true,
-			"stat": 4485791,
-			"hitPointInfo": {
-				"maximum": 119,
-				"current": 119,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485791,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8c255588-b739-4c2c-b6b5-e8f2abc246f0": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8c255588-b739-4c2c-b6b5-e8f2abc246f0",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1158px",
-			"name": "Hobgoblin Recruit 14",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#808000",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2114px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8c4f2732-8074-4ae2-a964-f7bfcfdad1a3": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "8c4f2732-8074-4ae2-a964-f7bfcfdad1a3",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1934px",
-			"name": "Grilp 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1261px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8cd023b6-d01d-4132-8812-7257efe4eeba": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "8cd023b6-d01d-4132-8812-7257efe4eeba",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_07",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3950px",
-			"name": "C7. Summoning Altar (Seventh Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/07",
-			"top": "3666px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8d0cabb9-e7ec-408f-b96e-0dca365900ae": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "8d0cabb9-e7ec-408f-b96e-0dca365900ae",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2709px",
-			"name": "Hobgoblin Trooper 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "1106px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"8e034be7-8795-4d88-a117-00c80c242b4f": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "8e034be7-8795-4d88-a117-00c80c242b4f",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2502px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"960413296041326f004631-c7eb-41f6-9ca3-653b55cbc86b": {
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"color": "#1A6AFF",
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"custom_conditions": [],
-			"type": "door",
-			"mapElev": "10",
-			"scaleCreated": 2.6444444444444444,
-			"teleporterCoords": {
-				"top": 4092,
-				"left": 3140,
-				"scale": 2.6444444444444444
-			},
-			"vision": {
-				"color": "rgba(0, 0, 0, 0)",
-				"feet": 0
-			},
-			"top": "4107px",
-			"size": 50,
-			"armorClass": 0,
-			"left": "935px",
-			"name": "",
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "960413296041326f004631-c7eb-41f6-9ca3-653b55cbc86b",
-			"auraislight": true,
-			"conditions": [],
-			"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
-			"light2": {
-				"color": "rgba(142, 142, 142, 1)",
-				"feet": "0"
-			}
-		},
-		"98d27998-893d-4d83-af0b-577dd1b8979a": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "98d27998-893d-4d83-af0b-577dd1b8979a",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2709px",
-			"name": "Hobgoblin Trooper 11",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#800000",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3510px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"995a16d7-3702-4993-bfb6-5a84decc0957": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 44,
-			"armorClass": 17,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "995a16d7-3702-4993-bfb6-5a84decc0957",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/440/638512253936083109.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485887,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3097px",
-			"name": "Hobgoblin Smokebinder",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Invisible"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 44,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Smokebinder",
-			"top": "3200px",
-			"hidehpbar": true,
-			"stat": 4485887,
-			"hitPointInfo": {
-				"maximum": 44,
-				"current": 44,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485887,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"99ea58bd-8c1c-43b5-b2b3-30142fe1b074": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "99ea58bd-8c1c-43b5-b2b3-30142fe1b074",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1081px",
-			"name": "Hobgoblin Incendiarist 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "1959px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"9bb103e4-cfc2-4cc4-8960-87327e21b8c8": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 20,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "9bb103e4-cfc2-4cc4-8960-87327e21b8c8",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/438/638512253932807441.jpeg",
-			"locked": false,
-			"abilityTracker": {
-				"HiddenGift": 3,
-				"LeadtheCharge": 1
-			},
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485883,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2632px",
-			"name": "Hobgoblin Death Captain",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Death Captain",
-			"top": "1028px",
-			"hidehpbar": true,
-			"stat": 4485883,
-			"hitPointInfo": {
-				"maximum": 90,
-				"current": 90,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485883,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"a23a6e3b-9448-43ff-850e-5520bb0a749c": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "a23a6e3b-9448-43ff-850e-5520bb0a749c",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1701px",
-			"name": "Hobgoblin Recruit 34",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000020",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"a65ccb06-668c-4261-aa00-011268729b33": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "a65ccb06-668c-4261-aa00-011268729b33",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1081px",
-			"name": "Hobgoblin Recruit 46",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#A00000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"a85652d2-d1d5-4e21-923e-7c506039be1e": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "a85652d2-d1d5-4e21-923e-7c506039be1e",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "848px",
-			"name": "Hobgoblin Recruit 8",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000000",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2269px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"a9f0078a-ae3e-4779-89d6-5e6a50bd0056": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "a9f0078a-ae3e-4779-89d6-5e6a50bd0056",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2709px",
-			"name": "Hobgoblin War Mage 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "4674px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"ad7ab3bc-d7da-46de-a4fc-a24855097840": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "ad7ab3bc-d7da-46de-a4fc-a24855097840",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1469px",
-			"name": "Grilp 2",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1300px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"adcbb885-d4a4-4b41-93ae-f47bf9383758": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "adcbb885-d4a4-4b41-93ae-f47bf9383758",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1546px",
-			"name": "Hobgoblin Recruit 45",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#606060",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"ae11a98d-496c-4be2-b372-a959a4136363": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "ae11a98d-496c-4be2-b372-a959a4136363",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1934px",
-			"name": "Hobgoblin Recruit 23",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00C0C0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"b1aa7bc9-5123-448a-8490-87d267ae1746": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "b1aa7bc9-5123-448a-8490-87d267ae1746",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_02",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1934px",
-			"name": "C2. Green Route (Second Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/02",
-			"top": "640px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"b47e6eba-30c8-4109-a29c-ac5f49bf4339": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "b47e6eba-30c8-4109-a29c-ac5f49bf4339",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1003px",
-			"name": "Hobgoblin Recruit 17",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#808080",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2580px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"b759422a-e354-40f6-8555-bd060395e057": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "b759422a-e354-40f6-8555-bd060395e057",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Recruit 15",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#800080",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2812px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"b7f15b0c-f093-4831-b2ed-f4fe44cdd62a": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "b7f15b0c-f093-4831-b2ed-f4fe44cdd62a",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1003px",
-			"name": "Hobgoblin Recruit 31",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#404040",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3976px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"b9667d88-aa04-447b-8179-2d169a2fbe87": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "b9667d88-aa04-447b-8179-2d169a2fbe87",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2424px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"bec61be4-15e2-40c2-b9d2-9288986f489f": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "bec61be4-15e2-40c2-b9d2-9288986f489f",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_04",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3207.4666666666667px",
-			"name": "C4. Armory (Fourth Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/04",
-			"top": "1086.433333333333px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"c3a6e9be-47e7-4efc-837a-72dc0399a6e4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "c3a6e9be-47e7-4efc-837a-72dc0399a6e4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1779px",
-			"name": "Hobgoblin Recruit 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2890px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"c44ce0f8-998c-43b0-966c-ec077eec76d4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 12,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "c44ce0f8-998c-43b0-966c-ec077eec76d4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/8/441/636306375308314493.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"itemId": 17100,
-			"square": false,
-			"healthauratype": "aura",
-			"placeType": "count",
-			"size": 78,
-			"left": "3362.4666666666667px",
-			"name": "Aarakocra",
-			"defaultmaxhptype": "average",
-			"disableborder": false,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"alwaysshowname": false,
-			"restrictPlayerMove": false,
-			"listItemPath": "/Monsters/Aarakocra",
-			"top": "1551.433333333333px",
-			"hidehpbar": false,
-			"stat": 17100,
-			"hitPointInfo": {
-				"maximum": 13,
-				"current": 13,
-				"temp": 0
-			},
-			"lockRestrictDrop": "none",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 17100,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"c5f0f745-e4e2-4f99-b4bd-4fff68e7e321": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "c5f0f745-e4e2-4f99-b4bd-4fff68e7e321",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 11",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#800000",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2037px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"c9e6b59a-4100-4504-bc7f-e75c22b800f4": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "c9e6b59a-4100-4504-bc7f-e75c22b800f4",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3097px",
-			"name": "Hobgoblin War Mage 5",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#5F0404",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"cab1d410-4d00-4d44-93aa-b74402c4f1ae": {
-			"disablestat": true,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"folderPath": "/Numbers",
-			"armorClass": 0,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "cab1d410-4d00-4d44-93aa-b74402c4f1ae",
-			"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-			"locked": true,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "labelToken",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 60
-			},
-			"itemId": "_AboveVTT_Tokens_Numbers_06",
-			"square": true,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "416.4666666666667px",
-			"name": "C6. Great Hall (Sixth Circle)",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": false,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"itemType": "builtinToken",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": false,
-			"alwaysshowname": true,
-			"restrictPlayerMove": true,
-			"listItemPath": "/AboveVTT Tokens/Numbers/06",
-			"top": "3956.433333333333px",
-			"hidehpbar": true,
-			"hitPointInfo": {
-				"maximum": 0,
-				"current": 0,
-				"temp": 0
-			},
-			"lockRestrictDrop": "lock",
-			"underDarkness": false,
-			"player_owned": false,
-			"scaleCreated": 2.6444444444444444,
-			"tokenSize": 1,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"ccfeba97-dda4-4787-86b4-951875be5796": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 65,
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "ccfeba97-dda4-4787-86b4-951875be5796",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin War Mage",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 65,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "2114px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"cdfaea21-252f-4836-86e0-b1c664b233ca": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 12,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "cdfaea21-252f-4836-86e0-b1c664b233ca",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 78
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485882,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Brandbearer 7",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00E5FF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 12,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Brandbearer",
-			"top": "2114px",
-			"hidehpbar": true,
-			"stat": 4485882,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 280,
-			"hitPointInfo": {
-				"maximum": 12,
-				"current": 12,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485882,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"ce53fb89-c968-448d-ad79-0f3236432c6e": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "ce53fb89-c968-448d-ad79-0f3236432c6e",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1585px",
-			"name": "Grilp 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1183px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d1497cf5-8485-4c1d-88d6-814d6d070a78": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "d1497cf5-8485-4c1d-88d6-814d6d070a78",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Recruit 20",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#0000C0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2269px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d1decf9a-a31e-4793-aa83-5ea03034e4d7": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "d1decf9a-a31e-4793-aa83-5ea03034e4d7",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2942px",
-			"name": "Hobgoblin War Mage 4",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#884DFF",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "3510px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d3c8eb10-01d7-46ba-a0f0-b607bcac2350": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "d3c8eb10-01d7-46ba-a0f0-b607bcac2350",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/444/638512253942947115.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485889,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3252px",
-			"name": "Hobgoblin War Mage 3",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin War Mage",
-			"top": "3510px",
-			"hidehpbar": true,
-			"stat": 4485889,
-			"hitPointInfo": {
-				"maximum": 65,
-				"current": 65,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485889,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d6d981b1-57d3-4d29-b262-8da4b56de10d": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 9,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "d6d981b1-57d3-4d29-b262-8da4b56de10d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Hobgoblin Trooper 7",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Prone"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#00E5FF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 18,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "2580px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 9,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d93f1a93-5a9a-4f89-a5b7-fb14392f04de": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "d93f1a93-5a9a-4f89-a5b7-fb14392f04de",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/442/638512253939671530.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485888,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "3329px",
-			"name": "Hobgoblin Trooper 13",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000080",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Trooper",
-			"top": "3821px",
-			"hidehpbar": true,
-			"stat": 4485888,
-			"hitPointInfo": {
-				"maximum": 18,
-				"current": 18,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485888,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"d9c59ff6-38b8-4f8a-a282-ba3c1218316d": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "d9c59ff6-38b8-4f8a-a282-ba3c1218316d",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1856px",
-			"name": "Grilp 3",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "834px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"e0913921-f1b1-4b44-a678-8be15c1641d2": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "e0913921-f1b1-4b44-a678-8be15c1641d2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1856px",
-			"name": "Hobgoblin Recruit 3",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "2735px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"e0a5f904-8d8c-4f35-9595-0006af1b5d38": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 78,
-			"armorClass": 16,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "e0a5f904-8d8c-4f35-9595-0006af1b5d38",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 3,
-				"y": 89
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485884,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1391px",
-			"name": "Hobgoblin Firerunner",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FF7433",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 78,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Firerunner",
-			"top": "3045px",
-			"hidehpbar": true,
-			"stat": 4485884,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 275,
-			"hitPointInfo": {
-				"maximum": 78,
-				"current": 78,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485884,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"e17bb958-4dca-47a2-aef5-ca56f15bd389": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "e17bb958-4dca-47a2-aef5-ca56f15bd389",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1236px",
-			"name": "Hobgoblin Recruit 6",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#EC8AFF",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "1959px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"e86d414a-4ebd-48cf-a369-713204c70242": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "e86d414a-4ebd-48cf-a369-713204c70242",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1469px",
-			"name": "Hobgoblin Recruit 41",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000060",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4131px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"eba1973f-c467-4df3-8bbf-385272b77ec1": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "eba1973f-c467-4df3-8bbf-385272b77ec1",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1081px",
-			"name": "Hobgoblin Recruit 48",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#0000A0",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3898px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"efff00a3-4c10-445f-babf-7d8f2172a353": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "efff00a3-4c10-445f-babf-7d8f2172a353",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1624px",
-			"name": "Hobgoblin Recruit 12",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Unconscious"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#008000",
-			"hidestat": false,
-			"hidden": true,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "1882px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"f6967d5a-528f-44d7-9835-b1748c7177aa": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"armorClass": 15,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "f6967d5a-528f-44d7-9835-b1748c7177aa",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 7,
-				"y": 10
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485885,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "2864px",
-			"name": "Narine",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#FFD433",
-			"hidden": false,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Incendiarist",
-			"top": "1339px",
-			"hidehpbar": true,
-			"stat": 4485885,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 220,
-			"hitPointInfo": {
-				"maximum": 33,
-				"current": 33,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485885,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"f82cbb57-382c-40e0-b81e-ac03d60f75b2": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "f82cbb57-382c-40e0-b81e-ac03d60f75b2",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1701px",
-			"name": "Hobgoblin Recruit 27",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#000040",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "4209px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"f8d6f6dd-0879-4e4b-9f49-6a27a6acb93f": {
-			"disablestat": false,
-			"gridSquares": 0.5030094582975064,
-			"custom_conditions": [],
-			"hp": 10,
-			"armorClass": 13,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": 0
-			},
-			"id": "f8d6f6dd-0879-4e4b-9f49-6a27a6acb93f",
-			"imgsrc": "https://www.dndbeyond.com/avatars/41759/419/638512253905663378.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": 0
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 0, 0.1)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 129, 0, 0.3)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": 0,
-				"y": 0
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485872,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 39,
-			"left": "1973px",
-			"name": "Grilp",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [],
-			"enablepercenthpbar": false,
-			"sizeId": 2,
-			"itemType": "monster",
-			"color": "#1A6AFF",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 10,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Grilp",
-			"top": "1106px",
-			"hidehpbar": true,
-			"stat": 4485872,
-			"hitPointInfo": {
-				"maximum": 10,
-				"current": 10,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485872,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		},
-		"fd8ee5d5-dcb5-473a-aafd-52743b09cac5": {
-			"disablestat": false,
-			"gridSquares": 1.0060189165950129,
-			"custom_conditions": [],
-			"hp": 7,
-			"armorClass": 14,
-			"light1": {
-				"color": "rgba(255, 255, 255, 1)",
-				"feet": "0"
-			},
-			"id": "fd8ee5d5-dcb5-473a-aafd-52743b09cac5",
-			"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			"locked": false,
-			"light2": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "0"
-			},
-			"aura2": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"aura1": {
-				"color": "rgba(255, 255, 100, 0.5)",
-				"feet": "0"
-			},
-			"offset": {
-				"x": -2,
-				"y": 79
-			},
-			"tokenStyleSelect": "circle",
-			"revealname": false,
-			"tokenBaseStyleSelect": "default",
-			"vision": {
-				"color": "rgba(141.933, 141.933, 141.933, 1)",
-				"feet": "60"
-			},
-			"itemId": 4485886,
-			"square": false,
-			"placeType": "count",
-			"healthauratype": "aura",
-			"size": 78,
-			"left": "1003px",
-			"name": "Hobgoblin Recruit 25",
-			"defaultmaxhptype": "average",
-			"disableborder": true,
-			"auraislight": true,
-			"conditions": [
-				{
-					"name": "Poisoned"
-				}
-			],
-			"enablepercenthpbar": false,
-			"sizeId": 4,
-			"itemType": "monster",
-			"color": "#400000",
-			"hidden": true,
-			"hidestat": false,
-			"videoToken": false,
-			"legacyaspectratio": true,
-			"mapElev": 0,
-			"max_hp": 7,
-			"alwaysshowname": false,
-			"restrictPlayerMove": true,
-			"listItemPath": "/Monsters/Hobgoblin Recruit",
-			"top": "3743px",
-			"hidehpbar": true,
-			"stat": 4485886,
-			"alternativeImages": [
-				"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-			],
-			"imageZoom": 215,
-			"hitPointInfo": {
-				"maximum": 7,
-				"current": 7,
-				"temp": 0
-			},
-			"lockRestrictDrop": "restrict",
-			"underDarkness": false,
-			"player_owned": false,
-			"monster": 4485886,
-			"scaleCreated": 2.6444444444444444,
-			"maxAge": false,
-			"zindexdiff": 17,
-			"disableaura": false,
-			"revealInFog": false
-		}
-	},
-	"darkness_filter": "100",
-	"conversion": 0.37815126050420167,
-	"scale_factor": 0.9999999999999999,
-	"offsetx": 72.46666666666671,
-	"dm_map_usable": "1",
-	"offsety": 19.433333333333014,
-	"daylight": "rgba(255, 255, 255, 1)",
-	"hpps": 77.53333333333335,
+		"darkness_filter": "100",
+		"conversion": 0.37815126050420167,
+		"scale_factor": 0.9999999999999999,
+		"offsetx": 72.46666666666671,
+		"dm_map_usable": "1",
+		"offsety": 19.433333333333014,
+		"daylight": "rgba(255, 255, 255, 1)",
+		"hpps": 77.53333333333335
 	},
 	"dnd/wel/burnock-mill/BurnockMillMap": {
 		"vpps": "92.43333333333331",
@@ -30392,10 +28453,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -30429,11 +28486,6 @@ export const get_scene_data_wel = {
 				"top": "3947px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -30474,10 +28526,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
@@ -30548,10 +28596,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -30585,11 +28629,6 @@ export const get_scene_data_wel = {
 				"top": "4040px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -30615,10 +28654,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#606060",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -30665,10 +28700,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#004040",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -30714,10 +28745,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#006060",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -30764,10 +28791,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#EC8AFF",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -30826,10 +28849,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -30903,10 +28922,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -30965,10 +28980,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#E000E0",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -31027,10 +29038,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -31106,10 +29113,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31179,10 +29182,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31216,10 +29215,6 @@ export const get_scene_data_wel = {
 				"top": "3947px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -31258,10 +29253,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -31321,7 +29312,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {},
 				"id": "482389fc-a43f-4d69-a820-dc896fe5e0a9",
 				"imgsrc": "https://www.dndbeyond.com/avatars/41759/450/638512253953711242.jpeg",
 				"locked": false,
@@ -31336,10 +29326,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -31375,8 +29361,6 @@ export const get_scene_data_wel = {
 				"top": "805px",
 				"hidehpbar": true,
 				"stat": 4485892,
-				"alternativeImages": [],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": "77",
 					"current": 77,
@@ -31416,10 +29400,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31453,11 +29433,6 @@ export const get_scene_data_wel = {
 				"top": "4225px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -31497,10 +29472,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31534,10 +29505,6 @@ export const get_scene_data_wel = {
 				"top": "4132px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -31579,10 +29546,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
@@ -31656,10 +29619,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31718,10 +29677,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#E00000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -31783,10 +29738,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
@@ -31860,10 +29811,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -31936,10 +29883,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32011,10 +29954,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -32090,10 +30029,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32165,10 +30100,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32237,10 +30168,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -32314,10 +30241,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32376,10 +30299,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#E0E000",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -32425,10 +30344,6 @@ export const get_scene_data_wel = {
 					"feet": "0"
 				},
 				"color": "#1A6AFF",
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"hitPointInfo": {
 					"maximum": 0,
 					"current": 0,
@@ -32488,10 +30403,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -32565,10 +30476,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32602,11 +30509,6 @@ export const get_scene_data_wel = {
 				"top": "4132px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -32646,10 +30548,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32683,10 +30581,6 @@ export const get_scene_data_wel = {
 				"top": "4040px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -32726,10 +30620,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32763,10 +30653,6 @@ export const get_scene_data_wel = {
 				"top": "4040px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -32805,10 +30691,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -32882,10 +30764,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32958,10 +30836,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -32995,11 +30869,6 @@ export const get_scene_data_wel = {
 				"top": "4225px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -33041,10 +30910,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
@@ -33118,10 +30983,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -33155,11 +31016,6 @@ export const get_scene_data_wel = {
 				"top": "4040px",
 				"hidehpbar": true,
 				"stat": 4485895,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 5,
 					"current": 5,
@@ -33199,10 +31055,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -33236,10 +31088,6 @@ export const get_scene_data_wel = {
 				"top": "4225px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -33285,10 +31133,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": -37,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -33349,10 +31193,6 @@ export const get_scene_data_wel = {
 						"mod": "+3"
 					}
 				},
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 211,
 				"hitPointInfo": {
 					"maximum": 36,
 					"current": 36,
@@ -33395,10 +31235,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -33472,10 +31308,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -33509,10 +31341,6 @@ export const get_scene_data_wel = {
 				"top": "3947px",
 				"hidehpbar": true,
 				"stat": 4485893,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 0,
 				"hitPointInfo": {
 					"maximum": 9,
 					"current": 9,
@@ -33551,10 +31379,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -33630,10 +31454,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": 0,
-					"y": 0
-				},
 				"tokenStyleSelect": "labelToken",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -33702,10 +31522,6 @@ export const get_scene_data_wel = {
 				"aura1": {
 					"color": "rgba(255, 129, 0, 0.3)",
 					"feet": "0"
-				},
-				"offset": {
-					"x": 0,
-					"y": 0
 				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
@@ -33779,10 +31595,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 100, 0.5)",
 					"feet": "0"
 				},
-				"offset": {
-					"x": -8,
-					"y": 7
-				},
 				"tokenStyleSelect": "circle",
 				"revealname": false,
 				"tokenBaseStyleSelect": "default",
@@ -33816,10 +31628,6 @@ export const get_scene_data_wel = {
 				"top": "4132px",
 				"hidehpbar": true,
 				"stat": 4485898,
-				"alternativeImages": [
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-				],
-				"imageZoom": 195,
 				"hitPointInfo": {
 					"maximum": 55,
 					"current": 55,
