@@ -336,7 +336,7 @@ function avtt_settings() {
 		},
 		{
 			name: 'iframeStatBlocks',
-			label: 'Fetch Monster Stat Blocks',
+			label: 'Alternative Statblocks',
 			type: 'toggle',
 			options: [
 				{ value: true, label: "Load from DDB", description: `Monster details pages are being fetched and shown as Stat Blocks. Disabling this will build monster stat blocks locally instead. Disabling this will improve performance and reduce network data usage. Enabling this is not recommended unless you are experiencing issues with the default stat blocks.` },
