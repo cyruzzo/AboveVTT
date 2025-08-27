@@ -987,7 +987,7 @@ class Token {
 			}
 		}
 		else{
-			if(this.options.healthauratype == "none"){
+			if (this.options.healthauratype == "none" || this.options.healthauratype == "condition-bloodied-50"){
 				this.options.disableaura = true;
 				this.options.enablepercenthpbar = false;
 			} else if(this.options.healthauratype == "bar"){
@@ -996,7 +996,7 @@ class Token {
 			} else if(this.options.healthauratype == "aura"){
 				this.options.disableaura = false;
 				this.options.enablepercenthpbar = false;
-			} else if(this.options.healthauratype && this.options.healthauratype.startsWith("aura-bloodied-")){
+			} else if(this.options.healthauratype == "aura-bloodied-50"){
 				this.options.disableaura = false;
 				this.options.enablepercenthpbar = false;
 			}
@@ -1608,6 +1608,14 @@ class Token {
 		if(this.isPlayer() && find_pc_by_player_id(this.options.id, false)?.inspiration){
 			this.options.conditions = find_pc_by_player_id(this.options.id, false).conditions
 		}
+		if (this.options.healthauratype == 'condition-bloodied-50' ){
+			if (this.hpPercentage <= 50) {
+				if(!this.hasCondition("Bloodied"))
+					this.addCondition("Bloodied")
+			} else {
+				this.removeCondition("Bloodied");
+			}
+		} 
 		
 		const conditions = this.conditions;
 		const conditionsTotal = conditions.length + this.options.custom_conditions.length + (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || (window.JOURNAL.notes[this.options.id].player instanceof Array && window.JOURNAL.notes[this.options.id].player.includes(`${window.myUser}`))))
