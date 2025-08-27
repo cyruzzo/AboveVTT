@@ -860,8 +860,8 @@ class Token {
 			this.place_sync_persist();
 		}		
 	}
-	place_sync_persist() {
-		this.place();
+	place_sync_persist(animationDuration) {
+		this.place(animationDuration);
 		this.sync($.extend(true, {}, this.options));
 	}
 
@@ -3864,7 +3864,7 @@ function place_token_at_view_point(tokenObject, pageX, pageY) {
 	place_token_at_map_point(tokenObject, mapPosition.x, mapPosition.y);
 }
 
-function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false) {
+function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, animationDuration) {
 
 	console.log(`attempting to place token at ${x}, ${y}; options: ${JSON.stringify(tokenObject)}`);
 
@@ -3950,7 +3950,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false) 
 	// place the token
 	if(forcePlaceAndSize && options.id in window.TOKEN_OBJECTS){
 		window.TOKEN_OBJECTS[options.id].options = options;
-		window.TOKEN_OBJECTS[options.id].place_sync_persist();
+		window.TOKEN_OBJECTS[options.id].place_sync_persist(animationDuration);
 	}
 	else{
 		create_update_token(options);
@@ -5294,10 +5294,10 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 			let token = window.TOKEN_OBJECTS[id] != undefined ? window.TOKEN_OBJECTS[id] : window.all_token_objects[id];
 			if(token == undefined) continue;
 			let options = $.extend(true, {}, token.options);
-			
-			options.selected = true;
-
-			place_token_at_map_point(options, x, y, forceSize=true);				
+            const forceSize = true;
+			const animationDuration = 0;
+			place_token_at_map_point(options, x, y, forceSize, animationDuration);	
+			window.TOKEN_OBJECTS[id].selected = true;			
 		}
 		window.TELEPORTER_PASTE_BUFFER = undefined;
 	}
@@ -5358,7 +5358,7 @@ function paste_selected_tokens(x, y, teleporter=undefined) {
 	}
 
 	
-
+    
 	draw_selected_token_bounding_box();
 }
 function delete_selected_walls() {
