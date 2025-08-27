@@ -3694,7 +3694,7 @@ function display_monster_filter_modal() {
         filter_observer.observe(mutation_target,mutation_config);
         console.groupEnd()
     });
-    iframe.attr("src", `https://www.dndbeyond.com/encounters/${window.EncounterHandler.avttId}/edit`);
+    iframe.attr("src", `https://www.dndbeyond.com/encounter-builder`);
 
 }
 
