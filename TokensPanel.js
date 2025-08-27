@@ -1977,9 +1977,9 @@ function register_token_row_context_menu() {
                     }
                 }
             }
-            if(rowItem.isTypeMyToken()){
+            if(rowItem.isTypeMyToken() || rowItem.isTypeBuiltinToken() || rowItem.isTypeDDBToken()){
                 menuItems["duplicateMyToken"] = {
-                    name: 'Duplicate',
+                    name: rowItem.isTypeMyToken()  ? 'Duplicate' : 'Copy to My Tokens',
                     callback: function(itemKey, opt, originalEvent) {
                         let itemToPlace = find_sidebar_list_item(opt.$trigger);
                         duplicate_my_token(itemToPlace);
@@ -3945,12 +3945,17 @@ function find_token_options_for_list_item(listItem) {
 function duplicate_my_token(listItem){
     if (!listItem) return {};
     let foundOptions = $.extend(true, {}, find_token_options_for_list_item(listItem));
+    if(foundOptions.image){
+        foundOptions.imgsrc = foundOptions.image;
+        delete foundOptions.image;
+    }
     delete foundOptions.id;
+    const folder = listItem.isTypeMyToken() ? find_sidebar_list_item_from_path(listItem.folderPath) : find_sidebar_list_item_from_path(RootFolder.MyTokens.path)
     if(window.JOURNAL.notes[listItem.id] != undefined){
-        create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
+        create_token_inside(folder, undefined, undefined, undefined, foundOptions, window.JOURNAL.notes[listItem.id].text);
     }
     else{
-        create_token_inside(find_sidebar_list_item_from_path(listItem.folderPath), undefined, undefined, undefined, foundOptions);
+        create_token_inside(folder, undefined, undefined, undefined, foundOptions);
     }
 }
 function create_token_copy_inside(listItem, open5e = false){

@@ -30377,15 +30377,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
-				},
 				"id": "0967b843-e081-40c4-970e-d4f4a4e339b1",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -30541,15 +30532,6 @@ export const get_scene_data_wel = {
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
-				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
 				},
 				"id": "118d24bd-25ea-443b-b553-37b1f8c78c75",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
@@ -31418,15 +31400,6 @@ export const get_scene_data_wel = {
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
-				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
 				},
 				"id": "4c7d082a-ad5e-444c-98ce-cc7d4848d708",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
@@ -32577,15 +32550,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
-				},
 				"id": "987da141-dffc-44dc-a0c1-5459aeace2dd",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -32979,15 +32943,6 @@ export const get_scene_data_wel = {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
 				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
-				},
 				"id": "ad10f593-b320-4bca-83c6-48b61871fd27",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
 				"locked": false,
@@ -33147,15 +33102,6 @@ export const get_scene_data_wel = {
 				"light1": {
 					"color": "rgba(255, 255, 255, 1)",
 					"feet": "0"
-				},
-				"alternativeImagesCustomizations": {
-					"https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
-						"offset": {
-							"x": 0,
-							"y": 0
-						},
-						"imageZoom": 0
-					}
 				},
 				"id": "b7e66928-5f74-434f-9748-d470db4a1b81",
 				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
