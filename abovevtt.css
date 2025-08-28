@@ -8426,7 +8426,7 @@ button#changeTokenImage:before{
 .mfp-wrap{
     z-index: 1000000 !important;
 }
-[role='dialog'] .note .note-text {
+[role='dialog']>.note>.note-text {
     min-height: 450px;
     position: relative;
     height: 100%;
