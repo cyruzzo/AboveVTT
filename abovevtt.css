@@ -4843,6 +4843,11 @@ div#initialPosition_row input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: searchfield;
+}
+
 /*do our own css of mobile character sheets due to disabling ddb event that changes classes*/
 .ct-character-sheet-mobile__header{
     position: sticky !important;
