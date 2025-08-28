@@ -210,7 +210,8 @@ function token_context_menu_expanded(tokenIds, e) {
 					imgsrc: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`,
 					type: 'door',
 					size: 50,
-					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor
+					scaleCreated: window.CURRENT_SCENE_DATA.scale_factor,
+					auraislight: false
 				};
 				window.ScenesHandler.create_update_token(options)
 			}
