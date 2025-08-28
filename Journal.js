@@ -178,14 +178,26 @@ class JournalManager{
 	
 	sync(){
 		let self=this;
-
+		const isAnyParentShared = function(chapter){
+			let parentShared = false;
+			while (parentShared == false && chapter?.parentID != undefined){
+				const parentId = chapter.parentID;
+				chapter = self.chapters.find(d => d.id == parentId);
+				if (chapter?.shareWithPlayer)
+					parentShared = true;
+			}
+			return parentShared;
+		}
 		if(window.DM){
 			window.MB.sendMessage('custom/myVTT/JournalChapters',{
 				chapters: self.chapters
 			});
 			let sendNotes = [];
+			
+
 			for(let i in self.notes){
-				if(self.notes[i].player){
+				const parentFolder = self.chapters.find(d => d.notes.includes(i));
+				if (self.notes[i].player || parentFolder?.shareWithPlayer || isAnyParentShared(parentFolder)){
 					self.notes[i].id = i;
 					sendNotes.push(self.notes[i])
 				}
@@ -219,12 +231,43 @@ class JournalManager{
 	 * @param {Array|Boolean} shareWithPlayer - Array of player userIds to share with, or true to share with all players
 	 */
 	share_chapter(chapterIndex, shareWithPlayer){
-		this.chapters[chapterIndex].shareWithPlayer = shareWithPlayer || false;
-		this.persist();
-		this.build_journal();
+		const self = this;
+		self.chapters[chapterIndex].shareWithPlayer = shareWithPlayer || false;
+		self.persist();
+		self.build_journal();
 		window.MB.sendMessage('custom/myVTT/JournalChapters',{
-			chapters: this.chapters
+			chapters: self.chapters
 		});
+		
+		if(shareWithPlayer){
+			const anyParentIsChapter = function (id, chapter) {
+				
+				let noteChapter = self.chapters.find(d => d.notes.includes(id));
+				let anyParentIsChapter = noteChapter?.id == chapter.id;
+				while (anyParentIsChapter == false && noteChapter?.parentID != undefined) {
+					const parentId = noteChapter.parentID;
+					noteChapter = self.chapters.find(d => d.id == parentId);
+					if (noteChapter?.id == chapter?.id)
+						anyParentIsChapter = true;
+				}
+				return anyParentIsChapter;
+			}
+			const chapter = self.chapters[chapterIndex]
+			
+			let sendNotes = [];
+
+
+			for (let i in self.notes) {	
+				if (anyParentIsChapter(i, chapter)) {
+					self.notes[i].id = i;
+					sendNotes.push(self.notes[i])
+				}
+			}
+			self.sendNotes(sendNotes)
+		}
+		
+		
+
 	}
 	build_journal(searchText){
 		console.log('build_journal');
@@ -2269,6 +2312,7 @@ class JournalManager{
 	
 	note_visibility(id,visibility){
 		this.notes[id].player=visibility;
+
 		window.MB.sendMessage("custom/myVTT/note", {
 			note: this.notes[id],
 			id: id
