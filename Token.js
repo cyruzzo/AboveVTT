@@ -3683,7 +3683,7 @@ function should_snap_to_grid() {
 		|| ((window.CURRENT_SCENE_DATA.snap != "1") && window.toggleSnap);
 }
 
-function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0, arrowKeys=false) {
+function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, tokenWidth = 0, arrowKeys=false, roundDown=false) {
 	if (forceSnap || should_snap_to_grid()) {
 		const gridSquaresWide = Math.round(tokenWidth/window.CURRENT_SCENE_DATA.hpps)
 		const hpps = window.CURRENT_SCENE_DATA.gridType == 2 ? window.CURRENT_SCENE_DATA.vpps : window.CURRENT_SCENE_DATA.hpps;
@@ -3821,14 +3821,22 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			startX = startX*window.CURRENT_SCENE_DATA.scaleAdjustment.x+gridWidth/2 - tokenWidth/2;
 			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.y*window.CURRENT_SCENE_DATA.scale_factor);
 		}
-		
-		let currentGridX = Math.round((mapX - startX) / gridWidth);
-		let currentGridY = Math.round((mapY - startY) / gridHeight);
-		if(window.CURRENT_SCENE_DATA.gridType == 3 && currentGridX % 2 == 1){ //replace with current scene when setting exists
-			currentGridY -= 0.5;
+		let currentGridX;
+		let currentGridY;
+		if (roundDown || window.CURRENT_SCENE_DATA.gridType != 1){ //used for fog grid brush and non-square grids
+			currentGridX = Math.floor((mapX - startX) / gridWidth);
+			currentGridY = Math.floor((mapY - startY) / gridHeight);
 		}
-		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
-			currentGridX -= 0.5;
+		else{
+			currentGridX = Math.round((mapX - startX) / gridWidth);
+			currentGridY = Math.round((mapY - startY) / gridHeight);
+		}	
+
+		if(window.CURRENT_SCENE_DATA.gridType == 3 && currentGridX % 2 == 1){ 
+			currentGridY += 0.5;
+		}
+		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){
+			currentGridX += 0.5;
 		} 
 		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),
