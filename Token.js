@@ -2138,15 +2138,13 @@ class Token {
 					
 
 
-
-
 				old.find(".token-image").css("transition", "max-height 0.2s linear, max-width 0.2s linear, transform 0.2s linear")
 				old.find(".token-image").css("transform", "scale(var(--token-scale)) rotate(var(--token-rotation))");
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)/100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
-					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)/ 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
+					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
 					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
 					"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -2700,12 +2698,12 @@ class Token {
 					else{
 						tokenImage = $("<div style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+" div-token-image'/>");
 					}
-					
+				
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
-						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 90 * this.options.size }px` : '0px',
+						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 90 * this.options.size }px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
 						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
