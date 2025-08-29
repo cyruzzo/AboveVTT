@@ -2145,8 +2145,8 @@ class Token {
 				old.css({
 					"--token-scale": imageScale,
 					"--token-rotation": `${rotation}deg`,
-					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : '0px',
-					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : '0px',
+					"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX)/100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
+					"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY)/ 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
 					"--image-opacity": `${imageOpacity}`,
 					"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`, // will be used for object-view-box when supported in firefox
 					"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -2704,8 +2704,8 @@ class Token {
 					tok.css({
 						"--token-scale": imageScale,
 						"--token-rotation": `${rotation}deg`,
-						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) * this.options.gridSquares}px` : '0px',
-						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) * this.options.gridSquares}px` : '0px',
+						"--offsetX": imageOffsetX != undefined ? `${parseFloat(imageOffsetX) / 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
+						"--offsetY": imageOffsetY != undefined ? `${parseFloat(imageOffsetY) / 100 * window.CURRENT_SCENE_DATA.hpps * this.options.gridSquares}px` : '0px',
 						"--image-opacity": `${imageOpacity}`,
 						"--view-box": `inset(${newInset}% ${newInset}% ${newInset}% ${newInset}%)`,
 						"--image-zoom": imageZoom == undefined ? ``: `${imageZoom+100}%` //adjust from viewbox to background-size property due to firefox not supporting it
@@ -3822,13 +3822,13 @@ function snap_point_to_grid(mapX, mapY, forceSnap = false, tinyToken = false, to
 			startY = startY*window.CURRENT_SCENE_DATA.scaleAdjustment.y+gridHeight - tokenWidth/2 - ((1-(gridSquaresWide%2))*hexSize*window.CURRENT_SCENE_DATA.scaleAdjustment.y*window.CURRENT_SCENE_DATA.scale_factor);
 		}
 		
-		let currentGridX = Math.floor((mapX - startX) / gridWidth);
-		let currentGridY = Math.floor((mapY - startY) / gridHeight);
+		let currentGridX = Math.round((mapX - startX) / gridWidth);
+		let currentGridY = Math.round((mapY - startY) / gridHeight);
 		if(window.CURRENT_SCENE_DATA.gridType == 3 && currentGridX % 2 == 1){ //replace with current scene when setting exists
-			currentGridY += 0.5;
+			currentGridY -= 0.5;
 		}
 		else if(window.CURRENT_SCENE_DATA.gridType == 2 && currentGridY % 2 == 1){//replace with current scene when setting exists
-			currentGridX += 0.5;
+			currentGridX -= 0.5;
 		} 
 		return {
 			x: Math.ceil((currentGridX * gridWidth) + startX),

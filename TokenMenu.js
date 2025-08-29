@@ -3496,8 +3496,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 				token.options.offset = {x: 0, y:0};
 				token.options.offset.x = offsetX;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(offsetX) * token.options.gridSquares}px`,
-					"--offsetY": `${parseFloat(token.options.offset.y) * token.options.gridSquares}px`
+					"--offsetX": `${parseFloat(offsetX) / 100 * window.CURRENT_SCENE_DATA.hpps * token.options.gridSquares}px`,
+					"--offsetY": `${parseFloat(token.options.offset.y) / 100 * window.CURRENT_SCENE_DATA.hpps * token.options.gridSquares}px`
 				})
 
 				if(persist)
@@ -3517,8 +3517,8 @@ function build_adjustments_flyout_menu(tokenIds) {
 					token.options.offset = {x: 0, y:0};
 				token.options.offset.y = offsetY;
 				$(`.VTTToken[data-id='${token.options.id}']`).css({
-					"--offsetX": `${parseFloat(token.options.offset.x) * token.options.gridSquares}px`,
-					"--offsetY": `${parseFloat(offsetY) * token.options.gridSquares}px`
+					"--offsetX": `${parseFloat(token.options.offset.x) / 100 * window.CURRENT_SCENE_DATA.hpps * token.options.gridSquares}px`,
+					"--offsetY": `${parseFloat(offsetY) / 100 * window.CURRENT_SCENE_DATA.hpps * token.options.gridSquares}px`
 				})
 				if(persist)
 					token.place_sync_persist();
