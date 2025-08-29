@@ -3414,7 +3414,8 @@ function drawing_mousemove(e) {
 		
 
 			if(window.CURRENT_SCENE_DATA.gridType == '1'){
-				const {x,y} = snap_point_to_grid(mouseX, mouseY, true);
+				const roundDown = true;
+				const { x, y } = snap_point_to_grid(mouseX, mouseY, true, undefined, undefined, undefined, roundDown);
 				window.BRUSHPOINTS.push([Math.round(x), Math.round(y)])
 			}
 			else{
