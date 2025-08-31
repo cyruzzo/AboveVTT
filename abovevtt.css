@@ -11614,16 +11614,6 @@ div#playlistFields {
     padding-top: 0
 }
 
-.stat-block .monster-header {
-    padding-top: 4px;
-    letter-spacing: .35px;
-    font-weight: 500;
-    color: var(--monster-header-color,#5b160c);
-    font-size: var(--monster-trait-header-size,22px);
-    font-family: var(--monster-trait-header-font,"Roboto Condensed",Helvetica,sans-serif);
-    border-bottom: 2px solid var(--monster-header-underline,#7a3c2f);
-    font-variant: small-caps;
-}
 
 .stat-block .monster-header+p {
     break-before: avoid
@@ -11658,6 +11648,10 @@ div#playlistFields {
 .ct-sidebar__inner>[class*='styles_pane']>[class*='styles_content'][class*='styles_dark'] .glc-game-log{
     background: #12181c;
 }
+
+.stat-block p{
+    margin-bottom: 10px;
+}
 .stat-block .mon-stat-block__attribute-label,
 .stat-block .mon-stat-block__attribute-data-value,
 .stat-block .mon-stat-block__tidbits span,
@@ -11684,7 +11678,16 @@ div#playlistFields {
 .stat-block .stats+p {
     margin-top: 10px
 }
-
+.stat-block :is(p.monster-header, .monster-header) {
+    padding-top: 4px;
+    letter-spacing: .35px;
+    font-weight: 500;
+    color: var(--monster-header-color, #5b160c);
+    font-size: var(--monster-trait-header-size, 22px);
+    font-family: var(--monster-trait-header-font, "Roboto Condensed", Helvetica, sans-serif);
+    border-bottom: 2px solid var(--monster-header-underline, #7a3c2f);
+    font-variant: small-caps;
+}
 .stat-block .stats table.abilities-saves {
     --theme-table-row-color: transparent;
     flex: 1 1 auto;
