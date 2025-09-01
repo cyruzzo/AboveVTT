@@ -760,11 +760,10 @@ function check_single_token_visibility(id){
 
 
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
-	const tokenObjectKeys = Object.keys(window.TOKEN_OBJECTS);
-	const playerTokenWithVisionEnabled = tokenObjectKeys.some(d => d.startsWith('/profile').length > 0 && d.options.auraislight != true);
-	const sharedVisionToken = tokenObjectValues.find(d => d.options.share_vision !== undefined && d.options.share_vision != false && d.options.auraislight == true);
+	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
+	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
-	if (((playerTokenWithVisionEnabled || sharedVisionToken) && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
+	if ((((playerTokenId === undefined && playerTokenWithVisionEnabled) || sharedVisionToken) && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
 		playerTokenHasVision = true
 	else
 		playerTokenHasVision = false;
@@ -883,9 +882,8 @@ function do_check_token_visibility() {
 	
 	let playerTokenHasVision;
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
-	const tokenObjectKeys = Object.keys(window.TOKEN_OBJECTS);
-	const playerTokenWithVisionEnabled = tokenObjectKeys.some(d => d.startsWith('/profile').length > 0 && d.options.auraislight != true);
-	const sharedVisionToken = tokenObjectValues.find(d => d.options.share_vision !== undefined && d.options.share_vision != false && d.options.auraislight == true);
+	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
+	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
 
 
@@ -7192,11 +7190,10 @@ function redraw_light(darknessMoved = false){
 	}
 
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
-	const tokenObjectKeys = Object.keys(window.TOKEN_OBJECTS);
-	const playerTokenWithVisionEnabled = tokenObjectKeys.some(d => d.startsWith('/profile').length > 0 && d.options.auraislight != true);
-	const sharedVisionToken = tokenObjectValues.find(d => d.options.share_vision !== undefined && d.options.share_vision != false);
+	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
+	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
-	if (!playerTokenWithVisionEnabled && !sharedVisionToken) {
+	if (playerTokenWithVisionEnabled === false && sharedVisionToken === false) {
 		offscreenContext.globalCompositeOperation = "lighten";
 		offscreenContext.fillStyle = "white";
 		moveOffscreenContext.fillStyle = "white";
