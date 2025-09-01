@@ -697,10 +697,10 @@ class JournalManager{
 					});
 
 
-					for(let i =0; i<window.playerUsers.length; i++){
-						if(toggle_container.find(`input[name='${window.playerUsers[i].userId}']`).length == 0){
-							let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[i].userId}'/>`);
-							let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[i].userId}'>${window.playerUsers[i].userName}</label></div>`)
+					for(let j =0; j<window.playerUsers.length; j++){
+						if(toggle_container.find(`input[name='${window.playerUsers[j].userId}']`).length == 0){
+							let visibility_toggle=$(`<input type='checkbox' name='${window.playerUsers[j].userId}'/>`);
+							let visibility_row = $(`<div class='visibility_toggle_row'><label for='${window.playerUsers[j].userId}'>${window.playerUsers[j].userName}</label></div>`)
 							
 							visibility_row.append(visibility_toggle)
 
@@ -919,7 +919,7 @@ class JournalManager{
 										let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
 										if(sharedUsers.length == 0)
 											sharedUsers = false;
-										window.JOURNAL.note_visibility(note_id,visibility_toggle.is(":checked"));
+										window.JOURNAL.note_visibility(note_id, sharedUsers);
 										window.JOURNAL.build_journal();
 									});
 									
