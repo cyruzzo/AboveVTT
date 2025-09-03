@@ -2896,12 +2896,8 @@ class Token {
 					x: 0,
 					y: 0
 				};
-			 	if(window.moveOffscreenCanvasMask == undefined){
-			 		window.moveOffscreenCanvasMask = document.createElement('canvas');
-					window.moveOffscreenContext = window.moveOffscreenCanvasMask.getContext("2d", { willReadFrequently: true });
-			 	}
-				let canvas = window.moveOffscreenCanvasMask;
-				let ctx = window.moveOffscreenContext
+			 	
+				let ctx;
 
 				tok.draggable({
 					stop: function (event) {
@@ -2965,6 +2961,7 @@ class Token {
 						if (get_avtt_setting_value("allowTokenMeasurement")) {
 							$("#temp_overlay").css("z-index", "50");
 						}
+						ctx = window.moveOffscreenContext
 						window.DRAWFUNCTION = "select"
 						window.DRAGGING = true;
 						window.oldTokenPosition = {};
