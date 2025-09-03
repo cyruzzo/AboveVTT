@@ -911,16 +911,22 @@ function do_check_token_visibility() {
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
+
+	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length > 0;
+
+	let truesightContext;
+
+	if (truesightAuraExists){
+		offScreenCtx.drawImage(truesightCanvas, 0, 0);
+		truesightContext = window.truesightCanvas.getContext('2d');
+	}
+
+
 	offScreenCtx.globalCompositeOperation = 'multiply';
 	offScreenCtx.drawImage(fogCanvas, 0, 0);
 
 	
-	const truesightAuraExists = $(`.aura-element-container-clip.truesight`).length>0;
 
-	let truesightContext;
-
-	if(truesightAuraExists) 
-		truesightContext = window.truesightCanvas.getContext('2d');
 
 	const offscreenImageData = offScreenCtx.getImageData(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 	
@@ -952,9 +958,9 @@ function do_check_token_visibility() {
 			inTruesight = is_token_under_truesight_aura(id, truesightContext);
 		}
 
-		if (showThisPlayerToken !== true && (hideThisTokenInFogOrDarkness === true && inVisibleLight !== true && dmSelected !== true || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
+		if (showThisPlayerToken !== true && ((hideThisTokenInFogOrDarkness === true && inVisibleLight !== true && dmSelected !== true) || (window.TOKEN_OBJECTS[id].options.hidden === true && inTruesight !== true && dmSelected !== true) || (hideInvisible === true && inTruesight !== true))) {
 			hideIds = hideIds.add(tokenSelector).add(auraSelector).add(darknessTokenSelector)
-		}
+		}	
 		else if (window.TOKEN_OBJECTS[id].options.hidden !== true || inTruesight === true) {
 			showTokenIds = showTokenIds.add(tokenSelector).add(darknessTokenSelector);
 			if(window.TOKEN_OBJECTS[id].options.hideaura !== true || id === playerTokenId)
