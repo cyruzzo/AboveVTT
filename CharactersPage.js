@@ -1540,7 +1540,7 @@ function observe_character_sheet_changes(documentToObserve) {
         $(this).text(text);
       })
       snippets.each(function(){
-        if($(this).closest(`[class*='styles_maxHeight']>div:not(.sidebar-panel-content)`).has('input[type="search"]').length>0)
+        if ($(this).closest(`:is([class*='styles_maxHeight'], [class*='styles_pane'])>div:not(.sidebar-panel-content)`).has('input[type="search"]').length>0)
           return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
         add_journal_roll_buttons($(this));
         add_aoe_statblock_click($(this), `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
