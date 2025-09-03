@@ -3180,7 +3180,7 @@ class Token {
 							let canMove = true;
 							if(!self.isAoe()){
 								for(let i=0; i<pixeldata.length; i+=4){
-									if(pixeldata[i]<253 || pixeldata[i+1]<253 || pixeldata[i+2]<253){
+									if(pixeldata[i]<250 || pixeldata[i+1]<250 || pixeldata[i+2]<250){
 										canMove = false;
 										break;
 									}
