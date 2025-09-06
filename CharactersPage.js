@@ -1532,18 +1532,21 @@ function observe_character_sheet_changes(documentToObserve) {
 
       snippets.addClass("above-vtt-visited");
       snippets.find('.ddbc-snippet__tag, .ddbc-tooltip[data-origintal-tile]').each(function(){   
-        $(this).parent().replaceWith($(this).text());
+        const curr = $(this);
+        curr.parent().replaceWith(curr.text());
       })
       snippets.find('td').each(function(){
-        let text = $(this).text();
+        const curr = $(this);
+        let text = curr.text();
         text = text.replace("–", "-");
-        $(this).text(text);
+        curr.text(text);
       })
       snippets.each(function(){
-        if ($(this).closest(`:is([class*='styles_maxHeight'], [class*='styles_pane'])>div:not(.sidebar-panel-content)`).has('input[type="search"]').length>0)
+        const curr = $(this);
+        if (curr.closest(`:is([class*='styles_maxHeight'], [class*='styles_pane'])>div:not(.sidebar-panel-content)`).has('input[type="search"], .ct-preferences-pane').length>0)
           return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
-        add_journal_roll_buttons($(this));
-        add_aoe_statblock_click($(this), `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
+        add_journal_roll_buttons(curr);
+        add_aoe_statblock_click(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
     }
  
