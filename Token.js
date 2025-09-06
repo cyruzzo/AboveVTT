@@ -550,7 +550,7 @@ class Token {
 		if(this.options?.audioChannel?.audioId != undefined){
 			window.MIXER.deleteChannel(this.options.audioChannel.audioId)
 		}
-		if(this.options.combatGroupToken){
+		if(this.options.combatGroupToken && window.DM){
 			for(let i in window.TOKEN_OBJECTS){
 				if(i == this.options.combatGroupToken)
 					continue;
@@ -563,7 +563,7 @@ class Token {
 						delete window.all_token_objects[i].options.combatGroup;
 						delete window.all_token_objects[i].options.ct_show;
 					}
-					ct_remove_token(window.TOKEN_OBJECTS[i]);
+					ct_remove_token(window.TOKEN_OBJECTS[i], false);
 					window.TOKEN_OBJECTS[i].update_and_sync();
 				}
 			}
@@ -2915,11 +2915,11 @@ class Token {
 										continue;
 									let curr = window.TOKEN_OBJECTS[id];
 									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									if(window.TOKEN_OBJECTS[curr.options.id] != undefined){
+									if(window.TOKEN_OBJECTS[curr?.options?.id] != undefined){
 										curr.sync($.extend(true, {}, curr.options));
 									}
 									
-									if(curr.options.darkness === true)
+									if(curr?.options?.darkness === true)
 										darknessMoved = true;
 								}												
 							}
@@ -4790,7 +4790,9 @@ async function do_draw_selected_token_bounding_box() {
 				return;
 			$(this).toggleClass('tokenselected', true);	
 			$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');		
-			window.TOKEN_OBJECTS[$(this).attr('data-id')].selected = true;	
+			const tokenObject = window.TOKEN_OBJECTS[$(this).attr('data-id')];
+			if (tokenObject)
+				tokenObject.selected = true;	
 			window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
 		})
 	}
