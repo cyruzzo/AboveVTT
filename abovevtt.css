@@ -6031,7 +6031,9 @@ button.avtt-roll-formula-button {
 .MuiButtonBase-root {
     width: 100%;
 }
-
+.MuiButtonBase-root.PrivateSwitchBase-root {
+    width: unset;
+}
 .MuiModal-root,
 div#selectedTokensBorder,
 div#selectedTokensBorderRotationGrabberConnector,
