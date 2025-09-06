@@ -246,7 +246,7 @@ class MessageBroker {
 		if (callback)
 			this.callbackAboveQueue.push(callback);
 		
-		if (this.loadingAboveWS) {
+		if (this.loadingAboveWS || this.abovews?.readyState == 1) {
 			return;
 		}
 		this.loadingAboveWS=true;
@@ -330,7 +330,7 @@ class MessageBroker {
 			this.callbackQueue.push(callback);
 
 		console.log("LOADING WS: There Are " + this.callbackQueue.length + " elements in the queue");
-		if (this.loadingWS) {
+		if (this.loadingWS || this.ws?.readyState == 1) {
 			console.log("ALREADY LOADING A WS");
 			return;
 		}
