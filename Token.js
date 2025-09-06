@@ -2914,8 +2914,7 @@ class Token {
 									if (id == self.options.id)
 										continue;
 									let curr = window.TOKEN_OBJECTS[id];
-									let ev = { target: $("#tokens [data-id='" + id + "']").get(0) };
-									if(window.TOKEN_OBJECTS[curr?.options?.id] != undefined){
+									if (curr != undefined){
 										curr.sync($.extend(true, {}, curr.options));
 									}
 									
@@ -4791,9 +4790,10 @@ async function do_draw_selected_token_bounding_box() {
 			$(this).toggleClass('tokenselected', true);	
 			$(`:is(#combat_area, #combat_area_carousel) tr[data-target='${$(this).attr('data-id')}']`).toggleClass('selected-token', getCombatTrackersettings().ct_selected_token == '1');		
 			const tokenObject = window.TOKEN_OBJECTS[$(this).attr('data-id')];
-			if (tokenObject)
-				tokenObject.selected = true;	
-			window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
+			if (tokenObject){
+				tokenObject.selected = true;
+				window.CURRENTLY_SELECTED_TOKENS.push($(this).attr('data-id'));
+			}
 		})
 	}
 
