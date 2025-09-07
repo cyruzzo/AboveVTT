@@ -4470,6 +4470,14 @@ function open_quick_roll_menu(e){
 				$(this).toggleClass('save-success', true)
 			}
 		})
+		const rows = results.find('tr[data-target]');
+		rows.each(function(){
+			const target = $(this).attr('data-target');
+			if (window.all_token_objects[target]?.options.revealname != true){
+				$(this).toggleClass('hideQrmRowFromPlayers')
+			}
+
+		})
 		results.attr('id','qrm-gamelog');
 		let msgdata = {
 			player: window.PLAYER_NAME,
