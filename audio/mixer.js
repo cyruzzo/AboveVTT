@@ -210,8 +210,20 @@ class Mixer extends EventTarget {
 
             if(player.paused)
                 player.load();
-            if (state.paused || channel.paused) {
-                player.pause();
+            if (player && (state.paused || channel.paused)) {
+                if (state.fade == true && !player.paused) {
+                    $(player).stop();
+                    $(player).animate({ volume: 0 }, { 
+                        duration: 5000, 
+                        complete: function () {
+                            player.pause();
+                        }
+                    });
+                }
+                else{
+                    player.pause();
+                }
+                
             } else if (play) {        
      
                 if(channel.token){
@@ -222,15 +234,33 @@ class Mixer extends EventTarget {
                         window.TokenAudioLevels[id] = 0;
                     }
                 }
-                player.volume = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? state.volume * channel.volume * window.TokenAudioLevels[id] : state.volume * channel.volume : state.volume * channel.volume;
+
+                const currVolume = (window.TokenAudioLevels != undefined) ? window.TokenAudioLevels[id] != undefined ? state.volume * channel.volume * window.TokenAudioLevels[id] : state.volume * channel.volume : state.volume * channel.volume;;
+                player.volume = currVolume;
                 player.loop = channel.loop;
                 if(channel.currentTime != undefined && !skipTime){
                     player.currentTime = channel.currentTime;
                 }
                    
-                const currentState = window.MIXER.state();    
-                if(this._players[id] && !(currentState.paused || currentState.channels[id].paused))
-                    this.playaudio(id);          
+                const currentState = window.MIXER.state();  
+                if (this._players[id] && !(currentState.paused || currentState.channels[id].paused)){
+                    
+                    if (this._players[id].paused && currentState.fade == true){
+                        $(this._players[id]).stop();
+                        this._players[id].volume = 0;
+                        this.playaudio(id);
+                        $(this._players[id]).animate({ volume: currVolume }, {
+                            duration: 5000
+                        });
+                        this.playaudio(id);
+                        
+                    }
+                    else {
+                        $(this._players[id]).stop();
+                        this.playaudio(id);
+                    }
+                   
+                }
             }
         });
 
@@ -245,7 +275,7 @@ class Mixer extends EventTarget {
 
     async playaudio(id) {
       
-      try {
+      try { 
         await this._players[id].play();
         $(`#mixer-channels .audio-row[data-id='${id}'] .channel-play-pause-button`).toggleClass('playing pressed', true)
         $(`#mixer-channels .audio-row[data-id='${id}'] svg.play-svg`).css('display', 'none');
@@ -331,6 +361,15 @@ class Mixer extends EventTarget {
      */
     get volume() {
         return this.state().volume;
+    }
+    set fade(shouldFade = false){
+        const state = this.state();
+        state.fade = shouldFade;
+        const noSync = true;
+        this._write(state, undefined, noSync);
+    }
+    get fade(){
+        return this.state().fade;
     }
 
     // play / pause

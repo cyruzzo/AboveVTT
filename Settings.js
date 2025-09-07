@@ -1261,7 +1261,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 			return;
 		if(option.dmOnly == true && !window.DM)
 			return;
-		const currentValue = setValues[option.name] != undefined ? setValues[option.name] : option.defaultValue;
+		const currentValue = setValues?.[option.name] != undefined ? setValues[option.name] : option.defaultValue;
 
 		switch (option.type) {
 			case "dropdown":

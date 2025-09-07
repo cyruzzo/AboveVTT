@@ -182,7 +182,7 @@ function init_mixer() {
                     channel.paused = true;
                     window.MIXER.updateChannel(id, channel);
                 }
-            });
+            });``
 
             if(channel.loop) {
                 loop.toggleClass('pressed', true);
@@ -314,6 +314,16 @@ function init_mixer() {
         console.log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
+    let crossFade = $('<button class="cross-fade-button"></button>');
+    let crossFadeSvg = $(`<span class="material-symbols-outlined">edit_audio</span>`)
+    crossFade.append(crossFadeSvg);
+    crossFade.off().on("click", function () {
+        const isPressed = $(this).hasClass('pressed')
+        crossFade.toggleClass('pressed', !isPressed);
+        window.MIXER.fade = !isPressed;
+    });
+
+
     // play/pause button
     let playPause = $('<button class="mixer-play-pause-button" style="font-size:10px;"></button>');
     let mixer_playlist_svg = $('<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24"><path d="M2.5 8V6H14.5V8ZM2.5 12V10H14.5V12ZM2.5 16V14H10.5V16ZM15.5 21V13L21.5 17Z"/></svg>');
@@ -372,7 +382,7 @@ function init_mixer() {
         });   
     })
     $("#sounds-panel .sidebar-panel-header").append(header, playlistInput, addPlaylistButton, copyPlaylistButton, removePlaylistButton, playlistFields, masterVolumeSlider(), mixerChannels);
-    $('#master-volume').append(clear, sequentialPlay, playPause);
+    $('#master-volume').append(clear, sequentialPlay, crossFade, playPause);
 }
 
 
