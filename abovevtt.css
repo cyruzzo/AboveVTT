@@ -11375,7 +11375,8 @@ button.channel-loop-button{
 .channel-remove-button,
 .track-add-to-mixer,
 .track-add-token-mixer,
-.sequential-button {
+.sequential-button,
+.cross-fade-button {
     box-shadow: 1px 1px 1px 1px #0003, 1px 2px 0px -2px #0003;
     border: 1px solid transparent;
     box-sizing: border-box;
@@ -11402,7 +11403,8 @@ button.channel-loop-button{
 .channel-remove-button:focus,
 .track-add-to-mixer:focus,
 .track-add-token-mixer:focus,
-.sequential-button:focus {
+.sequential-button:focus,
+.cross-fade-button:focus {
     outline: none;
 }
 
@@ -11434,7 +11436,8 @@ button.channel-loop-button{
 .channel-remove-button:active,
 .track-add-to-mixer:active,
 .track-add-token-mixer:active,
-.sequential-button:active {
+.sequential-button:active,
+.cross-fade-button:active {
     background-color: rgb(245, 248, 250);
     box-shadow: inset #000 1px 1px 3px 1px;
     transform: translate(1px, 2px) scale(0.8);
@@ -11509,9 +11512,13 @@ div#playlistFields {
 }
 .mixer-clear-button{
     position: absolute;
+    left: 102px;
+}
+.sequential-button {
+    position: absolute;
     left: 126px;
 }
-.sequential-button{
+.cross-fade-button {
     position: absolute;
     left: 150px;
 }
