@@ -29,7 +29,6 @@ const debounceHandleInjected = mydebounce(() => {
 				if(newlihtml=="") {
 					li.css("display","none"); // THIS IS TO HIDE DMONLY STUFF
 				} 
-					
 				
 			 	li.html(newlihtml);
 			 	window.JOURNAL.translateHtmlAndBlocks(li);	

@@ -10148,7 +10148,18 @@ button.resistanceButton.qrm_buttons_bar span {
     display:table;
     width:100%;
 }
-[class*="glc-game-log"] table#qrm-gamelog :is(tr, td),
+[class*="glc-game-log"] table#qrm-gamelog td:last-of-type {
+    width: 100% !important;
+}
+.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line {
+    visibility: hidden;
+}
+
+.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line::before {
+    content: '???';
+    visibility: visible;
+}
+[class*="glc-game-log"] table#qrm-gamelog :is(tr, td),  
 [class*="glc-game-log"] table#qrm-gamelog{
     background:none;
     border: none;
