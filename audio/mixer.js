@@ -702,9 +702,11 @@ class Mixer extends EventTarget {
             throw `failed to player for channel ${id}`
         }
         player.ontimeupdate = (e) => {
-            wwww.style.width = e.target.currentTime / e.target.duration * 100 + "%";
-            const fade = window.MIXER.state().fade;
             const id = progress.getAttribute('data-id');
+            if (window.draggingAudioBar !== id){
+                progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
+            }
+            const fade = window.MIXER.state().fade;
             const fadeTime = e.target.currentTime >= e.target.duration - 5 && fade;
             const endTime = e.target.currentTime == e.target.duration;
             if (endTime && e.target.loop == false){   
@@ -759,6 +761,7 @@ class Mixer extends EventTarget {
         $(total).off().on('mousedown', function(e){
             let progressRect = this.getBoundingClientRect();
             const totalWidth = $(this).width();
+            window.draggingAudioBar = id;
             $(document).off('mousemove.draggingAudio').on('mousemove.draggingAudio', function(e){
                 let percentClick = Math.min(1, Math.max(0, (e.clientX - progressRect.left) / totalWidth));
 
@@ -778,6 +781,7 @@ class Mixer extends EventTarget {
                     window.MIXER.updateChannel(id, channel);
                 }
                 $(document).off('mousemove.draggingAudio');
+                window.draggingAudioBar = null;
             })
             
        

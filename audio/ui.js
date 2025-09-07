@@ -287,7 +287,7 @@ function init_mixer() {
     clear.on('click', function(){window.MIXER.clear()});
 
     let sequentialPlay = $(`<button class="sequential-button ${window.MIXER.mixerMode == 'playlist' ? 'pressed' : window.MIXER.mixerMode == 'shuffle' ? 'pressed shuffle' : ''}"></button>`);
-    let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
+    let sequential_svg = $(`<span class="material-symbols-outlined">${window.MIXER.mixerMode == 'shuffle' ? 'shuffle' : 'format_list_numbered_rtl'}</span>`)
     sequentialPlay.append(sequential_svg);
     sequentialPlay.off().on("click", function() {
         const icon = sequentialPlay.find(".material-symbols-outlined"); // Find the icon span
