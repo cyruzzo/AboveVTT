@@ -372,6 +372,15 @@ class Mixer extends EventTarget {
         return this.state().fade;
     }
 
+    set mixerMode(mode = 'soundboard') {
+        const state = this.state();
+        state.mixerMode = mode;
+        const noSync = true;
+        this._write(state, undefined, noSync);
+    }
+    get mixerMode() {
+        return this.state().mixerMode;
+    }
     // play / pause
 
     /**
@@ -693,15 +702,25 @@ class Mixer extends EventTarget {
             throw `failed to player for channel ${id}`
         }
         player.ontimeupdate = (e) => {
-            progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
-
-            if (e.target.currentTime == e.target.duration && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length > 0) {
-                const id = progress.getAttribute('data-id');
+            const id = progress.getAttribute('data-id');
+            if (window.draggingAudioBar !== id){
+                progress.style.width = e.target.currentTime / e.target.duration * 100 + "%";
+            }
+            const fade = window.MIXER.state().fade;
+            const fadeTime = e.target.currentTime >= e.target.duration - 5 && fade;
+            const endTime = e.target.currentTime == e.target.duration;
+            if (endTime && e.target.loop == false){   
+                const channel = window.MIXER.readChannel(id);
                 e.target.currentTime = 0;
                 $(progress).css('width', '');
-                let channel = window.MIXER.readChannel(id);
                 channel.currentTime = 0;
                 window.MIXER.updateChannel(id, channel);
+                window.MIXER._players[id].pause();
+            }
+
+            if ((fadeTime || endTime) && e.target.loop == false && $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).length > 0) {
+              
+                
                 $(`.audio-row[data-id='${id}'] .channel-play-pause-button.playing`).click();
 
                 if ($(`.sequential-button`).hasClass('pressed')) {
@@ -730,8 +749,7 @@ class Mixer extends EventTarget {
                     }
                     
                     const nextTrackId= nextTrack.attr('data-id');
-                    channel = window.MIXER.readChannel(nextTrackId);    
-                    this._players[id].currentTime = 0;
+                    const channel = window.MIXER.readChannel(nextTrackId);    
                     channel.currentTime = 0;
                     window.MIXER.updateChannel(nextTrackId, channel);
                 
@@ -740,17 +758,32 @@ class Mixer extends EventTarget {
             }
         }
 
-        $(total).off().on('click', function(e){
+        $(total).off().on('mousedown', function(e){
             let progressRect = this.getBoundingClientRect();
-            let percentClick = (e.clientX - progressRect.left) / $(this).width();
-            const channel = window.MIXER.readChannel(id);
-            if(!isNaN(player.duration)){
+            const totalWidth = $(this).width();
+            window.draggingAudioBar = id;
+            $(document).off('mousemove.draggingAudio').on('mousemove.draggingAudio', function(e){
+                let percentClick = Math.min(1, Math.max(0, (e.clientX - progressRect.left) / totalWidth));
 
-                player.currentTime = player.duration * percentClick;
-                channel.currentTime = player.currentTime;
-                progress.style.width = player.currentTime / player.duration * 100 + "%";
-                window.MIXER.updateChannel(id, channel);
-            }
+                if (!isNaN(player.duration)) {
+                    progress.style.width = percentClick*100 + "%";
+                }
+            })
+            $(document).off('mouseup.progressBar').one('mouseup.progressbar', function(e){
+                
+                let percentClick = Math.min(1, Math.max(0, (e.clientX - progressRect.left) / totalWidth));
+                const channel = window.MIXER.readChannel(id);
+                if (!isNaN(player.duration)) {
+
+                    player.currentTime = player.duration * percentClick;
+                    channel.currentTime = player.currentTime;
+                    progress.style.width = player.currentTime / player.duration * 100 + "%";
+                    window.MIXER.updateChannel(id, channel);
+                }
+                $(document).off('mousemove.draggingAudio');
+                window.draggingAudioBar = null;
+            })
+            
        
         });
         return total

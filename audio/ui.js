@@ -286,8 +286,8 @@ function init_mixer() {
     clear.append(clear_svg);
     clear.on('click', function(){window.MIXER.clear()});
 
-    let sequentialPlay = $('<button class="sequential-button"></button>');
-    let sequential_svg = $(`<span class="material-symbols-outlined">format_list_numbered_rtl</span>`)
+    let sequentialPlay = $(`<button class="sequential-button ${window.MIXER.mixerMode == 'playlist' ? 'pressed' : window.MIXER.mixerMode == 'shuffle' ? 'pressed shuffle' : ''}"></button>`);
+    let sequential_svg = $(`<span class="material-symbols-outlined">${window.MIXER.mixerMode == 'shuffle' ? 'shuffle' : 'format_list_numbered_rtl'}</span>`)
     sequentialPlay.append(sequential_svg);
     sequentialPlay.off().on("click", function() {
         const icon = sequentialPlay.find(".material-symbols-outlined"); // Find the icon span
@@ -300,21 +300,24 @@ function init_mixer() {
             if(currentlyPlaying.length>0){
                 currentlyPlaying.click();
             }
+            window.MIXER.mixerMode = 'playlist';
             // icon.text("repeat"); // Continuous Play icon
         } else if (!sequentialPlay.hasClass("shuffle")) {
             sequentialPlay.addClass("shuffle");
             sequentialPlay.attr("title", "Shuffle Play");
             icon.text("shuffle"); // Shuffle Play icon
+            window.MIXER.mixerMode = 'shuffle';
         } else {
             sequentialPlay.removeClass("shuffle pressed");
-            sequentialPlay.attr("title", "Loop Off");
+            sequentialPlay.attr("title", "Soundboard/Playlist Mode");
             icon.text("format_list_numbered_rtl"); // Default icon
+            window.MIXER.mixerMode = 'soundboard';
         }
     
         console.log("Playback Mode:", sequentialPlay.attr("title"));
     });
 
-    let crossFade = $('<button class="cross-fade-button"></button>');
+    let crossFade = $(`<button class="cross-fade-button ${window.MIXER.state().fade == true ? 'pressed' : ''}"></button>`);
     let crossFadeSvg = $(`<span class="material-symbols-outlined">edit_audio</span>`)
     crossFade.append(crossFadeSvg);
     crossFade.off().on("click", function () {
