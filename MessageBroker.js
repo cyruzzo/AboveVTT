@@ -1562,12 +1562,21 @@ class MessageBroker {
 
 
 		};
+		if(is_campaign_page()){
+			get_cobalt_token(function (token) {
+				self.loadWS(token);
+			});
 
-		get_cobalt_token(function(token) {
+			self.loadAboveWS();
+			return;
+		}
+
+		get_cobalt_token(function (token) {
 			self.loadWS(token, report_connection);
 		});
 
 		self.loadAboveWS(notify_player_join);
+
 	}
 
 	async handleScene (msg, forceRefresh=false) {
