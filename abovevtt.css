@@ -8043,7 +8043,7 @@ button#changeTokenImage:before{
     border-radius: 50%;
     transform: scale(var(--token-scale)) rotate(var(--token-rotation));
     height: 100%;
-    width: 100%;;
+    width: 100%;
     top: 0px;
     left: 0px;
     background-color: #000;
