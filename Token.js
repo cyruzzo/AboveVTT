@@ -368,14 +368,16 @@ class Token {
 	    if (STANDARD_CONDITIONS.includes(conditionName)) {
 	        if (this.isPlayer()) {	        
 				if(this.isCurrentPlayer()){
+					$('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}</style>`);
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-					$('.ct-condition-manage-pane').css('visibility', 'hidden');
-					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
 					this.options.conditions.push({ name: conditionName });
-
-					setTimeout(function(){
+					setTimeout(function () {
+						$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
+					}, 30)
+					setTimeout(function () {
 						$(`#switch_gamelog`).click();
-					}, 10)
+						$("#condition-click").remove();
+					}, 40)
 
 				}
 				else{
@@ -402,9 +404,8 @@ class Token {
 		if (STANDARD_CONDITIONS.includes(conditionName)) {
 			if (this.isPlayer()) {
 				if(this.isCurrentPlayer()){
+					$('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}</style>`);
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-					$('.ct-condition-manage-pane').css('visibility', 'hidden');
-					$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
 					this.options.conditions = this.options.conditions.filter(c => {
 						if (typeof c === "string") {
 							return c !== conditionName;
@@ -412,9 +413,14 @@ class Token {
 							return c?.name !== conditionName;
 						}
 					});
-					setTimeout(function(){
+					setTimeout(function () {
+						$('.ct-condition-manage-pane').css('visibility', 'hidden');
+						$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
+					}, 30)
+					setTimeout(function () {
 						$(`#switch_gamelog`).click();
-					}, 10)		
+						$("#condition-click").remove();
+					}, 40)	
 				}
 				else{
 

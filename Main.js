@@ -2035,25 +2035,30 @@ function init_character_page_sidebar() {
 
 	$(".ct-sidebar__inner").off("click.setCondition").on("click.setCondition", ".set-conditions-button", function(clickEvent) {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
-			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-			setTimeout(function(){
-				$('.ct-condition-manage-pane').css('visibility', 'hidden');
-				$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
-			}, 10)
-			setTimeout(function(){
-				$(`#switch_gamelog`).click();
-			}, 20)
+		$('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}</style>`);
+		$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+		setTimeout(function(){
+			$('.ct-condition-manage-pane').css('visibility', 'hidden');
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="false"]`).click();
+		}, 30)
+		setTimeout(function(){
+			$(`#switch_gamelog`).click();
+			$("#condition-click").remove();
+		}, 40)
 	});	
 	$(".ct-sidebar__inner").off("click.removeCondition").on("click.removeCondition", ".remove-conditions-button", function(clickEvent) {
 		let conditionName = $(clickEvent.target).parent().find("span").text();
-			$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
-			setTimeout(function(){
-				$('.ct-condition-manage-pane').css('visibility', 'hidden');
-				$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
-			}, 10)
-			setTimeout(function(){
-				$(`#switch_gamelog`).click();
-			}, 20)
+		$('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}</style>`);
+
+		$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
+		setTimeout(function(){
+			$('.ct-condition-manage-pane').css('visibility', 'hidden');
+			$(`.ct-sidebar__inner .ct-condition-manage-pane__condition-name:contains('${conditionName}') ~ .ct-condition-manage-pane__condition-toggle>[class*='styles_toggle'][aria-pressed="true"]`).click();
+		}, 30)
+		setTimeout(function(){
+			$(`#switch_gamelog`).click();
+			$("#condition-click").remove();
+		}, 40)
 
 	});
 	$(".ct-character-header-info__content").on("click", function(){
