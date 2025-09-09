@@ -8820,7 +8820,7 @@ div.note[id^="ui-id"] {
     position: relative;
     overflow: scroll;
 }
-div.note[id^="ui-id"]:has(.note-text>p .journal-site-embed) {
+div.note[id^="ui-id"]:has(.note-text>p .journal-site-embed, .mce-toolbar-grp.mce-panel) {
     height: 100% !important;
 }
 .tooltip-body-description-text.note-text img{
