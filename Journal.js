@@ -1715,6 +1715,7 @@ class JournalManager{
 				event.preventDefault();
 				render_source_chapter_in_iframe(event.target.href);
 			});
+			note.parent().css('height', '600px');
 		}
 		this.positionNotePins(id, note_text);
 	}
@@ -3573,7 +3574,7 @@ class JournalManager{
 				
 			}
 		});
-				
+		note.parent().css('height', '600px');		
 	}
 }
 

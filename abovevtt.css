@@ -5209,20 +5209,23 @@ button.block-send-to-game-log span {
 }
 
 
-.note-text iframe.journal-site-embed{
+.note-text iframe.journal-site-embed,
+.note-text form:has(>.mce-tinymce) iframe {
     display:block;
     position:absolute;
     width:100%;
     height:100%;
     top: 0px;
 }
-.note-text iframe.journal-site-embed {
+.note-text iframe.journal-site-embed,
+.note-text form:has(>.mce-tinymce) iframe{
     top: 0px;
     height: 100%;
     border: none;
 }
 
-.note-text>p:has(.journal-site-embed) {
+.note-text>p:has(.journal-site-embed),
+.note-text form:has(>.mce-tinymce iframe) {
     height: 100%;
     display: block;
     position: absolute;
@@ -8820,7 +8823,7 @@ div.note[id^="ui-id"] {
     position: relative;
     overflow: scroll;
 }
-div.note[id^="ui-id"]:has(.note-text>p .journal-site-embed, .mce-toolbar-grp.mce-panel) {
+div.note[id^="ui-id"] {
     height: 100% !important;
 }
 .tooltip-body-description-text.note-text img{
