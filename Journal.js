@@ -704,7 +704,7 @@ class JournalManager{
 							
 							visibility_row.append(visibility_toggle)
 
-							visibility_toggle.prop("checked",(self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.playerUsers[i].userId}`)));
+							visibility_toggle.prop("checked",(self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.playerUsers[j].userId}`)));
 							
 							visibility_toggle.change(function(){
 								let sharedUsers = toggle_container.find(`input:checked:not([name='allPlayers'])`).toArray().map(d => d.name);
@@ -805,7 +805,7 @@ class JournalManager{
 					if(! (note_id in self.notes && note_id in relevantNotes ))
 						continue;
 						
-					if( (! window.DM) && (!sharedParentFolder) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) && (self.chapters[i]?.shareWithPlayer == false || self.chapters[i]?.shareWithPlayer instanceof Array && !self.chapters[i]?.shareWithPlayer.includes(`${window.myUser}`)))
+					if( (! window.DM) && (!sharedParentFolder) && (self.notes[note_id]?.player == false || (self.notes[note_id]?.player instanceof Array && !self.notes[note_id]?.player.includes(`${window.myUser}`))) && !(self.chapters[i]?.shareWithPlayer == true || (self.chapters[i]?.shareWithPlayer instanceof Array && self.chapters[i]?.shareWithPlayer.includes(`${window.myUser}`))))
 						continue;
 					
 					let prependIcon = (self.notes[note_id].player && window.DM) ? $(`<span class="material-symbols-outlined" style='font-size:12px'>share</span>`) : '';
