@@ -3304,6 +3304,7 @@ class JournalManager{
 		tinyMCE.init({
 			selector: '#' + tmp,
 			menubar: false,
+			end_container_on_empty_block: true,
 			style_formats:  [
 				 { title: 'Headers', items: [
 			      { title: 'h1', block: 'h1' },
