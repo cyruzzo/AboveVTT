@@ -204,8 +204,8 @@ class Mixer extends EventTarget {
                   }
                 }
                 player = new Audio(url);
-                player.preload = "none";
-                this._players[id] = player;
+                player.preload = "metadata";
+                this._players[id] = player; 
             }
 
             if(player.paused)
@@ -691,16 +691,24 @@ class Mixer extends EventTarget {
         const progress = document.createElement("div");
         progress.className = "channel-progress-bar-progress";
         progress.setAttribute('data-id', id)
-
+       
         const total = document.createElement("div");
         total.setAttribute('data-id', id);
         total.className = "channel-progress-bar-total";
         total.append(progress);
-
+       
+        const state = this.state();
+        const channel = state.channels[id];
         const player = this._players[id];
         if (!player) {
             throw `failed to player for channel ${id}`
         }
+        $(player).off('loadedmetadata.progress').one('loadedmetadata.progress', function(){
+            if (channel.currentTime != undefined && !isNaN(player.duration) && player.duration != 0){
+                progress.style.width = channel.currentTime / player.duration * 100 + "%";
+            }
+        })
+       
         player.ontimeupdate = (e) => {
             const id = progress.getAttribute('data-id');
             if (window.draggingAudioBar !== id){
