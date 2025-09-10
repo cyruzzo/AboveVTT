@@ -31,11 +31,13 @@ const debounceHandleInjected = mydebounce(() => {
 				} 
 				
 			 	li.html(newlihtml);
-			 	window.JOURNAL.translateHtmlAndBlocks(li);	
-				add_journal_roll_buttons(li);
-				window.JOURNAL.add_journal_tooltip_targets(li);
-				add_stat_block_hover(li)
-				add_aoe_statblock_click(li);
+				if(window.JOURNAL){
+					window.JOURNAL.translateHtmlAndBlocks(li);
+					add_journal_roll_buttons(li);
+					window.JOURNAL.add_journal_tooltip_targets(li);
+					add_stat_block_hover(li)
+					add_aoe_statblock_click(li);
+				}
 				let rollType = current.data.injected_data?.rollType?.toLowerCase();
 				let rollAction = current.data.injected_data?.rollTitle?.toLowerCase();
 				if(rollType != undefined && rollAction != 'initiative' && rollType != "tohit" && rollType != "attack" && rollType != "to hit" && rollType != "save" && rollType != "skill" && rollType != "check" && window.DM){
