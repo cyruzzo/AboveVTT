@@ -1543,7 +1543,7 @@ function observe_character_sheet_changes(documentToObserve) {
       })
       snippets.each(function(){
         const curr = $(this);
-        if (curr.closest(`:is([class*='styles_maxHeight'], [class*='styles_pane'])>div:not(.sidebar-panel-content)`).has('input[type="search"], .ct-preferences-pane').length>0)
+        if (curr.has('>button').length>0 || curr.closest(`:is([class*='styles_maxHeight'], [class*='styles_pane'])>div:not(.sidebar-panel-content)`).has('input[type="search"], .ct-preferences-pane').length>0)
           return; // do not adjust side bar when it includes a search such as adding extras as it causes crashing
         add_journal_roll_buttons(curr);
         add_aoe_statblock_click(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
