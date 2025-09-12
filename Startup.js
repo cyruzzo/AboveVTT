@@ -83,6 +83,7 @@ $(function() {
         }
         $('body').toggleClass('reduceMovement', (window.EXPERIMENTAL_SETTINGS['reduceMovement'] == true));
         $('body').toggleClass('mobileAVTTUI', (window.EXPERIMENTAL_SETTINGS['iconUi'] == true));
+        $('body').toggleClass('color-blind-avtt', (window.EXPERIMENTAL_SETTINGS['colorBlindText'] == true));
           // STREAMING STUFF
 
         window.STREAMPEERS = {};

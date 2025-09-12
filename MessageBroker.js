@@ -66,10 +66,10 @@ const debounceHandleInjected = mydebounce(() => {
 						
 						if(is_gamelog_popout()){
 							tabCommunicationChannel.postMessage({
-		           msgType: 'gamelogDamageButtons',
-		           damage: damage
-		          });
-		          return;
+								msgType: 'gamelogDamageButtons',
+								damage: damage
+							});
+							return;
 						}
 						if($(`.tokenselected:not([data-id*='profile'])`).length == 0){
 							showTempMessage('No non-player tokens selected');
