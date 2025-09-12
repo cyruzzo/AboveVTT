@@ -8815,8 +8815,10 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
 .reduceMovement [data-animation] .islight:after{
     animation: none !important;
 }
-[data-clone-id] {
-    pointer-events: none;
+
+[data-clone-id],
+[data-clone-id] * {
+    pointer-events: none !important;
 }
 div.note[id^="ui-id"] {
     width: 100% !important;
@@ -8825,7 +8827,7 @@ div.note[id^="ui-id"] {
     position: relative;
     overflow: scroll;
 }
-div.note[id^="ui-id"] {
+div.note[id^="ui-id"] { 
     height: 100% !important;
 }
 .tooltip-body-description-text.note-text img{
