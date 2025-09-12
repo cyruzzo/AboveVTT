@@ -419,12 +419,12 @@ function avtt_settings() {
 				class: 'stream'
 			},
 			{
-				name: "disableCombatText",
-				label: "Disable DM Damage Button Text",
+				name: "colorBlindText",
+				label: "Red/Green Colorblind Text",
 				type: "toggle",
 				options: [
-					{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
-					{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+					{ value: true, label: "Enable", description: `If enabled adjusts green text to yellow` },
+					{ value: false, label: "Disable", description: `If enabled adjusts green text to yellow` }
 				],
 				defaultValue: false,
 				class: 'ui'
@@ -550,6 +550,17 @@ function avtt_settings() {
 		],
 		defaultValue: false,
 		class: 'performance'
+	})
+	settings.push({
+		name: "disableCombatText",
+		label: "Disable DM Damage Button Text",
+		type: "toggle",
+		options: [
+			{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
+			{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+		],
+		defaultValue: false,
+		class: 'ui'
 	})
 	settings.push(
 	{
@@ -922,6 +933,9 @@ function set_avtt_setting_value(name, newValue) {
 		 case "iconUi":
 		 	$('body').toggleClass('mobileAVTTUI', newValue)
 		 	break;
+		case "colorBlindText":
+			$('body').toggleClass('color-blind-avtt', newValue)
+			break;
 		case "alwaysHideScrollbar":
 			hide_or_unhide_scrollbar();
 			break;

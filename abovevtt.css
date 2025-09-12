@@ -3614,14 +3614,20 @@ div#selectedTokensBorder {
     }
   }
 
-
-.floating-combat-text.heal{
-    color: #5F5;
+body{
+    --floating-heal-color: #5F5;
+    --floating-dmg-color: #F55;
+}
+body.color-blind-avtt {
+    --floating-heal-color: #fff455;
 }
 
+.floating-combat-text.heal{
+    color: var(--floating-heal-color);
+}
 
 .floating-combat-text.dmg{
-    color: #F55;
+    color: var(--floating-dmg-color)
 }
 
 /* AOE BORDERS */
@@ -8151,29 +8157,50 @@ button#changeTokenImage:before{
     opacity: 0.8;
 }
 
+body {
+    --crit-success: #0a0;
+    --crit-fail: #a00;
+    --crit-mixed: #4768ff;
+}
+
+body.color-blind-avtt {
+    --crit-success: #ffff00;
+}
+
 [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal,
 [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
 [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
-[class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
-    color:#0a0 !important;
+[class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+    color: var(--crit-success) !important;
 }
+
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] span,
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*="TotalContainer-Flex"] .aboveDiceTotal,
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
+.color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+    text-shadow: 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000;
+}
+
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] .aboveDiceTotal,
 [class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
 [class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] span,
-[class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
-    color:#a00 !important;
+[class*="glc-game-log"] .crit-fail div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+    color: var(--crit-fail) !important;
 }
+
 [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] span,
 [class*="glc-game-log"] .crit-mixed div[class*="TotalContainer-Flex"] .aboveDiceTotal,
 [class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
 [class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] span,
-[class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal{
-    color:#4768ff !important;
+[class*="glc-game-log"] .crit-mixed div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
+    color: var(--crit-mixed) !important;
 }
 
 [class*="glc-game-log"] div[class*="TotalContainer-Flex"] .custom-spell-save-text span,
