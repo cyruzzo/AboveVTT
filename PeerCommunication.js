@@ -687,7 +687,7 @@ function peer_is_dragging_token(eventData) {
     html = $(`#tokens div[data-id='${eventData.tokenId}']`).clone();
     html.attr("data-clone-id", `dragging-${eventData.tokenId}`);
     html.attr("data-id", ``);
-    html.removeClass('tokenselected underDarkness');
+    html.removeClass('tokenselected underDarkness ui-draggable-dragging pause_click ui-draggable ui-draggable-handle');
     html.css('opacity', '0.5')
     if (!html || html.length === 0) {
       noisy_log("peer_is_dragging_token no token on scene matching", `#tokens div[data-id='${eventData.tokenId}']`, eventData);
