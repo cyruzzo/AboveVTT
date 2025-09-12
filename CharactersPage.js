@@ -1043,7 +1043,7 @@ function inject_dice_roll(element, clear=true) {
     if (slashCommands.length === 0) return;
 
     console.debug("inject_dice_roll slashCommands", slashCommands);
-    let updatedInnerHtml = element.text();
+    let updatedInnerHtml = element.text().replace(/\/</gi, '<');
     for (const command of slashCommands) {
       let originalCommand = command[0];
       try {
