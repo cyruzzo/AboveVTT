@@ -8815,6 +8815,7 @@ body.preventSelectDefinitelyNot .token.declutterToken[style*='opacity: 0.5']{
 .reduceMovement [data-animation] .islight:after{
     animation: none !important;
 }
+
 [data-clone-id],
 [data-clone-id] * {
     pointer-events: none !important;
