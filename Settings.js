@@ -324,6 +324,17 @@ function avtt_settings() {
 			class: 'ui'
 		},	
 		{
+			name: "disableCombatText",
+			label: "Disable DM Damage Button Text",
+			type: "toggle",
+			options: [
+				{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
+				{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+			],
+			defaultValue: false,
+			class: 'ui'
+		},
+		{
 			name: 'streamDiceRolls',
 			label: 'Stream Dice Rolls',
 			type: 'toggle',
@@ -417,17 +428,6 @@ function avtt_settings() {
 				],
 				defaultValue: false,
 				class: 'stream'
-			},
-			{
-				name: "colorBlindText",
-				label: "Red/Green Colorblind Text",
-				type: "toggle",
-				options: [
-					{ value: true, label: "Enable", description: `If enabled adjusts green text to yellow` },
-					{ value: false, label: "Disable", description: `If enabled adjusts green text to yellow` }
-				],
-				defaultValue: false,
-				class: 'ui'
 			},
 			{	
 				name: "tokenDefaults",
@@ -552,12 +552,12 @@ function avtt_settings() {
 		class: 'performance'
 	})
 	settings.push({
-		name: "disableCombatText",
-		label: "Disable DM Damage Button Text",
+		name: "colorBlindText",
+		label: "Red/Green Colorblind Text",
 		type: "toggle",
 		options: [
-			{ value: true, label: "Enable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` },
-			{ value: false, label: "Disable", description: `If enabled removes the scrolling text on tokens displayed to DM when using gamelog damage buttons.` }
+			{ value: true, label: "Enable", description: `If enabled adjusts green text to yellow` },
+			{ value: false, label: "Disable", description: `If enabled adjusts green text to yellow` }
 		],
 		defaultValue: false,
 		class: 'ui'

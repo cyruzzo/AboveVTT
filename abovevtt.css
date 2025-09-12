@@ -8182,7 +8182,8 @@ body.color-blind-avtt {
 .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
 .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] span,
 .color-blind-avtt [class*="glc-game-log"] .crit-success div[class*='DiceMessage_TotalContainer'] .aboveDiceTotal {
-    text-shadow: 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000, 0px 0px 1px #000;
+    --text-shadow-color: color-mix(in srgb, #000 100%, var(--crit-success) 50%);
+    text-shadow: 1px 1px var(--text-shadow-color), -1px -1px var(--text-shadow-color), -1px 1px var(--text-shadow-color), 1px -1px var(--text-shadow-color), 2px 2px 2px var(--text-shadow-color);
 }
 
 [class*="glc-game-log"] .crit-fail div[class*="TotalContainer-Flex"] span,
