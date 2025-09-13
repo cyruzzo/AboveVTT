@@ -698,7 +698,7 @@ function is_token_under_truesight_aura(tokenid, truesightContext=undefined){
 }
 
 
-function is_door_under_fog(door, imageData){
+function is_door_in_visible_light(door, imageData){
 
 	if (imageData == undefined) {
 		return false;
@@ -710,7 +710,7 @@ function is_door_under_fog(door, imageData){
 	for(let x=centerX-10; x<=centerX+10; x++){
 		for(let y=centerY-10; y<=centerY+10; y++){
 			pixeldata = getPixelFromImageData(imageData, x, y);
-			if(pixeldata[0]>=4 || pixeldata[1]>=4 || pixeldata[2]>=4)
+			if(pixeldata[0]>=5 || pixeldata[1]>=5 || pixeldata[2]>=5)
 				return true;
 		}
 	}
@@ -718,23 +718,7 @@ function is_door_under_fog(door, imageData){
 	return false;
 }
 
-function is_door_under_light_aura(door, lightContext=undefined){
-	if(lightContext == undefined){
-		lightContext = window.lightInLos.getContext('2d');
-	}
 
-
-	let left = parseFloat($(door).css('--mid-x'))/window.CURRENT_SCENE_DATA.scale_factor;
-	let top = parseFloat($(door).css('--mid-y'))/window.CURRENT_SCENE_DATA.scale_factor;
-	let pixeldata = lightContext.getImageData(left-10, top-10, 20, 20).data;
-	
-	for(let i=0; i<pixeldata.length; i+=4){
-		if(pixeldata[i]>4 || pixeldata[i+1]>4 || pixeldata[i+2]>4)
-			return true;
-	}
-				
-	return  false;
-}
 
 function check_single_token_visibility(id){
 	console.log("check_single_token_visibility");
@@ -974,15 +958,12 @@ function do_check_token_visibility() {
 		}	
 		
 	}
-	
-	
 
 	let doors = $('.door-button');
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
 
-		const inVisibleLight = (is_door_under_fog(door, offscreenImageData) === true); 
-		
+		const inVisibleLight = (is_door_in_visible_light(door, offscreenImageData) === true); 
 
 		if (!inVisibleLight || $(door).hasClass('secret')) {
 			hideDoors = hideDoors.add(door)
@@ -990,16 +971,15 @@ function do_check_token_visibility() {
 		else {
 			showDoors = showDoors.add(door)
 		}
-			
-		
 	}
-		hideIds.hide();
-		showTokenIds.css({ 'opacity': 1, 'display': 'flex' });
-		showAuraIds.show();
-		dmSelectedTokens.css({ 'display': 'flex' });
+	
+	hideIds.hide();
+	showTokenIds.css({ 'opacity': 1, 'display': 'flex' });
+	showAuraIds.show();
+	dmSelectedTokens.css({ 'display': 'flex' });
 
-		showDoors.toggleClass('notVisible', false);
-		hideDoors.toggleClass('notVisible', true);
+	showDoors.toggleClass('notVisible', false);
+	hideDoors.toggleClass('notVisible', true);
 	
 
 
