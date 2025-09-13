@@ -1581,6 +1581,9 @@ class Token {
 
 
 	build_conditions(parent, singleRow = false) {
+		if(this.options.combatGroupToken)
+			return [];
+		
 		function badge_condition(condition, conditionContainer, conditionSymbolName) {
 			if(!isNaN(parseInt(condition.duration))) {
 				let expired = (parseInt(condition.duration) <= 0) ? "expired" : "";
