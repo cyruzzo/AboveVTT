@@ -698,24 +698,22 @@ function is_token_under_truesight_aura(tokenid, truesightContext=undefined){
 }
 
 
-function is_door_under_fog(door, fogContext=undefined){
-	if(window.DM)
-		return false;
+function is_door_under_fog(door, imageData){
 
-	if(fogContext == undefined){
-		fogContext = $('#fog_overlay')[0].getContext('2d');
+	if (window.DM || imageData == undefined) {
+		return false;
 	}
-	
+	const centerX = parseFloat($(door).css('--mid-x')) / window.CURRENT_SCENE_DATA.scale_factor;
+	const centerY = parseFloat($(door).css('--mid-y')) / window.CURRENT_SCENE_DATA.scale_factor;
+	const pixeldata = getPixelFromImageData(imageData, centerX, centerY);
 
+	for (let i = 0; i < pixeldata.length; i += 4) {
+		if (pixeldata[i] > 4 || pixeldata[i + 1] > 4 || pixeldata[i + 2] > 4) {
+			return true;
+		}
+	}
 
-	let left = parseFloat($(door).css('--mid-x'))/window.CURRENT_SCENE_DATA.scale_factor;
-	let top = parseFloat($(door).css('--mid-y'))/window.CURRENT_SCENE_DATA.scale_factor;
-	let pixeldata = fogContext.getImageData(left, top, 1, 1).data;
-
-	if (pixeldata[3] >= 253)
-		return true;
-	else
-		return false;
+	return false;
 }
 
 function is_door_under_light_aura(door, lightContext=undefined){
@@ -760,7 +758,8 @@ function check_single_token_visibility(id){
 
 
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
-	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
+	const aPlayerToken = tokenObjectValues.some(d => d.options.id.startsWith('/profile'));
+	const playerTokenWithVisionEnabled = aPlayerToken == true && (window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true)));
 	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
 	if ((((playerTokenId === undefined && playerTokenWithVisionEnabled) || sharedVisionToken) && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
@@ -774,11 +773,11 @@ function check_single_token_visibility(id){
 	offScreenCanvas.width = fogCanvas.width;
 	offScreenCanvas.height = fogCanvas.height;
 	const offScreenCtx = window.tokenCheckOffscreenContext;
+
 	if (playerTokenHasVision && window.CURRENT_SCENE_DATA.disableSceneVision != 1) {
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 		offScreenCtx.drawImage(lightCanvas, 0, 0);
-	}
-	else {
+	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1) {
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
@@ -882,7 +881,8 @@ function do_check_token_visibility() {
 	
 	let playerTokenHasVision;
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
-	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
+	const aPlayerToken = tokenObjectValues.some(d => d.options.id.startsWith('/profile'));
+	const playerTokenWithVisionEnabled = aPlayerToken == true && (window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true)));
 	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
 
@@ -893,7 +893,7 @@ function do_check_token_visibility() {
 		playerTokenHasVision = false;
 	
 
-	
+
 	
 	if (window.tokenCheckOffscreenCanvas == undefined) {
 		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
@@ -906,8 +906,7 @@ function do_check_token_visibility() {
 	if (playerTokenHasVision && window.CURRENT_SCENE_DATA.disableSceneVision != 1){
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
 		offScreenCtx.drawImage(lightCanvas, 0, 0);	
-	}
-	else{
+	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1){
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
 	}
@@ -976,18 +975,16 @@ function do_check_token_visibility() {
 	let doors = $('.door-button');
 	for(let i=0; i<doors.length; i++){
 		let door = doors[i];
+
+		const inVisibleLight = (is_door_under_fog(door, offscreenImageData) === true); 
 		
 
-			const inFog = (is_door_under_fog(door, fogContext)); // this token is in fog and not the players token
-
-			const notInLight = (inFog === true || (window.CURRENT_SCENE_DATA.disableSceneVision != 1 && playerTokenHasVision === true && is_door_under_light_aura(door, lightContext) !== true && (window.CURRENT_SCENE_DATA.darkness_filter > 0 || window.walls.length>4))); // this token is not in light, the player is using vision/light and darkness > 0
-			
-			if (notInLight || $(door).hasClass('secret')) {
-				hideDoors = hideDoors.add(door)
-			}
-			else {
-				showDoors = showDoors.add(door)
-			}
+		if (!inVisibleLight || $(door).hasClass('secret')) {
+			hideDoors = hideDoors.add(door)
+		}
+		else {
+			showDoors = showDoors.add(door)
+		}
 			
 		
 	}
@@ -7195,18 +7192,21 @@ function redraw_light(darknessMoved = false){
 
 	}
 
+
+
 	const tokenObjectValues = Object.values(window.TOKEN_OBJECTS);
+	const aPlayerTokenExists = tokenObjectValues.some(d => d.options.id.startsWith('/profile'))
 	const playerTokenWithVisionEnabled = window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true));
 	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser) && d.options.auraislight == true);
 
-	if (playerTokenWithVisionEnabled === false && sharedVisionToken === false) {
+	if (aPlayerTokenExists && playerTokenWithVisionEnabled === false && sharedVisionToken === false) {
 		offscreenContext.globalCompositeOperation = "lighten";
 		offscreenContext.fillStyle = "white";
 		moveOffscreenContext.fillStyle = "white";
 		offscreenContext.fillRect(0, 0, canvasWidth, canvasHeight);
 		moveOffscreenContext.fillRect(0, 0, canvasWidth, canvasHeight);
-	}
-	
+	} 
+
 	
 
 	
