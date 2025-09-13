@@ -3445,10 +3445,6 @@ function build_adjustments_flyout_menu(tokenIds) {
 			return;
 		}
 		tokens.forEach(token => {			
-			// Reset imageScale if new size is larger
-			if(token.options.size < newSize) {
-				token.imageSize(1);
-			}
 			token.size(newSize, linewidth);
 			clampTokenImageSize(token.options.imageSize, token.options.size);
 		});
