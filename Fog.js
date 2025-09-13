@@ -705,11 +705,13 @@ function is_door_under_fog(door, imageData){
 	}
 	const centerX = parseFloat($(door).css('--mid-x')) / window.CURRENT_SCENE_DATA.scale_factor;
 	const centerY = parseFloat($(door).css('--mid-y')) / window.CURRENT_SCENE_DATA.scale_factor;
-	const pixeldata = getPixelFromImageData(imageData, centerX, centerY);
+	let pixeldata;
 
-	for (let i = 0; i < pixeldata.length; i += 4) {
-		if (pixeldata[i] > 4 || pixeldata[i + 1] > 4 || pixeldata[i + 2] > 4) {
-			return true;
+	for(let x=centerX-10; x<=centerX+10; x++){
+		for(let y=centerY-10; y<=centerY+10; y++){
+			pixeldata = getPixelFromImageData(imageData, x, y);
+			if(pixeldata[0]>=4 || pixeldata[1]>=4 || pixeldata[2]>=4)
+				return true;
 		}
 	}
 
