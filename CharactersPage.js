@@ -305,6 +305,15 @@ const buffsDebuffs = {
       "check": "0",
       "type": "spell"
   },
+  "Foresight": {
+    "tohit": "0",
+    "dmg": "0",
+    "save": "0",
+    "check": "0",
+    "replace": /^1d20/gi,
+    "newRoll": '2d20kh1',
+    "type": "spell"
+  },
   "Hexblade's Curse": {
       "tohit": "0",
       "dmg": "+PB",
