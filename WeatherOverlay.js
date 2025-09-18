@@ -1,10 +1,8 @@
 class WeatherOverlay {
     constructor(canvas, lightCanvas, type = 'rain') {
         
-        this.offscreenCanvas = document.createElement('canvas');
+        this.offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);;
         this.offscreenCtx = this.offscreenCanvas.getContext('2d');
-        this.offscreenCanvas.width = canvas.width;
-        this.offscreenCanvas.height = canvas.height;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.lightCanvas = lightCanvas;

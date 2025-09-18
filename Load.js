@@ -16,6 +16,8 @@ if (isPlainCharacterPage) {
 	l.setAttribute("style", "display:none;");
 	l.setAttribute("id", "extensionpath");
 	l.setAttribute("data-path", getExtURL("/"));
+	
+
 	(document.body || document.documentElement).appendChild(l);
 	loadStyle = [
 		"DiceContextMenu/DiceContextMenu.css",
@@ -52,6 +54,7 @@ if (isPlainCharacterPage) {
 		} else if (isPlayerPage) {
 			loadingBg.setAttribute("class", "player");
 		}
+
 	}
 
 	let l = document.createElement('div');

@@ -4209,10 +4209,8 @@ function checkAudioVolume(){
 			
 
 			const tokenMovePolygon = getTokenVision(tokenId).move
-			const audioCanvas = document.createElement('canvas');
+			const audioCanvas = new OffscreenCanvas($("#raycastingCanvas").width(), $("#raycastingCanvas").height());
 			const audioCanvasCtx = audioCanvas.getContext('2d');
-			audioCanvas.width = $("#raycastingCanvas").width();
-			audioCanvas.height =  $("#raycastingCanvas").height();
 			
 			if(audioPolygon != undefined){
 				drawPolygon(audioCanvasCtx, audioPolygon, 'rgba(255, 255, 255, 1)', true, undefined, undefined, undefined, audioPolygonOrigScale);

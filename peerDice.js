@@ -44,7 +44,7 @@ function setDiceRemoteStream(stream, peerId) {
     
     let canvas=dicecanvas.get(0);
     let ctx=canvas.getContext('2d');
-    let tmpcanvas = document.createElement("canvas");
+    let tmpcanvas = new OffscreenCanvas(0, 0);
     let tmpctx = tmpcanvas.getContext("2d");
     video.off('resize.dice').on("resize.dice", function(){
         let videoAspectRatio = video[0].videoWidth / video[0].videoHeight
@@ -62,13 +62,8 @@ function setDiceRemoteStream(stream, peerId) {
         dicecanvas.css("height",tmpcanvas.height);
         dicecanvas.css("width",tmpcanvas.width );
     });
-    let stop = false;
-    let frameCount = 0;
-    let fpsInterval = 1000/16;
-    let then = Date.now();
 
-    let startTime = then;
-    let now, elapsed;
+
     let updateCanvas=function(){
         if(tmpcanvas.width<=0){
             diceStreamThrottle(updateCanvas);
