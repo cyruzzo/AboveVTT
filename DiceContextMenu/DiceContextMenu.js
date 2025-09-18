@@ -19,8 +19,11 @@ function standard_dice_context_menu(expression, modifierString = "", action = un
     
     menu.sendToSection();
     let additionalDiceExpression='';
-    if (expression === "1d20" || /^1d20/gi.test(expression)) {
+    if (expression === "1d20" || /^1d20/gi.test(expression) || expression === "2d20kh1" || /^2d20kh1/gi.test(expression)) {
         // only add advantage/disadvantage options if rolling 1d20
+        if (expression === "2d20kh1" || /^2d20kh1/gi.test(expression)){
+            expression = expression.replace(/^2d20kh1/gi, '1d20');
+        }
         menu.section("ROLL WITH:", s => s
             .row("Super Advantage", `${svg_advantage()}${svg_advantage()}`, false)
             .row("Advantage", svg_advantage(), false)
