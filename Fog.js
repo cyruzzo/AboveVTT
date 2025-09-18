@@ -738,7 +738,7 @@ function check_single_token_visibility(id){
 
 
 	if(window.tokenCheckOffscreenCanvas == undefined){
-		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenCanvas = new OffscreenCanvas(fogCanvas.width, fogCanvas.height);
 		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
 	}
 
@@ -884,7 +884,7 @@ function do_check_token_visibility() {
 
 	
 	if (window.tokenCheckOffscreenCanvas == undefined) {
-		window.tokenCheckOffscreenCanvas = document.createElement('canvas');
+		window.tokenCheckOffscreenCanvas = new OffscreenCanvas(fogCanvas.width, fogCanvas.height);
 		window.tokenCheckOffscreenContext = window.tokenCheckOffscreenCanvas.getContext('2d');
 	}
 	const offScreenCanvas = window.tokenCheckOffscreenCanvas;
@@ -1551,11 +1551,10 @@ function redraw_fog() {
 		fogStyle = "rgb(0, 0, 0)";
 
 
-	let offscreenDraw = document.createElement('canvas');
+	let offscreenDraw = new OffscreenCanvas(canvas.width, canvas.height); 
 	let ctx = offscreenDraw.getContext('2d');
 
-	offscreenDraw.width = canvas.width;
-	offscreenDraw.height = canvas.height;
+
 
 	fogContext.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1782,9 +1781,9 @@ function redraw_drawings() {
 		
 	 
 
-	let offscreenDrawAboveFog = document.createElement('canvas');
+	let offscreenDrawAboveFog = new OffscreenCanvas(canvasAboveFog.width, canvasAboveFog.height);
 	let offscreenContextAboveFog = offscreenDrawAboveFog.getContext('2d');
-	let offscreenDrawBelowFog = document.createElement('canvas');
+	let offscreenDrawBelowFog = new OffscreenCanvas(canvasBelowFog.width, canvasBelowFog.height);
 	let offscreenContextBelowFog = offscreenDrawBelowFog.getContext('2d');
 
 	offscreenDrawAboveFog.width = canvasAboveFog.width;
@@ -1888,7 +1887,7 @@ function redraw_elev(openLegened = false) {
 		
 	 
 
-	let offscreenDraw = document.createElement('canvas');
+	let offscreenDraw = new OffscreenCanvas(canvas.width, canvas.height);
 	let offscreenContext = offscreenDraw.getContext('2d');
 
 	offscreenDraw.width = canvas.width;
@@ -2012,11 +2011,9 @@ function redraw_drawn_light(){
 	lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
 	const drawings = window.DRAWINGS.filter(d => d[1] == "light")
 
-	let offscreenDraw = document.createElement('canvas');
+	let offscreenDraw = new OffscreenCanvas(lightCanvas.width, lightCanvas.height);
 	let offscreenContext = offscreenDraw.getContext('2d');
 
-	offscreenDraw.width = lightCanvas.width;
-	offscreenDraw.height = lightCanvas.height;
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
@@ -2127,9 +2124,8 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	else{
 		$('#VTT').css('--walls-up-shadow-percent', '0%');
 	}
-	const offscreenCanvas = document.createElement('canvas');
-	offscreenCanvas.width = canvas.width;
-	offscreenCanvas.height = canvas.height;
+	const offscreenCanvas = new OffscreenCanvas(canvas.width, canvas.height);
+
 	const offscreenContext = offscreenCanvas.getContext('2d');
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
@@ -2377,9 +2373,7 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 	}
 
 	if(window.DM && $('#wall_button').hasClass('button-enabled') && $('#edit_wall').hasClass('button-enabled')){
-		const selectedWallCanvas = document.createElement('canvas');
-		selectedWallCanvas.width = canvas.width;
-		selectedWallCanvas.height = canvas.height;
+		const selectedWallCanvas = new OffscreenCanvas(canvas.width, canvas.height); 
 		window.selectedWallCtx = selectedWallCanvas.getContext('2d')
 		window.selectedWallCtx.clearRect(0, 0, canvas.width, canvas.height);
 		const currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor)*window.CURRENT_SCENE_DATA.conversion : 1
@@ -2932,10 +2926,8 @@ function drawing_mousedown(e) {
 
 		clear_temp_canvas()
 
-		const offscreen_canvas = document.createElement('canvas');
+		const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
 		const offscreen_context = offscreen_canvas.getContext('2d');
-		offscreen_canvas.width = $('#scene_map')[0].width;
-		offscreen_canvas.height = $('#scene_map')[0].height;
 		offscreen_context.fillStyle = "#FFF";
 
 		const [scaledX,scaledY] = [window.BEGIN_MOUSEX/window.CURRENT_SCENE_DATA.scale_factor, window.BEGIN_MOUSEY/window.CURRENT_SCENE_DATA.scale_factor];
@@ -3398,10 +3390,8 @@ function drawing_mousemove(e) {
 
 			clear_temp_canvas()
 
-			const offscreen_canvas = document.createElement('canvas');
+			const offscreen_canvas = new OffscreenCanvas($('#scene_map')[0].width, $('#scene_map')[0].height); 
 			const offscreen_context = offscreen_canvas.getContext('2d');
-			offscreen_canvas.width = $('#scene_map')[0].width;
-			offscreen_canvas.height = $('#scene_map')[0].height;
 			offscreen_context.fillStyle = "#FFF";
 
 			const [scaledX,scaledY] = [mouseX/window.CURRENT_SCENE_DATA.scale_factor, mouseY/window.CURRENT_SCENE_DATA.scale_factor];
@@ -6866,22 +6856,23 @@ function detectInLos(x, y) {
 
 
 function redraw_light(darknessMoved = false){
+	const canvasWidth = getSceneMapSize().sceneWidth;
+	const canvasHeight = getSceneMapSize().sceneHeight;
     if(window.rayContext == undefined){
 		window.rayCanvas = document.getElementById('raycastingCanvas');
 		window.rayContext = window.rayCanvas.getContext('2d');
 
-		window.offscreenCanvasMask = document.createElement('canvas');
+		window.offscreenCanvasMask = new OffscreenCanvas(canvasWidth, canvasHeight); 
 		window.offscreenContext = window.offscreenCanvasMask.getContext('2d');
 
-		window.moveOffscreenCanvasMask = document.createElement('canvas');
+		window.moveOffscreenCanvasMask = new OffscreenCanvas(canvasWidth, canvasHeight);  
 		window.moveOffscreenContext = window.moveOffscreenCanvasMask.getContext('2d', { willReadFrequently: true });
 	}
-
+	
     const canvas = window.rayCanvas;
 	const context = window.rayContext;
 
-	const canvasWidth = getSceneMapSize().sceneWidth;
-	const canvasHeight = getSceneMapSize().sceneHeight;
+
 
 	context.clearRect(0, 0, canvasWidth, canvasHeight)
 
@@ -6909,7 +6900,7 @@ function redraw_light(darknessMoved = false){
 
 
 	if(window.lightInLos == undefined){
-		window.lightInLos = document.createElement('canvas');
+		window.lightInLos = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.lightInLosContext = window.lightInLos.getContext('2d');
 	}
 
@@ -6929,7 +6920,7 @@ function redraw_light(darknessMoved = false){
 	}
 
 	if(window.truesightCanvas == undefined){
-		window.truesightCanvas = document.createElement('canvas');
+		window.truesightCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.truesightCanvasContext = window.truesightCanvas.getContext('2d');
 	}
 	const truesightCanvasContext = window.truesightCanvasContext;
@@ -6940,7 +6931,7 @@ function redraw_light(darknessMoved = false){
 	truesightCanvasContext.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if (window.devilsightCanvas == undefined){
-		window.devilsightCanvas = document.createElement('canvas');
+		window.devilsightCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.devilsightCtx = window.devilsightCanvas.getContext('2d');
 	}
  
@@ -6953,7 +6944,7 @@ function redraw_light(darknessMoved = false){
 	devilsightCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if (window.tempDarkvisionCanvas == undefined){
-		window.tempDarkvisionCanvas = document.createElement('canvas');
+		window.tempDarkvisionCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.tempDarkvisionCtx = window.tempDarkvisionCanvas.getContext('2d');
 	}
 	const tempDarkvisionCanvas = window.tempDarkvisionCanvas;
@@ -6965,7 +6956,7 @@ function redraw_light(darknessMoved = false){
 	tempDarkvisionCtx.clearRect(0,0,canvasWidth,canvasHeight);
 
 	if (window.tempDarknessCanvas == undefined) {
-		window.tempDarknessCanvas = document.createElement('canvas');
+		window.tempDarknessCanvas = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.tempDarknessCtx = window.tempDarknessCanvas.getContext('2d');
 	}
 	const tempDarknessCanvas = window.tempDarknessCanvas;

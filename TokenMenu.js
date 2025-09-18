@@ -87,12 +87,10 @@ function close_token_context_menu() {
 
 function select_tokens_in_aoe(aoeTokens, selectPlayerTokens = true){
 	deselect_all_tokens();
-	let canvas = document.createElement('canvas');
-	let ctx = canvas.getContext('2d', { willReadFrequently: true }); //rare case where we can allow cpu do so all the lifting since it is not rendered
 	let rayCast = document.getElementById("raycastingCanvas");
-
-	canvas.width = rayCast.width;
-	canvas.height = rayCast.height;
+	let canvas = new OffscreenCanvas(rayCast.width, rayCast.height);
+	let ctx = canvas.getContext('2d', { willReadFrequently: true }); //rare case where we can allow cpu do so all the lifting since it is not rendered
+	
 
 
 	ctx.globalCompositeOperation='source-over';
