@@ -1015,7 +1015,7 @@ class JournalManager{
 							text: "",
 							player: false,
 							plain: "",
-							ddbsource: `https://dndbeyond.com${source}`
+							ddbsource: `https://www.dndbeyond.com${source}`
 						};
 						let chapter = self.chapters.find(x => x.title == 'Compendium')
 						if(!chapter){
@@ -1030,6 +1030,7 @@ class JournalManager{
 						chapter.notes.push(new_noteid);
 						self.persist();
 						self.build_journal(searchText);
+						journalPanel.remove_sidebar_loading_indicator();
 					}
 					else{
 						self.chapters.push({
@@ -3606,10 +3607,11 @@ function init_journal(gameid){
 }
 
 function render_source_chapter_in_iframe(url) {
+	url = url.replace('https://dndbeyond', 'https://www.dndbeyond');
 	const sourceChapter = url.startsWith('https://www.dndbeyond.com/sources/') || url.startsWith('/sources/');
 	const compendiumChapter = url.startsWith('https://www.dndbeyond.com/compendium/') || url.startsWith('/compendium/');
 	const attachmentChapter = url.startsWith('https://www.dndbeyond.com/attachments/') || url.startsWith('/attachments/');
-	const rulesChapter = url.startsWith('https://dndbeyond.com/magic-items') || url.startsWith('https://dndbeyond.com/feats') || url.startsWith('https://dndbeyond.com/spells')
+	const rulesChapter = url.startsWith('https://www.dndbeyond.com/magic-items') || url.startsWith('https://www.dndbeyond.com/feats') || url.startsWith('https://www.dndbeyond.com/spells')
 	if (typeof url !== "string" ||  (!sourceChapter && !compendiumChapter && !attachmentChapter && !rulesChapter)) {
 		console.error(`render_source_chapter_in_iframe was given an invalid url`, url);
 		showError(new Error(`Unable to render a DDB chapter. This url does not appear to be a valid DDB chapter ${url}`));
@@ -3622,6 +3624,7 @@ function render_source_chapter_in_iframe(url) {
 			url = `${url}?filter-partnered-content=t`
 		}
 	}
+	
 	const chapterHash = url.split("#")?.[1];
 	const iframeId = 'sourceChapterIframe';
 	const containerId = `${iframeId}_resizeDrag`;
