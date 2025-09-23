@@ -2106,6 +2106,7 @@ padding-top:10px;
     font-variant: small-caps;
     font-size: 17px;
     width: 160px;
+    flex: 1 1;
 }
 
 .player-actions {

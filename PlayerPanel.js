@@ -22,6 +22,7 @@ function update_pclist() {
 				<div class="player-card-header">
 					<div class="player-name">${pc.name}</div>
 					<div class="player-actions">
+						${pc.name != dm_id ? `<button class="find-btn" style="font-size:10px;"><svg class="findSVG" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000"><path d="M0 0h24v24H0z" fill="none" /><path d="M12 11c1.33 0 4 .67 4 2v.16c-.97 1.12-2.4 1.84-4 1.84s-3.03-.72-4-1.84V13c0-1.33 2.67-2 4-2zm0-1c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm6 .2C18 6.57 15.35 4 12 4s-6 2.57-6 6.2c0 2.34 1.95 5.44 6 9.14 4.05-3.7 6-6.8 6-9.14zM12 2c4.2 0 8 3.22 8 8.2 0 3.32-2.67 7.25-8 11.8-5.33-4.55-8-8.48-8-11.8C4 5.22 7.8 2 12 2z" /></svg></button>` : ''}
 						<button class="whisper-btn" data-to="${pc.name}">WHISPER</button>
 					</div>
 				</div>
@@ -43,13 +44,17 @@ function update_pclist() {
 					card.find(".player-actions").append(changeThemeButton);
 					changeThemeButton.click(function (e) {
 						$(".ddbc-character-avatar__portrait").click(); // open the character details sidebar
-						$(".ct-character-manage-pane__decorate-button").click(); // open the "change sheet appearance" sidebar
-						$(".ct-decorate-pane__grid > .ct-decorate-pane__grid-item:nth-child(3)").click(); // expand the "theme" section
+						setTimeout(function(){
+							$(".ct-character-manage-pane__decorate-button, [class*='styles_decorateButton']").click(); // open the "change sheet appearance" sidebar
+							setTimeout(function () {
+								$(".ct-decorate-pane__grid > .ct-decorate-pane__grid-item:nth-child(3)").click(); // expand the "theme" section
+							}, 25)
+						}, 25)
 					});
 				}
 			}
 		});
-		const peerConnected = is_peer_connected(pc.id);
+		const peerConnected = is_peer_connected(getPlayerIDFromSheet(pc.sheet));
 		if (peerConnected) {
 			if (pc.sheet.includes(my_player_id())) {
 				update_player_online_indicator(my_player_id(), peerConnected, color);
@@ -63,6 +68,14 @@ function update_pclist() {
 		$("#switch_gamelog").click();
 		$("#chat-text").val("/whisper ["+$(this).attr('data-to')+ "] ");
 		$("#chat-text").focus();
+	});
+
+	$(".find-btn").on("click",function(){
+		const id = $(this).closest('[data-player-id]').attr('data-player-id');
+		const token = $(`#tokens [data-id='${id}']`);
+		if (token.length == 0 || token.css('visibility') == 'hidden' || token.css('display') == 'none') 
+			return;	
+		window.TOKEN_OBJECTS[id].highlight()
 	});
 }
 
