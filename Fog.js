@@ -7107,15 +7107,10 @@ function redraw_light(darknessMoved = false){
 
 
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
-			lightInLosContext.globalCompositeOperation = 'source-over';
-			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light, 'white')
-
+			lightInLosContext.globalCompositeOperation = 'lighten';
+			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color)
+			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color)
 		}
-
-
-
-
-
 
 		if (selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)) {
 
@@ -7153,8 +7148,8 @@ function redraw_light(darknessMoved = false){
 			}
 
 			if (window.lightAuraClipPolygon[auraId]?.darkvision !== undefined) {
-				lightInLosContext.globalCompositeOperation = 'source-over';
-				drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, 'white')
+				lightInLosContext.globalCompositeOperation = 'lighten';
+				drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, window.lightAuraClipPolygon[auraId].vision.color);
 			}
 
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
@@ -7611,10 +7606,23 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 		return; // don't make an object for 0 range light
 	}
 
+	
 
 	window.lightAuraClipPolygon[auraId] = {
 		light: lightRadius,
 		darkvision: darkvisionRadius,
+		light1: {
+			range: light1Range > 0 ? light1Range * window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.fpsq + (window.TOKEN_OBJECTS[auraId].options.size / 2) : 0,
+			color: light1Color
+		},
+		light2: {
+			range: light2Range > 0 ? (parseInt(light1Range) + parseInt(light2Range)) * window.CURRENT_SCENE_DATA.hpps / window.CURRENT_SCENE_DATA.fpsq + (window.TOKEN_OBJECTS[auraId].options.size / 2) : 0,
+			color: light2Color
+		},
+		vision: {
+			range: darkvisionRadius,
+			color: visionColor
+		},
 		middle: {
 			x: horizontalTokenMiddle,
 			y: verticalTokenMiddle
