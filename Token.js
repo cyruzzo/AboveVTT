@@ -4415,7 +4415,7 @@ function setTokenLight (token, options) {
 		// use sizeWidth and sizeHeight???
 		
 		const lightRadius = innerlightSize ? (innerlightSize + (optionsSize / 2)) : 0;
-		const totallight = lightRadius + outerlightSize;
+		const totallight = innerlightSize ? lightRadius + outerlightSize : outerlightSize ? outerlightSize + (optionsSize / 2) : 0;
 		const lightBg = `radial-gradient(${options.light1.daylight ? 'var(--daylight-color)' : options.light1.color} ${lightRadius}px, ${options.light2.daylight ? 'var(--daylight-color)' : options.light2.color} ${lightRadius}px ${totallight}px);`;
 		const totalSize = (totallight == 0) ? 0 : (2 * totallight);
 		const absPosOffset = (optionsSize - totalSize) / 2;
