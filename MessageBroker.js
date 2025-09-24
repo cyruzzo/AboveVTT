@@ -1611,6 +1611,7 @@ class MessageBroker {
 					conversion: conversion,
 					scale_factor: scaleFactor
 				};
+				check_darkness_value();
 				window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : `rgba(255, 255, 255, 1)`
 		 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
 
@@ -1683,6 +1684,7 @@ class MessageBroker {
 				}
 				msg.data.tokens = Object.fromEntries(Object.entries(msg.data.tokens).filter(([_, v]) => v != null));
 				window.CURRENT_SCENE_DATA = msg.data;
+				check_darkness_value();
 				window.CURRENT_SCENE_DATA.daylight = window.CURRENT_SCENE_DATA.daylight ? window.CURRENT_SCENE_DATA.daylight : `rgba(255, 255, 255, 1)`
 		 		$('#VTT').css('--daylight-color', window.CURRENT_SCENE_DATA.daylight);
 				if(window.DM){

@@ -1471,7 +1471,7 @@ function check_darkness_value(){
   		 		darknessPercent = 40;
   		 		$('#raycastingCanvas').css('opacity', '0');
   		 	}
-  		 	else if(window.DM){
+			else if (window.DM || window.CURRENT_SCENE_DATA.disableSceneVision != 1){
   		 		$('#raycastingCanvas').css('opacity', '');
   		 	}
 			else if (window.CURRENT_SCENE_DATA.disableSceneVision == 1) {
@@ -1502,12 +1502,13 @@ function check_darkness_value(){
 			darknessPercent = 40;
 			$('#raycastingCanvas').css('opacity', '0');
 		}
-		else if(window.DM){
+		else if (window.DM || window.CURRENT_SCENE_DATA.disableSceneVision != 1){
 			$('#raycastingCanvas').css('opacity', '');
 		}
 		else if (window.CURRENT_SCENE_DATA.disableSceneVision == 1){
 			$('#raycastingCanvas').css('opacity', '0');
 		}
+		
 
 		if(!parseInt(darknessfilter) && window.walls.length>4){
 			$('#outer_light_container').css({
