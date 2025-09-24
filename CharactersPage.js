@@ -1557,7 +1557,7 @@ function observe_character_sheet_changes(documentToObserve) {
         add_journal_roll_buttons(curr);
         add_aoe_statblock_click(curr, `/profile/${window.myUser}/characters/${window.PLAYER_ID}`);
       })
-    }
+    } 
  
     // for buttons text that changes based on input, such as damage change from adjusting spell level in the sidebar
     const manualSetRollbuttons = documentToObserve.find(`.ct-spell-caster__modifier-amount:not(.above-vtt-visited)`) 
@@ -2536,7 +2536,7 @@ function observe_character_sheet_changes(documentToObserve) {
                 } catch (error) {
                   console.log("inject_dice_roll failed to process element", error);
                 }
-              } else if (mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || (mutationParent.attr('class').includes('ddb-character-app') && mutationParent.parent().hasClass('ddbc-character-tidbits__heading'))) {
+              } else if (mutationParent.is("[class*='styles_characterName']") || mutation.target.parentElement.classList.contains("ddb-character-app-sn0l9p") || (mutationParent.attr('class').includes('ddb-character-app') && mutationParent.parent().hasClass('ddbc-character-tidbits__heading'))) {
                 window.PLAYER_NAME = mutation.target.data;
                 character_sheet_changed({name: mutation.target.data});
               }
@@ -2843,7 +2843,7 @@ function read_pc_object_from_character_sheet(playerId, container = $(document)) 
     // TODO: immunities?
     // TODO: initiativeBonus?
     pc.inspiration = read_inspiration(container);
-    pc.name = container.find(".ct-character-header-info__content [class*='ddb-character-app']").text();
+    pc.name = container.find(".ct-character-header-info__content [class*='ddb-character-app'], [class*='styles_characterName']").first().text();
     const pb = parseInt(container.find(".ct-proficiency-bonus-box__value").text());
     if (pb) {
       pc.proficiencyBonus = pb;
