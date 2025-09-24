@@ -2620,7 +2620,7 @@ function set_window_name_and_image(callback) {
 
   console.debug("set_window_name_and_image");
 
-  window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app]").text();
+  window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app], [class*='styles_characterName']").first().text();
   try {
     // This should be just fine, but catch any parsing errors just in case
     window.PLAYER_IMG = get_higher_res_url($(".ddbc-character-avatar__portrait").css("background-image").slice(4, -1).replace(/"/g, "")) || get_higher_res_url($(".ddbc-character-avatar__portrait").attr('src')) || defaultAvatarUrl;

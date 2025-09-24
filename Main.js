@@ -3866,7 +3866,6 @@ width=${width},height=${height},left=100,top=100`;
 	$(childWindows[name].document).find('body, head').empty();
 	$(childWindows[name].document).find('body').append(cloneSelector.clone(true,true));
 	$(childWindows[name].document).find('head').append($('link, style').clone());
-	$(childWindows[name].document).find('head').append($('link, style').clone());
 	$(childWindows[name].document).find('a[href^="/"]').each(function() {
         this.href = `https://dndbeyond.com${this.getAttribute("href")}`;
 	});
@@ -3874,6 +3873,7 @@ width=${width},height=${height},left=100,top=100`;
 }
 function popoutGamelogCleanup(){
 	$(childWindows["Gamelog"].document).find("#popoutGamelogCleanup").remove();
+	$(childWindows["Gamelog"].document).find('head').append($('link, style').clone());
 	$(childWindows["Gamelog"].document).find('head').append(`<style id='popoutGamelogCleanup'>
 		body{
 			overflow: hidden !important;
