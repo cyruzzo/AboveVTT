@@ -1012,6 +1012,7 @@ function init_character_list_page_without_avtt() {
             'visibility':'',
             'display': ''
           });
+          $('#combat_carousel_container').remove();
           setTimeout(function(){
             $(".builder-sections-sheet-icon").off().on("click", function(){
               window.location.href = `https://www.dndbeyond.com${$(".builder-sections-sheet-icon").attr("href")}?abovevtt=true`;
