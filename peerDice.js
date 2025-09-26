@@ -63,30 +63,33 @@ function setDiceRemoteStream(stream, peerId) {
         dicecanvas.css("width",tmpcanvas.width );
     });
 
-
+    let lastTime = 0
     let updateCanvas=function(){
         if(tmpcanvas.width<=0){
             diceStreamThrottle(updateCanvas);
             return;
         }
-        tmpctx.drawImage(video[0], 0, 0, tmpcanvas.width, tmpcanvas.height);
-        
-        const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
-
-        for (let i = 0; i < frame.data.length; i += 4) {
-            const red = frame.data[i + 0];
-            const green = frame.data[i + 1];
-            const blue = frame.data[i + 2];
-            if ((red < 24) && (green < 24) && (blue < 24))
-                frame.data[i + 3] = 128;
-            if ((red < 8) && (green < 8) && (blue < 8))
-                frame.data[i + 3] = 0;
-            
-            
+        if (video[0].currentTime == lastTime){
+            ctx.clearRect(0, 0, tmpcanvas.width, tmpcanvas.height);
         }
-        ctx.putImageData(frame,0,0);    
-       
-       
+        else{
+            lastTime = video[0].currentTime;
+            tmpctx.drawImage(video[0], 0, 0, tmpcanvas.width, tmpcanvas.height);
+
+            const frame = tmpctx.getImageData(0, 0, tmpcanvas.width, tmpcanvas.height);
+
+            for (let i = 0; i < frame.data.length; i += 4) {
+                const red = frame.data[i + 0];
+                const green = frame.data[i + 1];
+                const blue = frame.data[i + 2];
+                if ((red < 24) && (green < 24) && (blue < 24))
+                    frame.data[i + 3] = 128;
+                if ((red < 8) && (green < 8) && (blue < 8))
+                    frame.data[i + 3] = 0;
+            }
+            ctx.putImageData(frame, 0, 0);    
+        }
+
         diceStreamThrottle(updateCanvas);
     }
 
@@ -134,6 +137,11 @@ function joinDiceRoom(room = window.gameId) {
         window.diceCurrentPeers.push(call);
     })
 
+    window.diceVideoPeer.off('error').on('error', () => {
+        $('.stream-dice-button').html("Dice Stream Disabled");
+        $('.stream-dice-button').toggleClass("enabled", false);
+        window.JOINTHEDICESTREAM = false;
+    })
 
 
     

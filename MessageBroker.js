@@ -1550,15 +1550,15 @@ class MessageBroker {
 			if (msg.eventType === "custom/myVTT/diceVideoPeerConnect") {
 				if(msg.data.id != diceplayer_id){
 					let call = window.diceVideoPeer.call(msg.data.id, window.MYMEDIASTREAM)
-          call.on('stream', (stream) => {
-              window.diceVideoConnectedPeers.push(msg.data.id);
-              setDiceRemoteStream(stream, call.peer);   
-              call.on('close', () => {
-                $(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
-            	})   
-          })
-          window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
-          window.diceCurrentPeers.push(call);
+					call.on('stream', (stream) => {
+						window.diceVideoConnectedPeers.push(msg.data.id);
+						setDiceRemoteStream(stream, call.peer);   
+						call.on('close', () => {
+							$(`video.remote-dice-video#${call.peer}, #streamer-canvas-${call.peer}`).remove();
+						})   
+					})
+					window.diceCurrentPeers = window.diceCurrentPeers.filter(d=> d.peer != call.peer)
+					window.diceCurrentPeers.push(call);
 				}
 			}
 
