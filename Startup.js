@@ -977,6 +977,18 @@ async function start_above_vtt_for_players() {
     if(!window.CURRENT_SCENE_DATA.is_video || !window.CURRENT_SCENE_DATA.player_map.includes('youtu')){
       $("#youtube_controls_button").css('visibility', 'hidden');
     }
+    if ($('.stream-dice-button').length == 0){
+      $(".glc-game-log>[class*='Container-Flex']").append($(`<div id="stream_dice"><div class='stream-dice-button ${window.JOINTHEDICESTREAM ? `enabled` : ``}'>Dice Stream ${window.JOINTHEDICESTREAM ? `Enabled` : `Disabled`}</div></div>`));
+      $(".stream-dice-button").off().on("click", function () {
+        if (window.JOINTHEDICESTREAM) {
+          update_dice_streaming_feature(false);
+        }
+        else {
+          update_dice_streaming_feature(true);
+        }
+      })
+    }
+     
   });
 
   /*prevents repainting due to ddb adjusting player sheet classes and throttling it*/
