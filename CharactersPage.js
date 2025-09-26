@@ -1705,7 +1705,7 @@ function observe_character_sheet_changes(documentToObserve) {
     }
 
 
-    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
+    const spellDamageButtons = documentToObserve.find(`.ddbc-spell-damage-effect .integrated-dice__container:not('.above-vtt-visited-spell-damage'),  [class*='styles_attack']:has([class*='__save-value']) [class*='attack__damage'] .integrated-dice__container:not('.above-vtt-visited-spell-damage')`)
     if(spellDamageButtons.length > 0){
       $(spellDamageButtons).addClass("above-vtt-visited-spell-damage");
       spellDamageButtons.off('click.spellSave').on('click.spellSave', function(e){
