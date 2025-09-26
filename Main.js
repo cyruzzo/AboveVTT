@@ -3808,6 +3808,7 @@ function show_sidebar(dispatchResize = true) {
 		$("#sheet").removeClass("sidebar_hidden");
 	}
 	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '340px');
+	$('canvas.streamer-canvas').css('--sidebar-width', '340px');
 	if(dispatchResize)
 		window.dispatchEvent(new Event('resize'));
 	addGamelogPopoutButton()
@@ -3972,6 +3973,7 @@ function hide_sidebar(triggerResize = true) {
 		$("#sheet").addClass("sidebar_hidden");
 	}
 	$('canvas.dice-rolling-panel__container, .roll-mod-container').css('--sidebar-width', '0px');
+	$('canvas.streamer-canvas').css('--sidebar-width', '0px');
 	if(triggerResize)
 		window.dispatchEvent(new Event('resize'));
 }

@@ -25,15 +25,21 @@ function setDiceRemoteStream(stream, peerId) {
     let dicecanvas=$(`<canvas width='${video[0].videoWidth}' height='${video[0].videoHeight}' class='streamer-canvas' />`);
     dicecanvas.attr("id","streamer-canvas-"+peerId);
     //dicecanvas.css("opacity",0.5);
-    dicecanvas.css("position","fixed");
-    dicecanvas.css("top","50%");
-    dicecanvas.css("left","50%");
-    dicecanvas.css("transform","translate(-50%, -50%)");
-    dicecanvas.css("z-index",60000);
-    dicecanvas.css("touch-action","none");
-    dicecanvas.css("pointer-events","none");
-    dicecanvas.css("filter", "drop-shadow(-16px 18px 15px black)");
-    dicecanvas.css("clip-path", "inset(2px 2px 2px 2px)");
+    let sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : 340;
+ 
+    dicecanvas.css({
+        "position": "fixed",
+        "max-width": "calc(100% - var(--sidebar-width, 340px))",
+        "top" : "50%",
+        "left": "calc(50% - calc(var(--sidebar-width, 340px) / 2))",
+        "transform": "translate(-50%,-50%)",
+        "z-index": 60000,
+        "touch-action": "none",
+        "pointer-events": "none",
+        "filter": "drop-shadow(-16px 18px 15px black)",
+        "clip-path": "inset(2px 2px 2px 2px)"
+    });
+
     $("#site").append(dicecanvas);
     
     
@@ -46,12 +52,15 @@ function setDiceRemoteStream(stream, peerId) {
     let ctx=canvas.getContext('2d');
     let tmpcanvas = new OffscreenCanvas(0, 0);
     let tmpctx = tmpcanvas.getContext("2d");
+    
     video.off('resize.dice').on("resize.dice", function(){
         let videoAspectRatio = video[0].videoWidth / video[0].videoHeight
+        sidebarWidth = $("#hide_rightpanel").hasClass("point-left") ? 0 : 340;
+
         if (video[0].videoWidth > video[0].videoHeight)
         {
-            tmpcanvas.width = Math.min(video[0].videoWidth, window.innerWidth);
-            tmpcanvas.height = Math.min(video[0].videoHeight, window.innerWidth / videoAspectRatio);       
+            tmpcanvas.width = Math.min(video[0].videoWidth, window.innerWidth - sidebarWidth);
+            tmpcanvas.height = Math.min(video[0].videoHeight, (window.innerWidth - sidebarWidth) / videoAspectRatio);       
         }
         else {
             tmpcanvas.width = Math.min(video[0].videoWidth, window.innerHeight / (1 / videoAspectRatio));
