@@ -1759,7 +1759,6 @@ function open_player_sheet(sheet_url, closeIfOpen = true, playerName = '') {
 		// This ensures that they are loaded sequentially to avoid any race conditions.
 		let injectScript = function () {
 		    if (scripts.length === 0) {
-		        delete scripts;
 		        return;
 		    }
 		    let nextScript = scripts.shift();
