@@ -64,15 +64,21 @@ function setDiceRemoteStream(stream, peerId) {
     });
 
     let lastTime = 0
+    let sameFrameCount = 0;
     let updateCanvas=function(){
         if(tmpcanvas.width<=0){
             diceStreamThrottle(updateCanvas);
             return;
         }
-        if (video[0].currentTime == lastTime){
+        if (video[0].currentTime == lastTime) 
+            sameFrameCount++;
+        else 
+            sameFrameCount = 0;
+        
+        if (sameFrameCount > 10) {
             ctx.clearRect(0, 0, tmpcanvas.width, tmpcanvas.height);
         }
-        else{
+        else {
             lastTime = video[0].currentTime;
             tmpctx.drawImage(video[0], 0, 0, tmpcanvas.width, tmpcanvas.height);
 
@@ -87,9 +93,8 @@ function setDiceRemoteStream(stream, peerId) {
                 if ((red < 8) && (green < 8) && (blue < 8))
                     frame.data[i + 3] = 0;
             }
-            ctx.putImageData(frame, 0, 0);    
+            ctx.putImageData(frame, 0, 0);
         }
-
         diceStreamThrottle(updateCanvas);
     }
 
