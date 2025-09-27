@@ -8704,6 +8704,10 @@ body:not(.body-rpgcampaign) .site-bar{
     opacity: 1 !important;
 }
 
+.body-rpgcharacter-sheet #tokens .inPersonMini {
+    display: none !important;
+}
+
 .audio-token .audio-radius{
     position: absolute;
     border-radius: 50%;

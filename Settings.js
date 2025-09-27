@@ -11,7 +11,8 @@ function token_setting_options() {
 				{ value: "virtualMiniSquare", label: "Virtual Mini w/ Square Base", description: `The token looks like a physical mini with a round base. The image will show up as it is naturally with The largest side being equal to the token size, we set "Ignore Aspect Ratio" to false and "Square" to true. We also add a virtual token base to this Style with Borders and Health Aura on the base of the token. Great for tokens with a top-down art style!` },
 				{ value: "noConstraint", label: "No Constraint", description: `The token will show up as it is naturally largest side being equal to token size, we set "Ignore Aspect Ratio" to false and "Square to true. Borders and Health Aura are drawn as a drop shadow to fit the shape of the token.` },
 				{ value: "definitelyNotAToken", label: "Definitely Not a Token", description: `This token will have the shape of no contraints and be made to appear as a object tile` },
-				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` }
+				{ value: "labelToken", label: "Map Pin Token", description: `This token will have the settings of Definitely Not a Token and have it's name always displayed` },
+				{ value: "inPersonMini", label: "TV Table Mini - Hidden from Players", description: `This token will not be displayed to players on the scene but they will still see it in the combat tracker.` }
 				
 			],
 			defaultValue: "circle",
@@ -1316,7 +1317,7 @@ function build_sidebar_token_options_flyout(availableOptions, setValues, updateV
 		}
 	});
 	if(!genericFlyout){
-		container.append(build_age_inputs([setValues['age']], [setValues['maxAge']],
+		container.append(build_age_inputs([setValues?.['age']], [setValues?.['maxAge']],
 		function(age){
 			updateValue("age", age)
 			didChange();
