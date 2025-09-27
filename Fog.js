@@ -6485,9 +6485,12 @@ function initParticle(pos, divisor) {
 	window.PARTICLE = {};
 	window.PARTICLE.pos = pos;
 	window.PARTICLE.rays = [];
+	window.PARTICLE.baseAngles = [];
+	window.PARTICLE.featureRayCache = {};
 	window.PARTICLE.divisor =  divisor || 40; // the degree of approximation
 	for (let a = 0; a < 360; a += window.PARTICLE.divisor) {
     	window.PARTICLE.rays.push(new Ray(window.PARTICLE.pos, degreeToRadian(a)));
+    	window.PARTICLE.baseAngles.push(a);
 	}
 };
 
@@ -6495,6 +6498,110 @@ function particleUpdate(x, y) {
 	window.PARTICLE.pos.x = x;
 	window.PARTICLE.pos.y = y;
 };
+
+const FEATURE_RAY_LIMIT = 1000;
+const FEATURE_RAY_ANGLE_OFFSET = 0.1; // degrees to sample just off wall edges
+const FEATURE_RAY_ANGLE_PERCISION = 100; // precision factor for deduplicating angles, multiplying offset by this should >= 10 otherwise it will deduplicate it
+
+function radianToDegree(radian) {
+	return radian * (180 / Math.PI);
+}
+
+function normalizeAngleDegrees(angle) {
+	let normalized = angle % 360;
+	if(normalized < 0)
+		normalized += 360;
+	return normalized;
+}
+
+function featureAngleRounded(angle) {
+	return Math.round(normalizeAngleDegrees(angle) * FEATURE_RAY_ANGLE_PERCISION) / FEATURE_RAY_ANGLE_PERCISION;
+}
+
+function distanceSquared(pointA, pointB) {
+	const dx = pointA.x - pointB.x;
+	const dy = pointA.y - pointB.y;
+	return dx * dx + dy * dy;
+}
+
+function collectFeatureAnglesForWalls(origin, walls, limit) {
+	if(!origin || !walls || walls.length === 0 || limit <= 0)
+		return [];
+	const endpoints = [];
+	for(let i = 0; i < walls.length; i++){
+		const wall = walls[i];
+		if(!wall)
+			continue;
+		if(wall.radius !== undefined)
+			continue;
+		if(wall.a !== undefined)
+			endpoints.push(wall.a);
+		if(wall.b !== undefined)
+			endpoints.push(wall.b);
+	}
+	if(endpoints.length === 0)
+		return [];
+	endpoints.sort(function(a, b){
+		return distanceSquared(a, origin) - distanceSquared(b, origin);
+	});
+	const angles = [];
+	const seen = new Set();
+	const offsetValues = FEATURE_RAY_ANGLE_OFFSET > 0 ? [0, -FEATURE_RAY_ANGLE_OFFSET, FEATURE_RAY_ANGLE_OFFSET] : [0];
+	let added = 0;
+	for(let i = 0; i < endpoints.length && added < limit; i++){
+		const endpoint = endpoints[i];
+		if(endpoint === undefined)
+			continue;
+		const baseAngleDeg = normalizeAngleDegrees(radianToDegree(Math.atan2(endpoint.y - origin.y, endpoint.x - origin.x)));
+		for(let j = 0; j < offsetValues.length && added < limit; j++){
+			const normAngle = normalizeAngleDegrees(baseAngleDeg + offsetValues[j]);
+			const roundedAngle = featureAngleRounded(normAngle);
+			if(seen.has(roundedAngle))
+				continue;
+			seen.add(roundedAngle);
+			angles.push(normAngle);
+			added++;
+		}
+	}
+	angles.sort(function(a, b){ return a - b; });
+	return angles;
+}
+
+function buildActiveRays(particle, walls) {
+	if(!particle)
+		return [];
+	const combined = [];
+	const used = new Set();
+	const baseAngles = particle.baseAngles || [];
+	const baseRays = particle.rays || [];
+	for(let i = 0; i < baseRays.length; i++){
+		const baseAngle = baseAngles[i] !== undefined ? baseAngles[i] : i * (particle.divisor || 1);
+		const normAngle = normalizeAngleDegrees(baseAngle);
+		combined.push({ angle: normAngle, ray: baseRays[i] });
+		used.add(featureAngleRounded(normAngle));
+	}
+	const limit = FEATURE_RAY_LIMIT;
+	const featureAngles = collectFeatureAnglesForWalls(particle.pos, walls, limit);
+	if(featureAngles.length > 0){
+		if(particle.featureRayCache === undefined)
+			particle.featureRayCache = {};
+		for(let i = 0; i < featureAngles.length; i++){
+			const angleDeg = featureAngles[i];
+			const angleRounded = featureAngleRounded(angleDeg);
+			if(used.has(angleRounded))
+				continue;
+			used.add(angleRounded);
+			let ray = particle.featureRayCache[angleRounded];
+			if(ray === undefined){
+				ray = new Ray(particle.pos, degreeToRadian(angleDeg));
+				particle.featureRayCache[angleRounded] = ray;
+			}
+			combined.push({ angle: angleDeg, ray: ray });
+		}
+	}
+	combined.sort(function(a, b){ return a.angle - b.angle; });
+	return combined.map(function(entry){ return entry.ray; });
+}
 
 function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
 
@@ -6530,7 +6637,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
-	for (let i = 0; i < window.PARTICLE.rays.length; i++) {
+	const activeRays = buildActiveRays(window.PARTICLE, walls);
+	const lastRayIndex = activeRays.length - 1;
+	for (let i = 0; i < activeRays.length; i++) {
+	    const ray = activeRays[i];
 	    let pt;
 	    let closestLight = null;
 	    let closestMove = null;
@@ -6561,7 +6671,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 				continue;
 
-			pt = window.PARTICLE.rays[i].cast(walls[j]);
+			pt = ray.cast(walls[j]);
 					
 
 			if (pt) {
@@ -6584,8 +6694,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				      	
 				        if(dist == lightRadius){
 				          	pt = {
-					          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-					          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+					          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+					          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 					          }
 				   		}	       
 				   		if(recordLightFurtherThanNeed)    		
@@ -6604,8 +6714,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			     	
 			        if(dist == lightRadius){
 			          	pt = {
-				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-				          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+				          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+				          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 				          }
 			   		}	           	
 			   		
@@ -6627,8 +6737,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				          	
 					        if(dist == lightRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 						          }
 				       		}	 
 				       		if(recordNoDarknessFurtherThanNeed)
@@ -6649,8 +6759,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	   	 		          	
 	   	 			        if(dist == lightRadius){
 	   	 			          	pt = {
-	   	 				          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-	   	 				          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+	   	 				          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+	   	 				          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 	   	 				          }
 	   	 		       		}	 
 	   	 		       		secondClosestNoDarkness = pt;          	
@@ -6673,8 +6783,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						{
 				    	 	if(dist == lightRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 						          }
 					   		}
 					   		if(recordMoveFurtherThanNeed)
@@ -6693,8 +6803,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 						{
 				    	 	if(dist == lightRadius){
 					          	pt = {
-						          	x: window.PARTICLE.pos.x+window.PARTICLE.rays[i].dir.x * lightRadius,
-						          	y: window.PARTICLE.pos.y+window.PARTICLE.rays[i].dir.y * lightRadius
+						          	x: window.PARTICLE.pos.x+ray.dir.x * lightRadius,
+						          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 						          }
 					   		}
 					   		secondClosestMove = pt;
@@ -6724,13 +6834,13 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	 		closestMove = secondClosestMove;
 	 	}
 
-    	if (closestLight !== null && (closestWall != prevClosestWall || i === 359 || closestWall?.radius !== undefined)) {
+    	if (closestLight !== null && (closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
     		if(closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null){	    		
     			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
     		}
     		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
     	} 
-    	if (closestMove !== null && (closestBarrier !== prevClosestBarrier || i === 359)) {
+    	if (closestMove !== null && (closestBarrier !== prevClosestBarrier || i === lastRayIndex)) {
     		if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
     			 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
     		}
@@ -6744,7 +6854,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     	}
      	
 		if(canSeeDarkness){
-			if (closestNoDarkness !== null && (closestNoDarknessWall !== prevClosestNoDarkness || i === 359 || closestNoDarknessWall?.radius !== undefined)) {
+			if (closestNoDarkness !== null && (closestNoDarknessWall !== prevClosestNoDarkness || i === lastRayIndex || closestNoDarknessWall?.radius !== undefined)) {
 	    		if(closestNoDarknessWall !== prevClosestNoDarkness && prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null){	    		
 	    			noDarknessPolygon.push({x: prevClosestNoDarknessPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
 	    		}
@@ -6970,7 +7080,7 @@ function redraw_light(darknessMoved = false){
 
 	let darknessBoundarys = getDarknessBoundarys();
 	
-	if(window.walls.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
+	if(window.walls?.length <= 4 && window.CURRENT_SCENE_DATA.darkness_filter == 0){
 		moveOffscreenContext.fillStyle = "white";
 	}else{
 		moveOffscreenContext.fillStyle = "black";
