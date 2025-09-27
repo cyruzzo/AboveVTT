@@ -2039,6 +2039,11 @@ class JournalManager{
 		for(let i=0; i<trackerSpans.length; i++){
 			$(trackerSpans[i]).replaceWith(`[track]${$(trackerSpans[i]).text()}[/track]`);
 		}
+		const embededIframes = target.find('iframe');
+		for(let i=0; i<embededIframes.length; i++){
+			embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`
+		}
+
 		const iframes = target.find('.journal-site-embed')
 		for(let i=0; i<iframes.length; i++){
 			let url = $(iframes[i]).text();
@@ -2048,13 +2053,15 @@ class JournalManager{
 			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
 				url = url.replace(/view\?usp=/gi, 'preview?usp=')
 			}else if(url.match(/youtube.com/gi)){
-				url = url.replace("youtube.com", "youtube-nocookie.com")
+				url = url.replace("youtube.com", "youtube-nocookie.com");
+				url = url.replace(/watch\?v=(.*)/gi, 'embed/$1');
 			}
 			encodeURI(url);
 			const newFrame = $(`<iframe class='journal-site-embed' src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'></iframe>`)			
 			$(iframes[i]).replaceWith(newFrame);
 		}
 
+		
 
     	let data = $(target).clone().html();
 

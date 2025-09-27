@@ -151,14 +151,12 @@ function joinDiceRoom(room = window.gameId) {
         window.diceCurrentPeers.push(call);
     })
 
-    window.diceVideoPeer.off('error').on('error', () => {
+    window.diceVideoPeer.off('error').on('error', (event) => {
+        console.error(`Dice Peer Error event caught: ${event.message}, error object: ${event.error}, filename: ${event.filename}, line number: ${event.lineno}, column number: ${event.colno}`);
         $('.stream-dice-button').html("Dice Stream Disabled");
         $('.stream-dice-button').toggleClass("enabled", false);
         window.JOINTHEDICESTREAM = false;
-    })
-
-
-    
+    })    
 }
 function getDiceMedia(){
     let diceRollPanel = $(".dice-rolling-panel__container");
