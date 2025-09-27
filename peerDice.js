@@ -151,14 +151,15 @@ function joinDiceRoom(room = window.gameId) {
         window.diceCurrentPeers.push(call);
     })
 
-    window.diceVideoPeer.off('error').on('error', () => {
+    window.diceVideoPeer.off('error').on('error', (event) => {
+        console.error(`Dice Peer Error event caught: ${event.message}`);
+        if(event.message.match(/ID.*is taken/gi)){
+            alert("AboveVTT P2P Dice Stream Error: Your Player ID is already connected to the dice stream. You may have another window open logged into the same player or DM view. Please close the other window and try again.");
+        }
         $('.stream-dice-button').html("Dice Stream Disabled");
         $('.stream-dice-button').toggleClass("enabled", false);
         window.JOINTHEDICESTREAM = false;
-    })
-
-
-    
+    })    
 }
 function getDiceMedia(){
     let diceRollPanel = $(".dice-rolling-panel__container");
