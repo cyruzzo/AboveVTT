@@ -2041,7 +2041,10 @@ class JournalManager{
 		}
 		const embededIframes = target.find('iframe');
 		for(let i=0; i<embededIframes.length; i++){
-			embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`
+			embededIframes[i].setAttribute('allowfullscreen', '');
+			embededIframes[i].setAttribute('webkitallowfullscreen', '');
+			embededIframes[i].setAttribute('mozallowfullscreen', '');
+			embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`;
 		}
 
 		const iframes = target.find('.journal-site-embed')
@@ -2057,7 +2060,11 @@ class JournalManager{
 				url = url.replace(/watch\?v=(.*)/gi, 'embed/$1');
 			}
 			encodeURI(url);
-			const newFrame = $(`<iframe class='journal-site-embed' src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'></iframe>`)			
+			const newFrame = $(`<iframe class='journal-site-embed'
+						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
+						allowfullscreen
+						webkitallowfullscreen
+						mozallowfullscreen></iframe>`)
 			$(iframes[i]).replaceWith(newFrame);
 		}
 
