@@ -4555,6 +4555,8 @@ function setTokenBase(token, options) {
 		return;
 	$(`.token[data-id='${options.id}']>.base`).remove();
 	let base = $(`<div class='base'></div>`);
+
+
 	if(options.size < 150){
 		base.toggleClass("large-or-smaller-base", true);
 	}
@@ -4573,6 +4575,10 @@ function setTokenBase(token, options) {
 	if (options.tokenStyleSelect !== "noConstraint") {
 		token.children(".token-image").toggleClass("freeform", false);
 		token.toggleClass("freeform", false);
+	}
+
+	if (options.tokenStyleSelect !== "inPersonMini") {
+		token.toggleClass("inPersonMini", false);
 	}
 
 	if (options.tokenStyleSelect === "circle") {
@@ -4630,6 +4636,14 @@ function setTokenBase(token, options) {
 		options.legacyaspectratio = false;
 		token.children(".token-image").css("border-radius", "0");
 		token.children(".token-image").addClass("preserve-aspect-ratio");
+	}
+	else if (options.tokenStyleSelect === "inPersonMini") {
+		options.square = false;
+		options.legacyaspectratio = true;
+		token.children(".token-image").css("border-radius", "50%")
+		token.children(".token-image").removeClass("preserve-aspect-ratio");
+		token.toggleClass("square", false);
+		token.toggleClass("inPersonMini", true);
 	}
 
 	
