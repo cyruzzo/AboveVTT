@@ -2620,7 +2620,9 @@ function set_window_name_and_image(callback) {
   }
 
   console.debug("set_window_name_and_image");
-  window.document.title = `AVTT ${window.document.title}`
+  if (!is_characters_builder_page()){
+    window.document.title = `AVTT ${window.document.title.replace(/^AVTT /, '')}`;
+  }
   window.PLAYER_NAME = $(".ddbc-character-tidbits__heading [class*=ddb-character-app], [class*='styles_characterName']").first().text();
   try {
     // This should be just fine, but catch any parsing errors just in case
