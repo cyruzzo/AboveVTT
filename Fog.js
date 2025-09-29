@@ -1442,7 +1442,8 @@ function check_darkness_value(){
 	if(selectedTokens.length>0){
 		for(let j = 0; j < selectedTokens.length; j++){
 		  	let tokenId = $(selectedTokens[j]).attr('data-id');
-
+			if (window.TOKEN_OBJECTS[tokenId] == undefined)
+				continue;
 			if(tokenId.includes(window.PLAYER_ID) || window.DM || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc')){
 				tokenHasSharedVision = true;
 				break;
