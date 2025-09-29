@@ -6345,7 +6345,11 @@ Vector.dist = function(v1, v2) {
       dy = v1.y - v2.y;
   return Math.sqrt(dx * dx + dy * dy);
 };
-
+Vector.sqDist = function (v1, v2) {
+	let dx = v1.x - v2.x,
+		dy = v1.y - v2.y;
+	return (dx * dx + dy * dy);
+};
 // vector object instance methods
 Vector.prototype.mag = function() {
   let x = this.x,
@@ -6419,11 +6423,11 @@ Ray.prototype.cast = function(boundary) {
 		else{
 			let p1 = new Vector(this.pos.x + u1.x + m*this.dir.x, this.pos.y + u1.y + m*this.dir.y);
 					  
-		  	if(d < boundary.radius && Vector.dist(this.pos, boundary.a) > boundary.radius){
+		  	if(d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > boundary.radius**2){
 		  		
 		  		let p2 = new Vector(this.pos.x + u1.x - m*this.dir.x, this.pos.y + u1.y - m*this.dir.y);
-		  		let distance1 = Vector.dist(this.pos, p1);
-		  		let distance2 = Vector.dist(this.pos, p2);
+				let distance1 = Vector.sqDist(this.pos, p1);
+				let distance2 = Vector.sqDist(this.pos, p2);
 			  	if(distance1 >= distance2){
 			  		return p2
 			  	}
@@ -6677,8 +6681,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 			if (pt) {
 				let dist = lightRadius;
-				let pointDistance = Vector.dist(window.PARTICLE.pos, pt);
-				if(pointDistance < lightRadius)
+				let pointDistance = Vector.sqDist(window.PARTICLE.pos, pt);
+				if(pointDistance < lightRadius**2)
 					dist = pointDistance;
 				
 				const recordLightFurtherThanNeed = Math.abs(recordLight - dist) > diffNeedForTerrainWalls;
