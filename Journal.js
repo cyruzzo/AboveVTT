@@ -988,7 +988,7 @@ class JournalManager{
 			chapterImport.append($(`<option value='/magic-items'>Magic Items</option>`));
 			chapterImport.append($(`<option value='/feats'>Feats</option>`));
 			chapterImport.append($(`<option value='/spells'>Spells</option>`));
-			const sortedSources = window.ddbConfigJson.sources.sort((a, b) => a.description.localeCompare(b.description));
+			const sortedSources = window.ddbConfigJson.sources.sort((a, b) => a.description.localeCompare(b.description, 'en'));
 			for(let source=0; source<sortedSources.length; source++){
 				const currentSource = sortedSources[source]
 				if(currentSource.sourceURL == '' || currentSource.name == 'HotDQ' || currentSource.name == 'RoT')
@@ -2113,7 +2113,7 @@ class JournalManager{
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
                 	
-                	let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+					let rulesId = window.ddbConfigJson.rules.filter((d) => d.name.localeCompare(m, "en", { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/basic-rules/combat#${m}" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/rules/${rulesId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/conditions/${rulesId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
@@ -2124,7 +2124,7 @@ class JournalManager{
                 	if(m.startsWith('#') || m.startsWith('>'))
                 		return m;
                 	
-                	let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].definition.id;
+					let conditionId = window.ddbConfigJson.conditions.filter((d) => d.definition.name.localeCompare(m, "en", { sensitivity: 'base' }) == 0)[0].definition.id;
                		return `<a class="tooltip-hover condition-tooltip" href="/compendium/rules/free-rules/rules-glossary${m}Condition" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/conditions/${conditionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/conditions/${conditionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
@@ -2134,7 +2134,7 @@ class JournalManager{
                 function(m){
 
                 	
-                	let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+					let skillId = window.ddbConfigJson.abilitySkills.filter((d) => d.name.localeCompare(m, "en", { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="/compendium/rules/basic-rules/using-ability-scores#${m}" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/skills/${skillId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${skillId}/tooltip-json" target="_blank">${m}</a>`
                 }
 
@@ -2152,7 +2152,7 @@ class JournalManager{
                 /(?<!]|;|#|\w|\-|<[^>]+)(truesight|blindsight|darkvision|tremorsense)(?![^<]+>|\-|\w|\[)/gi,
                  function(m){
                 	
-                	let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, undefined, { sensitivity: 'base' }) == 0)[0].id;
+					 let senseId = window.ddbConfigJson.senses.filter((d) => d.name.localeCompare(m, "en", { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/senses/${senseId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${senseId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
@@ -2165,7 +2165,7 @@ class JournalManager{
      				if(m.toLowerCase().includes(' action'))
      					compare = m.toLowerCase().replace(' action', '');
                 	
-                	let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(compare, undefined, { sensitivity: 'base' }) == 0)[0].id;
+					let actionId = window.ddbConfigJson.basicActions.filter((d) => d.name.localeCompare(compare, "en", { sensitivity: 'base' }) == 0)[0].id;
                		return `<a class="tooltip-hover skill-tooltip" href="" aria-haspopup="true" data-tooltip-href="//www.dndbeyond.com/actions/${actionId}-tooltip" data-tooltip-json-href="//www.dndbeyond.com/skills/${actionId}/tooltip-json" target="_blank">${m}</a>`
                 }
             );
