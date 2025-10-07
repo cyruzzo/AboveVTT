@@ -795,7 +795,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 				let id = $(this).attr('id');
 				if (typeof id == typeof undefined)
 					return;
-				let img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right, .compendium-center-banner-img").attr("href") || $(this).children('img').attr('src');
+				let img1 = $(this).find(".compendium-image-center, .compendium-image-left, .compendium-image-right, .compendium-center-banner-img").attr("href") || $(this).children('img').attr('src') ||$(this).find('.map-nav-container').children('img').attr('src');
 
 				let links = $(this).find("figcaption a");
 				let player_map = '';
@@ -858,20 +858,21 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 						}
 					}
 				}	
-				self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
-					id: id,
-					uuid: source_keyword + "/" + chapter_keyword + "/" + id,
-					title: title,
-					dm_map: dm_map,
-					player_map: player_map ? player_map : thumb,
-					player_map_is_video: "0",
-					dm_map_is_video: "0",
-					thumb: thumb,
-					scale: "100",
-					dm_map_usable: dm_map ? "1" : '0',
-					tokens: tokens,
-					notes: notes
-				});
+				if (!self.sources[source_keyword].chapters[chapter_keyword].scenes.some(d => d.uuid == `${source_keyword}/${chapter_keyword}/${id}`) )
+					self.sources[source_keyword].chapters[chapter_keyword].scenes.push({
+						id: id,
+						uuid: source_keyword + "/" + chapter_keyword + "/" + id,
+						title: title,
+						dm_map: dm_map,
+						player_map: player_map ? player_map : thumb,
+						player_map_is_video: "0",
+						dm_map_is_video: "0",
+						thumb: thumb,
+						scale: "100",
+						dm_map_usable: dm_map ? "1" : '0',
+						tokens: tokens,
+						notes: notes
+					});
 			});
 
 			// COMPENDIUM IMAGES
