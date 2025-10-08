@@ -167,9 +167,7 @@ class Token {
 		}
 		this.options.hp = newValue; // backwards compatibility
 	}
-	check_concentration(newValue){
-		
-	}
+
 
 	/** @return {number} the value of this token's temp HP */
 	get tempHp() {
