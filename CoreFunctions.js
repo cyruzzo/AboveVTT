@@ -1723,6 +1723,7 @@ const debounce_pc_token_update = mydebounce(() => {
     if (token && pc) {
       let currentImage = token.options.imgsrc;
       if (currentImage != undefined){
+        token.hp = pc.hitPointInfo.current; // triggers concentration checks
         token.options.hitPointInfo = pc.hitPointInfo;
 
         const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
