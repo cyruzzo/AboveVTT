@@ -1878,8 +1878,8 @@ class MessageBroker {
 							try{
 								const teleporterTokenId = window.TELEPORTER_PASTE_BUFFER.targetToken
 								const targetPortal = window.TOKEN_OBJECTS[teleporterTokenId];
-								const top = parseInt(targetPortal.options.top)+25;
-								const left = parseInt(targetPortal.options.left)+25;
+								const top = (parseInt(targetPortal.options.top) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);
+								const left = (parseInt(targetPortal.options.left) + 25) * (window.CURRENT_SCENE_DATA.scale_factor / targetPortal.options.scaleCreated);
 								const isTeleporter = true;
 								await paste_selected_tokens(left, top, isTeleporter);
 								window.TOKEN_OBJECTS[teleporterTokenId].highlight();
