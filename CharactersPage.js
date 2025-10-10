@@ -1534,7 +1534,7 @@ function observe_character_sheet_changes(documentToObserve) {
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div[class*='ct-item-detail__customize']:nth-child(4) p:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) tr:not(.above-vtt-visited),
       .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) div[class*='--damage']:not([class*='__modifier']):not(.ct-customize-data-editor__property--damagetypeid):not(.above-vtt-visited),
-      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not(.above-vtt-visited),
+      .ct-sidebar__inner [class*='styles_content']>div:first-of-type>div:not([class*='styles_gameLogPane']):not([class*='ct-preferences-pane']):last-of-type>div>div:not(.ct-item-detail__customize):not([class*='__intro']) span:not([class*='button']):not([class*='casting']):not([class*='__modifier']):not([class*='Checkbox_inputContainer']):not(.above-vtt-visited),
       [class*='spell-damage-group'] span[class*='__value']:not(.above-vtt-visited)
     `);
   
