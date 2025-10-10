@@ -7673,7 +7673,7 @@ button span.onedrive-btn-status{
     height: 100%;
 } 
 .token>.token-image{
-    object-position: var(--offsetX, center) var(--offsetY, top);
+    object-position: var(--offsetX, center) calc(-1 * var(--offsetY, top));
     object-view-box: var(--view-box);
     opacity: var(--image-opacity);
 }
