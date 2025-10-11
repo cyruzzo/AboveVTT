@@ -469,6 +469,21 @@ function init_trackLibrary() {
         };
         fileInput.click();
     };
+    importCSV.style.position = 'absolute';
+    importCSV.style.top = '15px';
+    importCSV.style.right = '90px';
+
+    const exportCSV = document.createElement('button');
+    exportCSV.textContent = "Export CSV";
+    exportCSV.onclick = () => {
+        const csvContent = trackLibrary.exportCSV();
+        let currentdate = new Date();
+        let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth() + 1)}-${currentdate.getDate()}`;
+        download(csvContent, `${window.CAMPAIGN_INFO.name}-${datetime}-audiocsv.csv`, "text/csv;charset=utf-8;");
+    }
+    exportCSV.style.position = 'absolute';
+    exportCSV.style.top = '15px';
+    exportCSV.style.right = '2px';
 
     const addTrack = $(`<button id='addTrack'>Add Track</button>`)
     const importTrackFields = $("<div id='importTrackFields'></div>")
@@ -478,8 +493,8 @@ function init_trackLibrary() {
     const cancelButton = $('<button class="add-track-cancel-button">X</button>');  
 
     // Mixer/ Track List QOL updates
-    const addTracksToMixer = $(`<button id='addTrack'>Add Tracks to Mixer</button>`);
-    const addShuffledToMixer = $('<button id="addShuffledToMixer">Add Shuffled</button>');
+    const addTracksToMixer = $(`<button id='addTrack'>Add Visible to Mixer</button>`);
+    const addShuffledToMixer = $('<button id="addShuffledToMixer">Add Shuffled to Mixer</button>');
 
     // Click handlers
     addTracksToMixer.on("click", function() {
@@ -707,13 +722,13 @@ function init_trackLibrary() {
         }
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
-
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br><b>Import</b>:  ", addTrack, dropBoxbutton, importCSV, importTrackFields, trackList);
+    
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, importCSV, exportCSV, importTrackFields, trackList);
 }
 
 function init() {
     log(`initializing audio ui for ${window.DM ? 'DM' : 'player'}`);
-    if (window.DM) {
+    if (window.DM) {                
         init_trackLibrary();
         init_mixer();
     } else {

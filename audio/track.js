@@ -160,6 +160,29 @@ class TrackLibrary extends Library {
         this.create(track);
     }
     /**
+     * Export the current track library contents to CSV
+     * @returns {string}
+     */
+    exportCSV() {
+        const rows = [['name', 'src', 'tags']];
+        this.map().forEach(track => {
+            const tagList = Array.isArray(track.tags)
+                ? track.tags
+                : typeof track.tags === 'string' && track.tags.length > 0
+                    ? track.tags.split('|')
+                    : [];
+            rows.push([
+                track.name ?? '',
+                track.src ?? '',
+                tagList
+                    .map(tag => (tag ?? '').toString().trim())
+                    .filter(tag => tag.length > 0)
+                    .join('|')
+            ]);
+        });
+        return $.csv.fromArrays(rows);
+    }
+    /**
      * Import a csv of tracks into the track library
      * @param {string} csv
      */
