@@ -1451,7 +1451,9 @@ function token_context_menu_expanded(tokenIds, e) {
 			    tokenImage.find('img').attr('data-basic-avatar-url', largeAvatar);
 			    tokenImage.find('img').attr('data-current-avatar-url', "largeAvatarUrl");
 			}
-			let tokenImage = $(`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token.options.imgsrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${token.options.imgsrc}' src='${token.options.imgsrc}'/>  </div>`);
+
+			const imageSrc = token.options.imgsrc.startsWith('above-bucket-not-a-url') ? await getAvttStorageUrl(token.options.imgsrc) : token.options.imgsrc;
+			let tokenImage = $(`<div class="image" style="display: block; max-width:100%;"><${(token.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => imageSrc.includes(d))) ? 'video disableremoteplayback muted' : 'img'} class='magnify' style='max-width:100%;' href='${imageSrc}' src='${imageSrc}'/>  </div>`);
 			
 			if(typeof token.options.monster == 'number' && token.options.itemType == 'monster' && token.options.alternativeImages == undefined){
 

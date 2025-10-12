@@ -249,27 +249,7 @@ function find_builtin_token(fullPath) {
     return found;
 }
 
-function backfill_mytoken_folders() {
-    mytokens.forEach(myToken => {
-        if (myToken.folderPath !== RootFolder.Root.path) {
-            // we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
-            let parts = myToken.folderPath.split("/");
-            let backfillPath = "";
-            parts.forEach(part => {
-                let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-                if (fullBackfillPath !== RootFolder.Root.path && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
-                    // we don't have this folder yet so add it
-                    let newFolder = { folderPath: sanitize_folder_path(backfillPath), name: part, collapsed: true };
-                    console.log("adding folder", newFolder);
-                    mytokensfolders.push(newFolder);
-                } else {
-                    console.log("not adding folder", fullBackfillPath);
-                }
-                backfillPath = fullBackfillPath;
-            });
-        }
-    });
-}
+
 
 /**
  * iterates over all the token sources and replaces window.tokenListItems with new objects.
@@ -287,7 +267,6 @@ function rebuild_token_items_list() {
         playersFolder.rootId = 'playersFolder';
     }
 
-    backfill_mytoken_folders(); // just in case we're missing any folders
 
     // Players
     let tokenItems = window.pcs
@@ -668,7 +647,19 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
                 enable_draggable_token_creation(row);
             }
             console.debug("appending item", item);
-            $(`#${item.parentId} > .folder-item-list`).append(row);
+            if ($(`#${item.parentId}`).length) {
+                $(`#${item.parentId} > .folder-item-list`).append(row);
+                return;
+            }
+            if(item.isTypeMyToken()){
+                $(`#myTokensFolder > .folder-item-list`).append(row);
+                item.parentId = "myTokensFolder";
+                const customization = find_token_customization(item.type, item.id)
+                customization.parentId = item.parentId;
+                persist_token_customization(customization);
+                return;
+            }
+
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
@@ -702,7 +693,11 @@ function get_helper_size(draggedItem){
  * @param html {*|jQuery|HTMLElement} the html that corresponds to an item (like a row in the list of tokens)
  * @param specificImage {string} the url of the image to use. If nothing is provided, an image will be selected at random from the token's specified alternative-images.
  */
-function enable_draggable_token_creation(html, specificImage = undefined) {
+async function enable_draggable_token_creation(html, specificImage = undefined) {
+    if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
+        specificImage = await getAvttStorageUrl(specificImage)
+    }
+
     html.draggable({
         appendTo: "body",
         zIndex: 100000,
@@ -731,9 +726,16 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 let helper = draggedRow.find(".token-image").clone();
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
-                } else {         
-                    helper.attr("src", random_image_for_item(draggedItem));
-                    
+                } else {      
+                    const src = random_image_for_item(draggedItem);
+                    if (src.startsWith('above-bucket-not-a-url')) {
+                        getAvttStorageUrl(src).then((url) => {
+                            helper.attr("src", url);
+                        })
+                    }
+                    else{
+                        helper.attr("src", src);
+                    }
                 }
                 helper.addClass("draggable-token-creation");
                 return helper;
@@ -837,7 +839,7 @@ function enable_draggable_token_creation(html, specificImage = undefined) {
                 }
                 let draggedItem = find_sidebar_list_item(draggedRow);
                 let hidden = event.shiftKey ? true : undefined; // we only want to force hidden if the shift key is help. otherwise let the global and override settings handle it
-                let src = $(ui.helper).attr("src");
+                let src = $(ui.helper).attr("data-src");
                 if (ui.helper.attr("data-shape") && ui.helper.attr("data-style")) {
                     src = build_aoe_img_name(ui.helper.attr("data-style"), ui.helper.attr("data-shape"));
                 }
@@ -913,7 +915,19 @@ function update_pc_token_rows() {
                 abilityValue.find(".ability_score").text(a.score);
             });    
             let customizations = find_token_customization(listItem.type, listItem.id);
-            row.find(".token-image").attr('src', (customizations?.tokenOptions?.alternativeImages?.length>0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image);
+            
+            let rowImage = (customizations?.tokenOptions?.alternativeImages?.length > 0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image;
+            if (rowImage.startsWith('above-bucket-not-a-url')){
+                getAvttStorageUrl(rowImage).then((url) => {
+                    row.find(".token-image").attr('src', url)
+                })
+            }
+            else{
+                row.find(".token-image").attr('src', rowImage)
+            }
+            
+            
+            
             row.find(".pinv-value").text(pc.passiveInvestigation);
             row.find(".pins-value").text(pc.passiveInsight);
             row.find(".walking-value").text(speed_from_pc_object(pc));
@@ -2100,52 +2114,85 @@ function create_player_folder_inside(listItem) {
  * Creates a "My Tokens" folder within another "My Tokens" folder
  * @param listItem {SidebarListItem} The folder to create a new folder within
  */
-function create_mytoken_folder_inside(listItem) {
+function create_mytoken_folder_inside(listItem, options = {}) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_mytoken_folder_inside called with an incorrect item type", listItem);
         return;
     }
 
-    let newFolderName = "New Folder";
-    let newFolderCount = window.TOKEN_CUSTOMIZATIONS
-        .filter(tc => tc.tokenType === ItemType.Folder && tc.name().startsWith(newFolderName))
-        .length;
-    if (newFolderCount > 0) {
-        newFolderName += ` ${newFolderCount + 1}`;
+    const { name: desiredName, skipModal = false, skipDidChange = false, onCreated } = typeof options === "object" && options !== null ? options : {};
+
+    let newFolderName;
+    if (typeof desiredName === "string" && desiredName.trim()) {
+        const baseName = desiredName.trim();
+        const siblingNames = window.TOKEN_CUSTOMIZATIONS
+            .filter(tc => tc.tokenType === ItemType.Folder && tc.parentId === listItem.id)
+            .map(tc => (typeof tc.name === "function" ? tc.name() : tc.tokenOptions?.name || "").toLowerCase());
+        newFolderName = baseName;
+        let suffix = 2;
+        while (siblingNames.includes(newFolderName.toLowerCase())) {
+            newFolderName = `${baseName} ${suffix}`;
+            suffix += 1;
+        }
+    } else {
+        newFolderName = "New Folder";
+        let newFolderCount = window.TOKEN_CUSTOMIZATIONS
+            .filter(tc => tc.tokenType === ItemType.Folder && tc.parentId === listItem.id && tc.name().startsWith(newFolderName))
+            .length;
+        if (newFolderCount > 0) {
+            newFolderName += ` ${newFolderCount + 1}`;
+        }
     }
     let newFolder = TokenCustomization.Folder(uuid(), listItem.id, RootFolder.MyTokens.id, { name: newFolderName });
     persist_token_customization(newFolder, function(didSucceed, errorType) {
         if (didSucceed) {
-                did_change_mytokens_items();
+                if (!skipDidChange) {
+                    did_change_mytokens_items();
+                }
                 let newListItem = window.tokenListItems.find(li => li.type === ItemType.Folder && li.id === newFolder.id);
-                display_folder_configure_modal(newListItem);
-                expand_all_folders_up_to_item(newListItem);
+                if (newListItem) {
+                    if (!skipModal) {
+                        display_folder_configure_modal(newListItem);
+                    }
+                    expand_all_folders_up_to_item(newListItem);
+                }
+                if (typeof onCreated === "function") {
+                    onCreated(newListItem, newFolder);
+                }
         } else {
             showError(errorType, "create_mytoken_folder_inside failed to create a new folder");
         }
     });
+    return newFolder;
 }
 
 function delete_mytokens_folder_and_everything_in_it(listItem) {
+    build_import_loading_indicator('Deleting Folder and Contents');
     console.log("delete_mytokens_folder_and_everything_in_it about to delete all tokens with parentId", listItem.id);
-    delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
-        if (deletedChildren) {
-            console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
-            delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
+    setTimeout(() => {
+        delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
+            if (deletedChildren) {
+                console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
+                delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
+                    did_change_mytokens_items();
+                    expand_all_folders_up_to_item(listItem);
+                    if (deletedFolder) {
+                        console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
+                    } else {
+                        showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
+                    }
+                    $("body>.import-loading-indicator").remove();
+                });
+            } else {
                 did_change_mytokens_items();
                 expand_all_folders_up_to_item(listItem);
-                if (deletedFolder) {
-                    console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
-                } else {
-                    showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
-                }
-            });
-        } else {
-            did_change_mytokens_items();
-            expand_all_folders_up_to_item(listItem);
-            showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
-        }
-    });
+                showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
+                $("body>.import-loading-indicator").remove();
+            }
+        })
+    }, 0);
+
+   
 }
 
 function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
@@ -2179,7 +2226,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
  * Creates a new "My Token" object within a folder
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
-function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='', options = undefined, statBlock = undefined) {
+function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='', options = undefined, statBlock = undefined, skipDidChange = false) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
@@ -2230,6 +2277,8 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
     }
 
     persist_token_customization(customization, function (didSucceed, error) {
+        if (skipDidChange)
+            return;
         console.log("create_token_inside created a new item", customization);
         did_change_mytokens_items();
         const newItem = window.tokenListItems.find(li => li.type === ItemType.MyToken && li.id === customization.id);
@@ -2458,9 +2507,21 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
                addImageUrl(links[i].link, links[i].type)
             }    
         }, 'multiple')
+        const avttButton = createCustomAvttChooser('', function (links) {
+            for (let i = 0; i < links.length; i++) {
+                addImageUrl(links[i].link)
+            }  
+        }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE]);
         dropboxButton.toggleClass('token-row-button', true);
         oneDriveButton.toggleClass('token-row-button', true);
-        inputWrapper.append(dropboxButton, oneDriveButton);
+        avttButton.toggleClass('token-row-button', true);
+        if (window.testAvttFilePicker === true) {
+            inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
+        }
+        else{
+            inputWrapper.append(dropboxButton, oneDriveButton);
+        }
+        
     }
 
 
@@ -3152,7 +3213,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         console.warn("redraw_token_images_in_modal was called without proper items");
         return;
     }
-    let currentlySelectedToken = $('.example-token.selected .div-token-image')?.attr('src');
+    let currentlySelectedToken = $('.example-token.selected .div-token-image')?.attr('data-src');
     let modalBody = sidebarPanel.body
     modalBody.empty();
     modalBody.off('click.select').on('click.select', function(e){
@@ -3160,7 +3221,7 @@ function redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, drawI
         if($(e.target).closest('.example-token').length > 0){
             $(e.target).closest('.example-token')?.toggleClass('selected', true);
         } 
-        let src = $(e.target).closest('.example-token')?.find('.div-token-image')?.attr('src');
+        let src = $(e.target).closest('.example-token')?.find('.div-token-image')?.attr('data-src');
 
         display_token_configuration_modal(listItem, placedToken, src, sidebarPanel)
     })
@@ -3293,7 +3354,7 @@ function build_alternative_image_for_modal(image, options, placedToken, listItem
  * @param listItem {SidebarListItem|undefined} the item the modal represents
  * @param placedToken {Token|undefined} the token on the scene
  */
-function decorate_modal_images(sidebarPanel, listItem, placedToken) {
+async function decorate_modal_images(sidebarPanel, listItem, placedToken) {
     if (listItem === undefined && placedToken === undefined) {
         console.warn("decorate_modal_images was called without a listItem or a placedToken");
         return;
@@ -3303,7 +3364,7 @@ function decorate_modal_images(sidebarPanel, listItem, placedToken) {
     for (let i = 0; i < items.length; i++) {
         let combinedOptions = options;
         let item = $(items[i]);
-        let imgsrc = item.find(".div-token-image").attr("src");
+        let imgsrc = item.find(".div-token-image, .token-image").attr("data-src");
         if(options.alternativeImagesCustomizations != undefined && options.alternativeImagesCustomizations[imgsrc] != undefined){
             combinedOptions = {
                 ...options,
@@ -3835,7 +3896,7 @@ function register_custom_token_image_context_menu() {
                     name: "Remove",
                     callback: async function (itemKey, opt, originalEvent) {
                         let selectedItem = $(opt.$trigger[0]);
-                        let imgSrc = selectedItem.find(".token-image").attr("src");
+                        let imgSrc = selectedItem.find(".token-image").attr("data-src");
                         if(tokenChangeImage){
                             imgSrc = selectedItem.attr("src");
                         }
@@ -3867,7 +3928,16 @@ function register_custom_token_image_context_menu() {
                             await customization.removeAlternativeImage(imgSrc);
                             persist_token_customization(customization, function(){
                                 let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
-                                $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
+                                if (listingImage.startsWith('above-bucket-not-a-url')) {
+                                    getAvttStorageUrl(listingImage).then((url) => {
+                                        $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', url);
+                                    })
+                                }
+                                else {
+                                    $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', listingImage);
+                                }
+                                
+                               
                                 redraw_token_images_in_modal(window.current_sidebar_modal, listItem, placedToken);
                             });
      
@@ -4143,8 +4213,35 @@ function display_change_image_modal(placedToken) {
         close_sidebar_modal();
         placedToken.place_sync_persist();      
     }, 'multiple')
+
+
     oneDriveButton.toggleClass('token-row-button', true);
-    sidebarPanel.inputWrapper.append(dropboxButton, oneDriveButton);
+
+    const avttButton = createCustomAvttChooser('', function (links) {
+        for (let i = 0; i < links.length; i++) {
+            if (!placedToken.options.alternativeImages) {
+                placedToken.options.alternativeImages = [];
+            }
+            if (!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)) {
+                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+            placedToken.options.imgsrc = parse_img(links[i].link);
+            if (!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)) {
+                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+            }
+        }
+        close_sidebar_modal();
+        placedToken.place_sync_persist();
+    }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE]);
+
+    avttButton.toggleClass('token-row-button', true);
+    if(window.testAvttFilePicker === true){
+        sidebarPanel.inputWrapper.append(dropboxButton, avttButton, oneDriveButton);
+    }
+    else{
+        sidebarPanel.inputWrapper.append(dropboxButton, oneDriveButton);
+    }
+   
 
     let inputWrapper = sidebarPanel.inputWrapper;
     sidebarPanel.footer.find(`.token-image-modal-add-button`).remove();

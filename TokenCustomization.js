@@ -175,7 +175,9 @@ class TokenCustomization {
     }
 
     setTokenOption(key, value) {
-        let currSrc = $('.sidebar-panel-body .example-token.selected .div-token-image')?.attr('src')
+        let currSrc = $('.sidebar-panel-body .example-token.selected :is(.div-token-image')?.attr('data-src')
+       
+    
         let target = this.tokenOptions;
         if(currSrc != undefined){
             if(this.tokenOptions.alternativeImagesCustomizations == undefined)
@@ -870,6 +872,9 @@ function delete_token_customization_by_parent_id(parentId, callback) {
             if(window.JOURNAL.statBlocks)
                 delete window.JOURNAL.statBlocks[statBlockID]
             window.JOURNAL.persist();
+        }
+        if(tokensToBeDeleted[i].tokenType == ItemType.Folder){
+            delete_token_customization_by_parent_id(tokensToBeDeleted[i].id, callback)
         }
     }
 

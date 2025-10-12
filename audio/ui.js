@@ -2,6 +2,216 @@ import { trackLibrary } from './track.js';
 import { Channel } from './mixer.js';
 import { log } from './helpers.js';
 
+const AVTT_AUDIO_ALLOWED_EXTENSIONS = new Set([
+    'aac', 'aif', 'aifc', 'aiff', 'au', 'flac', 'm4a', 'mid', 'mp3', 'm4p', 'm4b',
+    'm4r', 'ogg', 'opus', 'ra', 'ram', 'spx', 'wav', 'wm'
+]);
+
+function avttAudioSafeDecode(value) {
+    if (typeof avttScenesSafeDecode === 'function') {
+        return avttScenesSafeDecode(value);
+    }
+    if (typeof value !== 'string') {
+        return value;
+    }
+    try {
+        return decodeURIComponent(value);
+    } catch (error) {
+        return value;
+    }
+}
+
+function avttAudioNormalizeRelativePath(path) {
+    if (typeof path !== 'string') {
+        return '';
+    }
+    const normalized = path.replace(/\\/g, '/').replace(/^\/+/, '');
+    if (!normalized) {
+        return '';
+    }
+    return normalized.endsWith('/') ? normalized : `${normalized}/`;
+}
+
+function avttAudioRelativePathFromLink(link) {
+    const prefix = `above-bucket-not-a-url/${window.PATREON_ID}/`;
+    if (typeof link === 'string' && link.startsWith(prefix)) {
+        return link.slice(prefix.length);
+    }
+    return '';
+}
+
+async function avttAudioFetchFolderListing(relativePath) {
+    const targetPath = typeof relativePath === 'string' ? relativePath : '';
+    if (typeof getFolderListingFromS3 === 'function') {
+        return await getFolderListingFromS3(targetPath);
+    }
+    if (typeof AVTT_S3 === 'undefined') {
+        throw new Error('AVTT_S3 endpoint is not available.');
+    }
+    const response = await fetch(
+        `${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(targetPath)}&list=true`
+    );
+    const json = await response.json();
+    return Array.isArray(json?.folderContents) ? json.folderContents : [];
+}
+
+async function avttAudioCollectAssets(folderRelativePath) {
+    const normalizedBase = avttAudioNormalizeRelativePath(folderRelativePath);
+    if (!normalizedBase) {
+        return [];
+    }
+    const stack = [normalizedBase];
+    const visited = new Set();
+    const files = [];
+
+    while (stack.length > 0) {
+        const current = stack.pop();
+        if (!current || visited.has(current)) {
+            continue;
+        }
+        visited.add(current);
+        let entries;
+        try {
+            entries = await avttAudioFetchFolderListing(current);
+        } catch (error) {
+            console.warn('Failed to load AVTT audio folder listing', current, error);
+            continue;
+        }
+        if (!Array.isArray(entries)) {
+            continue;
+        }
+        for (const entry of entries) {
+            const keyValue = typeof entry === 'string' ? entry : entry?.Key || entry?.key || '';
+            if (!keyValue) {
+                continue;
+            }
+            let relativeKey = keyValue;
+            if (typeof avttExtractRelativeKey === 'function') {
+                relativeKey = avttExtractRelativeKey(keyValue);
+            } else {
+                const prefix = `${window.PATREON_ID}/`;
+                relativeKey = keyValue.startsWith(prefix) ? keyValue.slice(prefix.length) : keyValue;
+            }
+            if (!relativeKey || !relativeKey.startsWith(normalizedBase)) {
+                continue;
+            }
+            if (relativeKey.endsWith('/')) {
+                if (!visited.has(relativeKey)) {
+                    stack.push(relativeKey);
+                }
+                continue;
+            }
+            const extension = typeof getFileExtension === 'function'
+                ? getFileExtension(relativeKey)
+                : (relativeKey.split('.').pop() || '').toLowerCase();
+            if (!AVTT_AUDIO_ALLOWED_EXTENSIONS.has(String(extension).toLowerCase())) {
+                continue;
+            }
+            files.push(relativeKey);
+        }
+    }
+    return files;
+}
+
+function avttAudioDeriveName(value) {
+    const decoded = avttAudioSafeDecode(value || '');
+    return decoded.replace(/\.[^.]+$/, '') || decoded;
+}
+
+async function importAvttAudioSelections(links) {
+    if (!Array.isArray(links) || links.length === 0) {
+        return;
+    }
+    
+    build_import_loading_indicator("Importing Audio...");
+
+    const folderSet = new Set();
+    const audioPlans = [];
+
+    const directFiles = [];
+    const folderEntries = [];
+    for (const link of links) {
+        if (!link) {
+            continue;
+        }
+        if (link.isFolder) {
+            folderEntries.push(link);
+        } else {
+            directFiles.push(link);
+        }
+    }
+
+    for (const link of directFiles) {
+        const relativePathRaw = typeof link.path === 'string' ? link.path : link.name;
+        const normalizedRelative = (relativePathRaw || '').replace(/\\/g, '/');
+        const parts = normalizedRelative.split('/').filter(Boolean);
+        const fileName = parts.pop() || link.name || 'Track';
+        const extension = typeof getFileExtension === 'function'
+            ? getFileExtension(fileName)
+            : (fileName.split('.').pop() || '');
+        if (!AVTT_AUDIO_ALLOWED_EXTENSIONS.has(String(extension).toLowerCase())) {
+            continue;
+        }
+        const tags = parts.map(avttAudioSafeDecode);
+        audioPlans.push({
+            name: avttAudioDeriveName(fileName),
+            link: link.link,
+            tags: Array.from(new Set(tags)),
+        });
+    }
+
+    for (const folderLink of folderEntries) {
+        const folderPathRaw = folderLink.path || avttAudioRelativePathFromLink(folderLink.link);
+        const normalizedRelative = avttAudioNormalizeRelativePath(folderPathRaw);
+        if (!normalizedRelative) {
+            continue;
+        }
+        const rootSegments = normalizedRelative.replace(/\/$/, '').split('/').filter(Boolean);
+        if (!rootSegments.length) {
+            continue;
+        }
+        const rootFullPath = sanitize_folder_path(`${rootSegments.join('/')}`);
+        folderSet.add(rootFullPath);
+
+        let assets;
+        try {
+            assets = await avttAudioCollectAssets(normalizedRelative);
+        } catch (error) {
+            console.warn('Failed to enumerate AVTT audio folder', folderLink, error);
+            assets = [];
+        }
+
+        for (const relativePath of assets) {
+            const extension = typeof getFileExtension === 'function'
+                ? getFileExtension(relativePath)
+                : (relativePath.split('.').pop() || '');
+            if (!AVTT_AUDIO_ALLOWED_EXTENSIONS.has(String(extension).toLowerCase())) {
+                continue;
+            }
+            const segments = relativePath.split('/').filter(Boolean);
+            const fileName = avttAudioDeriveName(segments.pop() || '');
+            const folderSegments = segments;
+            const tags = Array.from(new Set(folderSegments.map(avttAudioSafeDecode)));
+            const linkUrl = `above-bucket-not-a-url/${window.PATREON_ID}/${relativePath}`;
+            audioPlans.push({
+                name: fileName,
+                link: linkUrl,
+                tags,
+            });
+        }
+    }
+
+    for (const plan of audioPlans) {
+        try {
+            trackLibrary.addTrack(plan.name, plan.link, plan.tags);
+        } catch (error) {
+            console.warn('Failed to add track to library', plan, error);
+        }
+    }
+
+    $('body>.import-loading-indicator').remove();
+}
+
 /**
  *
  * @returns {HTMLDivElement}
@@ -222,10 +432,30 @@ function init_mixer() {
                 $('style#mixer-paused').remove();
             }    
 
+            function waitForPlayer(id, callback = () => {}) {
+                if (typeof window.MIXER._players[id] !== "undefined") {
+                    callback();
+                }
+                else {
+                    setTimeout(function () { waitForPlayer(id, callback)}, 250);
+                }
+            }
 
-            $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
-
-            mixerChannels.append(item);
+            waitForPlayer(id, () => {
+                $(item).append(channelNameDiv, window.MIXER.channelVolumeSlider(id), channel_play_pause, loop, remove, window.MIXER.channelProgressBar(id));
+                mixerChannels.append(item);
+                if (channel.paused) {
+                    play_svg.css('display', 'block');
+                    pause_svg.css('display', 'none');
+                    channel_play_pause.toggleClass('playing pressed', false);
+                }
+                else {
+                    play_svg.css('display', 'none');
+                    pause_svg.css('display', 'none');
+                    validIcon.css('display', 'block');
+                    channel_play_pause.toggleClass('audio-error', false);
+                }
+            })
         });
     }
 
@@ -453,7 +683,10 @@ function init_trackLibrary() {
             trackLibrary.addTrack(links[i].name, links[i].link);  
         }   
     }, 'multiple', audioArray);
-
+   
+    const avttButton = createCustomAvttChooser(' ', function (links) {
+        importAvttAudioSelections(links)  
+    }, [avttFilePickerTypes.AUDIO, avttFilePickerTypes.FOLDER]);
     // import csv button
     const importCSV = document.createElement('button');
     importCSV.textContent = "Import CSV";
@@ -476,10 +709,19 @@ function init_trackLibrary() {
     const exportCSV = document.createElement('button');
     exportCSV.textContent = "Export CSV";
     exportCSV.onclick = () => {
-        const csvContent = trackLibrary.exportCSV();
-        let currentdate = new Date();
-        let datetime = `${currentdate.getFullYear()}-${(currentdate.getMonth() + 1)}-${currentdate.getDate()}`;
-        download(csvContent, `${window.CAMPAIGN_INFO.name}-${datetime}-audiocsv.csv`, "text/csv;charset=utf-8;");
+        if (typeof window.export_audio_csv === 'function') {
+            window.export_audio_csv();
+            return;
+        }
+        if (!window?.TRACK_LIBRARY || typeof window.TRACK_LIBRARY.exportCSV !== 'function') {
+            alert('Audio CSV export is not available.');
+            return;
+        }
+        const csvContent = window.TRACK_LIBRARY.exportCSV();
+        const currentDate = new Date();
+        const datetime = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)}-${currentDate.getDate()}`;
+        const campaignName = window?.CAMPAIGN_INFO?.name ? window.CAMPAIGN_INFO.name : 'Campaign';
+        download(csvContent, `${campaignName}-${datetime}-audio.csv`, "text/csv;charset=utf-8;");
     }
     exportCSV.style.position = 'absolute';
     exportCSV.style.top = '15px';
@@ -680,7 +922,7 @@ function init_trackLibrary() {
                     rowHtml.remove();
                 }
             };
-             menuItems["tags"] = {
+            menuItems["tags"] = {
                 name: "Tags",
                 callback: function() {
                     const setTrackTagsFields = $("<div id='editTagsFields'></div>")
@@ -705,7 +947,6 @@ function init_trackLibrary() {
                     rowHtml.after(setTrackTagsFields);
                 }
             };
-    
             menuItems["border"] = "---";
 
             // not a built in folder or token, add an option to delete
@@ -722,8 +963,13 @@ function init_trackLibrary() {
         }
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
+    if (window.testAvttFilePicker === true) {
+        $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, avttButton, importCSV, exportCSV, importTrackFields, trackList);
+    }
+    else {
+        $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, oneDriveButton, importCSV, exportCSV, importTrackFields, trackList);
+    }
     
-    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, importCSV, exportCSV, importTrackFields, trackList);
 }
 
 function init() {

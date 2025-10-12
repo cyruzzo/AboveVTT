@@ -2021,7 +2021,7 @@ class JournalManager{
 
 
 
-    translateHtmlAndBlocks(target, displayNoteId) {
+    async translateHtmlAndBlocks(target, displayNoteId) {
     	let pastedButtons = target.find('.avtt-roll-button, [data-rolltype="recharge"], .integrated-dice__container, span[data-dicenotation]');
     	target.find('>style:first-of-type, >style#contentStyles').remove();
 		
@@ -2047,26 +2047,9 @@ class JournalManager{
 			embededIframes[i].src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(embededIframes[i].src)}`;
 		}
 
-		const iframes = target.find('.journal-site-embed')
-		for(let i=0; i<iframes.length; i++){
-			let url = $(iframes[i]).text();
-			if(url.includes('dropbox.com')){
-				url = url.replace('dl=0', 'raw=1')
-			}
-			else if(url.match(/drive\.google\.com.*\/view\?usp=/gi)){
-				url = url.replace(/view\?usp=/gi, 'preview?usp=')
-			}else if(url.match(/youtube.com/gi)){
-				url = url.replace("youtube.com", "youtube-nocookie.com");
-				url = url.replace(/watch\?v=(.*)/gi, 'embed/$1');
-			}
-			encodeURI(url);
-			const newFrame = $(`<iframe class='journal-site-embed'
-						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
-						allowfullscreen
-						webkitallowfullscreen
-						mozallowfullscreen></iframe>`)
-			$(iframes[i]).replaceWith(newFrame);
-		}
+
+
+
 
 		
 
@@ -2304,9 +2287,8 @@ class JournalManager{
 
             input = input.replace(/\[track\]([a-zA-Z\s]+)([\d]+)\[\/track\]/g, function(m, m1, m2){
                 return `<span>${m1}</span><span class="add-input each" data-number="${m2}" data-spell="${m1}"></span>`
-            })
-
-           
+            })		
+			
  
             input = input.replace(/\&nbsp\;/g, ' ');
             // Replace quotes to entity
@@ -2314,10 +2296,54 @@ class JournalManager{
             return input;
         });
 
+
 	    let newHtml = lines.join('');
+			
 	    let ignoreFormatting = $(data).find('.ignore-abovevtt-formating');
 	
 		let $newHTML = $(newHtml);
+		
+		
+		const aboveSrc = $newHTML.find(`[src*='above-bucket'], [href*='above-bucket']`);
+		for (let i = 0; i < aboveSrc.length; i++) {
+			const currTarget = aboveSrc[i];
+			const src = currTarget.src;
+			const href = currTarget.href;
+
+			if (src?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
+				let url = src.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
+				url = await getAvttStorageUrl(url);
+				$(currTarget).attr('src', url);
+			}
+			else if (href?.match(/.*?above-bucket-not-a-url\/(.*?)/gi)) {
+				let url = href.replace(/.*?above-bucket-not-a-url\/(.*?)/gi, '$1')
+				url = await getAvttStorageUrl(url);
+				$(currTarget).attr('href', url);
+			}
+		}
+
+		const iframes = $newHTML.find('.journal-site-embed')
+		for (let i = 0; i < iframes.length; i++) {
+			let url = $(iframes[i]).text();
+			if (url?.includes('dropbox.com')) {
+				url = url.replace('dl=0', 'raw=1')
+			}
+			else if (url?.match(/drive\.google\.com.*\/view\?usp=/gi)) {
+				url = url.replace(/view\?usp=/gi, 'preview?usp=')
+			} else if (url?.match(/youtube.com/gi)) {
+				url = url.replace("youtube.com", "youtube-nocookie.com");
+				url = url.replace(/watch\?v=(.*)/gi, 'embed/$1');
+			} else if (url?.startsWith('above-bucket-not-a-url')) {
+				url = await getAvttStorageUrl(url);
+			}
+			encodeURI(url);
+			const newFrame = $(`<iframe class='journal-site-embed'
+						src='${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(url)}'
+						allowfullscreen
+						webkitallowfullscreen
+						mozallowfullscreen></iframe>`)
+			$(iframes[i]).replaceWith(newFrame);
+		}
 	    $newHTML.find('.ignore-abovevtt-formating').each(function(index){
 			$(this).empty().append(ignoreFormatting[index].innerHTML);
 	    })
