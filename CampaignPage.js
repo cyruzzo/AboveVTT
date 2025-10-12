@@ -39,9 +39,9 @@ $(function() {
 });
 
 
-async function openCampaignDB(startUp = function(){}) {
+async function openCampaignDB(startUp = function () { }) {
   const DBOpenRequest = await indexedDB.open(`AboveVTT-${window.gameId}`, 2); // version 2
-  
+
   DBOpenRequest.onsuccess = (e) => {
     window.gameIndexedDb = DBOpenRequest.result;
   };
@@ -49,18 +49,18 @@ async function openCampaignDB(startUp = function(){}) {
     console.warn(e);
   };
   DBOpenRequest.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if(!db.objectStoreNames?.contains('exploredData')){
-        const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
-      }
-      if(!db.objectStoreNames?.contains('journalData')){
-        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-      }
+    const db = event.target.result;
+    if (!db.objectStoreNames?.contains('exploredData')) {
+      const objectStore = db.createObjectStore("exploredData", { keyPath: "exploredId" });
+    }
+    if (!db.objectStoreNames?.contains('journalData')) {
+      const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+    }
   };
-   
-  
-  const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`, 2);
-  
+
+
+  const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 3);
+
   DBOpenRequest2.onsuccess = (e) => {
     window.globalIndexedDB = DBOpenRequest2.result;
     startUp()
@@ -69,13 +69,16 @@ async function openCampaignDB(startUp = function(){}) {
     console.warn(e);
   };
   DBOpenRequest2.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      if(!db.objectStoreNames?.contains('customizationData')){
-        const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
-      }
-      if(!db.objectStoreNames?.contains('journalData')){
-        const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-      }
+    const db = event.target.result;
+    if (!db.objectStoreNames?.contains('customizationData')) {
+      const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+    }
+    if (!db.objectStoreNames?.contains('journalData')) {
+      const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+    }
+    if (!db.objectStoreNames?.contains('avttFilePicker')) {
+      const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
+    }
   };
 }
 function inject_instructions() {

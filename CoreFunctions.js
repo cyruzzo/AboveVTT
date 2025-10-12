@@ -554,9 +554,9 @@ function openDB() {
     })
   );
    
-  promises.push(new Promise(async (resolve, reject) => {
-      const DBOpenRequest2 = await indexedDB.open(`AboveVTT-Global`, 2);
-      
+  promises.push(new Promise((resolve, reject) => {
+      const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 3);
+
       DBOpenRequest2.onsuccess = (e) => {
         resolve(DBOpenRequest2.result);
       };
@@ -564,13 +564,16 @@ function openDB() {
         console.warn(e);
       };
       DBOpenRequest2.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if(!db.objectStoreNames?.contains('customizationData')){
-            const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
-          }
-          if(!db.objectStoreNames?.contains('journalData')){
-            const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-          }
+        const db = event.target.result;
+        if (!db.objectStoreNames?.contains('customizationData')) {
+          const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+        }
+        if (!db.objectStoreNames?.contains('journalData')) {
+          const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+        }
+        if (!db.objectStoreNames?.contains('avttFilePicker')) {
+          const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
+        }
       };
     })
   );
@@ -1258,7 +1261,14 @@ function createCustomOnedriveChooser(text, callback = function(){}, selectionMod
   })
   return button;
 }
-
+function createCustomAvttChooser(text, callback = function () { }, selectionType = []) {
+  let button = $(`<button class="avttPicker"><span class='avtt-btn-status'></span>${text}</button>`);
+  button.off('click.avtt').on('click.avtt', function (e) {
+    e.stopPropagation();
+    launchFilePicker(callback, selectionType);
+  })
+  return button;
+}
 function createCustomDropboxChooser(text, options){
   let button = $(`<button class="dropboxChooser"><span class="dropin-btn-status"></span>${text}</button>`)
   button.off('click.dropbox').on('click.dropbox', function(e){
@@ -1990,8 +2000,10 @@ async function normalize_scene_urls(scenes) {
 
   return scenesArray;
 }
-
-function updateImgSrc(url, container, video){
+async function getAvttStorageUrl(url){
+  return await getFileFromS3(url.replace('above-bucket-not-a-url/', ''));
+}
+async function updateImgSrc(url, container, video){
   url = parse_img(url)
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
@@ -2011,12 +2023,18 @@ function updateImgSrc(url, container, video){
     throttleImgSrc(() => {
       container.attr('src', url);
     })
-  }else{
+  }
+  else if(url.startsWith('above-bucket-not-a-url'))
+  {
+    url = await getAvttStorageUrl(url)
+    container.attr('src', url);
+  }
+  else{
     container.attr('src', url);
   }
 }
-function updateTokenSrc(url, container, video=false){
-  url = parse_img(url)
+async function updateTokenSrc(url, container, video=false){
+  url = await parse_img(url)
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
     container.css('background', `url(${url.replace('embed?', 'download?')})`)
@@ -2029,6 +2047,11 @@ function updateTokenSrc(url, container, video=false){
     else{
       url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
     }
+    container.attr('src', url);
+    container.css('background', `url(${url})`)
+  }
+  else if(url.startsWith('above-bucket-not-a-url')){
+    url = await getAvttStorageUrl(url);
     container.attr('src', url);
     container.css('background', `url(${url})`)
   }
@@ -2310,7 +2333,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     "position": "fixed",
     "height": height,
     "width": width,
-    "z-index": "10000",
+    "z-index": "100000",
     "display": "none"
   });
 
@@ -2348,7 +2371,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
   /*Set draggable and resizeable on monster sheets for players. Allow dragging and resizing through iFrames by covering them to avoid mouse interaction*/
   const close_title_button = $(`<div class="title_bar_close_button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><g transform="rotate(-45 50 50)"><rect></rect></g><g transform="rotate(45 50 50)"><rect></rect></g></svg></div>`);
   titleBar.append(close_title_button);
-  close_title_button.on("click", function (event) {
+  close_title_button.on("click.close", function (event) {
     close_and_cleanup_generic_draggable_window($(event.currentTarget).closest('.resize_drag_window').attr('id'));
   });
 
@@ -2406,6 +2429,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     addClasses: false,
     scroll: false,
     containment: "#windowContainment",
+    distance: 5,
     start: function(event, ui) {
       $(event.currentTarget).append($('<div class="iframeResizeCover"></div>'));
     },
