@@ -826,8 +826,8 @@ class Token {
 				let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 				let oldImage = old.find('.token-image');
 
-				if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
-					copyImage.attr("src", parse_img(this.options.imgsrc));
+				if (copyImage.attr('src') != parse_img(this.options.imgsrc)) {
+					updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
 				}
 			}
 
@@ -2568,8 +2568,8 @@ class Token {
 						let copyImage = $(`[data-notatoken='notatoken_${this.options.id}']`).find('.token-image')
 						let oldImage = old.find('.token-image');
 
-						if(copyImage.attr('src') != parse_img(this.options.imgsrc)){
-							copyImage.attr("src", parse_img(this.options.imgsrc));
+						if (copyImage.attr('src') != parse_img(this.options.imgsrc)) {
+							updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
 						}
 
 				}  	
