@@ -312,6 +312,7 @@ class Mixer extends EventTarget {
                 state.playlists[selectedPlaylistID].channels = state.channels;
                 state.playlists[selectedPlaylistID].volume = state.volume;
                 state.playlists[selectedPlaylistID].paused = state.paused;
+                state.playlists[selectedPlaylistID].orderedChannels = state.orderedChannels;
             }
         }
         localStorage.setItem(this._localStorageKey, JSON.stringify(state));
@@ -465,6 +466,7 @@ class Mixer extends EventTarget {
         state.channels = state.playlists[id].channels;
         state.volume = state.playlists[id].volume;
         state.paused = state.playlists[id].paused;
+        state.orderedChannels = state.playlists[id].orderedChannels;
         this._write(state, true);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
@@ -518,9 +520,13 @@ class Mixer extends EventTarget {
             window.TOKEN_OBJECTS[channel.token].options.audioChannel.audioId = audioId;
         }
         else{
-            state.channels[uuid()] = channel;
+            const id = uuid();
+            state.channels[id] = channel;
+            if (!state.orderedChannels)
+                state.orderedChannels = [];
+            state.orderedChannels.push(id);
         }
-
+        
         this._write(state);  
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }
@@ -531,7 +537,12 @@ class Mixer extends EventTarget {
     addMultiChannels(channelData = []) {
         const state = this.state();
         for(let i=0; i<channelData.length; i++){
-            state.channels[uuid()] = channelData[i];
+            const id = uuid();
+            state.channels[id] = channelData[i];
+            if (!state.orderedChannels) 
+                state.orderedChannels = [];
+            state.orderedChannels.push(id);
+            
         }
 
         this._write(state);
@@ -576,6 +587,9 @@ class Mixer extends EventTarget {
     deleteChannel(id) {
         const state = this.state();
         delete state.channels[id];
+        if(state.orderedChannels){
+            state.orderedChannels.filter(d=> d != id);
+        }
         this._write(state);
         this.dispatchEvent(new Event(mixerEvents.ON_CHANNEL_LIST_CHANGE));
     }

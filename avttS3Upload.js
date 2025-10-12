@@ -3482,6 +3482,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     if (avttUploadController) {
       avttUploadController.abort('User cancelled upload by closing window.');
     }
+    clearGetFileFromS3Queue();
   });
   
   let membership;
@@ -3525,7 +3526,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       return;
     }
 
-    /*if (activeUserTier.level === "free") {
+    if (activeUserTier.level === "free") {
       alert(
         "Unable to detect an active Azmoria Patreon membership. Please check your subscription tier and try again.",
       );
@@ -5360,31 +5361,18 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 const GET_FILE_FROM_S3_MAX_RETRIES = 5;
 const GET_FILE_FROM_S3_BASE_DELAY_MS = 250;
 const GET_FILE_FROM_S3_MAX_DELAY_MS = 4000;
-const getFileFromS3Queue = [];
-const getFileFromS3Pending = new Map();
+let getFileFromS3Queue = [];
+let getFileFromS3Pending = new Map();
 let isProcessingGetFileFromS3Queue = false;
 
 function clearGetFileFromS3Queue() {
   if (!Array.isArray(getFileFromS3Queue) || getFileFromS3Queue.length === 0) return;
   try {
-    // Reject all queued (not-yet-processed) requests so callers don't hang
-    while (getFileFromS3Queue.length > 0) {
-      const item = getFileFromS3Queue.shift();
-      try {
-        if (item && typeof item.reject === 'function') {
-          item.reject(new DOMException('Cancelled', 'AbortError'));
-        }
-      } catch (e) {
-        console.warn('Failed to reject queued getFileFromS3 item', e);
-      }
-      try {
-        if (item && item.cacheKey) {
-          getFileFromS3Pending.delete(item.cacheKey);
-        }
-      } catch (e) {
-        
-      }
+    if (avttActiveSearchAbortController) {
+      avttActiveSearchAbortController.abort('Cancelled Search Request');
     }
+    getFileFromS3Queue = [];
+    getFileFromS3Pending = new Map();
   } catch (e) {
     console.warn('Error while clearing getFileFromS3Queue', e);
   }
