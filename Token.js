@@ -3515,6 +3515,9 @@ class Token {
 						if (window.ON_SCREEN_TOKENS[this.options.id] == undefined)
 							window.ON_SCREEN_TOKENS[this.options.id] = {};
 						window.ON_SCREEN_TOKENS[this.options.id].onScreenDarknessToken = tokenClone;
+
+						let copyImage = tokenClone.find('.token-image')
+						updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken);
 					}	
 			    }
 

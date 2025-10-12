@@ -871,6 +871,9 @@ function delete_token_customization_by_parent_id(parentId, callback) {
                 delete window.JOURNAL.statBlocks[statBlockID]
             window.JOURNAL.persist();
         }
+        if(tokensToBeDeleted[i].tokenType == ItemType.Folder){
+            delete_token_customization_by_parent_id(tokensToBeDeleted[i].id, callback)
+        }
     }
 
 

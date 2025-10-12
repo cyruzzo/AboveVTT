@@ -1226,7 +1226,7 @@ function build_example_token(options, size=90) {
 	token.place(0);
 	let html = $(`#tokens div[data-id='${mergedOptions.id}']`).clone();
 	html.find('.token-image').attr('src', mergedOptions.imgsrc);
-	html.find('div.token-image').attr('background-image', `url(${mergedOptions.imgsrc})`);
+	html.find('div.token-image').css('background-image', `url(${mergedOptions.imgsrc})`);
 	token.delete(false);
 
 	html.addClass("example-token");

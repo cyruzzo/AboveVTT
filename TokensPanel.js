@@ -249,27 +249,7 @@ function find_builtin_token(fullPath) {
     return found;
 }
 
-function backfill_mytoken_folders() {
-    mytokens.forEach(myToken => {
-        if (myToken.folderPath !== RootFolder.Root.path) {
-            // we split the path and backfill empty every folder along the way if needed. This is really important for folders that hold subfolders, but not items
-            let parts = myToken.folderPath.split("/");
-            let backfillPath = "";
-            parts.forEach(part => {
-                let fullBackfillPath = sanitize_folder_path(`${backfillPath}/${part}`);
-                if (fullBackfillPath !== RootFolder.Root.path && !mytokensfolders.find(fi => sanitize_folder_path(`${fi.folderPath}/${fi.name}`) === fullBackfillPath)) {
-                    // we don't have this folder yet so add it
-                    let newFolder = { folderPath: sanitize_folder_path(backfillPath), name: part, collapsed: true };
-                    console.log("adding folder", newFolder);
-                    mytokensfolders.push(newFolder);
-                } else {
-                    console.log("not adding folder", fullBackfillPath);
-                }
-                backfillPath = fullBackfillPath;
-            });
-        }
-    });
-}
+
 
 /**
  * iterates over all the token sources and replaces window.tokenListItems with new objects.
@@ -287,7 +267,6 @@ function rebuild_token_items_list() {
         playersFolder.rootId = 'playersFolder';
     }
 
-    backfill_mytoken_folders(); // just in case we're missing any folders
 
     // Players
     let tokenItems = window.pcs
@@ -668,7 +647,19 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
                 enable_draggable_token_creation(row);
             }
             console.debug("appending item", item);
-            $(`#${item.parentId} > .folder-item-list`).append(row);
+            if ($(`#${item.parentId}`).length) {
+                $(`#${item.parentId} > .folder-item-list`).append(row);
+                return;
+            }
+            if(item.isTypeMyToken()){
+                $(`#myTokensFolder > .folder-item-list`).append(row);
+                item.parentId = "myTokensFolder";
+                const customization = find_token_customization(item.type, item.id)
+                customization.parentId = item.parentId;
+                persist_token_customization(customization);
+                return;
+            }
+
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
@@ -2127,25 +2118,32 @@ function create_mytoken_folder_inside(listItem) {
 }
 
 function delete_mytokens_folder_and_everything_in_it(listItem) {
+    build_import_loading_indicator('Deleting Folder and Contents');
     console.log("delete_mytokens_folder_and_everything_in_it about to delete all tokens with parentId", listItem.id);
-    delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
-        if (deletedChildren) {
-            console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
-            delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
+    setTimeout(() => {
+        delete_token_customization_by_parent_id(listItem.id, function (deletedChildren, deletedChildrenErrorType) {
+            if (deletedChildren) {
+                console.log("delete_mytokens_folder_and_everything_in_it successfully deleted all children. about to delete the folder with id", listItem.id);
+                delete_token_customization_by_type_and_id(listItem.type, listItem.id, function (deletedFolder, deletedFolderErrorType) {
+                    did_change_mytokens_items();
+                    expand_all_folders_up_to_item(listItem);
+                    if (deletedFolder) {
+                        console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
+                    } else {
+                        showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
+                    }
+                    $("body>.import-loading-indicator").remove();
+                });
+            } else {
                 did_change_mytokens_items();
                 expand_all_folders_up_to_item(listItem);
-                if (deletedFolder) {
-                    console.log("delete_mytokens_folder_and_everything_in_it successfully deleted the folder with id", listItem.id);
-                } else {
-                    showError(deletedFolderErrorType, "delete_mytokens_folder_and_everything_in_it failed to delete the folder with id", listItem.id);
-                }
-            });
-        } else {
-            did_change_mytokens_items();
-            expand_all_folders_up_to_item(listItem);
-            showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
-        }
-    });
+                showError(deletedChildrenErrorType, "delete_mytokens_within_folder failed to delete token customizations");
+                $("body>.import-loading-indicator").remove();
+            }
+        })
+    }, 0);
+
+   
 }
 
 function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
