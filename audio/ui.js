@@ -465,7 +465,7 @@ function init_mixer() {
         });
 
         $(mixerChannels).sortable({
-            cancel:'.map-audio-row, .tokenTrack',
+            cancel:'.map-audio-row, .tokenTrack, input, .channel-progress-bar-progress, .channel-progress-bar-total',
             distance: 10,
             axis: 'y',
             items: '.audio-row:not(.map-audio-row):not(.tokenTrack)',
