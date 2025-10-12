@@ -139,6 +139,7 @@ if (isPlainCharacterPage) {
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
 		{ src: "WeatherOverlay.js" },
+		{ src: "avttS3Upload.js" }
 	]
 	//Do not load characterPage.js for DM or on campaign page
 	if(isPlayerPage && !isDM){ 
@@ -174,7 +175,7 @@ if (isPlainCharacterPage) {
 	}
 	else{//dm
   		window.scripts.push(
-	  		{ src: "SceneData.js" },
+	  		{ src: "SceneData.js" }
 		)
 	}
 	if(isVttGamePage) {
