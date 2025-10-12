@@ -2330,6 +2330,39 @@ async function avttHandleFolderDrop(event, destinationPath) {
   avttHandleDragEnd();
 }
 
+async function avttHandleMapDrop(event) {
+  if (avttIsExternalFileDrag(event)) {
+    if (event.currentTarget && event.currentTarget.classList) {
+      event.currentTarget.classList.remove("avtt-drop-target");
+    }
+    return;
+  }
+  event.preventDefault();
+  event.stopPropagation();
+  const element = event.currentTarget;
+  if (element && element.classList) {
+    element.classList.remove("avtt-drop-target");
+  }
+
+  if (!Array.isArray(avttDragItems) || avttDragItems.length === 0) {
+    avttHandleDragEnd();
+    return;
+  }
+
+  for (const entry of avttDragItems) {
+    const rawKey = entry.key;
+
+    if (entry.isFolder && destinationPath.startsWith(entry.key)) {
+      continue;
+    }
+    const url = `above-bucket-not-a-url/${window.PATREON_ID}/${rawKey}`
+    const listItem = new SidebarListItem(uuid(), entry.displayName, url, ItemType.MyToken, RootFolder.MyTokens.path);
+    create_and_place_token(listItem, event.shiftKey, url, event.pageX, event.pageY, false, undefined, undefined, {tokenStyleSelect: "definitelyNotAToken"});
+  }
+
+  avttHandleDragEnd();
+}
+
 const userLimit = Object.freeze({
   low: 10 * 1024 * 1024 * 1024,
   mid: 25 * 1024 * 1024 * 1024,
@@ -4923,9 +4956,14 @@ function refreshFiles(
     else{
       upFolder.hide();
     }
+    $('#VTT').off('dragover.avttFiles').on('dragover.avttFiles', (event) => {
+      event.preventDefault(); 
+    });
 
-
-
+    $('#VTT').off('drop.avttFiles').on('drop.avttFiles', async (e) => {
+      console.log('DROPED ON MAP');
+      await avttHandleMapDrop(e)
+    });
     const insertFiles = (files, searchTerm, fileTypes) => {
       if (signal?.aborted) {
         return;
@@ -5159,7 +5197,9 @@ function refreshFiles(
         listItem.addEventListener("dragstart", (dragEvent) => {
           avttHandleDragStart(dragEvent, entry);
         });
-        listItem.addEventListener("dragend", avttHandleDragEnd);
+        listItem.addEventListener("dragend", (dragEvent) => {
+          avttHandleDragEnd(dragEvent);
+        });
         if (entry.isFolder) {
           listItem.addEventListener("dragenter", (dragEvent) => {
             avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
@@ -5173,7 +5213,7 @@ function refreshFiles(
           listItem.addEventListener("drop", async (dragEvent) => {
             await avttHandleFolderDrop(dragEvent, entry.relativePath);
           });
-        }
+        }        
         listItem.addEventListener("contextmenu", (contextEvent) => {
           avttOpenContextMenu(contextEvent, entry);
         });

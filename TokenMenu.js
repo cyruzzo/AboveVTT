@@ -1162,7 +1162,7 @@ function token_context_menu_expanded(tokenIds, e) {
 							window.MB.sendMessage('custom/myVTT/token', options);
 						}, 300);
 						t.place_sync_persist();
-						ct_add_token(window.TOKEN_OBJECTS[group], false, clickEvent.shiftKey, clickEvent.ctrlKey)	
+						ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)	
 					
 					}
 				}
@@ -1271,7 +1271,7 @@ function token_context_menu_expanded(tokenIds, e) {
 					window.MB.sendMessage('custom/myVTT/token', options);
 				}, 300);
 				t.place_sync_persist();
-				ct_add_token(window.TOKEN_OBJECTS[group], false, clickEvent.shiftKey, clickEvent.ctrlKey)
+				ct_add_token(window.TOKEN_OBJECTS[group], false, undefined, clickEvent.shiftKey, clickEvent.ctrlKey)
 			}
 		debounceCombatReorder();
 		});

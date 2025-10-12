@@ -1023,7 +1023,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         return;
     }
 
-    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {
+    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {{tokenStyleSelect: "definitelyNotAToken"}
 
         let tokensToPlace = [];
 
