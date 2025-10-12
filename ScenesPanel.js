@@ -2741,6 +2741,7 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		}
 
 		for (const asset of files) {
+			await async_sleep(1);
 			const relativePath = asset.relativePath;
 			const relativeWithinFolder = relativePath.slice(normalizedRelative.length);
 			const subSegments = relativeWithinFolder.split("/").slice(0, -1).filter(Boolean);
@@ -2777,8 +2778,8 @@ async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
 		window.ScenesHandler.scenes.push(sceneData);
 	}
 
-	for (const sceneData of pendingScenes) {
-		const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneData.id);
+	if(pendingScenes.length == 1){
+		const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === pendingScenes[0].id);
 		if (sceneIndex >= 0) {
 			edit_scene_dialog(sceneIndex, true);
 		}
