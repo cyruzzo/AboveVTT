@@ -673,9 +673,9 @@ function avttAdjustCachedUsage(deltaBytes = 0, deltaObjects = 0) {
   if (usedElement) {
     usedElement.innerHTML = formatFileSize(S3_Current_Size);
   }
-  const tierLabel = document.getElementById("patreon-tier");
-  if (tierLabel && typeof activeUserTier === "object") {
-    tierLabel.textContent = `Patreon tier: ${activeUserTier.label} | Upload limit ${formatFileSize(activeUserLimit)}`;
+  const tierLabel = $("#patreon-tier span.user-teir-level");
+  if (tierLabel.length && typeof activeUserTier === "object") {
+    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
   }
 }
 
@@ -1615,12 +1615,13 @@ function avttEnsureContextMenu() {
   menu.id = "avtt-file-context-menu";
   menu.className = "avtt-context-menu hidden";
   menu.innerHTML = `
+    <button type="button" data-action="sendToGamelog">Send To Gamelog</button>
     <button type="button" data-action="cut">Cut</button>
     <button type="button" data-action="paste">Paste</button>
     <button type="button" data-action="copyPath">Copy Path</button>
-    <button type="button" data-action="openNewTab">Open in New Tab</button>
     <button type="button" data-action="rename">Rename</button>
     <button type="button" data-action="import">Import</button>
+    <button type="button" data-action="openNewTab">Open in New Tab</button>
     <hr/>
     <button type="button" data-action="delete">Delete</button>
   `;
@@ -1720,6 +1721,11 @@ function avttUpdateContextMenuState() {
   if (importButton) {
     const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
     importButton.disabled = !hasAbovevtt;
+  }
+  const sendToGamelogButton = menu.querySelector('button[data-action="sendToGamelog"]');
+  if (sendToGamelogButton) {
+    const hasAbovevtt = selection.some((e) => !e.isFolder && (allowedVideoTypes.includes(getFileExtension(e.key)) || allowedImageTypes.includes(getFileExtension(e.key))));
+    sendToGamelogButton.disabled = !hasAbovevtt;
   }
 }
 
@@ -1874,6 +1880,38 @@ async function avttHandleContextAction(action) {
         alert(error?.message || "Failed to open the file in a new tab.");
       }
       break;
+    }
+    case "sendToGamelog": {
+      if (
+        !avttContextMenuState.targetPath ||
+        avttContextMenuState.isImplicit ||
+        avttContextMenuState.isFolder
+      ) {
+        return;
+      }
+      let player = window.PLAYER_NAME;
+      let image = window.PLAYER_IMG;
+      if (window.DM && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+        let id = window.CURRENTLY_SELECTED_TOKENS[0];
+        let firstToken = window.TOKEN_OBJECTS[id];
+        image = firstToken.options.imgsrc;
+        player = window.CURRENTLY_SELECTED_TOKENS.map(id => window.TOKEN_OBJECTS[id].options.name).join(", ");
+      }
+      let data = {
+        player: player,
+        img: image,
+        dmonly: false,
+        language: $('#chat-language').val()
+      };
+      const url = `above-bucket-not-a-url/${window.PATREON_ID}/${avttContextMenuState.targetPath}`;
+      const avttUrl = await getAvttStorageUrl(url)
+      data.text = `
+          <a class='chat-link' href='${avttUrl}' target='_blank' rel='noopener noreferrer'>${url}</a>
+          <img width=100% class='magnify' src='${avttUrl}' href='${avttUrl}' alt='Chat Image' style='display: none'/>
+          <video width=100% class='magnify' autoplay muted loop src='${avttUrl}' href='${avttUrl}' alt='Chat Video' style='display: none'/>
+      `; 
+      window.MB.inject_chat(data);
+
     }
     default:
       break;
@@ -3448,7 +3486,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   
   let membership;
   try {
-    membership = await PatreonAuth.ensureMembership();
+    
+    membership = await PatreonAuth.ensureMembership(!window.notFilePickerFirstLoad);
   } catch (error) {
     console.error("Patreon verification failed", error);
     alert("Patreon login is required to open the AVTT File Uploader.");
@@ -3457,7 +3496,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
   applyActiveMembership(membership);
 
-  if (activeUserTier.level === "free") {
+  /*if (activeUserTier.level === "free") {
     const patreonConfig = PatreonAuth.resolveConfig();
     if (!patreonConfig.clientId || !patreonConfig.redirectUri) {
       alert("Patreon login is not configured.");
@@ -3486,13 +3525,13 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       return;
     }
 
-    if (activeUserTier.level === "free") {
+    /*if (activeUserTier.level === "free") {
       alert(
         "Unable to detect an active Azmoria Patreon membership. Please check your subscription tier and try again.",
       );
       return;
     }
-  }
+  }*/
 
   currentFolder = "";
   const filePicker = $(` 
@@ -3554,7 +3593,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 gap: 6px;
             }
             #avtt-column-headers .avtt-sortable-header.active {
-                color: var(--highlight-color, rgba(131, 185, 255, 1));
+                color: var(--link-color, rgba(39, 150, 203, 1));
             }
             .avtt-sort-indicator {
                 font-size: 0.75em;
@@ -3566,7 +3605,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 position: relative;
             }
             .avtt-toolbar-link {
-                color: var(--highlight-color, rgba(131, 185, 255, 1));
+                color: var(--link-color, rgba(39, 150, 203, 1));
                 margin: 0;
                 cursor: pointer;
             }
@@ -3695,7 +3734,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
             }
 
             #avtt-file-picker.avtt-drop-over {
-                border-color: var(--highlight-color, rgba(131, 185, 255, 1));
+                border-color: var(--link-color, rgba(39, 150, 203, 1));
                 box-shadow: 0 0 8px rgba(131, 185, 255, 0.6);
             }
 
@@ -3834,7 +3873,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 background: rgba(131, 185, 255, 0.2);
             }
             .avtt-conflict-modal button:focus-visible {
-                outline: 2px solid var(--highlight-color, rgba(131, 185, 255, 1));
+                outline: 2px solid var(--link-color, rgb(39, 150, 203));
                 outline-offset: 2px;
             }
             #cancel-avtt-upload-button {
@@ -3865,7 +3904,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 color: var(--font-color, #000);
             }
             .avtt-conflict-modal input[type="text"]:focus {
-                outline: 2px solid var(--highlight-color, rgba(131, 185, 255, 1));
+                outline: 2px solid var(--link-color, rgba(39, 150, 203));
                 outline-offset: 1px;
             }
             #avtt-file-picker .beholder-dm-screen.loading-status-indicator__svg {
@@ -3875,12 +3914,17 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 padding: 0px !important;
                 position: sticky !important;
             }
+            #patreon-tier a{
+              text-decoration: underline 1px dotted color-mix(in srgb, var(--link-color, rgba(39, 150, 203, 1)), transparent 50%);
+              color: var(--font-color, #000);
+              cursor: pointer;
+            }
         </style>
         <div id="avtt-file-picker">
             <div id="select-section">
                 <div>
                     <div id='sizeUsed'><span id='user-used'></span> used of <span id='user-limit'> </span></div>
-                    <div id='patreon-tier'></div>
+                    <div id='patreon-tier'><span class='user-teir-level'></span><span> | <a id='logout-patreon-button'>Logout</a></span></div>
                 </div>
                 <div style='display: flex; gap: 10px; line-height: 16px; width: 100%; align-items: center; padding-left:20px;'>
                   <div id="avtt-actions-menu" class="avtt-toolbar-dropdown">
@@ -3898,7 +3942,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                   <input id='search-files' type='search' placeholder='Search' />
                   <div style='flex-grow:1'></div>
                   <div id='uploading-file-indicator' style='display:none'></div>
-                    <label style='color: var(--highlight-color, rgba(131, 185, 255, 1));margin: 0;cursor:pointer;line-height: 16px;' for="file-input">Upload File</label>
+                    <label style='color: var(--link-color, rgba(39, 150, 203, 1));margin: 0;cursor:pointer;line-height: 16px;' for="file-input">Upload File</label>
                     <input style='display:none;' type="file" multiple id="file-input"
                         accept="image/*,video/*,audio/*,.uvtt,.json,.dd2vtt,.df2vtt,application/pdf" />
                     <div id='create-folder' class='avtt-toolbar-link'>Create Folder</div>
@@ -3915,7 +3959,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                     </div>
                 </div>
             </div>
-            <div id='upFolder' style='position: absolute; left: 30px; top:10px; text-align: left; cursor: pointer; var(--highlight-color, rgba(131, 185, 255, 1))'>
+            <div id='upFolder' style='position: absolute; left: 30px; top:10px; text-align: left; cursor: pointer; var(--link-color, rgba(39, 150, 203, 1))'>
             </div>
             <div id="avtt-listing-toolbar">
                 <div id="avtt-column-headers">
@@ -3949,9 +3993,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   avttEnsureContextMenu();
   avttHideContextMenu();
 
-  const tierLabel = document.getElementById("patreon-tier");
-  if (tierLabel) {
-    tierLabel.textContent = `Patreon tier: ${activeUserTier.label} | Upload limit ${formatFileSize(activeUserLimit)}`;
+  const tierLabel = $("#patreon-tier span.user-teir-level");
+  if (tierLabel.length) {
+    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
   }
 
 
@@ -3967,6 +4011,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   const filePickerElement = document.getElementById("avtt-file-picker");
   const uploadingIndicator = document.getElementById("uploading-file-indicator");
   const selectFilesToggle = document.getElementById("avtt-select-files");
+  const logoutPatreonButton = document.getElementById("logout-patreon-button");
   const actionsMenu = document.getElementById("avtt-actions-menu");
   const actionsDropdown = document.getElementById("avtt-actions-dropdown");
   const actionsToggle = actionsMenu
@@ -4572,7 +4617,22 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       hideUploadingIndicator();
     }
   });
-  
+  logoutPatreonButton.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if(typeof PatreonAuth?.logout == "function"){
+      PatreonAuth.logout();
+      $('#avtt-s3-uploader').remove()
+    }
+    const childWindow = await window.open('https://www.patreon.com/logout', "patreonLogout", `scrollbars=no, width=10, height=10, top=0, left=0`);
+    
+    setTimeout(() => {
+        childWindow.close();
+      }, 250)
+   
+    
+   
+  })
 
   selectFile.addEventListener("click", (event) => {
     const selectedCheckboxes = $('#file-listing input[type="checkbox"]:checked');
@@ -4778,9 +4838,9 @@ function refreshFiles(
           S3_Current_Size = size;
           document.getElementById("user-used").innerHTML = formatFileSize(S3_Current_Size);
           document.getElementById("user-limit").innerHTML = formatFileSize(activeUserLimit);
-          const tierLabel = document.getElementById("patreon-tier");
-          if (tierLabel) {
-              tierLabel.textContent = `Patreon tier: ${activeUserTier.label} | Upload limit ${formatFileSize(activeUserLimit)}`;
+          const tierLabel = $("#patreon-tier span.user-teir-level");
+          if (tierLabel.length) {
+            tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
           }
         })
         .catch((error) => {
@@ -4789,7 +4849,7 @@ function refreshFiles(
           }
         });
     }
-    if(!window.firstFilePickerLoad){
+    if(!window.notFilePickerFirstLoad){
         getUserUploadedFileSize(true, { signal })
         .then((size) => {
             S3_Current_Size = size;
@@ -4800,7 +4860,7 @@ function refreshFiles(
             console.warn("Failed to load initial usage details", error);
           }
         });
-        window.firstFilePickerLoad = true;
+        window.notFilePickerFirstLoad = true;
         useCache = false;
     }
 

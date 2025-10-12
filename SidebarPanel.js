@@ -1178,15 +1178,10 @@ async function importAvttTokens(links, baseFolderItem) {
     const normalizedRelative = (relativePathRaw || "").replace(/\\/g, "/");
     const parts = normalizedRelative.split("/").filter(Boolean);
     const fileName = parts.pop() || link.name || "Token";
-    const folderSegments = parts;
-    const targetFolderPath = folderSegments.length > 0
-      ? sanitize_folder_path(`${baseFullPath}/${folderSegments.join("/")}`)
-      : baseFullPath;
-    addFolderPath(targetFolderPath);
     const extension = (typeof getFileExtension === "function"
       ? getFileExtension(relativePathRaw || fileName)
       : (fileName.split(".").pop() || "")) || link.extension || "";
-    registerTokenPlan(targetFolderPath, fileName, link.link, extension);
+    registerTokenPlan(baseFullPath, fileName, link.link, extension);
   }
 
   for (const folderLink of folderEntries) {
@@ -1196,6 +1191,8 @@ async function importAvttTokens(links, baseFolderItem) {
       continue;
     }
     const rootSegments = normalizedRelative.replace(/\/$/, "").split("/").filter(Boolean);
+    const removeBeforeIndex = rootSegments.indexOf(folderLink.name)
+    rootSegments.splice(0, removeBeforeIndex)
     if (!rootSegments.length) {
       continue;
     }
