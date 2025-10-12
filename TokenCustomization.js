@@ -175,7 +175,9 @@ class TokenCustomization {
     }
 
     setTokenOption(key, value) {
-        let currSrc = $('.sidebar-panel-body .example-token.selected .div-token-image')?.attr('src')
+        let currSrc = $('.sidebar-panel-body .example-token.selected :is(.div-token-image')?.attr('data-src')
+       
+    
         let target = this.tokenOptions;
         if(currSrc != undefined){
             if(this.tokenOptions.alternativeImagesCustomizations == undefined)

@@ -556,7 +556,6 @@ function openDB() {
    
   promises.push(new Promise((resolve, reject) => {
       const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 3);
-
       DBOpenRequest2.onsuccess = (e) => {
         resolve(DBOpenRequest2.result);
       };
@@ -564,16 +563,16 @@ function openDB() {
         console.warn(e);
       };
       DBOpenRequest2.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames?.contains('customizationData')) {
-          const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
-        }
-        if (!db.objectStoreNames?.contains('journalData')) {
-          const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
-        }
-        if (!db.objectStoreNames?.contains('avttFilePicker')) {
-          const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
-        }
+          const db = event.target.result;
+          if(!db.objectStoreNames?.contains('customizationData')){
+            const objectStore = db.createObjectStore("customizationData", { keyPath: "customizationId" });
+          }
+          if(!db.objectStoreNames?.contains('journalData')){
+            const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
+          }
+          if (!db.objectStoreNames?.contains('avttFilePicker')) {
+            const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
+          }
       };
     })
   );
@@ -1261,6 +1260,7 @@ function createCustomOnedriveChooser(text, callback = function(){}, selectionMod
   })
   return button;
 }
+
 function createCustomAvttChooser(text, callback = function () { }, selectionType = []) {
   let button = $(`<button class="avttPicker"><span class='avtt-btn-status'></span>${text}</button>`);
   button.off('click.avtt').on('click.avtt', function (e) {
@@ -1993,10 +1993,17 @@ async function normalize_scene_urls(scenes) {
     return [];
   }
 
-  let scenesArray = await Promise.all(scenes.map(async sceneData => Object.assign(sceneData, {
-    dm_map: await parse_img(sceneData.dm_map),
-    player_map: await parse_img(sceneData.player_map)
-  })));
+  let scenesArray = await Promise.all(
+    scenes.map(async (sceneData) => {
+      if (sceneData?.itemType === ItemType.Folder) {
+        return sceneData;
+      }
+      return Object.assign(sceneData, {
+        dm_map: await parse_img(sceneData.dm_map),
+        player_map: await parse_img(sceneData.player_map),
+      });
+    }),
+  );
 
   return scenesArray;
 }

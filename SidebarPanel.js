@@ -983,6 +983,322 @@ function sanitize_folder_path(dirtyPath) {
   return cleanPath;
 }
 
+const AVTT_TOKEN_ALLOWED_EXTENSIONS = new Set(["jpeg", "jpg", "png", "gif", "bmp", "webp", "mp4", "mov", "avi", "mkv", "wmv", "flv", "webm"]);
+
+function avttTokenSafeDecode(value) {
+  if (typeof avttScenesSafeDecode === "function") {
+    return avttScenesSafeDecode(value);
+  }
+  if (typeof value !== "string") {
+    return value;
+  }
+  try {
+    return decodeURIComponent(value);
+  } catch (error) {
+    return value;
+  }
+}
+
+function avttTokenNormalizeRelativePath(path) {
+  if (typeof path !== "string") {
+    return "";
+  }
+  const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
+  if (!normalized) {
+    return "";
+  }
+  return normalized.endsWith("/") ? normalized : `${normalized}/`;
+}
+
+function avttTokenRelativePathFromLink(link) {
+  const prefix = `above-bucket-not-a-url/${window.PATREON_ID}/`;
+  if (typeof link === "string" && link.startsWith(prefix)) {
+    return link.slice(prefix.length);
+  }
+  return "";
+}
+
+async function avttTokenFetchFolderListing(relativePath) {
+  const targetPath = typeof relativePath === "string" ? relativePath : "";
+  if (typeof getFolderListingFromS3 === "function") {
+    return await getFolderListingFromS3(targetPath);
+  }
+  if (typeof AVTT_S3 === "undefined") {
+    throw new Error("AVTT_S3 endpoint is not available.");
+  }
+  const response = await fetch(
+    `${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(targetPath)}&list=true`,
+  );
+  const json = await response.json();
+  return Array.isArray(json?.folderContents) ? json.folderContents : [];
+}
+
+async function avttTokenCollectAssets(folderRelativePath) {
+  const normalizedBase = avttTokenNormalizeRelativePath(folderRelativePath);
+  if (!normalizedBase) {
+    return { files: [], folders: [] };
+  }
+  const stack = [normalizedBase];
+  const visited = new Set();
+  const files = [];
+  const folderPaths = new Set();
+  folderPaths.add("");
+
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current || visited.has(current)) {
+      continue;
+    }
+    visited.add(current);
+    let entries;
+    try {
+      entries = await avttTokenFetchFolderListing(current);
+    } catch (error) {
+      console.warn("Failed to load AVTT folder listing", current, error);
+      continue;
+    }
+    if (!Array.isArray(entries)) {
+      continue;
+    }
+    for (const entry of entries) {
+      const keyValue = typeof entry === "string" ? entry : entry?.Key || entry?.key || "";
+      if (!keyValue) {
+        continue;
+      }
+      let relativeKey = keyValue;
+      if (typeof avttExtractRelativeKey === "function") {
+        relativeKey = avttExtractRelativeKey(keyValue);
+      } else {
+        const prefix = `${window.PATREON_ID}/`;
+        relativeKey = keyValue.startsWith(prefix) ? keyValue.slice(prefix.length) : keyValue;
+      }
+      if (!relativeKey || !relativeKey.startsWith(normalizedBase)) {
+        continue;
+      }
+      if (relativeKey.endsWith("/")) {
+        if (relativeKey.length > normalizedBase.length) {
+          const relativeWithin = relativeKey.slice(normalizedBase.length).replace(/\/+$/, "");
+          if (relativeWithin) {
+            folderPaths.add(relativeWithin);
+          }
+        }
+        if (!visited.has(relativeKey)) {
+          stack.push(relativeKey);
+        }
+        continue;
+      }
+      const extension = typeof getFileExtension === "function"
+        ? getFileExtension(relativeKey)
+        : (relativeKey.split(".").pop() || "").toLowerCase();
+      if (!AVTT_TOKEN_ALLOWED_EXTENSIONS.has(String(extension).toLowerCase())) {
+        continue;
+      }
+      files.push({ relativePath: relativeKey });
+    }
+  }
+  return { files, folders: Array.from(folderPaths) };
+}
+
+function avttTokenDeriveName(relativePath) {
+  const fileName = (relativePath || "").split("/").filter(Boolean).pop() || relativePath || "Token";
+  const decoded = avttTokenSafeDecode(fileName);
+  return decoded.replace(/\.[^.]+$/, "") || decoded;
+}
+
+async function importAvttTokens(links, baseFolderItem) {
+  if (!Array.isArray(links) || links.length === 0) {
+    return;
+  }
+  if (
+    !baseFolderItem ||
+    typeof baseFolderItem.isTypeFolder !== "function" ||
+    !baseFolderItem.isTypeFolder() ||
+    baseFolderItem.folderType !== ItemType.MyToken
+  ) {
+    console.warn("importAvttTokens called with invalid base folder", baseFolderItem);
+    return;
+  }
+  build_import_loading_indicator("Importing Tokens...");
+  const baseFullPath = sanitize_folder_path(baseFolderItem.fullPath());
+
+  const folderSet = new Set();
+  const folderPathRemap = new Map();
+  const tokenPlans = [];
+
+  const registerTokenPlan = (folderPath, name, link, extension) => {
+    if (!link) {
+      return;
+    }
+    const safeName = avttTokenSafeDecode(name || "New Token") || "New Token";
+    let tokenType = "";
+    if (typeof extension === "string" && extension.length > 0) {
+      tokenType = extension.startsWith(".") ? extension : `.${extension}`;
+    }
+    tokenPlans.push({
+      folderPath: sanitize_folder_path(folderPath),
+      name: safeName,
+      link,
+      type: tokenType,
+    });
+  };
+
+  const addFolderPath = (fullPath) => {
+    const sanitized = sanitize_folder_path(fullPath);
+    if (!sanitized || sanitized === baseFullPath) {
+      return;
+    }
+    const relativePart = sanitized.startsWith(`${baseFullPath}/`)
+      ? sanitized.slice(baseFullPath.length + 1)
+      : sanitized;
+    const segments = relativePart.split("/").filter(Boolean);
+    let currentPath = baseFullPath;
+    for (const segment of segments) {
+      currentPath = sanitize_folder_path(`${currentPath}/${segment}`);
+      if (currentPath !== baseFullPath) {
+        folderSet.add(currentPath);
+      }
+    }
+  };
+
+  const directFiles = [];
+  const folderEntries = [];
+  for (const link of links) {
+    if (!link) {
+      continue;
+    }
+    if (link.isFolder) {
+      folderEntries.push(link);
+    } else {
+      directFiles.push(link);
+    }
+  }
+
+  for (const link of directFiles) {
+    const relativePathRaw = typeof link.path === "string" ? link.path : link.name;
+    const normalizedRelative = (relativePathRaw || "").replace(/\\/g, "/");
+    const parts = normalizedRelative.split("/").filter(Boolean);
+    const fileName = parts.pop() || link.name || "Token";
+    const folderSegments = parts;
+    const targetFolderPath = folderSegments.length > 0
+      ? sanitize_folder_path(`${baseFullPath}/${folderSegments.join("/")}`)
+      : baseFullPath;
+    addFolderPath(targetFolderPath);
+    const extension = (typeof getFileExtension === "function"
+      ? getFileExtension(relativePathRaw || fileName)
+      : (fileName.split(".").pop() || "")) || link.extension || "";
+    registerTokenPlan(targetFolderPath, fileName, link.link, extension);
+  }
+
+  for (const folderLink of folderEntries) {
+    const folderPathRaw = folderLink.path || avttTokenRelativePathFromLink(folderLink.link);
+    const normalizedRelative = avttTokenNormalizeRelativePath(folderPathRaw);
+    if (!normalizedRelative) {
+      continue;
+    }
+    const rootSegments = normalizedRelative.replace(/\/$/, "").split("/").filter(Boolean);
+    if (!rootSegments.length) {
+      continue;
+    }
+    const rootFullPath = sanitize_folder_path(`${baseFullPath}/${rootSegments.join("/")}`);
+    addFolderPath(rootFullPath);
+
+    let assets;
+    try {
+      assets = await avttTokenCollectAssets(normalizedRelative);
+    } catch (error) {
+      console.warn("Failed to enumerate AVTT token folder", folderLink, error);
+      assets = { files: [], folders: [] };
+    }
+
+    for (const folderRelative of assets.folders || []) {
+      if (!folderRelative) {
+        continue;
+      }
+      const subSegments = folderRelative.split("/").filter(Boolean);
+      const fullSegments = [...rootSegments, ...subSegments];
+      if (!fullSegments.length) {
+        continue;
+      }
+      const folderFullPath = sanitize_folder_path(`${baseFullPath}/${fullSegments.join("/")}`);
+      addFolderPath(folderFullPath);
+    }
+
+    for (const asset of assets.files || []) {
+      const relativePath = asset.relativePath;
+      if (!relativePath) {
+        continue;
+      }
+      const relativeWithinFolder = relativePath.slice(normalizedRelative.length);
+      const subSegments = relativeWithinFolder.split("/").filter(Boolean);
+      const fileName = avttTokenDeriveName(relativePath);
+      const folderSegments = [...rootSegments, ...subSegments.slice(0, -1)];
+      const targetFolderPath = folderSegments.length
+        ? sanitize_folder_path(`${baseFullPath}/${folderSegments.join("/")}`)
+        : baseFullPath;
+      addFolderPath(targetFolderPath);
+      const linkUrl = `above-bucket-not-a-url/${window.PATREON_ID}/${relativePath}`;
+      const extension = typeof getFileExtension === "function" ? getFileExtension(relativePath) : (relativePath.split(".").pop() || "");
+      registerTokenPlan(targetFolderPath, fileName, linkUrl, extension);
+    }
+  }
+
+  const folderCache = new Map();
+  folderCache.set(baseFullPath, baseFolderItem);
+
+  const orderedFolders = Array.from(folderSet).sort((a, b) => {
+    const depthDiff = a.split("/").length - b.split("/").length;
+    if (depthDiff !== 0) {
+      return depthDiff;
+    }
+    return a.localeCompare(b);
+  });
+
+  for (const folderPath of orderedFolders) {
+    const resolvedFolderPath = folderPathRemap.get(folderPath) || folderPath;
+    const segments = resolvedFolderPath.replace(`${baseFullPath}/`, "").split("/").filter(Boolean);
+    if (!segments.length) {
+      continue;
+    }
+    const folderName = avttTokenSafeDecode(segments[segments.length - 1]);
+    const parentPathOriginal = segments.length > 1
+      ? sanitize_folder_path(`${baseFullPath}/${segments.slice(0, -1).join("/")}`)
+      : baseFullPath;
+    const parentPath = folderPathRemap.get(parentPathOriginal) || parentPathOriginal;
+    const parentItem = folderCache.get(parentPath) || find_sidebar_list_item_from_path(parentPath);
+    if (!parentItem) {
+      console.warn("Unable to locate parent folder for AVTT import", parentPath);
+      continue;
+    }
+    let existingFolderItem = find_sidebar_list_item_from_path(resolvedFolderPath);
+    if (!existingFolderItem) {
+      const created = create_mytoken_folder_inside(parentItem, { name: folderName, skipModal: true });
+      const expectedPath = sanitize_folder_path(`${parentItem.fullPath()}/${created?.tokenOptions?.name || folderName}`);
+      existingFolderItem = find_sidebar_list_item_from_path(expectedPath);
+    }
+    if (existingFolderItem) {
+      const effectivePath = typeof existingFolderItem.fullPath === "function"
+        ? existingFolderItem.fullPath()
+        : folderPathRemap.get(folderPath) || folderPath;
+      folderCache.set(effectivePath, existingFolderItem);
+      folderPathRemap.set(folderPath, effectivePath);
+    }
+  }
+
+  for (const plan of tokenPlans) {
+    const resolvedFolderPath = folderPathRemap.get(plan.folderPath) || plan.folderPath;
+    const parentItem = folderCache.get(resolvedFolderPath) || find_sidebar_list_item_from_path(resolvedFolderPath);
+    if (!parentItem) {
+      console.warn("Unable to locate target folder for token import", plan.folderPath);
+      continue;
+    }
+    create_token_inside(parentItem, plan.name, plan.link, plan.type, undefined, undefined, true);
+  }
+
+  if (tokenPlans.length > 0) {
+    did_change_mytokens_items();
+    $('body>.import-loading-indicator').remove();
+  }
+}
 /**
  * @param html {*|jQuery|HTMLElement} the html representation of the item
  * @returns {SidebarListItem|undefined} SidebarListItem.Aoe if found, else undefined
@@ -1444,8 +1760,9 @@ function build_sidebar_list_row(listItem) {
         //import dropbox
         const dropboxOptions = dropBoxOptions(function(links){
             for(let i = 0; i<links.length; i++){
-              create_token_inside(listItem, links[i].name, links[i].link);
-            }       
+              create_token_inside(listItem, links[i].name, links[i].link, undefined, undefined, undefined, true);
+            }   
+            did_change_mytokens_items();       
         }, true);
         const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
 
@@ -1454,19 +1771,32 @@ function build_sidebar_list_row(listItem) {
 
         const oneDriveButton = createCustomOnedriveChooser('', function(links){
             for(let i = 0; i<links.length; i++){
-              create_token_inside(listItem, links[i].name, links[i].link, links[i].type);
-            }       
+              create_token_inside(listItem, links[i].name, links[i].link, links[i].type, undefined, undefined, undefined, true);
+            }   
+            did_change_mytokens_items();       
         }, 'multiple')
         oneDriveButton.toggleClass('token-row-button one-drive-button', true);
         oneDriveButton.attr('title', 'Create token from Onedrive'); 
-     
+        
+        const avttButton = createCustomAvttChooser('', function (links) { 
+          importAvttTokens(links, listItem);
+        }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE, avttFilePickerTypes.FOLDER]);
+        avttButton.toggleClass('token-row-button avtt-file-button', true);
+        avttButton.attr('title', "Create token from Azmoria's AVTT File Picker"); 
 
         let addTokenMenu = $(`<div class='addTokenMenu'></div>`)
 
         
        
         let addToken = $(`<button class="token-row-button hover-add-button" title="Create New Token"><span class="material-icons">person_add_alt_1</span></button>`);
-        addTokenMenu.append(addToken, dropboxButton, oneDriveButton);
+        if (window.testAvttFilePicker === true) { //console testing var
+          addTokenMenu.append(addToken, dropboxButton, avttButton, oneDriveButton);
+        }
+        else{
+          addTokenMenu.append(addToken, dropboxButton, oneDriveButton);
+        }
+
+       
         rowItem.append(addTokenMenu);
         addToken.on("click", function (clickEvent) {
           clickEvent.stopPropagation();
@@ -1796,11 +2126,14 @@ function did_click_row(clickEvent) {
       }
       else if(clickedItem.type == ItemType.Scene){
         // show the preview
-        build_and_display_sidebar_flyout(clickEvent.clientY, function (flyout) {
+        build_and_display_sidebar_flyout(clickEvent.clientY, async function (flyout) {
           if (clickedItem.isVideo) {
             flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
           } else {
-            flyout.append(`<img class='list-item-image-flyout' src="${clickedItem.image}" alt="scene map preview" />`);
+            const src = clickedItem.image.startsWith('above-bucket-not-a-url') 
+              ? await getAvttStorageUrl(clickedItem.image) 
+              : clickedItem.image;
+            flyout.append(`<img class='list-item-image-flyout' src="${src}" alt="scene map preview" />`);
           }
           flyout.css("right", "340px");
         });
@@ -2877,12 +3210,13 @@ function remove_sidebar_flyout(removeHoverNote) {
     flyouts.remove();
 }
 
-function list_item_image_flyout(hoverEvent) {
+async function list_item_image_flyout(hoverEvent) {
   console.log("list_item_image_flyout", hoverEvent);
   $(`#list-item-image-flyout`).remove(); // never duplicate
   if (hoverEvent.type === "mouseenter") {
-    let imgsrc = $(hoverEvent.currentTarget).find("img").attr("src");
-    let flyout = $(`<img id='list-item-image-flyout' src="${imgsrc}" alt="image preview" />`);
+    const imgsrc = $(hoverEvent.currentTarget).find("img").attr("src");
+    const src = imgsrc.startsWith('above-bucket-not-a-url') ? await getAvttStorageUrl(imgsrc) : imgsrc;
+    const flyout = $(`<img id='list-item-image-flyout' src="${src}" alt="image preview" />`);
     flyout.css({
       "top": hoverEvent.clientY - 75,
     });

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Patreon Auth Callback</title>
+    <script>
+        (function () {
+            function parseKeyValue(input) {
+                if (!input) {
+                    return {};
+                }
+                return input.split('&').reduce(function (acc, pair) {
+                    if (!pair) {
+                        return acc;
+                    }
+                    var parts = pair.split('=');
+                    var key = decodeURIComponent(parts[0] || '');
+                    var value = decodeURIComponent(parts[1] || '');
+                    if (key) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                }, {});
+            }
+
+            var params = {};
+            var query = window.location.search.substring(1);
+            var hash = window.location.hash.substring(1);
+            var queryParams = parseKeyValue(query);
+            var hashParams = parseKeyValue(hash);
+            for (var key in queryParams) {
+                if (Object.prototype.hasOwnProperty.call(queryParams, key)) {
+                    params[key] = queryParams[key];
+                }
+            }
+            for (var hashKey in hashParams) {
+                if (Object.prototype.hasOwnProperty.call(hashParams, hashKey)) {
+                    params[hashKey] = hashParams[hashKey];
+                }
+            }
+
+            var message = {
+                source: 'avtt:patreon-auth',
+                state: params.state || '',
+                code: params.code || '',
+                error: params.error || '',
+                error_description: params.error_description || params.errorDescription || ''
+            };
+
+            try {
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(message, "*");
+                }
+            } catch (err) {
+                console.error('Failed to notify opener about Patreon auth result', err);
+            }
+            window.close();
+        })();
+    </script>
+</head>
+<body>
+    <p>Completing Patreon authentication...</p>
+</body>
+</html>
+

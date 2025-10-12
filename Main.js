@@ -55,11 +55,11 @@ function parse_img(url) {
 		else if(retval.includes("https://1drv.ms/"))
 		{
 			if(retval.split('/')[4].length == 1){
-	      retval = retval;
-	    }
-	    else{
-	      retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
-	    }
+				retval = retval;
+			}
+			else{
+				retval = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+			}
 		}
 		if(retval.includes("discordapp.com")){
 			retval = update_old_discord_link(retval)
@@ -536,6 +536,11 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.width(width);
 			newmap.height(height);		
 		}
+		else if(url.startsWith('above-bucket-not-a-url')){
+			url = await getAvttStorageUrl(url);
+			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
+
+		}
 		else{
 			url = await getGoogleDriveAPILink(url)
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
@@ -567,26 +572,29 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		videoVolume = videoVolume * $("#master-volume input").val();
 		
 		if(url.includes('google')){
-	    if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0 ) {
-	        const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
-	        const fileid = parsed.split('=')[1];
-	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;     
-	    } 
-	    else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
-	        const fileid = url.split('=')[1];
-	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
-	    }
-	    else if (url.startsWith("https://drive.google.com") && url.indexOf("thumbnail?id=") > -1) {
-	        const fileid = url.split('=')[1].split('&')[0];
-	        url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
-	    }
+			if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") < 0 && url.indexOf("thumbnail?id=") < 0 ) {
+				const parsed = 'https://drive.google.com/uc?id=' + url.split('/')[5];
+				const fileid = parsed.split('=')[1];
+				url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;     
+			} 
+			else if (url.startsWith("https://drive.google.com") && url.indexOf("uc?id=") > -1) {
+				const fileid = url.split('=')[1];
+				url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
+			}
+			else if (url.startsWith("https://drive.google.com") && url.indexOf("thumbnail?id=") > -1) {
+				const fileid = url.split('=')[1].split('&')[0];
+				url = `https://www.googleapis.com/drive/v3/files/${fileid}?alt=media&key=AIzaSyBcA_C2gXjTueKJY2iPbQbDvkZWrTzvs5I`;   
+			}
 		}
 		else if(url.includes('onedrive')){
-	    url = url.replace('embed?', 'download?');
+	    	url = url.replace('embed?', 'download?');
 		}
 		else if(url.includes("https://1drv.ms/"))
 		{
 		  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
+		}
+		else if (url.startsWith('above-bucket-not-a-url')) {
+			url = await getAvttStorageUrl(url)
 		}
 		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.25' onplay="this.volume=${videoVolume/100}" id="scene_map" src="${url}" />`);
 		newmap.off("loadeddata").one("loadeddata", callback);
@@ -2431,8 +2439,7 @@ function init_ui() {
 		
 		curDown = false;
 		$("#VTT, #black_layer").css("cursor", "");
-		//remove iframe cover that prevents mouse interaction
-		$('.iframeResizeCover').remove();
+
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
@@ -2444,6 +2451,8 @@ function init_ui() {
 				close_sidebar_modal();
 			}
 		}
+		//remove iframe cover that prevents mouse interaction
+		$('.iframeResizeCover').remove();
 		let sidebarMonsterStatBlock = $("#monster-details-page-iframe");
 		if (sidebarMonsterStatBlock.length > 0 && !event.target.closest("#monster-details-page-iframe")) {
 			sidebarMonsterStatBlock.remove();
@@ -2799,8 +2808,17 @@ function init_zoom_buttons() {
 				$(".dm-paused-indicator").remove();
 			}
 		});
-
-		zoom_section.append(select_locked, ping_center, pause_players);
+		let avttS3FileShare = $(`<div id='aboveFileHostButton' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='AVTT File Hosting'> 
+		<div class="ddbc-tab-options__header-heading">
+				<span class="material-icons button-icon">folder</span>
+		</div></div>
+		`);
+		avttS3FileShare.click(launchFilePicker);
+		if (window.testAvttFilePicker === true) { //console testing var
+			zoom_section.append(avttS3FileShare, select_locked, ping_center, pause_players);
+		} else {
+			zoom_section.append(select_locked, ping_center, pause_players);
+		}
 	}
 
 

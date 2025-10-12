@@ -101,12 +101,22 @@ class ChatObserver {
             data.whisper = "THE DM"
             data.text = `<div class="custom-gamelog-message"style="position: relative;margin-bottom: 12px;"><span style='font-size: 9px;position: absolute;bottom: -18px;left: 0px;opacity: 0.5;margin-top: 10px;'><b>To: THE DM</b></span>&nbsp;${text.replace('/dm', '')}</div>`;  
         }else if (validateUrl(text)) {
+            const imgLink = await parse_img(text);
             data.text = `
                 <a class='chat-link' href='${text}' target='_blank' rel='noopener noreferrer'>${text}</a>
-                <img width=100% class='magnify' src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Image' style='display: none'/>
-                <video width=100% class='magnify' autoplay muted loop src='${await parse_img(text)}' href='${await parse_img(text)}' alt='Chat Video' style='display: none'/>
+                <img width=100% class='magnify' src='${imgLink}' href='${imgLink}' alt='Chat Image' style='display: none'/>
+                <video width=100% class='magnify' autoplay muted loop src='${imgLink}' href='${imgLink}' alt='Chat Video' style='display: none'/>
             `; // `href` is not valid on `img` tags, but magnific uses it so make sure it's there
-        } else {
+        } 
+        else if(text.startsWith('above-bucket-not-a-url')){
+            const avttUrl = await getAvttStorageUrl(text)
+            data.text = `
+                <a class='chat-link' href='${avttUrl}' target='_blank' rel='noopener noreferrer'>${text}</a>
+                <img width=100% class='magnify' src='${avttUrl}' href='${avttUrl}' alt='Chat Image' style='display: none'/>
+                <video width=100% class='magnify' autoplay muted loop src='${avttUrl}' href='${avttUrl}' alt='Chat Video' style='display: none'/>
+            `; // `href` is not valid on `img` tags, but magnific uses it so make sure it's there
+        } 
+        else {
             data.text = `<div class="custom-gamelog-message">${text}</div>`
         }
 

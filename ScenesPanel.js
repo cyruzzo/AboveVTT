@@ -162,6 +162,9 @@ async function getUvttData(url){
 	        api_url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 	      }
 		}
+		else if(url.startsWith('above-bucket-not-a-url')){
+			api_url = await getAvttStorageUrl(url);
+		}
 
 		await $.getJSON(api_url, function(data){
 			jsonData = data;
@@ -1266,21 +1269,43 @@ function edit_scene_dialog(scene_id) {
 	const dropBoxOptions1 = dropBoxOptions(function(links){playerMapRow.find('input').val(links[0].link)});
 	const dropBoxbutton1 = createCustomDropboxChooser('Choose Map from Dropbox', dropBoxOptions1);
 	const onedriveButton1 = createCustomOnedriveChooser('Choose Map from Onedrive', function(links){playerMapRow.find('input').val(links[0].link)})
+	const avttButton1 = createCustomAvttChooser("Choose Map from Azmoria's AVTT File Picker", function (links) { playerMapRow.find('input').val(links[0].link)});
+
 
 	const dmMapRow = form_row('dm_map', 'DM Only Map', null, true)
 
 	const dropBoxOptions2 = dropBoxOptions(function(links){dmMapRow.find('input').val(links[0].link)});
 	const dropBoxbutton2 = createCustomDropboxChooser('Choose DM Map from Dropbox', dropBoxOptions2);
 	const onedriveButton2 = createCustomOnedriveChooser('Choose DM Map from Onedrive', function(links){dmMapRow.find('input').val(links[0].link)})
+	const avttButton2 = createCustomAvttChooser("Choose Map from Azmoria's AVTT File Picker", function (links) { dmMapRow.find('input').val(links[0].link) });
+	
 	// add in toggles for these 2 rows
 	playerMapRow.append(form_toggle("player_map_is_video", "Video map?", false, handle_map_toggle_click))
 	playerMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
-	playerMapRow.append(dropBoxbutton1, onedriveButton1);
+	
+	if (window.testAvttFilePicker === true) { //console testing
+		playerMapRow.append(dropBoxbutton1, avttButton1, onedriveButton1);
+	}
+	else{
+		playerMapRow.append(dropBoxbutton1, onedriveButton1);
+	}
+	
+	
+	
 	playerMapRow.attr('title', `This map will be shown to everyone if DM map is off or only players if the DM map is on. If you are using your own maps you will have to upload them to a public accessible place. Eg. discord, imgur, dropbox, gdrive etc.`)
 	
 	dmMapRow.append(form_toggle("dm_map_is_video", "Video map?", false, handle_map_toggle_click))
 	dmMapRow.find('button').append($(`<div class='isvideotogglelabel'>link is video</div>`));
-	dmMapRow.append(dropBoxbutton2, onedriveButton2);
+	
+	if (window.testAvttFilePicker === true) { //console testing
+		dmMapRow.append(dropBoxbutton2, avttButton2, onedriveButton2);
+	}
+	else {
+		dmMapRow.append(dropBoxbutton2, onedriveButton2);
+	}
+
+	
+	
 	dmMapRow.attr('title', `This map will be shown to the DM only. It is used for a nearly indentical map to the main map that had secrets embedded in it that you don't want your players to see. Both maps must have links.`)
 	form.append(playerMapRow)	
 	form.append(dmMapRow)
@@ -1913,6 +1938,38 @@ function default_scene_data() {
 	return defaultData;
 }
 
+function build_scene_data_payload(parentId, fullPath, sceneName = "New Scene", mapUrl = "", existingNameSet = new Set()) {
+	const sanitizedFullPath = sanitize_folder_path(fullPath || RootFolder.Scenes.path);
+	const baseName = avttScenesSafeDecode(sceneName || "New Scene") || "New Scene";
+	let candidate = baseName;
+	let suffix = 1;
+	while (existingNameSet.has(candidate)) {
+		candidate = `${baseName} ${suffix}`;
+		suffix += 1;
+	}
+	existingNameSet.add(candidate);
+
+	const sceneData = {
+		...default_scene_data(),
+		title: candidate,
+		player_map: mapUrl || "",
+		parentId,
+	};
+
+	const normalizedFullPath = sanitize_folder_path(sanitizedFullPath);
+	const relativeFolderPath = normalizedFullPath
+		.replace(RootFolder.Scenes.path, "")
+		.replace(/^\/+/, "");
+	sceneData.folderPath = relativeFolderPath;
+
+	const lowerMap = typeof sceneData.player_map === "string" ? sceneData.player_map.toLowerCase() : "";
+	if ([".mp4", ".webm", ".m4v", ".mov", ".avi", ".mkv", ".wmv", ".flv"].some((ext) => lowerMap.includes(ext))) {
+		sceneData.player_map_is_video = "1";
+	}
+
+	return sceneData;
+}
+
 
 function init_scenes_panel() {
 	console.log("init_scenes_panel");
@@ -2379,28 +2436,356 @@ async function redraw_scene_list(searchTerm) {
 }
 
 async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "") {
+	const sanitizedFullPath = sanitize_folder_path(fullPath || RootFolder.Scenes.path);
+	const existingNames = new Set(
+		window.ScenesHandler.scenes
+			.filter((scene) => scene.itemType !== ItemType.Folder && scene.parentId === parentId)
+			.map((scene) => scene.title),
+	);
 
-	let newSceneName = sceneName;
-	let newSceneCount = window.sceneListItems.filter(item => item.parentId === parentId && item.name.startsWith(newSceneName)).length;
-	if (newSceneCount > 0) {
-		newSceneName = `${newSceneName} ${newSceneCount}`;
-	}
-
-	let sceneData = default_scene_data();
-	sceneData.player_map = mapUrl;
-	if(['.mp4', '.webm','.m4v'].some(d => mapUrl.includes(d))){
-		sceneData.player_map_is_video = '1';
-	}
-	sceneData.title = newSceneName;
-	sceneData.parentId = parentId;
-	sceneData.folderPath = fullPath.replace(RootFolder.Scenes.path, "");
+	const sceneData = build_scene_data_payload(parentId, sanitizedFullPath, sceneName, mapUrl, existingNames);
 
 	window.ScenesHandler.scenes.push(sceneData);
 
 	await AboveApi.migrateScenes(window.gameId, [sceneData]);
 
-	edit_scene_dialog(window.ScenesHandler.scenes.length - 1, true);
+	const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneData.id);
+	if (sceneIndex >= 0) {
+		edit_scene_dialog(sceneIndex, true);
+	}
 	did_update_scenes();
+}
+
+function avttScenesSafeDecode(value) {
+	if (typeof value !== "string") {
+		return value;
+	}
+	try {
+		return decodeURIComponent(value);
+	} catch (error) {
+		return value;
+	}
+}
+
+const AVTT_SCENE_ALLOWED_EXTENSIONS = (() => {
+	const imageTypes = (typeof allowedImageTypes !== "undefined" && Array.isArray(allowedImageTypes))
+		? allowedImageTypes
+		: ["jpeg", "jpg", "png", "gif", "bmp", "webp"];
+	const videoTypes = (typeof allowedVideoTypes !== "undefined" && Array.isArray(allowedVideoTypes))
+		? allowedVideoTypes
+		: ["mp4", "mov", "avi", "mkv", "wmv", "flv", "webm"];
+	return new Set([...imageTypes, ...videoTypes].map((ext) => String(ext).toLowerCase()));
+})();
+
+function avttScenesNormalizeRelativePath(path) {
+	if (typeof path !== "string") {
+		return "";
+	}
+	const normalized = path.replace(/\\/g, "/").replace(/^\/+/, "");
+	if (!normalized) {
+		return "";
+	}
+	return normalized.endsWith("/") ? normalized : `${normalized}/`;
+}
+
+function avttScenesRelativePathFromLink(link) {
+	const prefix = `above-bucket-not-a-url/${window.PATREON_ID}/`;
+	if (typeof link === "string" && link.startsWith(prefix)) {
+		return link.slice(prefix.length);
+	}
+	return "";
+}
+
+function avttScenesIsThumbnailKey(relativeKey) {
+	if (typeof avttIsThumbnailRelativeKey === "function") {
+		return avttIsThumbnailRelativeKey(relativeKey);
+	}
+	return typeof relativeKey === "string" && relativeKey.startsWith("thumbnails/");
+}
+
+async function avttScenesFetchFolderListing(relativePath) {
+	const targetPath = typeof relativePath === "string" ? relativePath : "";
+	if (typeof getFolderListingFromS3 === "function") {
+		return await getFolderListingFromS3(targetPath);
+	}
+	if (typeof AVTT_S3 === "undefined") {
+		throw new Error("AVTT_S3 endpoint is not available.");
+	}
+	const response = await fetch(
+		`${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(targetPath)}&list=true`,
+	);
+	const json = await response.json();
+	return Array.isArray(json?.folderContents) ? json.folderContents : [];
+}
+
+async function avttScenesCollectAssets(folderRelativePath) {
+	const normalizedBase = avttScenesNormalizeRelativePath(folderRelativePath);
+	if (!normalizedBase) {
+		return { files: [], folders: [] };
+	}
+	const stack = [normalizedBase];
+	const visited = new Set();
+	const files = [];
+	const folderPaths = new Set();
+	folderPaths.add("");
+
+	while (stack.length > 0) {
+		const current = stack.pop();
+		if (!current || visited.has(current)) {
+			continue;
+		}
+		visited.add(current);
+		let entries;
+		try {
+			entries = await avttScenesFetchFolderListing(current);
+		} catch (error) {
+			console.warn("Failed to load AVTT folder listing", current, error);
+			continue;
+		}
+		if (!Array.isArray(entries)) {
+			continue;
+		}
+		for (const entry of entries) {
+			const keyValue = typeof entry === "string" ? entry : entry?.Key || entry?.key || "";
+			if (!keyValue) {
+				continue;
+			}
+			let relativeKey = keyValue;
+			if (typeof avttExtractRelativeKey === "function") {
+				relativeKey = avttExtractRelativeKey(keyValue);
+			} else {
+				const prefix = `${window.PATREON_ID}/`;
+				relativeKey = keyValue.startsWith(prefix) ? keyValue.slice(prefix.length) : keyValue;
+			}
+			if (!relativeKey || !relativeKey.startsWith(normalizedBase)) {
+				continue;
+			}
+			if (avttScenesIsThumbnailKey(relativeKey)) {
+				continue;
+			}
+			if (relativeKey.endsWith("/")) {
+				if (relativeKey.length > normalizedBase.length) {
+					const relativeWithin = relativeKey.slice(normalizedBase.length).replace(/\/+$/, "");
+					if (relativeWithin) {
+						folderPaths.add(relativeWithin);
+					}
+				}
+				if (!visited.has(relativeKey)) {
+					stack.push(relativeKey);
+				}
+				continue;
+			}
+			const extension = typeof getFileExtension === "function"
+				? getFileExtension(relativeKey)
+				: (relativeKey.split(".").pop() || "").toLowerCase();
+			if (!AVTT_SCENE_ALLOWED_EXTENSIONS.has(String(extension).toLowerCase())) {
+				continue;
+			}
+			files.push({ relativePath: relativeKey });
+		}
+	}
+	return { files, folders: Array.from(folderPaths) };
+}
+
+function avttScenesDeriveSceneName(relativePath) {
+	const fileName = (relativePath || "").split("/").filter(Boolean).pop() || relativePath || "Scene";
+	const decoded = avttScenesSafeDecode(fileName);
+	return decoded.replace(/\.[^.]+$/, "") || decoded;
+}
+
+async function importAvttSelections(selectedItems, baseParentId, baseFullPath) {
+	if (!Array.isArray(selectedItems) || selectedItems.length === 0) {
+		return;
+	}
+	build_import_loading_indicator("Importing scenes...");
+	const sanitizedBaseFullPath = sanitize_folder_path(baseFullPath || RootFolder.Scenes.path);
+	const existingFoldersMap = new Map();
+	const pendingFoldersMap = new Map();
+	const pendingScenes = [];
+	const sceneNameSetsByParent = new Map();
+
+	window.ScenesHandler.scenes
+		.filter((scene) => scene?.itemType === ItemType.Folder)
+		.forEach((folder) => {
+			const folderPath = sanitize_folder_path(folder_path_of_scene(folder));
+			if (folderPath) {
+				existingFoldersMap.set(folderPath, folder);
+			}
+		});
+
+	existingFoldersMap.set(sanitizedBaseFullPath, { id: baseParentId });
+
+	const getSceneNameSet = (parentId) => {
+		if (!sceneNameSetsByParent.has(parentId)) {
+			const existingNames = window.ScenesHandler.scenes
+				.filter((scene) => scene.itemType !== ItemType.Folder && scene.parentId === parentId)
+				.map((scene) => scene.title);
+			sceneNameSetsByParent.set(parentId, new Set(existingNames));
+		}
+		return sceneNameSetsByParent.get(parentId);
+	};
+	getSceneNameSet(baseParentId);
+
+	const ensureFolderSegments = (segments) => {
+		if (!Array.isArray(segments) || segments.length === 0) {
+			const baseFolder = existingFoldersMap.get(sanitizedBaseFullPath);
+			return {
+				parentId: baseFolder?.id ?? baseParentId,
+				fullPath: sanitizedBaseFullPath,
+				folder: baseFolder || null,
+				created: false,
+			};
+		}
+		let parentId = baseParentId;
+		let currentPath = sanitizedBaseFullPath;
+		let created = false;
+		let lastFolder = null;
+		const accumulatedSegments = [];
+
+		for (const rawSegment of segments) {
+			const segment = avttScenesSafeDecode(rawSegment);
+			if (!segment) {
+				continue;
+			}
+			accumulatedSegments.push(segment);
+			const candidatePath = sanitize_folder_path(`${sanitizedBaseFullPath}/${accumulatedSegments.join("/")}`);
+			let folderData = pendingFoldersMap.get(candidatePath) || existingFoldersMap.get(candidatePath);
+			if (!folderData) {
+				folderData = {
+					id: uuid(),
+					title: segment,
+					itemType: ItemType.Folder,
+					parentId,
+				};
+				const relativePath = candidatePath.replace(RootFolder.Scenes.path, "").replace(/^\/+/, "");
+				if (relativePath) {
+					folderData.folderPath = relativePath;
+				}
+				pendingFoldersMap.set(candidatePath, folderData);
+				existingFoldersMap.set(candidatePath, folderData);
+				sceneNameSetsByParent.set(folderData.id, new Set());
+				created = true;
+			}
+			getSceneNameSet(folderData.id);
+			parentId = folderData.id;
+			currentPath = candidatePath;
+			lastFolder = folderData;
+		}
+
+		return {
+			parentId,
+			fullPath: currentPath,
+			folder: lastFolder,
+			created,
+		};
+	};
+
+	const addSceneForFile = (item, targetContext, sceneNameSource) => {
+		const nameSet = getSceneNameSet(targetContext.parentId);
+		const sceneData = build_scene_data_payload(
+			targetContext.parentId,
+			targetContext.fullPath,
+			sceneNameSource,
+			item.link,
+			nameSet,
+		);
+		pendingScenes.push(sceneData);
+	};
+
+	const processStandaloneFile = (item) => {
+		if (!item || !item.link) {
+			return;
+		}
+		const relativePath = item.path || avttScenesRelativePathFromLink(item.link);
+		const sceneName = relativePath ? avttScenesDeriveSceneName(relativePath) : avttScenesSafeDecode(item.name || "New Scene");
+		const targetContext = ensureFolderSegments([]);
+		addSceneForFile(item, targetContext, sceneName);
+	};
+
+	const processFolderSelection = async (folderItem) => {
+		const folderPathRaw = (folderItem && folderItem.path) || avttScenesRelativePathFromLink(folderItem?.link);
+		const normalizedRelative = avttScenesNormalizeRelativePath(folderPathRaw);
+		if (!normalizedRelative) {
+			console.warn("AVTT folder import skipped due to missing folder path", folderItem);
+			return;
+		}
+
+		const allSegments = normalizedRelative.replace(/\/$/, "").split("/").filter(Boolean);
+		const rootFolderName = allSegments.pop();
+		if (!rootFolderName) {
+			console.warn("AVTT folder import skipped due to unresolved folder name", folderItem);
+			return;
+		}
+
+		const rootContext = ensureFolderSegments([rootFolderName]);
+		getSceneNameSet(rootContext.parentId);
+
+		const { files, folders } = await avttScenesCollectAssets(normalizedRelative);
+
+		const orderedFolders = folders
+			.filter((path) => path && path.length > 0)
+			.sort((a, b) => {
+				const depthDiff = a.split("/").length - b.split("/").length;
+				if (depthDiff !== 0) {
+					return depthDiff;
+				}
+				return a.localeCompare(b);
+			});
+
+		for (const folderRelative of orderedFolders) {
+			const segments = [rootFolderName, ...folderRelative.split("/").filter(Boolean)];
+			const ensureResult = ensureFolderSegments(segments);
+			if (ensureResult.created && !sceneNameSetsByParent.has(ensureResult.parentId)) {
+				sceneNameSetsByParent.set(ensureResult.parentId, new Set());
+			}
+		}
+
+		for (const asset of files) {
+			const relativePath = asset.relativePath;
+			const relativeWithinFolder = relativePath.slice(normalizedRelative.length);
+			const subSegments = relativeWithinFolder.split("/").slice(0, -1).filter(Boolean);
+			const segments = [rootFolderName, ...subSegments];
+			const targetContext = segments.length > 0 ? ensureFolderSegments(segments) : rootContext;
+			const sceneName = avttScenesDeriveSceneName(relativePath);
+			const sceneLink = `above-bucket-not-a-url/${window.PATREON_ID}/${relativePath}`;
+			addSceneForFile({ link: sceneLink }, targetContext, sceneName);
+		}
+	};
+
+	for (const item of selectedItems) {
+		if (!item) {
+			continue;
+		}
+		if (item.isFolder || item.type === avttFilePickerTypes.FOLDER) {
+			await processFolderSelection(item);
+		} else {
+			processStandaloneFile(item);
+		}
+	}
+
+	const payload = [...pendingFoldersMap.values(), ...pendingScenes];
+	if (!payload.length) {
+		return;
+	}
+
+	await AboveApi.migrateScenes(window.gameId, payload);
+
+	for (const folderData of pendingFoldersMap.values()) {
+		window.ScenesHandler.scenes.push(folderData);
+	}
+	for (const sceneData of pendingScenes) {
+		window.ScenesHandler.scenes.push(sceneData);
+	}
+
+	for (const sceneData of pendingScenes) {
+		const sceneIndex = window.ScenesHandler.scenes.findIndex((scene) => scene.id === sceneData.id);
+		if (sceneIndex >= 0) {
+			edit_scene_dialog(sceneIndex, true);
+		}
+	}
+
+	await did_update_scenes();
+	$('body>.import-loading-indicator').remove();
 }
 
 function create_scene_folder_inside(listItem) {
@@ -2733,7 +3118,7 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 		existingContainer.append(content);
 	}
 	else{
-		const mainContainer = $(`<div id="sources-import-main-container"></div>`);
+		const mainContainer = $(`<div id="sources-import-main-container" class='resize_drag_window moveableWindow'></div>`);
 		mainContainer.append(`<link class="ddb-classes-page-stylesheet" rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/blocks/css/compiled.css" >`);
 		mainContainer.append(`<link class="ddb-classes-page-stylesheet"  rel="stylesheet" type="text/css" href="https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/css/compiled.css" >`);
 		const titleBar = floating_window_title_bar("sources-import-iframe-title-bar", title);
@@ -2760,6 +3145,8 @@ function adjust_create_import_edit_container(content='', empty=true, title='', w
 				$('.iframeResizeCover').remove();
 			}
 		});
+		frame_z_index_when_click(mainContainer);
+		mainContainer.on('mousedown', function(){frame_z_index_when_click(mainContainer)})
 		$(document.body).append(mainContainer);
 	}
 	$(`#sources-import-main-container`).css({
@@ -2867,6 +3254,32 @@ async function create_scene_root_container(fullPath, parentId) {
 		e.preventDefault();
 		Dropbox.choose(dropboxOptionsImport)
 	});
+	
+	
+	const avttFileImport = await build_tutorial_import_list_item({
+		"title": "Azmoria's AVTT File Picker Image or Video",
+		"description": "Build a scene using Azmoria's AVTT File Picker image or video file.",
+		"category": "Scenes",
+		"player_map": "",
+	}, `${window.EXTENSION_PATH}assets/avtt-logo.png`, false);
+	avttFileImport.css("width", "25%");
+	if (window.testAvttFilePicker === true){ //console testing var
+		sectionHtml.find("ul").append(avttFileImport); 
+	}
+	avttFileImport.find(".listing-card__callout").hide();
+	avttFileImport.find("a.listing-card__link").click(function (e) {
+		e.stopPropagation();
+		e.preventDefault();
+		launchFilePicker(async function (files) {
+			try {
+				await importAvttSelections(files, parentId, fullPath);
+			} catch (error) {
+				console.error("Failed to import from AVTT File Picker selection", error);
+				alert(error?.message || "Failed to import selection from AVTT. See console for details.");
+			}
+		}, [avttFilePickerTypes.IMAGE, avttFilePickerTypes.VIDEO, avttFilePickerTypes.FOLDER]);
+	});
+
 
 	const onedriveImport = await build_tutorial_import_list_item({
 		"title": "Onedrive Image or Video",
@@ -2963,7 +3376,12 @@ function build_UVTT_import_container(){
 	const dropBoxOptions1 = dropBoxOptions(function(links){$('#player_map_row input').val(links[0].link)}, false, ['.dd2vtt', '.uvtt', '.df2vtt']);
 	const dropBoxbutton1 = createCustomDropboxChooser('Choose UVTT file from Dropbox', dropBoxOptions1);
 	const onedriveButton1 = createCustomOnedriveChooser('Choose UVTT file from Onedrive', function(links){$('#player_map_row input').val(links[0].link)}, 'single', ['.dd2vtt', '.uvtt', '.df2vtt'])
+	const avttButton1 = createCustomAvttChooser("Choose UVTT File from Azmoria's AVTT File Picker", function (links) { $('#player_map_row input').val(links[0].link) }, [avttFilePickerTypes.UVTT]);
+
 	form.append(dropBoxbutton1);
+	if(window.testAvttFilePicker === true){ //console testing var
+		form.append(avttButton1);
+	}
 	//form.append(onedriveButton1); if we ever get this working again, or one drive changes things to make them accessible we can reenable it
 
 	const hiddenDoorToggle = form_toggle('hidden_doors_toggle', null, false, function(event) {

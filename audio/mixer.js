@@ -162,7 +162,7 @@ class Mixer extends EventTarget {
     syncPlayers(play = true, skipTime=false) {
         const state = this.state();
  
-        Object.entries(state.channels).forEach(([id, channel]) => {
+        Object.entries(state.channels).forEach(async ([id, channel]) => {
             if(!channel?.src){
                 delete this._players[id];
                 return;
@@ -202,6 +202,9 @@ class Mixer extends EventTarget {
                   else{
                     url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
                   }
+                }
+                else if(url.startsWith('above-bucket-not-a-url')){
+                    url = await getAvttStorageUrl(url);
                 }
                 player = new Audio(url);
                 player.preload = "metadata";

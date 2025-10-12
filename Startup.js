@@ -307,6 +307,7 @@ function addExtensionPathStyles(){ // some above server images moved out of exte
     body{
       --onedrive-svg: url('${window.EXTENSION_PATH}images/Onedrive_icon.svg');
       --onedrive-mask: url('${window.EXTENSION_PATH}images/Onedrive_icon.png');
+      --avtt-mask: url('${window.EXTENSION_PATH}assets/avtt-logo.png');
     }
   </style>`
 
