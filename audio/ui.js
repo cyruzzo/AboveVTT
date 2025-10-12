@@ -1,5 +1,5 @@
 import { trackLibrary } from './track.js';
-import { Channel } from './mixer.js';
+import { Channel, mixer } from './mixer.js';
 import { log } from './helpers.js';
 
 const AVTT_AUDIO_ALLOWED_EXTENSIONS = new Set([
@@ -265,7 +265,7 @@ function init_mixer() {
             playlistInput.append(option);
         });
         mixerChannels.innerHTML = "";
-        let youtube_section= $("<li class='audio-row'></li>");;    
+        let youtube_section= $("<li class='audio-row map-audio-row'></li>");;    
         let channelNameDiv = $(`<div class='channelNameOverflow'><div class='channelName'>Animated Map Audio</div>`)
         let youtube_volume = $(`<input type="range" min="0" max="100" value="${window.MIXER.state()?.animatedMap?.volume != undefined ? window.MIXER.state().animatedMap.volume : window.YTPLAYER ? window.YTPLAYER.volume : 25}" step="1" class="volume-control" id="youtube_volume">`);
         $(youtube_section).append(channelNameDiv, youtube_volume);
@@ -290,7 +290,13 @@ function init_mixer() {
         });
 
         /** @type {Object.<string, Channel>} */
-        Object.entries(channels).forEach(([id, channel]) => {
+        const objectKeys = Object.keys(channels)
+        let channelArray = playlists[window.MIXER.selectedPlaylist()].orderedChannels?.length ? playlists[window.MIXER.selectedPlaylist()].orderedChannels : objectKeys;
+        const leftOverKeys = objectKeys.filter(key => { if(!channelArray.includes(key)) return key });
+        channelArray = channelArray.concat(leftOverKeys);
+        channelArray.forEach((id) => {
+            const channel = channels[id]
+            
             if(!channel?.src){
                 return;
             }
@@ -457,6 +463,28 @@ function init_mixer() {
                 }
             })
         });
+
+        $(mixerChannels).sortable({
+            cancel:'.map-audio-row, .tokenTrack',
+            distance: 10,
+            axis: 'y',
+            items: '.audio-row:not(.map-audio-row):not(.tokenTrack)',
+            stop: (event, ui) => {
+                const state = window.MIXER.state()
+                try {
+                    const orderedIds = $('.sidebar-panel-header li.audio-row:not(.map-audio-row):not(.tokenTrack)').map((i, item) => {
+                        return $(item).attr('data-id')
+                    })
+                    state.orderedChannels = [...orderedIds];
+                    window.MIXER._write(state);
+                }
+                catch (error) {
+                    console.warn(`Could not get playlist order: ${error.message}`)
+                }
+
+               
+            }
+        })
     }
 
 
