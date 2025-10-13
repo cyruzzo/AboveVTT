@@ -4313,10 +4313,10 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     return rawPath || file.name;
   };
 
-  const resolveUploadKey = (file) =>
-    `${currentFolder}${toNormalizedUploadPath(file)}`;
+  const resolveUploadKey = (file, uploadFolder = currentFolder) =>
+    `${uploadFolder}${toNormalizedUploadPath(file)}`;
 
-  const uploadSelectedFiles = async (files) => {
+  const uploadSelectedFiles = async (files, uploadFolder = currentFolder) => {
     const fileArray = Array.from(files || []).filter(Boolean);
     if (!fileArray.length) {
       return;
@@ -4344,7 +4344,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
         continue;
       }
 
-      let targetKey = resolveUploadKey(selectedFile);
+      let targetKey = resolveUploadKey(selectedFile, uploadFolder);
       let action = "overwrite";
 
       try {
@@ -4573,7 +4573,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     }
 
     try {
-      await uploadSelectedFiles(files);
+      await uploadSelectedFiles(files, currentFolder);
     } finally {
       event.target.value = "";
     }

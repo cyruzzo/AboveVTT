@@ -1175,7 +1175,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 					window.TOKEN_OBJECTS[token.options.id].update_and_sync()
 				}
 				debounceCombatReorder();
-			}, token.options.itemId, token.options.id, adv, dis);
+			}, token.options.itemId, token.options.id,  adv, dis);
 		}
 	}
 
