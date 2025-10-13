@@ -5401,6 +5401,8 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 const GET_FILE_FROM_S3_MAX_RETRIES = 5;
 const GET_FILE_FROM_S3_BASE_DELAY_MS = 250;
 const GET_FILE_FROM_S3_MAX_DELAY_MS = 4000;
+const GET_FILE_FROM_S3_BATCH_SIZE = 10;
+const GET_FILE_FROM_S3_CACHE_TTL_MS = 3500000;
 let getFileFromS3Queue = [];
 let getFileFromS3Pending = new Map();
 let isProcessingGetFileFromS3Queue = false;
@@ -5424,21 +5426,269 @@ function getFileFromS3Delay(ms) {
   });
 }
 
-async function processGetFileFromS3Queue() {
-  if (isProcessingGetFileFromS3Queue) 
+function cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL) {
+  if (!cacheKey || !fileURL) {
     return;
-  
-  isProcessingGetFileFromS3Queue = true;
-  while (getFileFromS3Queue.length > 0) {
-    const { originalName, cacheKey, sanitizedKey, resolve, reject } = getFileFromS3Queue.shift();
+  }
+  if (!window.avtt_file_urls || typeof window.avtt_file_urls !== "object") {
+    window.avtt_file_urls = {};
+  }
+  const expireAt = Date.now() + GET_FILE_FROM_S3_CACHE_TTL_MS;
+  window.avtt_file_urls[cacheKey] = {
+    url: fileURL,
+    expire: expireAt,
+  };
+  if (sanitizedKey && sanitizedKey !== cacheKey) {
+    window.avtt_file_urls[sanitizedKey] = {
+      url: fileURL,
+      expire: expireAt,
+    };
+  }
+}
+
+async function processGetFileFromS3Queue() {
+  if (isProcessingGetFileFromS3Queue) {
+    return;
+  }
+
+  const processSingleItem = async (queueItem) => {
+    if (!queueItem) {
+      return;
+    }
     try {
-      const result = await fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey);
-      resolve(result);
+      const result = await fetchFileFromS3WithRetry(
+        queueItem.originalName,
+        queueItem.cacheKey,
+        queueItem.sanitizedKey,
+      );
+      queueItem.resolve(result);
     } catch (error) {
-      reject(error);
+      queueItem.reject(error);
+    }
+  };
+
+  isProcessingGetFileFromS3Queue = true;
+  try {
+    while (getFileFromS3Queue.length > 0) {
+      const firstItem = getFileFromS3Queue.shift();
+      if (!firstItem) {
+        continue;
+      }
+
+      const normalizedOriginal = avttNormalizeRelativePath(firstItem.originalName);
+      const [rawUser, ...restParts] = normalizedOriginal.split("/").filter(Boolean);
+      const patreonId = rawUser || "";
+      if (!patreonId || restParts.length === 0) {
+        await processSingleItem(firstItem);
+        continue;
+      }
+
+      const normalizedUser = avttNormalizeRelativePath(patreonId);
+      const batchItems = [firstItem];
+
+      for (let index = 0; index < getFileFromS3Queue.length && batchItems.length < GET_FILE_FROM_S3_BATCH_SIZE;) {
+        const candidate = getFileFromS3Queue[index];
+        if (!candidate) {
+          getFileFromS3Queue.splice(index, 1);
+          continue;
+        }
+        const candidateOriginal = avttNormalizeRelativePath(candidate.originalName);
+        const candidateUser = candidateOriginal.split("/").filter(Boolean)[0] || "";
+        if (candidateUser && avttNormalizeRelativePath(candidateUser) === normalizedUser) {
+          batchItems.push(candidate);
+          getFileFromS3Queue.splice(index, 1);
+        } else {
+          index += 1;
+        }
+      }
+
+      const batchLookup = new Map();
+      const fallbackItems = [];
+
+      const extractRelativeKey = (item) => {
+        const normalizedCacheKey = avttNormalizeRelativePath(item.cacheKey);
+        const prefix = `${normalizedUser}/`;
+        if (normalizedCacheKey.startsWith(prefix)) {
+          return normalizedCacheKey.slice(prefix.length);
+        }
+        const sanitized = item.sanitizedKey ? avttNormalizeRelativePath(item.sanitizedKey) : "";
+        if (sanitized) {
+          return sanitized;
+        }
+        const normalizedOriginalKey = avttNormalizeRelativePath(item.originalName);
+        if (normalizedOriginalKey.startsWith(prefix)) {
+          return normalizedOriginalKey.slice(prefix.length);
+        }
+        const parts = normalizedCacheKey.split("/").filter(Boolean);
+        if (parts.length > 1) {
+          return parts.slice(1).join("/");
+        }
+        return "";
+      };
+
+      for (const item of batchItems) {
+        const relativeKey = extractRelativeKey(item);
+        if (!relativeKey) {
+          fallbackItems.push(item);
+          continue;
+        }
+        const normalizedRelative = avttNormalizeRelativePath(relativeKey);
+        const fullPath = `${normalizedUser}/${normalizedRelative}`;
+        if (!batchLookup.has(fullPath)) {
+          batchLookup.set(fullPath, { relativeKey: normalizedRelative, items: [] });
+        }
+        batchLookup.get(fullPath).items.push(item);
+      }
+
+      if (batchLookup.size <= 1) {
+        for (const item of batchItems) {
+          await processSingleItem(item);
+        }
+        continue;
+      }
+
+      let batchResult = null;
+      const relativeKeys = Array.from(batchLookup.values()).map((entry) => entry.relativeKey);
+      try {
+        batchResult = await fetchFilesFromS3BatchWithRetry(normalizedUser, relativeKeys);
+      } catch (batchError) {
+        console.warn("Batch signed URL fetch failed, falling back to individual requests", batchError);
+      }
+
+      if (!batchResult) {
+        for (const item of batchItems) {
+          await processSingleItem(item);
+        }
+        continue;
+      }
+
+      const unresolvedItems = new Set(fallbackItems);
+      for (const [fullPath, entry] of batchLookup.entries()) {
+        const result = batchResult.get(fullPath);
+        const url = result?.url;
+        if (url) {
+          for (const item of entry.items) {
+            cacheGetFileFromS3Url(item.cacheKey, item.sanitizedKey, url);
+            item.resolve(url);
+            unresolvedItems.delete(item);
+          }
+        } else {
+          for (const item of entry.items) {
+            unresolvedItems.add(item);
+          }
+        }
+      }
+
+      if (unresolvedItems.size > 0) {
+        for (const item of unresolvedItems) {
+          await processSingleItem(item);
+        }
+      }
+    }
+  } finally {
+    isProcessingGetFileFromS3Queue = false;
+  }
+}
+
+async function fetchFilesFromS3BatchWithRetry(userId, relativeKeys) {
+  const normalizedUser = avttNormalizeRelativePath(userId);
+  const uniqueKeys = Array.from(
+    new Set(
+      (Array.isArray(relativeKeys) ? relativeKeys : [])
+        .map((key) => avttNormalizeRelativePath(key))
+        .filter((key) => typeof key === "string" && key.length > 0),
+    ),
+  );
+  if (!normalizedUser || uniqueKeys.length === 0) {
+    return new Map();
+  }
+
+  let attempt = 0;
+  let lastError = null;
+  while (attempt < GET_FILE_FROM_S3_MAX_RETRIES) {
+    attempt += 1;
+    try {
+      return await fetchFilesFromS3BatchOnce(normalizedUser, uniqueKeys);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= GET_FILE_FROM_S3_MAX_RETRIES) {
+        break;
+      }
+      const backoffDelay = Math.min(
+        GET_FILE_FROM_S3_BASE_DELAY_MS * 2 ** (attempt - 1),
+        GET_FILE_FROM_S3_MAX_DELAY_MS,
+      );
+      await getFileFromS3Delay(backoffDelay);
     }
   }
-  isProcessingGetFileFromS3Queue = false;
+  throw lastError || new Error("Failed to fetch batch of files from S3");
+}
+
+async function fetchFilesFromS3BatchOnce(userId, relativeKeys) {
+  const response = await fetch(
+    `${AVTT_S3}?action=batchDownload&user=${encodeURIComponent(userId)}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items: relativeKeys }),
+    },
+  );
+
+  let json = null;
+  try {
+    json = await response.json();
+  } catch (error) {
+    json = null;
+  }
+
+  if (!response.ok) {
+    const message = json?.message || `Failed to fetch batch files from S3 (${response.status})`;
+    throw new Error(message);
+  }
+
+  const resultMap = new Map();
+  const successes = Array.isArray(json?.results) ? json.results : [];
+  for (const entry of successes) {
+    const relativeKey = typeof entry?.filename === "string" ? avttNormalizeRelativePath(entry.filename) : "";
+    const rawPath = typeof entry?.path === "string" ? entry.path : "";
+    const fullPath = rawPath
+      ? avttNormalizeRelativePath(rawPath)
+      : relativeKey
+        ? `${userId}/${relativeKey}`
+        : "";
+    const downloadURL = typeof entry?.downloadURL === "string" ? entry.downloadURL : "";
+    if (!fullPath || !downloadURL) {
+      continue;
+    }
+    resultMap.set(fullPath, { url: downloadURL });
+  }
+
+  const errors = Array.isArray(json?.errors) ? json.errors : [];
+  for (const entry of errors) {
+    const relativeKey = typeof entry?.filename === "string" ? avttNormalizeRelativePath(entry.filename) : "";
+    const rawPath = typeof entry?.path === "string" ? entry.path : "";
+    const fullPath = rawPath
+      ? avttNormalizeRelativePath(rawPath)
+      : relativeKey
+        ? `${userId}/${relativeKey}`
+        : "";
+    const message = typeof entry?.message === "string" && entry.message
+      ? entry.message
+      : "Failed to fetch file from S3";
+    if (!fullPath || resultMap.has(fullPath)) {
+      continue;
+    }
+    resultMap.set(fullPath, { error: message });
+  }
+
+  for (const key of relativeKeys) {
+    const fullPath = avttNormalizeRelativePath(`${userId}/${key}`);
+    if (!resultMap.has(fullPath)) {
+      resultMap.set(fullPath, { error: "File missing from batch response" });
+    }
+  }
+
+  return resultMap;
 }
 
 async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
@@ -5462,16 +5712,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
       if (!fileURL) {
         throw new Error("File not found on S3");
       }
-      window.avtt_file_urls[cacheKey] = {
-        url: fileURL,
-        expire: Date.now() + 3500000
-      };
-      if (sanitizedKey && sanitizedKey !== cacheKey) {
-        window.avtt_file_urls[sanitizedKey] = {
-          url: fileURL,
-          expire: Date.now() + 3500000
-        };
-      }
+      cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL);
       console.log("File found on S3: ", fileURL);
       return fileURL;
     } catch (error) {
@@ -5479,7 +5720,10 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
       if (attempt >= GET_FILE_FROM_S3_MAX_RETRIES) {
         break;
       }
-      const backoffDelay = Math.min(GET_FILE_FROM_S3_BASE_DELAY_MS * 2 ** (attempt - 1), GET_FILE_FROM_S3_MAX_DELAY_MS);
+      const backoffDelay = Math.min(
+        GET_FILE_FROM_S3_BASE_DELAY_MS * 2 ** (attempt - 1),
+        GET_FILE_FROM_S3_MAX_DELAY_MS,
+      );
       await getFileFromS3Delay(backoffDelay);
     }
   }
