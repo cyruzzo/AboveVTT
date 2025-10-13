@@ -7652,20 +7652,18 @@ button span.onedrive-btn-status{
     overflow: hidden;
     transition: 250ms width 0ms;
     flex-direction:row-reverse;
+    flex-shrink:0;
+}
 
+.sidebar-list-item-row-details{
+    flex-shrink: 1;
 }
-#myTokensFolder>.sidebar-list-item-row-item>.addTokenMenu {
-    width: 43px;
-}
+
 .addTokenMenu:hover,
 .hover-add-button:hover~.addTokenMenu {
-    width: 440px;
+    width: 102px;
+    flex-shrink: 0;
 }
-#myTokensFolder>.sidebar-list-item-row-item>.addTokenMenu:hover,
-#myTokensFolder>.sidebar-list-item-row-item>.hover-add-button:hover~.addTokenMenu {
-    width: 900px
-}
-
 
 .addTokenMenu button {
     display: inline-block;
