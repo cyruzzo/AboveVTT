@@ -863,8 +863,16 @@ function delete_token_customization_by_parent_id(parentId, callback) {
         console.warn("delete_token_customization_by_parent_id received an invalid parentId", parentId);
         callback(false);
         return;
-    }
-    let tokensToBeDeleted = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId == parentId);
+    } 
+
+    const path = (parentId == RootFolder.MyTokens.id) 
+        ? RootFolder.MyTokens.path 
+        : (parentId == RootFolder.Players.id) 
+            ? RootFolder.Players.path 
+            : window.TOKEN_CUSTOMIZATIONS.find(d => d.id == parentId)?.fullPath()
+    if(!path)
+        return;
+    let tokensToBeDeleted = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.fullPath().includes(path));
     for(i = 0; i < tokensToBeDeleted.length; i++){
         let statBlockID = tokensToBeDeleted[i].tokenOptions?.statBlock;
         if(statBlockID){
@@ -873,13 +881,8 @@ function delete_token_customization_by_parent_id(parentId, callback) {
                 delete window.JOURNAL.statBlocks[statBlockID]
             window.JOURNAL.persist();
         }
-        if(tokensToBeDeleted[i].tokenType == ItemType.Folder){
-            delete_token_customization_by_parent_id(tokensToBeDeleted[i].id)
-        }
     }
-
-
-    window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => tc.parentId !== parentId);
+    window.TOKEN_CUSTOMIZATIONS = window.TOKEN_CUSTOMIZATIONS.filter(tc => !tc.fullPath().includes(path));
 
     persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, callback);
 }

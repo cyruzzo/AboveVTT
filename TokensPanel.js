@@ -1023,7 +1023,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
         return;
     }
 
-    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {
+    if (listItem.isTypeFolder() || listItem.isTypeEncounter()) {{tokenStyleSelect: "definitelyNotAToken"}
 
         let tokensToPlace = [];
 
@@ -2120,7 +2120,7 @@ function create_mytoken_folder_inside(listItem, options = {}) {
         return;
     }
 
-    const { name: desiredName, skipModal = false, skipDidChange = false, onCreated } = typeof options === "object" && options !== null ? options : {};
+    const { name: desiredName, skipModal = false, skipDidChange = false, skipPersist = false, onCreated } = typeof options === "object" && options !== null ? options : {};
 
     let newFolderName;
     if (typeof desiredName === "string" && desiredName.trim()) {
@@ -2144,6 +2144,12 @@ function create_mytoken_folder_inside(listItem, options = {}) {
         }
     }
     let newFolder = TokenCustomization.Folder(uuid(), listItem.id, RootFolder.MyTokens.id, { name: newFolderName });
+    if(skipPersist){
+        window.TOKEN_CUSTOMIZATIONS.push(newFolder);
+        return newFolder;
+    }
+    
+    
     persist_token_customization(newFolder, function(didSucceed, errorType) {
         if (didSucceed) {
                 if (!skipDidChange) {
@@ -2154,7 +2160,9 @@ function create_mytoken_folder_inside(listItem, options = {}) {
                     if (!skipModal) {
                         display_folder_configure_modal(newListItem);
                     }
-                    expand_all_folders_up_to_item(newListItem);
+                    if (!skipDidChange) {
+                        expand_all_folders_up_to_item(newListItem);
+                    }
                 }
                 if (typeof onCreated === "function") {
                     onCreated(newListItem, newFolder);
@@ -2226,7 +2234,7 @@ function move_mytokens_to_parent_folder_and_delete_folder(listItem, callback) {
  * Creates a new "My Token" object within a folder
  * @param listItem {SidebarListItem} the folder item to create a token in
  */
-function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='', options = undefined, statBlock = undefined, skipDidChange = false) {
+function create_token_inside(listItem, tokenName = "New Token", tokenImage = '', type='', options = undefined, statBlock = undefined, skipDidChange = false, skipPersist = false) {
     if (!listItem.isTypeFolder() || !listItem.fullPath().startsWith(RootFolder.MyTokens.path)) {
         console.warn("create_token_inside called with an incorrect item type", listItem);
         return;
@@ -2275,7 +2283,10 @@ function create_token_inside(listItem, tokenName = "New Token", tokenImage = '',
         window.JOURNAL.persist();
         customization.tokenOptions.statBlock = customization.id;
     }
-
+    if (skipPersist){
+        window.TOKEN_CUSTOMIZATIONS.push(customization);
+        return
+    }
     persist_token_customization(customization, function (didSucceed, error) {
         if (skipDidChange)
             return;

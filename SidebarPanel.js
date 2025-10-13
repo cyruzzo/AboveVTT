@@ -1020,8 +1020,8 @@ function avttTokenRelativePathFromLink(link) {
 
 async function avttTokenFetchFolderListing(relativePath) {
   const targetPath = typeof relativePath === "string" ? relativePath : "";
-  if (typeof getFolderListingFromS3 === "function") {
-    return await getFolderListingFromS3(targetPath);
+  if (typeof avttGetFolderListingCached === "function") {
+    return await avttGetFolderListingCached(targetPath);
   }
   if (typeof AVTT_S3 === "undefined") {
     throw new Error("AVTT_S3 endpoint is not available.");
@@ -1268,7 +1268,9 @@ async function importAvttTokens(links, baseFolderItem) {
     }
     let existingFolderItem = find_sidebar_list_item_from_path(resolvedFolderPath);
     if (!existingFolderItem) {
-      const created = create_mytoken_folder_inside(parentItem, { name: folderName, skipModal: true });
+      const created = create_mytoken_folder_inside(parentItem, { name: folderName, skipModal: true, skipDidChange: true, skipPersist: true });
+      const newFolder = SidebarListItem.Folder(created.id, created.folderPath(), created.name(), created.tokenOptions.collapsed, created.parentId, ItemType.Encounter, created.color)
+      window.tokenListItems.push(newFolder);
       const expectedPath = sanitize_folder_path(`${parentItem.fullPath()}/${created?.tokenOptions?.name || folderName}`);
       existingFolderItem = find_sidebar_list_item_from_path(expectedPath);
     }
@@ -1288,13 +1290,15 @@ async function importAvttTokens(links, baseFolderItem) {
       console.warn("Unable to locate target folder for token import", plan.folderPath);
       continue;
     }
-    create_token_inside(parentItem, plan.name, plan.link, plan.type, undefined, undefined, true);
+    create_token_inside(parentItem, plan.name, plan.link, plan.type, undefined, undefined, true, true);
   }
+  persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS, function () {
+    if (tokenPlans.length > 0) {
+      did_change_mytokens_items();
+      $('body>.import-loading-indicator').remove();
+    }
+  })
 
-  if (tokenPlans.length > 0) {
-    did_change_mytokens_items();
-    $('body>.import-loading-indicator').remove();
-  }
 }
 /**
  * @param html {*|jQuery|HTMLElement} the html representation of the item
