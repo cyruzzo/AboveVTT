@@ -163,7 +163,7 @@ async function getUvttData(url){
 	      }
 		}
 		else if(url.startsWith('above-bucket-not-a-url')){
-			api_url = await getAvttStorageUrl(url);
+			api_url = await getAvttStorageUrl(url, true);
 		}
 
 		await $.getJSON(api_url, function(data){

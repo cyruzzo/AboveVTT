@@ -1587,7 +1587,7 @@ function build_sidebar_list_row(listItem) {
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
   
-    updateImgSrc(listingImage, img, video);
+    updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
   }
   else{
@@ -2132,7 +2132,7 @@ function did_click_row(clickEvent) {
             flyout.append(`<div style="background:lightgray;padding:10px;">This map is a video. We don't currently support previewing videos.</div>`);
           } else {
             const src = clickedItem.image.startsWith('above-bucket-not-a-url') 
-              ? await getAvttStorageUrl(clickedItem.image) 
+              ? await getAvttStorageUrl(clickedItem.image, true) 
               : clickedItem.image;
             flyout.append(`<img class='list-item-image-flyout' src="${src}" alt="scene map preview" />`);
           }

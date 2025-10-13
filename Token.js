@@ -829,7 +829,7 @@ class Token {
 				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
 					const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 					if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
-						getAvttStorageUrl(this.options.imgsrc).then((url) => {
+						getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
 							copyImage.attr("src", parse_img(url));
 						});
 					}
@@ -2284,7 +2284,7 @@ class Token {
 						
 						const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 						if (!oldImage.attr('src')?.includes(encodeURI(fileSrc))) {
-							getAvttStorageUrl(this.options.imgsrc).then((url) => {
+							getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
 								let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length - 1]
 								let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length - 1]);
 								let imgClass = oldImage.attr('class');
@@ -2306,7 +2306,7 @@ class Token {
 								window.videoTokenOld[this.options.id] = this.options.videoToken;
 
 								updateTokenSrc(this.options.imgsrc, oldImage, video)
-								getAvttStorageUrl(this.options.imgsrc).then((url) => {
+								getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
 									$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(url));
 								})
 
@@ -2360,7 +2360,7 @@ class Token {
 						
 					}
 					else if(oldImage.attr("src")!=parse_img(this.options.imgsrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
-						let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length-1]
+						let oldFileExtension = oldImage.attr("src")?.split('.')[oldImage.attr("src").length-1]
 						let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
 						let imgClass = oldImage.attr('class');
 						let video = false;

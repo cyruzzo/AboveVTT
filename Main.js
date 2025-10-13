@@ -537,7 +537,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 			newmap.height(height);		
 		}
 		else if(url.startsWith('above-bucket-not-a-url')){
-			url = await getAvttStorageUrl(url);
+			url = await getAvttStorageUrl(url, true);
 			newmap = $(`<img id='scene_map' src='${url}' style='position:absolute;top:0;left:0;z-index:10'>`);
 
 		}
@@ -594,7 +594,7 @@ async function load_scenemap(url, is_video = false, width = null, height = null,
 		  url = "https://api.onedrive.com/v1.0/shares/u!" + btoa(url) + "/root/content";
 		}
 		else if (url.startsWith('above-bucket-not-a-url')) {
-			url = await getAvttStorageUrl(url)
+			url = await getAvttStorageUrl(url, true)
 		}
 		let newmap = $(`<video style="${newmapSize} position: absolute; top: 0; left: 0;z-index:10" playsinline autoplay loop data-volume='0.25' onplay="this.volume=${videoVolume/100}" id="scene_map" src="${url}" />`);
 		newmap.off("loadeddata").one("loadeddata", callback);
