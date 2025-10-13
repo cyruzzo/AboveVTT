@@ -1350,7 +1350,7 @@ function find_sidebar_list_item(html) {
     }
   }
 
-  let htmlId = html.attr("data-id") || html.attr("id");
+  let htmlId = html.attr("data-id") || html.attr("id") || html.attr("data-token-id");
   if (typeof htmlId === "string" && htmlId.length > 0) {
     foundItem = window.tokenListItems.find(li => li.id === htmlId);
     if (foundItem !== undefined) {

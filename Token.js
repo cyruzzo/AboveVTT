@@ -245,7 +245,24 @@ class Token {
 			}
 		}).filter(c => c); // remove undefined and empty strings
 	}
-
+	async removeAlternativeImage(imageUrl) {
+		if (this.options.alternativeImages === undefined) {
+			return;
+		}
+		let index = this.options.alternativeImages.findIndex(i => i === imageUrl);
+		if (typeof index === "number" && index >= 0) {
+			if (this.options.alternativeImagesCustomizations != undefined)
+				delete this.options.alternativeImagesCustomizations[this.options.alternativeImages[index]];
+			this.options.alternativeImages.splice(index, 1);
+		}
+		const parsed = await parse_img(imageUrl);
+		let parsedIndex = this.options.alternativeImages.findIndex(i => parse_img(i) === parsed);
+		if (typeof parsedIndex === "number" && parsedIndex >= 0) {
+			if (this.options.alternativeImagesCustomizations != undefined)
+				delete this.options.alternativeImagesCustomizations[this.options.alternativeImages[parsedIndex]];
+			this.options.alternativeImages.splice(parsedIndex, 1);
+		}
+	}
 	stopAnimation(){
 		const tok = $(`#tokens div[data-id="${this.options.id}"]`);
 		if (tok.length === 0) {
