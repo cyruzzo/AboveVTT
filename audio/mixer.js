@@ -204,7 +204,7 @@ class Mixer extends EventTarget {
                   }
                 }
                 else if(url.startsWith('above-bucket-not-a-url')){
-                    url = await getAvttStorageUrl(url);
+                    url = await getAvttStorageUrl(url, true);
                 }
                 player = new Audio(url);
                 player.preload = "metadata";

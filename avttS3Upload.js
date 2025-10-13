@@ -5486,7 +5486,7 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
   throw lastError || new Error("Failed to fetch file from S3");
 }
 
-async function getFileFromS3(fileName) {
+async function getFileFromS3(fileName, highPriority=false) {
   const originalName = typeof fileName === "string" ? fileName : "";
   if (!originalName) {
     throw new Error("Missing filename for S3 request");
@@ -5510,21 +5510,36 @@ async function getFileFromS3(fileName) {
     // Avoid pushing duplicate queue items for the same cacheKey
     const alreadyQueued = getFileFromS3Queue.find((q) => q && q.cacheKey === cacheKey);
     if (!alreadyQueued) {
-      getFileFromS3Queue.push({
-        originalName,
-        cacheKey,
-        sanitizedKey,
-        resolve,
-        reject,
-      });
+      if(highPriority){
+        getFileFromS3Queue.unshift({
+          originalName,
+          cacheKey,
+          sanitizedKey,
+          resolve,
+          reject,
+        });
+      }
+      else{
+        getFileFromS3Queue.push({
+          originalName,
+          cacheKey,
+          sanitizedKey,
+          resolve,
+          reject,
+        });
+      }
+
     } else {
-      // If already queued, hook up to the existing pending promise if present
       if (getFileFromS3Pending.has(cacheKey)) {
         const existing = getFileFromS3Pending.get(cacheKey);
         existing.then(resolve).catch(reject);
       } else {
-        // fallback: still push (rare) to ensure this caller gets resolved
-        getFileFromS3Queue.push({ originalName, cacheKey, sanitizedKey, resolve, reject });
+        if (highPriority) {
+          getFileFromS3Queue.unshift({ originalName, cacheKey, sanitizedKey, resolve, reject });
+        }
+        else{
+          getFileFromS3Queue.push({ originalName, cacheKey, sanitizedKey, resolve, reject });
+        }
       }
     }
   });

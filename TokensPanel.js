@@ -918,7 +918,7 @@ function update_pc_token_rows() {
             
             let rowImage = (customizations?.tokenOptions?.alternativeImages?.length > 0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image;
             if (rowImage.startsWith('above-bucket-not-a-url')){
-                getAvttStorageUrl(rowImage).then((url) => {
+                getAvttStorageUrl(rowImage, true).then((url) => {
                     row.find(".token-image").attr('src', url)
                 })
             }
@@ -2476,11 +2476,11 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             let video = false;
             if(customization?.tokenOptions?.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => newImageUrl.includes(d)))){
-                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted loading='lazy' data-src='${newImageUrl}' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
             else{
-                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+                rowImage = $(`<img loading='lazy' data-src='${newImageUrl}' class='token-image' alt='${alt}'>`);
             }      
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
             updateTokenSrc(newImageUrl, rowImage, video);
@@ -2560,11 +2560,11 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
             
             let video=false;
             if(isVideoValue || (['.mp4', '.webm', '.m4v'].some(d => listingImage.includes(d)))){
-                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted data-src='${listingImage}' loading='lazy' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
             else{
-                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+                rowImage = $(`<img loading='lazy' data-src='${listingImage}' class='token-image' alt='${alt}'>`);
             }      
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);         
             updateTokenSrc(listingImage, rowImage, video);
@@ -3909,7 +3909,7 @@ function register_custom_token_image_context_menu() {
                         let selectedItem = $(opt.$trigger[0]);
                         let imgSrc = selectedItem.find(".token-image").attr("data-src");
                         if(tokenChangeImage){
-                            imgSrc = selectedItem.attr("src");
+                            imgSrc = selectedItem.attr("data-src");
                         }
                         
                         let listItem = find_sidebar_list_item(opt.$trigger);
@@ -3919,15 +3919,27 @@ function register_custom_token_image_context_menu() {
                         let placedTokenId = selectedItem.attr("data-token-id");
                         let placedToken = window.TOKEN_OBJECTS[placedTokenId];
                         if(placedToken !== undefined){
-                            placedToken.options.alternativeImages = placedToken.options.alternativeImages.filter(d => d !== imgSrc);
+                            for(id of window.CURRENTLY_SELECTED_TOKENS){
+                                const token = window.TOKEN_OBJECTS[id];
+                                if(!token)
+                                    continue;
+                                token.options.alternativeImages = token.options.alternativeImages.filter(d => d !== imgSrc);
+
+                            }
                         }
                         if (placedToken !== undefined && placedToken.options.imgsrc === imgSrc) {
                             let continueRemoving = confirm("This image is set on the token. Removing it will remove the image on the token as well. Are you sure you want to remove this image?")
                             if (!continueRemoving) {
                                 return;
                             }
-                            placedToken.options.imgsrc = "";
-                            placedToken.place_sync_persist();
+                            for (id of window.CURRENTLY_SELECTED_TOKENS) {
+                                const token = window.TOKEN_OBJECTS[id];
+                                if (!token)
+                                    continue;
+                                token.options.imgsrc = "";
+                                token.place_sync_persist();
+                            }
+                            
                         }
 
                         if (!tokenChangeImage && listItem?.isTypeMyToken() || listItem?.isTypeMonster() || listItem?.isTypePC() || listItem?.isTypeOpen5eMonster()) {
@@ -3940,7 +3952,7 @@ function register_custom_token_image_context_menu() {
                             persist_token_customization(customization, function(){
                                 let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;     
                                 if (listingImage.startsWith('above-bucket-not-a-url')) {
-                                    getAvttStorageUrl(listingImage).then((url) => {
+                                    getAvttStorageUrl(listingImage, true).then((url) => {
                                         $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', url);
                                     })
                                 }
@@ -3998,11 +4010,11 @@ function build_remove_all_images_button(sidebarPanel, listItem, placedToken) {
             let alt = $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('alt')
             let video = false;
             if(customization?.tokenOptions?.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => listingImage.includes(d)))){
-                rowImage = $(`<video disableRemotePlayback muted loading='lazy' class='token-image video-listing' alt='${alt}'>`);
+                rowImage = $(`<video disableRemotePlayback muted loading='lazy' data-src='${listingImage}' class='token-image video-listing' alt='${alt}'>`);
                 video = true;
             } 
             else{
-                rowImage = $(`<img loading='lazy' class='token-image' alt='${alt}'>`);
+                rowImage = $(`<img loading='lazy' data-src='${listingImage}' class='token-image' alt='${alt}'>`);
             }      
             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).replaceWith(rowImage);
 
@@ -4136,31 +4148,33 @@ function display_change_image_modal(placedToken) {
         let html;
         let video = false;
         if(placedToken?.options.videoToken == true || (['.mp4', '.webm', '.m4v'].some(d => imgUrl.includes(d)))){
-            html = $(`<video disableRemotePlayback muted autoplay='false' class="example-token" data-token-id='${placedToken?.options.id}' loading="lazy" alt="alternative image" />`);  
+            html = $(`<video disableRemotePlayback muted autoplay='false' data-src='${imgUrl}'  class="example-token" data-token-id='${placedToken?.options.id}' loading="lazy" alt="alternative image" />`);  
             video = true;   
         } else{
-            html = $(`<img class="example-token" loading="lazy" data-token-id='${placedToken?.options.id}' alt="alternative image" />`);
+            html = $(`<img class="example-token" loading="lazy" data-src='${imgUrl}' data-token-id='${placedToken?.options.id}' alt="alternative image" />`);
         }
         updateImgSrc(imgUrl, html, video);
         // the user is changing their token image, allow them to simply click an image
         // we don't want to allow drag and drop from this modal
         html.on("click", function (imgClickEvent) {
-
             const imgSrc = parse_img(imgUrl);
-            if(placedToken.options.alternativeImagesCustomizations != undefined){
-                placedToken.options ={
-                    ...placedToken.options,
-                    ...placedToken.options.alternativeImagesCustomizations[imgSrc],
+            const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
+            const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
+            for (id of window.CURRENTLY_SELECTED_TOKENS) {
+                const token = window.TOKEN_OBJECTS[id];
+                if (token.options.alternativeImagesCustomizations != undefined) {
+                    token.options = {
+                        ...token.options,
+                        ...token.options.alternativeImagesCustomizations[imgSrc],
+                    }
+                    const newSize = token.options.tokenSize * hpps
+                    token.size(newSize);
                 }
-                const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
-                const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
-                const newSize = placedToken.options.tokenSize * hpps
-                placedToken.size(newSize);
+                token.options.imgsrc = imgSrc;
+                token.place_sync_persist();
             }
-            placedToken.options.imgsrc = imgSrc;
-           
+
             close_sidebar_modal();
-            placedToken.place_sync_persist();
         });
         sidebarPanel.body.append(html);
     });
@@ -4171,78 +4185,105 @@ function display_change_image_modal(placedToken) {
             alert("You cannot use urls starting with data:");
             return;
         }
+        for(id of window.CURRENTLY_SELECTED_TOKENS){
+            const token = window.TOKEN_OBJECTS[id];
+            if(!token)
+                continue;
+            if (!token.options.alternativeImages) {
+                token.options.alternativeImages = [];
+            }
+            if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+            }
+            token.options.imgsrc = parse_img(imageUrl);
+            if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+            }
+
+            token.place_sync_persist();
+        }
        
-        if(!placedToken.options.alternativeImages){
-           placedToken.options.alternativeImages =[];
-        }
-        if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-           placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
-        }
-        placedToken.options.imgsrc = parse_img(imageUrl);
-        if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-            placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
-        }
+
+
         close_sidebar_modal();
-        placedToken.place_sync_persist();
     };
    
     let imageUrlInput = sidebarPanel.build_image_url_input("Use a different image", add_token_customization_image);
     sidebarPanel.inputWrapper.append(imageUrlInput);
     //dropbox button
     const dropboxOptions = dropBoxOptions(function(links){
-        for(let i = 0; i<links.length; i++){
-            if(!placedToken.options.alternativeImages){
-               placedToken.options.alternativeImages =[];
-            }
-            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-               placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
-            }
-            placedToken.options.imgsrc = parse_img(links[i].link);
-            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+        for (let i = 0; i < links.length; i++) {
+            for (id of window.CURRENTLY_SELECTED_TOKENS) {
+                const token = window.TOKEN_OBJECTS[id];
+                if (!token)
+                    continue;
+                if (!token.options.alternativeImages) {
+                    token.options.alternativeImages = [];
+                }
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+                token.options.imgsrc = parse_img(links[i].link);
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+
+                token.place_sync_persist();
             }
         }
-        close_sidebar_modal();
-        placedToken.place_sync_persist();       
+        close_sidebar_modal();   
     }, true);
     const dropboxButton = createCustomDropboxChooser('', dropboxOptions);
     dropboxButton.toggleClass('token-row-button', true);
 
     const oneDriveButton = createCustomOnedriveChooser('', function(links){
-        for(let i = 0; i<links.length; i++){
-            if(!placedToken.options.alternativeImages){
-               placedToken.options.alternativeImages =[];
-            }
-            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-               placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
-            }
-            placedToken.options.imgsrc = parse_img(links[i].link);
-            if(!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)){
-                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+        for (let i = 0; i < links.length; i++) {
+            for (id of window.CURRENTLY_SELECTED_TOKENS) {
+                const token = window.TOKEN_OBJECTS[id];
+                if (!token)
+                    continue;
+                if (!token.options.alternativeImages) {
+                    token.options.alternativeImages = [];
+                }
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+                token.options.imgsrc = parse_img(links[i].link);
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+
+                token.place_sync_persist();
             }
         }
-        close_sidebar_modal();
-        placedToken.place_sync_persist();      
+        close_sidebar_modal();   
     }, 'multiple')
 
 
     oneDriveButton.toggleClass('token-row-button', true);
 
     const avttButton = createCustomAvttChooser('', function (links) {
-        for (let i = 0; i < links.length; i++) {
-            if (!placedToken.options.alternativeImages) {
-                placedToken.options.alternativeImages = [];
-            }
-            if (!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)) {
-                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
-            }
-            placedToken.options.imgsrc = parse_img(links[i].link);
-            if (!placedToken.options.alternativeImages.includes(placedToken.options.imgsrc)) {
-                placedToken.options.alternativeImages = placedToken.options.alternativeImages.concat([placedToken.options.imgsrc])
+        for (let i = 0; i < links.length; i++) {  
+            for (id of window.CURRENTLY_SELECTED_TOKENS) {
+                const token = window.TOKEN_OBJECTS[id];
+                if (!token)
+                    continue;
+                if (!token.options.alternativeImages) {
+                    token.options.alternativeImages = [];
+                }
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+                token.options.imgsrc = parse_img(links[i].link);
+                if (!token.options.alternativeImages.includes(token.options.imgsrc)) {
+                    token.options.alternativeImages = token.options.alternativeImages.concat([token.options.imgsrc])
+                }
+
+                token.place_sync_persist();
             }
         }
         close_sidebar_modal();
-        placedToken.place_sync_persist();
+
     }, [avttFilePickerTypes.VIDEO, avttFilePickerTypes.IMAGE]);
 
     avttButton.toggleClass('token-row-button', true);
@@ -4257,7 +4298,7 @@ function display_change_image_modal(placedToken) {
     let inputWrapper = sidebarPanel.inputWrapper;
     sidebarPanel.footer.find(`.token-image-modal-add-button`).remove();
     // allow them to use the new url for the placed token without saving the url for all future tokens
-    let onlyForThisTokenButton = $(`<button class="sidebar-panel-footer-button" title="This url will be used for this token only. New tokens will continue to use the images shown above.">Set for this token only</button>`);
+    let onlyForThisTokenButton = $(`<button class="sidebar-panel-footer-button" title="This url will be used for selected tokens only. New tokens will continue to use the images shown above.">Set for selected tokens</button>`);
     onlyForThisTokenButton.on("click", function(event) {
         let imageUrl = $(`input[name='addCustomImage']`)[0].value;
         if (imageUrl !== undefined && imageUrl.length > 0) {
@@ -4266,7 +4307,7 @@ function display_change_image_modal(placedToken) {
     });
     inputWrapper.append(onlyForThisTokenButton);
 
-    inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can change the image for all tokens of this type by clicking the gear button on the token row in the Tokens tab.</div>`));
+    inputWrapper.append($(`<div class="sidebar-panel-header-explanation" style="padding:4px;">You can preset alternative images by clicking the cogwheel in the token panel and adding them there.</div>`));
 }
 
 const fetch_and_cache_scene_monster_items = mydebounce( () => {
