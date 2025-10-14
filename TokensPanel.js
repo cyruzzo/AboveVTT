@@ -4207,7 +4207,7 @@ function display_change_image_modal(placedToken) {
             alert("You cannot use urls starting with data:");
             return;
         }
-        for (id of window.allTokenIds){
+        for (id of allTokenIds){
             const token = window.TOKEN_OBJECTS[id];
             if(!token)
                 continue;
@@ -4235,7 +4235,7 @@ function display_change_image_modal(placedToken) {
     //dropbox button
     const dropboxOptions = dropBoxOptions(function(links){
         for (let i = 0; i < links.length; i++) {
-            for (id of window.allTokenIds) {
+            for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
                 if (!token)
                     continue;
@@ -4260,7 +4260,7 @@ function display_change_image_modal(placedToken) {
 
     const oneDriveButton = createCustomOnedriveChooser('', function(links){
         for (let i = 0; i < links.length; i++) {
-            for (id of window.allTokenIds) {
+            for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
                 if (!token)
                     continue;
@@ -4286,7 +4286,7 @@ function display_change_image_modal(placedToken) {
 
     const avttButton = createCustomAvttChooser('', function (links) {
         for (let i = 0; i < links.length; i++) {  
-            for (id of window.allTokenIds) {
+            for (id of allTokenIds) {
                 const token = window.TOKEN_OBJECTS[id];
                 if (!token)
                     continue;
