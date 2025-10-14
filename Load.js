@@ -102,6 +102,7 @@ if (isPlainCharacterPage) {
 		// AboveVTT Files
 		{ src: "environment.js" },
 		{ src: "CoreFunctions.js" }, // Make sure CoreFunctions executes before anything else
+		{ src: "avttS3Upload.js" },
 		{ src: "AboveApi.js" },
 		{ src: "DDBApi.js" },
 		{ src: "AOETemplates.js" },
@@ -135,11 +136,10 @@ if (isPlainCharacterPage) {
 		{ src: "Main.js" },
 		{ src: "MonsterStatBlock.js" },
 		// AboveVTT files that execute when loaded	
-		{ src: "audio/index.js", type: "module" },
 		{ src: "onedrive/onedrivemsal.js" },
 		{ src: "onedrive/onedrivepicker.js" },
-		{ src: "WeatherOverlay.js" },
-		{ src: "avttS3Upload.js" }
+		{ src: "audio/index.js", type: "module" },
+		{ src: "WeatherOverlay.js" }
 	]
 	//Do not load characterPage.js for DM or on campaign page
 	if(isPlayerPage && !isDM){ 
