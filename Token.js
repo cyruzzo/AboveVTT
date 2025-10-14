@@ -843,10 +843,10 @@ class Token {
 
 				const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
 				let copyImage = underDarkToken.find('.token-image')
-				
 				if (copyImage.length == 0) {
 					let oldImage = old.find('.token-image');
-					underDarkToken.append(oldImage.clone());
+					copyImage = oldImage.clone();
+					underDarkToken.append(copyImage);
 				}
 
 				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
@@ -2314,6 +2314,7 @@ class Token {
 								let video = false;
 								if (oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken) {
 									oldImage.remove();
+									$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
 									let tokenImage;
 									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
 										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + "'/>");
@@ -2676,7 +2677,8 @@ class Token {
 						let copyImage = underDarkToken.find('.token-image')
 						if(copyImage.length == 0){
 							let oldImage = old.find('.token-image');
-							underDarkToken.append(oldImage.clone());
+							copyImage = oldImage.clone();
+							underDarkToken.append(copyImage);
 						}
 						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
 							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
