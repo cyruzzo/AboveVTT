@@ -5184,9 +5184,7 @@ function refreshFiles(
               currentFolder = entry.relativePath;
             });
         }
-        listItem.addEventListener("click", () => {
-          $("input").blur();
-        });
+
         const checkboxElement = checkboxCell.find("input")[0];
         if (checkboxElement) {
           checkboxElement.setAttribute("data-index", String(index));
