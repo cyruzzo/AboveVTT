@@ -2724,17 +2724,6 @@ const PatreonAuth = (() => {
   let cachedMembership = null;
   let cachedMembershipFetchedAt = 0;
 
-  function resolveConfig() {
-    const external =
-      typeof window.AVTT_PATRON_CONFIG === "object"
-        ? window.AVTT_PATRON_CONFIG
-        : {};
-    const merged = { ...defaultConfig, ...external };
-    merged.campaignSlug = (
-      merged.campaignSlug || defaultConfig.campaignSlug
-    ).toLowerCase();
-    return merged;
-  }
 
   function loadStoredTokens() {
     try {
@@ -3363,7 +3352,7 @@ const PatreonAuth = (() => {
   }
 
   async function ensureMembership() {
-    const config = resolveConfig();
+    const config = defaultConfig;
     if (!config.clientId || !config.redirectUri) {
       console.warn(
         "Patreon configuration is incomplete. Falling back to free tier.",
@@ -3400,7 +3389,7 @@ const PatreonAuth = (() => {
   return {
     ensureMembership,
     logout,
-    resolveConfig,
+    defaultConfig,
   };
 })();
 
@@ -3530,42 +3519,6 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
   applyActiveMembership(membership);
 
-  /*if (activeUserTier.level === "free") {
-    const patreonConfig = PatreonAuth.resolveConfig();
-    if (!patreonConfig.clientId || !patreonConfig.redirectUri) {
-      alert("Patreon login is not configured.");
-      return;
-    }
-
-    const shouldAttemptLogin = window.confirm(
-      "Log in with Patreon to verify your Azmoria membership?",
-    );
-    if (!shouldAttemptLogin) {
-      return;
-    }
-
-    PatreonAuth.logout();
-    try {
-      membership = await PatreonAuth.ensureMembership();
-      applyActiveMembership(membership);
-    } catch (reauthError) {
-      console.error(
-        "Patreon verification failed after reauth prompt",
-        reauthError,
-      );
-      alert(
-        "Patreon verification failed. Patreon login is required to open the AVTT File Uploader.",
-      );
-      return;
-    }
-
-    if (activeUserTier.level === "free") {
-      alert(
-        "Unable to detect an active Azmoria Patreon membership. Please check your subscription tier and try again.",
-      );
-      return;
-    }
-  }*/
 
   currentFolder = "";
   const filePicker = $(` 
