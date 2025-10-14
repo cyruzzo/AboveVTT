@@ -7689,8 +7689,8 @@ function clipped_light(auraId, maskPolygon, playerTokenId, canvasWidth = getScen
 		blackVision = 0;
 
 
-	let lightRadius =((parseInt(light1Range)*blackLight1)+(parseInt(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
-	let darkvisionRadius = parseInt(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
+	let lightRadius = ((parseFloat(light1Range) * blackLight1) + (parseFloat(light2Range)*blackLight2))*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq 
+	let darkvisionRadius = parseFloat(visionRange)*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.fpsq*blackVision;
 	
 	const selectedTokenCheck = numberOfSharedVisionTokens == 0 || (window.SelectedTokenVision !== true || window.CURRENTLY_SELECTED_TOKENS.includes(auraId) || window.CURRENTLY_SELECTED_TOKENS.length===0)
 
