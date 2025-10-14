@@ -3913,13 +3913,6 @@ function register_custom_token_image_context_menu() {
                         }
 
 
-
-                       
-                        
-                        
-                       
-                        
-
                         // if they are removing the image that is set on a token, ask them if they really want to remove it
                         let placedTokenId = selectedItem.attr("data-token-id") || selectedItem.attr("data-id") || selectedItem.attr("id");
                         let placedToken = window.TOKEN_OBJECTS[placedTokenId];
