@@ -842,23 +842,20 @@ class Token {
 
 
 				const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
-				let copyImage = underDarkToken.find('.token-image')
-				
-				if (copyImage.length == 0) {
-					let oldImage = old.find('.token-image');
-					underDarkToken.append(oldImage.clone());
-				}
+				underDarkToken.find('.token-image').remove();
+
+				let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
+				const copyImage = oldImage.clone();
+				underDarkToken.append(copyImage);
 
 				if(this.options.imgsrc.startsWith('above-bucket-not-a-url')){
 					const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 					if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))){
-						getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
-							copyImage.attr("src", parse_img(url));
-						});
+						updateTokenSrc(this.options.imgsrc, copyImage, this.options.videoToken)
 					}
 				}
 				else if (copyImage.attr('src') != parse_img(this.options.imgsrc)){
-					copyImage.attr("src", parse_img(this.options.imgsrc));
+					updateTokenSrc(parse_img(this.options.imgsrc), copyImage, this.options.videoToken)
 				}
 			}
 
@@ -2310,10 +2307,11 @@ class Token {
 							getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
 								let oldFileExtension = oldImage.attr("src").split('.')[oldImage.attr("src").length - 1]
 								let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length - 1]);
-								let imgClass = oldImage.attr('class');
+								let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 								let video = false;
 								if (oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken) {
 									oldImage.remove();
+									
 									let tokenImage;
 									if (this.options.videoToken == true || ['.mp4', '.webm', '.m4v'].some(d => this.options.imgsrc.includes(d))) {
 										tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='" + imgClass + "'/>");
@@ -2324,13 +2322,25 @@ class Token {
 									}
 									oldImage = tokenImage;
 									old.append(tokenImage);
+		
 								}
 								window.videoTokenOld[this.options.id] = this.options.videoToken;
-
-								updateTokenSrc(this.options.imgsrc, oldImage, video)
-								getAvttStorageUrl(this.options.imgsrc, true).then((url) => {
-									$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(url));
-								})
+								let underDarkImage;
+								const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
+								if (underDarkToken.length > 0) {
+									underDarkToken.find('.token-image').remove();
+									underDarkImage = oldImage.clone();
+									underDarkToken.append(underDarkImage);
+								}
+								
+								$(`#combat_area tr[data-target='${this.options.id}'] img[class*='Avatar']`).attr("src", parse_img(url));
+								oldImage.attr('src', url);
+								oldImage.css('background', `url(${url})`);
+								if(underDarkImage){
+									underDarkImage.attr('src', url);
+									underDarkImage.css('background', `url(${url})`);
+								}
+								this.update_health_aura(old)
 
 								oldImage.off('dblclick.highlightToken').on('dblclick.highlightToken', function (e) {
 									self.highlight(true); // dont scroll
@@ -2384,11 +2394,11 @@ class Token {
 					else if(oldImage.attr("src")!=parse_img(this.options.imgsrc) || window.videoTokenOld[this.options.id] != this.options.videoToken){
 						let oldFileExtension = oldImage.attr("src")?.split('.')[oldImage.attr("src").length-1]
 						let newFileExtention = parse_img(this.options.imgsrc.split('.')[this.options.imgsrc.split('.').length-1]);
-						let imgClass = oldImage.attr('class');
+						let imgClass = oldImage.attr('class')?.replaceAll('div-token-image', '');
 						let video = false;
 						if(oldFileExtension !== newFileExtention || window.videoTokenOld[this.options.id] != this.options.videoToken){
 							oldImage.remove();
-							$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
+							
 							let tokenImage;
 							if(this.options.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => this.options.imgsrc.includes(d))){
 								tokenImage = $("<video disableRemotePlayback autoplay loop muted style='transform:scale(var(--token-scale)) rotate(var(--token-rotation))' class='"+imgClass+"'/>");			
@@ -2399,6 +2409,13 @@ class Token {
 							}
 							oldImage = tokenImage;
 							old.append(tokenImage);
+							const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
+							if (underDarkToken.length > 0) {
+								underDarkToken.find('.token-image').remove();
+								const underDarkImage = tokenImage.clone();
+								underDarkToken.append(underDarkImage);
+								updateTokenSrc(this.options.imgsrc, underDarkImage, video)
+							}
 						}
 						window.videoTokenOld[this.options.id] = this.options.videoToken;
 						
@@ -2673,11 +2690,12 @@ class Token {
 							);
 						}
 						const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
-						let copyImage = underDarkToken.find('.token-image')
-						if(copyImage.length == 0){
-							let oldImage = old.find('.token-image');
-							underDarkToken.append(oldImage.clone());
-						}
+						underDarkToken.find('.token-image').remove();
+						
+						let oldImage = $(`#tokens div[data-id='${this.options.id}'] .token-image`);
+						const copyImage = oldImage.clone();
+						underDarkToken.append(copyImage);
+						
 						if (this.options.imgsrc.startsWith('above-bucket-not-a-url')) {
 							const fileSrc = this.options.imgsrc.replace('above-bucket-not-a-url', '');
 							if (!copyImage.attr('src')?.includes(encodeURI(fileSrc))) {
