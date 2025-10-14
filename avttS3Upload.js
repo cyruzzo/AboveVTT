@@ -5711,7 +5711,6 @@ async function fetchFileFromS3WithRetry(originalName, cacheKey, sanitizedKey) {
         throw new Error("File not found on S3");
       }
       cacheGetFileFromS3Url(cacheKey, sanitizedKey, fileURL);
-      console.log("File found on S3: ", fileURL);
       return fileURL;
     } catch (error) {
       lastError = error;
@@ -5745,7 +5744,18 @@ async function getFileFromS3(fileName, highPriority=false) {
   }
 
   if (getFileFromS3Pending.has(cacheKey)) {
-    return getFileFromS3Pending.get(cacheKey);
+
+    if (highPriority) {
+      const i = getFileFromS3Queue.findIndex(item => item.cacheKey === cacheKey);
+      if (i > -1) {
+        const [item] = getFileFromS3Queue.splice(i, 1);
+        getFileFromS3Queue.unshift(item);
+        return getFileFromS3Pending.get(cacheKey)
+      }
+    }else{
+      return getFileFromS3Pending.get(cacheKey);
+    }
+
   }
 
   const queuedPromise = new Promise((resolve, reject) => {
@@ -5773,8 +5783,21 @@ async function getFileFromS3(fileName, highPriority=false) {
 
     } else {
       if (getFileFromS3Pending.has(cacheKey)) {
-        const existing = getFileFromS3Pending.get(cacheKey);
-        existing.then(resolve).catch(reject);
+        
+        if(highPriority){
+          const i = getFileFromS3Queue.findIndex(item => item.cacheKey === cacheKey);
+          if (i > -1) {
+            const [item] = getFileFromS3Queue.splice(i, 1);
+            getFileFromS3Queue.unshift(item);
+            const existing = getFileFromS3Pending.get(cacheKey);
+            existing.then(resolve).catch(reject);
+          }
+        }
+        else{
+          const existing = getFileFromS3Pending.get(cacheKey);
+          existing.then(resolve).catch(reject);
+        }
+        
       } else {
         if (highPriority) {
           getFileFromS3Queue.unshift({ originalName, cacheKey, sanitizedKey, resolve, reject });
