@@ -727,7 +727,11 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                 if (specificImage !== undefined) {
                     helper.attr("src", specificImage);
                 } else {      
-                    const src = random_image_for_item(draggedItem);
+                    let src = random_image_for_item(draggedItem);
+                    if(draggedItem.type == ItemType.PC){
+                        src = window.all_token_objects?.[draggedItem.id]?.options?.imgsrc || src;
+                    }  
+                    helper.attr("data-src", src);
                     if (src.startsWith('above-bucket-not-a-url')) {
                         getAvttStorageUrl(src).then((url) => {
                             helper.attr("src", url);
@@ -4177,21 +4181,34 @@ function display_change_image_modal(placedToken) {
             // the user is changing their token image, allow them to simply click an image
             // we don't want to allow drag and drop from this modal
             html.on("click", function (imgClickEvent) {
+
                 const imgSrc = parse_img(imgUrl);
                 const tokenMultiplierAdjustment = (!window.CURRENT_SCENE_DATA.scaleAdjustment) ? 1 : (window.CURRENT_SCENE_DATA.scaleAdjustment.x > window.CURRENT_SCENE_DATA.scaleAdjustment.y) ? window.CURRENT_SCENE_DATA.scaleAdjustment.x : window.CURRENT_SCENE_DATA.scaleAdjustment.y;
                 const hpps = window.CURRENT_SCENE_DATA.hpps * tokenMultiplierAdjustment;
                 for (id of allTokenIds) {
                     const token = window.TOKEN_OBJECTS[id];
-                    if (token.options.alternativeImagesCustomizations != undefined) {
-                        token.options = {
-                            ...token.options,
-                            ...token.options.alternativeImagesCustomizations[imgSrc],
+                    if(token){ 
+                        
+                        if (token.options.alternativeImagesCustomizations != undefined) {
+                            token.options = {
+                                ...token.options,
+                                ...token.options.alternativeImagesCustomizations[imgSrc],
+                            }
+                            const newSize = token.options.tokenSize * hpps
+                            token.size(newSize);
                         }
-                        const newSize = token.options.tokenSize * hpps
-                        token.size(newSize);
+                        token.options.imgsrc = imgSrc; 
+
+                        token.place_sync_persist();
                     }
-                    token.options.imgsrc = imgSrc;
-                    token.place_sync_persist();
+
+
+                    const allToken = window.all_token_objects[id];
+                    if (allToken) {
+                        allToken.options = {
+                            ...token.options
+                        }
+                    }
                 }
 
                 close_sidebar_modal();
