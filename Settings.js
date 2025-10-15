@@ -642,7 +642,7 @@ function avtt_settings() {
 			{ name: "centerPing", label: "Center Player View on Ping", defaultValue: true, dmOnly: true, type: 'toggle',options: [
 				{ value: true, label: "Enabled", description: `` },
 				{ value: false, label: "Disabled", description: `` }
-			], },,
+			], },
 			{ name: "selectLocked", label: "Locked Tokens Selectable", defaultValue: true, dmOnly: true, type: 'toggle',options: [
 				{ value: true, label: "Enabled", description: `` },
 				{ value: false, label: "Disabled", description: `` }
