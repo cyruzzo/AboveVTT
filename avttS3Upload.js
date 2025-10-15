@@ -675,7 +675,7 @@ function avttAdjustCachedUsage(deltaBytes = 0, deltaObjects = 0) {
   }
   const tierLabel = $("#patreon-tier span.user-teir-level");
   if (tierLabel.length && typeof activeUserTier === "object") {
-    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
+    tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
   }
 }
 
@@ -5333,7 +5333,8 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       }
       avttRemoveCacheEntry(entry.key);
     }
-    avttAdjustCachedUsage(-json.usage.totalBytes, -json.usage.objectCount);
+    avttUsageCache.totalBytes = json.usage.totalBytes;
+    avttUsageCache.objectCount = json.usage.objectCount;
     refreshFiles(
       currentFolder,
       true,
