@@ -4827,7 +4827,7 @@ function refreshFiles(
           document.getElementById("user-limit").innerHTML = formatFileSize(activeUserLimit);
           const tierLabel = $("#patreon-tier span.user-teir-level");
           if (tierLabel.length) {
-            tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
+            tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
           }
         })
         .catch((error) => {
