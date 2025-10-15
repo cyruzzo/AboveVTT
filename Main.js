@@ -2564,7 +2564,7 @@ function init_zoom_buttons() {
 	if ($("#zoom_buttons").length > 0) {
 		return;
 	}
-	let defaultValues = get_avtt_setting_value('quickToggleDefaults');
+	let defaultValues = get_avtt_setting_value('quickToggleDefaults') || {};
 	// ZOOM BUTTON
 	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
