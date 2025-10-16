@@ -1736,8 +1736,6 @@ const debounce_pc_token_update = mydebounce(() => {
     if (crossSceneToken && pc) {
       let currentImage = crossSceneToken.options.imgsrc;
       if (currentImage != undefined) {
-        
-
         const newImage = (crossSceneToken.options.alternativeImages == undefined || crossSceneToken.options.alternativeImages?.length == 0) ? pc.image : currentImage;
         const options = $.extend(true, token.options, pc, { imgsrc: newImage });
         for (let i = 0; i < unusedPlayerData.length; i++) {
@@ -2314,7 +2312,24 @@ function open_github_issue(title, body) {
   window.open(url, '_blank');
 }
 
-
+function display_url_embeded(url){
+  const encodedUrl = encodeURIComponent(url);
+  const src = `${window.EXTENSION_PATH}iframe.html?src=${encodedUrl}`;
+  const iframe = $(`<iframe id='embededFileFrame' src='${src}'></iframe>`);
+  iframe.css({
+    width: 'calc(100% + 2px)',
+    height: '100%',
+    background: 'var(--background-color, #fff)',
+    'border-radius': '0px 0px 5px 5px',
+    top: '-1px',
+    left: '-1px',
+    position: 'relative',
+    'border-top': '0px'
+  })    
+  const container = find_or_create_generic_draggable_window('embededFileDisplay', '', false, true, '#embededFileFrame', 'min(80%, 1000px)', 'min(80%, 600px)', undefined, undefined, true);
+  container.append(iframe);
+  $('body').append(container);
+}
 
 function find_or_create_generic_draggable_window(id, titleBarText, addLoadingIndicator = true, addPopoutButton = false, popoutSelector=``, width='80%', height='80%', top='10%', left='10%', showSlow = true, cancelClasses='') {
   console.log(`find_or_create_generic_draggable_window id: ${id}, titleBarText: ${titleBarText}, addLoadingIndicator: ${addLoadingIndicator}, addPopoutButton: ${addPopoutButton}`);

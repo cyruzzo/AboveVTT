@@ -1618,8 +1618,9 @@ function avttEnsureContextMenu() {
     <button type="button" data-action="sendToGamelog">Send To Gamelog</button>
     <button type="button" data-action="cut">Cut</button>
     <button type="button" data-action="paste">Paste</button>
-    <button type="button" data-action="copyPath">Copy Path</button>
     <button type="button" data-action="rename">Rename</button>
+    <button type="button" data-action="forceOpen">Force Display to Players</button>
+    <button type="button" data-action="copyPath">Copy Path</button>
     <button type="button" data-action="import">Import</button>
     <button type="button" data-action="openNewTab">Open in New Tab</button>
     <hr/>
@@ -1714,9 +1715,12 @@ function avttUpdateContextMenuState() {
   }
   const openNewTabButton = menu.querySelector('button[data-action="openNewTab"]');
   if (openNewTabButton) {
-    openNewTabButton.disabled =
-      !hasExplicitTarget || avttContextMenuState.isFolder;
-  }
+    openNewTabButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
+  } 
+  const forceOpenButton = menu.querySelector('button[data-action="forceOpen"]');
+  if (forceOpenButton) {
+    forceOpenButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
+  } 
   const importButton = menu.querySelector('button[data-action="import"]');
   if (importButton) {
     const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
@@ -1879,8 +1883,37 @@ async function avttHandleContextAction(action) {
         console.error("Failed to open file in new tab", error);
         alert(error?.message || "Failed to open the file in a new tab.");
       }
+      break; 
+    } 
+    case "forceOpen": {
+      if (
+        !avttContextMenuState.targetPath ||
+        avttContextMenuState.isImplicit ||
+        avttContextMenuState.isFolder
+      ) {
+        return;
+      }
+      try {
+        const rawKey =
+          avttContextMenuState.rawKey ||
+          (typeof window !== "undefined" && typeof window.PATREON_ID === "string"
+            ? `${window.PATREON_ID}/${avttContextMenuState.targetPath}`
+            : avttContextMenuState.targetPath);
+        if (!rawKey) {
+          throw new Error("File path is unavailable.");
+        }
+        const url = await getAvttStorageUrl(rawKey);
+        if (!url) {
+          throw new Error("File URL could not be generated.");
+        }
+        window.MB.sendMessage("custom/myVTT/open-url-embed", url)
+        display_url_embeded(url);
+      } catch (error) {
+        console.error("Failed to open file in new tab", error);
+        alert(error?.message || "Failed to open the file in a new tab.");
+      }
       break;
-    }
+    } 
     case "sendToGamelog": {
       if (
         !avttContextMenuState.targetPath ||
@@ -3533,6 +3566,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 height: calc(100% - 15px);
                 overflow: auto;
                 border: 1px solid #ddd;
+                width: calc(100% + 2px);
+                left: -1px;
             }
             #file-listing-section {
                 text-align: left;

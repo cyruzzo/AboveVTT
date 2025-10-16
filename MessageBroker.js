@@ -161,17 +161,26 @@ const debounceHandleInjected = mydebounce(() => {
 	        	});		
 					}
 					else if($(img[i]).is('video')){
-						$(img[i]).magnificPopup({type: 'iframe', closeOnContentClick: true});
-							img[i].addEventListener('loadeddata', function() {
-						    	if(img[i].videoWidth > 0) {
-											$(img[i]).css({
-												'display': 'block',
-												'width': '100%'
-											});
-											li.find('.chat-link').css('display', 'none');
-										}
-										newheight = li.find('>[class*="MessageContainer-Flex"]').height();
-										li.height(newheight);
+						const src = img[i].src;
+						$(img[i]).magnificPopup({
+							type: 'iframe', 
+							closeOnContentClick: true,
+							callbacks: {
+								elementParse: function (item) {
+									item.src = `${window.EXTENSION_PATH}iframe.html?src=${encodeURIComponent(item.src)}`;
+								}
+							}
+						});
+						img[i].addEventListener('loadeddata', function() {
+							if(img[i].videoWidth > 0) {
+										$(img[i]).css({
+											'display': 'block',
+											'width': '100%'
+										});
+										li.find('.chat-link').css('display', 'none');
+									}
+									newheight = li.find('>[class*="MessageContainer-Flex"]').height();
+									li.height(newheight);
 						}, false);
 					}
 				}
@@ -639,7 +648,10 @@ class MessageBroker {
 					});
 				}
 			}
-
+			if (msg.eventType == "custom/myVTT/open-url-embed"){
+				const url = msg.data;
+				display_url_embeded(url);
+			}
 			if (msg.eventType === "custom/myVTT/fetchscene") {
 
 				if(msg.data.sceneid.players){
