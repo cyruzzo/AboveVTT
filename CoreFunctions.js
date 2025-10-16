@@ -1730,40 +1730,33 @@ const debounce_pc_token_update = mydebounce(() => {
   window.PC_TOKENS_NEEDING_UPDATES.forEach((playerId) => {
     const pc = find_pc_by_player_id(playerId, false);
     let token = window.TOKEN_OBJECTS[pc?.sheet];     
-    if (token && pc) {
-      let currentImage = token.options.imgsrc;
-      if (currentImage != undefined){
-        token.hp = pc.hitPointInfo.current; // triggers concentration checks
-        token.options.hitPointInfo = pc.hitPointInfo;
 
-        const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-        token.options = $.extend(true, {}, token.options, pc);
-        token.options.imgsrc = newImage;
+    let crossSceneToken = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
+   
+    if (crossSceneToken && pc) {
+      let currentImage = crossSceneToken.options.imgsrc;
+      if (currentImage != undefined) {
+        
 
+        const newImage = (crossSceneToken.options.alternativeImages == undefined || crossSceneToken.options.alternativeImages?.length == 0) ? pc.image : currentImage;
+        const options = $.extend(true, token.options, pc, { imgsrc: newImage });
         for (let i = 0; i < unusedPlayerData.length; i++) {
-          delete token.options[unusedPlayerData[i]];
+          delete options[unusedPlayerData[i]];
         }
-        if (window.DM) {
-          token.place_sync_persist(); // update it on the server
-        }
-        else {
-          token.place(); // update token for players even if dm isn't connected to websocket
+        crossSceneToken.options = $.extend(true, {}, options);
+        if(token){
+          token.hp = pc.hitPointInfo.current; // triggers concentration checks
+          token.options.hitPointInfo = pc.hitPointInfo;
+          token.options = options;
+          if (window.DM) {
+            token.place_sync_persist(); // update it on the server
+          }
+          else {
+            token.place(); // update token for players even if dm isn't connected to websocket
+          }
         }
       }
-
-    }
-    token = window.all_token_objects[pc?.sheet] //for the combat tracker and cross scene syncing/tokens - we want to update this even if the token isn't on the current map
-    if(token && pc){
-      const currentImage = token.options.imgsrc;
-      if(currentImage != undefined){
-        const newImage = (token.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-        token.options = $.extend(true, {}, token.options, pc);
-        token.options.imgsrc = newImage;
-        for (let i = 0; i < unusedPlayerData.length; i++) {
-          delete token.options[unusedPlayerData[i]];
-        }
-      }
-    }     
+    }   
   });
   if (window.DM) {
     update_pc_token_rows();
