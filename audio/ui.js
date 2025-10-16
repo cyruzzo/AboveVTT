@@ -991,12 +991,9 @@ function init_trackLibrary() {
         }
     });
     trackLibrary.dispatchEvent(new Event('onchange'));
-    if (window.testAvttFilePicker === true) {
-        $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, avttButton, importCSV, exportCSV, importTrackFields, trackList);
-    }
-    else {
-        $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, oneDriveButton, importCSV, exportCSV, importTrackFields, trackList);
-    }
+    
+    $("#sounds-panel .sidebar-panel-body").append(header, searchTrackLibary, "<br>", addTracksToMixer, addShuffledToMixer, "<br>", addTrack, dropBoxbutton, avttButton, importCSV, exportCSV, importTrackFields, trackList);
+
     
 }
 
