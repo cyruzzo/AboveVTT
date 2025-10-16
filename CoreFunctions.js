@@ -766,8 +766,8 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     $(pastedButtons[i]).replaceWith($(pastedButtons[i]).text());
   }
 
-  const rollImage = specificImage ? specificImage : (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.imgsrc : window.PLAYER_IMG
-  const rollName = specificName ? specificName : (tokenId) ? window.TOKEN_OBJECTS[tokenId].options.revealname == true || window.TOKEN_OBJECTS[tokenId].options.player_owned ? window.TOKEN_OBJECTS[tokenId].options.name : '' : window.PLAYER_NAME
+  const rollImage = specificImage ? specificImage : (tokenId) ? window.all_token_objects[tokenId].options.imgsrc : window.PLAYER_IMG
+  const rollName = specificName ? specificName : (tokenId) ? window.all_token_objects[tokenId].options.revealname == true || window.all_token_objects[tokenId].options.player_owned ? window.all_token_objects[tokenId].options.name : '' : window.PLAYER_NAME
 
   const clickHandler = function(clickEvent) {
     clickEvent.stopPropagation();
@@ -906,8 +906,8 @@ function add_journal_roll_buttons(target, tokenId=undefined, specificImage=undef
     }
   })
 
-  const tokenName = window.TOKEN_OBJECTS && window.TOKEN_OBJECTS[tokenId]?.options?.name ? window.TOKEN_OBJECTS[tokenId]?.options?.name  : window.PLAYER_NAME
-  const tokenImage = window.TOKEN_OBJECTS && window.TOKEN_OBJECTS[tokenId]?.options?.imgsrc ? window.TOKEN_OBJECTS[tokenId]?.options?.imgsrc : window.PLAYER_IMG
+  const tokenName = window.all_token_objects && window.all_token_objects[tokenId]?.options?.name ? window.all_token_objects[tokenId]?.options?.name  : window.PLAYER_NAME
+  const tokenImage = window.all_token_objects && window.all_token_objects[tokenId]?.options?.imgsrc ? window.all_token_objects[tokenId]?.options?.imgsrc : window.PLAYER_IMG
   const entityType = tokenId ? "monster" : "character";
 
   // terminate the clones reference, overkill but rather be safe when it comes to memory
