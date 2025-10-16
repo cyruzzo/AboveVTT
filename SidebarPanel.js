@@ -1571,6 +1571,10 @@ function build_sidebar_list_row(listItem) {
     let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
     let img;
     let video = false;
+    let isAvttBucketFile = listingImage.startsWith('above-bucket-not-a-url');
+    if (isAvttBucketFile) {
+      listingImage = listingImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')
+    }
     if(listingImage?.includes != undefined && listingImage.includes('folder.svg')){
     img = $(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 309.267 309.267" style="enable-background:new 0 0 309.267 309.267;" xml:space="preserve">
         <g>
@@ -1580,15 +1584,13 @@ function build_sidebar_list_row(listItem) {
         </g>
     </svg>`)
     }
-    else if(tokenCustomizations?.tokenOptions?.videoToken == true || ['.mp4', '.webm','.mkv'].some(d => listingImage?.includes(d))){
+    else if ((!isAvttBucketFile && tokenCustomizations?.tokenOptions?.videoToken == true) || ['.mp4', '.webm','.mkv'].some(d => listingImage?.includes(d))){
         img = $(`<video disableRemotePlayback muted src="" loading="lazy" alt="${listItem.name} image" class="token-image video-listing" />`);   
         video = true;
     } else{
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
-    if(listingImage.startsWith('above-bucket-not-a-url')){
-      listingImage = listingImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')
-    }
+
     updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
   }
