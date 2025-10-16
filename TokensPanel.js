@@ -695,7 +695,7 @@ function get_helper_size(draggedItem){
  */
 async function enable_draggable_token_creation(html, specificImage = undefined) {
     if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
-        specificImage = await getAvttStorageUrl(specificImage)
+        specificImage = await getAvttStorageUrl(`${specificImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')}`)
     }
 
     html.draggable({
@@ -733,7 +733,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                     }  
                     helper.attr("data-src", src);
                     if (src.startsWith('above-bucket-not-a-url')) {
-                        getAvttStorageUrl(src).then((url) => {
+                        getAvttStorageUrl(src.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')).then((url) => {
                             helper.attr("src", url);
                         })
                     }
@@ -922,7 +922,7 @@ function update_pc_token_rows() {
             
             let rowImage = (customizations?.tokenOptions?.alternativeImages?.length > 0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image;
             if (rowImage.startsWith('above-bucket-not-a-url')){
-                getAvttStorageUrl(rowImage, true).then((url) => {
+                getAvttStorageUrl(rowImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2'), true).then((url) => {
                     row.find(".token-image").attr('src', url)
                 })
             }
@@ -3960,7 +3960,7 @@ function register_custom_token_image_context_menu() {
                                 persist_token_customization(customization, function () {
                                     let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
                                     if (listingImage.startsWith('above-bucket-not-a-url')) {
-                                        getAvttStorageUrl(listingImage, true).then((url) => {
+                                        getAvttStorageUrl(listingImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2'), true).then((url) => {
                                             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', url);
                                         })
                                     }
