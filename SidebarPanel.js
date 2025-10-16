@@ -1586,7 +1586,9 @@ function build_sidebar_list_row(listItem) {
     } else{
         img = $(`<img src="" loading="lazy" alt="${listItem.name} image" class="token-image" />`);
     }
-  
+    if(listingImage.startsWith('above-bucket-not-a-url')){
+      listingImage = listingImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')
+    }
     updateImgSrc(listingImage, img, video, false);
     imgHolder.append(img);
   }
