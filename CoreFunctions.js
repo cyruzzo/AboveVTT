@@ -2315,7 +2315,7 @@ function open_github_issue(title, body) {
 function display_url_embeded(url){
   const encodedUrl = encodeURIComponent(url);
   const src = `${window.EXTENSION_PATH}iframe.html?src=${encodedUrl}`;
-  const iframe = $(`<iframe id='embededFileFrame' src='${src}'></iframe>`);
+  const iframe = $(`<iframe id='embededFileFrame' data-src='${url}' src='${src}'></iframe>`);
   iframe.css({
     width: 'calc(100% + 2px)',
     height: '100%',
@@ -2395,11 +2395,17 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     popoutButton.off('click.popout').on('click.popout', function(){
       if($(popoutSelector).is("iframe")){
         
-        name = titleBarText.replace(/(\r\n|\n|\r)/gm, "").trim();
+        const name = titleBarText.replace(/(\r\n|\n|\r)/gm, "").trim();
         const params = `scrollbars=no,resizable=yes,status=no,location=no,toolbar=no,menubar=no,
       width=${container.width()},height=${container.height()},left=100,top=100`;
-        let iframeSrc =  $(popoutSelector).attr('src').replace('https://www.dndbeyond.com', '');
-        childWindows[name] = window.open(`https://dndbeyond.com${iframeSrc}`, '_blank', params);
+        let iframeSrc = $(popoutSelector).attr('data-src');
+        if (!iframeSrc){
+          iframeSrc = $(popoutSelector).attr('src').replace('https://www.dndbeyond.com', '');
+          childWindows[name] = window.open(`https://dndbeyond.com${iframeSrc}`, '_blank', params);
+        } else{
+          childWindows[name] = window.open(iframeSrc, '_blank', params);
+        }
+          
         close_title_button.click();
         childWindows[name].onbeforeunload = function(){
           closePopout(name);
