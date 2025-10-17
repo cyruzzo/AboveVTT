@@ -5389,7 +5389,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 const GET_FILE_FROM_S3_MAX_RETRIES = 5;
 const GET_FILE_FROM_S3_BASE_DELAY_MS = 250;
 const GET_FILE_FROM_S3_MAX_DELAY_MS = 4000;
-const GET_FILE_FROM_S3_BATCH_SIZE = 10;
+const GET_FILE_FROM_S3_BATCH_SIZE = 50;
 const GET_FILE_FROM_S3_CACHE_TTL_MS = 3500000;
 let getFileFromS3Queue = [];
 let getFileFromS3Pending = new Map();
