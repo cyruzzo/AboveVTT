@@ -152,13 +152,17 @@ if (isPlainCharacterPage) {
 			{ src: "jquery.magnific-popup.min.js" },
 			{ src: "purify.min.js" },
 			{ src: "environment.js" },
-			{ src: "CoreFunctions.js" }, 		
+			{ src: "CoreFunctions.js" }, 	
+			{ src: "rpg-dice-roller.bundle.min.js" },
+			{ src: "DiceContextMenu/DiceContextMenu.js" },
+			{ src: "DiceRoller.js" },	
 			{ src: "DDBApi.js" }, 
 			{ src: "Settings.js" },
 			{ src: "MessageBroker.js" },
 			{ src: "Journal.js" },
 			{ src: "ChatObserver.js" },
 			{ src: "MonsterStatBlock.js" },
+			{ src: "MonsterDice.js" },
 			{ src: "CampaignPage.js" }
 		]
 	}

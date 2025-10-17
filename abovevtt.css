@@ -2548,7 +2548,10 @@ body:not(.encounter-builder-page) .sidebar__pane-content {
     top: 28px;
     height: calc(100vh - 30px) !important;
 }
-
+body .gamelogcontainer .sidebar__pane-content {
+    top: 0px !important;
+    height: calc(100% - 10px) !important;
+}
 .ddbc-tab-list__nav-item {
     display: flex;
     border-bottom: 3px solid transparent;
