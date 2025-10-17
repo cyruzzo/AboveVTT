@@ -1615,13 +1615,16 @@ function avttEnsureContextMenu() {
   menu.id = "avtt-file-context-menu";
   menu.className = "avtt-context-menu hidden";
   menu.innerHTML = `
-    <button type="button" data-action="sendToGamelog">Send To Gamelog</button>
     <button type="button" data-action="cut">Cut</button>
     <button type="button" data-action="paste">Paste</button>
     <button type="button" data-action="rename">Rename</button>
-    <button type="button" data-action="forceOpen">Force Display to Players</button>
+    <hr/>
     <button type="button" data-action="copyPath">Copy Path</button>
     <button type="button" data-action="import">Import</button>
+    <hr/>
+    <button type="button" data-action="sendToGamelog">Send To Gamelog</button>
+    <button type="button" data-action="open">Display to Self</button>
+    <button type="button" data-action="forceOpen">Display to Everyone</button>
     <button type="button" data-action="openNewTab">Open in New Tab</button>
     <hr/>
     <button type="button" data-action="delete">Delete</button>
@@ -1716,6 +1719,10 @@ function avttUpdateContextMenuState() {
   const openNewTabButton = menu.querySelector('button[data-action="openNewTab"]');
   if (openNewTabButton) {
     openNewTabButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
+  } 
+  const openButton = menu.querySelector('button[data-action="open"]');
+  if (openButton) {
+    openButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
   } 
   const forceOpenButton = menu.querySelector('button[data-action="forceOpen"]');
   if (forceOpenButton) {
@@ -1908,6 +1915,38 @@ async function avttHandleContextAction(action) {
         }
         window.MB.sendMessage("custom/myVTT/open-url-embed", url)
         display_url_embeded(url);
+      } catch (error) {
+        console.error("Failed to open file in new tab", error);
+        alert(error?.message || "Failed to open the file in a new tab.");
+      }
+      break;
+    } 
+        case "forceOpen":
+        case "open": {
+      if (
+        !avttContextMenuState.targetPath ||
+        avttContextMenuState.isImplicit ||
+        avttContextMenuState.isFolder
+      ) {
+        return;
+      }
+      try {
+        const rawKey =
+          avttContextMenuState.rawKey ||
+          (typeof window !== "undefined" && typeof window.PATREON_ID === "string"
+            ? `${window.PATREON_ID}/${avttContextMenuState.targetPath}`
+            : avttContextMenuState.targetPath);
+        if (!rawKey) {
+          throw new Error("File path is unavailable.");
+        }
+        const url = await getAvttStorageUrl(rawKey);
+        if (!url) {
+          throw new Error("File URL could not be generated.");
+        }
+        display_url_embeded(url);
+        if(action == 'forceOpen')
+          window.MB.sendMessage("custom/myVTT/open-url-embed", url)
+
       } catch (error) {
         console.error("Failed to open file in new tab", error);
         alert(error?.message || "Failed to open the file in a new tab.");
@@ -3776,6 +3815,11 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 flex-shrink:1;
                 overflow: hidden;
             }
+            #avtt-file-context-menu hr {
+                height:2px;
+                margin:5px;
+                opacity:0.2;
+            }
             .crumbSeparator{
                 margin: 0 5px;
             }
@@ -3808,6 +3852,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 overflow: hidden;
                 text-overflow: ellipsis;    
                 white-space: nowrap;
+            }
+            #file-listing-section tr span.material-symbols-outlined{
+                flex-shrink:0;
             }
             #select-section{
                 display: flex;
