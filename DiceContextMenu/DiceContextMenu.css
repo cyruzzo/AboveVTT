@@ -1,6 +1,6 @@
 
 .dcm-backdrop {
-    z-index: 60000 !important;
+    z-index: 600000 !important;
     position: fixed;
     inset: 0px;
     top: 0;

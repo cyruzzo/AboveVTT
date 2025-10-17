@@ -3,6 +3,11 @@
 $(function() {
   if (is_campaign_page()) {
     window.gameIndexedDb = undefined;
+    let loadingGamelog;
+    if (is_gamelog_popout()) {
+      loadingGamelog = build_combat_tracker_loading_indicator('Loading Gamelog...');
+      $('body').append(loadingGamelog);
+    } 
     if(window.DM)
       window.globalIndexedDB = undefined;
     monitor_console_logs();
@@ -17,12 +22,28 @@ $(function() {
           if (is_gamelog_popout()) {
             window.MB = new MessageBroker();
             window.JOURNAL = new JournalManager(window.gameId);
+            window.diceRoller = new DiceRoller(); 
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             window.PLAYER_ID = urlParams.get('id');
             window.DM = window.PLAYER_ID == 'false';
             window.PLAYER_NAME = urlParams.get('player_name');
-            inject_chat_buttons();
+            if (!window.ddbConfigJson){
+              DDBApi.fetchConfigJson().then(config => {
+                window.ddbConfigJson = config;
+                inject_chat_buttons();
+                setTimeout(function(){
+                  $('body').find(".sidebar-panel-loading-indicator").remove();
+                }, 500);
+              });
+            }
+            else{
+              inject_chat_buttons();
+              setTimeout(function () {
+                $('body').find(".sidebar-panel-loading-indicator").remove();
+              }, 500);
+            }
+            
           } else {
 
             inject_instructions();

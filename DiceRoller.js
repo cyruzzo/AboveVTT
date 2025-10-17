@@ -704,7 +704,9 @@ class DiceRoller {
                 }, 200)
                 return true;
             }
-            else if((!is_abovevtt_page() || is_gamelog_popout()) && window.sendToTab != undefined ){
+            else if ((!is_abovevtt_page() && window.sendToTab != undefined) || is_gamelog_popout() ){
+                if(window.sendToTab == undefined)
+                    window.sendToTab = isNaN(Number(window.PLAYER_ID)) ? false : Number(window.PLAYER_ID);
                 setTimeout(function(){
                     tabCommunicationChannel.postMessage({
                           msgType: 'roll',
