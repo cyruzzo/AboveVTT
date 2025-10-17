@@ -3815,7 +3815,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 flex-shrink:1;
                 overflow: hidden;
             }
-            #avtt-file-context-menu hr {
+            #avtt-file-context-menu hr,
+            #avtt-actions-dropdown hr {
                 height:2px;
                 margin:5px;
                 opacity:0.2;
@@ -4001,8 +4002,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                     <div id="avtt-actions-dropdown" class="avtt-toolbar-dropdown-list">
                       <button type="button" data-action="cut">Cut</button>
                       <button type="button" data-action="paste">Paste</button>
-                      <button type="button" data-action="copy-path">Copy Path</button>
                       <button type="button" data-action="rename">Rename</button>
+                      <hr/>
+                      <button type="button" data-action="copy-path">Copy Path</button>
                       <button type="button" data-action="import">Import</button>
                       <hr/>
                       <button type="button" data-action="delete">Delete</button>
