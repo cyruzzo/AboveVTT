@@ -1565,8 +1565,8 @@ function minimize_player_window_double_click(titleBar) {
  */
 function frame_z_index_when_click(moveableFrame){
 
-	if(moveableFrame.css('z-index') != 50000) {
-		moveableFrame.css('z-index', 50000);
+	if(moveableFrame.css('z-index') != 90000) {
+		moveableFrame.css('z-index', 90000);
 		$(".moveableWindow, [role='dialog']").not(moveableFrame).each(function() {
 			$(this).css('z-index',($(this).css('z-index')-1));
 		});
