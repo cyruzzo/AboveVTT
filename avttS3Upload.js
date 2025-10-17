@@ -5114,6 +5114,7 @@ function refreshFiles(
               "background-size": "cover",
               "background-position": "center",
               "background-image": `url(${previewUrl})`,
+              "flex-shrink": '0'
             });
             container.replaceWith(imageDiv[0]);
             if (!hasValidThumbnail && sourceUrl) {
