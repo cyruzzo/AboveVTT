@@ -2346,7 +2346,9 @@ function display_url_embeded(url){
     position: 'relative',
     'border-top': '0px'
   })    
-  const container = find_or_create_generic_draggable_window('embededFileDisplay', '', false, true, '#embededFileFrame', 'min(80%, 1000px)', 'min(80%, 600px)', undefined, undefined, true);
+  const path = decodeURIComponent(`embed_${url.split('?')[0].replace(/.*\.com\/\d+\/(.*)/gi, '$1')}`).replaceAll(/\s/gi, '-').replaceAll(/[^\d\w]/gi, '');
+  const container = find_or_create_generic_draggable_window(path, '', false, true, '#embededFileFrame', 'min(80%, 1000px)', 'min(80%, 600px)', undefined, undefined, false);
+  container.find(`#embededFileFrame`).remove();
   container.append(iframe);
   $('body').append(container);
 }
@@ -2367,7 +2369,7 @@ function find_or_create_generic_draggable_window(id, titleBarText, addLoadingInd
     "position": "fixed",
     "height": height,
     "width": width,
-    "z-index": "100000",
+    "z-index": "90000",
     "display": "none"
   });
 
