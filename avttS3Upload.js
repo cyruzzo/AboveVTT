@@ -2436,6 +2436,7 @@ async function avttHandleMapDrop(event) {
 }
 
 const userLimit = Object.freeze({
+  avtt: 1 * 1024 * 1024 * 1024,
   low: 10 * 1024 * 1024 * 1024,
   mid: 25 * 1024 * 1024 * 1024,
   high: 100 * 1024 * 1024 * 1024,
@@ -2783,11 +2784,12 @@ const PatreonAuth = (() => {
     campaignSlug: "azmoria",
     creatorVanity: "azmoria",
     creatorName: "Azmoria",
+    avttCampaignSlug: "abovevtt",
     creatorIds: ["939792"],
     scope:
       "identity identity[email] identity.memberships campaigns campaigns.members",
     popupWidth: 600,
-    popupHeight: 750,
+    popupHeight: 750, 
     timeoutMs: 180000,
   };
   const membershipCacheTtlMs = 5 * 60 * 1000;
@@ -3292,6 +3294,17 @@ const PatreonAuth = (() => {
       };
     }
 
+    if(campaign.attributes.vanity.toLowerCase() =='abovevtt'){
+      return {
+        level: "avtt",
+        label: "Free Tier | AVTT Subscriber",
+        amountCents: 0,
+        member,
+        campaign,
+        tiers: [],
+      }
+    }
+
     const userTiers = tierIds.map((id) => tiersIndex[id]).filter(Boolean);
     if (!userTiers.length) {
       return {
@@ -3351,7 +3364,8 @@ const PatreonAuth = (() => {
     const campaigns = indexIncludedByType(json.included, "campaign");
     const tiersIndex = indexIncludedByType(json.included, "tier");
     const targetSlug = config.campaignSlug;
-
+    const avttTargetSlug = config.avttCampaignSlug;
+    let isAvttSub = false;
     for (const ref of membershipRefs) {
       const member = members[ref.id];
       if (!member) {
@@ -3367,7 +3381,7 @@ const PatreonAuth = (() => {
         campaign?.attributes?.url ||
         ""
       ).toLowerCase();
-      if (!campaign || !vanity.includes(targetSlug)) {
+      if (!campaign || (!vanity.includes(targetSlug) && !vanity.toLowerCase().includes(avttTargetSlug))) {
         continue;
       }
 
@@ -3394,6 +3408,10 @@ const PatreonAuth = (() => {
         tiersIndex,
         campaignTiers,
       );
+      if(result.level == 'avtt'){
+        isAvttSub = true;
+        continue;
+      }
       if (result.level === "creator" || isCreatorAccount) {
         result.level = "creator";
         result.label =
@@ -3412,7 +3430,16 @@ const PatreonAuth = (() => {
         tiers: [],
       };
     }
-
+    if (isAvttSub){
+      return {
+        level: 'avtt',
+        label: 'Free Tier | AVTT Subscriber',
+        amountCents: Number.MAX_SAFE_INTEGER,
+        member: null,
+        campaign: null,
+        tiers: [],
+      }
+    }
     return {
       level: "free",
       label: "Free",
@@ -3499,6 +3526,9 @@ function applyActiveMembership(membership) {
       break;
     case "low":
       activeUserLimit = userLimit.low;
+      break;
+    case "avtt":
+      activeUserLimit = userLimit.avtt;
       break;
     default:
       activeUserLimit = 0;
@@ -4066,7 +4096,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
   const tierLabel = $("#patreon-tier span.user-teir-level");
   if (tierLabel.length) {
-    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
+    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
   }
 
 
@@ -4911,7 +4941,7 @@ function refreshFiles(
           document.getElementById("user-limit").innerHTML = formatFileSize(activeUserLimit);
           const tierLabel = $("#patreon-tier span.user-teir-level");
           if (tierLabel.length) {
-            tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> tier: ${activeUserTier.label}`;
+            tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
           }
         })
         .catch((error) => {
