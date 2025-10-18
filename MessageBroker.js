@@ -7,22 +7,19 @@ function clearFrame(){
 }
 const debounceHandleInjected = mydebounce(() => {	
 	const self = window.MB
-	console.log("deciphering");
+
 	let pend_length = self.chat_pending_messages.length;
 	for(let i=0;i<pend_length;i++){	
 		let current=self.chat_pending_messages.shift();
 		
 		let injection_id=current.data?.rolls[0]?.rollType;
 		let injection_data=current.data?.injected_data;
-		console.log(`injection_id = ${injection_id}`);
-		console.log(`injection_data = ${injection_data}`);
-		
+
 		let found=false;
 		$(self.diceMessageSelector).each(function(){
 			if($(this).text()==injection_id){
 				found=true;
 				let li = $(this).closest("li");
-				console.log("TROVATOOOOOOOOOOOOOOOOO");
 				let oldheight=li.height();
 				let newlihtml=self.convertChat(injection_data, current.data.player_name==window.PLAYER_NAME ).html();
 
@@ -1505,7 +1502,7 @@ class MessageBroker {
 						if(combatSettingData['tie_breaker'] !='1'){
 							total = parseInt(total);
 						}
-						console.log("cerco " + entityid);
+
 						
 						$("#tokens .VTTToken").each(
 							function(){

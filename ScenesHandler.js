@@ -702,7 +702,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 
 	build_scenes(source_keyword, chapter_keyword, callback) {
 		let self = this;
-		console.log("cerco scene source: " + source_keyword + " | chapter: " + chapter_keyword);
+
 		//let chapter_url='https://www.dndbeyond.com/sources/'+source_keyword+'/'+chapter_keyword;
 		let chapter_url = self.sources[source_keyword].chapters[chapter_keyword].url;
 		console.log("checking for scenes in " + chapter_url);

@@ -721,7 +721,7 @@ function is_door_in_visible_light(door, imageData){
 
 
 function check_single_token_visibility(id){
-	console.log("check_single_token_visibility");
+
 	if (window.DM || $("#fog_overlay").is(":hidden") || window.TOKEN_OBJECTS[id].options.combatGroupToken)
 		return;	
 	

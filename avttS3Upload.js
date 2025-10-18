@@ -214,9 +214,9 @@ function avttPrimeListingCachesFromFullListing(entries) {
     }
     grouped.get(parentFolder).push({ ...entry });
   }
-  // Ensure all ancestor folders exist in the grouped map even if there is no
-  // explicit folder object returned from the server. This lets the UI show
-  // folder entries for implicit folders.
+
+
+
   const initialFolderKeys = Array.from(grouped.keys());
   for (const folder of initialFolderKeys) {
     let parent = avttGetParentFolder(folder);
@@ -228,12 +228,12 @@ function avttPrimeListingCachesFromFullListing(entries) {
     }
   }
 
-  // For each folder that exists (either explicitly or implicitly because it
-  // contained files), ensure its parent listing contains a folder entry
-  // representing that folder. Also add the implicit folder entry to
-  // avttAllFilesCache so other cache operations can find it.
+
+
+
+
   for (const folderPath of Array.from(grouped.keys())) {
-    if (!folderPath) continue; // skip root
+    if (!folderPath) continue;
     const parent = avttGetParentFolder(folderPath);
     const absoluteFolderKey = `${window.PATREON_ID}/${folderPath}`;
     const parentListing = grouped.get(parent) || [];
@@ -241,12 +241,12 @@ function avttPrimeListingCachesFromFullListing(entries) {
       (e) => (e?.Key || e?.key || "") === absoluteFolderKey,
     );
     if (!alreadyPresentInParent) {
-      // Add a minimal folder entry to the parent's listing
+
       const folderEntry = { Key: absoluteFolderKey, Size: 0 };
       parentListing.push(folderEntry);
       grouped.set(parent, parentListing);
 
-      // Ensure avttAllFilesCache contains this folder entry as well
+
       const existsInAll = avttAllFilesCache.some(
         (e) => (e?.Key || e?.key || "") === absoluteFolderKey,
       );
@@ -256,14 +256,14 @@ function avttPrimeListingCachesFromFullListing(entries) {
     }
   }
 
-  // Finally store grouped listings into the folder cache
+
   for (const [folderPath, listing] of grouped.entries()) {
     avttStoreFolderListing(folderPath, listing);
   }
   if (!grouped.has("")) {
     avttStoreFolderListing("", []);
   }
-  // Attempt to persist the freshly primed caches to IndexedDB (if available)
+
   try {
     avttSchedulePersist();
   } catch (e) {
@@ -271,7 +271,7 @@ function avttPrimeListingCachesFromFullListing(entries) {
   }
 }
 
-// IndexedDB persistence helpers for avtt caches
+
 let avttPersistTimer = null;
 function avttSchedulePersist(delay = 250) {
   if (avttPersistTimer) {
@@ -295,12 +295,12 @@ function avttWriteFilePickerRecords(records = []) {
       clearReq.onsuccess = () => {
         try {
           for (const rec of Array.isArray(records) ? records : []) {
-            // ensure the key exists
+
             if (!rec || !rec.fileEntry) continue;
             store.put(rec);
           }
         } catch (err) {
-          // continue and let transaction complete/error
+
           console.warn('avttWriteFilePickerRecords put failed', err);
         }
       };
@@ -1556,7 +1556,7 @@ async function avttImportSelectedFiles(selection) {
   const filesToImport = entries.filter((e) => !e.isFolder && /\.abovevtt$/i.test(e.key));
   if (!filesToImport.length) return;
   try {
-    // show global import indicator if available
+
     if (typeof build_import_loading_indicator === 'function') {
       build_import_loading_indicator('Importing Files');
     }
@@ -1576,7 +1576,7 @@ async function avttImportSelectedFiles(selection) {
         continue;
       }
       const text = await resp.text();
-      // call Settings import processor
+
       if (typeof import_process_datafile_text === 'function') {
         await import_process_datafile_text(text);
       }
@@ -1722,11 +1722,13 @@ function avttUpdateContextMenuState() {
   } 
   const openButton = menu.querySelector('button[data-action="open"]');
   if (openButton) {
-    openButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
+    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+    openButton.disabled = hasAbovevtt || !hasExplicitTarget || avttContextMenuState.isFolder;
   } 
   const forceOpenButton = menu.querySelector('button[data-action="forceOpen"]');
   if (forceOpenButton) {
-    forceOpenButton.disabled = !hasExplicitTarget || avttContextMenuState.isFolder;
+    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+    forceOpenButton.disabled = hasAbovevtt || !hasExplicitTarget || avttContextMenuState.isFolder;
   } 
   const importButton = menu.querySelector('button[data-action="import"]');
   if (importButton) {
@@ -2267,7 +2269,7 @@ function avttHandleDragStart(event, entry) {
     try {
       event.dataTransfer.setData("text/avtt-entry", "1");
     } catch (e) {
-      // best-effort
+
     }
   }
   const row = event.currentTarget;
@@ -2449,6 +2451,16 @@ const allowedDocTypes = ["pdf"];
 const allowedTextTypes = ["abovevtt", "csv"];
 let avttUploadController;
 let avttUploadSignal;
+
+let avttUploadQueue = [];
+let avttActiveUploads = 0;
+let avttQueueTotalEnqueued = 0;
+let avttQueueCompleted = 0;
+let avttQueueConflictPolicy = null;
+let avttConflictPromptPending = null;
+const AVTT_MAX_CONCURRENT_UPLOADS = 4;
+
+
 
 function avttShouldGenerateThumbnail(extension) {
   if (!extension) {
@@ -3294,7 +3306,7 @@ const PatreonAuth = (() => {
       };
     }
 
-    if(campaign.attributes.vanity.toLowerCase() =='abovevtt'){
+    if(campaign.attributes.vanity.toLowerCase() == 'abovevtt'){
       return {
         level: "avtt",
         label: "Free Tier | AVTT Subscriber",
@@ -3381,7 +3393,7 @@ const PatreonAuth = (() => {
         campaign?.attributes?.url ||
         ""
       ).toLowerCase();
-      if (!campaign || (!vanity.includes(targetSlug) && !vanity.toLowerCase().includes(avttTargetSlug))) {
+      if (!campaign || (!vanity.toLowerCase() == targetSlug && !vanity.toLowerCase() == avttTargetSlug)) {
         continue;
       }
 
@@ -3585,9 +3597,13 @@ const debounceSearchFiles = (searchTerm, fileTypes) => {
 
 async function launchFilePicker(selectFunction = false, fileTypes = []) {
   $("#avtt-s3-uploader").remove();
-  if (avttUploadController) {
-    avttUploadController.abort('User cancelled upload by reopening uploader.');
-  }
+    if (avttUploadController) {
+      try { avttUploadController.abort('User cancelled upload by reopening uploader.'); } catch {}
+    }
+
+    avttUploadQueue = [];
+    avttQueueTotalEnqueued = 0;
+    avttQueueCompleted = 0;
   const draggableWindow = find_or_create_generic_draggable_window(
     "avtt-s3-uploader",
     "AVTT File Uploader",
@@ -3604,8 +3620,12 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   draggableWindow.toggleClass("prevent-sidebar-modal-close", true);
   draggableWindow.find(".title_bar_close_button").off("click.cancelUpload").on("click.cancelUpload", () => {
     if (avttUploadController) {
-      avttUploadController.abort('User cancelled upload by closing window.');
+      try { avttUploadController.abort('User cancelled upload by closing window.'); } catch {}
     }
+
+    avttUploadQueue = [];
+    avttQueueTotalEnqueued = 0;
+    avttQueueCompleted = 0;
     clearGetFileFromS3Queue();
   });
   
@@ -4341,8 +4361,11 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
     cancelButton.on('click', () => {
       if (avttUploadController) {
-        avttUploadController.abort('User cancelled upload by clicking the cancel button.');
+        try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch {}
       }
+
+      avttUploadQueue = [];
+      avttQueueTotalEnqueued = avttQueueCompleted;
     });
 
     $(uploadingIndicator).prepend(cancelButton);
@@ -4381,101 +4404,123 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   const resolveUploadKey = (file, uploadFolder = currentFolder) =>
     `${uploadFolder}${toNormalizedUploadPath(file)}`;
 
-  const uploadSelectedFiles = async (files, uploadFolder = currentFolder) => {
-    const fileArray = Array.from(files || []).filter(Boolean);
-    if (!fileArray.length) {
-      return;
-    }
-
-    let totalSize = 0;
-    let uploadedBytes = 0;
-    let uploadedCount = 0;
-    let conflictPolicy = null;
-    const userUsedElement = document.getElementById("user-used");
-    const targetFileKeys = [];
-    let numberSkipped = 0;
-    for (let i = 0; i < fileArray.length; i += 1) {
-      const selectedFile = fileArray[i];
-      showUploadingProgress(i, fileArray.length);
-
-      const extension = getFileExtension(selectedFile.name);
-      if (!isAllowedExtension(extension)) {
-        console.warn(`Skipping unsupported file type: ${selectedFile.name}`);
-        numberSkipped += 1;
-        if (i === fileArray.length - 1) {
-          alert(`Skipped ${numberSkipped} unsupported file(s).`);
-          hideUploadingIndicator();
-        }
-        continue;
-      }
-
-      let targetKey = resolveUploadKey(selectedFile, uploadFolder);
-      let action = "overwrite";
-
+function avttEnqueueUploads(filesOrFileArray) {
+  const files = Array.isArray(filesOrFileArray) ? filesOrFileArray : [filesOrFileArray];
+  for (const f of files) {
+    if (!f) continue;
+    avttUploadQueue.push(f);
+  }
+  avttQueueTotalEnqueued += files.length;
+  avttProcessUploadQueue();
+}
+const debounceFlush = mydebounce((callback=()=>{})=>{
+  callback();
+}, 5000)
+async function avttProcessUploadQueue() {
+  if (avttActiveUploads >= AVTT_MAX_CONCURRENT_UPLOADS) {
+    return;
+  }
+  
+  while (avttActiveUploads < AVTT_MAX_CONCURRENT_UPLOADS && avttUploadQueue.length > 0) {
+    const nextFile = avttUploadQueue.shift();
+    if (!nextFile) continue;
+    avttActiveUploads += 1;
+    (async () => {
       try {
-        const exists = await avttDoesObjectExist(targetKey);
-        if (exists) {
-          if (conflictPolicy?.applyAll) {
-            action = conflictPolicy.action;
-          } else {
-            const conflictResult = await avttPromptUploadConflict({ fileName: targetKey });
-            if (!conflictResult || !conflictResult.action) {
-              action = "skip";
+
+        const selectedFile = nextFile;
+        const extension = getFileExtension(selectedFile.name);
+        if (!isAllowedExtension(extension)) {
+          console.warn(`Skipping unsupported file type: ${selectedFile.name}`);
+          return;
+        }
+
+
+        showUploadingProgress(avttQueueCompleted, Math.max(avttQueueTotalEnqueued, 1));
+
+        let targetKey = resolveUploadKey(selectedFile, currentFolder);
+        let action = "overwrite";
+
+        try {
+          const exists = await avttDoesObjectExist(targetKey);
+          if (exists) {
+            if (avttQueueConflictPolicy?.applyAll) {
+              action = avttQueueConflictPolicy.action;
             } else {
-              action = conflictResult.action;
-              if (conflictResult.applyAll) {
-                conflictPolicy = {
-                  action,
-                  applyAll: true,
-                };
+
+              if (avttConflictPromptPending) {
+                try {
+                  const sharedResult = await avttConflictPromptPending;
+                  if (!sharedResult || !sharedResult.action) {
+                    action = "skip";
+                  } else {
+                    action = sharedResult.action;
+                    if (sharedResult.applyAll) {
+                      avttQueueConflictPolicy = { action, applyAll: true };
+                    }
+                  }
+                } catch (_) {
+                  action = "skip";
+                }
+              } else {
+                avttConflictPromptPending = avttPromptUploadConflict({ fileName: targetKey });
+                try {
+                  const conflictResult = await avttConflictPromptPending;
+                  if (!conflictResult || !conflictResult.action) {
+                    action = "skip";
+                  } else {
+                    action = conflictResult.action;
+                    if (conflictResult.applyAll) {
+                      avttQueueConflictPolicy = { action, applyAll: true };
+                    }
+                  }
+                } finally {
+                  avttConflictPromptPending = null;
+                }
               }
             }
           }
+        } catch (existError) {
+          console.warn("Failed to verify if file exists before upload", existError);
         }
-      } catch (existError) {
-        console.warn("Failed to verify if file exists before upload", existError);
-      }
 
-      if (action === "skip") {
-        continue;
-      }
-
-      if (action === "keepBoth") {
-        try {
-          targetKey = await avttDeriveUniqueKey(targetKey);
-        } catch (deriveError) {
-          console.error("Failed to generate unique key for duplicate upload", deriveError);
-          alert("Failed to generate a unique name for a duplicate file. Skipping.");
-          continue;
+        if (action === "skip") {
+          return;
         }
-      }
 
-      const prospectiveTotal = totalSize + selectedFile.size;
-      if (
-        activeUserLimit !== undefined &&
-        prospectiveTotal + S3_Current_Size > activeUserLimit
-      ) {
-        alert("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
-        hideUploadingIndicator();
-        return;
-      }
-
-      let thumbnailBlob = null;
-      if (avttShouldGenerateThumbnail(extension)) {
-        try {
-          thumbnailBlob = await avttGenerateThumbnailBlob(selectedFile, extension);
-        } catch (thumbnailError) {
-          console.warn("Failed to generate thumbnail for", targetKey, thumbnailError);
-          thumbnailBlob = null;
+        if (action === "keepBoth") {
+          try {
+            targetKey = await avttDeriveUniqueKey(targetKey);
+          } catch (deriveError) {
+            console.error("Failed to generate unique key for duplicate upload", deriveError);
+            alert("Failed to generate a unique name for a duplicate file. Skipping.");
+            return;
+          }
         }
-      }
 
-      try {
+        const prospectiveTotal = (Number(selectedFile.size) || 0);
+        if (
+          activeUserLimit !== undefined &&
+          prospectiveTotal + S3_Current_Size > activeUserLimit
+        ) {
+          alert("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
+          return;
+        }
+
+        let thumbnailBlob = null;
+        if (avttShouldGenerateThumbnail(extension)) {
+          try {
+            thumbnailBlob = await avttGenerateThumbnailBlob(selectedFile, extension);
+          } catch (thumbnailError) {
+            console.warn("Failed to generate thumbnail for", targetKey, thumbnailError);
+            thumbnailBlob = null;
+          }
+        }
+
         const presignResponse = await fetch(`${AVTT_S3}?filename=${encodeURIComponent(targetKey)}&user=${window.PATREON_ID}&upload=true`);
         if (!presignResponse.ok) {
           throw new Error("Failed to retrieve upload URL.");
         }
-
         const data = await presignResponse.json();
         const uploadHeaders = {};
         const inferredType = resolveContentType(selectedFile);
@@ -4490,51 +4535,102 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
           headers: uploadHeaders,
           signal: avttUploadSignal,
         });
-
         if (!uploadResponse.ok) {
           throw new Error("Upload failed.");
         }
-
         if (thumbnailBlob) {
           await avttUploadThumbnail(targetKey, thumbnailBlob, avttUploadSignal);
         }
 
-        totalSize = prospectiveTotal;
+        const userUsedElement = document.getElementById("user-used");
         if (userUsedElement) {
-          userUsedElement.innerHTML = formatFileSize(totalSize + S3_Current_Size);
+          userUsedElement.innerHTML = formatFileSize((Number(selectedFile.size) || 0) + S3_Current_Size);
         }
         avttRegisterPendingUploadKey(targetKey, Number(selectedFile.size) || 0);
-        targetFileKeys.push(targetKey);
-        uploadedBytes += Number(selectedFile.size) || 0;
-        uploadedCount += 1;
+
+        avttPendingUsageBytes += Number(selectedFile.size) || 0;
+        avttPendingUsageCount += 1;
+        avttPendingUsageKeys.push(targetKey);
       } catch (error) {
-        console.error(error);
+        console.error('Upload task failed', error);
         if (typeof error === "string") {
-          alert(error || "Aborted manually.");
-        } else {
-          alert(error.message || "An unexpected error occurred while uploading.");
+
+        } else if (error?.name !== 'AbortError') {
+
         }
-        if (uploadedCount > 0) {
-          await applyUsageDelta(uploadedBytes, uploadedCount);
-        }
-        hideUploadingIndicator();
-        return;
+      } finally {
+        avttQueueCompleted += 1;
+        showUploadingProgress(avttQueueCompleted, Math.max(avttQueueTotalEnqueued, 1));
       }
+    })()
+      .catch((e) => console.warn('Unhandled upload task error', e))
+      .finally(() => {
+
+        avttActiveUploads = Math.max(0, avttActiveUploads - 1);
+        const flush = () => {
+          if (avttUploadQueue.length === 0 && avttActiveUploads === 0) {
+            avttQueueConflictPolicy = null;
+            avttQueueTotalEnqueued = 0;
+            avttQueueCompleted = 0;
+            avttScheduleFlush();
+            return;
+          }
+          debounceFlush(flush);
+        }
+        debounceFlush(flush);
+ 
+
+        avttProcessUploadQueue();
+    });
+  }
+}
+
+  let avttPendingUsageBytes = 0;
+  let avttPendingUsageCount = 0;
+  let avttPendingUsageKeys = [];
+  let avttUsageFlushScheduled = false;
+
+  async function avttFlushUsageAndRefresh() {
+    const bytes = avttPendingUsageBytes;
+    const count = avttPendingUsageCount;
+    const keys = avttPendingUsageKeys.slice();
+    avttPendingUsageBytes = 0;
+    avttPendingUsageCount = 0;
+    avttPendingUsageKeys = [];
+    
+    try {
+      if (count > 0) {
+        await applyUsageDelta(bytes, count);
+      }
+    } finally {
+      refreshFiles(
+        currentFolder,
+        true,
+        undefined,
+        undefined,
+        activeFilePickerFilter,
+        { useCache: true, revalidate: false, selectFiles: keys },
+      );
+      showUploadComplete();
+      avttUsageFlushScheduled = false;
+      setTimeout(function(){avttUploadController = undefined;}, 1000);
+    }
+  }
+
+  function avttScheduleFlush() {
+    if (avttUsageFlushScheduled) return;
+    avttUsageFlushScheduled = true;
+
+    Promise.resolve().then(avttFlushUsageAndRefresh);
+  }
+
+  const uploadSelectedFiles = async (files, uploadFolder = currentFolder) => {
+    const fileArray = Array.from(files || []).filter(Boolean);
+    if (!fileArray.length) {
+      return;
     }
 
-    if (uploadedCount > 0) {
-      await applyUsageDelta(uploadedBytes, uploadedCount);
-    }
-
-    refreshFiles(
-      currentFolder,
-      true,
-      undefined,
-      undefined,
-      activeFilePickerFilter,
-      { useCache: true, revalidate: false, selectFiles: targetFileKeys },
-    );
-    showUploadComplete();
+    avttEnqueueUploads(fileArray);
   };
 
   const assignRelativePath = (file, relativePath) => {
@@ -4575,6 +4671,11 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     const files = [];
 
     for (const entry of entries) {
+
+      if (avttUploadController?.signal?.aborted) {
+        avttUploadQueue = [];
+        break;
+      }
       if (entry.isDirectory) {
         const nestedFiles = await readDirectoryEntries(entry, directoryPath);
         files.push(...nestedFiles);
@@ -4582,7 +4683,12 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
         const file = await new Promise((resolve, reject) =>
           entry.file(resolve, reject),
         );
-        files.push({ file, relativePath: `${directoryPath}${file.name}` });
+        const relativePath = `${directoryPath}${file.name}`;
+
+        const fileWithPath = assignRelativePath(file, relativePath);
+
+        avttEnqueueUploads([fileWithPath]);
+        files.push({ file, relativePath });
       }
     }
 
@@ -4594,12 +4700,25 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       return [];
     }
 
+
+    if (avttUploadController?.signal?.aborted) {
+      avttUploadQueue = [];
+      return [];
+    }
     const items = dataTransfer.items;
     if (!items || !items.length) {
-      return Array.from(dataTransfer.files || []);
+      const files = Array.from(dataTransfer.files || []);
+      if (files.length) { avttEnqueueUploads(files); }
+      return files;
     }
 
     const collected = [];
+
+    const enqueue = (file) => {
+      if (!file) return;
+      collected.push(file);
+      avttEnqueueUploads([file]);
+    };
 
     for (const item of items) {
       if (item.kind !== "file") {
@@ -4612,20 +4731,25 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
           : null;
 
       if (entry && entry.isDirectory) {
-        const directoryFiles = await readDirectoryEntries(entry);
-        for (const { file, relativePath } of directoryFiles) {
-          collected.push(assignRelativePath(file, relativePath));
+        if (avttUploadController?.signal?.aborted) {
+          avttUploadQueue = [];
+          break;
         }
+
+        const directoryFiles = await readDirectoryEntries(entry);
+        collected.push(...directoryFiles.map(({ file, relativePath }) => assignRelativePath(file, relativePath)));
       } else {
         const file = item.getAsFile();
         if (file) {
-          collected.push(assignRelativePath(file, file.name));
+          enqueue(assignRelativePath(file, file.name));
         }
       }
     }
 
     if (!collected.length) {
-      return Array.from(dataTransfer.files || []);
+      const filesFallback = Array.from(dataTransfer.files || []);
+      if (filesFallback.length) { avttEnqueueUploads(filesFallback); }
+      return filesFallback;
     }
 
     return collected;
@@ -4706,10 +4830,13 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     }
 
     try {
-      const droppedFiles = await collectDroppedFiles(transfer);
-      if (droppedFiles.length) {
-        await uploadSelectedFiles(droppedFiles);
-      }
+      const loadingFiles = build_combat_tracker_loading_indicator('Preparing Files for Upload...');
+      requestAnimationFrame(function(){$('#avtt-file-picker #file-listing-section').append(loadingFiles)});
+      
+      await collectDroppedFiles(transfer);
+      loadingFiles.remove();
+      
+
     } catch (error) {
       console.error("Failed to upload dropped files", error);
       alert(error.message || "An unexpected error occurred while uploading dropped files.");
@@ -4906,8 +5033,8 @@ function refreshFiles(
   fileTypes,
   options = {},
 ) {
-    // Clear any queued getFileFromS3 requests (these are pending preview/fetch requests)
-    // This prevents stale queued requests from running after a folder/refresh change.
+
+
     try {
       clearGetFileFromS3Queue();
     } catch (e) {
@@ -5034,7 +5161,6 @@ function refreshFiles(
         return;
       }
       $('#file-listing-section .sidebar-panel-loading-indicator').remove();
-      console.log("Files in folder: ", files);
       const normalizedSearch =
         typeof searchTerm === "string" ? searchTerm.toLowerCase() : undefined;
 
@@ -5826,7 +5952,7 @@ async function getFileFromS3(fileName, highPriority=false) {
   }
 
   const queuedPromise = new Promise((resolve, reject) => {
-    // Avoid pushing duplicate queue items for the same cacheKey
+
     const alreadyQueued = getFileFromS3Queue.find((q) => q && q.cacheKey === cacheKey);
     if (!alreadyQueued) {
       if(highPriority){

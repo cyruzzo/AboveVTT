@@ -972,7 +972,6 @@ function rebuild_ddb_npcs(redrawList = false) {
         } else if (name.includes("Genasi") || name.includes("Simic")) { // Most names have hyphens, but Simic Hybrid and all the Genasi variants have spaces.
             name = name.replaceAll("-", " ");
         }
-        console.debug("rebuild_ddb_npcs Adding playable race", name, portraitId);
         if (playableRaces[name]) {
             playableRaces[name].push(portraitId);
         } else {
@@ -992,9 +991,7 @@ function rebuild_ddb_npcs(redrawList = false) {
                 name: playableRaceName,
                 alternativeImages: altImages
             }));
-        } else {
-            console.log("rebuild_ddb_npcs DDB doesn't have any images for", playableRaceName);
-        }
+        } 
     }
 
     if (redrawList) {
