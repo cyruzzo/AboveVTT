@@ -1129,7 +1129,7 @@ async function importAvttTokens(links, baseFolderItem) {
     if (!link) {
       return;
     }
-    const safeName = avttTokenSafeDecode(name || "New Token") || "New Token";
+    const safeName = avttTokenDeriveName(name);
     let tokenType = "";
     if (typeof extension === "string" && extension.length > 0) {
       tokenType = extension.startsWith(".") ? extension : `.${extension}`;
@@ -1177,7 +1177,7 @@ async function importAvttTokens(links, baseFolderItem) {
     const relativePathRaw = typeof link.path === "string" ? link.path : link.name;
     const normalizedRelative = (relativePathRaw || "").replace(/\\/g, "/");
     const parts = normalizedRelative.split("/").filter(Boolean);
-    const fileName = parts.pop() || link.name || "Token";
+    const fileName = parts.pop() || link.name;
     const extension = (typeof getFileExtension === "function"
       ? getFileExtension(relativePathRaw || fileName)
       : (fileName.split(".").pop() || "")) || link.extension || "";
