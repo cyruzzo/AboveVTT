@@ -3448,6 +3448,9 @@ div#selectedTokensBorder {
     top: 0;
     z-index: 10;
 }
+.mce-floatpanel{
+    z-index: 91000 !important;
+}
 .icon-condition,
 .context-menu-icon-condition {
     margin: 4px;

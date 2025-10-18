@@ -1651,6 +1651,11 @@ class JournalManager{
 		    $(this).find('p').remove();
 		    $(this).after(input)
 	    })
+		$(note_text).find('img[data-src*="above-bucket-not-a-url"]').each(async (index, image) => {
+			const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
+			image.src = src;
+			image.href = src;
+		})
 		if(!noteAlreadyOpen){
 			note.append(note_text);
 		}
@@ -2445,7 +2450,11 @@ class JournalManager{
 		    if(editor.isDirty()){
 				let parser = new DOMParser()
 				let html = parser.parseFromString(editor.getContent(), 'text/html');
-				self.notes[id].text = $(html).find('body').html();
+				const body = $(html).find('body')// we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
+				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				self.notes[id].text = body.html(); 
 		    	self.notes[id].plain = editor.getContent({ format: 'text' });
 		    	self.notes[id].statBlock = statBlock;
 		    	self.persist();
@@ -3561,6 +3570,21 @@ class JournalManager{
 				        ],
 				      onclick: (e) => {e.preventDefault(); e.stopPropagation(); editor.insertContent(`<img class="mon-stat-block__separator-img" alt="" src="https://www.dndbeyond.com/file-attachments/0/579/stat-block-header-bar.svg"/>`)},
 				    });
+				editor.on('init', function (e) {
+					const body = $(e.target.contentDocument.body);
+					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
+					const backgroundColor = $(':root').css('--background-color'); // support azmoria's dark mode without requiring inverse filters
+					const fontColor = $(':root').css('--font-color');
+					body.css({
+						background: backgroundColor,
+						color: fontColor
+					});
+					avttImages.each(async (index, image) => {
+						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
+						image.src = src;
+					})
+				});
+
 				editor.on('NodeChange', async function (e) {
 					// When an image is inserted into the editor
 				    if (e.element.tagName === "IMG") { 
@@ -3576,13 +3600,30 @@ class JournalManager{
 		                    console.log("parse dropbox audio is converting", url, "to", parsed);
 		                    url = parsed;
 		                }
-
+						else if (url.includes('above-bucket-not-a-url')) {
+							const splitUrl = url.match(/above-bucket-not-a-url.*$/gi)?.[0];
+							e.element.setAttribute("data-src", splitUrl);
+							url = await getAvttStorageUrl(splitUrl, true);	
+						}
 				        e.element.setAttribute("src", await getGoogleDriveAPILink(url));
 				        return; 
 				    }
 				    return;
 				});
 				editor.on('change keyup', async function(e){
+					const body = $(e.target);
+					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]:not([src])');
+					avttImages.each(async (index, image) => {
+						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
+						image.src = src;
+					})
+					const avttImages2 = body.find('img[src^="above-bucket-not-a-url"]');
+					avttImages2.each(async (index, image) => {
+						const origSrc = image.getAttribute('src');
+						const src = await getAvttStorageUrl(origSrc, true);
+						image.setAttribute('data-src', origSrc)
+						image.src = src;
+					})
 				    if(editor.isDirty()){
 				    	debounceNoteSave(e, editor);
 				    }
@@ -3600,7 +3641,11 @@ class JournalManager{
 				let note_id = $(this.getElement()).attr('data-note-id');
 				let parser = new DOMParser();
 				let html = parser.parseFromString(tinymce.activeEditor.getContent(), 'text/html');
-				self.notes[note_id].text = $(html).find('body').html(); // we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
+				const body = $(html).find('body')// we do this to get rid of style tags used in templates that aren't needed to be stored - it was causing notes to be too large from message size limits
+				const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
+				avttImages.attr('src', '');
+				avttImages.attr('href', '');
+				self.notes[note_id].text = body.html(); 
 				self.notes[note_id].plain = tinymce.activeEditor.getContent({ format: 'text' });
 				self.notes[note_id].statBlock = statBlock;
 				self.persist();
