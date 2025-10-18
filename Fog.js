@@ -2038,8 +2038,8 @@ function redraw_drawn_light(){
 				width = width / adjustedScale;
 			}
 			else{
-				width = (width != undefined && parseInt(width) != 0) ? width/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
-				height = (height != undefined && parseInt(height) != 0) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+				width = (width != undefined) ? width/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
+				height = (height != undefined) ? height/window.CURRENT_SCENE_DATA.fpsq*window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor : undefined
 			}
 		}
 		
@@ -5080,11 +5080,23 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
   	}
 
 	if(distance2 != undefined){
+		function halfLuminosity(rgbaStr) {
+			const m = rgbaStr
+				.replace(/\s+/g, '')
+				.match(/^rgba?\((\d{1,3}\.?\d*),(\d{1,3}\.?\d*),(\d{1,3}\.?\d*)(?:,([01]?\.?\d*))?\)$/i);
+			if (!m) 
+				return rgbaStr;
+
+			let r = m[1] * 0.5;
+			let g = m[2] * 0.5;
+			let b = m[3] * 0.5;
+			const a = m[4] !== undefined ? parseFloat(m[4]) : 1;
+
+
+			return `rgba(${r}, ${g}, ${b}, ${a})` 
+		}
 		distance2+=distance1;
-		let fogStyleArray = fogStyle.split(',');
-		fogStyleArray[3] = `${parseFloat(fogStyleArray[3])/2})`;
-		fogStyle = fogStyleArray.join(',');
-		particleLook(ctx,  [...window.walls, ...darknessBoundarys], distance2, fog, fogStyle, fogType, true, islight); 
+		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance2, fog, halfLuminosity(fogStyle), fogType, true, islight); 
 	}
 
 }
@@ -6901,7 +6913,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, undefined, undefined, undefined, undefined, true);
 				}
 				else{
+					ctx.save();
+					ctx.globalCompositeOperation = 'lighten';
 					drawPolygon(ctx, lightPolygon, fogStyle, undefined, 6, undefined, undefined, undefined, undefined, true);
+					ctx.restore();
 				}	
 			}
 		}
