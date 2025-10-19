@@ -170,6 +170,7 @@ function avttStoreFolderListing(folderPath, entries) {
     avttFolderListingCache.set(normalized, []);
     return;
   }
+  const seen = new Set();
   const cloned = entries
     .map(avttCloneListingEntry)
     .filter(
@@ -177,7 +178,12 @@ function avttStoreFolderListing(folderPath, entries) {
         entry &&
         entry.Key &&
         !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
-    );
+    )
+    .filter((entry) => {
+      if (seen.has(entry.Key)) return false;
+      seen.add(entry.Key);
+      return true;
+    });
   avttFolderListingCache.set(normalized, cloned);
 }
 
@@ -195,6 +201,14 @@ function avttPrimeListingCachesFromFullListing(entries) {
         entry.Key &&
         !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
     );
+  // Deduplicate global list by Key
+  if (Array.isArray(avttAllFilesCache)) {
+    const dedup = new Map();
+    for (const e of avttAllFilesCache) {
+      if (e && e.Key && !dedup.has(e.Key)) dedup.set(e.Key, e);
+    }
+    avttAllFilesCache = Array.from(dedup.values());
+  }
   const grouped = new Map();
   for (const entry of avttAllFilesCache) {
     const relative = avttExtractRelativeKey(entry.Key);
@@ -325,7 +339,7 @@ function avttReadFilePickerRecords() {
     }
   });
 }
-function avttPersistCachesToIndexedDB() {
+const persistCacheThrottle = throttle(()=>{
   const records = [];
   if (Array.isArray(avttAllFilesCache)) {
     for (const entry of avttAllFilesCache) {
@@ -347,6 +361,9 @@ function avttPersistCachesToIndexedDB() {
     console.warn("avttPersistCachesToIndexedDB write helper failed", err);
   }
   return;
+}, 15000)
+function avttPersistCachesToIndexedDB() {
+  persistCacheThrottle();
 }
 
 function avttLoadCachesFromIndexedDB() {
@@ -2567,7 +2584,15 @@ async function avttGenerateImageThumbnailBlob(file) {
       canvas.height,
     );
     ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
-    return await avttCanvasToBlob(canvas);
+    const blob = await avttCanvasToBlob(canvas);
+    // Explicit cleanup
+    try {
+      const ctx2 = canvas.getContext('2d');
+      if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+      canvas.width = 0; canvas.height = 0;
+    } catch {}
+    image.src = '';
+    return blob;
   } catch (error) {
     console.warn("Failed to generate image thumbnail", file?.name, error);
     return null;
@@ -2646,7 +2671,14 @@ async function avttGenerateVideoThumbnailBlob(file) {
       canvas.height,
     );
     ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-    return await avttCanvasToBlob(canvas);
+    const blob = await avttCanvasToBlob(canvas);
+    // Explicit cleanup
+    try {
+      const ctx2 = canvas.getContext('2d');
+      if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+      canvas.width = 0; canvas.height = 0;
+    } catch {}
+    return blob;
   } catch (error) {
     console.warn("Failed to generate video thumbnail", file?.name, error);
     return null;
@@ -4542,35 +4574,30 @@ async function avttProcessUploadQueue() {
         avttRegisterPendingUploadKey(targetKey, Number(selectedFile.size) || 0);
         try {
           const now = new Date().toISOString();
-          const newEntry = {
-            key: `${window.PATREON_ID}/${targetKey}`,
-            Key: `${window.PATREON_ID}/${targetKey}`,
-            size: Number(selectedFile.size) || 0,
-            lastModified: now,
-          };
+          const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
+          const newEntry = { Key: normalizedKey, Size: Number(selectedFile.size) || 0, LastModified: now };
           if (Array.isArray(avttAllFilesCache)) {
-            const idx = avttAllFilesCache.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+            const idx = avttAllFilesCache.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
             if (idx >= 0) {
-              avttAllFilesCache[idx] = newEntry;
+              avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
             } else {
-              avttAllFilesCache.push(newEntry);
+              avttAllFilesCache.push({ ...newEntry });
             }
           }
-          if (avttFolderListingCache) {
-            const parentFolder = avttGetParentFolder(`${window.PATREON_ID}/${targetKey}`);
-
+          if (avttFolderListingCache && typeof avttFolderListingCache.get === 'function') {
+            const parentFolder = avttGetParentFolder(normalizedKey);
             const existing = avttFolderListingCache.get(parentFolder);
             if (Array.isArray(existing)) {
-              const idx = existing.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+              const idx = existing.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
               if (idx >= 0) {
-                existing[idx] = newEntry;
+                existing[idx] = { ...existing[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
               } else {
-                existing.push(newEntry);
+                existing.push({ ...newEntry });
               }
               avttFolderListingCache.set(parentFolder, existing);
             }
           }
-          avttSchedulePersist();
+          try { avttSchedulePersist(); } catch {}
         } catch (cacheError) {
           console.warn('Failed to update local caches after upload', cacheError);
         }
@@ -4860,8 +4887,10 @@ async function avttProcessUploadQueue() {
 
     try {
       await collectDroppedFiles(transfer);
-    } catch (error) {
+    } catch (error) { 
       console.error("Failed to upload dropped files", error);
+      if (error.message.includes('A requested file or directory could not be found at the time an operation was processed.'))
+        return;
       alert(error.message || "An unexpected error occurred while uploading dropped files.");
       hideUploadingIndicator();
     }
