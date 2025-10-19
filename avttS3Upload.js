@@ -5091,7 +5091,7 @@ function formatFileSize(bytes) {
   }
   return `${size.toFixed(1)} ${units[unitIndex]}`;
 }
-
+let filesForInsert = [];
 function refreshFiles(
   path,
   recheckSize = false,
@@ -5243,7 +5243,7 @@ function refreshFiles(
       };
 
       const regEx = new RegExp(`^${window.PATREON_ID}/`, "gi");
-      const prepared = [];
+      filesForInsert = [];
 
       for (const fileEntry of files) {
         const rawKey =
@@ -5309,7 +5309,7 @@ function refreshFiles(
           }
         }
 
-        prepared.push({
+        filesForInsert.push({
           rawKey,
           relativePath,
           size,
@@ -5319,7 +5319,7 @@ function refreshFiles(
         });
       }
 
-      if (prepared.length === 0) {
+      if (filesForInsert.length === 0) {
         fileListing.innerHTML = "<tr><td colspan='4'>No files found.</td></tr>";
         avttApplyClipboardHighlights();
         avttUpdateSelectNonFoldersCheckbox();
@@ -5327,7 +5327,7 @@ function refreshFiles(
         return;
       }
 
-      avttSortEntries(prepared);
+      avttSortEntries(filesForInsert);
       const setLineImgSrc = (container, entry) => {
         requestAnimationFrame(async () => {
           try {
@@ -5406,9 +5406,9 @@ function refreshFiles(
         if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0) {
           $(fileListingSection).append(build_combat_tracker_loading_indicator('Loading files...'));
         }
-        const end = Math.min(renderIndex + CHUNK_SIZE, prepared.length);
+        const end = Math.min(renderIndex + CHUNK_SIZE, filesForInsert.length);
         for (let i = renderIndex; i < end; i++) {
-          const entry = prepared[i];
+          const entry = filesForInsert[i];
           const index = i;
           const listItem = document.createElement("tr");
           listItem.classList.add("avtt-file-row");
@@ -5502,10 +5502,10 @@ function refreshFiles(
       const onScroll = () => {
         if (!container) return;
         const remaining = container.scrollHeight - container.scrollTop - container.clientHeight;
-        if (remaining <= 100 && renderIndex < prepared.length) {
+        if (remaining <= 100 && renderIndex < filesForInsert.length) {
           setTimeout(renderChunk, 0);
         }
-        if (renderIndex >= prepared.length) {
+        if (renderIndex >= filesForInsert.length) {
           container.removeEventListener('scroll', onScroll);
         }
       };
