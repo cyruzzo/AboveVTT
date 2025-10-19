@@ -188,7 +188,6 @@ class Mixer extends EventTarget {
                 else if(url.includes('dropbox.com')){       
                     const splitUrl = url.split('dropbox.com');
                     const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-                    console.log("parse dropbox audio is converting", url, "to", parsed);
                     url = parsed;
                 }
                 else if(url.startsWith("https://onedrive.live.com/embed?")){

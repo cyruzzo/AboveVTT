@@ -2180,7 +2180,7 @@ async function migrate_scene_folders() {
  * @param searchTerm {string} the search term used to filter the list of scenes
  */
 async function redraw_scene_list(searchTerm) {
-	console.group("redraw_scene_list");
+
 
 	let nameFilter = "";
 	if (typeof searchTerm === "string") {
@@ -2201,12 +2201,10 @@ async function redraw_scene_list(searchTerm) {
 	window.sceneListFolders
 		.sort(SidebarListItem.folderDepthComparator)
 		.forEach(item => { promises.push(new Promise(async (resolve, reject) => {
-				console.debug("redraw_scene_list folderPath", item.folderPath, item.parentId, item.id);
 				let row = await build_sidebar_list_row(item);
 				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 				let folder = $(`#${item.parentId} > .folder-item-list`);
 				if (folder.length > 0) {
-					console.debug("appending folder item", item, folder);
 					folder.append(row);
 				} else {
 					$(`#scenesFolder`).append(row);
@@ -2404,7 +2402,6 @@ async function redraw_scene_list(searchTerm) {
 				}
 				// let folder = find_html_row_from_path(item.folderPath, scenesPanel.body).find(` > .folder-item-list`);
 				if (folder.length > 0) {
-					console.debug("appending scene item", item, folder);
 					folder.append(row);
 				} else {
 					$(`#scenesFolder`).append(row);
@@ -2432,7 +2429,6 @@ async function redraw_scene_list(searchTerm) {
 	}
 	if($('.scenes-panel-add-buttons-wrapper button.reorder-button.active').length>0)
        enable_draggable_change_folder(ItemType.Scene)
-	console.groupEnd();
 }
 
 async function create_scene_inside(parentId, fullPath = RootFolder.Scenes.path, sceneName = "New Scene", mapUrl = "") {
@@ -3017,7 +3013,6 @@ function delete_folder_and_all_scenes_within_it(listItem) {
 
 function move_scenes_to_parent_folder(listItem) {
 	console.group(`move_scenes_to_parent_folder`);
-	console.debug("before moving scenes", window.ScenesHandler.scenes);
 	window.ScenesHandler.scenes.forEach((scene, sceneIndex) => {
 		if (scene.parentId === listItem.id) {
 			// this is a direct child of the listItem we're about to delete. let's move it up one level
@@ -3025,14 +3020,11 @@ function move_scenes_to_parent_folder(listItem) {
 			window.ScenesHandler.persist_scene(sceneIndex);
 		}
 	});
-	console.debug("after moving scenes", window.ScenesHandler.scenes);
 	console.groupEnd();
 }
 
 function delete_scenes_folder(listItem) {
-	console.debug("before moving window.sceneListFolders", window.sceneListFolders);
 	window.ScenesHandler.delete_scene(listItem.id, false);
-	console.debug("after deleting from window.sceneListFolders", window.sceneListFolders);
 }
 
 function move_scene_to_folder(listItem, parentId) {

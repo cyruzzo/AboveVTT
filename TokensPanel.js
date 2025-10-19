@@ -627,7 +627,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
                 }
 
             }
-            console.debug("appending item", item);
+
             $(`#${item.parentId} > .folder-item-list`).append(row);
 
 
@@ -646,7 +646,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
             if (enableDraggable === true && !item.isTypeEncounter()) {
                 enable_draggable_token_creation(row);
             }
-            console.debug("appending item", item);
+
             if ($(`#${item.parentId}`).length) {
                 $(`#${item.parentId} > .folder-item-list`).append(row);
                 return;
@@ -4554,8 +4554,7 @@ function convert_open5e_monsterData(monsterData){
         }
        
         let convertedSkills = [];
-        Object.entries(monsterData.skills).forEach(([key, value]) => {
-          console.log(`${key}: ${value}`)     
+        Object.entries(monsterData.skills).forEach(([key, value]) => {  
             if(key == "athletics"){
                 convertedSkills.push({skillId: 2, value: value, additionalBonus: null})
             }
@@ -4702,7 +4701,6 @@ function convert_open5e_monsterData(monsterData){
 
         monsterData.movements = [];
         Object.entries(monsterData.speed).forEach(([key, value]) => {
-          console.log(`${key}: ${value}`)
           key = key.replace(/\b[a-z]/g, function(letter) {
             return letter.toUpperCase();
           });

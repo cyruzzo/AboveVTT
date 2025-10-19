@@ -645,7 +645,6 @@ class SidebarListItem {
    * @returns {SidebarListItem} the list item this creates
    */
   static Folder(id, folderPath, name, collapsed, parentId, folderType, color = '#F4B459') {
-    console.debug(`SidebarListItem.Folder folderPath: ${folderPath}, name: ${name}, collapsed: ${collapsed}, id: ${id}, parentId: ${parentId}, folderType: ${folderType}`);
     if(parentId == undefined && folderPath == RootFolder.Scenes.path){
         parentId = RootFolder.Scenes.id
     }
@@ -667,7 +666,6 @@ class SidebarListItem {
    * @constructor
    */
   static MyToken(tokenCustomization) {
-    console.debug("SidebarListItem.MyToken", tokenCustomization);
     let image = "";
     if (typeof tokenCustomization.tokenOptions?.alternativeImages === "object" && tokenCustomization.tokenOptions.alternativeImages.length > 0) {
       image = tokenCustomization.tokenOptions.alternativeImages[0];
@@ -690,14 +688,12 @@ class SidebarListItem {
    * @constructor
    */
   static BuiltinToken(tokenData) {
-    console.debug("SidebarListItem.BuiltinToken", tokenData);
     let folderPath = sanitize_folder_path(`${RootFolder.AboveVTT.path}/${tokenData.folderPath}`);
     let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.image, ItemType.BuiltinToken, folderPath, path_to_html_id(folderPath));
     item.tokenOptions = tokenData;
     return item
   }
   static DDBToken(tokenData) {
-    console.debug("SidebarListItem.DDBToken", tokenData);
     let folderPath = sanitize_folder_path(`${RootFolder.DDB.path}/${tokenData.folderPath}`);
     let item = new SidebarListItem(path_to_html_id(folderPath, tokenData.name), tokenData.name, tokenData.alternativeImages[0], ItemType.DDBToken, folderPath, path_to_html_id(folderPath));
     item.tokenOptions = tokenData;
@@ -711,7 +707,6 @@ class SidebarListItem {
    * @constructor
    */
   static Monster(monsterData) {
-    console.debug("SidebarListItem.Monster", monsterData);
     let item = new SidebarListItem(monsterData.id, monsterData.name, monsterData.avatarUrl, ItemType.Monster, RootFolder.Monsters.path, RootFolder.Monsters.id);
     item.monsterData = monsterData;
     return item;
@@ -723,7 +718,6 @@ class SidebarListItem {
    * @constructor
    */
   static open5eMonster(monsterData) {
-    console.debug("SidebarListItem.Monster", monsterData);
     if(monsterData.img_main == null || monsterData.img_main == "http://api.open5e.com/"){
       monsterData.img_main = 'https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg'
     }
@@ -741,7 +735,6 @@ class SidebarListItem {
    * @constructor
    */
   static PC(sheet, name, image, folderPath=RootFolder.Players.path, parentId=RootFolder.Players.id) {
-    console.debug("SidebarListItem.PC", sheet, name, image, folderPath, parentId);
     let item = new SidebarListItem(sheet, name, image, ItemType.PC, folderPath, parentId);
     item.sheet = sheet;
     return item;
@@ -759,7 +752,6 @@ class SidebarListItem {
     if ((typeof encounter.name == 'string') && encounter.name.length > 0) {
       name = encounter.name;
     }
-    console.debug(`SidebarListItem.Encounter ${RootFolder.Encounters.path}/${name}, collapsed: ${collapsed}`);
     let item = new SidebarListItem(encounter.id, name, `${window.EXTENSION_PATH}assets/folder.svg`, ItemType.Encounter, RootFolder.Encounters.path, RootFolder.Encounters.id);
     if ((typeof encounter.flavorText == 'string') && encounter.flavorText.length > 0) {
       item.description = encounter.flavorText;
@@ -777,7 +769,6 @@ class SidebarListItem {
     let folderPath = folder_path_of_scene(sceneData);
     let parentId = sceneData.parentId || RootFolder.Scenes.id;
     let item = new SidebarListItem(sceneData.id, name, sceneData.player_map, ItemType.Scene, folderPath, parentId);
-    console.debug(`SidebarListItem.Scene ${item.fullPath()}`);
     item.isVideo = sceneData.player_map_is_video == "1"; // explicity using `==` instead of `===` in case it's ever `1` or `"1"`
     item.noteData = sceneData.noteData || undefined;
     return item;
@@ -790,7 +781,6 @@ class SidebarListItem {
     }
     const image = `class=aoe-token-tileable aoe-style-${style} aoe-shape-${shape} ${name ? set_spell_override_style(name) : ""}`
     let item = new SidebarListItem(path_to_html_id(RootFolder.Aoe.path, name), name, image, ItemType.Aoe, RootFolder.Aoe.path, RootFolder.Aoe.id);
-    console.debug(`SidebarListItem.Aoe`, item);
     item.shape = shape;
     let parsedSize = parseInt(size);
     if (isNaN(parsedSize)) {
@@ -1487,7 +1477,6 @@ function set_list_item_identifier(html, listItem) {
   }
   html.attr("data-id", listItem.id).addClass("list-item-identifier");
   html.attr("data-full-path", encode_full_path(listItem.fullPath())).addClass("list-item-identifier");
-  console.log(`set_list_item_identifier`, html, listItem.fullPath(), listItem.id);
 }
 
 function path_to_html_id(path, name) {
@@ -1552,7 +1541,6 @@ function matches_full_path(html, fullPath) {
  * @returns {*|jQuery|HTMLElement} that represents a row in the list of items in the sidebar
  */
 function build_sidebar_list_row(listItem) {
-  console.log('build_sidebar_list_row', listItem.name);
 
   let row = $(`<div id="${listItem.id}" class="sidebar-list-item-row" title="${listItem.name}"></div>`);
   set_list_item_identifier(row, listItem);
@@ -1634,7 +1622,6 @@ function build_sidebar_list_row(listItem) {
       subtitle.hide();
       row.append(`<div class="folder-item-list"></div>`);
       row.addClass("folder");
-      console.log(`folder.collapsed: ${listItem.collapsed}`, listItem);
       if (listItem.collapsed === true) {
         row.addClass("collapsed");
       }

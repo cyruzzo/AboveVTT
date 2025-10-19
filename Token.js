@@ -883,9 +883,6 @@ class Token {
 			const selectedNewtop =  Math.round(Math.round( (selectedOldTop - startY) / window.CURRENT_SCENE_DATA.vpps)) * window.CURRENT_SCENE_DATA.vpps + startY;
 			const selectedNewleft = Math.round(Math.round( (selectedOldleft - startX) / window.CURRENT_SCENE_DATA.hpps)) * window.CURRENT_SCENE_DATA.hpps + startX;
 
-			console.log("Snapping from "+selectedOldleft+ " "+selectedOldTop + " -> "+selectedNewleft + " "+selectedNewtop);
-			console.log("params startX " + startX + " startY "+ startY + " vpps "+window.CURRENT_SCENE_DATA.vpps + " hpps "+window.CURRENT_SCENE_DATA.hpps);
-
 			this.update_from_page();
 			this.options.top = `${selectedNewtop}px`;
 			this.options.left = `${selectedNewleft}px`;
@@ -919,7 +916,6 @@ class Token {
 			let pageY = Math.round(top * window.ZOOM - ($(window).height() / 2));
 			
 			
-			console.log(left + " " + top + "->" + pageX + " " + pageY);
 			
 			if(!dontscroll){
 				if($("#hide_rightpanel").hasClass("point-right")) {
@@ -1010,7 +1006,6 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	update_health_aura(token){
-		console.group("update_health_aura")
 		// set token data to the player if this token is a player token, otherwise just use this tokens data
 		if($(`.token[data-id='${this.options.id}']>.hpvisualbar`).length<1){
 			let hpvisualbar = $(`<div class='hpvisualbar'></div>`);
@@ -1150,15 +1145,10 @@ class Token {
 			'--max-width': tokenWidth + 'px',
 			'--max-height': tokenHeight + 'px',
 		})
-
-
-
-		
-		console.groupEnd()
 	}
 
 	update_condition_timers(){
-		console.group("update_condition_timers")
+		
 
 		function setDurationBadgeText(token, condition){
 			if(condition.duration == undefined)
@@ -1179,7 +1169,6 @@ class Token {
 			const condition = this.options.custom_conditions[i];
 			setDurationBadgeText(this, condition);
 		}
-		console.groupEnd()
 	}
 
 
@@ -1205,7 +1194,6 @@ class Token {
 	}
 
 	update_from_page() {
-		console.group("update_from_page")
 		let selector = "div[data-id='" + this.options.id + "']";
 		let old = $("#tokens").find(selector);
 
@@ -1241,7 +1229,6 @@ class Token {
 		this.update_age();
 
 		toggle_player_selectable(this, old)
-		console.groupEnd()
 	}
 
 
@@ -1343,7 +1330,6 @@ class Token {
 		maxhp_input.val(this.maxHp);
 
 		if (this.options.disableaura){
-			console.log("building hp bar", this.options)
 			this.tempHp && this.tempHp > 0 ?
 				hpbar.css('background', '#77a2ff')
 				: hpbar.css('background', '');
@@ -1586,7 +1572,6 @@ class Token {
 	 * @param token jquery selected div with the class "token"
 	 */
 	build_stats(token){
-		console.group("build_stats")
 		if (!token.has(".hpbar").length > 0  && !token.has(".ac").length > 0 && !token.has(".elev").length > 0){
 			token.append(this.build_hp());
 			token.append(this.build_ac());
@@ -1609,8 +1594,6 @@ class Token {
 			$(`#combat_area tr[data-target='${this.options.id}'] .ac svg text`).text(this.ac);
 			ct_update_popout();
 		}
-
-		console.groupEnd()
 	}
 
 
@@ -1626,7 +1609,6 @@ class Token {
 			}
 		}
 
-		console.group("build_conditions")
 		let self=this;
 		let bar_width = Math.floor(this.sizeWidth() * 0.2);
 		const cond = $("<div class='conditions' style='padding:0;margin:0'/>");
@@ -1928,7 +1910,6 @@ class Token {
 			}
 			// CHECK IF ADDING NOTE CONDITION
 			if (this.options.id in window.JOURNAL.notes && (window.DM || window.JOURNAL.notes[this.options.id].player == true || (window.JOURNAL.notes[this.options.id].player instanceof Array && window.JOURNAL.notes[this.options.id].player.includes(`${window.myUser}`)))) {
-				console.log("aggiungerei nota");
 				const conditionName = "note"
 				const conditionContainer = $(`<div id='${conditionName}' class='condition-container' />`);
 				const symbolImage = $("<img class='condition-img note-condition' src='" + window.EXTENSION_PATH + "assets/conditons/note.svg'/>");
@@ -2086,7 +2067,6 @@ class Token {
 		} else {
 			return [cond, moreCond];
 		}
-		console.groupEnd()
 	}
 
 	place(animationDuration) {
@@ -2109,7 +2089,7 @@ class Token {
 			if (animationDuration == undefined || parseFloat(animationDuration) == NaN) {
 				animationDuration = 1000;
 			}
-			console.log("cerco id" + this.options.id);
+
 			let selector = "div[data-id='" + this.options.id + "']";
 			let old = $("#tokens").find(selector);
 			let self = this;
@@ -2139,9 +2119,6 @@ class Token {
 			}		
 
 			if (old.length > 0) {
-				console.trace();
-				console.group("old token")
-				console.log("trovato!!");
 				if(this.options.type == 'door'){
 					this.options.size = 50;
 					setTokenLight(old, this.options);
@@ -2711,8 +2688,6 @@ class Token {
 		    		$(`[data-notatoken='notatoken_${this.options.id}']`).remove();
 		    		old.toggleClass('underDarkness', false);
 		    	}
-				
-				console.groupEnd()
 			}
 			else { // adding a new token
 				// console.group("new token")
@@ -2933,7 +2908,7 @@ class Token {
 				
 				let zindexdiff=(typeof this.options.zindexdiff == 'number') ? this.options.zindexdiff : topZIndex != 0 ? topZIndex : Math.round(17/(this.sizeWidth()/window.CURRENT_SCENE_DATA.hpps)); 
 				this.options.zindexdiff = Math.max(zindexdiff, -5000);
-				console.log("Diff: "+zindexdiff);
+
 				
 				
 				tok.width(this.sizeWidth());
@@ -3145,7 +3120,6 @@ class Token {
 						$("#resizeDragMon").append($('<div class="iframeResizeCover"></div>'));			
 						$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 
-						console.log("Click x: " + click.x + " y: " + click.y);
 
 						self.orig_top = self.options.top;
 						self.orig_left = self.options.left;
@@ -3344,13 +3318,6 @@ class Token {
 						self.options.left = `${ui.position.left}px`;
 						self.options.top = `${ui.position.top}px`;
 
-
-
-						//console.log("Changing to " +ui.position.left+ " "+ui.position.top);
-						// HACK TEST 
-						/*$(event.target).css("left",ui.position.left);
-						$(event.target).css("top",ui.position.top);*/
-						// END OF HACK TEST
 						
 						const allowTokenMeasurement = get_avtt_setting_value("allowTokenMeasurement")
 						
@@ -3424,7 +3391,6 @@ class Token {
 								if ((id != self.options.id) && (!window.TOKEN_OBJECTS[id].options.locked || (window.DM && window.TOKEN_OBJECTS[id].options.restrictPlayerMove ||  $('#select_locked .ddbc-tab-options__header-heading').hasClass('ddbc-tab-options__header-heading--is-active')))) {
 
 
-									//console.log("sposto!");
 									let curr = window.TOKEN_OBJECTS[id];
 									tokenX = offsetLeft + parseInt(curr.orig_left);
 									tokenY = offsetTop + parseInt(curr.orig_top);
@@ -3676,7 +3642,6 @@ class Token {
 				if (window.ON_SCREEN_TOKENS[this.options.id] == undefined)
 					window.ON_SCREEN_TOKENS[this.options.id] = {};
 				window.ON_SCREEN_TOKENS[this.options.id].onScreenToken = tok;
-				console.groupEnd()
 			}
 			// HEALTH AURA / DEAD CROSS
 			selector = "div[data-id='" + this.options.id + "']";
@@ -3694,7 +3659,6 @@ class Token {
 		    });  
 			$(`[data-notatoken='notatoken_${this.options.id}']`).children('div:not(.base):not(.token-image):not(.hpvisualbar):not(.dead)').remove();
 
-			console.groupEnd()
 
 			return true;
 		}
@@ -5587,7 +5551,6 @@ function delete_selected_tokens() {
 	if (tokensToDelete.length == 0) return;
 	window.TOKEN_OBJECTS_RECENTLY_DELETED = {};
 	tokensToDelete.forEach(t => window.TOKEN_OBJECTS_RECENTLY_DELETED[t.options.id] = Object.assign({}, t.options));
-	console.log("delete_selected_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 
 	for (let i = 0; i < tokensToDelete.length; i++) {
 		tokensToDelete[i].delete(true);
@@ -5596,7 +5559,6 @@ function delete_selected_tokens() {
 }
 
 function undo_delete_tokens() {
-	console.log("undo_delete_tokens", window.TOKEN_OBJECTS_RECENTLY_DELETED);
 	if (!window.DM) return;
 	for (let id in window.TOKEN_OBJECTS_RECENTLY_DELETED) {
 		let options = window.TOKEN_OBJECTS_RECENTLY_DELETED[id];
