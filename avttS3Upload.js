@@ -170,6 +170,7 @@ function avttStoreFolderListing(folderPath, entries) {
     avttFolderListingCache.set(normalized, []);
     return;
   }
+  const seen = new Set();
   const cloned = entries
     .map(avttCloneListingEntry)
     .filter(
@@ -177,7 +178,12 @@ function avttStoreFolderListing(folderPath, entries) {
         entry &&
         entry.Key &&
         !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
-    );
+    )
+    .filter((entry) => {
+      if (seen.has(entry.Key)) return false;
+      seen.add(entry.Key);
+      return true;
+    });
   avttFolderListingCache.set(normalized, cloned);
 }
 
@@ -195,6 +201,14 @@ function avttPrimeListingCachesFromFullListing(entries) {
         entry.Key &&
         !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
     );
+  // Deduplicate global list by Key
+  if (Array.isArray(avttAllFilesCache)) {
+    const dedup = new Map();
+    for (const e of avttAllFilesCache) {
+      if (e && e.Key && !dedup.has(e.Key)) dedup.set(e.Key, e);
+    }
+    avttAllFilesCache = Array.from(dedup.values());
+  }
   const grouped = new Map();
   for (const entry of avttAllFilesCache) {
     const relative = avttExtractRelativeKey(entry.Key);
@@ -325,7 +339,7 @@ function avttReadFilePickerRecords() {
     }
   });
 }
-function avttPersistCachesToIndexedDB() {
+const persistCacheThrottle = throttle(()=>{
   const records = [];
   if (Array.isArray(avttAllFilesCache)) {
     for (const entry of avttAllFilesCache) {
@@ -347,6 +361,9 @@ function avttPersistCachesToIndexedDB() {
     console.warn("avttPersistCachesToIndexedDB write helper failed", err);
   }
   return;
+}, 15000, { leading: true, trailing: true })
+function avttPersistCachesToIndexedDB() {
+  persistCacheThrottle();
 }
 
 function avttLoadCachesFromIndexedDB() {
@@ -2450,7 +2467,7 @@ let avttQueueTotalEnqueued = 0;
 let avttQueueCompleted = 0;
 let avttQueueConflictPolicy = null;
 let avttConflictPromptPending = null;
-const AVTT_MAX_CONCURRENT_UPLOADS = 5;
+const AVTT_MAX_CONCURRENT_UPLOADS = 3;
 
 
 
@@ -2567,7 +2584,15 @@ async function avttGenerateImageThumbnailBlob(file) {
       canvas.height,
     );
     ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
-    return await avttCanvasToBlob(canvas);
+    const blob = await avttCanvasToBlob(canvas);
+    // Explicit cleanup
+    try {
+      const ctx2 = canvas.getContext('2d');
+      if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+      canvas.width = 0; canvas.height = 0;
+    } catch {}
+    image.src = '';
+    return blob;
   } catch (error) {
     console.warn("Failed to generate image thumbnail", file?.name, error);
     return null;
@@ -2646,7 +2671,14 @@ async function avttGenerateVideoThumbnailBlob(file) {
       canvas.height,
     );
     ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
-    return await avttCanvasToBlob(canvas);
+    const blob = await avttCanvasToBlob(canvas);
+    // Explicit cleanup
+    try {
+      const ctx2 = canvas.getContext('2d');
+      if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
+      canvas.width = 0; canvas.height = 0;
+    } catch {}
+    return blob;
   } catch (error) {
     console.warn("Failed to generate video thumbnail", file?.name, error);
     return null;
@@ -3273,7 +3305,7 @@ const PatreonAuth = (() => {
   function buildMembershipResult(member, campaign, tiersIndex, campaignTiers) {
     const memberRole = member?.attributes?.role;
     if (memberRole && memberRole.toLowerCase() === "creator") {
-      const label = member?.attributes?.full_name || "Creator";
+      const label = "Creator";
       return {
         level: "creator",
         label,
@@ -3418,8 +3450,7 @@ const PatreonAuth = (() => {
       }
       if (result.level === "creator" || isCreatorAccount) {
         result.level = "creator";
-        result.label =
-          identity?.attributes?.full_name || result.label || "Creator";
+        result.label = "Creator";
       }
       return result;
     }
@@ -3427,7 +3458,7 @@ const PatreonAuth = (() => {
     if (isCreatorAccount) {
       return {
         level: "creator",
-        label: identity?.attributes?.full_name || "Creator",
+        label: "Creator",
         amountCents: Number.MAX_SAFE_INTEGER,
         member: null,
         campaign: null,
@@ -3996,7 +4027,6 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               width: 15px;
               height: 15px;
               font-size: 10px;
-              float: right;
             }    
             #cancel-avtt-upload-button:hover{
               color: #F00 !important;
@@ -4029,6 +4059,15 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               text-decoration: underline 1px dotted color-mix(in srgb, var(--link-color, rgba(39, 150, 203, 1)), transparent 50%);
               color: var(--font-color, #000);
               cursor: pointer;
+            }
+            #uploading-file-indicator{
+                display: flex;
+                gap: 3px;
+                flex-wrap: nowrap;
+                flex-direction: row;
+                position: absolute;
+                bottom: 18px;
+                left: 15px;
             }
         </style>
         <div id="avtt-file-picker">
@@ -4346,21 +4385,29 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     if (!uploadingIndicator) {
       return;
     }
-    uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${index + 1}</span> of <span id='total-files'>${total}</span>`;
-    uploadingIndicator.style.display = "block";
-    const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
+
+    if($(uploadingIndicator).find('#file-number').length == 0){
+      uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${index + 1}</span> of <span id='total-files'>${total}</span>`;
+      uploadingIndicator.style.display = "flex";
+      const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
+      cancelButton.on('click', () => {
+        if (avttUploadController) {
+          try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch { }
+        }
+
+        avttUploadQueue = [];
+        avttQueueTotalEnqueued = avttQueueCompleted;
+      });
+
+      $(uploadingIndicator).prepend(cancelButton);
+    }else{
+      $(uploadingIndicator).find('#file-number').text(`${index + 1}`);
+      $(uploadingIndicator).find('#total-files').text(`${total}`);
+    }
 
 
-    cancelButton.on('click', () => {
-      if (avttUploadController) {
-        try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch {}
-      }
 
-      avttUploadQueue = [];
-      avttQueueTotalEnqueued = avttQueueCompleted;
-    });
 
-    $(uploadingIndicator).prepend(cancelButton);
   };
 
   const hideUploadingIndicator = () => {
@@ -4542,35 +4589,30 @@ async function avttProcessUploadQueue() {
         avttRegisterPendingUploadKey(targetKey, Number(selectedFile.size) || 0);
         try {
           const now = new Date().toISOString();
-          const newEntry = {
-            key: `${window.PATREON_ID}/${targetKey}`,
-            Key: `${window.PATREON_ID}/${targetKey}`,
-            size: Number(selectedFile.size) || 0,
-            lastModified: now,
-          };
+          const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
+          const newEntry = { Key: normalizedKey, Size: Number(selectedFile.size) || 0, LastModified: now };
           if (Array.isArray(avttAllFilesCache)) {
-            const idx = avttAllFilesCache.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+            const idx = avttAllFilesCache.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
             if (idx >= 0) {
-              avttAllFilesCache[idx] = newEntry;
+              avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
             } else {
-              avttAllFilesCache.push(newEntry);
+              avttAllFilesCache.push({ ...newEntry });
             }
           }
-          if (avttFolderListingCache) {
-            const parentFolder = avttGetParentFolder(`${window.PATREON_ID}/${targetKey}`);
-
+          if (avttFolderListingCache && typeof avttFolderListingCache.get === 'function') {
+            const parentFolder = avttGetParentFolder(normalizedKey);
             const existing = avttFolderListingCache.get(parentFolder);
             if (Array.isArray(existing)) {
-              const idx = existing.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+              const idx = existing.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
               if (idx >= 0) {
-                existing[idx] = newEntry;
+                existing[idx] = { ...existing[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
               } else {
-                existing.push(newEntry);
+                existing.push({ ...newEntry });
               }
               avttFolderListingCache.set(parentFolder, existing);
             }
           }
-          avttSchedulePersist();
+          try { avttSchedulePersist(); } catch {}
         } catch (cacheError) {
           console.warn('Failed to update local caches after upload', cacheError);
         }
@@ -4860,8 +4902,10 @@ async function avttProcessUploadQueue() {
 
     try {
       await collectDroppedFiles(transfer);
-    } catch (error) {
+    } catch (error) { 
       console.error("Failed to upload dropped files", error);
+      if (error.message.includes('A requested file or directory could not be found at the time an operation was processed.'))
+        return;
       alert(error.message || "An unexpected error occurred while uploading dropped files.");
       hideUploadingIndicator();
     }
@@ -5047,7 +5091,7 @@ function formatFileSize(bytes) {
   }
   return `${size.toFixed(1)} ${units[unitIndex]}`;
 }
-
+let filesForInsert = [];
 function refreshFiles(
   path,
   recheckSize = false,
@@ -5199,7 +5243,7 @@ function refreshFiles(
       };
 
       const regEx = new RegExp(`^${window.PATREON_ID}/`, "gi");
-      const prepared = [];
+      filesForInsert = [];
 
       for (const fileEntry of files) {
         const rawKey =
@@ -5265,7 +5309,7 @@ function refreshFiles(
           }
         }
 
-        prepared.push({
+        filesForInsert.push({
           rawKey,
           relativePath,
           size,
@@ -5275,7 +5319,7 @@ function refreshFiles(
         });
       }
 
-      if (prepared.length === 0) {
+      if (filesForInsert.length === 0) {
         fileListing.innerHTML = "<tr><td colspan='4'>No files found.</td></tr>";
         avttApplyClipboardHighlights();
         avttUpdateSelectNonFoldersCheckbox();
@@ -5283,7 +5327,7 @@ function refreshFiles(
         return;
       }
 
-      avttSortEntries(prepared);
+      avttSortEntries(filesForInsert);
       const setLineImgSrc = (container, entry) => {
         requestAnimationFrame(async () => {
           try {
@@ -5355,94 +5399,124 @@ function refreshFiles(
         });
       };
       fileListing.innerHTML = "";
-      prepared.forEach((entry, index) => {
-        const listItem = document.createElement("tr");
-        listItem.classList.add("avtt-file-row");
-        listItem.dataset.path = entry.relativePath;
-        listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
-        listItem.dataset.type = entry.type || "";
-        listItem.setAttribute("draggable", "true");
-        const checkboxCell = $(`<td><input type="checkbox" id='input-${entry.relativePath}' class="avtt-file-checkbox ${entry.isFolder ? "folder" : ""}" value="${entry.relativePath}" data-size="${entry.isFolder ? 0 : entry.size}"></td>`);
-        if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)){
-          checkboxCell.find("input").prop("checked", true);
+      const CHUNK_SIZE = 100;
+      let renderIndex = 0;
+      const renderChunk = () => {      
+        if (signal?.aborted) return;
+        if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0) {
+          $(fileListingSection).append(build_combat_tracker_loading_indicator('Loading files...'));
         }
+        const end = Math.min(renderIndex + CHUNK_SIZE, filesForInsert.length);
+        for (let i = renderIndex; i < end; i++) {
+          const entry = filesForInsert[i];
+          const index = i;
+          const listItem = document.createElement("tr");
+          listItem.classList.add("avtt-file-row");
+          listItem.dataset.path = entry.relativePath;
+          listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
+          listItem.dataset.type = entry.type || "";
+          listItem.setAttribute("draggable", "true");
+          const checkboxCell = $(`<td><input type=\"checkbox\" id='input-${entry.relativePath}' class=\"avtt-file-checkbox ${entry.isFolder ? "folder" : ""}\" value=\"${entry.relativePath}\" data-size=\"${entry.isFolder ? 0 : entry.size}\"></td>`);
+          if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)){
+            checkboxCell.find("input").prop("checked", true);
+          }
 
-        const labelCell = $(`<td><label for='input-${entry.relativePath}' style="cursor:pointer;" class="avtt-file-name  ${entry.isFolder ? "folder" : ""}" title="${entry.relativePath}"><span class="material-symbols-outlined">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}</span></label></td>`);
-        const typeCell = $(`<td>${entry.type || ""}</td>`);
-        const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
-        const sizeCell = $(`<td class="avtt-file-size">${sizeValue}</td>`);
+          const labelCell = $(`<td><label for='input-${entry.relativePath}' style=\"cursor:pointer;\" class=\"avtt-file-name  ${entry.isFolder ? "folder" : ""}\" title=\"${entry.relativePath}\"><span class=\"material-symbols-outlined\">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}</span></label></td>`);
+          const typeCell = $(`<td>${entry.type || ""}</td>`);
+          const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
+          const sizeCell = $(`<td class=\"avtt-file-size\">${sizeValue}</td>`);
 
-        const iconElement = labelCell.find("span.material-symbols-outlined")[0];
-        if (iconElement) {
-          setLineImgSrc(iconElement, entry);
-        }
+          const iconElement = labelCell.find("span.material-symbols-outlined")[0];
+          if (iconElement) {
+            setLineImgSrc(iconElement, entry);
+          }
 
-        $(listItem).append(checkboxCell, labelCell, typeCell, sizeCell);
-        if (entry.isFolder) {
-          labelCell
-            .off("click.openFolder")
-            .on("click.openFolder", function (e) {
-              e.preventDefault();
-              refreshFiles(
-                entry.relativePath,
-                undefined,
-                undefined,
-                undefined,
-                fileTypes,
-                {
-                  useCache: true,
-                  revalidate:
-                    !avttFolderListingCache.has(entry.relativePath) ||
-                    !Array.isArray(avttFolderListingCache.get(entry.relativePath)),
-                },
-              );
-              currentFolder = entry.relativePath;
+          $(listItem).append(checkboxCell, labelCell, typeCell, sizeCell);
+          if (entry.isFolder) {
+            labelCell
+              .off("click.openFolder")
+              .on("click.openFolder", function (e) {
+                e.preventDefault();
+                refreshFiles(
+                  entry.relativePath,
+                  undefined,
+                  undefined,
+                  undefined,
+                  fileTypes,
+                  {
+                    useCache: true,
+                    revalidate:
+                      !avttFolderListingCache.has(entry.relativePath) ||
+                      !Array.isArray(avttFolderListingCache.get(entry.relativePath)),
+                  },
+                );
+                currentFolder = entry.relativePath;
+              });
+          }
+
+          const checkboxElement = checkboxCell.find("input")[0];
+          if (checkboxElement) {
+            checkboxElement.setAttribute("data-index", String(index));
+            checkboxElement.addEventListener("click", (clickEvent) => {
+              avttHandleCheckboxClick(clickEvent, index);
             });
+          }
+          listItem.addEventListener("dragstart", (dragEvent) => {
+            avttHandleDragStart(dragEvent, entry);
+          });
+          listItem.addEventListener("dragend", (dragEvent) => {
+            avttHandleDragEnd(dragEvent);
+          });
+          if (entry.isFolder) {
+            listItem.addEventListener("dragenter", (dragEvent) => {
+              avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
+            });
+            listItem.addEventListener("dragover", (dragEvent) => {
+              avttHandleFolderDragOver(dragEvent, listItem, entry.relativePath);
+            });
+            listItem.addEventListener("dragleave", (dragEvent) => {
+              avttHandleFolderDragLeave(dragEvent, listItem);
+            });
+            listItem.addEventListener("drop", async (dragEvent) => {
+              await avttHandleFolderDrop(dragEvent, entry.relativePath);
+            });
+          }
+          listItem.addEventListener("contextmenu", (contextEvent) => {
+            avttOpenContextMenu(contextEvent, entry);
+          });
+
+          fileListing.appendChild(listItem);
         }
+        renderIndex = end;
+        avttApplyClipboardHighlights();
+        avttUpdateSelectNonFoldersCheckbox();
+        avttUpdateActionsMenuState();
+        $('#file-listing-section .sidebar-panel-loading-indicator').remove();
+      };
 
-        const checkboxElement = checkboxCell.find("input")[0];
-        if (checkboxElement) {
-          checkboxElement.setAttribute("data-index", String(index));
-          checkboxElement.addEventListener("click", (clickEvent) => {
-            avttHandleCheckboxClick(clickEvent, index);
-          });
+      // Initial chunk render
+      renderChunk();
+
+      // Scroll-triggered incremental render: 100px from bottom
+      const container = document.getElementById("file-listing-section");
+      const onScroll = () => {
+        if (!container) return;
+        const remaining = container.scrollHeight - container.scrollTop - container.clientHeight;
+        if (remaining <= 100 && renderIndex < filesForInsert.length) {
+          setTimeout(renderChunk, 0);
         }
-        listItem.addEventListener("dragstart", (dragEvent) => {
-          avttHandleDragStart(dragEvent, entry);
-        });
-        listItem.addEventListener("dragend", (dragEvent) => {
-          avttHandleDragEnd(dragEvent);
-        });
-        if (entry.isFolder) {
-          listItem.addEventListener("dragenter", (dragEvent) => {
-            avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
-          });
-          listItem.addEventListener("dragover", (dragEvent) => {
-            avttHandleFolderDragOver(dragEvent, listItem, entry.relativePath);
-          });
-          listItem.addEventListener("dragleave", (dragEvent) => {
-            avttHandleFolderDragLeave(dragEvent, listItem);
-          });
-          listItem.addEventListener("drop", async (dragEvent) => {
-            await avttHandleFolderDrop(dragEvent, entry.relativePath);
-          });
-        }        
-        listItem.addEventListener("contextmenu", (contextEvent) => {
-          avttOpenContextMenu(contextEvent, entry);
-        });
-
-        fileListing.appendChild(listItem);
-      });
-      avttApplyClipboardHighlights();
-      avttUpdateSelectNonFoldersCheckbox();
-      avttUpdateActionsMenuState();
-
+        if (renderIndex >= filesForInsert.length) {
+          container.removeEventListener('scroll', onScroll);
+        }
+      };
+      if (container) {
+        container.removeEventListener('scroll', onScroll);
+        container.addEventListener('scroll', onScroll, { passive: true });
+      }
+    
     };
-    const hasCachedAllFiles =
-      Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0;
-    const hasCachedFolder =
-      avttFolderListingCache.has(normalizedPath) &&
-      Array.isArray(avttFolderListingCache.get(normalizedPath));
+    const hasCachedAllFiles = Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0;
+    const hasCachedFolder = avttFolderListingCache.has(normalizedPath) && Array.isArray(avttFolderListingCache.get(normalizedPath));
     const hasCachedData = allFiles ? hasCachedAllFiles : hasCachedFolder;
     const shouldUseCachedData = useCache && hasCachedData;
 
