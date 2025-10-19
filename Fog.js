@@ -6839,8 +6839,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	   
 	    if(closestWall?.terrainWall == true && secondClosestWall != null){
 	    	closestWall = secondClosestWall;
-	    	closestLight = secondClosestLight;
+	    	
 	    }
+		if (closestWall?.terrainWall == true && secondClosestLight != null) {
+			closestLight = secondClosestLight;
+		}
+		
 
     	if(closestNoDarknessWall?.terrainWall == true && secondClosestNoDarknessWall != null){
     		closestNoDarknessWall = secondClosestNoDarknessWall;
@@ -6864,10 +6868,10 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
     		}
     		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
     	} 
-		if (recordLight === squaredRadius){
+		if (closestLight !== null && recordLight === squaredRadius){
     		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
     	}
-		if (recordMove === squaredRadius){
+		if (closestMove !== null && recordMove === squaredRadius){
     		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
     	}
      	
@@ -6879,7 +6883,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	} 
 
-			if (recordLight === squaredRadius){
+			if (closestNoDarkness !== null && recordLight === squaredRadius){
 	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
 	    	}
 
