@@ -39,7 +39,8 @@ function avttIsThumbnailRelativeKey(relativeKey) {
   return normalized.startsWith(AVTT_THUMBNAIL_PREFIX);
 }
 
-function avttGetThumbnailRelativeKey(relativeKey) {
+
+function avttGetThumbnailKeyFromRelative(relativeKey) {
   const normalized = avttNormalizeRelativePath(relativeKey);
   if (!normalized) {
     return "";
@@ -48,14 +49,6 @@ function avttGetThumbnailRelativeKey(relativeKey) {
     return normalized;
   }
   return `${AVTT_THUMBNAIL_PREFIX}${normalized}`;
-}
-
-function avttGetThumbnailKeyFromRelative(relativeKey) {
-  const normalized = avttNormalizeRelativePath(relativeKey);
-  if (!normalized) {
-    return "";
-  }
-  return avttGetThumbnailRelativeKey(normalized);
 }
 
 function avttVerifyImageUrl(url, timeout = 5000) {
@@ -2187,8 +2180,7 @@ async function avttHandlePasteFromClipboard(destinationFolder = currentFolder) {
   if (moves.length === 0) {
     return;
   }
-  const operation =
-    avttClipboard.mode === AVTT_CLIPBOARD_MODE.COPY ? "copy" : "move";
+  const operation = avttClipboard.mode === AVTT_CLIPBOARD_MODE.COPY ? "copy" : "move";
   await avttMoveEntries(moves, {
     operation,
     clearClipboard: operation === "move",
@@ -2458,7 +2450,7 @@ let avttQueueTotalEnqueued = 0;
 let avttQueueCompleted = 0;
 let avttQueueConflictPolicy = null;
 let avttConflictPromptPending = null;
-const AVTT_MAX_CONCURRENT_UPLOADS = 4;
+const AVTT_MAX_CONCURRENT_UPLOADS = 5;
 
 
 
@@ -4404,10 +4396,11 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   const resolveUploadKey = (file, uploadFolder = currentFolder) =>
     `${uploadFolder}${toNormalizedUploadPath(file)}`;
 
-function avttEnqueueUploads(filesOrFileArray) {
+  function avttEnqueueUploads(filesOrFileArray, uploadFolder = currentFolder) {
   const files = Array.isArray(filesOrFileArray) ? filesOrFileArray : [filesOrFileArray];
   for (const f of files) {
     if (!f) continue;
+    f.originFolder = uploadFolder;
     avttUploadQueue.push(f);
   }
   avttQueueTotalEnqueued += files.length;
@@ -4438,7 +4431,7 @@ async function avttProcessUploadQueue() {
 
         showUploadingProgress(avttQueueCompleted, Math.max(avttQueueTotalEnqueued, 1));
 
-        let targetKey = resolveUploadKey(selectedFile, currentFolder);
+        let targetKey = resolveUploadKey(selectedFile, nextFile.originFolder);
         let action = "overwrite";
 
         try {
@@ -4498,7 +4491,7 @@ async function avttProcessUploadQueue() {
           }
         }
 
-        const prospectiveTotal = (Number(selectedFile.size) || 0);
+        const prospectiveTotal = (Number(selectedFile.size) || 0) + (avttPendingUsageBytes || 0);
         if (
           activeUserLimit !== undefined &&
           prospectiveTotal + S3_Current_Size > activeUserLimit
@@ -4544,9 +4537,45 @@ async function avttProcessUploadQueue() {
 
         const userUsedElement = document.getElementById("user-used");
         if (userUsedElement) {
-          userUsedElement.innerHTML = formatFileSize((Number(selectedFile.size) || 0) + S3_Current_Size);
+          userUsedElement.innerHTML = formatFileSize((avttPendingUsageBytes || 0) + S3_Current_Size);
         }
         avttRegisterPendingUploadKey(targetKey, Number(selectedFile.size) || 0);
+        // Update local caches with the newly uploaded file
+        try {
+          const now = new Date().toISOString();
+          const newEntry = {
+            key: `${window.PATREON_ID}/${targetKey}`,
+            Key: `${window.PATREON_ID}/${targetKey}`,
+            size: Number(selectedFile.size) || 0,
+            lastModified: now,
+          };
+          if (Array.isArray(avttAllFilesCache)) {
+            const idx = avttAllFilesCache.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+            if (idx >= 0) {
+              avttAllFilesCache[idx] = newEntry;
+            } else {
+              avttAllFilesCache.push(newEntry);
+            }
+          }
+          if (avttFolderListingCache) {
+            const parentFolder = avttGetParentFolder(`${window.PATREON_ID}/${targetKey}`);
+
+            const existing = avttFolderListingCache.get(parentFolder);
+            if (Array.isArray(existing)) {
+              const idx = existing.findIndex((f) => f && (f.Key === newEntry.Key || f.key === newEntry.key));
+              if (idx >= 0) {
+                existing[idx] = newEntry;
+              } else {
+                existing.push(newEntry);
+              }
+              avttFolderListingCache.set(parentFolder, existing);
+            }
+          }
+          // Schedule persistence of updated caches
+          try { avttSchedulePersist(); } catch {}
+        } catch (cacheError) {
+          console.warn('Failed to update local caches after upload', cacheError);
+        }
 
         avttPendingUsageBytes += Number(selectedFile.size) || 0;
         avttPendingUsageCount += 1;
@@ -4630,7 +4659,7 @@ async function avttProcessUploadQueue() {
       return;
     }
 
-    avttEnqueueUploads(fileArray);
+    avttEnqueueUploads(fileArray, uploadFolder);
   };
 
   const assignRelativePath = (file, relativePath) => {
@@ -4649,7 +4678,7 @@ async function avttProcessUploadQueue() {
     return file;
   };
 
-  const readDirectoryEntries = async (directoryEntry, prefix = "") => {
+  const readDirectoryEntries = async (directoryEntry, prefix = "", uploadFolder = currentFolder) => {
     const reader = directoryEntry.createReader();
     const entries = [];
 
@@ -4677,7 +4706,7 @@ async function avttProcessUploadQueue() {
         break;
       }
       if (entry.isDirectory) {
-        const nestedFiles = await readDirectoryEntries(entry, directoryPath);
+        const nestedFiles = await readDirectoryEntries(entry, directoryPath, uploadFolder);
         files.push(...nestedFiles);
       } else if (entry.isFile) {
         const file = await new Promise((resolve, reject) =>
@@ -4686,8 +4715,8 @@ async function avttProcessUploadQueue() {
         const relativePath = `${directoryPath}${file.name}`;
 
         const fileWithPath = assignRelativePath(file, relativePath);
-
-        avttEnqueueUploads([fileWithPath]);
+        file.originFolder = uploadFolder;
+        avttEnqueueUploads([fileWithPath], uploadFolder);
         files.push({ file, relativePath });
       }
     }
@@ -4700,7 +4729,7 @@ async function avttProcessUploadQueue() {
       return [];
     }
 
-
+    const uploadFolder = currentFolder;
     if (avttUploadController?.signal?.aborted) {
       avttUploadQueue = [];
       return [];
@@ -4708,7 +4737,7 @@ async function avttProcessUploadQueue() {
     const items = dataTransfer.items;
     if (!items || !items.length) {
       const files = Array.from(dataTransfer.files || []);
-      if (files.length) { avttEnqueueUploads(files); }
+      if (files.length) { avttEnqueueUploads(files, uploadFolder); }
       return files;
     }
 
@@ -4716,8 +4745,9 @@ async function avttProcessUploadQueue() {
 
     const enqueue = (file) => {
       if (!file) return;
+      file.originFolder = uploadFolder;
       collected.push(file);
-      avttEnqueueUploads([file]);
+      avttEnqueueUploads([file], uploadFolder);
     };
 
     for (const item of items) {
@@ -4736,10 +4766,11 @@ async function avttProcessUploadQueue() {
           break;
         }
 
-        const directoryFiles = await readDirectoryEntries(entry);
+        const directoryFiles = await readDirectoryEntries(entry, undefined, uploadFolder);
         collected.push(...directoryFiles.map(({ file, relativePath }) => assignRelativePath(file, relativePath)));
       } else {
         const file = item.getAsFile();
+        file.originFolder = uploadFolder;
         if (file) {
           enqueue(assignRelativePath(file, file.name));
         }
@@ -4748,7 +4779,7 @@ async function avttProcessUploadQueue() {
 
     if (!collected.length) {
       const filesFallback = Array.from(dataTransfer.files || []);
-      if (filesFallback.length) { avttEnqueueUploads(filesFallback); }
+      if (filesFallback.length) { avttEnqueueUploads(filesFallback, uploadFolder); }
       return filesFallback;
     }
 
@@ -4830,13 +4861,7 @@ async function avttProcessUploadQueue() {
     }
 
     try {
-      const loadingFiles = build_combat_tracker_loading_indicator('Preparing Files for Upload...');
-      requestAnimationFrame(function(){$('#avtt-file-picker #file-listing-section').append(loadingFiles)});
-      
       await collectDroppedFiles(transfer);
-      loadingFiles.remove();
-      
-
     } catch (error) {
       console.error("Failed to upload dropped files", error);
       alert(error.message || "An unexpected error occurred while uploading dropped files.");
