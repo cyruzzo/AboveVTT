@@ -361,7 +361,7 @@ const persistCacheThrottle = throttle(()=>{
     console.warn("avttPersistCachesToIndexedDB write helper failed", err);
   }
   return;
-}, 15000)
+}, 15000, { leading: true, trailing: true })
 function avttPersistCachesToIndexedDB() {
   persistCacheThrottle();
 }
@@ -2467,7 +2467,7 @@ let avttQueueTotalEnqueued = 0;
 let avttQueueCompleted = 0;
 let avttQueueConflictPolicy = null;
 let avttConflictPromptPending = null;
-const AVTT_MAX_CONCURRENT_UPLOADS = 5;
+const AVTT_MAX_CONCURRENT_UPLOADS = 3;
 
 
 
@@ -3305,7 +3305,7 @@ const PatreonAuth = (() => {
   function buildMembershipResult(member, campaign, tiersIndex, campaignTiers) {
     const memberRole = member?.attributes?.role;
     if (memberRole && memberRole.toLowerCase() === "creator") {
-      const label = member?.attributes?.full_name || "Creator";
+      const label = "Creator";
       return {
         level: "creator",
         label,
@@ -3450,8 +3450,7 @@ const PatreonAuth = (() => {
       }
       if (result.level === "creator" || isCreatorAccount) {
         result.level = "creator";
-        result.label =
-          identity?.attributes?.full_name || result.label || "Creator";
+        result.label = "Creator";
       }
       return result;
     }
@@ -3459,7 +3458,7 @@ const PatreonAuth = (() => {
     if (isCreatorAccount) {
       return {
         level: "creator",
-        label: identity?.attributes?.full_name || "Creator",
+        label: "Creator",
         amountCents: Number.MAX_SAFE_INTEGER,
         member: null,
         campaign: null,
@@ -4028,7 +4027,6 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               width: 15px;
               height: 15px;
               font-size: 10px;
-              float: right;
             }    
             #cancel-avtt-upload-button:hover{
               color: #F00 !important;
@@ -4061,6 +4059,15 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               text-decoration: underline 1px dotted color-mix(in srgb, var(--link-color, rgba(39, 150, 203, 1)), transparent 50%);
               color: var(--font-color, #000);
               cursor: pointer;
+            }
+            #uploading-file-indicator{
+                display: flex;
+                gap: 3px;
+                flex-wrap: nowrap;
+                flex-direction: row;
+                position: absolute;
+                bottom: 18px;
+                left: 15px;
             }
         </style>
         <div id="avtt-file-picker">
@@ -4378,21 +4385,29 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     if (!uploadingIndicator) {
       return;
     }
-    uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${index + 1}</span> of <span id='total-files'>${total}</span>`;
-    uploadingIndicator.style.display = "block";
-    const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
+
+    if($(uploadingIndicator).find('#file-number').length == 0){
+      uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${index + 1}</span> of <span id='total-files'>${total}</span>`;
+      uploadingIndicator.style.display = "block";
+      const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
+      cancelButton.on('click', () => {
+        if (avttUploadController) {
+          try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch { }
+        }
+
+        avttUploadQueue = [];
+        avttQueueTotalEnqueued = avttQueueCompleted;
+      });
+
+      $(uploadingIndicator).prepend(cancelButton);
+    }else{
+      $(uploadingIndicator).find('#file-number').text(`${index + 1}`);
+      $(uploadingIndicator).find('#total-files').text(`${total}`);
+    }
 
 
-    cancelButton.on('click', () => {
-      if (avttUploadController) {
-        try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch {}
-      }
 
-      avttUploadQueue = [];
-      avttQueueTotalEnqueued = avttQueueCompleted;
-    });
 
-    $(uploadingIndicator).prepend(cancelButton);
   };
 
   const hideUploadingIndicator = () => {
