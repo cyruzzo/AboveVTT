@@ -4388,7 +4388,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
     if($(uploadingIndicator).find('#file-number').length == 0){
       uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${index + 1}</span> of <span id='total-files'>${total}</span>`;
-      uploadingIndicator.style.display = "block";
+      uploadingIndicator.style.display = "flex";
       const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
       cancelButton.on('click', () => {
         if (avttUploadController) {
@@ -5399,94 +5399,124 @@ function refreshFiles(
         });
       };
       fileListing.innerHTML = "";
-      prepared.forEach((entry, index) => {
-        const listItem = document.createElement("tr");
-        listItem.classList.add("avtt-file-row");
-        listItem.dataset.path = entry.relativePath;
-        listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
-        listItem.dataset.type = entry.type || "";
-        listItem.setAttribute("draggable", "true");
-        const checkboxCell = $(`<td><input type="checkbox" id='input-${entry.relativePath}' class="avtt-file-checkbox ${entry.isFolder ? "folder" : ""}" value="${entry.relativePath}" data-size="${entry.isFolder ? 0 : entry.size}"></td>`);
-        if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)){
-          checkboxCell.find("input").prop("checked", true);
+      const CHUNK_SIZE = 100;
+      let renderIndex = 0;
+      const renderChunk = () => {      
+        if (signal?.aborted) return;
+        if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0) {
+          $(fileListingSection).append(build_combat_tracker_loading_indicator('Loading files...'));
         }
+        const end = Math.min(renderIndex + CHUNK_SIZE, prepared.length);
+        for (let i = renderIndex; i < end; i++) {
+          const entry = prepared[i];
+          const index = i;
+          const listItem = document.createElement("tr");
+          listItem.classList.add("avtt-file-row");
+          listItem.dataset.path = entry.relativePath;
+          listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
+          listItem.dataset.type = entry.type || "";
+          listItem.setAttribute("draggable", "true");
+          const checkboxCell = $(`<td><input type=\"checkbox\" id='input-${entry.relativePath}' class=\"avtt-file-checkbox ${entry.isFolder ? "folder" : ""}\" value=\"${entry.relativePath}\" data-size=\"${entry.isFolder ? 0 : entry.size}\"></td>`);
+          if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)){
+            checkboxCell.find("input").prop("checked", true);
+          }
 
-        const labelCell = $(`<td><label for='input-${entry.relativePath}' style="cursor:pointer;" class="avtt-file-name  ${entry.isFolder ? "folder" : ""}" title="${entry.relativePath}"><span class="material-symbols-outlined">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}</span></label></td>`);
-        const typeCell = $(`<td>${entry.type || ""}</td>`);
-        const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
-        const sizeCell = $(`<td class="avtt-file-size">${sizeValue}</td>`);
+          const labelCell = $(`<td><label for='input-${entry.relativePath}' style=\"cursor:pointer;\" class=\"avtt-file-name  ${entry.isFolder ? "folder" : ""}\" title=\"${entry.relativePath}\"><span class=\"material-symbols-outlined\">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}</span></label></td>`);
+          const typeCell = $(`<td>${entry.type || ""}</td>`);
+          const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
+          const sizeCell = $(`<td class=\"avtt-file-size\">${sizeValue}</td>`);
 
-        const iconElement = labelCell.find("span.material-symbols-outlined")[0];
-        if (iconElement) {
-          setLineImgSrc(iconElement, entry);
-        }
+          const iconElement = labelCell.find("span.material-symbols-outlined")[0];
+          if (iconElement) {
+            setLineImgSrc(iconElement, entry);
+          }
 
-        $(listItem).append(checkboxCell, labelCell, typeCell, sizeCell);
-        if (entry.isFolder) {
-          labelCell
-            .off("click.openFolder")
-            .on("click.openFolder", function (e) {
-              e.preventDefault();
-              refreshFiles(
-                entry.relativePath,
-                undefined,
-                undefined,
-                undefined,
-                fileTypes,
-                {
-                  useCache: true,
-                  revalidate:
-                    !avttFolderListingCache.has(entry.relativePath) ||
-                    !Array.isArray(avttFolderListingCache.get(entry.relativePath)),
-                },
-              );
-              currentFolder = entry.relativePath;
+          $(listItem).append(checkboxCell, labelCell, typeCell, sizeCell);
+          if (entry.isFolder) {
+            labelCell
+              .off("click.openFolder")
+              .on("click.openFolder", function (e) {
+                e.preventDefault();
+                refreshFiles(
+                  entry.relativePath,
+                  undefined,
+                  undefined,
+                  undefined,
+                  fileTypes,
+                  {
+                    useCache: true,
+                    revalidate:
+                      !avttFolderListingCache.has(entry.relativePath) ||
+                      !Array.isArray(avttFolderListingCache.get(entry.relativePath)),
+                  },
+                );
+                currentFolder = entry.relativePath;
+              });
+          }
+
+          const checkboxElement = checkboxCell.find("input")[0];
+          if (checkboxElement) {
+            checkboxElement.setAttribute("data-index", String(index));
+            checkboxElement.addEventListener("click", (clickEvent) => {
+              avttHandleCheckboxClick(clickEvent, index);
             });
+          }
+          listItem.addEventListener("dragstart", (dragEvent) => {
+            avttHandleDragStart(dragEvent, entry);
+          });
+          listItem.addEventListener("dragend", (dragEvent) => {
+            avttHandleDragEnd(dragEvent);
+          });
+          if (entry.isFolder) {
+            listItem.addEventListener("dragenter", (dragEvent) => {
+              avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
+            });
+            listItem.addEventListener("dragover", (dragEvent) => {
+              avttHandleFolderDragOver(dragEvent, listItem, entry.relativePath);
+            });
+            listItem.addEventListener("dragleave", (dragEvent) => {
+              avttHandleFolderDragLeave(dragEvent, listItem);
+            });
+            listItem.addEventListener("drop", async (dragEvent) => {
+              await avttHandleFolderDrop(dragEvent, entry.relativePath);
+            });
+          }
+          listItem.addEventListener("contextmenu", (contextEvent) => {
+            avttOpenContextMenu(contextEvent, entry);
+          });
+
+          fileListing.appendChild(listItem);
         }
+        renderIndex = end;
+        avttApplyClipboardHighlights();
+        avttUpdateSelectNonFoldersCheckbox();
+        avttUpdateActionsMenuState();
+        $('#file-listing-section .sidebar-panel-loading-indicator').remove();
+      };
 
-        const checkboxElement = checkboxCell.find("input")[0];
-        if (checkboxElement) {
-          checkboxElement.setAttribute("data-index", String(index));
-          checkboxElement.addEventListener("click", (clickEvent) => {
-            avttHandleCheckboxClick(clickEvent, index);
-          });
+      // Initial chunk render
+      renderChunk();
+
+      // Scroll-triggered incremental render: 100px from bottom
+      const container = document.getElementById("file-listing-section");
+      const onScroll = () => {
+        if (!container) return;
+        const remaining = container.scrollHeight - container.scrollTop - container.clientHeight;
+        if (remaining <= 100 && renderIndex < prepared.length) {
+          setTimeout(renderChunk, 0);
         }
-        listItem.addEventListener("dragstart", (dragEvent) => {
-          avttHandleDragStart(dragEvent, entry);
-        });
-        listItem.addEventListener("dragend", (dragEvent) => {
-          avttHandleDragEnd(dragEvent);
-        });
-        if (entry.isFolder) {
-          listItem.addEventListener("dragenter", (dragEvent) => {
-            avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
-          });
-          listItem.addEventListener("dragover", (dragEvent) => {
-            avttHandleFolderDragOver(dragEvent, listItem, entry.relativePath);
-          });
-          listItem.addEventListener("dragleave", (dragEvent) => {
-            avttHandleFolderDragLeave(dragEvent, listItem);
-          });
-          listItem.addEventListener("drop", async (dragEvent) => {
-            await avttHandleFolderDrop(dragEvent, entry.relativePath);
-          });
-        }        
-        listItem.addEventListener("contextmenu", (contextEvent) => {
-          avttOpenContextMenu(contextEvent, entry);
-        });
-
-        fileListing.appendChild(listItem);
-      });
-      avttApplyClipboardHighlights();
-      avttUpdateSelectNonFoldersCheckbox();
-      avttUpdateActionsMenuState();
-
+        if (renderIndex >= prepared.length) {
+          container.removeEventListener('scroll', onScroll);
+        }
+      };
+      if (container) {
+        container.removeEventListener('scroll', onScroll);
+        container.addEventListener('scroll', onScroll, { passive: true });
+      }
+    
     };
-    const hasCachedAllFiles =
-      Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0;
-    const hasCachedFolder =
-      avttFolderListingCache.has(normalizedPath) &&
-      Array.isArray(avttFolderListingCache.get(normalizedPath));
+    const hasCachedAllFiles = Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0;
+    const hasCachedFolder = avttFolderListingCache.has(normalizedPath) && Array.isArray(avttFolderListingCache.get(normalizedPath));
     const hasCachedData = allFiles ? hasCachedAllFiles : hasCachedFolder;
     const shouldUseCachedData = useCache && hasCachedData;
 
