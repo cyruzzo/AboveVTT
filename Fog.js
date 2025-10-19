@@ -6650,7 +6650,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
     const tokenIsDoor = window.TOKEN_OBJECTS[auraId]?.options?.type =='door';
 
-	const diffNeedForTerrainWalls = 5;
+	const diffNeedForTerrainWalls = 300;
     
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
@@ -6690,12 +6690,12 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				continue;
 
 			pt = ray.cast(walls[j]);
-					
+
 
 			if (pt) {
 				let dist = squaredRadius;
 				let pointDistance = Vector.sqDist(window.PARTICLE.pos, pt);
-				if(pointDistance < lightRadius**2)
+				if (pointDistance < squaredRadius)
 					dist = pointDistance;
 				
 				const recordLightFurtherThanNeed = Math.abs(recordLight - dist) > diffNeedForTerrainWalls;
@@ -6716,8 +6716,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					          	y: window.PARTICLE.pos.y+ray.dir.y * lightRadius
 					          }
 				   		}	       
-				   		if(recordLightFurtherThanNeed)    		
-			   				secondClosestLight = closestLight;
+				   		if(recordLightFurtherThanNeed) 
+							secondClosestLight = closestLight;
+						   			
 				      	closestLight = pt;
 
 						if (dist != squaredRadius){    
@@ -6837,59 +6838,64 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 	    }	    
 	   
-	    if(closestWall?.terrainWall == true && secondClosestWall != null){
-	    	closestWall = secondClosestWall;
-	    	
-	    }
-		if (closestWall?.terrainWall == true && secondClosestLight != null) {
-			closestLight = secondClosestLight;
+		if (closestWall?.terrainWall == true && secondClosestLight != null && (secondClosestWall != null || secondRecordLight == squaredRadius)){
+			closestLight = secondClosestLight;	
+		}
+		
+		if (closestNoDarknessWall?.terrainWall == true && secondClosestNoDarkness != null){
+			closestNoDarkness = secondClosestNoDarkness;
+    	}
+
+		if (closestBarrier?.terrainWall == true && secondClosestMove != null){
+			closestMove = secondClosestMove;
+	 	}
+
+		
+		if (closestLight !== null && ((closestWall?.terrainWall && (secondClosestWall != null || secondRecordLight == squaredRadius)) || closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
+			if (closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null) {
+				lightPolygon.push({ x: prevClosestPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+			lightPolygon.push({ x: closestLight.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y * window.CURRENT_SCENE_DATA.scale_factor })
+		}
+		if (closestMove !== null && ((closestBarrier?.terrainWall && (secondClosestBarrier != null || secondRecordMove == squaredRadius)) || (closestBarrier !== prevClosestBarrier || i === lastRayIndex))) {
+			if (closestBarrier != prevClosestBarrier && prevClosestBarrierPoint) {
+				movePolygon.push({ x: prevClosestBarrierPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+			movePolygon.push({ x: closestMove.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y * window.CURRENT_SCENE_DATA.scale_factor })
+		}
+		if (closestLight !== null && recordLight === squaredRadius) {
+			if ( prevClosestWall !== null && prevClosestPoint !== null) {
+				lightPolygon.push({ x: prevClosestPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+			lightPolygon.push({ x: closestLight.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y * window.CURRENT_SCENE_DATA.scale_factor })
+		}
+		if (closestMove !== null && recordMove === squaredRadius) {
+			if (prevClosestBarrier !== null && prevClosestBarrierPoint !== null) {
+				movePolygon.push({ x: prevClosestBarrierPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+			movePolygon.push({ x: closestMove.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y * window.CURRENT_SCENE_DATA.scale_factor })
+		}
+
+		if (canSeeDarkness) {
+			if (closestNoDarkness !== null && ((closestNoDarknessWall?.terrainWall && (secondClosestNoDarkness != null || secondRecordNoDarkness == squaredRadius)) || (closestNoDarknessWall !== prevClosestNoDarkness || i === lastRayIndex || closestNoDarknessWall?.radius !== undefined))) {
+				if (closestNoDarknessWall !== prevClosestNoDarkness && prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null) {
+					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				}
+				noDarknessPolygon.push({ x: closestNoDarkness.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+
+			if (closestNoDarkness !== null && recordNoDarkness === squaredRadius) {
+				if (prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null) {
+					noDarknessPolygon.push({ x: prevClosestNoDarknessPoint.x * window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y * window.CURRENT_SCENE_DATA.scale_factor })
+				}
+				noDarknessPolygon.push({ x: closestNoDarkness.x * window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y * window.CURRENT_SCENE_DATA.scale_factor })
+			}
+
+			prevClosestNoDarknessPoint = closestNoDarkness;
+			prevClosestNoDarkness = closestNoDarknessWall;
 		}
 		
 
-    	if(closestNoDarknessWall?.terrainWall == true && secondClosestNoDarknessWall != null){
-    		closestNoDarknessWall = secondClosestNoDarknessWall;
-    		closestNoDarkness = secondClosestNoDarkness;
-    	}
-
-	 	if(closestBarrier?.terrainWall == true && secondClosestBarrier != null){
-	 		closestBarrier = secondClosestBarrier;
-	 		closestMove = secondClosestMove;
-	 	}
-
-    	if (closestLight !== null && (closestWall != prevClosestWall || i === lastRayIndex || closestWall?.radius !== undefined)) {
-    		if(closestWall !== prevClosestWall && prevClosestWall !== null && prevClosestPoint !== null){	    		
-    			lightPolygon.push({x: prevClosestPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
-    		}
-    		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	} 
-    	if (closestMove !== null && (closestBarrier !== prevClosestBarrier || i === lastRayIndex)) {
-    		if(closestBarrier != prevClosestBarrier && prevClosestBarrierPoint){
-    			 movePolygon.push({x: prevClosestBarrierPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestBarrierPoint.y*window.CURRENT_SCENE_DATA.scale_factor})
-    		}
-    		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	} 
-		if (closestLight !== null && recordLight === squaredRadius){
-    		lightPolygon.push({x: closestLight.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestLight.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	}
-		if (closestMove !== null && recordMove === squaredRadius){
-    		movePolygon.push({x: closestMove.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestMove.y*window.CURRENT_SCENE_DATA.scale_factor})
-    	}
-     	
-		if(canSeeDarkness){
-			if (closestNoDarkness !== null && (closestNoDarknessWall !== prevClosestNoDarkness || i === lastRayIndex || closestNoDarknessWall?.radius !== undefined)) {
-	    		if(closestNoDarknessWall !== prevClosestNoDarkness && prevClosestNoDarkness !== null && prevClosestNoDarknessPoint !== null){	    		
-	    			noDarknessPolygon.push({x: prevClosestNoDarknessPoint.x*window.CURRENT_SCENE_DATA.scale_factor, y: prevClosestNoDarknessPoint.y*window.CURRENT_SCENE_DATA.scale_factor}) 		
-	    		}
-	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    	} 
-
-			if (closestNoDarkness !== null && recordLight === squaredRadius){
-	    		noDarknessPolygon.push({x: closestNoDarkness.x*window.CURRENT_SCENE_DATA.scale_factor, y: closestNoDarkness.y*window.CURRENT_SCENE_DATA.scale_factor})
-	    	}
-
-	    	prevClosestNoDarknessPoint = closestNoDarkness;
-	    	prevClosestNoDarkness = closestNoDarknessWall;
-		}
 	    
 
 
