@@ -6650,7 +6650,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
     const tokenIsDoor = window.TOKEN_OBJECTS[auraId]?.options?.type =='door';
 
-	const diffNeedForTerrainWalls = 300;
+	const diffNeedForTerrainWalls = 100;
     
     let notBlockVision = [1, 3, 6, 7, 12, 13, '1', '3', '6', '7', '12', '13'];
     let notBlockMove = [8, 9, 10, 11, 12, 13, '8', '9', '10', '11', '12', '13'];
@@ -6698,10 +6698,14 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				if (pointDistance < squaredRadius)
 					dist = pointDistance;
 				
-				const recordLightFurtherThanNeed = Math.abs(recordLight - dist) > diffNeedForTerrainWalls;
-				const recordNoDarknessFurtherThanNeed = Math.abs(recordNoDarkness - dist) > diffNeedForTerrainWalls;
-				const recordMoveFurtherThanNeed = Math.abs(recordMove - dist) > diffNeedForTerrainWalls;
+				const recordLightFurtherThanNeed = Math.abs(secondRecordLight - dist) > diffNeedForTerrainWalls;
+				const recordNoDarknessFurtherThanNeed = Math.abs(secondRecordNoDarkness - dist) > diffNeedForTerrainWalls;
+				const recordMoveFurtherThanNeed = Math.abs(secondRecordMove - dist) > diffNeedForTerrainWalls;
+				if (walls[j].terrainWall && closestLight && Vector.sqDist(pt, closestLight)<diffNeedForTerrainWalls){
+					continue;
+				}
 				
+
 				if (dist < recordLight && !notBlockVision.includes(walls[j].c)) {
 				  	if(!tokenIsDoor || auraId != `${walls[j].a.x}${walls[j].a.y}${walls[j].b.x}${walls[j].b.y}${window.CURRENT_SCENE_DATA.id}`.replaceAll('.', ''))
 						{
