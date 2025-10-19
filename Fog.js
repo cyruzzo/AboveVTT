@@ -6698,9 +6698,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 				if (pointDistance < squaredRadius)
 					dist = pointDistance;
 				
-				const recordLightFurtherThanNeed = Math.abs(secondRecordLight - dist) > diffNeedForTerrainWalls;
-				const recordNoDarknessFurtherThanNeed = Math.abs(secondRecordNoDarkness - dist) > diffNeedForTerrainWalls;
-				const recordMoveFurtherThanNeed = Math.abs(secondRecordMove - dist) > diffNeedForTerrainWalls;
+				const recordLightFurtherThanNeed = Math.abs(recordLight - dist) > diffNeedForTerrainWalls;
+				const recordNoDarknessFurtherThanNeed = Math.abs(recordNoDarkness - dist) > diffNeedForTerrainWalls;
+				const recordMoveFurtherThanNeed = Math.abs(recordMove - dist) > diffNeedForTerrainWalls;
 				if (walls[j].terrainWall && closestLight && Vector.sqDist(pt, closestLight)<diffNeedForTerrainWalls){
 					continue;
 				}
