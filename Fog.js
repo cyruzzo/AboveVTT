@@ -6693,6 +6693,9 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 
 
 			if (pt) {
+				if (walls[j].terrainWall && closestLight && Vector.sqDist(pt, closestLight) < diffNeedForTerrainWalls) {
+					continue;
+				}
 				let dist = squaredRadius;
 				let pointDistance = Vector.sqDist(window.PARTICLE.pos, pt);
 				if (pointDistance < squaredRadius)
