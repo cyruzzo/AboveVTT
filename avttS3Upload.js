@@ -5254,15 +5254,17 @@ async function avttFlushUsageAndRefresh() {
       await applyUsageDelta(bytes, count);
     }
   } finally {
-    refreshFiles(
-      currentFolder,
-      true,
-      undefined,
-      undefined,
-      activeFilePickerFilter,
-      { useCache: true, revalidate: false, selectFiles: keys },
-    );
-    showUploadComplete();
+    if (document.getElementById("file-listing-section")){
+      refreshFiles(
+        currentFolder,
+        true,
+        undefined,
+        undefined,
+        activeFilePickerFilter,
+        { useCache: true, revalidate: false, selectFiles: keys },
+      );
+      showUploadComplete();
+    }
     avttUsageFlushScheduled = false;
     setTimeout(function () { avttUploadController = undefined; }, 1000);
   }

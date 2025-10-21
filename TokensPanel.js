@@ -656,12 +656,11 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
                 item.parentId = "myTokensFolder";
                 const customization = find_token_customization(item.type, item.id)
                 customization.parentId = item.parentId;
-                persist_token_customization(customization);
                 return;
             }
-
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
+    persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
 
     update_pc_token_rows();
     inject_encounter_monsters();

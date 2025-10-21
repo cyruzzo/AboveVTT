@@ -46,10 +46,9 @@ $(function() {
         return window.CAMPAIGN_INFO.dmId;
       })
       .then((campaignDmId) => {
-
-
-        const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid');
         const isDmPage = is_encounters_page();
+        const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
+        
 
 
         if (isDmPage && campaignDmId == userId) {
@@ -405,6 +404,7 @@ function start_player_joining_as_dm(){
         border-radius:5px;
     ">
       <span style="
+      color: #ddd;
       font-size: 25px;
       text-shadow: 1px 0px #000, 0px 1px #000, -1px 0px #000, 0px -1px #000, 1px 1px #000, -1px -1px #000, -1px 1px #000, 1px -1px #000; 
       ">It is not currently possible to join as DM from a player account.</span>
