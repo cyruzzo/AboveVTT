@@ -979,7 +979,7 @@ async function init_character_sheet_page() {
         .then(store_campaign_info)      // store gameId and campaign secret in localStorage for use on other pages     
         .then(async () => {
           window.CAMPAIGN_INFO = await DDBApi.fetchCampaignInfo(window.gameId);
-          window.myUser = $('#message-broker-client').attr('data-userid');
+          window.myUser = $('#message-broker-client').attr('data-userid') || Cobalt?.User?.ID;
         })
     }, 5000)
   }
