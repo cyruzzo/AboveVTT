@@ -2513,12 +2513,7 @@ async function avttHandleMapDrop(event) {
   avttHandleDragEnd();
 }
 
-const userLimit = Object.freeze({
-  avtt: 1 * 1024 * 1024 * 1024,
-  low: 10 * 1024 * 1024 * 1024,
-  mid: 25 * 1024 * 1024 * 1024,
-  high: 100 * 1024 * 1024 * 1024,
-});
+
 const allowedImageTypes = ["jpeg", "jpg", "png", "gif", "bmp", "webp"];
 const allowedVideoTypes = ["mp4", "mov", "avi", "mkv", "wmv", "flv", "webm"];
 const allowedAudioTypes = ["mp3", "wav", "aac", "flac", "ogg"];
@@ -2960,46 +2955,6 @@ const PatreonAuth = (() => {
     localStorage.removeItem(PATREON_AUTH_STORAGE_KEYS.tokens);
   }
 
-  function isCreatorIdentity(identity, config) {
-    if (!identity) {
-      return false;
-    }
-    try {
-      const creatorVanity = String(
-        config.creatorVanity || config.campaignSlug || "",
-      ).toLowerCase();
-      const creatorName = String(config.creatorName || "").toLowerCase();
-      const creatorIds = Array.isArray(config.creatorIds)
-        ? config.creatorIds.map((id) => String(id))
-        : [];
-      const identityId = identity.id ? String(identity.id) : "";
-      const identityAttributes = identity.attributes || {};
-      const identityVanity = String(
-        identityAttributes.vanity || "",
-      ).toLowerCase();
-      const identityUrl = String(identityAttributes.url || "").toLowerCase();
-      const identityFullName = String(
-        identityAttributes.full_name || "",
-      ).toLowerCase();
-      window.PATREON_ID = identityId;
-      if (
-        creatorVanity &&
-        (identityVanity === creatorVanity ||
-          identityUrl.includes(creatorVanity))
-      ) {
-        return true;
-      }
-      if (creatorName && identityFullName === creatorName) {
-        return true;
-      }
-      if (identityId && creatorIds.includes(identityId)) {
-        return true;
-      }
-    } catch (error) {
-      console.warn("Failed to evaluate Patreon creator identity", error);
-    }
-    return false;
-  }
 
   function tokensValid(tokens) {
     return (
@@ -3052,37 +3007,7 @@ const PatreonAuth = (() => {
     }
   }
 
-  async function fetchPatreonIdentity(accessToken, query) {
-    try {
-      const response = await fetch(`${AVTT_S3}?action=patreonIdentity`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          accessToken,
-          query,
-        }),
-      });
-      let json;
-      try {
-        json = await response.json();
-      } catch (parseError) {
-        console.error("Failed to parse Patreon identity response", parseError);
-        throw new Error("Failed to parse Patreon identity response.");
-      }
-      if (!response.ok || json?.error) {
-        const message =
-          json?.error_description ||
-          json?.message ||
-          json?.error ||
-          "Failed to load Patreon profile information.";
-        throw new Error(message);
-      }
-      return json;
-    } catch (error) {
-      console.error("Patreon identity request failed", error);
-      throw error;
-    }
-  }
+
 
   function storeState(state) {
     sessionStorage.setItem(PATREON_AUTH_STORAGE_KEYS.state, state);
@@ -3340,245 +3265,24 @@ const PatreonAuth = (() => {
     return tokens;
   }
 
-  function indexIncludedByType(included = [], type) {
-    return included
-      .filter((item) => item.type === type)
-      .reduce((acc, item) => {
-        acc[item.id] = item;
-        return acc;
-      }, {});
-  }
-
-  function resolveCampaignTiers(campaignId, tiersIndex) {
-    const cached = campaignTierCache.get(campaignId);
-    if (cached && cached.length) {
-      return cached;
-    }
-    const tierList = Object.values(tiersIndex || {}).filter(
-      (tier) => tier?.relationships?.campaign?.data?.id === campaignId,
-    );
-    tierList.sort(
-      (a, b) =>
-        (a?.attributes?.amount_cents || 0) - (b?.attributes?.amount_cents || 0),
-    );
-    if (tierList.length) {
-      campaignTierCache.set(campaignId, tierList);
-    }
-    return tierList;
-  }
-
-  async function fetchCampaignTiersFallback(campaignId, accessToken) {
-    try {
-      const response = await fetch(`${AVTT_S3}?action=patreonCampaignTiers`, {
+  async function fetchMembership(accessToken, config) {
+    const response = await fetch(`${AVTT_S3}?action=patreonMembership`,
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ campaignId, accessToken }),
-      });
-      const json = await response.json();
-      if (!response.ok || json?.error) {
-        const message =
-          json?.error_description ||
-          json?.message ||
-          json?.error ||
-          "Failed to fetch Patreon campaign tiers.";
-        throw new Error(message);
-      }
-      const tiers = (json.included || []).filter(
-        (item) => item.type === "tier",
-      );
-      tiers.sort(
-        (a, b) =>
-          (a?.attributes?.amount_cents || 0) -
-          (b?.attributes?.amount_cents || 0),
-      );
-      return tiers;
-    } catch (error) {
-      console.warn("Fallback campaign tier request failed", error);
-      throw error;
-    }
-  }
+        body: JSON.stringify({ 
+          accessToken, 
+          config 
+        }),
+      },
+    );
+    
+    const { user } = await response.json();
+    activeUserLimit = user.limit;
+    activeUserTier = user;
+    window.PATREON_ID = user.membership.identity;
 
-  function buildMembershipResult(member, campaign, tiersIndex, campaignTiers) {
-    const memberRole = member?.attributes?.role;
-    if (memberRole && memberRole.toLowerCase() === "creator") {
-      const label = "Creator";
-      return {
-        level: "creator",
-        label,
-        amountCents: Number.MAX_SAFE_INTEGER,
-        member,
-        campaign,
-        tiers: [],
-      };
-    }
-
-    const tierIds = (
-      member.relationships?.currently_entitled_tiers?.data || []
-    ).map((t) => t.id);
-    if (!tierIds.length) {
-      return {
-        level: "free",
-        label: "Free",
-        amountCents: 0,
-        member,
-        campaign,
-        tiers: [],
-      };
-    }
-
-    if(campaign.attributes.vanity.toLowerCase() == 'abovevtt'){
-      return {
-        level: "avtt",
-        label: "Free Tier | AVTT Subscriber",
-        amountCents: 0,
-        member,
-        campaign,
-        tiers: [],
-      }
-    }
-
-    const userTiers = tierIds.map((id) => tiersIndex[id]).filter(Boolean);
-    if (!userTiers.length) {
-      return {
-        level: "free",
-        label: "Free",
-        amountCents: 0,
-        member,
-        campaign,
-        tiers: [],
-      };
-    }
-
-    let highest = null;
-    let highestIndex = -1;
-    campaignTiers.forEach((tier, index) => {
-      if (tierIds.includes(tier?.id)) {
-        if (
-          !highest ||
-          (tier?.attributes?.amount_cents || 0) >=
-            (highest?.attributes?.amount_cents || 0)
-        ) {
-          highest = tier;
-          highestIndex = index;
-        }
-      }
-    });
-
-    if (!highest) {
-      highest = userTiers[userTiers.length - 1];
-      highestIndex = campaignTiers.findIndex((t) => t?.id === highest?.id);
-    }
-
-    let level = "low";
-    if (highestIndex >= campaignTiers.length - 1) {
-      level = "high";
-    } else if (highestIndex >= 2) {
-      level = "mid";
-    }
-
-    const label = highest?.attributes?.title || "Supporter";
-    const amountCents = highest?.attributes?.amount_cents || 0;
-
-    return { level, label, amountCents, member, campaign, tiers: userTiers };
-  }
-
-  async function fetchMembership(accessToken, config) {
-    const query = {
-      include: "memberships.campaign,memberships.currently_entitled_tiers",
-      "fields[member]": "patron_status",
-      "fields[campaign]": "vanity,url",
-    };
-    const json = await fetchPatreonIdentity(accessToken, query);
-    const identity = json.data;
-    const isCreatorAccount = isCreatorIdentity(identity, config);
-    const membershipRefs = json.data?.relationships?.memberships?.data || [];
-    const members = indexIncludedByType(json.included, "member");
-    const campaigns = indexIncludedByType(json.included, "campaign");
-    const tiersIndex = indexIncludedByType(json.included, "tier");
-    const targetSlug = config.campaignSlug;
-    const avttTargetSlug = config.avttCampaignSlug;
-    let isAvttSub = false;
-    for (const ref of membershipRefs) {
-      const member = members[ref.id];
-      if (!member) {
-        continue;
-      }
-      const campaignRel = member.relationships?.campaign?.data;
-      if (!campaignRel) {
-        continue;
-      }
-      const campaign = campaigns[campaignRel.id];
-      const vanity = (
-        campaign?.attributes?.vanity ||
-        campaign?.attributes?.url ||
-        ""
-      ).toLowerCase();
-      if (!campaign || (!vanity.toLowerCase() == targetSlug && !vanity.toLowerCase() == avttTargetSlug)) {
-        continue;
-      }
-
-      let campaignTiers = resolveCampaignTiers(campaign.id, tiersIndex);
-      if (!campaignTiers.length) {
-        try {
-          campaignTiers = await fetchCampaignTiersFallback(
-            campaign.id,
-            accessToken,
-          );
-          if (campaignTiers.length) {
-            campaignTierCache.set(campaign.id, campaignTiers);
-          }
-        } catch (fallbackError) {
-          console.warn(
-            "Failed to fetch campaign tiers via fallback",
-            fallbackError,
-          );
-        }
-      }
-      const result = buildMembershipResult(
-        member,
-        campaign,
-        tiersIndex,
-        campaignTiers,
-      );
-      if(result.level == 'avtt'){
-        isAvttSub = true;
-        continue;
-      }
-      if (result.level === "creator" || isCreatorAccount) {
-        result.level = "creator";
-        result.label = "Creator";
-      }
-      return result;
-    }
-
-    if (isCreatorAccount) {
-      return {
-        level: "creator",
-        label: "Creator",
-        amountCents: Number.MAX_SAFE_INTEGER,
-        member: null,
-        campaign: null,
-        tiers: [],
-      };
-    }
-    if (isAvttSub){
-      return {
-        level: 'avtt',
-        label: 'Free Tier | AVTT Subscriber',
-        amountCents: Number.MAX_SAFE_INTEGER,
-        member: null,
-        campaign: null,
-        tiers: [],
-      }
-    }
-    return {
-      level: "free",
-      label: "Free",
-      amountCents: 0,
-      member: null,
-      campaign: null,
-      tiers: [],
-    };
+    return user.membership;
   }
 
   async function ensureMembership() {
@@ -3603,7 +3307,14 @@ const PatreonAuth = (() => {
       return cachedMembership;
     }
     const tokens = await ensureAccessToken(config);
+
+
+//come back
+
     const membership = await fetchMembership(tokens.accessToken, config);
+
+
+
     cachedMembership = membership;
     cachedMembershipFetchedAt = Date.now();
     return membership;
@@ -3628,49 +3339,7 @@ const PatreonAuth = (() => {
   };
 })();
 
-function applyActiveMembership(membership) {
-  if (!membership || typeof membership !== "object") {
-    activeUserTier = {
-      level: "free",
-      label: "Free",
-      amountCents: 0,
-      membership: null,
-    };
-  } else {
-    const rawLevel =
-      membership.level ||
-      (membership.tiers && membership.tiers.length ? "low" : "free");
-    const level = rawLevel.toLowerCase();
-    const fallbackLabel =
-      membership.tiers && membership.tiers.length
-        ? membership.tiers[membership.tiers.length - 1]?.attributes?.title ||
-          "Supporter"
-        : "Free";
-    const label = membership.label || fallbackLabel;
-    const amountCents =
-      typeof membership.amountCents === "number" ? membership.amountCents : 0;
-    activeUserTier = { level, label, amountCents, membership };
-  }
 
-  switch (activeUserTier.level) {
-    case "creator":
-    case "high":
-      activeUserLimit = userLimit.high;
-      break;
-    case "mid":
-      activeUserLimit = userLimit.mid;
-      break;
-    case "low":
-      activeUserLimit = userLimit.low;
-      break;
-    case "avtt":
-      activeUserLimit = userLimit.avtt;
-      break;
-    default:
-      activeUserLimit = 0;
-      break;
-  }
-}
 
 let avttActiveSearchAbortController = null;
 
@@ -3765,8 +3434,6 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     alert("Patreon login is required to open the AVTT File Uploader.");
     return;
   }
-
-  applyActiveMembership(membership);
 
 
   currentFolder = "";
