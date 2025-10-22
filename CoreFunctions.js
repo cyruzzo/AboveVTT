@@ -2052,6 +2052,7 @@ async function updateImgSrc(url, container, video, highPriority = true){
     container.attr('src', url);
   }
   else{
+    url = parse_img(url);
     container.attr('src', url);
   }
 }
@@ -2078,6 +2079,7 @@ async function updateTokenSrc(url, container, video=false){
     container.css('background', `url(${url})`)
   }
   else{
+    url = parse_img(url);
     container.attr('src', url);
     container.css('background', `url(${url})`)
   }
