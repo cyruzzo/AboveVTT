@@ -98,7 +98,6 @@ class JournalManager{
 		    if(window.DM && !is_gamelog_popout()){
 			  	// also sync the journal
 			    window.JOURNAL?.sync();
-				did_update_scenes();
 			}
 		});
 	}

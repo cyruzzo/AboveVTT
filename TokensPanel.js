@@ -556,11 +556,6 @@ function init_tokens_panel() {
 
     window.monsterListItems = []; // don't let this grow unbounded
     window.open5eListItems = [];
-    setTimeout(function () {
-        // give it a couple of second to make sure everything is rendered before fetching the base monsters
-        // this isn't ideal, but the loading screen is up for much longer anyway...
-        filter_token_list("");
-    }, 2000);
 }
 
 
@@ -660,7 +655,7 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
             }
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
-    persist_all_token_customizations(window.TOKEN_CUSTOMIZATIONS);
+    
 
     update_pc_token_rows();
     inject_encounter_monsters();
@@ -3105,13 +3100,35 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     inputWrapper.append(tokenOptionsButton);
     inputWrapper.append(`<br />`);
 }
+function rgbaToHex(input) {
+    if (typeof input !== 'string') throw new Error('Expected rgba(...) string');
+    const str = input.trim();
+    if(str.match(/^#/gi))
+        return str;
+    // Match rgb/rgba with decimals and optional spaces
+    const m = str.matchAll(/\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*(,\s*([\d\.]+)\s*)?\)$/gi)?.next()?.value
+    if (!m) throw new Error('Invalid rgb/rgba string');
 
+    const r = Math.min(255, Math.max(0, Math.round(Number(m[1]))));
+    const g = Math.min(255, Math.max(0, Math.round(Number(m[2]))));
+    const b = Math.min(255, Math.max(0, Math.round(Number(m[3]))));
+    const a = m[4] !== undefined ? Math.min(1, Math.max(0, Number(m[5]))) : 1;
+
+    const toHex = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+
+    if (a >= 1) {
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    }
+    const aByte = Math.round(a * 255);
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(aByte)}`;
+}
 /// colorChangeCallback(borderColor, eventType)
 function build_token_border_color_input(initialColor, colorChangeCallback) {
     if (typeof colorChangeCallback !== "function") {
         console.warn("build_token_border_color_input was called without a callback function");
         return;
     }
+    initialColor = rgbaToHex(initialColor);
     // border color
     let borderColorInput = $(`<input class="border-color-input" type="color" value="${initialColor}"/>`);
     let borderColorWrapper = $(`

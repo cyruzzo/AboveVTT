@@ -443,10 +443,7 @@ async function start_above_vtt_for_dm() {
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
-  startup_step("Fetching scenes from cloud");
   window.ScenesHandler = new ScenesHandler();
-  window.ScenesHandler.scenes = await AboveApi.getSceneList();
-  await migrate_to_cloud_if_necessary();
 
   startup_step("Fetching Encounters from DDB");
   const avttId = window.location.pathname.split("/").pop();
@@ -467,9 +464,11 @@ async function start_above_vtt_for_dm() {
 
   startup_step("Fetching scenes from AboveVTT servers");
   let activeScene = await fetch_sceneList_and_scenes();
-
+  await migrate_to_cloud_if_necessary();
+  startup_step("Loading scenes");
+  did_update_scenes();
   startup_step("Migrating scene folders");
-  await migrate_scene_folders();
+  migrate_scene_folders();
 
   if (activeScene) {
     if(activeScene.data.playlist != undefined && activeScene.data.playlist != 0 && window.MIXER.state().playlists[activeScene.data.playlist] != undefined){
@@ -477,7 +476,11 @@ async function start_above_vtt_for_dm() {
     }
   }
 
-  did_update_scenes();
+
+  startup_step("Loading Tokens");
+  await rebuild_token_items_list()
+  filter_token_list("");
+
 
   startup_step("Start up complete");
   window.MB.sendMessage("custom/myVTT/DMAvatar", {
@@ -1019,10 +1022,6 @@ async function start_above_vtt_for_players() {
   }
 }
 
-function startup_step(stepDescription) {
-  console.log(`startup_step ${stepDescription}`);
-  $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
-}
 
 async function lock_character_gamelog_open() {
   if ($(".ct-sidebar__portal").length == 0) {

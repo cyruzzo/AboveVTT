@@ -9,29 +9,32 @@ function init_sidebar_tabs() {
     init_journal(find_game_id());
   }
   if (window.DM) {
+    startup_step(`Loading Token Panel`);
     $("#tokens-panel").remove();
     tokensPanel = new SidebarPanel("tokens-panel", false);
     sidebarContent.append(tokensPanel.build());
     init_tokens_panel();
-
+    startup_step(`Loading Scenes Panel`);
     $("#scenes-panel").remove();
     scenesPanel = new SidebarPanel("scenes-panel", false);
     sidebarContent.append(scenesPanel.build());
     init_scenes_panel();
 
   } else {
+    startup_step(`Loading Players Panel`);
     $("#players-panel").remove();
     playersPanel = new SidebarPanel("players-panel", false);
     sidebarContent.append(playersPanel.build());
     update_pclist();
   }
 
-  
+  startup_step(`Loading Sounds Panel`);
   $("#sounds-panel").remove();
   soundsPanel = new SidebarPanel("sounds-panel", false);
   sidebarContent.append(soundsPanel.build());
   window.draw_audio_sidepanel();
 
+  startup_step(`Loading Journal Panel`);
   $("#journal-panel").remove();
   journalPanel = new SidebarPanel("journal-panel", false);
   sidebarContent.append(journalPanel.build());
@@ -40,7 +43,7 @@ function init_sidebar_tabs() {
   } else if(window.JOURNAL.chapters?.length > 0){
     window.JOURNAL.build_journal()
   }
-
+  startup_step(`Loading Settings Panel`);
   $("#settings-panel").remove();
   settingsPanel = new SidebarPanel("settings-panel", false);
   sidebarContent.append(settingsPanel.build());

@@ -124,6 +124,11 @@ function notify_gamelog() {
     $(".GameLog_GameLog__2z_HZ").addClass("highlight-gamelog");
   }
 }
+function startup_step(stepDescription) {
+  console.log(`startup_step ${stepDescription}`);
+  $("#loading-overlay-beholder > .sidebar-panel-loading-indicator > .loading-status-indicator__subtext").text(stepDescription);
+}
+
 /// builds and returns the loading indicator that covers the iframe
 function build_combat_tracker_loading_indicator(subtext = "One moment while we fetch this monster stat block") {
   let loadingIndicator = $(`

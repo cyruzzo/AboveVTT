@@ -1017,7 +1017,7 @@ function fetch_ddb_portraits() {
             success: function (responseData) {
                 console.log("Successfully fetched config/json from DDB API");
                 window.ddbPortraits = responseData.data;
-                rebuild_ddb_npcs(true); // this is the first time we've had enough data to draw the list so do it
+                rebuild_ddb_npcs(false);
             },
             error: function (errorMessage) {
                 console.warn("Failed to fetch config json from DDB API", errorMessage);
