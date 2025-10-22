@@ -8,96 +8,263 @@
  */
 cached_journal_items = {};
 
+const AVTT_JOURNAL_CHUNK_SIZE = 100000;
+const AVTT_JOURNAL_CHUNK_STRATEGY = "chunked-json";
+
+function avttPromisifyIdbRequest(request) {
+	if (!request) {
+		return Promise.reject(new Error("Missing IDB request"));
+	}
+	return new Promise((resolve, reject) => {
+		request.onsuccess = (event) => resolve(event?.target?.result);
+		request.onerror = (event) => reject(event?.target?.error || event);
+	});
+}
+
+function avttResolveDefaultValue(dataType) {
+	return dataType === "array" ? [] : {};
+}
+
+async function avttSaveChunkedJson(objectStore, baseKey, data, options = {}) {
+	if (!objectStore || !baseKey) {
+		return;
+	}
+	const chunkSize = Number.isFinite(options?.chunkSize)
+		? Math.max(1, options.chunkSize)
+		: AVTT_JOURNAL_CHUNK_SIZE;
+	const dataType = options?.dataType === "array" ? "array" : "object";
+	const normalizedData =
+		data !== undefined && data !== null ? data : avttResolveDefaultValue(dataType);
+
+	let serialized;
+	try {
+		serialized = JSON.stringify(normalizedData);
+	} catch (error) {
+		console.warn("Failed to serialize journal payload for", baseKey, error);
+		return;
+	}
+
+	let existingManifest = null;
+	try {
+		existingManifest = await avttPromisifyIdbRequest(objectStore.get(baseKey));
+	} catch (error) {
+		console.warn("Failed to read existing manifest for", baseKey, error);
+	}
+	const previousChunkKeys = Array.isArray(existingManifest?.journalData?.chunkKeys)
+		? existingManifest.journalData.chunkKeys
+		: [];
+
+	const newChunkKeys = [];
+	for (let offset = 0, index = 0; offset < serialized.length; offset += chunkSize, index += 1) {
+		const chunkValue = serialized.slice(offset, offset + chunkSize);
+		const chunkKey = `${baseKey}::chunk::${index}`;
+		newChunkKeys.push(chunkKey);
+		try {
+			await avttPromisifyIdbRequest(
+				objectStore.put({ journalId: chunkKey, journalData: chunkValue }),
+			);
+		} catch (error) {
+			console.error("Failed to store journal chunk", chunkKey, error);
+			return;
+		}
+	}
+
+	for (const previousKey of previousChunkKeys) {
+		if (!newChunkKeys.includes(previousKey)) {
+			try {
+				await avttPromisifyIdbRequest(objectStore.delete(previousKey));
+			} catch (error) {
+				console.warn("Failed to delete stale journal chunk", previousKey, error);
+			}
+		}
+	}
+
+	const manifestPayload = {
+		version: 2,
+		strategy: AVTT_JOURNAL_CHUNK_STRATEGY,
+		chunkSize,
+		chunkCount: newChunkKeys.length,
+		chunkKeys: newChunkKeys,
+		dataType,
+		totalLength: serialized.length,
+		updatedAt: Date.now(),
+	};
+	try {
+		await avttPromisifyIdbRequest(
+			objectStore.put({ journalId: baseKey, journalData: manifestPayload }),
+		);
+	} catch (error) {
+		console.error("Failed to store journal manifest for", baseKey, error);
+	}
+}
+
+async function avttLoadChunkedJson(objectStore, baseKey, options = {}) {
+	if (!objectStore || !baseKey) {
+		return options?.defaultValue !== undefined
+			? options.defaultValue
+			: avttResolveDefaultValue(options?.dataType === "array" ? "array" : "object");
+	}
+	let record;
+	try {
+		record = await avttPromisifyIdbRequest(objectStore.get(baseKey));
+	} catch (error) {
+		console.warn("Failed to read journal record for", baseKey, error);
+		return options?.defaultValue !== undefined
+			? options.defaultValue
+			: avttResolveDefaultValue(options?.dataType === "array" ? "array" : "object");
+	}
+
+	const payload = record?.journalData;
+	if (
+		payload &&
+		payload.strategy === AVTT_JOURNAL_CHUNK_STRATEGY &&
+		Array.isArray(payload.chunkKeys)
+	) {
+		const chunks = [];
+		for (const chunkKey of payload.chunkKeys) {
+			try {
+				const chunkRecord = await avttPromisifyIdbRequest(objectStore.get(chunkKey));
+				if (typeof chunkRecord?.journalData === "string") {
+					chunks.push(chunkRecord.journalData);
+				}
+			} catch (error) {
+				console.warn("Failed to load journal chunk", chunkKey, error);
+			}
+		}
+		const combined = chunks.join("");
+		if (!combined) {
+			return options?.defaultValue !== undefined
+				? options.defaultValue
+				: avttResolveDefaultValue(payload.dataType === "array" ? "array" : "object");
+		}
+		try {
+			return JSON.parse(combined);
+		} catch (error) {
+			console.warn("Failed to parse chunked journal payload for", baseKey, error);
+			return options?.defaultValue !== undefined
+				? options.defaultValue
+				: avttResolveDefaultValue(payload.dataType === "array" ? "array" : "object");
+		}
+	}
+
+	if (payload !== undefined) {
+		return payload;
+	}
+	if (options?.defaultValue !== undefined) {
+		return options.defaultValue;
+	}
+	return undefined;
+}
+
 class JournalManager{
 	
 	
 	constructor(gameid){
 		this.gameid=gameid;
-		let promises = [];
+		this.notes = {};
+		this.chapters = [];
 
-		let objectStore = gameIndexedDb.transaction(["journalData"]).objectStore(`journalData`)
-		
-		
-	   	promises.push(new Promise((resolve) => { 
-		   	objectStore.get(`Journal`).onsuccess = (event) => {
-			 	if(event?.target?.result?.journalData){
-			 		this.notes = event?.target?.result?.journalData	
-				}
-				else {
-				  	if (window.DM && (localStorage.getItem('Journal' + gameid) != null)) {
-				  		this.notes = $.parseJSON(localStorage.getItem('Journal' + gameid));
-				  	}
-				  	else{
-				  		this.notes={};
-				  	}
-				}
-				let statBlockPromise = new Promise((resolve) => {
-					let globalObjectStore = globalIndexedDB.transaction(["journalData"]).objectStore(`journalData`)
-					if(window.DM){
-				  		globalObjectStore.get(`JournalStatblocks`).onsuccess = (event) => {
-						 	if(event?.target?.result?.journalData){
-							 	this.notes = {
-									...this.notes,
-									...event?.target?.result?.journalData
-								}			
-							}
-							else {
-								if((localStorage.getItem('JournalStatblocks') != null && localStorage.getItem('JournalStatblocks') != 'undefined')){
-							  		this.notes = {
-							  			...this.notes,
-							  			...$.parseJSON(localStorage.getItem('JournalStatblocks'))
-							  		}
-							  	}
-							}
-							resolve(true);
-						}
-					}
-
-					else{
-				  		globalObjectStore.get(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`).onsuccess = (event) => {
-						 	if(event?.target?.result?.journalData){
-							 	this.notes = {
-									...this.notes,
-									...event?.target?.result?.journalData
-								}			
-							}
-							resolve(true);
-						}
-					}
-				})
-
-				statBlockPromise.then(()=>{resolve(true)});
-				
+		const loadJournalPromise = (async () => {
+			let journalData;
+			try {
+				const objectStore = gameIndexedDb.transaction(["journalData"]).objectStore(`journalData`);
+				journalData = await avttLoadChunkedJson(objectStore, `Journal`, { dataType: "object" });
+			} catch (error) {
+				console.warn("Failed to load journal entries", error);
 			}
-		}))
 
-		promises.push(new Promise((resolve) => {
-			objectStore.get(`JournalChapters`).onsuccess = (event) => {
-			 	if(event?.target?.result?.journalData){
-			 		this.chapters = event?.target?.result?.journalData; 		
+			if (journalData === undefined) {
+				if (window.DM && localStorage.getItem(`Journal${gameid}`) != null) {
+					try {
+						journalData = $.parseJSON(localStorage.getItem(`Journal${gameid}`));
+					} catch (error) {
+						console.warn("Failed to parse legacy local journal storage", error);
+						journalData = {};
+					}
+				} else {
+					journalData = {};
 				}
-				else{
-				  	if (window.DM && (localStorage.getItem('JournalChapters' + gameid) != null)) {
-				  		this.chapters = $.parseJSON(localStorage.getItem('JournalChapters' + gameid));
-				  	}
-				  	else{
-				  		this.chapters=[];
-				  	}
-			   	}
-				resolve(true);
 			}
-		}))
+			if (typeof journalData !== "object" || journalData === null) {
+				journalData = {};
+			}
+			this.notes = journalData;
+		})();
 
+		const loadChaptersPromise = (async () => {
+			let chaptersData;
+			try {
+				const objectStore = gameIndexedDb.transaction(["journalData"]).objectStore(`journalData`);
+				chaptersData = await avttLoadChunkedJson(objectStore, `JournalChapters`, {
+					dataType: "array",
+				});
+			} catch (error) {
+				console.warn("Failed to load journal chapters", error);
+			}
+			if (chaptersData === undefined) {
+				if (window.DM && localStorage.getItem(`JournalChapters${gameid}`) != null) {
+					try {
+						chaptersData = $.parseJSON(localStorage.getItem(`JournalChapters${gameid}`));
+					} catch (error) {
+						console.warn("Failed to parse legacy journal chapters storage", error);
+						chaptersData = [];
+					}
+				} else {
+					chaptersData = [];
+				}
+			}
+			if (!Array.isArray(chaptersData)) {
+				chaptersData = [];
+			}
+			this.chapters = chaptersData;
+		})();
 
+		const loadStatBlocksPromise = loadJournalPromise.then(async () => {
+			let statBlocksData;
+			try {
+				const globalObjectStore = globalIndexedDB.transaction(["journalData"]).objectStore(`journalData`);
+				if (window.DM) {
+					statBlocksData = await avttLoadChunkedJson(globalObjectStore, `JournalStatblocks`, {
+						dataType: "object",
+					});
+				} else if (window?.CAMPAIGN_INFO?.dmId) {
+					statBlocksData = await avttLoadChunkedJson(
+						globalObjectStore,
+						`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`,
+						{ dataType: "object" },
+					);
+				}
+			} catch (error) {
+				console.warn("Failed to load journal stat blocks", error);
+			}
 
+			if (statBlocksData === undefined && window.DM) {
+				const legacyStatBlocks = localStorage.getItem(`JournalStatblocks`);
+				if (legacyStatBlocks != null && legacyStatBlocks !== "undefined") {
+					try {
+						statBlocksData = $.parseJSON(legacyStatBlocks);
+					} catch (error) {
+						console.warn("Failed to parse legacy stat blocks", error);
+						statBlocksData = {};
+					}
+				}
+			}
 
-		Promise.all(promises).then(() => {
-		  if(is_abovevtt_page()){
-		  	this.build_journal();
-		  }
-		    if(window.DM && !is_gamelog_popout()){
-			  	// also sync the journal
-			    window.JOURNAL?.sync();
+			if (statBlocksData && typeof statBlocksData === "object") {
+				this.notes = {
+					...this.notes,
+					...statBlocksData,
+				};
+			}
+		});
+
+		Promise.all([loadJournalPromise, loadChaptersPromise, loadStatBlocksPromise]).then(() => {
+			if(is_abovevtt_page()){
+				this.build_journal();
+			}
+			if(window.DM && !is_gamelog_popout()){
+				// also sync the journal
+				window.JOURNAL?.sync();
 			}
 		});
 	}
@@ -105,54 +272,51 @@ class JournalManager{
 	
 	
 	persist(allowPlayerPersist=false){
-		if(window.DM || allowPlayerPersist){ 
+		if(!(window.DM || allowPlayerPersist)){
+			return;
+		}
+		const executePersist = async () => {
+			const notes =
+				this.notes && typeof this.notes === "object" ? this.notes : {};
+			const statBlocks = Object.fromEntries(
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock === true),
+			);
+			const journal = Object.fromEntries(
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true),
+			);
+			const chapters = Array.isArray(this.chapters) ? this.chapters : [];
 
-			const statBlocks = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock == true));
-			const chapters = this.chapters
-			const journal = Object.fromEntries(Object.entries(this.notes).filter(([key, value]) => this.notes[key].statBlock != true));
-
-
-			const storeImage = gameIndexedDb.transaction([`journalData`], "readwrite")
-			const objectStore = storeImage.objectStore(`journalData`)
-
-			const globalObjectStore = globalIndexedDB.transaction(["journalData"], "readwrite").objectStore(`journalData`)
-
-			if(window.DM){ // store your own statblocks as DM
-				const deleteRequest = globalObjectStore.delete(`JournalStatblocks`);
-				deleteRequest.onsuccess = (event) => {
-				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
-				};
-				deleteRequest.onerror = (event) => {
-				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks`, 'journalData': statBlocks});
-				};
-			}
-			else{ // store other DMs statblocks for use when DM isn't online; We keep these seperate so we don't override our own statblocks with another DMs statblock set.
-				const deleteRequest = globalObjectStore.delete(`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`);
-				deleteRequest.onsuccess = (event) => {
-				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`, 'journalData': statBlocks});
-				};
-				deleteRequest.onerror = (event) => {
-				  const objectStoreRequest = globalObjectStore.add({journalId: `JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`, 'journalData': statBlocks});
-				};
+			try {
+				const transaction = gameIndexedDb.transaction([`journalData`], "readwrite");
+				const objectStore = transaction.objectStore(`journalData`);
+				await avttSaveChunkedJson(objectStore, `Journal`, journal, { dataType: "object" });
+				await avttSaveChunkedJson(objectStore, `JournalChapters`, chapters, {
+					dataType: "array",
+				});
+			} catch (error) {
+				console.warn("Failed to persist journal entries", error);
 			}
 
+			try {
+				const globalObjectStore = globalIndexedDB
+					.transaction(["journalData"], "readwrite")
+					.objectStore(`journalData`);
+				if (window.DM) {
+					await avttSaveChunkedJson(globalObjectStore, `JournalStatblocks`, statBlocks, {
+						dataType: "object",
+					});
+				} else if (window?.CAMPAIGN_INFO?.dmId) {
+					await avttSaveChunkedJson(
+						globalObjectStore,
+						`JournalStatblocks_${window.CAMPAIGN_INFO.dmId}`,
+						statBlocks,
+						{ dataType: "object" },
+					);
+				}
+			} catch (error) {
+				console.warn("Failed to persist journal stat blocks", error);
+			}
 
-			const journalDeleteRequest = objectStore.delete(`Journal`);
-			journalDeleteRequest.onsuccess = (event) => {
-			  const objectStoreRequest = objectStore.add({journalId: `Journal`, 'journalData': journal});
-			};
-			journalDeleteRequest.onerror = (event) => {
-			  const objectStoreRequest = objectStore.add({journalId: `Journal`, 'journalData': journal});
-			};
-
-	
-			const chapterDeleteRequest = objectStore.delete(`JournalChapters`);
-			chapterDeleteRequest.onsuccess = (event) => {
-			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
-			};
-			journalDeleteRequest.onerror = (event) => {
-			  const objectStoreRequest = objectStore.add({journalId: `JournalChapters`, 'journalData': chapters});
-			};
 			if(window.DM){ // old storage kept as backup for now. 
 				try{
 					/*
@@ -168,9 +332,11 @@ class JournalManager{
 					console.warn('localStorage Journal Storage Failed', e) // prevent errors from stopping code when local storage is full.
 				}
 			}
+		};
 
-		}
-
+		executePersist().catch((error) => {
+			console.warn("Journal persist encountered an unexpected error", error);
+		});
 	}
 	
 	
