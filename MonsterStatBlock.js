@@ -96,7 +96,7 @@ async function display_stat_block_in_container(statBlock, container, tokenId, cu
         $(this).find('p').remove();
         $(this).after(input)
       })
-      let imageUrl = token.options.imgsrc;
+      let imageUrl = parse_img(token.options.imgsrc);
 
       if(token.options.imgsrc.startsWith('above-bucket-not-a-url')){
         imageUrl = await getAvttStorageUrl(imageUrl);
@@ -1721,7 +1721,7 @@ class MonsterStatBlock {
           await getAvttStorageUrl(token.options.imgsrc) : 
             (token?.options?.videoToken == undefined || token?.options?.imgsrc == this.data.avatarUrl) ? 
               this.data.largeAvatarUrl : 
-                token.options.imgsrc;
+                parse_img(token.options.imgsrc);
         let img = $(`<${(token?.options?.videoToken != undefined && (token?.options?.videoToken == true || ['.mp4', '.webm','.m4v'].some(d => token?.options?.imgsrc.includes(d)))) ? 'video disableremoteplayback muted' : 'img'}
             src="${imageSrc}"
             alt="${this.data.name}"
