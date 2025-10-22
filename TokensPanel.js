@@ -556,7 +556,6 @@ function init_tokens_panel() {
 
     window.monsterListItems = []; // don't let this grow unbounded
     window.open5eListItems = [];
-
 }
 
 
@@ -3107,21 +3106,21 @@ function rgbaToHex(input) {
     if(str.match(/^#/gi))
         return str;
     // Match rgb/rgba with decimals and optional spaces
-    const m = str.match(/^rgba?(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*)$/i);
+    const m = str.matchAll(/\(\s*([\d\.]+)\s*,\s*([\d\.]+)\s*,\s*([\d\.]+)\s*(,\s*([\d\.]+)\s*)?\)$/gi)?.next()?.value
     if (!m) throw new Error('Invalid rgb/rgba string');
 
     const r = Math.min(255, Math.max(0, Math.round(Number(m[1]))));
     const g = Math.min(255, Math.max(0, Math.round(Number(m[2]))));
     const b = Math.min(255, Math.max(0, Math.round(Number(m[3]))));
-    const a = m[4] !== undefined ? Math.min(1, Math.max(0, Number(m[4]))) : 1;
+    const a = m[4] !== undefined ? Math.min(1, Math.max(0, Number(m[5]))) : 1;
 
-    const toHex2 = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+    const toHex = (n) => n.toString(16).padStart(2, '0').toUpperCase();
 
     if (a >= 1) {
-        return `#${ toHex2(r) }${ toHex2(g) }${ toHex2(b) }`;
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
     }
     const aByte = Math.round(a * 255);
-    return `#${ toHex2(r) }${ toHex2(g) }${ toHex2(b) }${ toHex2(aByte) }`;
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}${toHex(aByte)}`;
 }
 /// colorChangeCallback(borderColor, eventType)
 function build_token_border_color_input(initialColor, colorChangeCallback) {

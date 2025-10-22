@@ -443,10 +443,7 @@ async function start_above_vtt_for_dm() {
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 
-
   window.ScenesHandler = new ScenesHandler();
-
-
 
   startup_step("Fetching Encounters from DDB");
   const avttId = window.location.pathname.split("/").pop();
@@ -481,6 +478,7 @@ async function start_above_vtt_for_dm() {
 
 
   startup_step("Loading Tokens");
+  await rebuild_token_items_list()
   filter_token_list("");
 
 
