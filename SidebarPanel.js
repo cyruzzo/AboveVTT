@@ -1013,17 +1013,7 @@ function avttTokenRelativePathFromLink(link) {
 
 async function avttTokenFetchFolderListing(relativePath) {
   const targetPath = typeof relativePath === "string" ? relativePath : "";
-  if (typeof avttGetFolderListingCached === "function") {
-    return await avttGetFolderListingCached(targetPath);
-  }
-  if (typeof AVTT_S3 === "undefined") {
-    throw new Error("AVTT_S3 endpoint is not available.");
-  }
-  const response = await fetch(
-    `${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(targetPath)}&list=true`,
-  );
-  const json = await response.json();
-  return Array.isArray(json?.folderContents) ? json.folderContents : [];
+  return await avttGetFolderListingCached(targetPath);
 }
 
 async function avttTokenCollectAssets(folderRelativePath) {

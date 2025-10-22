@@ -61,7 +61,7 @@ class Library extends EventTarget {
         const library = this.map();
         objs.forEach(o => {
             library.set(uuid(), o);
-        });
+        }); 
         this._write(library);
     }
 
