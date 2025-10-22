@@ -31659,5 +31659,4857 @@ export const get_scene_data_wel = {
 				"id": "dadd9d7d-575f-49f7-bd0f-1c99c9b6c55f"
 			}
 		}
+	},
+	"dnd/wel/shifting-library/ShiftingLibraryMap": {
+		"vpps": 82.13333333333333,
+		"upsq": "ft",
+		"scaleX": 1,
+		"scaleY": 1,
+		"fpsq": "5",
+		"dm_map_usable": "1",
+		"hpps": 82.53333333333333,
+		"reveals": [
+			[
+				0,
+				0,
+				0,
+				0,
+				2,
+				0,
+				1
+			],
+			[
+				204,
+				420,
+				970,
+				351,
+				0,
+				0,
+				1
+			],
+			[
+				841,
+				274,
+				233,
+				205,
+				0,
+				0,
+				1
+			]
+		],
+		"scale": 100,
+		"title": "Shifting Library Map ",
+		"gridType": "1",
+		"drawings": [
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				339,
+				2779,
+				339,
+				2779,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1207,
+				443,
+				2140,
+				2143,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				632,
+				1270,
+				574,
+				488,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1290,
+				1333,
+				255,
+				340,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1241,
+				1273,
+				211,
+				498,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1797,
+				1084,
+				331,
+				449,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				633,
+				1923,
+				589,
+				498,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1209,
+				2663,
+				2133,
+				2138,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				630,
+				4144,
+				587,
+				499,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				635,
+				3486,
+				569,
+				487,
+				"60",
+				1,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(153, 153, 153, 1)",
+				1440,
+				3181,
+				-23,
+				22,
+				"60",
+				1,
+				null
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				4143.466666666666,
+				627.6666666666667,
+				4636.266666666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				4143.466666666666,
+				1205.4,
+				4143.466666666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				4636.266666666666,
+				1205.4,
+				4636.266666666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				3486.3999999999996,
+				627.6666666666667,
+				3979.2,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				3486.3999999999996,
+				1205.4,
+				3486.3999999999996,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				3979.2,
+				1205.4,
+				3979.2,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				2829.333333333333,
+				627.6666666666667,
+				3322.133333333333,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				2829.333333333333,
+				1205.4,
+				2829.333333333333,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				3322.133333333333,
+				1205.4,
+				3322.133333333333,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3351.2666666666664,
+				4800.533333333333,
+				3351.2666666666664,
+				2665.0666666666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3351.2666666666664,
+				4800.533333333333,
+				1205.4,
+				4800.533333333333,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3351.2666666666664,
+				2665.0666666666666,
+				1205.4,
+				2665.0666666666666,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				447.4666666666669,
+				3351.2666666666664,
+				447.4666666666669,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3351.2666666666664,
+				447.4666666666669,
+				3351.2666666666664,
+				2582.9333333333334,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				2582.9333333333334,
+				3351.2666666666664,
+				2582.9333333333334,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				2418.6666666666665,
+				1205.4,
+				2418.6666666666665,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				1925.8666666666668,
+				627.6666666666667,
+				1925.8666666666668,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				1925.8666666666668,
+				627.6666666666667,
+				2418.6666666666665,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				1761.6,
+				1205.4,
+				1761.6,
+				6,
+				1,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				1268.8000000000002,
+				627.6666666666667,
+				1268.8000000000002,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				4143.466666666666,
+				1205.4,
+				4318,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				4636.266666666666,
+				1205.4,
+				4459,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				4800.533333333333,
+				1205.4,
+				4459,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1205.4,
+				4459,
+				1205.4,
+				4318,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				3486.3999999999996,
+				1205.4,
+				3661,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				3979.2,
+				1205.4,
+				3804,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				4318,
+				1205.4,
+				3804,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1205.4,
+				3804,
+				1205.4,
+				3661,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				2829.333333333333,
+				1205.4,
+				2999,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				3322.133333333333,
+				1205.4,
+				3146,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				2665.0666666666666,
+				1205.4,
+				2999,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				3661,
+				1205.4,
+				3146,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1205.4,
+				3146,
+				1205.4,
+				2999,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				2582.9333333333334,
+				1205.4,
+				2244,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1205.4,
+				2244,
+				1205.4,
+				2099,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				1268.8000000000002,
+				627.6666666666667,
+				1442,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				627.6666666666667,
+				1761.6,
+				627.6666666666667,
+				1585,
+				6,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				627.6666666666667,
+				1585,
+				627.6666666666667,
+				1442,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				447.4666666666669,
+				1205.4,
+				1441,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1205.4,
+				2099,
+				1205.4,
+				1587,
+				6,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1205.4,
+				1587,
+				1205.4,
+				1441,
+				12,
+				1,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1424,
+				825,
+				1482,
+				825,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1426,
+				2197,
+				1480,
+				2197,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1448,
+				4440,
+				1458,
+				4440,
+				12,
+				1,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1445,
+				3027,
+				1455,
+				3027,
+				12,
+				1,
+				false,
+				"",
+				""
+			]
+		],
+		"tokens": {
+			"03645cf6-bcd4-4e34-a7e7-c39642395dba": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "03645cf6-bcd4-4e34-a7e7-c39642395dba",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 1,
+					"y": 54
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486005,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "2444px",
+				"name": "Specter (MCDM) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Specter (MCDM)",
+				"top": "4472px",
+				"hidehpbar": true,
+				"stat": 4486005,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png"
+				],
+				"imageZoom": 220,
+				"hitPointInfo": {
+					"maximum": 19,
+					"current": 19,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486005,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"05114df8-054f-4461-ad2e-9878f1424d8b": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "05114df8-054f-4461-ad2e-9878f1424d8b",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/H.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_H",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "876px",
+				"name": "Kiona's Hoard",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/H",
+				"top": "4719px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"08fec235-87d6-4d38-bd8c-ba6eb86e9988": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "08fec235-87d6-4d38-bd8c-ba6eb86e9988",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "3022px",
+				"name": "Shade 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "612px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"0d737271-5e63-456f-9c0d-2eeee850fa90": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 14,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+						"offset": {
+							"y": 18
+						},
+						"imageZoom": 50
+					}
+				},
+				"id": "0d737271-5e63-456f-9c0d-2eeee850fa90",
+				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"y": 18
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485789,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "834px",
+				"name": "Blood-Borne Ooze 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 14,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Blood-Borne Ooze",
+				"top": "1187px",
+				"hidehpbar": true,
+				"stat": 4485789,
+				"alternativeImages": [
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+				],
+				"imageZoom": 50,
+				"hitPointInfo": {
+					"maximum": 14,
+					"current": 14,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485789,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"120543804120543661e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00E000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3707.0000000000005px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1180px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "120543804120543661e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"120544459120544318e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000080",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4363px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1180px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "120544459120544318e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1205445912054318e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#004000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4363px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1180px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1205445912054318e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"14248251482825e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#FFD433",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"teleporterCoords": {
+					"top": 3027,
+					"left": 1450,
+					"scale": 2.6787878787878787
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "800px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1428px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "14248251482825e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1426219714802197e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000080",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"teleporterCoords": {
+					"top": 4440,
+					"left": 1453,
+					"scale": 2.6787878787878787
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2172px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1428px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1426219714802197e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1445302714553027e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#911EB4",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"teleporterCoords": {
+					"top": 825,
+					"left": 1453,
+					"scale": 2.6787878787878787
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "3002px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1425px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1445302714553027e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1448444014584440e8a99892-0af6-4e28-b35d-d7e05efc7fcd": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#200020",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2.6787878787878787,
+				"teleporterCoords": {
+					"top": 2197,
+					"left": 1453,
+					"scale": 2.6787878787878787
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "4415px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1428px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1448444014584440e8a99892-0af6-4e28-b35d-d7e05efc7fcd",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"18a593d0-c7c9-4b7b-a5cf-50d68c6594f1": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 19,
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "18a593d0-c7c9-4b7b-a5cf-50d68c6594f1",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 1,
+					"y": 54
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486005,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "463px",
+				"name": "Specter (MCDM) 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 19,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Specter (MCDM)",
+				"top": "4801px",
+				"hidehpbar": true,
+				"stat": 4486005,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png"
+				],
+				"imageZoom": 220,
+				"hitPointInfo": {
+					"maximum": 19,
+					"current": 19,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486005,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"19ee1f34-b1f0-4d6c-98b5-76e96255c7e1": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "19ee1f34-b1f0-4d6c-98b5-76e96255c7e1",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/M.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/M.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_M",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "298px",
+				"name": "Mutual Destruction",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/M",
+				"top": "4226px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"22a0e8b6-5ace-4ac6-a994-d81031ff9667": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 14,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+						"offset": {
+							"y": 18
+						},
+						"imageZoom": 50
+					}
+				},
+				"id": "22a0e8b6-5ace-4ac6-a994-d81031ff9667",
+				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"y": 18
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485789,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "876px",
+				"name": "Blood-Borne Ooze",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 14,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Blood-Borne Ooze",
+				"top": "1146px",
+				"hidehpbar": true,
+				"stat": 4485789,
+				"alternativeImages": [
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+				],
+				"imageZoom": 50,
+				"hitPointInfo": {
+					"maximum": 14,
+					"current": 14,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485789,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"24b5e87e-dea3-49cd-adc7-4c1d093bdedc": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "24b5e87e-dea3-49cd-adc7-4c1d093bdedc",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_06",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "K6. Scroll Room",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/06",
+				"top": "2091px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"28830d69-aeb3-47ab-bbf7-9bd6da8904fe": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "28830d69-aeb3-47ab-bbf7-9bd6da8904fe",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_08",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "K8. Kiona’s Office",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/08",
+				"top": "4390px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"310e2cf0-e722-4208-9834-c739d7ac579c": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "310e2cf0-e722-4208-9834-c739d7ac579c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "3022px",
+				"name": "Shade",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "2255px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"31284fa6-8255-47f0-b47d-18bca734ebe7": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "31284fa6-8255-47f0-b47d-18bca734ebe7",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_04",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "958px",
+				"name": "K4. Ground Floor Desks",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/04",
+				"top": "2666px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"31512f2a-fb62-40fa-b505-84f2d13e93a6": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "31512f2a-fb62-40fa-b505-84f2d13e93a6",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_02",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1288px",
+				"name": "K2. Foyer",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/02",
+				"top": "1844px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"33a9b224-438e-4e67-94bd-32392c036afe": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "33a9b224-438e-4e67-94bd-32392c036afe",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "3104px",
+				"name": "Shade 8",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "4472px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"35f93059-9754-4046-a075-4ab6158eb990": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "35f93059-9754-4046-a075-4ab6158eb990",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/677/638512254354159974.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486049,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "3022px",
+				"name": "Wraith (MCDM) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Wraith (MCDM)",
+				"top": "3487px",
+				"hidehpbar": true,
+				"stat": 4486049,
+				"hitPointInfo": {
+					"maximum": 58,
+					"current": 58,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486049,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"372729e6-3044-4601-bf6a-c7b873ffa55a": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "372729e6-3044-4601-bf6a-c7b873ffa55a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "3104px",
+				"name": "Shade 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "1434px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4a814b39-648a-47f3-9098-7df579f8992f": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "4a814b39-648a-47f3-9098-7df579f8992f",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_07",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "K7. Storage",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/07",
+				"top": "2994px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"4f50c049-cc32-495a-8e92-915d5cf63a5f": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 38,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "4f50c049-cc32-495a-8e92-915d5cf63a5f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/508/638512254056514106.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485928,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "1764px",
+				"name": "Lightthief 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 38,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Lightthief",
+				"top": "3880px",
+				"hidehpbar": true,
+				"stat": 4485928,
+				"hitPointInfo": {
+					"maximum": 38,
+					"current": 38,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485928,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"50fe69a0-b098-4e9c-85f0-5d1991ec63b3": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "50fe69a0-b098-4e9c-85f0-5d1991ec63b3",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/EXCLAMATION.png",
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_____Exclamation_Mark",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "719.4333333333334px",
+				"name": "Library Features",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/! - Exclamation Mark",
+				"top": "936.3000000000003px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5c243a5b-f7f0-498f-8fae-acee5a4c0697": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png": {
+						"offset": {
+							"x": 59,
+							"y": 0
+						},
+						"imageZoom": 385
+					}
+				},
+				"id": "5c243a5b-f7f0-498f-8fae-acee5a4c0697",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 59,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485996,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "546px",
+				"name": "Shadow (MCDM) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 13,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shadow (MCDM)",
+				"top": "4801px",
+				"hidehpbar": true,
+				"stat": 4485996,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png"
+				],
+				"imageZoom": 385,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485996,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5e2fdb0d-bc21-4229-b769-96872288fb1d": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5e2fdb0d-bc21-4229-b769-96872288fb1d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1784px",
+				"name": "Shade 6",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "4637px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5ebd9f21-974a-43a4-9c43-bd91d749b5be": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "5ebd9f21-974a-43a4-9c43-bd91d749b5be",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1784px",
+				"name": "Shade 9",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "2912px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"63194dba-78ee-480e-a12f-e0b05cef139d": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 76,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "63194dba-78ee-480e-a12f-e0b05cef139d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/431/638512253922355582.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485878,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "463px",
+				"name": "Hellhound (MCDM) 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 76,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hellhound (MCDM)",
+				"top": "3487px",
+				"hidehpbar": true,
+				"stat": 4485878,
+				"hitPointInfo": {
+					"maximum": 76,
+					"current": 76,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485878,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6eb5d60d-6f72-4c86-8068-a090779248ad": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "6eb5d60d-6f72-4c86-8068-a090779248ad",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_05",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "K5. Hell Gate",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/05",
+				"top": "3733px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"74851620-e419-4905-9df0-98c71dda2bc3": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "74851620-e419-4905-9df0-98c71dda2bc3",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/677/638512254354159974.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486049,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "958px",
+				"name": "Micus",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Wraith (MCDM)",
+				"top": "2255px",
+				"hidehpbar": true,
+				"stat": 4486049,
+				"hitPointInfo": {
+					"maximum": 58,
+					"current": 58,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486049,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7659b607-28ba-4ae5-8ff7-db16a69346d5": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png": {
+						"offset": {
+							"x": 59,
+							"y": 0
+						},
+						"imageZoom": 385
+					}
+				},
+				"id": "7659b607-28ba-4ae5-8ff7-db16a69346d5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 59,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485996,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "628px",
+				"name": "Shadow (MCDM)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 13,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shadow (MCDM)",
+				"top": "4801px",
+				"hidehpbar": true,
+				"stat": 4485996,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png"
+				],
+				"imageZoom": 385,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485996,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"81d8f8e9-3fda-4365-bdff-abf4b1b2e5e2": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 19,
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "81d8f8e9-3fda-4365-bdff-abf4b1b2e5e2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 1,
+					"y": 54
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486005,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "463px",
+				"name": "Specter (MCDM) 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 19,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Specter (MCDM)",
+				"top": "4719px",
+				"hidehpbar": true,
+				"stat": 4486005,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png"
+				],
+				"imageZoom": 220,
+				"hitPointInfo": {
+					"maximum": 19,
+					"current": 19,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486005,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"84d9e970-812d-4c15-be4c-69d5fc16aa18": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 76,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "84d9e970-812d-4c15-be4c-69d5fc16aa18",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/431/638512253922355582.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485878,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "Hellhound (MCDM) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 76,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hellhound (MCDM)",
+				"top": "3569px",
+				"hidehpbar": true,
+				"stat": 4485878,
+				"hitPointInfo": {
+					"maximum": 76,
+					"current": 76,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485878,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8771834e-1c48-4b1b-81d2-37b259c14049": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8771834e-1c48-4b1b-81d2-37b259c14049",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "2609px",
+				"name": "Shade 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "777px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"95759186-a91c-4669-9d37-da8325ac8b59": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "95759186-a91c-4669-9d37-da8325ac8b59",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "2444px",
+				"name": "Shade 10",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "2830px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9bacd817-ebde-4965-b3b7-d2c9709a4c8c": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "9bacd817-ebde-4965-b3b7-d2c9709a4c8c",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1949px",
+				"name": "Shade 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "2255px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"a7d58562-db0a-421e-a54f-bd92019d1ed0": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "a7d58562-db0a-421e-a54f-bd92019d1ed0",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_01",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "K1. Entryway",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/01",
+				"top": "1434px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b2545ef6-421c-4de9-995e-0046503faad4": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 58,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b2545ef6-421c-4de9-995e-0046503faad4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/677/638512254354159974.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486049,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "Wraith (MCDM) 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 58,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Wraith (MCDM)",
+				"top": "4719px",
+				"hidehpbar": true,
+				"stat": 4486049,
+				"hitPointInfo": {
+					"maximum": 58,
+					"current": 58,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486049,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b40c3a66-494f-4467-a6ed-547ef026edd9": {
+				"disablestat": true,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b40c3a66-494f-4467-a6ed-547ef026edd9",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_03",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1536px",
+				"name": "K3. Bookstacks",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"alwaysshowname": true,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/03",
+				"top": "284px",
+				"hidehpbar": true,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2.6787878787878787,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b7fddc06-e673-43be-8b42-934e213a20f6": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 17,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b7fddc06-e673-43be-8b42-934e213a20f6",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/473/638512253992086819.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485906,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "765px",
+				"name": "Kiona the Dread Lord",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Kiona the Dread Lord",
+				"top": "4361px",
+				"hidehpbar": true,
+				"stat": 4485906,
+				"hitPointInfo": {
+					"maximum": 136,
+					"current": 136,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485906,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"be91ab66-9018-4144-9469-22f107384587": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "be91ab66-9018-4144-9469-22f107384587",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/606/638512254233572744.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485995,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "2609px",
+				"name": "Shade 7",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shade",
+				"top": "4637px",
+				"hidehpbar": true,
+				"stat": 4485995,
+				"hitPointInfo": {
+					"maximum": 8,
+					"current": 8,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485995,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"be9ff678-a10e-48d4-a6ee-eed31203e2e2": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 13,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png": {
+						"offset": {
+							"x": 59,
+							"y": 0
+						},
+						"imageZoom": 385
+					}
+				},
+				"id": "be9ff678-a10e-48d4-a6ee-eed31203e2e2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 59,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485996,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "628px",
+				"name": "Shadow (MCDM) 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 13,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Shadow (MCDM)",
+				"top": "4719px",
+				"hidehpbar": true,
+				"stat": 4485996,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/825/1000/1000/638063922274815873.png"
+				],
+				"imageZoom": 385,
+				"hitPointInfo": {
+					"maximum": 13,
+					"current": 13,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485996,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"bf530f63-61f7-4fe1-8e81-ce8012345ab8": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 14,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+						"offset": {
+							"y": 18
+						},
+						"imageZoom": 50
+					}
+				},
+				"id": "bf530f63-61f7-4fe1-8e81-ce8012345ab8",
+				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"y": 18
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485789,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "876px",
+				"name": "Blood-Borne Ooze 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 14,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Blood-Borne Ooze",
+				"top": "1187px",
+				"hidehpbar": true,
+				"stat": 4485789,
+				"alternativeImages": [
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+				],
+				"imageZoom": 50,
+				"hitPointInfo": {
+					"maximum": 14,
+					"current": 14,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485789,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c03176d2-ea9a-44b2-9c4d-c05cca8abbca": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c03176d2-ea9a-44b2-9c4d-c05cca8abbca",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/677/638512254354159974.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486049,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "2444px",
+				"name": "Wraith (MCDM)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Wraith (MCDM)",
+				"top": "2419px",
+				"hidehpbar": true,
+				"stat": 4486049,
+				"hitPointInfo": {
+					"maximum": 58,
+					"current": 58,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486049,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c456aaae-1abd-4c80-b9e2-0122048915c1": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c456aaae-1abd-4c80-b9e2-0122048915c1",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/677/638512254354159974.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486049,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "801.4333333333334px",
+				"name": "Brada",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Wraith (MCDM)",
+				"top": "2003.3000000000002px",
+				"hidehpbar": true,
+				"stat": 4486049,
+				"hitPointInfo": {
+					"maximum": 58,
+					"current": 58,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486049,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c60c33a4-e7be-4cd6-a955-ffa87e51daa9": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "c60c33a4-e7be-4cd6-a955-ffa87e51daa9",
+				"imgsrc": "https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 1,
+					"y": 54
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4486005,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "1949px",
+				"name": "Specter (MCDM) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Specter (MCDM)",
+				"top": "530px",
+				"hidehpbar": true,
+				"stat": 4486005,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/thumbnails/30835/892/1000/1000/638063923271035686.png"
+				],
+				"imageZoom": 220,
+				"hitPointInfo": {
+					"maximum": 19,
+					"current": 19,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4486005,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c8a0c672-d7df-4c16-a464-a7b362daa7ea": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 38,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c8a0c672-d7df-4c16-a464-a7b362daa7ea",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/508/638512254056514106.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485928,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "2749px",
+				"name": "Lightthief 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 38,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Lightthief",
+				"top": "4213px",
+				"hidehpbar": true,
+				"stat": 4485928,
+				"hitPointInfo": {
+					"maximum": 38,
+					"current": 38,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485928,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"da7e11e0-37df-4667-9a7f-a3a68c37b0dd": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 76,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "da7e11e0-37df-4667-9a7f-a3a68c37b0dd",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/431/638512253922355582.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485878,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "463px",
+				"name": "Hellhound (MCDM) 3",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 76,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hellhound (MCDM)",
+				"top": "3569px",
+				"hidehpbar": true,
+				"stat": 4485878,
+				"hitPointInfo": {
+					"maximum": 76,
+					"current": 76,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485878,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e4ebc37e-b8ff-4d5a-9f13-069529485bbe": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 38,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "e4ebc37e-b8ff-4d5a-9f13-069529485bbe",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/508/638512254056514106.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485928,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "1764px",
+				"name": "Lightthief 2",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 38,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Lightthief",
+				"top": "3220px",
+				"hidehpbar": true,
+				"stat": 4485928,
+				"hitPointInfo": {
+					"maximum": 38,
+					"current": 38,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485928,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e70b5143-5062-4675-9da8-73de84801acf": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 14,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+						"offset": {
+							"y": 18
+						},
+						"imageZoom": 50
+					}
+				},
+				"id": "e70b5143-5062-4675-9da8-73de84801acf",
+				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"y": 18
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485789,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "834px",
+				"name": "Blood-Borne Ooze 4",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 14,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Blood-Borne Ooze",
+				"top": "1146px",
+				"hidehpbar": true,
+				"stat": 4485789,
+				"alternativeImages": [
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+				],
+				"imageZoom": 50,
+				"hitPointInfo": {
+					"maximum": 14,
+					"current": 14,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485789,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f37f1ca8-e0da-496e-93f5-e60fa3ded9a2": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 14,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"alternativeImagesCustomizations": {
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0": {
+						"offset": {
+							"y": 18
+						},
+						"imageZoom": 50
+					}
+				},
+				"id": "f37f1ca8-e0da-496e-93f5-e60fa3ded9a2",
+				"imgsrc": "https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"y": 18
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485789,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "917px",
+				"name": "Blood-Borne Ooze 5",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 14,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Blood-Borne Ooze",
+				"top": "1146px",
+				"hidehpbar": true,
+				"stat": 4485789,
+				"alternativeImages": [
+					"https://dl.dropboxusercontent.com/scl/fi/nozw1da296tmfxy96k1kz/Blood-Borne-Ooze.webp?rlkey=cpl8vj2mrv4kspnqsfnczgtu2&st=cwggfl85&dl=0"
+				],
+				"imageZoom": 50,
+				"hitPointInfo": {
+					"maximum": 14,
+					"current": 14,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485789,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f6ff533b-646b-4f3c-aace-f404f7d3cf26": {
+				"disablestat": false,
+				"gridSquares": 1.005654281098546,
+				"custom_conditions": [],
+				"hp": 76,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f6ff533b-646b-4f3c-aace-f404f7d3cf26",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/431/638512253922355582.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485878,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 83,
+				"left": "381px",
+				"name": "Hellhound (MCDM)",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 76,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Hellhound (MCDM)",
+				"top": "3487px",
+				"hidehpbar": true,
+				"stat": 4485878,
+				"hitPointInfo": {
+					"maximum": 76,
+					"current": 76,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485878,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f7787bf7-c59e-414b-bc9e-92f3667d2b34": {
+				"disablestat": false,
+				"gridSquares": 0.502827140549273,
+				"custom_conditions": [],
+				"hp": 38,
+				"armorClass": 15,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f7787bf7-c59e-414b-bc9e-92f3667d2b34",
+				"imgsrc": "https://www.dndbeyond.com/avatars/41759/508/638512254056514106.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.933, 141.933, 141.933, 1)",
+					"feet": "60"
+				},
+				"itemId": 4485928,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 41.5,
+				"left": "2749px",
+				"name": "Lightthief",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 2,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 38,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Lightthief",
+				"top": "3554px",
+				"hidehpbar": true,
+				"stat": 4485928,
+				"hitPointInfo": {
+					"maximum": 38,
+					"current": 38,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 4485928,
+				"scaleCreated": 2.6787878787878787,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			}
+		},
+		"darkness_filter": "100",
+		"conversion": 0.3733031674208145,
+		"offsetx": 49.933333333333366,
+		"offsety": 36.800000000000296,
+		"grid": "0",
+		"notes": {}
 	}
 }

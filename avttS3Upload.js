@@ -2348,9 +2348,11 @@ function avttHandleDragStart(event, entry) {
 
     }
   }
-  const row = event.currentTarget;
-  if (row && row.classList) {
-    row.classList.add("avtt-dragging");
+  for (const item of avttDragItems) {
+    const row = avttFindRowByPath(item.key);
+    if (row) {
+      row.classList.add("avtt-cut-row");
+    }
   }
 }
 
@@ -5407,7 +5409,7 @@ function refreshFiles(
           $(checkboxElement).off('focus.preventDefault').on('focus.preventDefault', function(){
             this.blur()
           })
-          listItem.addEventListener("dragstart", (dragEvent) => {
+          listItem.addEventListener("dragstart", (dragEvent) => {   
             avttHandleDragStart(dragEvent, entry);
           });
           listItem.addEventListener("dragend", (dragEvent) => {
