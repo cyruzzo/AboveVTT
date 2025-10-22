@@ -1923,7 +1923,7 @@ class MessageBroker {
 						if (window.EncounterHandler !== undefined) {
 							fetch_and_cache_scene_monster_items();
 						}
-						did_update_scenes();
+
 						if (window.reorderState === ItemType.Scene) {
 							enable_draggable_change_folder(ItemType.Scene);
 						}

@@ -2034,7 +2034,7 @@ function init_scenes_panel() {
 	headerWrapper.find(".reorder-explanation").hide();
 
 	register_scene_row_context_menu(); // context menu for each row
-	did_update_scenes();
+
 	setTimeout(function () {
 		expand_folders_to_active_scenes();
 	}, 5000); // do better than this... or don't, it probably doesn't matter
@@ -2172,7 +2172,9 @@ async function migrate_scene_folders() {
 		await async_sleep(2000); // give the DB 2 seconds to persist the new data before fetching it again
 		window.ScenesHandler.scenes = await AboveApi.getSceneList();
 	}
-
+	if(itemsToMigrate.length > 0){
+		did_update_scenes();
+	}
 }
 
 /**
