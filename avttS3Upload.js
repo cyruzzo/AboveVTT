@@ -29,16 +29,83 @@ const avttUsageCache = {
 };
 let avttSearchActive = false;
 let avttLastBrowsedFolder = "";
-const AVTT_THUMBNAIL_PREFIX = "thumbnails/";
+const AVTT_THUMBNAIL_BASE = "thumbnails";
+const AVTT_FILE_CACHE_BASE = "files_cache";
+const AVTT_FILE_CACHE_FILENAME = "FILESCACHE.abovevtt";
 const AVTT_THUMBNAIL_DIMENSION = 50;
 const AVTT_THUMBNAIL_MIME_TYPE = "image/png";
 const avttPendingThumbnailGenerations = new Set();
 window.filePickerFirstLoad = true;
-function avttIsThumbnailRelativeKey(relativeKey) {
-  const normalized = avttNormalizeRelativePath(relativeKey);
-  return normalized.startsWith(AVTT_THUMBNAIL_PREFIX);
+
+function avttGetPatreonIdForPaths() {
+  const patreonId =
+    typeof window !== "undefined" && window && typeof window.PATREON_ID === "string" && window.PATREON_ID
+      ? window.PATREON_ID
+      : "anonymous";
+  return patreonId;
 }
 
+function avttBuildUserScopedFolderName(base) {
+  const normalizedBase = typeof base === "string" && base.trim() ? base.trim() : "shared";
+  const scopedIdRaw = avttNormalizeRelativePath(avttGetPatreonIdForPaths());
+  const scopedId = scopedIdRaw.replace(/\//g, "_");
+  return `${normalizedBase}_${scopedId}`;
+}
+
+function avttGetThumbnailPrefix() {
+  return `${avttBuildUserScopedFolderName(AVTT_THUMBNAIL_BASE)}/`;
+}
+
+function avttGetFileCacheFolder() {
+  return `${avttBuildUserScopedFolderName(AVTT_FILE_CACHE_BASE)}/`;
+}
+
+function avttGetFileCacheKey() {
+  return `${avttGetFileCacheFolder()}${AVTT_FILE_CACHE_FILENAME}`;
+}
+
+function avttApplyThumbnailPrefixToAboveBucket(path) {
+  if (typeof path !== "string") {
+    return path;
+  }
+  return path.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)$/i, (match, bucketPrefix, rest) => {
+    const userMatch = bucketPrefix.match(/^above-bucket-not-a-url\/([^/]+)\//i);
+    const scopedUser = userMatch && userMatch[1] ? userMatch[1] : "anonymous";
+    const sanitizedUser = String(scopedUser).replace(/[\\/]/g, "_") || "anonymous";
+    const thumbnailFolder = `thumbnails_${sanitizedUser}`;
+    const remaining = rest
+      .replace(/^thumbnails_[^/]*\//i, "")
+    const normalizedRemaining = remaining.replace(/^\/+/, "");
+    const base = `${bucketPrefix}${thumbnailFolder}`;
+    return normalizedRemaining ? `${base}/${normalizedRemaining}` : `${base}/`;
+  });
+}
+
+function avttIsThumbnailRelativeKey(relativeKey) {
+  const normalized = avttNormalizeRelativePath(relativeKey);
+  if (!normalized) {
+    return false;
+  }
+  if (normalized.startsWith(avttGetThumbnailPrefix())) {
+    return true;
+  }
+  return /^thumbnails_[^/]+(?:\/|$)/i.test(normalized);
+}
+
+function avttIsFileCacheRelativeKey(relativeKey) {
+  const normalized = avttNormalizeRelativePath(relativeKey);
+  if (!normalized) {
+    return false;
+  }
+  if (normalized.startsWith(avttGetFileCacheFolder())) {
+    return true;
+  }
+  return /^files_cache_[^/]+(?:\/|$)/i.test(normalized);
+}
+
+function avttIsHiddenSystemRelativeKey(relativeKey) {
+  return avttIsThumbnailRelativeKey(relativeKey) || avttIsFileCacheRelativeKey(relativeKey);
+}
 
 function avttGetThumbnailKeyFromRelative(relativeKey) {
   const normalized = avttNormalizeRelativePath(relativeKey);
@@ -48,7 +115,19 @@ function avttGetThumbnailKeyFromRelative(relativeKey) {
   if (avttIsThumbnailRelativeKey(normalized)) {
     return normalized;
   }
-  return `${AVTT_THUMBNAIL_PREFIX}${normalized}`;
+  return `${avttGetThumbnailPrefix()}${normalized}`;
+}
+
+function avttGetRelativeKeyFromThumbnail(thumbnailKey) {
+  const normalized = avttNormalizeRelativePath(thumbnailKey);
+  if (!normalized) {
+    return "";
+  }
+  const prefix = avttGetThumbnailPrefix();
+  if (!normalized.startsWith(prefix)) {
+    return normalized;
+  }
+  return normalized.slice(prefix.length);
 }
 
 function avttVerifyImageUrl(url, timeout = 5000) {
@@ -126,6 +205,82 @@ function avttNormalizeRelativePath(path) {
   return path.replace(/\\/g, "/");
 }
 
+const AVTT_DEFAULT_RETRYABLE_STATUSES = new Set([429, 503, 504]);
+const AVTT_UPLOAD_RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
+const AVTT_RESOURCE_RETRY_LIMIT = 3;
+const AVTT_MAX_MOVE_KEYS_PER_REQUEST = 60;
+const AVTT_MAX_CONCURRENT_MOVES = 3;
+
+function avttDelay(ms) {
+  if (!Number.isFinite(ms) || ms <= 0) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function avttFetchWithRetry(input, init = {}, options = {}) {
+  const {
+    retries = 4,
+    baseDelay = 400,
+    maxDelay = 5000,
+    retryStatuses = AVTT_DEFAULT_RETRYABLE_STATUSES,
+    jitter = 0.25,
+    treatNetworkErrorsAsRetryable = true,
+  } = options;
+  const signal = init?.signal;
+  let attempt = 0;
+  let delay = baseDelay;
+  let lastError = null;
+
+  while (attempt <= retries) {
+    if (signal?.aborted) {
+      throw new DOMException(signal.reason || "Aborted", "AbortError");
+    }
+    try {
+      const response = await fetch(input, init);
+      const shouldRetryStatus =
+        retryStatuses &&
+        (typeof retryStatuses.has === "function"
+          ? retryStatuses.has(response.status)
+          : Array.isArray(retryStatuses)
+            ? retryStatuses.includes(response.status)
+            : false);
+      if (!shouldRetryStatus) {
+        return response;
+      }
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      const abortRequested =
+        error?.name === "AbortError" || signal?.aborted === true;
+      if (!treatNetworkErrorsAsRetryable || abortRequested) {
+        throw error;
+      }
+    }
+
+    attempt += 1;
+    if (attempt > retries) {
+      break;
+    }
+
+    const jitterAmount = jitter
+      ? delay * jitter * (Math.random() * 2 - 1)
+      : 0;
+    const waitTime = Math.max(0, Math.min(delay + jitterAmount, maxDelay));
+    if (waitTime > 0) {
+      await avttDelay(waitTime);
+    }
+    delay = Math.min(delay * 2, maxDelay);
+  }
+
+  if (lastError) {
+    throw lastError;
+  }
+  throw new Error("Retry attempts exhausted");
+}
+
 function avttNormalizeFolderPath(folderPath) {
   const normalized = avttNormalizeRelativePath(folderPath);
   if (!normalized) {
@@ -178,7 +333,7 @@ function avttStoreFolderListing(folderPath, entries) {
       (entry) =>
         entry &&
         entry.Key &&
-        !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
+        !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(entry.Key)),
     )
     .filter((entry) => {
       if (seen.has(entry.Key)) return false;
@@ -200,7 +355,7 @@ const avttPrimeListingCachesFromFullListing = throttle((entries) => {
       (entry) =>
         entry &&
         entry.Key &&
-        !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
+        !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(entry.Key)),
     );
   // Deduplicate global list by Key
   if (Array.isArray(avttAllFilesCache)) {
@@ -213,7 +368,7 @@ const avttPrimeListingCachesFromFullListing = throttle((entries) => {
   const grouped = new Map();
   for (const entry of avttAllFilesCache) {
     const relative = avttExtractRelativeKey(entry.Key);
-    if (avttIsThumbnailRelativeKey(relative)) {
+    if (avttIsHiddenSystemRelativeKey(relative)) {
       continue;
     }
     const parentFolder = avttGetParentFolder(relative);
@@ -444,7 +599,7 @@ function avttLoadCachesFromIndexedDB() {
       const clonedEntry = avttCloneListingEntry(rec.payload);
       if (
         clonedEntry?.Key &&
-        !avttIsThumbnailRelativeKey(avttExtractRelativeKey(clonedEntry.Key))
+        !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(clonedEntry.Key))
       ) {
         avttAllFilesCache.push(clonedEntry);
       }
@@ -457,7 +612,7 @@ function avttLoadCachesFromIndexedDB() {
               (entry) =>
                 entry &&
                 entry.Key &&
-                !avttIsThumbnailRelativeKey(avttExtractRelativeKey(entry.Key)),
+                !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(entry.Key)),
             )
         : [];
       avttFolderListingCache.set(folderKey, listing);
@@ -509,7 +664,7 @@ function avttBuildCacheEntry(relativeKey, size = 0, sourceEntry = null) {
   if (!normalizedRelative) {
     return null;
   }
-  if (avttIsThumbnailRelativeKey(normalizedRelative)) {
+  if (avttIsHiddenSystemRelativeKey(normalizedRelative)) {
     return null;
   }
   return {
@@ -1106,12 +1261,15 @@ function avttSortEntries(entries) {
   }
   const multiplier = direction === "desc" ? -1 : 1;
   entries.sort((a, b) => {
-    if (a.isFolder && !b.isFolder) {
-      return -1;
+    if (column != AVTT_SORT_COLUMNS.TYPE){
+      if (a.isFolder && !b.isFolder) {
+        return -1;
+      }
+      if (!a.isFolder && b.isFolder) {
+        return 1;
+      }
     }
-    if (!a.isFolder && b.isFolder) {
-      return 1;
-    }
+
     let compare = 0;
     if (column === AVTT_SORT_COLUMNS.NAME) {
       compare = (a.displayName || "").localeCompare(
@@ -1242,7 +1400,7 @@ function avttRegisterPendingUploadKey(relativeKey, size = 0) {
     return;
   }
   avttUpsertCacheEntry(normalized, size);
-  if (avttIsThumbnailRelativeKey(normalized)) {
+  if (avttIsHiddenSystemRelativeKey(normalized)) {
     return;
   }
   let parentFolder = avttGetParentFolder(normalized);
@@ -1670,6 +1828,13 @@ async function avttImportSelectedFiles(selection) {
   }
 }
 
+window.avttGetThumbnailPrefix = avttGetThumbnailPrefix;
+window.avttApplyThumbnailPrefixToAboveBucket = avttApplyThumbnailPrefixToAboveBucket;
+window.avttGetFileCacheFolder = avttGetFileCacheFolder;
+window.avttGetFileCacheKey = avttGetFileCacheKey;
+window.avttIsThumbnailRelativeKey = avttIsThumbnailRelativeKey;
+window.avttIsFileCacheRelativeKey = avttIsFileCacheRelativeKey;
+window.avttIsHiddenSystemRelativeKey = avttIsHiddenSystemRelativeKey;
 window.avttCutSelectedFiles = avttCutSelectedFiles;
 window.avttPasteFiles = avttPasteFiles;
 window.avttClipboardHasEntries = avttClipboardHasEntries;
@@ -1873,13 +2038,13 @@ async function avttHandleContextAction(action) {
       break;
     }
     case "paste": {
-      if (avttContextMenuState.isImplicit && !avttContextMenuState.targetPath) {
+      /*if (avttContextMenuState.isImplicit && !avttContextMenuState.targetPath) {
         await avttHandlePasteFromClipboard(currentFolder);
       } else if (avttContextMenuState.isFolder) {
         await avttHandlePasteFromClipboard(avttContextMenuState.targetPath);
-      } else {
-        await avttHandlePasteFromClipboard(currentFolder);
-      }
+      } */
+      await avttHandlePasteFromClipboard(currentFolder);
+      
       break;
     }
     case "copyPath": {
@@ -2075,11 +2240,607 @@ function avttComputeNewKeyForDestination(entry, destinationFolder) {
   return `${normalizedDestination}${fileName}`;
 }
 
+async function avttCollectDescendantEntries(folderKey, options = {}) {
+  const { includeSelf = false } = options || {};
+  const normalizedFolder = avttNormalizeFolderPath(folderKey);
+  if (!normalizedFolder) {
+    return [];
+  }
+
+  const entriesByKey = new Map();
+  const order = [];
+
+  const addEntry = (
+    relativeKey,
+    size,
+    isFolder,
+    { allowFolderSelf = false, synthetic = false } = {},
+  ) => {
+    const normalizedRelative = avttNormalizeRelativePath(relativeKey);
+    if (!normalizedRelative) {
+      return false;
+    }
+    const normalizedKey = isFolder
+      ? avttNormalizeFolderPath(normalizedRelative)
+      : normalizedRelative;
+    if (!allowFolderSelf && normalizedKey === normalizedFolder) {
+      return false;
+    }
+    const numericSize = Number.isFinite(Number(size)) ? Number(size) : undefined;
+    const existing = entriesByKey.get(normalizedKey);
+    if (existing) {
+      if (existing.synthetic && !synthetic) {
+        entriesByKey.set(normalizedKey, {
+          key: normalizedKey,
+          size: numericSize,
+          isFolder: Boolean(isFolder),
+          synthetic: false,
+        });
+      }
+      return false;
+    }
+    entriesByKey.set(normalizedKey, {
+      key: normalizedKey,
+      size: numericSize,
+      isFolder: Boolean(isFolder),
+      synthetic: Boolean(synthetic),
+    });
+    order.push(normalizedKey);
+    return true;
+  };
+
+  if (includeSelf) {
+    addEntry(normalizedFolder, 0, true, { allowFolderSelf: true, synthetic: true });
+  }
+
+  let fulfilledFromAllFilesCache = false;
+  if (Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0) {
+    const absolutePrefix = `${window.PATREON_ID}/${normalizedFolder}`;
+    const beforeCount = order.length;
+    for (const cachedEntry of avttAllFilesCache) {
+      const absolute = cachedEntry?.Key || cachedEntry?.key;
+      if (typeof absolute !== "string" || !absolute.startsWith(absolutePrefix)) {
+        continue;
+      }
+      const relative = avttExtractRelativeKey(absolute);
+      if (!relative) {
+        continue;
+      }
+      const size = Number.isFinite(Number(cachedEntry?.Size))
+        ? Number(cachedEntry.Size)
+        : Number(cachedEntry?.size);
+      const isFolder = relative.endsWith("/");
+      addEntry(relative, size, isFolder, { allowFolderSelf: relative === normalizedFolder });
+    }
+    fulfilledFromAllFilesCache = order.length > beforeCount;
+  }
+
+  if (fulfilledFromAllFilesCache) {
+    return order.map((key) => entriesByKey.get(key));
+  }
+
+  const getCachedFolderListing = (folderPath) => {
+    const variants = [
+      folderPath,
+      typeof folderPath === "string" ? folderPath.replace(/\/$/, "") : folderPath,
+      avttNormalizeFolderPath(folderPath),
+    ];
+    for (const variant of variants) {
+      if (typeof variant !== "string") {
+        continue;
+      }
+      if (avttFolderListingCache.has(variant)) {
+        return avttFolderListingCache.get(variant);
+      }
+    }
+    return null;
+  };
+
+  const visitedFolders = new Set();
+  const fetchedFolders = new Set();
+  const stack = [normalizedFolder];
+
+  while (stack.length) {
+    const currentFolder = stack.pop();
+    if (!currentFolder || visitedFolders.has(currentFolder)) {
+      continue;
+    }
+    visitedFolders.add(currentFolder);
+
+    let listing = getCachedFolderListing(currentFolder);
+    if ((!Array.isArray(listing) || listing.length === 0) && !fetchedFolders.has(currentFolder)) {
+      try {
+        listing = await getFolderListingFromS3(currentFolder);
+        if (Array.isArray(listing) && listing.length > 0) {
+          avttStoreFolderListing(currentFolder, listing);
+        }
+      } catch (error) {
+        console.warn(
+          "Failed to expand folder listing while preparing move payload",
+          currentFolder,
+          error,
+        );
+        fetchedFolders.add(currentFolder);
+        continue;
+      }
+      fetchedFolders.add(currentFolder);
+    }
+
+    if (!Array.isArray(listing) || listing.length === 0) {
+      continue;
+    }
+
+    for (const cachedEntry of listing) {
+      const absolute = cachedEntry?.Key || cachedEntry?.key;
+      if (typeof absolute !== "string") {
+        continue;
+      }
+      const relative = avttExtractRelativeKey(absolute);
+      if (!relative) {
+        continue;
+      }
+      const size = Number.isFinite(Number(cachedEntry?.Size))
+        ? Number(cachedEntry.Size)
+        : Number(cachedEntry?.size);
+      const isFolder = relative.endsWith("/");
+      addEntry(relative, size, isFolder, { allowFolderSelf: relative === normalizedFolder });
+      if (isFolder) {
+        const childFolder = avttNormalizeFolderPath(relative);
+        if (
+          childFolder &&
+          childFolder !== currentFolder &&
+          !visitedFolders.has(childFolder)
+        ) {
+          stack.push(childFolder);
+        }
+      }
+    }
+  }
+
+  return order.map((key) => entriesByKey.get(key));
+}
+
+function avttBuildThumbnailDescendants(entries) {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return [];
+  }
+
+  const resultsByKey = new Map();
+  const order = [];
+
+  for (const entry of entries) {
+    if (!entry || typeof entry.key !== "string") {
+      continue;
+    }
+    const normalizedSourceKey = avttNormalizeRelativePath(entry.key);
+    if (!normalizedSourceKey) {
+      continue;
+    }
+    let thumbnailKey = avttGetThumbnailKeyFromRelative(normalizedSourceKey);
+    if (!thumbnailKey) {
+      continue;
+    }
+
+    const isFolder = Boolean(entry.isFolder);
+    const synthetic = Boolean(entry.synthetic);
+
+    if (isFolder) {
+      thumbnailKey = avttNormalizeFolderPath(thumbnailKey);
+    } else {
+      if (!avttShouldGenerateThumbnail(getFileExtension(normalizedSourceKey))) {
+        continue;
+      }
+      thumbnailKey = avttNormalizeRelativePath(thumbnailKey);
+    }
+
+    const existing = resultsByKey.get(thumbnailKey);
+    const payload = {
+      key: thumbnailKey,
+      isFolder,
+      ...(synthetic ? { synthetic: true } : {}),
+    };
+
+    if (!existing) {
+      resultsByKey.set(thumbnailKey, payload);
+      order.push(thumbnailKey);
+      continue;
+    }
+
+    if (existing.synthetic && !payload.synthetic) {
+      resultsByKey.set(thumbnailKey, { ...payload });
+    }
+  }
+
+  return order.map((key) => resultsByKey.get(key));
+}
+
+function avttChunkMovePayloadItems(items, maxKeys = AVTT_MAX_MOVE_KEYS_PER_REQUEST) {
+  const limit = Number.isFinite(Number(maxKeys)) && maxKeys > 0 ? Number(maxKeys) : 1000;
+  if (!Array.isArray(items) || !items.length) {
+    return [];
+  }
+
+  const expandedItems = [];
+
+  for (const originalItem of items) {
+    if (!originalItem || !originalItem.fromKey || !originalItem.toKey) {
+      continue;
+    }
+    if (!originalItem.isFolder || !Array.isArray(originalItem.descendants)) {
+      expandedItems.push({ ...originalItem });
+      continue;
+    }
+
+    const normalizedFrom = avttNormalizeFolderPath(originalItem.fromKey);
+    const sourceDescendantsRaw = Array.isArray(originalItem.descendants)
+      ? originalItem.descendants
+      : [];
+    const destinationDescendantsRaw = Array.isArray(originalItem.destinationDescendants)
+      ? originalItem.destinationDescendants
+      : [];
+    const hasSyntheticRoot = sourceDescendantsRaw.some((entry) => {
+      if (!entry || !entry.synthetic) {
+        return false;
+      }
+      const normalizedKey = avttNormalizeFolderPath(entry.key);
+      return normalizedKey === normalizedFrom;
+    });
+
+    const sourceDescendants = sourceDescendantsRaw
+      .filter((entry) => entry && !entry.synthetic)
+      .map((entry) => ({ ...entry }));
+    const destinationDescendants = destinationDescendantsRaw
+      .filter((entry) => entry && !entry.synthetic)
+      .map((entry) => ({ ...entry }));
+
+    if (!sourceDescendants.length && !destinationDescendants.length) {
+      expandedItems.push({
+        ...originalItem,
+        descendants: [],
+        destinationDescendants: [],
+        segmentIndex: 0,
+        segmentTotal: 1,
+        includeSyntheticRoot: hasSyntheticRoot,
+      });
+      continue;
+    }
+
+    let sourceIndex = 0;
+    let destinationIndex = 0;
+    const segments = [];
+    while (
+      sourceIndex < sourceDescendants.length ||
+      destinationIndex < destinationDescendants.length
+    ) {
+      const segmentSource = [];
+      const segmentDestination = [];
+      let remaining = limit - 1;
+
+      while (remaining > 0 && sourceIndex < sourceDescendants.length) {
+        segmentSource.push({ ...sourceDescendants[sourceIndex] });
+        sourceIndex += 1;
+        remaining -= 1;
+      }
+
+      while (remaining > 0 && destinationIndex < destinationDescendants.length) {
+        segmentDestination.push({ ...destinationDescendants[destinationIndex] });
+        destinationIndex += 1;
+        remaining -= 1;
+      }
+
+      segments.push({
+        source: segmentSource,
+        destination: segmentDestination,
+      });
+    }
+
+    if (!segments.length) {
+      segments.push({ source: [], destination: [] });
+    }
+
+    const totalSegments = segments.length;
+    segments.forEach((segment, index) => {
+      expandedItems.push({
+        ...originalItem,
+        descendants: segment.source,
+        destinationDescendants: segment.destination,
+        segmentIndex: index,
+        segmentTotal: totalSegments,
+        includeSyntheticRoot: hasSyntheticRoot && index === 0,
+      });
+    });
+  }
+
+  const chunks = [];
+  let currentChunk = [];
+  let currentCount = 0;
+
+  const flush = () => {
+    if (currentChunk.length) {
+      chunks.push(currentChunk);
+      currentChunk = [];
+      currentCount = 0;
+    }
+  };
+
+  for (const item of expandedItems) {
+    const descendantsCount = Array.isArray(item.descendants) ? item.descendants.length : 0;
+    const destinationCount = Array.isArray(item.destinationDescendants)
+      ? item.destinationDescendants.length
+      : 0;
+    const itemCost = item.isFolder ? 1 + descendantsCount + destinationCount : 1;
+
+    if (itemCost > limit) {
+      console.warn(
+        "Move payload item exceeds maximum chunk size and could not be split further.",
+        item.fromKey,
+      );
+    }
+
+    if (currentCount + itemCost > limit && currentChunk.length) {
+      flush();
+    }
+
+    currentChunk.push({
+      ...item,
+      descendants: Array.isArray(item.descendants)
+        ? item.descendants.map((entry) => ({ ...entry }))
+        : undefined,
+      destinationDescendants: Array.isArray(item.destinationDescendants)
+        ? item.destinationDescendants.map((entry) => ({ ...entry }))
+        : undefined,
+    });
+    currentCount += itemCost;
+  }
+
+  flush();
+  return chunks;
+}
+
+function avttComputeMovePayloadItemCost(item) {
+  if (!item || typeof item !== "object") {
+    return 0;
+  }
+  const isFolderMove = Boolean(item.isFolder);
+  const descendantsCount = Array.isArray(item.descendants) ? item.descendants.length : 0;
+  const destinationCount = Array.isArray(item.destinationDescendants)
+    ? item.destinationDescendants.length
+    : 0;
+  if (!isFolderMove) {
+    return 1;
+  }
+  return 1 + descendantsCount + destinationCount;
+}
+
+function avttCountMovePayloadEntries(items) {
+  if (!Array.isArray(items) || !items.length) {
+    return 0;
+  }
+  return items.reduce((sum, item) => sum + avttComputeMovePayloadItemCost(item), 0);
+}
+
+async function avttProcessMoveChunks(chunks, options = {}) {
+  const normalizedChunks = Array.isArray(chunks)
+    ? chunks
+        .map((items, index) => ({
+          items: Array.isArray(items) ? items : [],
+          index,
+        }))
+        .filter((entry) => Array.isArray(entry.items) && entry.items.length > 0)
+    : [];
+  if (!normalizedChunks.length) {
+    return { failures: [], completedEntries: 0 };
+  }
+
+  const totalChunks = normalizedChunks.length;
+  const maxConcurrent = Number.isFinite(Number(options.concurrency))
+    ? Math.max(1, Math.min(Number(options.concurrency), totalChunks))
+    : Math.min(AVTT_MAX_CONCURRENT_MOVES, totalChunks);
+  const chunkDelayMs =
+    Number.isFinite(Number(options.chunkDelayMs)) && Number(options.chunkDelayMs) > 0
+      ? Number(options.chunkDelayMs)
+      : 0;
+  const getEntryCount =
+    typeof options.getEntryCount === "function"
+      ? options.getEntryCount
+      : (chunk) => avttCountMovePayloadEntries(chunk?.items);
+  const onChunkSettled =
+    typeof options.onChunkSettled === "function" ? options.onChunkSettled : null;
+
+  let nextIndex = 0;
+  let completedEntries = 0;
+  const failures = [];
+
+  const worker = async () => {
+    while (nextIndex < totalChunks) {
+      const currentIndex = nextIndex;
+      nextIndex += 1;
+      const chunk = normalizedChunks[currentIndex];
+      if (!chunk || !Array.isArray(chunk.items) || !chunk.items.length) {
+        continue;
+      }
+
+      const chunkLabel = totalChunks > 1 ? `${chunk.index + 1}/${totalChunks}` : null;
+      let increment = 0;
+      try {
+        await avttSendMoveChunk(chunk.items, options.operation || "move", {
+          chunkLabel,
+          isThumbnail: options.isThumbnail === true,
+        });
+        increment = Number(getEntryCount(chunk, null)) || 0;
+        if (increment > 0) {
+          completedEntries += increment;
+        }
+        if (onChunkSettled) {
+          await onChunkSettled({
+            chunk,
+            chunkLabel,
+            status: "fulfilled",
+            increment,
+          });
+        }
+      } catch (error) {
+        const normalizedError =
+          error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
+        increment = Number(getEntryCount(chunk, normalizedError)) || 0;
+        if (increment > 0) {
+          completedEntries += increment;
+        }
+        failures.push({ chunk, error: normalizedError });
+        if (onChunkSettled) {
+          await onChunkSettled({
+            chunk,
+            chunkLabel,
+            status: "rejected",
+            error: normalizedError,
+            increment,
+          });
+        }
+      }
+
+      if (chunkDelayMs > 0) {
+        await avttDelay(chunkDelayMs);
+      }
+    }
+  };
+
+  const workers = [];
+  for (let i = 0; i < maxConcurrent; i += 1) {
+    workers.push(worker());
+  }
+  await Promise.all(workers);
+
+  return {
+    failures,
+    completedEntries,
+  };
+}
+
+async function avttSendMoveChunk(
+  items,
+  operation,
+  {
+    chunkLabel = null,
+    depth = 0,
+    maxDepth = 4,
+    isThumbnail = false,
+  } = {},
+) {
+  if (!Array.isArray(items) || !items.length) {
+    return;
+  }
+
+  const requestUrl = `${AVTT_S3}?action=move`;
+  const actionText = isThumbnail ? "update thumbnail(s)" : "move item(s)";
+  const chunkText = chunkLabel ? ` (${chunkLabel})` : "";
+
+  const splitAndRequeue = async () => {
+    if (items.length <= 1 || depth >= maxDepth) {
+      throw new Error(`Failed to ${actionText}${chunkText}.`);
+    }
+    const midpoint = Math.ceil(items.length / 2);
+    const firstLabel = chunkLabel ? `${chunkLabel} (part 1)` : null;
+    const secondLabel = chunkLabel ? `${chunkLabel} (part 2)` : null;
+    await avttSendMoveChunk(items.slice(0, midpoint), operation, {
+      chunkLabel: firstLabel,
+      depth: depth + 1,
+      maxDepth,
+      isThumbnail,
+    });
+    await avttDelay(250 + depth * 100);
+    await avttSendMoveChunk(items.slice(midpoint), operation, {
+      chunkLabel: secondLabel,
+      depth: depth + 1,
+      maxDepth,
+      isThumbnail,
+    });
+  };
+
+  const requestBody = {
+    user: window.PATREON_ID,
+    items,
+    operation,
+  };
+  const requestInit = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(requestBody),
+  };
+
+  const maxAttempts = 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    let response;
+    try {
+      response = await avttFetchWithRetry(requestUrl, requestInit, {
+        retries: 4,
+        baseDelay: 700,
+        maxDelay: 8000,
+        jitter: 0.45,
+      });
+    } catch (error) {
+      if (items.length > 1 && depth < maxDepth) {
+        await avttDelay(300 * (attempt + 1));
+        await splitAndRequeue();
+        return;
+      }
+      if (attempt < maxAttempts - 1) {
+        await avttDelay(600 * (attempt + 1));
+        continue;
+      }
+      const message =
+        error?.message && error.message !== "Failed to fetch"
+          ? error.message
+          : `Failed to ${actionText}${chunkText}.`;
+      throw new Error(message);
+    }
+
+    let json = null;
+    try {
+      json = await response.json();
+    } catch (parseError) {
+      json = null;
+    }
+
+    if (response.ok && json?.moved) {
+      return;
+    }
+
+    const status = Number(response?.status) || 0;
+    if ([429, 500, 502, 503, 504].includes(status) && items.length > 1 && depth < maxDepth) {
+      await avttDelay(300 * (attempt + 1));
+      await splitAndRequeue();
+      return;
+    }
+
+    if (attempt < maxAttempts - 1) {
+      await avttDelay(600 * (attempt + 1));
+      continue;
+    }
+
+    const message =
+      json?.message && typeof json.message === "string"
+        ? json.message
+        : `Failed to ${actionText}${chunkText}.`;
+    throw new Error(message);
+  }
+}
+
 async function avttMoveEntries(moves, options = {}) {
   const fileListingSection = document.getElementById("file-listing-section");
-  if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0) {
-    $(fileListingSection).append(build_combat_tracker_loading_indicator('Loading files...'));
+  let appendedLoadingIndicator = null;
+  if (
+    fileListingSection &&
+    $(fileListingSection).find('.sidebar-panel-loading-indicator').length === 0
+  ) {
+    appendedLoadingIndicator = $(build_combat_tracker_loading_indicator('Loading files...'));
+    $(fileListingSection).append(appendedLoadingIndicator);
   }
+  const removeLoadingIndicator = () => {
+    if (appendedLoadingIndicator && appendedLoadingIndicator.length) {
+      appendedLoadingIndicator.remove();
+    }
+    appendedLoadingIndicator = null;
+  };
   const validMoves = Array.isArray(moves)
     ? moves.filter(
         (move) =>
@@ -2092,6 +2853,7 @@ async function avttMoveEntries(moves, options = {}) {
       )
     : [];
   if (validMoves.length === 0) {
+    removeLoadingIndicator();
     return;
   }
   try {
@@ -2109,54 +2871,181 @@ async function avttMoveEntries(moves, options = {}) {
       options.operation === "copy" || options.operation === "move"
         ? options.operation
         : "move";
-    const moveItems = resolvedMoves.map((move) => ({
-      fromKey: move.fromKey,
-      toKey: move.toKey,
-      isFolder: Boolean(move.isFolder),
-      overwrite: Boolean(move.overwrite),
-    }));
+    const progressLabelSingular =
+      typeof options.progressLabelSingular === "string" && options.progressLabelSingular.trim()
+        ? options.progressLabelSingular.trim()
+        : null;
+    const progressLabelPlural =
+      typeof options.progressLabelPlural === "string" && options.progressLabelPlural.trim()
+        ? options.progressLabelPlural.trim()
+        : null;
+    const completionMessageOverride =
+      typeof options.completionMessage === "string" && options.completionMessage.trim()
+        ? options.completionMessage.trim()
+        : null;
+    const folderDescendantsCache = new Map();
+    const resolveFolderDescendants = async (folderKey) => {
+      const normalized = avttNormalizeFolderPath(folderKey);
+      if (!normalized) {
+        return [];
+      }
+      if (folderDescendantsCache.has(normalized)) {
+        return folderDescendantsCache.get(normalized);
+      }
+      const entries = await avttCollectDescendantEntries(normalized, { includeSelf: true });
+      folderDescendantsCache.set(normalized, entries);
+      return entries;
+    };
+    const buildDescendantPayload = (entries) =>
+      entries.map((entry) => {
+        const payload = {
+          key: entry.key,
+          isFolder: Boolean(entry.isFolder),
+        };
+        if (Number.isFinite(Number(entry.size))) {
+          payload.size = Number(entry.size);
+        }
+        if (entry.synthetic) {
+          payload.synthetic = true;
+        }
+        return payload;
+      });
+
+    const moveItems = [];
     const thumbnailMoves = [];
     const seenThumbnailMoves = new Set();
+
     for (const move of resolvedMoves) {
+      let descendantEntries = null;
+      if (move.isFolder) {
+        descendantEntries = await resolveFolderDescendants(move.fromKey);
+      }
+      let destinationDescendants = null;
+      if (move.isFolder && move.overwrite) {
+        try {
+          destinationDescendants = await avttCollectDescendantEntries(move.toKey, {
+            includeSelf: true,
+          });
+        } catch (collectDestinationError) {
+          console.warn(
+            "Failed to collect destination descendants while preparing move payload",
+            move.toKey,
+            collectDestinationError,
+          );
+        }
+      }
+
+      const moveItem = {
+        fromKey: move.fromKey,
+        toKey: move.toKey,
+        isFolder: Boolean(move.isFolder),
+        overwrite: Boolean(move.overwrite),
+      };
+      if (Array.isArray(descendantEntries) && descendantEntries.length) {
+        moveItem.descendants = buildDescendantPayload(descendantEntries);
+      }
+      if (Array.isArray(destinationDescendants) && destinationDescendants.length) {
+        moveItem.destinationDescendants = buildDescendantPayload(destinationDescendants);
+      }
+      moveItems.push(moveItem);
+
       const isFolderMove = Boolean(move.isFolder);
       let fromThumbnailKey = null;
       let toThumbnailKey = null;
+      let thumbnailDescendants = null;
+
       if (isFolderMove) {
         fromThumbnailKey = avttGetThumbnailKeyFromRelative(move.fromKey);
         toThumbnailKey = avttGetThumbnailKeyFromRelative(move.toKey);
+        if (Array.isArray(descendantEntries) && descendantEntries.length) {
+          thumbnailDescendants = avttBuildThumbnailDescendants(descendantEntries);
+        }
       } else if (avttShouldGenerateThumbnail(getFileExtension(move.fromKey))) {
         fromThumbnailKey = avttGetThumbnailKeyFromRelative(move.fromKey);
         toThumbnailKey = avttGetThumbnailKeyFromRelative(move.toKey);
       }
+
       if (!fromThumbnailKey || !toThumbnailKey || fromThumbnailKey === toThumbnailKey) {
         continue;
       }
+
       const signature = `${fromThumbnailKey}|${toThumbnailKey}`;
       if (seenThumbnailMoves.has(signature)) {
         continue;
       }
       seenThumbnailMoves.add(signature);
-      thumbnailMoves.push({
+
+      const thumbnailItem = {
         fromKey: fromThumbnailKey,
         toKey: toThumbnailKey,
         isFolder: isFolderMove,
         overwrite: Boolean(move.overwrite),
+      };
+      if (isFolderMove && Array.isArray(thumbnailDescendants) && thumbnailDescendants.length) {
+        thumbnailItem.descendants = buildDescendantPayload(thumbnailDescendants);
+      }
+      thumbnailMoves.push(thumbnailItem);
+    }
+
+    const moveItemChunks = avttChunkMovePayloadItems(
+      moveItems,
+      AVTT_MAX_MOVE_KEYS_PER_REQUEST,
+    );
+    if (!moveItemChunks.length) {
+      throw new Error("No move items available for processing.");
+    }
+
+    const totalMovePayloadCount = moveItemChunks.reduce(
+      (sum, chunkItems) => sum + avttCountMovePayloadEntries(chunkItems),
+      0,
+    );
+    let moveProgressCount = 0;
+    const moveIndicatorLabel = (() => {
+      const defaultSingular = operation === "copy" ? "Copying Item" : "Moving Item";
+      const defaultPlural = operation === "copy" ? "Copying Items" : "Moving Items";
+      if (progressLabelSingular || progressLabelPlural) {
+        if (totalMovePayloadCount === 1) {
+          return progressLabelSingular || progressLabelPlural || defaultSingular;
+        }
+        return progressLabelPlural || progressLabelSingular || defaultPlural;
+      }
+      return totalMovePayloadCount === 1 ? defaultSingular : defaultPlural;
+    })();
+    if (totalMovePayloadCount > 0) {
+      avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE, {
+        label: moveIndicatorLabel,
+        currentDisplay: 0,
+        total: totalMovePayloadCount,
       });
     }
 
-    const response = await fetch(`${AVTT_S3}?action=move`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user: window.PATREON_ID,
-        items: moveItems,
-        operation,
-      }),
+    const moveChunkResult = await avttProcessMoveChunks(moveItemChunks, {
+      operation,
+      concurrency: AVTT_MAX_CONCURRENT_MOVES,
+      getEntryCount: (chunk) => avttCountMovePayloadEntries(chunk.items),
+      onChunkSettled: async ({ increment }) => {
+        if (totalMovePayloadCount <= 0) {
+          return;
+        }
+        const normalizedIncrement = Number.isFinite(Number(increment)) ? Number(increment) : 0;
+        if (normalizedIncrement > 0) {
+          moveProgressCount = Math.min(
+            moveProgressCount + normalizedIncrement,
+            totalMovePayloadCount,
+          );
+        }
+        const moveDisplayValue =
+          totalMovePayloadCount > 0
+            ? Math.min(Math.max(moveProgressCount, 0), totalMovePayloadCount)
+            : Math.max(moveProgressCount, 0);
+        avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE, {
+          label: moveIndicatorLabel,
+          currentDisplay: moveDisplayValue,
+          total: totalMovePayloadCount,
+        });
+      },
     });
-    const json = await response.json();
-    if (!response.ok || !json?.moved) {
-      throw new Error(json?.message || "Failed to move item(s).");
-    }
+    const chunkFailures = Array.isArray(moveChunkResult?.failures) ? moveChunkResult.failures : [];
     const refreshPath =
       typeof options.refreshPath === "string" ? options.refreshPath : currentFolder;
 
@@ -2182,33 +3071,40 @@ async function avttMoveEntries(moves, options = {}) {
     }
 
     if (thumbnailMoves.length) {
-      try {
-        const thumbnailResponse = await fetch(`${AVTT_S3}?action=move`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: window.PATREON_ID,
-            items: thumbnailMoves,
-            operation,
-          }),
-        });
-        const thumbnailJson = await thumbnailResponse.json();
-        if (!thumbnailResponse.ok || !thumbnailJson?.moved) {
-          throw new Error(thumbnailJson?.message || "Failed to update thumbnail(s).");
-        }
-      } catch (thumbnailError) {
-        console.warn("Thumbnail move/copy request failed", thumbnailError);
+      const thumbnailChunks = avttChunkMovePayloadItems(
+        thumbnailMoves,
+        AVTT_MAX_MOVE_KEYS_PER_REQUEST,
+      );
+      const thumbnailResult = await avttProcessMoveChunks(thumbnailChunks, {
+        operation,
+        concurrency: AVTT_MAX_CONCURRENT_MOVES,
+        isThumbnail: true,
+      });
+      if (Array.isArray(thumbnailResult?.failures) && thumbnailResult.failures.length > 0) {
+        const [firstThumbnailFailure] = thumbnailResult.failures;
+        console.warn(
+          "Thumbnail move/copy request failed",
+          firstThumbnailFailure?.error || thumbnailResult.failures,
+        );
       }
     }
 
-    refreshFiles(
-      refreshPath,
-      true,
-      undefined,
-      undefined,
-      activeFilePickerFilter,
-      { useCache: true, revalidate: false },
+    await Promise.resolve(
+      refreshFiles(
+        refreshPath,
+        true,
+        undefined,
+        undefined,
+        activeFilePickerFilter,
+        { useCache: true, revalidate: false },
+      ),
     );
+    if (totalMovePayloadCount > 0) {
+      const completionMessage =
+        completionMessageOverride ||
+        (operation === "copy" ? "Copy Complete" : "Move Complete");
+      avttShowOperationComplete(AVTT_OPERATION_INDICATOR_MODES.MOVE, completionMessage, 1500);
+    }
     if (options.clearClipboard) {
       avttClearClipboard();
     } else {
@@ -2216,7 +3112,17 @@ async function avttMoveEntries(moves, options = {}) {
     }
   } catch (error) {
     console.error("Failed to move entries", error);
-    alert(error.message || "Failed to move item(s).");
+    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE);
+    const normalizedError =
+      error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
+    if (options?.suppressErrorAlert !== true) {
+      alert(normalizedError.message || "Failed to move item(s).");
+    }
+    if (options?.bubbleOnError) {
+      throw normalizedError;
+    }
+  } finally {
+    removeLoadingIndicator();
   }
 }
 
@@ -2267,36 +3173,61 @@ async function avttPromptRename(path, isFolder) {
     const idx = normalizedPath.lastIndexOf("/");
     return idx >= 0 ? `${normalizedPath.slice(0, idx + 1)}` : "";
   })();
-  const promptValue = await avttPromptTextDialog({
-    title: isFolder ? "Rename Folder" : "Rename File",
-    message: `Enter a new name for "${baseName}".`,
-    defaultValue: baseName,
-    confirmLabel: "Rename",
-  });
-  if (promptValue === null || promptValue === undefined) {
-    return false;
+  let lastSuggestedName = baseName;
+
+  while (true) {
+    const promptValue = await avttPromptTextDialog({
+      title: isFolder ? "Rename Folder" : "Rename File",
+      message: `Enter a new name for "${baseName}".`,
+      defaultValue: lastSuggestedName,
+      confirmLabel: "Rename",
+    });
+    if (promptValue === null || promptValue === undefined) {
+      return false;
+    }
+    const trimmedName = String(promptValue).trim();
+    if (!trimmedName || trimmedName === baseName) {
+      return false;
+    }
+    if (/[\\/]/.test(trimmedName)) {
+      alert("Names cannot contain slashes.");
+      lastSuggestedName = trimmedName;
+      continue;
+    }
+    const newKey = `${parentPath}${trimmedName}${isFolder ? "/" : ""}`;
+    if (newKey === path) {
+      return false;
+    }
+    if (isFolder && newKey.startsWith(`${path}`)) {
+      alert("Cannot rename a folder into its own sub-path.");
+      lastSuggestedName = trimmedName;
+      continue;
+    }
+    try {
+      await avttMoveEntries(
+        [{ fromKey: path, toKey: newKey, isFolder }],
+        {
+          operation: "move",
+          clearClipboard: false,
+          progressLabelSingular: "Renaming Item",
+          progressLabelPlural: "Renaming Items",
+          completionMessage: "Rename Complete",
+          suppressErrorAlert: true,
+          bubbleOnError: true,
+        },
+      );
+      return true;
+    } catch (error) {
+      const message = error?.message ? String(error.message) : "Failed to rename item(s).";
+      if (/already exists/i.test(message)) {
+        alert("An item with that name already exists. Please choose a different name.");
+        lastSuggestedName = trimmedName;
+        continue;
+      }
+      alert(message);
+      return false;
+    }
   }
-  const trimmedName = String(promptValue).trim();
-  if (!trimmedName || trimmedName === baseName) {
-    return false;
-  }
-  if (/[\\/]/.test(trimmedName)) {
-    alert("Names cannot contain slashes.");
-    return false;
-  }
-  const newKey = `${parentPath}${trimmedName}${isFolder ? "/" : ""}`;
-  if (newKey === path) {
-    return false;
-  }
-  if (isFolder && newKey.startsWith(`${path}`)) {
-    alert("Cannot rename a folder into its own sub-path.");
-    return false;
-  }
-  await avttMoveEntries(
-    [{ fromKey: path, toKey: newKey, isFolder }],
-    { operation: "move", clearClipboard: false },
-  );
-  return true;
 }
 
 async function avttRenameTarget() {
@@ -2504,7 +3435,7 @@ function avttShouldGenerateThumbnail(extension) {
   return allowedImageTypes.includes(normalized) || allowedVideoTypes.includes(normalized);
 }
 
-function avttCalculateCoverDimensions(sourceWidth, sourceHeight, targetWidth, targetHeight) {
+function avttCalculateContainDimensions(sourceWidth, sourceHeight, targetWidth, targetHeight) {
   const safeSourceWidth = Number(sourceWidth) > 0 ? Number(sourceWidth) : targetWidth;
   const safeSourceHeight = Number(sourceHeight) > 0 ? Number(sourceHeight) : targetHeight;
   if (!safeSourceWidth || !safeSourceHeight) {
@@ -2602,7 +3533,7 @@ async function avttGenerateImageThumbnailBlob(file) {
       throw new Error("Canvas 2D context unavailable");
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const { drawWidth, drawHeight, offsetX, offsetY } = avttCalculateCoverDimensions(
+    const { drawWidth, drawHeight, offsetX, offsetY } = avttCalculateContainDimensions(
       image.naturalWidth || image.width,
       image.naturalHeight || image.height,
       canvas.width,
@@ -2610,7 +3541,6 @@ async function avttGenerateImageThumbnailBlob(file) {
     );
     ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
     const blob = await avttCanvasToBlob(canvas);
-    // Explicit cleanup
     try {
       const ctx2 = canvas.getContext('2d');
       if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
@@ -2625,7 +3555,20 @@ async function avttGenerateImageThumbnailBlob(file) {
     URL.revokeObjectURL(objectUrl);
   }
 }
+function avttCalculateContainDimensions(sourceWidth, sourceHeight, targetWidth, targetHeight) {
+  const safeSourceWidth = Number(sourceWidth) > 0 ? Number(sourceWidth) : targetWidth;
+  const safeSourceHeight = Number(sourceHeight) > 0 ? Number(sourceHeight) : targetHeight;
+  if (!safeSourceWidth || !safeSourceHeight) {
+    return { drawWidth: targetWidth, drawHeight: targetHeight, offsetX: 0, offsetY: 0 };
+  }
 
+  const scale = Math.min(targetWidth / safeSourceWidth, targetHeight / safeSourceHeight);
+  const drawWidth = safeSourceWidth * scale;
+  const drawHeight = safeSourceHeight * scale;
+  const offsetX = (targetWidth - drawWidth) / 2;
+  const offsetY = (targetHeight - drawHeight) / 2;
+  return { drawWidth, drawHeight, offsetX, offsetY };
+}
 async function avttGenerateVideoThumbnailBlob(file) {
   if (!file) {
     return null;
@@ -2689,7 +3632,7 @@ async function avttGenerateVideoThumbnailBlob(file) {
       throw new Error("Canvas 2D context unavailable");
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const { drawWidth, drawHeight, offsetX, offsetY } = avttCalculateCoverDimensions(
+    const { drawWidth, drawHeight, offsetX, offsetY } = avttCalculateContainDimensions(
       sourceWidth,
       sourceHeight,
       canvas.width,
@@ -2697,7 +3640,6 @@ async function avttGenerateVideoThumbnailBlob(file) {
     );
     ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
     const blob = await avttCanvasToBlob(canvas);
-    // Explicit cleanup
     try {
       const ctx2 = canvas.getContext('2d');
       if (ctx2) { ctx2.clearRect(0, 0, canvas.width, canvas.height); }
@@ -2727,12 +3669,12 @@ async function avttGenerateThumbnailBlob(file, extension) {
   if (!avttShouldGenerateThumbnail(normalizedExtension)) {
     return null;
   }
-  if (allowedImageTypes.includes(normalizedExtension)) {
+  if (allowedImageTypes.includes(normalizedExtension) && normalizedExtension != 'gif') {
     return await avttGenerateImageThumbnailBlob(file);
   }
-  if (allowedVideoTypes.includes(normalizedExtension)) {
+  if (allowedVideoTypes.includes(normalizedExtension) || normalizedExtension == 'gif') {
     return await avttGenerateVideoThumbnailBlob(file);
-  }
+  } 
   return null;
 }
 
@@ -3408,6 +4350,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 width: calc(100% + 2px);
                 left: -1px;
             }
+            
             #file-listing-section {
                 text-align: left;
                 margin: 7px 10px 20px 10px;
@@ -3417,6 +4360,14 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 padding: 0px;
                 height: calc(100% - 165px);
                 overflow-y: auto;
+            }
+            .file-picker-path{
+              color: color-mix(in srgb, var(--font-color, #000) 60%, transparent 0%);
+              font-size: 9px;
+              position: relative;
+              top: 0px;
+              line-height: 10px;
+              display: block;
             }
             #avtt-listing-toolbar {
                 display: flex;
@@ -3915,6 +4866,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       avttUpdateActionsMenuState();
       avttApplyClipboardHighlights();
     });
+    $(selectFilesToggle).off('focus.preventDefault').on('focus.preventDefault', function () {
+      this.blur()
+    }) 
   }
 
   const handleExportOption = async (option) => {
@@ -4506,54 +5460,158 @@ function resolveContentType(file) {
   return "";
 }
 
-const showUploadingProgress = (index, total) => {
-  const uploadingIndicator = document.getElementById("uploading-file-indicator");
-  if (!uploadingIndicator) {
+const AVTT_OPERATION_INDICATOR_MODES = Object.freeze({
+  UPLOAD: "upload",
+  DELETE: "delete",
+  MOVE: "move",
+});
+
+function avttShowOperationProgressIndicator(mode, options = {}) {
+  const indicator = document.getElementById("uploading-file-indicator");
+  if (!indicator) {
+    return null;
+  }
+
+  const {
+    label = "",
+    currentDisplay = 0,
+    total = 0,
+    showCancelButton = false,
+    cancelHandler = null,
+  } = options;
+  const normalizedTotal = Number.isFinite(Number(total)) && Number(total) > 0 ? Number(total) : 0;
+  const normalizedCurrent = Number.isFinite(Number(currentDisplay)) && Number(currentDisplay) >= 0
+    ? Number(currentDisplay)
+    : 0;
+
+  const currentMode = indicator.dataset.mode || "";
+  if (currentMode !== mode) {
+    indicator.innerHTML = "";
+  }
+  indicator.dataset.mode = mode;
+  indicator.style.display = "flex";
+
+  const cancelButtonId = "cancel-avtt-upload-button";
+  let cancelButton = indicator.querySelector(`#${cancelButtonId}`);
+  if (showCancelButton) {
+    if (!cancelButton) {
+      cancelButton = document.createElement("button");
+      cancelButton.id = cancelButtonId;
+      cancelButton.title = "Cancel Upload";
+      cancelButton.textContent = "X";
+      cancelButton.type = "button";
+    }
+  } else if (cancelButton) {
+    $(cancelButton).off(".operationIndicator");
+    cancelButton.remove();
+    cancelButton = null;
+  }
+
+  let labelSpan = indicator.querySelector(".avtt-operation-label");
+  let fileNumberSpan = indicator.querySelector("#file-number");
+  let totalFilesSpan = indicator.querySelector("#total-files");
+  if (!labelSpan || !fileNumberSpan || !totalFilesSpan) {
+    indicator.innerHTML = "";
+    labelSpan = document.createElement("span");
+    labelSpan.className = "avtt-operation-label";
+    fileNumberSpan = document.createElement("span");
+    fileNumberSpan.id = "file-number";
+    totalFilesSpan = document.createElement("span");
+    totalFilesSpan.id = "total-files";
+
+    indicator.appendChild(labelSpan);
+    indicator.appendChild(document.createTextNode(" "));
+    indicator.appendChild(fileNumberSpan);
+    indicator.appendChild(document.createTextNode(" of "));
+    indicator.appendChild(totalFilesSpan);
+  }
+
+  if (showCancelButton && cancelButton) {
+    if (!cancelButton.isConnected || cancelButton.parentElement !== indicator) {
+      indicator.prepend(cancelButton);
+    }
+    if (cancelHandler) {
+      $(cancelButton).off(".operationIndicator").on("click.operationIndicator", cancelHandler);
+    } else {
+      $(cancelButton).off(".operationIndicator");
+    }
+  }
+
+  labelSpan.textContent = label;
+  totalFilesSpan.textContent = normalizedTotal > 0 ? String(normalizedTotal) : "0";
+
+  const boundedCurrent =
+    normalizedTotal > 0
+      ? Math.min(Math.max(normalizedCurrent, 0), normalizedTotal)
+      : Math.max(normalizedCurrent, 0);
+  fileNumberSpan.textContent = String(boundedCurrent);
+
+  indicator.dataset.total = String(normalizedTotal);
+  indicator.dataset.current = String(boundedCurrent);
+  return indicator;
+}
+
+function avttShowOperationComplete(mode, message, delay = 2000) {
+  const indicator = document.getElementById("uploading-file-indicator");
+  if (!indicator || indicator.dataset.mode !== mode) {
     return;
   }
+  $(indicator).find("#cancel-avtt-upload-button").off(".operationIndicator").remove();
+  indicator.innerHTML = message;
+  indicator.style.display = "flex";
+  indicator.dataset.current = "";
+  indicator.dataset.total = "";
+  if (Number.isFinite(Number(delay)) && delay > 0) {
+    setTimeout(() => {
+      avttHideOperationIndicator(mode);
+    }, delay);
+  }
+}
 
-  if ($(uploadingIndicator).find('#file-number').length == 0) {
-    uploadingIndicator.innerHTML = `Uploading File <span id='file-number'>${Math.min(index + 1, total)}</span> of <span id='total-files'>${total}</span>`;
-    uploadingIndicator.style.display = "flex";
-    const cancelButton = $("<button id='cancel-avtt-upload-button' title='Cancel Upload'>X  </button>");
-    cancelButton.on('click', () => {
+function avttHideOperationIndicator(mode) {
+  const indicator = document.getElementById("uploading-file-indicator");
+  if (!indicator) {
+    return;
+  }
+  const currentMode = indicator.dataset.mode;
+  if (mode && currentMode && currentMode !== mode) {
+    return;
+  }
+  $(indicator).find("#cancel-avtt-upload-button").off(".operationIndicator").remove();
+  indicator.innerHTML = "";
+  indicator.style.display = "none";
+  indicator.removeAttribute("data-mode");
+  indicator.removeAttribute("data-current");
+  indicator.removeAttribute("data-total");
+}
+
+const showUploadingProgress = (index, total) => {
+  const currentDisplay = Math.max(1, Math.min(index + 1, Math.max(total, 1)));
+  avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.UPLOAD, {
+    label: "Uploading File",
+    currentDisplay,
+    total,
+    showCancelButton: true,
+    cancelHandler: () => {
       if (avttUploadController) {
-        try { avttUploadController.abort('User cancelled upload by clicking the cancel button.'); } catch { }
+        try {
+          avttUploadController.abort("User cancelled upload by clicking the cancel button.");
+        } catch {
+          /* no-op */
+        }
       }
-
       avttUploadQueue = [];
       avttQueueTotalEnqueued = avttQueueCompleted;
-    });
-
-    $(uploadingIndicator).prepend(cancelButton);
-  } else {
-    $(uploadingIndicator).find('#file-number').text(`${Math.min(index + 1, total)}`);
-    $(uploadingIndicator).find('#total-files').text(`${total}`);
-  }
-
-
-
-
+    },
+  });
 };
 
 const hideUploadingIndicator = () => {
-  const uploadingIndicator = document.getElementById("uploading-file-indicator");
-  if (!uploadingIndicator) {
-    return;
-  }
-  uploadingIndicator.innerHTML = "";
-  uploadingIndicator.style.display = "none";
+  avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.UPLOAD);
 };
 
 const showUploadComplete = () => {
-  const uploadingIndicator = document.getElementById("uploading-file-indicator");
-  if (!uploadingIndicator) {
-    return;
-  }
-  uploadingIndicator.innerHTML = "Upload Complete";
-  setTimeout(() => {
-    uploadingIndicator.style.display = "none";
-  }, 2000);
+  avttShowOperationComplete(AVTT_OPERATION_INDICATOR_MODES.UPLOAD, "Upload Complete");
 };
 
 const toNormalizedUploadPath = (file) => {
@@ -4584,9 +5642,7 @@ const avttDeriveFilenameFromUrl = (urlString, fallback = "download") => {
       const cleaned = decodeURIComponent(last).split("?")[0] || last;
       return cleaned || fallback;
     }
-  } catch (_) {
-    // ignore parse errors
-  }
+  } catch {}
   return fallback;
 };
 
@@ -4652,15 +5708,18 @@ async function avttProcessUploadQueue() {
     if (!nextFile) continue;
     
     const selectedFile = nextFile;
+    let uploadRequeued = false;
     const completionDeferred = selectedFile?.avttCompletionDeferred || null;
+    const skipsConcurrencyLimit = selectedFile?.avttSkipConcurrency === true;
     const countsTowardTotals = selectedFile?.avttCountsTowardTotals !== false;
     const skipProgressIndicator = selectedFile?.avttSkipProgress === true;
     const linkedSignal = selectedFile?.avttLinkedAbortSignal;
     const bypassExtensionCheck = selectedFile?.avttBypassExtensionCheck === true;
     const skipPersistCache = selectedFile?.skipPersistCache === true;
     const isProxyUpload = Boolean(selectedFile?.avttProxySourceUrl);
-    if(!skipProgressIndicator && !skipPersistCache)
+    if (!skipsConcurrencyLimit) {
       avttActiveUploads += 1;
+    }
     (async () => {
       try {
 
@@ -4695,6 +5754,8 @@ async function avttProcessUploadQueue() {
         }
 
         const isThumbnailTarget = avttIsThumbnailRelativeKey(targetKey);
+        const isFileCacheTarget = avttIsFileCacheRelativeKey(targetKey);
+        const isSystemTarget = isThumbnailTarget || isFileCacheTarget;
         let action = selectedFile.avttDefaultConflictAction || "overwrite";
 
         if (!selectedFile.avttSkipConflictPrompt) {
@@ -4787,7 +5848,7 @@ async function avttProcessUploadQueue() {
           selectedFile.avttIsThumbnailUpload === true
             ? false
             : !isProxyUpload &&
-            !isThumbnailTarget &&
+            !isSystemTarget &&
             selectedFile.avttGenerateThumbnail !== false &&
             avttShouldGenerateThumbnail(extension);
         if (shouldGenerateThumbnailForFile) {
@@ -4799,7 +5860,9 @@ async function avttProcessUploadQueue() {
           }
         }
 
-        avttUploadController = new AbortController();
+        if (!avttUploadController || avttUploadController.signal?.aborted) {
+          avttUploadController = new AbortController();
+        }
         avttUploadSignal = avttUploadController.signal;
 
         let linkedAbortHandler = null;
@@ -4815,10 +5878,10 @@ async function avttProcessUploadQueue() {
             linkedSignal.addEventListener("abort", linkedAbortHandler, { once: true });
           }
         }
-
+        let remoteSize=0;
         try {
           if (isProxyUpload) {
-            const proxyResponse = await fetch(
+            const proxyResponse = await avttFetchWithRetry(
               `${AVTT_S3}?action=proxyDownload&user=${window.PATREON_ID}`,
               {
                 method: "POST",
@@ -4830,6 +5893,12 @@ async function avttProcessUploadQueue() {
                   targetKey,
                 }),
                 signal: avttUploadSignal,
+              },
+              {
+                retries: 4,
+                baseDelay: 400,
+                maxDelay: 5000,
+                retryStatuses: AVTT_UPLOAD_RETRYABLE_STATUSES,
               },
             );
             let proxyPayload = null;
@@ -4850,7 +5919,7 @@ async function avttProcessUploadQueue() {
                 targetKey = normalizedProxyTarget;
               }
             }
-            const remoteSize = Number(proxyPayload?.size);
+            remoteSize = Number(proxyPayload?.size);
             if (Number.isFinite(remoteSize) && remoteSize >= 0) {
               selectedFile.size = remoteSize;
             } else if (!Number.isFinite(Number(selectedFile.size))) {
@@ -4860,7 +5929,16 @@ async function avttProcessUploadQueue() {
               selectedFile.avttUploadedContentType = proxyPayload.contentType;
             }
           } else {
-            const presignResponse = await fetch(`${AVTT_S3}?filename=${encodeURIComponent(targetKey)}&user=${window.PATREON_ID}&upload=true`);
+            const presignResponse = await avttFetchWithRetry(
+              `${AVTT_S3}?filename=${encodeURIComponent(targetKey)}&user=${window.PATREON_ID}&upload=true`,
+              { signal: avttUploadSignal },
+              {
+                retries: 5,
+                baseDelay: 300,
+                maxDelay: 4000,
+                retryStatuses: AVTT_DEFAULT_RETRYABLE_STATUSES,
+              },
+            );
             if (!presignResponse.ok) {
               throw new Error("Failed to retrieve upload URL.");
             }
@@ -4870,12 +5948,21 @@ async function avttProcessUploadQueue() {
             if (inferredType) {
               uploadHeaders["Content-Type"] = inferredType;
             }
-            const uploadResponse = await fetch(data.uploadURL, {
-              method: "PUT",
-              body: selectedFile,
-              headers: uploadHeaders,
-              signal: avttUploadSignal,
-            });
+            const uploadResponse = await avttFetchWithRetry(
+              data.uploadURL,
+              {
+                method: "PUT",
+                body: selectedFile,
+                headers: uploadHeaders,
+                signal: avttUploadSignal,
+              },
+              {
+                retries: 3,
+                baseDelay: 500,
+                maxDelay: 6000,
+                retryStatuses: AVTT_UPLOAD_RETRYABLE_STATUSES,
+              },
+            );
             if (!uploadResponse.ok) {
               throw new Error("Upload failed.");
             }
@@ -4890,41 +5977,49 @@ async function avttProcessUploadQueue() {
           avttUploadThumbnail(targetKey, thumbnailBlob, avttUploadSignal).catch(() => { });
         }
 
+        if (selectedFile.avttResourceRetryAttempts) {
+          delete selectedFile.avttResourceRetryAttempts;
+        }
         selectedFile.avttPendingTargetKey = targetKey;
 
         const userUsedElement = document.getElementById("user-used");
         if (userUsedElement) {
           userUsedElement.innerHTML = formatFileSize((avttPendingUsageBytes || 0) + S3_Current_Size);
         }
-        avttRegisterPendingUploadKey(targetKey, Number(selectedFile.size) || 0);
+       
         try {
-          const now = new Date().toISOString();
-          const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
-          const newEntry = { Key: normalizedKey, Size: Number(selectedFile.size) || 0, LastModified: now };
-          if (Array.isArray(avttAllFilesCache)) {
-            const idx = avttAllFilesCache.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
-            if (idx >= 0) {
-              avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
-            } else {
-              avttAllFilesCache.push({ ...newEntry });
-            }
-          }
-          if (avttFolderListingCache && typeof avttFolderListingCache.get === 'function') {
-            const parentFolder = avttGetParentFolder(normalizedKey);
-            const existing = avttFolderListingCache.get(parentFolder);
-            if (Array.isArray(existing)) {
-              const idx = existing.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
+          if (!isSystemTarget){
+            const now = new Date().toISOString();
+            const normalizedKey = `${window.PATREON_ID}/${targetKey}`;
+            const newSize = selectedFile.size == 0 && remoteSize > 0 ? remoteSize : Number(selectedFile.size) || 0;
+            const newEntry = { Key: normalizedKey, Size: newSize, LastModified: now };
+            avttRegisterPendingUploadKey(targetKey, newSize);
+            if (Array.isArray(avttAllFilesCache)) {
+              const idx = avttAllFilesCache.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
               if (idx >= 0) {
-                existing[idx] = { ...existing[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
+                avttAllFilesCache[idx] = { ...avttAllFilesCache[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
               } else {
-                existing.push({ ...newEntry });
+                avttAllFilesCache.push({ ...newEntry });
               }
-              avttFolderListingCache.set(parentFolder, existing);
+            }
+            if (avttFolderListingCache && typeof avttFolderListingCache.get === 'function') {
+              const parentFolder = avttGetParentFolder(normalizedKey);
+              const existing = avttFolderListingCache.get(parentFolder);
+              if (Array.isArray(existing)) {
+                const idx = existing.findIndex((f) => (f?.Key || f?.key) === normalizedKey);
+                if (idx >= 0) {
+                  existing[idx] = { ...existing[idx], ...newEntry, key: undefined, size: undefined, lastModified: undefined };
+                } else {
+                  existing.push({ ...newEntry });
+                }
+                avttFolderListingCache.set(parentFolder, existing);
+              }
+            }
+            if (!skipPersistCache) {
+              try { avttSchedulePersist(false); } catch { }
             }
           }
-          if(!skipPersistCache){
-            try { avttSchedulePersist(false); } catch { }
-          }
+         
             
         } catch (cacheError) {
           console.warn('Failed to update local caches after upload', cacheError);
@@ -4938,14 +6033,43 @@ async function avttProcessUploadQueue() {
           completionDeferred.resolve(true);
         }
       } catch (error) {
-        console.error('Upload task failed', error);
-        if (typeof error === "string") {
+        const isAbortError = error?.name === 'AbortError';
+        if (!isAbortError) {
+          const rawMessage =
+            typeof error === "string"
+              ? error
+              : typeof error?.message === "string"
+                ? error.message
+                : "";
+          const messageUpper = String(rawMessage || "").toUpperCase();
+          const isResourceExhausted = messageUpper.includes("ERR_INSUFFICIENT_RESOURCES");
+          const isNetworkFailure = messageUpper.includes("FAILED TO FETCH");
+          if ((isResourceExhausted || isNetworkFailure) && !linkedSignal?.aborted) {
+            const attempts = Number(selectedFile.avttResourceRetryAttempts) || 0;
+            if (attempts < AVTT_RESOURCE_RETRY_LIMIT) {
+              uploadRequeued = true;
+              selectedFile.avttResourceRetryAttempts = attempts + 1;
+              const retryDelay = Math.min(2000 * selectedFile.avttResourceRetryAttempts, 8000);
+              console.warn(
+                `Upload retry scheduled for ${selectedFile.name || targetKey || "file"} (attempt ${
+                  selectedFile.avttResourceRetryAttempts
+                }) after resource exhaustion.`,
+              );
+              await avttDelay(retryDelay);
+              avttUploadQueue.unshift(selectedFile);
+            }
+          }
+        }
 
-        } else if (error?.name !== 'AbortError') {
+        if (uploadRequeued) {
+          return;
+        }
+
+        console.error('Upload task failed', error);
+        if (!isAbortError) {
           if (isProxyUpload && error instanceof Error && error.message) {
             alert(error.message);
           }
-
         }
         if (completionDeferred?.reject) {
           completionDeferred.reject(
@@ -4953,6 +6077,9 @@ async function avttProcessUploadQueue() {
           );
         }
       } finally {
+        if (uploadRequeued) {
+          return;
+        }
         if (countsTowardTotals) {
           avttQueueCompleted += 1;
           if (!skipProgressIndicator) {
@@ -4964,7 +6091,9 @@ async function avttProcessUploadQueue() {
       .catch((e) => console.warn('Unhandled upload task error', e))
       .finally(() => {
 
-        avttActiveUploads = Math.max(0, avttActiveUploads - 1);
+        if (!skipsConcurrencyLimit) {
+          avttActiveUploads = Math.max(0, avttActiveUploads - 1);
+        }
         const flush = () => {
           if (avttUploadQueue.length === 0 && avttActiveUploads === 0) {
             avttQueueConflictPolicy = null;
@@ -5046,12 +6175,12 @@ const debounceUploadCacheFile = mydebounce(throttle(async () => {
       const DataFile = {};
       DataFile.avttAllFilesCache = avttAllFilesCache;
       DataFile.avttFolderListingCache = Object.fromEntries(avttFolderListingCache);
-      download(JSON.stringify(DataFile, null, "\t"), `FILESCACHE.abovevtt`, "text/plain");
+      download(JSON.stringify(DataFile, null, "\t"), AVTT_FILE_CACHE_FILENAME, "text/plain");
     });
     const fileName =
       typeof filename === "string" && filename.trim()
         ? filename.trim()
-        : `FILESCACHE.abovevtt`;
+        : AVTT_FILE_CACHE_FILENAME;
 
     const blob = new Blob([data], { type: mimeType || "text/plain" });
     const syntheticFile = new File([blob], fileName, {
@@ -5064,7 +6193,7 @@ const debounceUploadCacheFile = mydebounce(throttle(async () => {
     syntheticFile.avttSkipConflictPrompt = true;
     syntheticFile.skipPersistCache = true;
 
-    await uploadSelectedFiles([syntheticFile], 'thumbnails/');
+    await uploadSelectedFiles([syntheticFile], avttGetFileCacheFolder());
   } catch (error) {
     console.error("AVTT File cache upload failed", error);
   }
@@ -5077,7 +6206,8 @@ async function readUploadedFileCache() {
   try {
     let url;
     try {
-      const response = await fetch(`${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent('thumbnails/FILESCACHE.abovevtt')}`);
+      const cacheKey = avttGetFileCacheKey();
+      const response = await fetch(`${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(cacheKey)}`);
       const json = await response.json();
       if (!response.ok) {
         throw new Error(json?.message || `Failed to fetch file from S3 (${response.status})`);
@@ -5094,7 +6224,7 @@ async function readUploadedFileCache() {
     if (!url) return;
     const resp = await fetch(url);
     if (!resp.ok) {
-      console.warn('Failed to fetch file for import thumbnails/FILESCACHE.abovevtt');
+      console.warn(`Failed to fetch file for import ${avttGetFileCacheKey()}`);
       return;
     }
     const DataFile = await resp.json();
@@ -5283,7 +6413,7 @@ function refreshFiles(
           continue;
         }
         const relativePath = rawKey.replace(regEx, "");
-        if (avttIsThumbnailRelativeKey(relativePath)) {
+        if (avttIsHiddenSystemRelativeKey(relativePath)) {
           continue;
         }
         const isFolder = /\/$/gi.test(relativePath);
@@ -5413,7 +6543,9 @@ function refreshFiles(
               "background-size": "cover",
               "background-position": "center",
               "background-image": `url(${previewUrl})`,
-              "flex-shrink": '0'
+              "flex-shrink": '0',
+              "background-size": "contain",
+              "background-repeat": "no-repeat"
             });
             container.replaceWith(imageDiv[0]);
             if (!hasValidThumbnail && sourceUrl) {
@@ -5448,7 +6580,7 @@ function refreshFiles(
             checkboxCell.find("input").prop("checked", true);
           }
 
-          const labelCell = $(`<td><label for='input-${entry.relativePath}' style=\"cursor:pointer;\" class=\"avtt-file-name  ${entry.isFolder ? "folder" : ""}\" title=\"${entry.relativePath}\"><span class=\"material-symbols-outlined\">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}</span></label></td>`);
+          const labelCell = $(`<td><label for='input-${entry.relativePath}' style=\"cursor:pointer;\" class=\"avtt-file-name  ${entry.isFolder ? "folder" : ""}\" title=\"${entry.relativePath}\"><span class=\"material-symbols-outlined\">${fileTypeIcon[entry.type] || ""}</span><span>${entry.displayName}${searchTerm ? `<br><span class='file-picker-path'>${entry.relativePath}</span>`: ''}</span></label></td>`);
           const typeCell = $(`<td>${entry.type || ""}</td>`);
           const sizeValue = entry.isFolder ? "" : formatFileSize(entry.size || 0);
           const sizeCell = $(`<td class=\"avtt-file-size\">${sizeValue}</td>`);
@@ -5502,11 +6634,14 @@ function refreshFiles(
           $(listItem).draggable({
             addClasses: false,
             scroll: true,
-            cursorAt: { left: 15, top: 15 },
+            cursorAt: { left: 0, top: 0 },
             containment: "#windowContainment",
             distance: 5,
             helper: (event) => {
               const helper = $(event.target).closest('tr').find('td:nth-of-type(2)>label>:first-child').clone();
+              helper.css({
+                "pointer-events": 'none'
+              })
               return helper;
             },
             appendTo: 'body',
@@ -5514,14 +6649,12 @@ function refreshFiles(
             start: function (event, ui) {
               draggedItems = avttHandleDragStart(event, entry);
               listItemArray = [];
-
+              window.orig_zoom = window.ZOOM;
               if (!Array.isArray(avttDragItems) || avttDragItems.length === 0) {
                 return;
               }
-
               for (const entry of avttDragItems) {
                 const rawKey = entry.key;
-
                 if (entry.isFolder) {
                   continue;
                 }
@@ -5532,16 +6665,45 @@ function refreshFiles(
             },
             drag: function (event, ui){
               let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
-       
               const closestFolder = droppedOn.closest('[data-is-folder="true"]');
-              if (!droppedOn.hasClass('avtt-drop-target') && closestFolder){
+              const isAvttDropTarget = closestFolder.hasClass('avtt-drop-target');
+
+              if(closestFolder.length>0 && isAvttDropTarget)
+                return;
+              if (droppedOn.closest('#VTT').length > 0) {
+                if (event.shiftKey) {
+                  $(ui.helper).css("opacity", 0.5);
+                } else {
+                  $(ui.helper).css("opacity", 1);
+                }
+                let zoom = parseFloat(window.ZOOM);
+                const size = window.CURRENT_SCENE_DATA.hpps * window.ZOOM;
+                const helper = ui.helper;
+
+                helper.css({ width: `${size}px`, height: `${size}px` });
+
+                ui.position = {
+                  left: (ui.position.left - (size / 2)),
+                  top: (ui.position.top - (size / 2))
+                };
+
+
+ 
+
                 $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
-                closestFolder.toggleClass('avtt-drop-target', true);
-              } else if(droppedOn.closest('[data-is-folder="true"]').length > 0){
-                if ($(this).attr('data-path') == droppedOn.attr('data-path'))
+              } else if (closestFolder.length == 0) {
+                $(ui.helper).css("opacity", 1);
+                $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
+              } else { 
+                $(ui.helper).css({
+                  width: ``,
+                  height: ``
+                });
+                $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
+                if ($(this).attr('data-path') == closestFolder.attr('data-path'))
                   return;
-                $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
-              }    
+                closestFolder.toggleClass('avtt-drop-target', true); 
+              }
             },
             stop: function (event, ui) {
               avttHandleDragEnd(event);
@@ -5693,6 +6855,77 @@ async function applyUsageDelta(deltaBytes, deltaObjects) {
   return result;
 }
 
+async function avttDeleteThumbnailKeys(entries, options = {}) {
+  const normalizedEntries = Array.isArray(entries)
+    ? entries
+        .map((entry) => {
+          if (!entry) return null;
+          const key =
+            typeof entry === "string"
+              ? avttNormalizeRelativePath(entry)
+              : avttNormalizeRelativePath(entry.key);
+          if (!key || !avttIsThumbnailRelativeKey(key)) {
+            return null;
+          }
+          const sizeValue =
+            typeof entry === "string" ? undefined : Number.isFinite(Number(entry.size)) ? Number(entry.size) : undefined;
+          return {
+            key,
+            size: sizeValue,
+            isFolder: false,
+          };
+        })
+        .filter(Boolean)
+    : [];
+  if (!normalizedEntries.length) {
+    return;
+  }
+
+  const MAX_DELETE_KEYS_PER_REQUEST = 1000;
+  let latestResponseJson = null;
+
+  for (let offset = 0; offset < normalizedEntries.length; offset += MAX_DELETE_KEYS_PER_REQUEST) {
+    const chunkEntries = normalizedEntries.slice(offset, offset + MAX_DELETE_KEYS_PER_REQUEST);
+    if (!chunkEntries.length) {
+      continue;
+    }
+    const chunkTotalSize = chunkEntries.reduce((sum, entry) => sum + (Number(entry?.size) || 0), 0);
+    const chunkPayload = {
+      keys: chunkEntries,
+      totalSize: chunkTotalSize,
+      objectCount: chunkEntries.length,
+    };
+    const response = await fetch(
+      `${AVTT_S3}?user=${window.PATREON_ID}&deleteFiles=true`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(chunkPayload),
+        signal: options?.signal,
+      },
+    );
+    let json = null;
+    try {
+      json = await response.json();
+    } catch (parseError) {
+      json = null;
+    }
+    if (!response.ok || !json?.deleted) {
+      throw new Error(json?.message || "Failed to delete thumbnail(s)");
+    }
+    latestResponseJson = json;
+  }
+
+  if (latestResponseJson?.usage) {
+    avttUsageCache.totalBytes = latestResponseJson.usage.totalBytes;
+    avttUsageCache.objectCount = latestResponseJson.usage.objectCount;
+  }
+
+  for (const entry of normalizedEntries) {
+    avttRemoveCacheEntry(entry.key);
+  }
+}
+
 async function deleteFilesFromS3Folder(selections, fileTypes) {
   const entries = Array.isArray(selections) ? selections.filter((entry) => entry && entry.key) : [];
   if (entries.length === 0) {
@@ -5706,52 +6939,247 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 
   const seenKeys = new Set();
   const payloadEntries = [];
+  const MAX_DELETE_KEYS_PER_REQUEST = 1000;
+  let cachedExpansionCount = 0;
+
   const addPayloadEntry = (key, size, isFolder) => {
     const normalized = avttNormalizeRelativePath(key);
     if (!normalized || seenKeys.has(normalized)) {
-      return;
+      return false;
     }
     seenKeys.add(normalized);
+    const numericSize = Number(size);
     payloadEntries.push({
       key: normalized,
-      size: Number(size) || 0,
+      size: Number.isFinite(numericSize) ? numericSize : undefined,
       isFolder: Boolean(isFolder),
     });
+    return true;
+  };
+
+  const addEntryWithAssociatedDeletes = (
+    key,
+    size,
+    isFolder,
+    { fromCache = false } = {},
+  ) => {
+    const added = addPayloadEntry(key, size, isFolder);
+    if (!added) {
+      return;
+    }
+    if (fromCache) {
+      cachedExpansionCount += 1;
+    }
+
+    if (isFolder) {
+      const thumbnailFolderKey = avttGetThumbnailKeyFromRelative(key);
+      addPayloadEntry(thumbnailFolderKey, 0, true);
+    } else if (avttShouldGenerateThumbnail(getFileExtension(key))) {
+      const thumbnailKey = avttGetThumbnailKeyFromRelative(key);
+      addPayloadEntry(thumbnailKey, 0, false);
+    }
+  };
+
+  const getCachedFolderListing = (folderPath) => {
+    const variants = [
+      folderPath,
+      typeof folderPath === "string" ? folderPath.replace(/\/$/, "") : folderPath,
+      avttNormalizeFolderPath(folderPath),
+    ];
+    for (const variant of variants) {
+      if (typeof variant !== "string") {
+        continue;
+      }
+      if (avttFolderListingCache.has(variant)) {
+        return avttFolderListingCache.get(variant);
+      }
+    }
+    return null;
+  };
+
+  const includeCachedDescendants = async (folderKey) => {
+
+    const normalizedFolder = avttNormalizeFolderPath(folderKey);
+    if (!normalizedFolder) {
+      return;
+    }
+
+    const includeEntry = (relativeKey, size, isFolder) => {
+      if (!relativeKey || relativeKey === normalizedFolder) {
+        return;
+      }
+      addEntryWithAssociatedDeletes(relativeKey, size, isFolder, { fromCache: true });
+    };
+
+    let fulfilledFromAllFilesCache = false;
+    if (Array.isArray(avttAllFilesCache) && avttAllFilesCache.length > 0) {
+      const absolutePrefix = `${window.PATREON_ID}/${normalizedFolder}`;
+      const expansionCountBefore = cachedExpansionCount;
+      for (const cachedEntry of avttAllFilesCache) {
+        const absolute = cachedEntry?.Key || cachedEntry?.key;
+        if (typeof absolute !== "string" || !absolute.startsWith(absolutePrefix)) {
+          continue;
+        }
+        const relative = avttExtractRelativeKey(absolute);
+        if (!relative || relative === normalizedFolder) {
+          continue;
+        }
+        const size = Number.isFinite(Number(cachedEntry?.Size))
+          ? Number(cachedEntry.Size)
+          : Number(cachedEntry?.size);
+        const isFolder = relative.endsWith("/");
+        includeEntry(relative, size, isFolder);
+      }
+      fulfilledFromAllFilesCache = cachedExpansionCount > expansionCountBefore;
+    }
+
+    if (fulfilledFromAllFilesCache) {
+      return;
+    }
+
+    const visitedFolders = new Set();
+    const fetchedFolders = new Set();
+    const stack = [normalizedFolder];
+    while (stack.length > 0) {
+      const currentFolder = stack.pop();
+      if (!currentFolder || visitedFolders.has(currentFolder)) {
+        continue;
+      }
+      visitedFolders.add(currentFolder);
+      let listing = getCachedFolderListing(currentFolder);
+      if ((!Array.isArray(listing) || listing.length === 0) && !fetchedFolders.has(currentFolder)) {
+        try {
+          listing = await getFolderListingFromS3(currentFolder);
+          if (Array.isArray(listing) && listing.length > 0) {
+            avttStoreFolderListing(currentFolder, listing);
+          }
+        } catch (fetchError) {
+          console.warn("Failed to expand folder listing during delete", currentFolder, fetchError);
+          fetchedFolders.add(currentFolder);
+          continue;
+        }
+        fetchedFolders.add(currentFolder);
+      }
+      if (!Array.isArray(listing) || listing.length === 0) {
+        continue;
+      }
+      for (const cachedEntry of listing) {
+        const absolute = cachedEntry?.Key || cachedEntry?.key;
+        if (typeof absolute !== "string") {
+          continue;
+        }
+        const relative = avttExtractRelativeKey(absolute);
+        if (!relative || relative === currentFolder) {
+          continue;
+        }
+        const size = Number.isFinite(Number(cachedEntry?.Size))
+          ? Number(cachedEntry.Size)
+          : Number(cachedEntry?.size);
+        const isFolder = relative.endsWith("/");
+        includeEntry(relative, size, isFolder);
+        if (isFolder) {
+          const childFolder = avttNormalizeFolderPath(relative);
+          if (childFolder && !visitedFolders.has(childFolder)) {
+            stack.push(childFolder);
+          }
+        }
+      }
+    }
   };
 
   for (const entry of entries) {
     if (!entry?.key) {
       continue;
     }
-    addPayloadEntry(entry.key, entry.size, entry.isFolder);
+    addEntryWithAssociatedDeletes(entry.key, entry.size, entry.isFolder);
     if (entry.isFolder) {
-      const thumbnailFolderKey = avttGetThumbnailKeyFromRelative(entry.key);
-      addPayloadEntry(thumbnailFolderKey, 0, true);
-    } else if (avttShouldGenerateThumbnail(getFileExtension(entry.key))) {
-      const thumbnailKey = avttGetThumbnailKeyFromRelative(entry.key);
-      addPayloadEntry(thumbnailKey, 0, false);
+      await includeCachedDescendants(entry.key);
     }
   }
 
-  const payload = { keys: payloadEntries };
-  payload.totalSize = entries.reduce(
-    (sum, entry) => sum + (Number(entry?.size) || 0),
-    0,
-  );
-  payload.objectCount = entries.length;
+  if (!payloadEntries.length) {
+    $('#avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator').remove();
+    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE);
+    return;
+  }
+
+  const totalDeleteCount = payloadEntries.length;
+  let deleteProgressCount = 0;
+  const deleteIndicatorLabel = totalDeleteCount === 1 ? "Deleting Item" : "Deleting Items";
+  avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE, {
+    label: deleteIndicatorLabel,
+    currentDisplay: 0,
+    total: totalDeleteCount,
+  });
 
   try {
-    const response = await fetch(`${AVTT_S3}?user=${window.PATREON_ID}&deleteFiles=true`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      },
-    );
-    const json = await response.json();
-    if (!response.ok || !json.deleted) {
-      throw new Error(json?.message || "Failed to delete file(s)");
+    let latestResponseJson = null;
+    const MAX_DELETE_ATTEMPTS = 3;
+    const DELETE_RETRY_BASE_DELAY_MS = 500;
+    for (let offset = 0; offset < payloadEntries.length; offset += MAX_DELETE_KEYS_PER_REQUEST) {
+      const chunkEntries = payloadEntries.slice(offset, offset + MAX_DELETE_KEYS_PER_REQUEST);
+      if (!chunkEntries.length) {
+        continue;
+      }
+      const chunkTotalSize = chunkEntries.reduce(
+        (sum, entry) => sum + (Number(entry?.size) || 0),
+        0,
+      );
+      const chunkPayload = {
+        keys: chunkEntries,
+        totalSize: chunkTotalSize,
+        objectCount: chunkEntries.length,
+      };
+      let chunkSucceeded = false;
+      let lastChunkError = null;
+      for (let attempt = 1; attempt <= MAX_DELETE_ATTEMPTS; attempt += 1) {
+        try {
+          const response = await fetch(
+            `${AVTT_S3}?user=${window.PATREON_ID}&deleteFiles=true`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(chunkPayload),
+            },
+          );
+          let json = null;
+          try {
+            json = await response.json();
+          } catch (parseError) {
+            json = null;
+          }
+          if (!response.ok || !json?.deleted) {
+            throw new Error(json?.message || "Failed to delete file(s)");
+          }
+          latestResponseJson = json;
+          chunkSucceeded = true;
+          break;
+        } catch (chunkError) {
+          lastChunkError =
+            chunkError instanceof Error
+              ? chunkError
+              : new Error(String(chunkError ?? "Failed to delete file(s)"));
+          if (attempt >= MAX_DELETE_ATTEMPTS) {
+            throw lastChunkError;
+          }
+          await avttDelay(DELETE_RETRY_BASE_DELAY_MS * attempt);
+        }
+      }
+      if (!chunkSucceeded) {
+        continue;
+      }
+
+      deleteProgressCount += chunkEntries.length;
+      const deleteDisplayValue = Math.min(Math.max(deleteProgressCount, 0), totalDeleteCount);
+      avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE, {
+        label: deleteIndicatorLabel,
+        currentDisplay: deleteDisplayValue,
+        total: totalDeleteCount,
+      });
     }
+
+    const finalJson = latestResponseJson || {};
+
     for (const entry of entries) {
       if (entry.isFolder) {
         avttRemoveFolderCacheRecursively(entry.key);
@@ -5763,8 +7191,12 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       }
       avttRemoveCacheEntry(entry.key);
     }
-    avttUsageCache.totalBytes = json.usage.totalBytes;
-    avttUsageCache.objectCount = json.usage.objectCount;
+
+    if (finalJson?.usage) {
+      avttUsageCache.totalBytes = finalJson.usage.totalBytes;
+      avttUsageCache.objectCount = finalJson.usage.objectCount;
+    }
+
     refreshFiles(
       currentFolder,
       true,
@@ -5773,9 +7205,13 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       fileTypes,
       { useCache: true, revalidate: false },
     );
+    if (totalDeleteCount > 0) {
+      avttShowOperationComplete(AVTT_OPERATION_INDICATOR_MODES.DELETE, "Delete Complete", 1500);
+    }
   } catch (error) {
     console.error("Failed to delete files", error);
     alert(error.message || "Failed to delete file(s).");
+    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE);
   }
 }
 
@@ -6203,14 +7639,70 @@ async function getFileFromS3(fileName, highPriority=false) {
 }
 
 async function getFolderListingFromS3(folderPath, options = {}) {
-  const { signal } = options;
-  const url = await fetch(
-    `${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(folderPath)}&list=true`,
-    { signal },
-  );
-  const json = await url.json();
-  const folderContents = json.folderContents || [];
-  return folderContents;
+  const { signal } = options || {};
+  const aggregated = [];
+  let continuationToken = null;
+  let iteration = 0;
+  const MAX_ITERATIONS = 500;
+  const normalizedPath =
+    typeof folderPath === "string" ? folderPath : "";
+
+  while (iteration < MAX_ITERATIONS) {
+    if (signal?.aborted) {
+      throw new DOMException(signal.reason || "Aborted", "AbortError");
+    }
+    const requestUrl = new URL(AVTT_S3);
+    requestUrl.searchParams.set("user", window.PATREON_ID);
+    requestUrl.searchParams.set("filename", normalizedPath);
+    requestUrl.searchParams.set("list", "true");
+    if (continuationToken) {
+      requestUrl.searchParams.set("continuationToken", continuationToken);
+    }
+
+    const response = await avttFetchWithRetry(
+      requestUrl.toString(),
+      { signal },
+      {
+        retries: 4,
+        baseDelay: 300,
+        maxDelay: 4000,
+        retryStatuses: AVTT_DEFAULT_RETRYABLE_STATUSES,
+      },
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch folder listing (${response.status})`);
+    }
+    const json = await response.json();
+    const folderContents = Array.isArray(json.folderContents)
+      ? json.folderContents
+      : [];
+    aggregated.push(...folderContents);
+
+    const responseContinuationToken =
+      typeof json.nextContinuationToken === "string" && json.nextContinuationToken
+        ? json.nextContinuationToken
+        : typeof json.continuationToken === "string" && json.continuationToken
+          ? json.continuationToken
+          : null;
+    continuationToken = responseContinuationToken;
+    iteration += 1;
+
+    const isTruncated =
+      json.isTruncated === undefined
+        ? Boolean(continuationToken)
+        : Boolean(json.isTruncated);
+    if (!isTruncated || !continuationToken) {
+      break;
+    }
+  }
+
+  if (iteration >= MAX_ITERATIONS) {
+    console.warn(
+      "Reached maximum pagination iterations while fetching folder listing.",
+    );
+  }
+
+  return aggregated;
 }
 
 async function getUserUploadedFileSize(forceFullCheck = false, options = {}) {
@@ -6232,6 +7724,8 @@ async function getUserUploadedFileSize(forceFullCheck = false, options = {}) {
     }
     let userSize = 0;
     let objectCount = 0;
+    const nonThumbnailKeys = new Set();
+    const thumbnailCandidates = [];
     for (const file of folderContents) {
       if (!file) {
         continue;
@@ -6242,12 +7736,63 @@ async function getUserUploadedFileSize(forceFullCheck = false, options = {}) {
       }
       const relative = avttExtractRelativeKey(key);
       if (avttIsThumbnailRelativeKey(relative)) {
+        thumbnailCandidates.push({
+          key: avttNormalizeRelativePath(relative),
+          size: Number.isFinite(Number(file.Size)) ? Number(file.Size) : undefined,
+        });
         continue;
+      }
+      const normalizedRelative = avttNormalizeRelativePath(relative);
+      if (normalizedRelative) {
+        nonThumbnailKeys.add(normalizedRelative);
       }
       userSize += Number(file.Size) || 0;
       objectCount += 1;
     }
-    avttPrimeListingCachesFromFullListing(folderContents);
+
+    const orphanedThumbnails = [];
+    if (thumbnailCandidates.length) {
+      for (const candidate of thumbnailCandidates) {
+        if (!candidate?.key) {
+          continue;
+        }
+        const baseRelative = avttGetRelativeKeyFromThumbnail(candidate.key);
+        if (!baseRelative || nonThumbnailKeys.has(baseRelative)) {
+          continue;
+        }
+        orphanedThumbnails.push({
+          key: candidate.key,
+          size: candidate.size,
+        });
+      }
+    }
+
+    const orphanedThumbnailKeySet =
+      orphanedThumbnails.length > 0
+        ? new Set(orphanedThumbnails.map((thumb) => thumb.key))
+        : null;
+
+    const filteredFolderContents =
+      orphanedThumbnailKeySet
+        ? folderContents.filter((entry) => {
+            const relative = avttExtractRelativeKey(entry?.Key || entry?.key);
+            const normalized = avttNormalizeRelativePath(relative);
+            return !orphanedThumbnailKeySet.has(normalized);
+          })
+        : folderContents;
+
+    if (orphanedThumbnailKeySet && orphanedThumbnails.length > 0) {
+      try {
+        await avttDeleteThumbnailKeys(orphanedThumbnails, { signal });
+      } catch (thumbnailCleanupError) {
+        if (thumbnailCleanupError?.name === "AbortError") {
+          throw thumbnailCleanupError;
+        }
+        console.warn("Failed to remove orphaned thumbnails during usage check", thumbnailCleanupError);
+      }
+    }
+
+    avttPrimeListingCachesFromFullListing(filteredFolderContents);
     avttUsageCache.objectCount = objectCount;
     try {
       await fetch(`${AVTT_S3}?action=usage&user=${window.PATREON_ID}`, {
@@ -6464,3 +8009,7 @@ async function avttExecuteGetAllUserFilesRequest(options, signal) {
 
   return aggregated;
 }
+
+
+
+
