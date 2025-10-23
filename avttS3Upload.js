@@ -110,7 +110,8 @@ function avttIsExternalFileDrag(event) {
         (type) =>
           type === "Files" ||
           type === "application/x-moz-file" ||
-          type === "public.file-url",
+          type === "public.file-url" ||
+          type === "text/uri-list",
       )
     ) {
       return true;
@@ -907,12 +908,7 @@ function avttCopySelectedPathsToClipboard() {
     (entry) => `above-bucket-not-a-url/${window.PATREON_ID}/${entry.key}`,
   );
   const copyText = paths.join(", ");
-  const copyPromise = navigator.clipboard.writeText(copyText);
-  if (copyPromise && typeof copyPromise.then === "function") {
-    copyPromise.catch((error) => {
-      console.error("Failed to copy AVTT paths", error);
-    });
-  }
+  navigator.clipboard.writeText(copyText);
   return true;
 }
 
@@ -1632,14 +1628,9 @@ async function avttImportSelectedFiles(selection) {
 
   const filesToImport = entries.filter((e) => !e.isFolder && /\.abovevtt$/i.test(e.key));
   if (!filesToImport.length) return;
-  try {
 
-    if (typeof build_import_loading_indicator === 'function') {
-      build_import_loading_indicator('Importing Files');
-    }
-  } catch (e) {
-    
-  }
+  build_import_loading_indicator('Importing Files');
+
 
   window.__IMPORT_SCENES_BUFFER = [];
 
@@ -1654,9 +1645,9 @@ async function avttImportSelectedFiles(selection) {
       }
       const text = await resp.text();
 
-      if (typeof import_process_datafile_text === 'function') {
-        await import_process_datafile_text(text);
-      }
+ 
+      await import_process_datafile_text(text);
+     
     } catch (err) {
       console.error('Import failed for', entry.key, err);
     }
@@ -1667,9 +1658,9 @@ async function avttImportSelectedFiles(selection) {
     if (scenes.length) {
       await AboveApi.migrateScenes(window.gameId, scenes);
     }
-    if (typeof window.$ === 'function') {
-      $(".import-loading-indicator .loading-status-indicator__subtext").addClass('complete');
-    }
+    
+    $(".import-loading-indicator .loading-status-indicator__subtext").addClass('complete');
+  
     setTimeout(() => {
       alert("Migration (hopefully) completed. You need to Re-Join AboveVTT");
       location.reload();
@@ -1942,25 +1933,17 @@ async function avttHandleContextAction(action) {
       ) {
         return;
       }
-      const helper = typeof getAvttStorageUrl === "function" ? getAvttStorageUrl : null;
-      const fallbackHelper =
-        !helper && typeof getFileFromS3 === "function" ? getFileFromS3 : null;
-      if (!helper && !fallbackHelper) {
-        alert("Cannot resolve file URL to open in a new tab.");
-        return;
-      }
+
       try {
-        const rawKey =
-          avttContextMenuState.rawKey ||
-          (typeof window !== "undefined" && typeof window.PATREON_ID === "string"
+        const rawKey = avttContextMenuState.rawKey 
+          || (typeof window !== "undefined" && typeof window.PATREON_ID === "string"
             ? `${window.PATREON_ID}/${avttContextMenuState.targetPath}`
             : avttContextMenuState.targetPath);
         if (!rawKey) {
           throw new Error("File path is unavailable.");
         }
-        const url = helper
-          ? await helper(rawKey)
-          : await fallbackHelper(rawKey.replace(/^above-bucket-not-a-url\//, ""));
+        const url = getAvttStorageUrl(rawKey)
+
         if (!url) {
           throw new Error("File URL could not be generated.");
         }
@@ -2357,10 +2340,8 @@ function avttHandleDragStart(event, entry) {
 }
 
 function avttHandleDragEnd() {
-  const rows = document.querySelectorAll("#file-listing tr.avtt-file-row");
-  rows.forEach((row) => {
-    row.classList.remove("avtt-dragging", "avtt-drop-target");
-  });
+  const rows = $("#file-listing tr.avtt-file-row");
+  rows.toggleClass("avtt-dragging avtt-drop-target", false);
   avttDragItems = null;
   avttApplyClipboardHighlights();
 }
@@ -2491,10 +2472,7 @@ async function avttHandleMapDrop(event) {
   }
   event.preventDefault();
   event.stopPropagation();
-  const element = event.currentTarget;
-  if (element && element.classList) {
-    element.classList.remove("avtt-drop-target");
-  }
+
 
   if (!Array.isArray(avttDragItems) || avttDragItems.length === 0) {
     avttHandleDragEnd();
@@ -2828,7 +2806,7 @@ async function avttUploadThumbnail(relativeTargetKey, blob, signal) {
       },
     };
 
-    avttQueueUploadEntry(thumbnailFile, { uploadFolder: "", assignOrigin: false });
+    avttQueueUploadEntry(thumbnailFile, { uploadFolder: "", assignOrigin: false, unshift: true });
     avttProcessUploadQueue();
 
     const outcome = await completionPromise;
@@ -3309,14 +3287,7 @@ const PatreonAuth = (() => {
       return cachedMembership;
     }
     const tokens = await ensureAccessToken(config);
-
-
-//come back
-
     const membership = await fetchMembership(tokens.accessToken, config);
-
-
-
     cachedMembership = membership;
     cachedMembershipFetchedAt = Date.now();
     return membership;
@@ -3372,16 +3343,16 @@ const avttDebouncedSearchHandler = mydebounce((searchTerm, fileTypes) => {
           revalidate: !Array.isArray(avttAllFilesCache),
         });
 
-  if (refreshPromise && typeof refreshPromise.finally === "function") {
-    refreshPromise.finally(() => {
-      if (avttActiveSearchAbortController === controller) {
-        avttActiveSearchAbortController = null;
-      }
-      else if (avttActiveSearchAbortController === controller) {
-        avttActiveSearchAbortController = null;
-      }
-    });
-  }    
+
+  refreshPromise.then(() => {
+    if (avttActiveSearchAbortController === controller) {
+      avttActiveSearchAbortController = null;
+    }
+    else if (avttActiveSearchAbortController === controller) {
+      avttActiveSearchAbortController = null;
+    }
+  });
+     
 }, 250);
 
 const debounceSearchFiles = (searchTerm, fileTypes) => {
@@ -3950,11 +3921,10 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
       if (nonFolderCheckboxes.length) {
         const lastCheckbox = nonFolderCheckboxes[nonFolderCheckboxes.length - 1];
         let indexAttr = null;
-        if (lastCheckbox && typeof lastCheckbox.getAttribute === "function") {
+        if (lastCheckbox) {
           indexAttr = lastCheckbox.getAttribute("data-index");
         }
-        avttLastSelectedIndex =
-          shouldSelect && indexAttr !== null ? Number(indexAttr) : null;
+        avttLastSelectedIndex = shouldSelect && indexAttr !== null ? Number(indexAttr) : null;
       } else {
         avttLastSelectedIndex = null;
       }
@@ -4026,14 +3996,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     } catch (error) {
       console.error("Export upload failed", error);
       alert(error?.message || "Failed to export data.");
-    } finally {
-      if (typeof window.$ === "function") {
-        try {
-          $(".import-loading-indicator").remove();
-        } catch (cleanupError) {
-          
-        }
-      }
+    } finally {   
+     $(".import-loading-indicator").remove();
     }
   };
 
@@ -4234,10 +4198,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
         continue;
       }
 
-      const entry =
-        typeof item.webkitGetAsEntry === "function"
-          ? item.webkitGetAsEntry()
-          : null;
+      const entry = typeof item.webkitGetAsEntry === "function" ? item.webkitGetAsEntry() : null;
 
       if (entry && entry.isDirectory) {
         if (avttUploadController?.signal?.aborted) {
@@ -4337,6 +4298,42 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     const transfer = event.dataTransfer;
     if (!transfer) {
       return;
+    }
+
+    try {
+      const uploadFolder = currentFolder;
+      let uriListRaw = "";
+      try {
+        if (typeof transfer.getData === "function") {
+          uriListRaw = transfer.getData("text/uri-list") || "";
+        }
+      } catch (_) { }
+      if (uriListRaw && typeof uriListRaw === "string") {
+        const urls = uriListRaw
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter((line) => line && !line.startsWith("#") && /^https?:\/\//i.test(line));
+        for (const url of urls) {
+          try {
+            const derivedName = avttDeriveFilenameFromUrl(url);
+            let syntheticFile;
+            try {
+              syntheticFile = new File([new Uint8Array(0)], derivedName, { type: "" });
+            } catch (_) {
+              syntheticFile = new Blob([new Uint8Array(0)], { type: "" });
+              syntheticFile.name = derivedName;
+            }
+            syntheticFile.avttProxySourceUrl = url;
+            syntheticFile.avttGenerateThumbnail = false;
+            syntheticFile.originFolder = uploadFolder;
+            avttEnqueueUploads([assignRelativePath(syntheticFile, derivedName)], uploadFolder);
+          } catch (downloadError) {
+            console.warn("Failed to queue URL drop for proxy download", url, downloadError);
+          }
+        }
+      }
+    } catch (uriListError) {
+      console.warn("Failed processing text/uri-list", uriListError);
     }
 
     try {
@@ -4591,10 +4588,50 @@ const toNormalizedUploadPath = (file) => {
 const resolveUploadKey = (file, uploadFolder = currentFolder) =>
   `${uploadFolder}${toNormalizedUploadPath(file)}`;
 
-function avttQueueUploadEntry(file, { uploadFolder = currentFolder, assignOrigin = true } = {}) {
+const avttDeriveFilenameFromUrl = (urlString, fallback = "download") => {
+  if (typeof urlString !== "string" || !urlString.trim()) {
+    return fallback;
+  }
+  try {
+    const parsed = new URL(urlString.trim());
+    const pathname = parsed.pathname || "";
+    const segments = pathname.split("/").filter(Boolean);
+    if (segments.length) {
+      const last = segments[segments.length - 1];
+      const cleaned = decodeURIComponent(last).split("?")[0] || last;
+      return cleaned || fallback;
+    }
+  } catch (_) {
+    // ignore parse errors
+  }
+  return fallback;
+};
+
+function avttQueueUploadEntry(file, { uploadFolder = currentFolder, assignOrigin = true, unshift=false } = {}) {
   if (!file) {
     return;
   }
+  
+  const targetKey = file.avttTargetKey
+    ? avttNormalizeRelativePath(file.avttTargetKey)
+    : resolveUploadKey(file, uploadFolder);
+
+  const existingIndex = avttUploadQueue.findIndex((queued) => {
+    const queuedKey = queued.avttPendingTargetKey
+      || (queued.avttTargetKey
+        ? avttNormalizeRelativePath(queued.avttTargetKey)
+        : resolveUploadKey(queued, queued.originFolder ?? uploadFolder));
+    return queuedKey === targetKey;
+  });
+
+  if (existingIndex !== -1) {
+    const [removed] = avttUploadQueue.splice(existingIndex, 1);
+    if (removed?.avttCountsTowardTotals !== false) {
+      avttQueueTotalEnqueued = Math.max(0, avttQueueTotalEnqueued - 1);
+    }
+  }
+  file.avttPendingTargetKey = targetKey;
+
   if (assignOrigin || typeof file.originFolder === "undefined") {
     file.originFolder = uploadFolder;
   }
@@ -4602,6 +4639,12 @@ function avttQueueUploadEntry(file, { uploadFolder = currentFolder, assignOrigin
   if (countsTowardTotals) {
     avttQueueTotalEnqueued += 1;
   }
+
+  if (unshift){
+    avttUploadQueue.unshift(file);
+    return;
+  }
+
   avttUploadQueue.push(file);
 }
 
@@ -4624,7 +4667,7 @@ async function avttProcessUploadQueue() {
   while (avttActiveUploads < AVTT_MAX_CONCURRENT_UPLOADS && avttUploadQueue.length > 0) {
     const nextFile = avttUploadQueue.shift();
     if (!nextFile) continue;
-    avttActiveUploads += 1;
+    
     const selectedFile = nextFile;
     const completionDeferred = selectedFile?.avttCompletionDeferred || null;
     const countsTowardTotals = selectedFile?.avttCountsTowardTotals !== false;
@@ -4632,6 +4675,9 @@ async function avttProcessUploadQueue() {
     const linkedSignal = selectedFile?.avttLinkedAbortSignal;
     const bypassExtensionCheck = selectedFile?.avttBypassExtensionCheck === true;
     const skipPersistCache = selectedFile?.skipPersistCache === true;
+    const isProxyUpload = Boolean(selectedFile?.avttProxySourceUrl);
+    if(!skipProgressIndicator && !skipPersistCache)
+      avttActiveUploads += 1;
     (async () => {
       try {
 
@@ -4643,7 +4689,7 @@ async function avttProcessUploadQueue() {
         }
 
         const extension = getFileExtension(selectedFile.name);
-        if (!bypassExtensionCheck && !isAllowedExtension(extension)) {
+        if (!isProxyUpload && !bypassExtensionCheck && !isAllowedExtension(extension)) {
           console.warn(`Skipping unsupported file type: ${selectedFile.name}`);
           if (completionDeferred?.resolve) {
             completionDeferred.resolve(false);
@@ -4739,23 +4785,26 @@ async function avttProcessUploadQueue() {
           return;
         }
 
-        const prospectiveTotal = (Number(selectedFile.size) || 0) + (avttPendingUsageBytes || 0);
-        if (
-          activeUserLimit !== undefined &&
-          prospectiveTotal + S3_Current_Size > activeUserLimit
-        ) {
-          alert("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
-          if (completionDeferred?.resolve) {
-            completionDeferred.resolve(false);
+        if (!isProxyUpload) {
+          const prospectiveTotal = (Number(selectedFile.size) || 0) + (avttPendingUsageBytes || 0);
+          if (
+            activeUserLimit !== undefined &&
+            prospectiveTotal + S3_Current_Size > activeUserLimit
+          ) {
+            alert("Skipping File. This upload would exceed the storage limit for your Patreon tier. Delete some files before uploading more.");
+            if (completionDeferred?.resolve) {
+              completionDeferred.resolve(false);
+            }
+            return;
           }
-          return;
         }
 
         let thumbnailBlob = null;
         const shouldGenerateThumbnailForFile =
           selectedFile.avttIsThumbnailUpload === true
             ? false
-            : !isThumbnailTarget &&
+            : !isProxyUpload &&
+            !isThumbnailTarget &&
             selectedFile.avttGenerateThumbnail !== false &&
             avttShouldGenerateThumbnail(extension);
         if (shouldGenerateThumbnailForFile) {
@@ -4767,16 +4816,6 @@ async function avttProcessUploadQueue() {
           }
         }
 
-        const presignResponse = await fetch(`${AVTT_S3}?filename=${encodeURIComponent(targetKey)}&user=${window.PATREON_ID}&upload=true`);
-        if (!presignResponse.ok) {
-          throw new Error("Failed to retrieve upload URL.");
-        }
-        const data = await presignResponse.json();
-        const uploadHeaders = {};
-        const inferredType = resolveContentType(selectedFile);
-        if (inferredType) {
-          uploadHeaders["Content-Type"] = inferredType;
-        }
         avttUploadController = new AbortController();
         avttUploadSignal = avttUploadController.signal;
 
@@ -4795,14 +4834,68 @@ async function avttProcessUploadQueue() {
         }
 
         try {
-          const uploadResponse = await fetch(data.uploadURL, {
-            method: "PUT",
-            body: selectedFile,
-            headers: uploadHeaders,
-            signal: avttUploadSignal,
-          });
-          if (!uploadResponse.ok) {
-            throw new Error("Upload failed.");
+          if (isProxyUpload) {
+            const proxyResponse = await fetch(
+              `${AVTT_S3}?action=proxyDownload&user=${window.PATREON_ID}`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  sourceUrl: selectedFile.avttProxySourceUrl,
+                  targetKey,
+                }),
+                signal: avttUploadSignal,
+              },
+            );
+            let proxyPayload = null;
+            try {
+              proxyPayload = await proxyResponse.json();
+            } catch (_) {
+              proxyPayload = null;
+            }
+            if (!proxyResponse.ok) {
+              const message =
+                (proxyPayload && (proxyPayload.message || proxyPayload.error)) ||
+                `Failed to proxy download (${proxyResponse.status})`;
+              throw new Error(message);
+            }
+            if (proxyPayload && typeof proxyPayload.targetKey === "string") {
+              const normalizedProxyTarget = avttNormalizeRelativePath(proxyPayload.targetKey);
+              if (normalizedProxyTarget) {
+                targetKey = normalizedProxyTarget;
+              }
+            }
+            const remoteSize = Number(proxyPayload?.size);
+            if (Number.isFinite(remoteSize) && remoteSize >= 0) {
+              selectedFile.size = remoteSize;
+            } else if (!Number.isFinite(Number(selectedFile.size))) {
+              selectedFile.size = 0;
+            }
+            if (typeof proxyPayload?.contentType === "string") {
+              selectedFile.avttUploadedContentType = proxyPayload.contentType;
+            }
+          } else {
+            const presignResponse = await fetch(`${AVTT_S3}?filename=${encodeURIComponent(targetKey)}&user=${window.PATREON_ID}&upload=true`);
+            if (!presignResponse.ok) {
+              throw new Error("Failed to retrieve upload URL.");
+            }
+            const data = await presignResponse.json();
+            const uploadHeaders = {};
+            const inferredType = resolveContentType(selectedFile);
+            if (inferredType) {
+              uploadHeaders["Content-Type"] = inferredType;
+            }
+            const uploadResponse = await fetch(data.uploadURL, {
+              method: "PUT",
+              body: selectedFile,
+              headers: uploadHeaders,
+              signal: avttUploadSignal,
+            });
+            if (!uploadResponse.ok) {
+              throw new Error("Upload failed.");
+            }
           }
         } finally {
           if (linkedSignal && linkedAbortHandler) {
@@ -4810,9 +4903,11 @@ async function avttProcessUploadQueue() {
           }
         }
 
-        if (thumbnailBlob) {
+        if (!isProxyUpload && thumbnailBlob) {
           avttUploadThumbnail(targetKey, thumbnailBlob, avttUploadSignal).catch(() => { });
         }
+
+        selectedFile.avttPendingTargetKey = targetKey;
 
         const userUsedElement = document.getElementById("user-used");
         if (userUsedElement) {
@@ -4864,6 +4959,9 @@ async function avttProcessUploadQueue() {
         if (typeof error === "string") {
 
         } else if (error?.name !== 'AbortError') {
+          if (isProxyUpload && error instanceof Error && error.message) {
+            alert(error.message);
+          }
 
         }
         if (completionDeferred?.reject) {
@@ -4919,26 +5017,29 @@ async function avttFlushUsageAndRefresh(skipPersist = false) {
 
   try {
     if (count > 0) {
-      await applyUsageDelta(bytes, count);
-      if (!skipPersist){
+      if (document.getElementById("file-listing-section")) {
+        showUploadComplete();
+        refreshFiles(
+          currentFolder,
+          true,
+          undefined,
+          undefined,
+          activeFilePickerFilter,
+          { useCache: true, revalidate: false, selectFiles: keys },
+        );
+
+      }
+      if (!skipPersist) {
         try { avttSchedulePersist(); } catch { }
       }
+      await applyUsageDelta(bytes, count);
     }
   } finally {
-    if (document.getElementById("file-listing-section")){
-      refreshFiles(
-        currentFolder,
-        true,
-        undefined,
-        undefined,
-        activeFilePickerFilter,
-        { useCache: true, revalidate: false, selectFiles: keys },
-      );
-      showUploadComplete();
-    }
     avttUsageFlushScheduled = false;
     setTimeout(function () { avttUploadController = undefined; }, 1000);
   }
+  
+  
 }
 
 function avttScheduleFlush(skipPersist=false) {
@@ -4991,20 +5092,29 @@ function uploadCacheFile() {
 
 async function readUploadedFileCache() {
   try {
-    const url = await getAvttStorageUrl(`${PATREON_ID}/thumbnails/FILESCACHE.abovevtt`);
+    let url;
+    try {
+      const response = await fetch(`${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent('thumbnails/FILESCACHE.abovevtt')}`);
+      const json = await response.json();
+      if (!response.ok) {
+        throw new Error(json?.message || `Failed to fetch file from S3 (${response.status})`);
+      }
+      const fileURL = json.downloadURL;
+      if (!fileURL) {
+        throw new Error("File not found on S3");
+      }
+      url = fileURL;
+    }
+    catch {
+      console.warn('Failed to get FILESCACHE')
+    }
     if (!url) return;
     const resp = await fetch(url);
     if (!resp.ok) {
       console.warn('Failed to fetch file for import thumbnails/FILESCACHE.abovevtt');
       return;
     }
-    const text = await resp.text();
-    let DataFile = null;
-    try {
-      DataFile = $.parseJSON(text);
-    } catch (e) {
-      console.error('Failed to parse filescache.abovevtt', err);
-    }
+    const DataFile = await resp.json();
     if (!DataFile)
       return;
 
@@ -5163,9 +5273,8 @@ function refreshFiles(
       event.preventDefault(); 
     });
 
-    $('#VTT').off('drop.avttFiles').on('drop.avttFiles', async (e) => {
-      console.log('DROPED ON MAP');
-      await avttHandleMapDrop(e)
+    $('#VTT').off('drop.avttFiles').on('drop.avttFiles', (e) => {
+      avttHandleMapDrop(e)
     });
     const insertFiles = (files, searchTerm, fileTypes) => {
       if (signal?.aborted) {

@@ -1,4 +1,5 @@
 import { trackLibrary } from './track.js';
+import { Track } from './track.js';
 import { Channel, mixer } from './mixer.js';
 import { log } from './helpers.js';
 
@@ -41,18 +42,8 @@ function avttAudioRelativePathFromLink(link) {
 }
 
 async function avttAudioFetchFolderListing(relativePath) {
-    const targetPath = typeof relativePath === 'string' ? relativePath : '';
-    if (typeof getFolderListingFromS3 === 'function') {
-        return await getFolderListingFromS3(targetPath);
-    }
-    if (typeof AVTT_S3 === 'undefined') {
-        throw new Error('AVTT_S3 endpoint is not available.');
-    }
-    const response = await fetch(
-        `${AVTT_S3}?user=${window.PATREON_ID}&filename=${encodeURIComponent(targetPath)}&list=true`
-    );
-    const json = await response.json();
-    return Array.isArray(json?.folderContents) ? json.folderContents : [];
+    const targetPath = typeof relativePath === "string" ? relativePath : "";
+    return await avttGetFolderListingCached(targetPath);
 }
 
 async function avttAudioCollectAssets(folderRelativePath) {
@@ -200,14 +191,20 @@ async function importAvttAudioSelections(links) {
             });
         }
     }
-
+    const library = await window.TRACK_LIBRARY.map();
     for (const plan of audioPlans) {
+
         try {
-            trackLibrary.addTrack(plan.name, plan.link, plan.tags);
+            const track = await new Track(plan.name, plan.link);
+            track.tags = plan.tags;
+            library.set(uuid(), track)
+    
         } catch (error) {
             console.warn('Failed to add track to library', plan, error);
         }
     }
+    
+    window.TRACK_LIBRARY._write(library);
 
     $('body>.import-loading-indicator').remove();
 }
