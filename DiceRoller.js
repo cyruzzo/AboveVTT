@@ -894,7 +894,7 @@ class DiceRoller {
     }
 
     /** wraps all messages that are sent by DDB, and processes any that we need to process, else passes it along as-is */
-    #wrappedDispatch(message) {
+    async #wrappedDispatch(message) {
         console.group("DiceRoller.#wrappedDispatch");
         if(this.#waitingForRoll && message.source == 'Beyond20'){
             return;
@@ -915,13 +915,17 @@ class DiceRoller {
                 ddbMessage.data.context.avatarUrl = window.pcs?.filter(d => d.characterId == ddbMessage.entityId)[0].image
             } 
 
+            if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
+                ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
+            }
+
             if((this.#pendingSpellSave != undefined || this.#pendingDamageType != undefined) && message.eventType === "dice/roll/fulfilled"){
                 if(this.#pendingSpellSave != undefined )
                     ddbMessage.avttSpellSave = this.#pendingSpellSave;
                 if(this.#pendingDamageType != undefined && ddbMessage.data.rolls.some(d=> d.rollType.includes('damage')))
                     ddbMessage.avttDamageType = this.#pendingDamageType;
                 this.ddbDispatch(ddbMessage);
-                this.#resetVariables();
+                await this.#resetVariables();
             }       
             else{
                 if(window.DM && window.modifiySendToDDBDiceClicked == true){
@@ -942,9 +946,14 @@ class DiceRoller {
                 this.ddbDispatch(message);
                 return;
             }
+            
             console.log("capturing pending message: ", message);
             let ddbMessage = { ...message };
-            this.#swapDiceRollMetadata(ddbMessage);
+
+            await this.#swapDiceRollMetadata(ddbMessage);
+            if (ddbMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
+                ddbMessage.data.context.avatarUrl = await getAvttStorageUrl(ddbMessage.data.context.avatarUrl, true)
+            }
             this.#pendingMessage = ddbMessage;
             this.ddbDispatch(ddbMessage);
         } else if (message.eventType === "dice/roll/fulfilled" && this.#pendingMessage?.data?.rollId === message.data.rollId) {
@@ -952,11 +961,15 @@ class DiceRoller {
                 this.ddbDispatch(message);
                 return;
             }
+
             console.log("capturing fulfilled message: ", message)
-            let alteredMessage = this.#swapRollData(message);
+            let alteredMessage = await this.#swapRollData(message);
+            if (alteredMessage.data?.context?.avatarUrl?.startsWith("above-bucket-not-a-url")) {
+                alteredMessage.data.context.avatarUrl = await getAvttStorageUrl(alteredMessage.data.context.avatarUrl, true)
+            }
             console.log("altered fulfilled message: ", alteredMessage);
             this.ddbDispatch(alteredMessage);
-            this.#resetVariables();
+            await this.#resetVariables();
             this.nextRoll(message, this.#pendingCritRange, this.#pendingCritType, this.#pendingDamageType);
         }
         console.groupEnd();

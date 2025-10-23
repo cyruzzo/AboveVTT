@@ -90,6 +90,10 @@ class ChatObserver {
 
         };
 
+        if(data.img.startsWith('above-bucket-not-a-url')){
+            data.img = await getAvttStorageUrl(data.img, true);
+        }
+
         if (text.startsWith("/w")) {
             let matches = text.match(/\[(.*?)] (.*)/);
             if (matches.length === 3) {

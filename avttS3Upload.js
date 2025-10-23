@@ -1,5 +1,4 @@
-const AVTT_S3 =
-  "https://l0cqoq0b4d.execute-api.us-east-1.amazonaws.com/default/uploader";
+const AVTT_S3 = "https://l0cqoq0b4d.execute-api.us-east-1.amazonaws.com/default/uploader";
 
 let S3_Current_Size = 0;
 let currentFolder = "";
@@ -34,7 +33,7 @@ const AVTT_THUMBNAIL_PREFIX = "thumbnails/";
 const AVTT_THUMBNAIL_DIMENSION = 50;
 const AVTT_THUMBNAIL_MIME_TYPE = "image/png";
 const avttPendingThumbnailGenerations = new Set();
-
+window.filePickerFirstLoad = true;
 function avttIsThumbnailRelativeKey(relativeKey) {
   const normalized = avttNormalizeRelativePath(relativeKey);
   return normalized.startsWith(AVTT_THUMBNAIL_PREFIX);
@@ -753,7 +752,7 @@ function avttAdjustCachedUsage(deltaBytes = 0, deltaObjects = 0) {
   }
   const tierLabel = $("#patreon-tier span.user-teir-level");
   if (tierLabel.length && typeof activeUserTier === "object") {
-    tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
+    tierLabel[0].innerHTML = `Azmoria <a draggable='false' target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
   }
 }
 
@@ -1942,7 +1941,7 @@ async function avttHandleContextAction(action) {
         if (!rawKey) {
           throw new Error("File path is unavailable.");
         }
-        const url = getAvttStorageUrl(rawKey)
+        const url = await getAvttStorageUrl(rawKey, true)
 
         if (!url) {
           throw new Error("File URL could not be generated.");
@@ -2037,8 +2036,14 @@ async function avttHandleContextAction(action) {
         dmonly: false,
         language: $('#chat-language').val()
       };
+
+      if (data.img?.startsWith('above-bucket-not-a-url')) {
+        data.img = await getAvttStorageUrl(data.img, true);
+      }
+
+
       const url = `above-bucket-not-a-url/${window.PATREON_ID}/${avttContextMenuState.targetPath}`;
-      const avttUrl = await getAvttStorageUrl(url)
+      const avttUrl = await getAvttStorageUrl(url, true)
       data.text = `
           <a class='chat-link' href='${avttUrl}' target='_blank' rel='noopener noreferrer'>${url}</a>
           <img width=100% class='magnify' src='${avttUrl}' href='${avttUrl}' alt='Chat Image' style='display: none'/>
@@ -2053,12 +2058,8 @@ async function avttHandleContextAction(action) {
 }
 
 function avttComputeNewKeyForDestination(entry, destinationFolder) {
-  const normalizedDestination =
-    destinationFolder && destinationFolder.endsWith("/")
-      ? destinationFolder
-      : destinationFolder
-      ? `${destinationFolder}/`
-      : "";
+  const normalizedDestination = (destinationFolder && destinationFolder.endsWith("/")) ? destinationFolder
+      : destinationFolder ? `${destinationFolder}/` : "";
   if (entry.isFolder) {
     const trimmed = entry.key.replace(/\/$/, "");
     const folderName = trimmed.split("/").pop();
@@ -2337,6 +2338,7 @@ function avttHandleDragStart(event, entry) {
       row.classList.add("avtt-cut-row");
     }
   }
+  return avttDragItems;
 }
 
 function avttHandleDragEnd() {
@@ -2463,34 +2465,15 @@ async function avttHandleFolderDrop(event, destinationPath) {
   avttHandleDragEnd();
 }
 
-async function avttHandleMapDrop(event) {
-  if (avttIsExternalFileDrag(event)) {
-    if (event.currentTarget && event.currentTarget.classList) {
-      event.currentTarget.classList.remove("avtt-drop-target");
-    }
+async function avttHandleMapDrop(event, listItemArray) {
+  if(listItemArray.length>10){
+    alert('Can only drop 10 tokens or less at once')
     return;
   }
-  event.preventDefault();
-  event.stopPropagation();
-
-
-  if (!Array.isArray(avttDragItems) || avttDragItems.length === 0) {
-    avttHandleDragEnd();
-    return;
+  for(item of listItemArray){
+    create_and_place_token(item.listItem, event.shiftKey, item.url, event.pageX, event.pageY, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
   }
-
-  for (const entry of avttDragItems) {
-    const rawKey = entry.key;
-
-    if (entry.isFolder && destinationPath.startsWith(entry.key)) {
-      continue;
-    }
-    const url = `above-bucket-not-a-url/${window.PATREON_ID}/${rawKey}`
-    const listItem = new SidebarListItem(uuid(), entry.displayName, url, ItemType.MyToken, RootFolder.MyTokens.path);
-    create_and_place_token(listItem, event.shiftKey, url, event.pageX, event.pageY, false, undefined, undefined, {tokenStyleSelect: "definitelyNotAToken"});
-  }
-
-  avttHandleDragEnd();
+    
 }
 
 
@@ -3298,7 +3281,7 @@ const PatreonAuth = (() => {
     clearLastAuthorizationCode();
     cachedMembership = null;
     cachedMembershipFetchedAt = 0;
-    window.notFilePickerFirstLoad = undefined;
+    window.filePickerFirstLoad = true;
     try { 
       avttUploadController.abort('User cancelled upload by logout.')
       avttActiveSearchAbortController = null; 
@@ -3399,8 +3382,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   
   let membership;
   try {
-    membership = await PatreonAuth.ensureMembership(!window.notFilePickerFirstLoad);
-    if(!window.notFilePickerFirstLoad)
+    membership = await PatreonAuth.ensureMembership(window.filePickerFirstLoad);
+    if(window.filePickerFirstLoad)
       readUploadedFileCache();
   } catch (error) {
     console.error("Patreon verification failed", error);
@@ -3818,7 +3801,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
             <div id="select-section">
                 <div>
                     <div id='sizeUsed'><span id='user-used'></span> used of <span id='user-limit'> </span></div>
-                    <div id='patreon-tier'><span class='user-teir-level'></span><span> | <a id='logout-patreon-button'>Logout</a></span></div>
+                    <div id='patreon-tier'><span class='user-teir-level'></span><span> | <a draggable='false' id='logout-patreon-button'>Logout</a></span></div>
                 </div>
                 <div style='display: flex; gap: 10px; line-height: 16px; width: 100%; align-items: center; padding-left:20px;'>
                   <div id="avtt-actions-menu" class="avtt-toolbar-dropdown">
@@ -3889,7 +3872,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
 
   const tierLabel = $("#patreon-tier span.user-teir-level");
   if (tierLabel.length) {
-    tierLabel[0].innerHTML = `<a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
+    tierLabel[0].innerHTML = `<a draggable='false' target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
   }
 
 
@@ -5187,7 +5170,7 @@ function refreshFiles(
           document.getElementById("user-limit").innerHTML = formatFileSize(activeUserLimit);
           const tierLabel = $("#patreon-tier span.user-teir-level");
           if (tierLabel.length) {
-            tierLabel[0].innerHTML = `Azmoria <a target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
+            tierLabel[0].innerHTML = `Azmoria <a draggable='false' target='_blank' href='https://www.patreon.com/cw/Azmoria/membership'>Patreon</a> Tier: ${activeUserTier.label}`;
           }
         })
         .catch((error) => {
@@ -5196,7 +5179,7 @@ function refreshFiles(
           }
         });
     }
-    if(!window.notFilePickerFirstLoad){
+    if(window.filePickerFirstLoad){
         getUserUploadedFileSize(true, { signal })
         .then((size) => {
             S3_Current_Size = size;
@@ -5207,7 +5190,7 @@ function refreshFiles(
             console.warn("Failed to load initial usage details", error);
           }
         });
-        window.notFilePickerFirstLoad = true;
+        window.filePickerFirstLoad = false;
         useCache = false;
     }
 
@@ -5236,7 +5219,7 @@ function refreshFiles(
             displayName:
               currentFolder && currentFolder !== ""
                 ? currentFolder.replace(/\/$/, "").split("/").pop()
-                : "Home",
+                : "Root",
             isImplicit: true,
           },
           { ensureSelection: false, implicitTarget: true },
@@ -5245,37 +5228,30 @@ function refreshFiles(
       fileListingSection.dataset.avttContextBound = "true";
     }
     const upFolder = $("#upFolder");
-    if (path != ""){
-      const splitPath = path.replace(/\/$/gi, "").split("/");
-      const breadCrumbs = splitPath.map((part, index) => {
+    
+    const splitPath = path.replace(/\/$/gi, "").split("/");
+    let breadCrumbs = [];
+    if(splitPath[0] != ""){
+      breadCrumbs = splitPath.map((part, index) => {
         const crumbPath = splitPath.slice(0, index + 1).join("/") + "/";
-        return `<a href="#" class="avtt-breadcrumb" data-path="${crumbPath}">${part}</a>`;
+        return `<a draggable='false' href="#" class="avtt-breadcrumb" data-path="${crumbPath}">${part}</a>`;
       });
-      breadCrumbs.unshift(`<a href="#" class="avtt-breadcrumb" data-path="">Home</a>`);
-      upFolder.html(`${breadCrumbs.join("<span class='crumbSeparator'>></span>")}`);
-      upFolder.find('.avtt-breadcrumb').on("click", function (e) {
-        e.preventDefault();
-        const newPath = e.currentTarget.getAttribute("data-path");
-        refreshFiles(newPath, undefined, undefined, undefined, fileTypes, {
-          useCache: true,
-          revalidate:
-            !avttFolderListingCache.has(newPath) ||
-            !Array.isArray(avttFolderListingCache.get(newPath)),
-        });
-        currentFolder = newPath;
-      });
-      upFolder.show();
-    } 
-    else{
-      upFolder.hide();
     }
-    $('#VTT').off('dragover.avttFiles').on('dragover.avttFiles', (event) => {
-      event.preventDefault(); 
+
+  breadCrumbs.unshift(`<a draggable='false' href="#" class="avtt-breadcrumb" data-path="">Root</a>`);
+    upFolder.html(`${breadCrumbs.length > 1 ? breadCrumbs.join("<span class='crumbSeparator'>></span>") : breadCrumbs[0]}`);
+    upFolder.find('.avtt-breadcrumb').on("click", function (e) {
+      e.preventDefault();
+      const newPath = e.currentTarget.getAttribute("data-path");
+      refreshFiles(newPath, undefined, undefined, undefined, fileTypes, {
+        useCache: true,
+        revalidate:
+          !avttFolderListingCache.has(newPath) ||
+          !Array.isArray(avttFolderListingCache.get(newPath)),
+      });
+      currentFolder = newPath;
     });
 
-    $('#VTT').off('drop.avttFiles').on('drop.avttFiles', (e) => {
-      avttHandleMapDrop(e)
-    });
     const insertFiles = (files, searchTerm, fileTypes) => {
       if (signal?.aborted) {
         return;
@@ -5467,7 +5443,6 @@ function refreshFiles(
           listItem.dataset.path = entry.relativePath;
           listItem.dataset.isFolder = entry.isFolder ? "true" : "false";
           listItem.dataset.type = entry.type || "";
-          listItem.setAttribute("draggable", "true");
           const checkboxCell = $(`<td><input type=\"checkbox\" tabindex="-1" id='input-${entry.relativePath}' class=\"avtt-file-checkbox ${entry.isFolder ? "folder" : ""}\" value=\"${entry.relativePath}\" data-size=\"${entry.isFolder ? 0 : entry.size}\"></td>`);
           if (!entry.isFolder && selectFiles && Array.isArray(selectFiles) && selectFiles.includes(entry.relativePath)) {
             checkboxCell.find("input").prop("checked", true);
@@ -5517,13 +5492,72 @@ function refreshFiles(
           }
           $(checkboxElement).off('focus.preventDefault').on('focus.preventDefault', function(){
             this.blur()
+          }) 
+          const preventDefaults = (event) => {
+            event.preventDefault();
+            
+          };
+          let listItemArray = [];
+          let draggedItems;
+          $(listItem).draggable({
+            addClasses: false,
+            scroll: true,
+            cursorAt: { left: 15, top: 15 },
+            containment: "#windowContainment",
+            distance: 5,
+            helper: (event) => {
+              const helper = $(event.target).closest('tr').find('td:nth-of-type(2)>label>:first-child').clone();
+              return helper;
+            },
+            appendTo: 'body',
+            zIndex: 10000000,
+            start: function (event, ui) {
+              draggedItems = avttHandleDragStart(event, entry);
+              listItemArray = [];
+
+              if (!Array.isArray(avttDragItems) || avttDragItems.length === 0) {
+                return;
+              }
+
+              for (const entry of avttDragItems) {
+                const rawKey = entry.key;
+
+                if (entry.isFolder) {
+                  continue;
+                }
+                const url = `above-bucket-not-a-url/${window.PATREON_ID}/${rawKey}`
+                const listItem = new SidebarListItem(uuid(), entry.displayName, url, ItemType.MyToken, RootFolder.MyTokens.path);
+                listItemArray.push({ url, listItem });
+              }
+            },
+            drag: function (event, ui){
+              let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
+       
+              const closestFolder = droppedOn.closest('[data-is-folder="true"]');
+              if (!droppedOn.hasClass('avtt-drop-target') && closestFolder){
+                $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
+                closestFolder.toggleClass('avtt-drop-target', true);
+              } else if(droppedOn.closest('[data-is-folder="true"]').length > 0){
+                if ($(this).attr('data-path') == droppedOn.attr('data-path'))
+                  return;
+                $('[data-is-folder="true"]').toggleClass('avtt-drop-target', false);
+              }    
+            },
+            stop: function (event, ui) {
+              avttHandleDragEnd(event);
+              let droppedOn = $(document.elementFromPoint(event.clientX, event.clientY));
+              const closestFolder = droppedOn.closest('[data-is-folder="true"]');
+              if(droppedOn.closest('#VTT').length>0){
+                avttHandleMapDrop(event, listItemArray)
+              } else if (closestFolder.length > 0){
+                if ($(this).attr('data-path') == closestFolder.attr('data-path'))
+                  return;
+                avttDragItems = draggedItems;
+                avttHandleFolderDrop(event, closestFolder.attr('data-path'));
+              }
+            },
           })
-          listItem.addEventListener("dragstart", (dragEvent) => {   
-            avttHandleDragStart(dragEvent, entry);
-          });
-          listItem.addEventListener("dragend", (dragEvent) => {
-            avttHandleDragEnd(dragEvent);
-          });
+       
           if (entry.isFolder) {
             listItem.addEventListener("dragenter", (dragEvent) => {
               avttHandleFolderDragEnter(dragEvent, listItem, entry.relativePath);
@@ -5534,8 +5568,8 @@ function refreshFiles(
             listItem.addEventListener("dragleave", (dragEvent) => {
               avttHandleFolderDragLeave(dragEvent, listItem);
             });
-            listItem.addEventListener("drop", async (dragEvent) => {
-              await avttHandleFolderDrop(dragEvent, entry.relativePath);
+            listItem.addEventListener("drop", (dragEvent) => {
+              avttHandleFolderDrop(dragEvent, entry.relativePath);
             });
           }
           listItem.addEventListener("contextmenu", (contextEvent) => {
