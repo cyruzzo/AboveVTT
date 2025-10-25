@@ -208,7 +208,7 @@ function avttNormalizeRelativePath(path) {
 const AVTT_DEFAULT_RETRYABLE_STATUSES = new Set([429, 503, 504]);
 const AVTT_UPLOAD_RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 const AVTT_RESOURCE_RETRY_LIMIT = 3;
-const AVTT_MAX_MOVE_KEYS_PER_REQUEST = 60;
+const AVTT_MAX_MOVE_KEYS_PER_REQUEST = 7;
 const AVTT_MAX_CONCURRENT_MOVES = 3;
 
 function avttDelay(ms) {
@@ -1129,10 +1129,30 @@ function avttUpdateActionsMenuState() {
   if (pasteButton) {
     pasteButton.disabled = !avttClipboardHasEntries();
   }
-  const importButton = dropdown.querySelector('[data-action="import"]');
+
+  const hasNonFolder = selection.some((e) => !e.isFolder);
+  const hasAbovevtt = hasNonFolder && selection.some((e) => (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
+  const openNewTabButton = dropdown.querySelector('button[data-action="openNewTab"]');
+  if (openNewTabButton) {
+    
+    openNewTabButton.disabled = !singleSelection || !hasNonFolder;
+  }
+  const openButton = dropdown.querySelector('button[data-action="open"]');
+  if (openButton) {
+    openButton.disabled = hasAbovevtt || !singleSelection || !hasNonFolder ;
+  }
+  const forceOpenButton = dropdown.querySelector('button[data-action="forceOpen"]');
+  if (forceOpenButton) {
+    forceOpenButton.disabled = hasAbovevtt || !singleSelection || !hasNonFolder ;
+  }
+  const importButton = dropdown.querySelector('button[data-action="import"]');
   if (importButton) {
-    const hasAbovevtt = selection.some((e) => !e.isFolder && (/\.abovevtt$/i.test(e.key) || /\.csv$/i.test(e.key)));
     importButton.disabled = !hasAbovevtt;
+  }
+  const sendToGamelogButton = dropdown.querySelector('button[data-action="sendToGamelog"]');
+  if (sendToGamelogButton) {
+    const hasAbovevtt = selection.some((e) => !e.isFolder && (allowedVideoTypes.includes(getFileExtension(e.key)) || allowedImageTypes.includes(getFileExtension(e.key))));
+    sendToGamelogButton.disabled = !hasAbovevtt;
   }
 }
 
@@ -1724,6 +1744,101 @@ async function avttHandleToolbarAction(action) {
         handled = true;
       }
       break;
+    }
+    case "openNewTab": {
+      const selection = avttGetSelectedEntries();
+      if (selection.length > 0) {
+        const rawKey = selection[0].key
+        const url = await getAvttStorageUrl(rawKey, true)
+
+        if (!url) {
+          throw new Error("File URL could not be generated.");
+        }
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+      try {
+
+      } catch (error) {
+        console.error("Failed to open file in new tab", error);
+        alert(error?.message || "Failed to open the file in a new tab.");
+      }
+      handled = true;
+      break;
+    }
+    case "forceOpen": {
+      try {
+        const selection = avttGetSelectedEntries();
+        if (selection.length > 0) {
+          const rawKey = selection[0].key
+          const url = await getAvttStorageUrl(rawKey);
+          if (!url) {
+            throw new Error("File URL could not be generated.");
+          }
+          window.MB.sendMessage("custom/myVTT/open-url-embed", url)
+          display_url_embeded(url);
+        }
+      } catch (error) {
+        console.error("Failed to open file in new tab", error);
+        alert(error?.message || "Failed to open the file in a new tab.");
+      }
+      handled = true;
+      break;
+    }
+    case "forceOpen":
+    case "open": {
+
+      try {
+        const selection = avttGetSelectedEntries();
+        if (selection.length > 0) {
+          const rawKey = selection[0].key
+          const url = await getAvttStorageUrl(rawKey);
+          if (!url) {
+            throw new Error("File URL could not be generated.");
+          }
+          display_url_embeded(url);
+          if (action == 'forceOpen')
+            window.MB.sendMessage("custom/myVTT/open-url-embed", url)
+        }
+      } catch (error) {
+        console.error("Failed to open file in new tab", error);
+        alert(error?.message || "Failed to open the file in a new tab.");
+      }
+      handled = true;
+      break;
+    }
+    case "sendToGamelog": {
+      const selection = avttGetSelectedEntries();
+      if (selection.length > 0) {
+        let player = window.PLAYER_NAME;
+        let image = window.PLAYER_IMG;
+        if (window.DM && window.CURRENTLY_SELECTED_TOKENS.length > 0) {
+          let id = window.CURRENTLY_SELECTED_TOKENS[0];
+          let firstToken = window.TOKEN_OBJECTS[id];
+          image = firstToken.options.imgsrc;
+          player = window.CURRENTLY_SELECTED_TOKENS.map(id => window.TOKEN_OBJECTS[id].options.name).join(", ");
+        }
+        let data = {
+          player: player,
+          img: image,
+          dmonly: false,
+          language: $('#chat-language').val()
+        };
+
+        if (data.img?.startsWith('above-bucket-not-a-url')) {
+          data.img = await getAvttStorageUrl(data.img, true);
+        }
+
+
+        const url = `above-bucket-not-a-url/${window.PATREON_ID}/${selection[0].key}`;
+        const avttUrl = await getAvttStorageUrl(url, true)
+        data.text = `
+            <a class='chat-link' href='${avttUrl}' target='_blank' rel='noopener noreferrer'>${url}</a>
+            <img width=100% class='magnify' src='${avttUrl}' href='${avttUrl}' alt='Chat Image' style='display: none'/>
+            <video width=100% class='magnify' autoplay muted loop src='${avttUrl}' href='${avttUrl}' alt='Chat Video' style='display: none'/>
+        `;
+        window.MB.inject_chat(data);
+      }
+      handled = true;
     }
     default:
       break;
@@ -4447,7 +4562,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 padding: 6px;
                 display: none;
                 z-index: 9999;
-                min-width: 140px;
+                min-width: 150px;
             }
             #avtt-actions-dropdown{
               left:0;
@@ -4566,7 +4681,8 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 flex-shrink:1;
                 overflow: hidden;
             }
-            #avtt-file-context-menu hr {
+            #avtt-file-context-menu hr,
+            #avtt-actions-dropdown hr {
                 height:2px;
                 margin:5px;
                 opacity:0.2;
@@ -4760,9 +4876,15 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                     <div id="avtt-actions-dropdown" class="avtt-toolbar-dropdown-list">
                       <button type="button" data-action="cut">Cut</button>
                       <button type="button" data-action="paste">Paste</button>
-                      <button type="button" data-action="copy-path">Copy Path</button>
                       <button type="button" data-action="rename">Rename</button>
+                      <hr/>
+                      <button type="button" data-action="copyPath">Copy Path</button>
                       <button type="button" data-action="import">Import</button>
+                      <hr/>
+                      <button type="button" data-action="sendToGamelog">Send To Gamelog</button>
+                      <button type="button" data-action="open">Display to Self</button>
+                      <button type="button" data-action="forceOpen">Display to Everyone</button>
+                      <button type="button" data-action="openNewTab">Open in New Tab</button>
                       <hr/>
                       <button type="button" data-action="delete">Delete</button>
                     </div>
