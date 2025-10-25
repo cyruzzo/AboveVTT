@@ -757,7 +757,7 @@ class ScenesHandler { // ONLY THE DM USES THIS OBJECT
 			}
 
 			const mapButtonDetails = {};
-			const mapButtons = iframe.contents().find(".map-button");
+			const mapButtons = iframe.contents().find(".map-button, .map-button-circle");
 			const frameBody = iframe.contents().find('body');
 			mapButtons.each(function(){
 				const id = this.id;
