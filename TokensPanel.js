@@ -3477,18 +3477,31 @@ function persist_folders_remembered_state() {
 }
 
 function update_token_folders_remembered_state() {
-    if (!window.tokenListItems || !window.sceneListFolders) {
-        return; // still starting up
-    }
 
-    let items = window.tokenListItems
-        .filter(item => item.isTypeFolder())
-        .concat(tokens_rootfolders)
-        .concat(window.sceneListFolders);
+
+    let folderItems = window.tokenListItems.filter(item => item.isTypeFolder())
+        
 
     if(localStorage.getItem('FolderRememberedState') != null) {
         let rememberedStates = JSON.parse(localStorage.getItem('FolderRememberedState'));
-        items.forEach(item => {
+        if (window.tokenListItems) {
+            folderItems.forEach(item => {
+                let state = rememberedStates[item.id];
+                if (state === true || state === false) {
+                    item.collapsed = state;
+                }
+            });
+        
+            tokens_rootfolders.forEach(item => {
+                let state = rememberedStates[item.id];
+                if (state === true || state === false) {
+                    item.collapsed = state;
+                }
+            });
+        }
+        if (!window.sceneListFolders)
+            return
+        window.sceneListFolders.forEach(item => {
             let state = rememberedStates[item.id];
             if (state === true || state === false) {
                 item.collapsed = state;
