@@ -2487,18 +2487,21 @@ function avttScenesNormalizeRelativePath(path) {
 }
 
 function avttScenesRelativePathFromLink(link) {
-	const prefix = `above-bucket-not-a-url/${window.PATREON_ID}/`;
-	if (typeof link === "string" && link.startsWith(prefix)) {
-		return link.slice(prefix.length);
+	if (typeof link !== "string" || !link) {
+		return "";
 	}
-	return "";
+	const match = link.match(/^above-bucket-not-a-url\/[^/]+\/(.*)$/i);
+	return match && match[1] ? match[1] : "";
 }
 
 function avttScenesIsThumbnailKey(relativeKey) {
 	if (typeof avttIsThumbnailRelativeKey === "function") {
 		return avttIsThumbnailRelativeKey(relativeKey);
 	}
-	return typeof relativeKey === "string" && relativeKey.startsWith("thumbnails/");
+	if (typeof relativeKey !== "string" || !relativeKey) {
+		return false;
+	}
+	return /^thumbnails_[^/]+(?:\/|$)/i.test(relativeKey);
 }
 
 async function avttScenesFetchFolderListing(relativePath) {
@@ -3461,13 +3464,14 @@ async function build_source_book_chapter_import_section(sceneSet) {
 	let sceneData = [];
 
 	sceneSet.forEach(scene => {
+		const tokenSet = {...scene.tokens};
 		if (scene.uuid in DDB_EXTRAS) {
-			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid], ... get_custom_scene_settings()}
+			scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid], ...get_custom_scene_settings()}
 		}
 		else if(scene.uuid.replace('dnd/', '') in DDB_EXTRAS){
 			scene = {...scene, ...DDB_EXTRAS[scene.uuid.replace('dnd/', '')], ...get_custom_scene_settings()}
 		}
-
+		scene.tokens = {...scene.tokens, ...tokenSet};
 		
 		sceneData.push(scene);
 		const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
@@ -3480,6 +3484,7 @@ async function build_source_book_chapter_import_section(sceneSet) {
 		if(otherVersions.length > 0){
 			for(let i = 0; i<otherVersions.length; i++){
 				scene = {...default_scene_data(), ...scene, ...DDB_EXTRAS[scene.uuid], ...DDB_EXTRAS[otherVersions[i]]}
+				scene.tokens = { ...scene.tokens, ...tokenSet };
 				sceneData.push(scene);
 				const sceneHtml = build_tutorial_import_list_item(scene, "https://www.dndbeyond.com/content/1-0-2416-0/skins/waterdeep/images/dnd-beyond-b-red.png");
 				sectionHtml.find("ul").append(sceneHtml);
@@ -4007,3 +4012,5 @@ function read_recently_visited_scene_importer_sources() {
 		window.recentlyVisitedSources = JSON.parse(recentlyVisitedSources);
 	}
 }
+
+

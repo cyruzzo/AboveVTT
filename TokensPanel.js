@@ -12,6 +12,50 @@ cached_open5e_items = {};
 
 
 
+function avttTokensGetThumbnailPrefix() {
+    if (typeof avttGetThumbnailPrefix === "function") {
+        return avttGetThumbnailPrefix();
+    }
+    const rawId =
+        typeof window !== "undefined" && window && typeof window.PATREON_ID === "string" && window.PATREON_ID
+            ? window.PATREON_ID
+            : "anonymous";
+    const sanitizedId = String(rawId).replace(/[\\/]/g, "_");
+    return `thumbnails_${sanitizedId}/`;
+}
+
+function avttTokensApplyThumbnailPrefix(path) {
+    if (typeof avttApplyThumbnailPrefixToAboveBucket === "function") {
+        return avttApplyThumbnailPrefixToAboveBucket(path);
+    }
+    if (typeof path !== "string") {
+        return path;
+    }
+    const rewritten = path.replace(/^(above-bucket-not-a-url\/([^/]+)\/)(.*)$/i, (match, bucketPrefix, userSegment, rest) => {
+        const sanitizedUser = String(userSegment || "anonymous").replace(/[\\\/]/g, "_") || "anonymous";
+        const thumbnailFolder = `thumbnails_${sanitizedUser}`;
+        const remaining = rest
+            .replace(/^thumbnails_[^/]*\//i, "")
+            .replace(/^thumbnails\//i, "")
+            .replace(/^\/+/, "");
+        const base = `${bucketPrefix}${thumbnailFolder}`;
+        return remaining ? `${base}/${remaining}` : `${base}/`;
+    });
+    if (rewritten !== path) {
+        return rewritten;
+    }
+    const thumbnailPrefix = avttTokensGetThumbnailPrefix();
+    const cleanedPrefix = thumbnailPrefix.replace(/\/+$/, "");
+    return path.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)$/i, (match, bucketPrefix, rest) => {
+        const remaining = rest
+            .replace(/^thumbnails_[^/]*\//i, "")
+            .replace(/^thumbnails\//i, "")
+            .replace(/^\/+/, "");
+        const base = `${bucketPrefix}${cleanedPrefix}`;
+        return remaining ? `${base}/${remaining}` : `${base}/`;
+    });
+}
+
 async function getOpen5e(results = [], search = ''){
     let ddbMonsterTypes = {
         1: 'Aberration',
@@ -689,7 +733,7 @@ function get_helper_size(draggedItem){
  */
 async function enable_draggable_token_creation(html, specificImage = undefined) {
     if(specificImage && specificImage.startsWith('above-bucket-not-a-url')){
-        specificImage = await getAvttStorageUrl(`${specificImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')}`)
+        specificImage = await getAvttStorageUrl(avttTokensApplyThumbnailPrefix(specificImage))
     }
 
     html.draggable({
@@ -727,7 +771,7 @@ async function enable_draggable_token_creation(html, specificImage = undefined) 
                     }  
                     helper.attr("data-src", src);
                     if (src.startsWith('above-bucket-not-a-url')) {
-                        getAvttStorageUrl(src.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2')).then((url) => {
+                        getAvttStorageUrl(avttTokensApplyThumbnailPrefix(src)).then((url) => {
                             helper.attr("src", url);
                         })
                     }
@@ -916,7 +960,7 @@ function update_pc_token_rows() {
             
             let rowImage = (customizations?.tokenOptions?.alternativeImages?.length > 0) ? customizations?.tokenOptions?.alternativeImages[0] : pc.image;
             if (rowImage.startsWith('above-bucket-not-a-url')){
-                getAvttStorageUrl(rowImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2'), true).then((url) => {
+                getAvttStorageUrl(avttTokensApplyThumbnailPrefix(rowImage), true).then((url) => {
                     row.find(".token-image").attr('src', url)
                 })
             }
@@ -3976,7 +4020,7 @@ function register_custom_token_image_context_menu() {
                                 persist_token_customization(customization, function () {
                                     let listingImage = (customization.tokenOptions?.alternativeImages && customization.tokenOptions?.alternativeImages[0] != undefined) ? customization.tokenOptions?.alternativeImages[0] : listItem.image;
                                     if (listingImage.startsWith('above-bucket-not-a-url')) {
-                                        getAvttStorageUrl(listingImage.replace(/^(above-bucket-not-a-url\/.*?\/)(.*)/gi, '$1thumbnails/$2'), true).then((url) => {
+                                        getAvttStorageUrl(avttTokensApplyThumbnailPrefix(listingImage), true).then((url) => {
                                             $(`.sidebar-list-item-row[id='${listItem.id}'] .token-image`).attr('src', url);
                                         })
                                     }
@@ -5386,3 +5430,6 @@ function getPersonailityTrait(){
     return tokenPersonality[Math.floor(Math.random() * 638) + 1];
 
 }
+
+
+
