@@ -2761,6 +2761,22 @@ async function avttProcessMoveChunks(chunks, options = {}) {
       : (chunk) => avttCountMovePayloadEntries(chunk?.items);
   const onChunkSettled =
     typeof options.onChunkSettled === "function" ? options.onChunkSettled : null;
+  const signal = options.signal;
+  const createAbortError = () => {
+    const reason = signal?.reason || "Aborted";
+    try {
+      return new DOMException(reason, "AbortError");
+    } catch (domExceptionError) {
+      const abortError = new Error(reason);
+      abortError.name = "AbortError";
+      return abortError;
+    }
+  };
+  const checkAbort = () => {
+    if (signal?.aborted) {
+      throw createAbortError();
+    }
+  };
 
   let nextIndex = 0;
   let completedEntries = 0;
@@ -2768,6 +2784,7 @@ async function avttProcessMoveChunks(chunks, options = {}) {
 
   const worker = async () => {
     while (nextIndex < totalChunks) {
+      checkAbort();
       const currentIndex = nextIndex;
       nextIndex += 1;
       const chunk = normalizedChunks[currentIndex];
@@ -2781,6 +2798,7 @@ async function avttProcessMoveChunks(chunks, options = {}) {
         await avttSendMoveChunk(chunk.items, options.operation || "move", {
           chunkLabel,
           isThumbnail: options.isThumbnail === true,
+          signal,
         });
         increment = Number(getEntryCount(chunk, null)) || 0;
         if (increment > 0) {
@@ -2795,6 +2813,9 @@ async function avttProcessMoveChunks(chunks, options = {}) {
           });
         }
       } catch (error) {
+        if (error?.name === "AbortError") {
+          throw error;
+        }
         const normalizedError =
           error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
         increment = Number(getEntryCount(chunk, normalizedError)) || 0;
@@ -2813,6 +2834,7 @@ async function avttProcessMoveChunks(chunks, options = {}) {
         }
       }
 
+      checkAbort();
       if (chunkDelayMs > 0) {
         await avttDelay(chunkDelayMs);
       }
@@ -2824,6 +2846,7 @@ async function avttProcessMoveChunks(chunks, options = {}) {
     workers.push(worker());
   }
   await Promise.all(workers);
+  checkAbort();
 
   return {
     failures,
@@ -2839,10 +2862,25 @@ async function avttSendMoveChunk(
     depth = 0,
     maxDepth = 4,
     isThumbnail = false,
+    signal = null,
   } = {},
 ) {
   if (!Array.isArray(items) || !items.length) {
     return;
+  }
+
+  const createAbortError = () => {
+    const reason = signal?.reason || "Aborted";
+    try {
+      return new DOMException(reason, "AbortError");
+    } catch (domExceptionError) {
+      const abortError = new Error(reason);
+      abortError.name = "AbortError";
+      return abortError;
+    }
+  };
+  if (signal?.aborted) {
+    throw createAbortError();
   }
 
   const requestUrl = `${AVTT_S3}?action=move`;
@@ -2850,6 +2888,9 @@ async function avttSendMoveChunk(
   const chunkText = chunkLabel ? ` (${chunkLabel})` : "";
 
   const splitAndRequeue = async () => {
+    if (signal?.aborted) {
+      throw createAbortError();
+    }
     if (items.length <= 1 || depth >= maxDepth) {
       throw new Error(`Failed to ${actionText}${chunkText}.`);
     }
@@ -2861,13 +2902,18 @@ async function avttSendMoveChunk(
       depth: depth + 1,
       maxDepth,
       isThumbnail,
+      signal,
     });
     await avttDelay(250 + depth * 100);
+    if (signal?.aborted) {
+      throw createAbortError();
+    }
     await avttSendMoveChunk(items.slice(midpoint), operation, {
       chunkLabel: secondLabel,
       depth: depth + 1,
       maxDepth,
       isThumbnail,
+      signal,
     });
   };
 
@@ -2880,10 +2926,14 @@ async function avttSendMoveChunk(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(requestBody),
+    signal,
   };
 
   const maxAttempts = 3;
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    if (signal?.aborted) {
+      throw createAbortError();
+    }
     let response;
     try {
       response = await avttFetchWithRetry(requestUrl, requestInit, {
@@ -2895,11 +2945,17 @@ async function avttSendMoveChunk(
     } catch (error) {
       if (items.length > 1 && depth < maxDepth) {
         await avttDelay(300 * (attempt + 1));
+        if (signal?.aborted) {
+          throw createAbortError();
+        }
         await splitAndRequeue();
         return;
       }
       if (attempt < maxAttempts - 1) {
         await avttDelay(600 * (attempt + 1));
+        if (signal?.aborted) {
+          throw createAbortError();
+        }
         continue;
       }
       const message =
@@ -2943,13 +2999,7 @@ async function avttSendMoveChunk(
 async function avttMoveEntries(moves, options = {}) {
   const fileListingSection = document.getElementById("file-listing-section");
   let appendedLoadingIndicator = null;
-  if (
-    fileListingSection &&
-    $(fileListingSection).find('.sidebar-panel-loading-indicator').length === 0
-  ) {
-    appendedLoadingIndicator = $(build_combat_tracker_loading_indicator('Loading files...'));
-    $(fileListingSection).append(appendedLoadingIndicator);
-  }
+
   const removeLoadingIndicator = () => {
     if (appendedLoadingIndicator && appendedLoadingIndicator.length) {
       appendedLoadingIndicator.remove();
@@ -2971,6 +3021,15 @@ async function avttMoveEntries(moves, options = {}) {
     removeLoadingIndicator();
     return;
   }
+  let aborted = false;
+  let indicatorMode = AVTT_OPERATION_INDICATOR_MODES.MOVE;
+  let abortController = null;
+  let signal = null;
+  let cancelCompletionMessage = "Operation Cancelled";
+  let cancelButtonTitle = "Cancel Operation";
+  let cancelHandler = () => {};
+  let abortReason = "";
+  let ensureNotAborted = () => {};
   try {
     const resolvedMoves = await avttResolveMoveConflicts(validMoves);
     if (!resolvedMoves.length) {
@@ -2998,6 +3057,64 @@ async function avttMoveEntries(moves, options = {}) {
       typeof options.completionMessage === "string" && options.completionMessage.trim()
         ? options.completionMessage.trim()
         : null;
+    indicatorMode =
+      options.indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME
+        ? AVTT_OPERATION_INDICATOR_MODES.RENAME
+        : AVTT_OPERATION_INDICATOR_MODES.MOVE;
+    if (indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME) {
+      if (avttRenameAbortController && avttRenameAbortController.signal && !avttRenameAbortController.signal.aborted) {
+        try { avttRenameAbortController.abort("Replaced by new rename operation."); } catch { /* no-op */ }
+      }
+      avttRenameAbortController = new AbortController();
+    } else {
+      if (avttMoveAbortController && avttMoveAbortController.signal && !avttMoveAbortController.signal.aborted) {
+        try { avttMoveAbortController.abort("Replaced by new move operation."); } catch { /* no-op */ }
+      }
+      avttMoveAbortController = new AbortController();
+    }
+    abortController =
+      indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME
+        ? avttRenameAbortController
+        : avttMoveAbortController;
+    signal = abortController?.signal || null;
+    const createAbortError = () => {
+      const reason = signal?.reason || "Aborted";
+      try { return new DOMException(reason, "AbortError"); }
+      catch {
+        const abortError = new Error(reason);
+        abortError.name = "AbortError";
+        return abortError;
+      }
+    };
+    ensureNotAborted = () => {
+      if (signal?.aborted) {
+        throw createAbortError();
+      }
+    };
+    abortReason =
+      indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME
+        ? "User cancelled rename operation."
+        : operation === "copy"
+          ? "User cancelled copy operation."
+          : "User cancelled move operation.";
+    cancelButtonTitle =
+      indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME
+        ? "Cancel Rename"
+        : operation === "copy"
+          ? "Cancel Copy"
+          : "Cancel Move";
+    cancelCompletionMessage =
+      indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME
+        ? "Rename Cancelled"
+        : operation === "copy"
+          ? "Copy Cancelled"
+          : "Move Cancelled";
+    cancelHandler = () => {
+      if (!signal?.aborted) {
+        try { abortController.abort(abortReason); } catch { /* no-op */ }
+      }
+    };
+    ensureNotAborted();
     const folderDescendantsCache = new Map();
     const resolveFolderDescendants = async (folderKey) => {
       const normalized = avttNormalizeFolderPath(folderKey);
@@ -3031,9 +3148,11 @@ async function avttMoveEntries(moves, options = {}) {
     const seenThumbnailMoves = new Set();
 
     for (const move of resolvedMoves) {
+      ensureNotAborted();
       let descendantEntries = null;
       if (move.isFolder) {
         descendantEntries = await resolveFolderDescendants(move.fromKey);
+        ensureNotAborted();
       }
       let destinationDescendants = null;
       if (move.isFolder && move.overwrite) {
@@ -3048,6 +3167,7 @@ async function avttMoveEntries(moves, options = {}) {
             collectDestinationError,
           );
         }
+        ensureNotAborted();
       }
 
       const moveItem = {
@@ -3079,6 +3199,7 @@ async function avttMoveEntries(moves, options = {}) {
         fromThumbnailKey = avttGetThumbnailKeyFromRelative(move.fromKey);
         toThumbnailKey = avttGetThumbnailKeyFromRelative(move.toKey);
       }
+      ensureNotAborted();
 
       if (!fromThumbnailKey || !toThumbnailKey || fromThumbnailKey === toThumbnailKey) {
         continue;
@@ -3102,6 +3223,7 @@ async function avttMoveEntries(moves, options = {}) {
       thumbnailMoves.push(thumbnailItem);
     }
 
+    ensureNotAborted();
     const moveItemChunks = avttChunkMovePayloadItems(
       moveItems,
       AVTT_MAX_MOVE_KEYS_PER_REQUEST,
@@ -3127,19 +3249,24 @@ async function avttMoveEntries(moves, options = {}) {
       return totalMovePayloadCount === 1 ? defaultSingular : defaultPlural;
     })();
     if (totalMovePayloadCount > 0) {
-      avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE, {
+      avttShowOperationProgressIndicator(indicatorMode, {
         label: moveIndicatorLabel,
         currentDisplay: 0,
         total: totalMovePayloadCount,
+        showCancelButton: true,
+        cancelButtonTitle,
+        cancelButtonLabel: "X",
+        cancelHandler,
       });
     }
 
     const moveChunkResult = await avttProcessMoveChunks(moveItemChunks, {
       operation,
       concurrency: AVTT_MAX_CONCURRENT_MOVES,
+      signal,
       getEntryCount: (chunk) => avttCountMovePayloadEntries(chunk.items),
       onChunkSettled: async ({ increment }) => {
-        if (totalMovePayloadCount <= 0) {
+        if (signal?.aborted || totalMovePayloadCount <= 0) {
           return;
         }
         const normalizedIncrement = Number.isFinite(Number(increment)) ? Number(increment) : 0;
@@ -3153,19 +3280,25 @@ async function avttMoveEntries(moves, options = {}) {
           totalMovePayloadCount > 0
             ? Math.min(Math.max(moveProgressCount, 0), totalMovePayloadCount)
             : Math.max(moveProgressCount, 0);
-        avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE, {
+        avttShowOperationProgressIndicator(indicatorMode, {
           label: moveIndicatorLabel,
           currentDisplay: moveDisplayValue,
           total: totalMovePayloadCount,
+          showCancelButton: true,
+          cancelButtonTitle,
+          cancelButtonLabel: "X",
+          cancelHandler,
         });
       },
     });
+    ensureNotAborted();
     const chunkFailures = Array.isArray(moveChunkResult?.failures) ? moveChunkResult.failures : [];
     const refreshPath =
       typeof options.refreshPath === "string" ? options.refreshPath : currentFolder;
 
     if (operation === "move") {
       for (const move of resolvedMoves) {
+        ensureNotAborted();
         const size = Number(move.size) || 0;
         if (move.isFolder) {
           avttRemoveCacheEntry(move.fromKey);
@@ -3177,6 +3310,7 @@ async function avttMoveEntries(moves, options = {}) {
       }
     } else {
       for (const move of resolvedMoves) {
+        ensureNotAborted();
         const size = Number(move.size) || 0;
         if (move.isFolder) {
           avttCopyFolderCaches(move.fromKey, move.toKey);
@@ -3186,6 +3320,7 @@ async function avttMoveEntries(moves, options = {}) {
     }
 
     if (thumbnailMoves.length) {
+      ensureNotAborted();
       const thumbnailChunks = avttChunkMovePayloadItems(
         thumbnailMoves,
         AVTT_MAX_MOVE_KEYS_PER_REQUEST,
@@ -3194,7 +3329,9 @@ async function avttMoveEntries(moves, options = {}) {
         operation,
         concurrency: AVTT_MAX_CONCURRENT_MOVES,
         isThumbnail: true,
+        signal,
       });
+      ensureNotAborted();
       if (Array.isArray(thumbnailResult?.failures) && thumbnailResult.failures.length > 0) {
         const [firstThumbnailFailure] = thumbnailResult.failures;
         console.warn(
@@ -3204,6 +3341,7 @@ async function avttMoveEntries(moves, options = {}) {
       }
     }
 
+    ensureNotAborted();
     await Promise.resolve(
       refreshFiles(
         refreshPath,
@@ -3218,7 +3356,9 @@ async function avttMoveEntries(moves, options = {}) {
       const completionMessage =
         completionMessageOverride ||
         (operation === "copy" ? "Copy Complete" : "Move Complete");
-      avttShowOperationComplete(AVTT_OPERATION_INDICATOR_MODES.MOVE, completionMessage, 1500);
+      avttShowOperationComplete(indicatorMode, completionMessage, 1500);
+    } else {
+      avttHideOperationIndicator(indicatorMode);
     }
     if (options.clearClipboard) {
       avttClearClipboard();
@@ -3226,18 +3366,40 @@ async function avttMoveEntries(moves, options = {}) {
       avttApplyClipboardHighlights();
     }
   } catch (error) {
-    console.error("Failed to move entries", error);
-    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.MOVE);
-    const normalizedError =
-      error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
-    if (options?.suppressErrorAlert !== true) {
-      alert(normalizedError.message || "Failed to move item(s).");
-    }
-    if (options?.bubbleOnError) {
-      throw normalizedError;
+    if (error?.name === "AbortError") {
+      aborted = true;
+    } else {
+      console.error("Failed to move entries", error);
+      avttHideOperationIndicator(indicatorMode);
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error ?? "Failed to move item(s)."));
+      if (options?.suppressErrorAlert !== true) {
+        alert(normalizedError.message || "Failed to move item(s).");
+      }
+      if (options?.bubbleOnError) {
+        throw normalizedError;
+      }
     }
   } finally {
+    if (indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME) {
+      if (avttRenameAbortController === abortController) {
+        avttRenameAbortController = null;
+      }
+    } else if (indicatorMode === AVTT_OPERATION_INDICATOR_MODES.MOVE) {
+      if (avttMoveAbortController === abortController) {
+        avttMoveAbortController = null;
+      }
+    }
     removeLoadingIndicator();
+  }
+  if (aborted) {
+    const indicatorElement = avttGetOperationIndicatorElement(indicatorMode);
+    if (indicatorElement && indicatorElement.style.display !== "none") {
+      avttShowOperationComplete(indicatorMode, cancelCompletionMessage, 800);
+    } else {
+      avttHideOperationIndicator(indicatorMode);
+    }
+    return;
   }
 }
 
@@ -3323,6 +3485,7 @@ async function avttPromptRename(path, isFolder) {
         [{ fromKey: path, toKey: newKey, isFolder }],
         {
           operation: "move",
+          indicatorMode: AVTT_OPERATION_INDICATOR_MODES.RENAME,
           clearClipboard: false,
           progressLabelSingular: "Renaming Item",
           progressLabelPlural: "Renaming Items",
@@ -3539,6 +3702,9 @@ let avttQueueCompleted = 0;
 let avttQueueConflictPolicy = null;
 let avttConflictPromptPending = null;
 const AVTT_MAX_CONCURRENT_UPLOADS = 3;
+let avttMoveAbortController = null;
+let avttRenameAbortController = null;
+let avttDeleteAbortController = null;
 
 
 
@@ -4812,7 +4978,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 outline: 2px solid var(--link-color, rgb(39, 150, 203));
                 outline-offset: 2px;
             }
-            #cancel-avtt-upload-button {
+            .avtt-operation-cancel-button {
               background: var(--background-color, #fff) !important;
               color: var(--font-color, #000) !important;
               border: 1px solid gray;
@@ -4822,7 +4988,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               height: 15px;
               font-size: 10px;
             }    
-            #cancel-avtt-upload-button:hover{
+            .avtt-operation-cancel-button:hover{
               color: #F00 !important;
             }
             .avtt-conflict-apply-all {
@@ -4854,14 +5020,37 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
               color: var(--font-color, #000);
               cursor: pointer;
             }
-            #uploading-file-indicator{
+            #counter-indicators{
+                position: absolute;
+                bottom: 18px;
+                left: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+            .avtt-operation-indicator{
                 display: flex;
                 gap: 3px;
                 flex-wrap: nowrap;
                 flex-direction: row;
-                position: absolute;
-                bottom: 18px;
-                left: 15px;
+                align-items: center;
+            }
+            div#counter-indicators .avtt-operation-cancel-button {
+                width:12px; 
+                height:12px;
+                font-size:8px;
+            }
+            div#counter-indicators{
+                gap: 3px;
+                font-size:12px;
+                padding: 0px;
+                max-height: 60px;
+                max-width:350px;
+                width:350px;
+                bottom:0px;
+                align-content: space-between;
+                flex-wrap: wrap;
             }
         </style>
         <div id="avtt-file-picker">
@@ -4891,7 +5080,12 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                   </div>
                   <input id='search-files' type='search' placeholder='Search' />
                   <div style='flex-grow:1'></div>
-                  <div id='uploading-file-indicator' style='display:none'></div>
+                  <div id='counter-indicators'>
+                    <div id='uploading-file-indicator' class='avtt-operation-indicator' style='display:none'></div>
+                    <div id='rename-file-indicator' class='avtt-operation-indicator' style='display:none'></div>
+                    <div id='move-file-indicator' class='avtt-operation-indicator' style='display:none'></div>
+                    <div id='delete-file-indicator' class='avtt-operation-indicator' style='display:none'></div>
+                  </div>
                     <label style='color: var(--link-color, rgba(39, 150, 203, 1));margin: 0;cursor:pointer;line-height: 16px;' for="file-input">Upload File</label>
                     <input style='display:none;' type="file" multiple id="file-input"
                         accept="image/*,video/*,audio/*,.uvtt,.json,.dd2vtt,.df2vtt,application/pdf" />
@@ -5586,10 +5780,25 @@ const AVTT_OPERATION_INDICATOR_MODES = Object.freeze({
   UPLOAD: "upload",
   DELETE: "delete",
   MOVE: "move",
+  RENAME: "rename",
+});
+const AVTT_OPERATION_INDICATOR_TARGETS = Object.freeze({
+  [AVTT_OPERATION_INDICATOR_MODES.UPLOAD]: "uploading-file-indicator",
+  [AVTT_OPERATION_INDICATOR_MODES.RENAME]: "rename-file-indicator",
+  [AVTT_OPERATION_INDICATOR_MODES.MOVE]: "move-file-indicator",
+  [AVTT_OPERATION_INDICATOR_MODES.DELETE]: "delete-file-indicator",
 });
 
+function avttGetOperationIndicatorElement(mode) {
+  const targetId = AVTT_OPERATION_INDICATOR_TARGETS?.[mode];
+  if (!targetId) {
+    return null;
+  }
+  return document.getElementById(targetId);
+}
+
 function avttShowOperationProgressIndicator(mode, options = {}) {
-  const indicator = document.getElementById("uploading-file-indicator");
+  const indicator = avttGetOperationIndicatorElement(mode);
   if (!indicator) {
     return null;
   }
@@ -5600,6 +5809,8 @@ function avttShowOperationProgressIndicator(mode, options = {}) {
     total = 0,
     showCancelButton = false,
     cancelHandler = null,
+    cancelButtonTitle = "Cancel Operation",
+    cancelButtonLabel = "X",
   } = options;
   const normalizedTotal = Number.isFinite(Number(total)) && Number(total) > 0 ? Number(total) : 0;
   const normalizedCurrent = Number.isFinite(Number(currentDisplay)) && Number(currentDisplay) >= 0
@@ -5613,16 +5824,18 @@ function avttShowOperationProgressIndicator(mode, options = {}) {
   indicator.dataset.mode = mode;
   indicator.style.display = "flex";
 
-  const cancelButtonId = "cancel-avtt-upload-button";
+  const cancelButtonId = `cancel-avtt-${mode}-button`;
   let cancelButton = indicator.querySelector(`#${cancelButtonId}`);
   if (showCancelButton) {
     if (!cancelButton) {
       cancelButton = document.createElement("button");
       cancelButton.id = cancelButtonId;
-      cancelButton.title = "Cancel Upload";
-      cancelButton.textContent = "X";
       cancelButton.type = "button";
+      cancelButton.className = "avtt-operation-cancel-button";
     }
+    cancelButton.title = cancelButtonTitle;
+    cancelButton.setAttribute("aria-label", cancelButtonTitle);
+    cancelButton.textContent = cancelButtonLabel;
   } else if (cancelButton) {
     $(cancelButton).off(".operationIndicator");
     cancelButton.remove();
@@ -5674,11 +5887,11 @@ function avttShowOperationProgressIndicator(mode, options = {}) {
 }
 
 function avttShowOperationComplete(mode, message, delay = 2000) {
-  const indicator = document.getElementById("uploading-file-indicator");
+  const indicator = avttGetOperationIndicatorElement(mode);
   if (!indicator || indicator.dataset.mode !== mode) {
     return;
   }
-  $(indicator).find("#cancel-avtt-upload-button").off(".operationIndicator").remove();
+  $(indicator).find(".avtt-operation-cancel-button").off(".operationIndicator").remove();
   indicator.innerHTML = message;
   indicator.style.display = "flex";
   indicator.dataset.current = "";
@@ -5691,7 +5904,7 @@ function avttShowOperationComplete(mode, message, delay = 2000) {
 }
 
 function avttHideOperationIndicator(mode) {
-  const indicator = document.getElementById("uploading-file-indicator");
+  const indicator = avttGetOperationIndicatorElement(mode);
   if (!indicator) {
     return;
   }
@@ -5699,7 +5912,7 @@ function avttHideOperationIndicator(mode) {
   if (mode && currentMode && currentMode !== mode) {
     return;
   }
-  $(indicator).find("#cancel-avtt-upload-button").off(".operationIndicator").remove();
+  $(indicator).find(".avtt-operation-cancel-button").off(".operationIndicator").remove();
   indicator.innerHTML = "";
   indicator.style.display = "none";
   indicator.removeAttribute("data-mode");
@@ -5714,6 +5927,8 @@ const showUploadingProgress = (index, total) => {
     currentDisplay,
     total,
     showCancelButton: true,
+    cancelButtonTitle: "Cancel Upload",
+    cancelButtonLabel: "X",
     cancelHandler: () => {
       if (avttUploadController) {
         try {
@@ -7056,8 +7271,38 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
   if (!confirm(`Are you sure you want to delete the selected ${entries.length} item(s)? This action cannot be undone.`)) {
     return;
   }
-  
-  $('#avtt-file-picker #file-listing-section').append(build_combat_tracker_loading_indicator('Deleting files...'));
+  if (avttDeleteAbortController && avttDeleteAbortController.signal && !avttDeleteAbortController.signal.aborted) {
+    try { avttDeleteAbortController.abort("Replaced by new delete operation."); } catch { /* no-op */ }
+  }
+  avttDeleteAbortController = new AbortController();
+  const abortController = avttDeleteAbortController;
+  const { signal } = abortController;
+  const createAbortError = () => {
+    const reason = signal?.reason || "Aborted";
+    try { return new DOMException(reason, "AbortError"); }
+    catch {
+      const abortError = new Error(reason);
+      abortError.name = "AbortError";
+      return abortError;
+    }
+  };
+  const ensureNotAborted = () => {
+    if (signal?.aborted) {
+      throw createAbortError();
+    }
+  };
+  const indicatorMode = AVTT_OPERATION_INDICATOR_MODES.DELETE;
+  const cancelButtonTitle = "Cancel Delete";
+  const cancelCompletionMessage = "Delete Cancelled";
+  const cancelHandler = () => {
+    if (!signal?.aborted) {
+      try { abortController.abort("User cancelled delete operation."); } catch { /* no-op */ }
+    }
+  };
+  let aborted = false;
+
+ 
+  ensureNotAborted();
 
   const seenKeys = new Set();
   const payloadEntries = [];
@@ -7085,6 +7330,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     isFolder,
     { fromCache = false } = {},
   ) => {
+    ensureNotAborted();
     const added = addPayloadEntry(key, size, isFolder);
     if (!added) {
       return;
@@ -7120,13 +7366,14 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
   };
 
   const includeCachedDescendants = async (folderKey) => {
-
+    ensureNotAborted();
     const normalizedFolder = avttNormalizeFolderPath(folderKey);
     if (!normalizedFolder) {
       return;
     }
 
     const includeEntry = (relativeKey, size, isFolder) => {
+      ensureNotAborted();
       if (!relativeKey || relativeKey === normalizedFolder) {
         return;
       }
@@ -7138,6 +7385,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       const absolutePrefix = `${window.PATREON_ID}/${normalizedFolder}`;
       const expansionCountBefore = cachedExpansionCount;
       for (const cachedEntry of avttAllFilesCache) {
+        ensureNotAborted();
         const absolute = cachedEntry?.Key || cachedEntry?.key;
         if (typeof absolute !== "string" || !absolute.startsWith(absolutePrefix)) {
           continue;
@@ -7163,6 +7411,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     const fetchedFolders = new Set();
     const stack = [normalizedFolder];
     while (stack.length > 0) {
+      ensureNotAborted();
       const currentFolder = stack.pop();
       if (!currentFolder || visitedFolders.has(currentFolder)) {
         continue;
@@ -7171,7 +7420,8 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       let listing = getCachedFolderListing(currentFolder);
       if ((!Array.isArray(listing) || listing.length === 0) && !fetchedFolders.has(currentFolder)) {
         try {
-          listing = await getFolderListingFromS3(currentFolder);
+          listing = await getFolderListingFromS3(currentFolder, { signal });
+          ensureNotAborted();
           if (Array.isArray(listing) && listing.length > 0) {
             avttStoreFolderListing(currentFolder, listing);
           }
@@ -7186,6 +7436,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
         continue;
       }
       for (const cachedEntry of listing) {
+        ensureNotAborted();
         const absolute = cachedEntry?.Key || cachedEntry?.key;
         if (typeof absolute !== "string") {
           continue;
@@ -7210,28 +7461,37 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
   };
 
   for (const entry of entries) {
+    ensureNotAborted();
     if (!entry?.key) {
       continue;
     }
     addEntryWithAssociatedDeletes(entry.key, entry.size, entry.isFolder);
     if (entry.isFolder) {
       await includeCachedDescendants(entry.key);
+      ensureNotAborted();
     }
   }
 
   if (!payloadEntries.length) {
     $('#avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator').remove();
-    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE);
+    avttHideOperationIndicator(indicatorMode);
+    if (avttDeleteAbortController === abortController) {
+      avttDeleteAbortController = null;
+    }
     return;
   }
 
   const totalDeleteCount = payloadEntries.length;
   let deleteProgressCount = 0;
   const deleteIndicatorLabel = totalDeleteCount === 1 ? "Deleting Item" : "Deleting Items";
-  avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE, {
+  avttShowOperationProgressIndicator(indicatorMode, {
     label: deleteIndicatorLabel,
     currentDisplay: 0,
     total: totalDeleteCount,
+    showCancelButton: true,
+    cancelButtonTitle,
+    cancelButtonLabel: "X",
+    cancelHandler,
   });
 
   try {
@@ -7239,6 +7499,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     const MAX_DELETE_ATTEMPTS = 3;
     const DELETE_RETRY_BASE_DELAY_MS = 500;
     for (let offset = 0; offset < payloadEntries.length; offset += MAX_DELETE_KEYS_PER_REQUEST) {
+      ensureNotAborted();
       const chunkEntries = payloadEntries.slice(offset, offset + MAX_DELETE_KEYS_PER_REQUEST);
       if (!chunkEntries.length) {
         continue;
@@ -7255,6 +7516,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       let chunkSucceeded = false;
       let lastChunkError = null;
       for (let attempt = 1; attempt <= MAX_DELETE_ATTEMPTS; attempt += 1) {
+        ensureNotAborted();
         try {
           const response = await fetch(
             `${AVTT_S3}?user=${window.PATREON_ID}&deleteFiles=true`,
@@ -7262,6 +7524,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(chunkPayload),
+              signal,
             },
           );
           let json = null;
@@ -7277,6 +7540,9 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
           chunkSucceeded = true;
           break;
         } catch (chunkError) {
+          if (chunkError?.name === "AbortError") {
+            throw createAbortError();
+          }
           lastChunkError =
             chunkError instanceof Error
               ? chunkError
@@ -7285,6 +7551,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
             throw lastChunkError;
           }
           await avttDelay(DELETE_RETRY_BASE_DELAY_MS * attempt);
+          ensureNotAborted();
         }
       }
       if (!chunkSucceeded) {
@@ -7293,16 +7560,25 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
 
       deleteProgressCount += chunkEntries.length;
       const deleteDisplayValue = Math.min(Math.max(deleteProgressCount, 0), totalDeleteCount);
-      avttShowOperationProgressIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE, {
+      if (signal?.aborted) {
+        break;
+      }
+      avttShowOperationProgressIndicator(indicatorMode, {
         label: deleteIndicatorLabel,
         currentDisplay: deleteDisplayValue,
         total: totalDeleteCount,
+        showCancelButton: true,
+        cancelButtonTitle,
+        cancelButtonLabel: "X",
+        cancelHandler,
       });
     }
 
+    ensureNotAborted();
     const finalJson = latestResponseJson || {};
 
     for (const entry of entries) {
+      ensureNotAborted();
       if (entry.isFolder) {
         avttRemoveFolderCacheRecursively(entry.key);
         const thumbnailFolderKey = avttGetThumbnailKeyFromRelative(entry.key);
@@ -7319,6 +7595,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       avttUsageCache.objectCount = finalJson.usage.objectCount;
     }
 
+    ensureNotAborted();
     refreshFiles(
       currentFolder,
       true,
@@ -7328,12 +7605,32 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
       { useCache: true, revalidate: false },
     );
     if (totalDeleteCount > 0) {
-      avttShowOperationComplete(AVTT_OPERATION_INDICATOR_MODES.DELETE, "Delete Complete", 1500);
+      avttShowOperationComplete(indicatorMode, "Delete Complete", 1500);
+    } else {
+      avttHideOperationIndicator(indicatorMode);
     }
   } catch (error) {
-    console.error("Failed to delete files", error);
-    alert(error.message || "Failed to delete file(s).");
-    avttHideOperationIndicator(AVTT_OPERATION_INDICATOR_MODES.DELETE);
+    if (error?.name === "AbortError") {
+      aborted = true;
+    } else {
+      console.error("Failed to delete files", error);
+      alert(error.message || "Failed to delete file(s).");
+      avttHideOperationIndicator(indicatorMode);
+    }
+  } finally {
+    if (avttDeleteAbortController === abortController) {
+      avttDeleteAbortController = null;
+    }
+    $('#avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator').remove();
+  }
+  if (aborted) {
+    const indicatorElement = avttGetOperationIndicatorElement(indicatorMode);
+    if (indicatorElement && indicatorElement.style.display !== "none") {
+      avttShowOperationComplete(indicatorMode, cancelCompletionMessage, 800);
+    } else {
+      avttHideOperationIndicator(indicatorMode);
+    }
+    return;
   }
 }
 
@@ -8131,6 +8428,7 @@ async function avttExecuteGetAllUserFilesRequest(options, signal) {
 
   return aggregated;
 }
+
 
 
 

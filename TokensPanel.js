@@ -3463,32 +3463,74 @@ function persist_my_tokens() {
     localStorage.removeItem("MyTokensFolders");
 }
 
-function persist_folders_remembered_state() {
+function persist_folders_remembered_state(collapsed) {
     if (window.tokenListItems === undefined) return;
     let rememberedFolderState = {};
-    window.tokenListItems
-        .filter(item => item.isTypeFolder())
-        .concat(tokens_rootfolders)
-        .concat(window.sceneListFolders)
-        .forEach(f => {
-            rememberedFolderState[f.id] = f.collapsed;
-        });
+    if(collapsed != undefined){
+        if (collapsed.token === true || collapsed.token === false) {
+            window.sceneListFolders.forEach(f => {
+                rememberedFolderState[f.id] = f.collapsed;
+            });
+            window.tokenListItems
+                .filter(item => item.isTypeFolder()).forEach(f => {
+                    f.collapsed = collapsed.token;
+                    rememberedFolderState[f.id] = collapsed.token;
+                })
+            tokens_rootfolders.forEach(f => {
+                f.collapsed = collapsed.token;
+                rememberedFolderState[f.id] = collapsed.token;
+            });
+
+        }
+        if (collapsed.scene === true || collapsed.scene === false) {
+            window.sceneListFolders.forEach(f => {
+                f.collapsed = collapsed.scene;
+                rememberedFolderState[f.id] = collapsed.scene;
+            });
+            window.tokenListItems
+                .filter(item => item.isTypeFolder())
+                .concat(tokens_rootfolders).forEach(f => {
+                    rememberedFolderState[f.id] = f.collapsed;
+                });
+        }
+    }
+    else{
+        window.tokenListItems
+            .filter(item => item.isTypeFolder())
+            .concat(tokens_rootfolders)
+            .concat(window.sceneListFolders).forEach(f => {
+                rememberedFolderState[f.id] = f.collapsed;
+            });
+    }
     localStorage.setItem("FolderRememberedState", JSON.stringify(rememberedFolderState));
 }
 
 function update_token_folders_remembered_state() {
-    if (!window.tokenListItems || !window.sceneListFolders) {
-        return; // still starting up
-    }
 
-    let items = window.tokenListItems
-        .filter(item => item.isTypeFolder())
-        .concat(tokens_rootfolders)
-        .concat(window.sceneListFolders);
+
+    let folderItems = window.tokenListItems.filter(item => item.isTypeFolder())
+        
 
     if(localStorage.getItem('FolderRememberedState') != null) {
         let rememberedStates = JSON.parse(localStorage.getItem('FolderRememberedState'));
-        items.forEach(item => {
+        if (window.tokenListItems) {
+            folderItems.forEach(item => {
+                let state = rememberedStates[item.id];
+                if (state === true || state === false) {
+                    item.collapsed = state;
+                }
+            });
+        
+            tokens_rootfolders.forEach(item => {
+                let state = rememberedStates[item.id];
+                if (state === true || state === false) {
+                    item.collapsed = state;
+                }
+            });
+        }
+        if (!window.sceneListFolders)
+            return
+        window.sceneListFolders.forEach(item => {
             let state = rememberedStates[item.id];
             if (state === true || state === false) {
                 item.collapsed = state;
