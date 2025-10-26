@@ -4301,7 +4301,7 @@ function checkAudioVolume(){
 	}else{
 		let playerTokenId = $(`#tokens .token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 		for(let tokenId in window.TOKEN_OBJECTS){
-			if(tokenId.includes(window.PLAYER_ID) || window.TOKEN_OBJECTS[tokenId].options.player_owned == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
+			if (tokenId.includes(window.PLAYER_ID) || window.TOKEN_OBJECTS[tokenId].options.player_owned == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == true || window.TOKEN_OBJECTS[tokenId].options.share_vision == window.myUser || (window.TOKEN_OBJECTS[tokenId].options.share_vision && is_spectator_page()) || (playerTokenId == undefined && window.TOKEN_OBJECTS[tokenId].options.itemType == 'pc'))
 		  		tokensToCheck.push(tokenId)
 		}
 	}
@@ -4486,7 +4486,7 @@ function setTokenAuras (token, options) {
 
 function setTokenLight (token, options) {
 	let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
-	const playerNoVision = options.id != playerTokenId && options.share_vision != true && options.share_vision != window.myUser
+	const playerNoVision = options.id != playerTokenId && options.share_vision != true && options.share_vision != window.myUser && !(options.share_vision && is_spectator_page())
 	const playerNoTokenIsPc = playerTokenId == undefined && options.itemType == 'pc'
 	const zeroLight = (options.light1?.feet == 0 && options.light2?.feet == 0) || (!options.light1?.feet && !options.light2?.feet)
 	const zeroVision = options.vision?.feet == 0 || !options.vision?.feet;
@@ -4657,7 +4657,7 @@ function setTokenLight (token, options) {
 	else if(options.type == 'door'){
 		$(".aura-element-container-clip[id='" + options.id +"']").css("display", "")
 	}
-	if((options.sight=='devilsight' || options.sight=='truesight') && (options.share_vision == true || options.share_vision == window.myUser || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
+	if ((options.sight == 'devilsight' || options.sight == 'truesight') && (options.share_vision == true || options.share_vision == window.myUser || (options.share_vision && is_spectator_page()) || options.id.includes(window.PLAYER_ID) || window.DM || (is_player_id(options.id) && playerTokenId == undefined))){
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('devilsight', true);	
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).toggleClass('truesight', options.sight=='truesight');
 	}

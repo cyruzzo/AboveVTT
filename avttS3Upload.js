@@ -5307,23 +5307,23 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
             #avtt-file-picker .beholder-dm-screen.loading-status-indicator__svg {
                 margin:0px !important;
             }
-            #avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator {
+            #avtt-file-picker .sidebar-panel-loading-indicator {
                 position: absolute !important;
                 top: 20px !important;
                 left: 50% !important;
-                background: #d3d3d3d9 !important;
+                background: var(--transparency-color, #d3d3d3d9) !important;
                 width: 200px !important;
                 height: 130px !important;
                 padding: 5px !important;
                 border-radius: 5px;
-                border: 1px solid #000000;
+                border: 1px solid var(--border-color, #000000);
                 transform: translateX(-50%);
                 filter: none;
             }
-            #avtt-file-picker #file-listing-section #loading-container{
+            #avtt-file-picker #loading-container{
               pointer-events:none;
-              position:relative;
-              height:0px;
+              position:absolute;
+              height: 0px;
               width: 100%;
             }
             #patreon-tier a{
@@ -5425,8 +5425,9 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                     <span class="avtt-sortable-header" data-sort="size" data-label="Size">Size</span>
                 </div>
             </div>
+            <div id='loading-container'></div>
             <div id="file-listing-section" style='position: relative;'>
-                <div id='loading-container'></div>
+
                 <table id="file-listing">
                     <tr>
                         <td colspan="4">Loading...</td>
@@ -6935,8 +6936,8 @@ function refreshFiles(
     const normalizedPath = typeof path === "string" ? path : "";
     let renderIndex = 0;
     const fileListingSection = document.getElementById("file-listing-section");
-    if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0){
-      const loadingContainer = $(fileListingSection).find('#loading-container');
+    if ($('#avtt-file-picker .sidebar-panel-loading-indicator').length == 0){
+      const loadingContainer = $('#avtt-file-picker #loading-container');
       loadingContainer.append(build_combat_tracker_loading_indicator('Loading files...'))
     }
     $(fileListingSection).off('scroll.loadMore')
@@ -7439,7 +7440,7 @@ function refreshFiles(
     const shouldFetch =
       wantsRevalidate || !hasCachedData || !useCache;
     if (!shouldFetch) {
-      $('#file-listing-section .sidebar-panel-loading-indicator').remove();
+      $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
       return Promise.resolve();
     }
 
@@ -7462,9 +7463,9 @@ function refreshFiles(
         }
         alert("Error fetching folder listing. See console for details.");
         console.error("Error fetching folder listing: ", err);
-        $('#file-listing-section .sidebar-panel-loading-indicator').remove();
+        $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
       }).finally(() => {
-        $('#file-listing-section .sidebar-panel-loading-indicator').remove();
+        $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
       });
 
     return handledPromise;
@@ -7790,7 +7791,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
   }
 
   if (!payloadEntries.length) {
-    $('#avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator').remove();
+    $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
     avttHideOperationIndicator(indicatorMode);
     if (avttDeleteAbortController === abortController) {
       avttDeleteAbortController = null;
@@ -7938,7 +7939,7 @@ async function deleteFilesFromS3Folder(selections, fileTypes) {
     if (avttDeleteAbortController === abortController) {
       avttDeleteAbortController = null;
     }
-    $('#avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator').remove();
+    $('#avtt-file-picker .sidebar-panel-loading-indicator').remove();
   }
   if (aborted) {
     const indicatorElement = avttGetOperationIndicatorElement(indicatorMode);

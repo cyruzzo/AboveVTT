@@ -56,7 +56,12 @@ $(function() {
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
         } 
-        else if(isDmPage){
+        else if (is_spectator_page()){
+          inject_dice();
+          startup_step("Starting AboveVTT for Spectator");
+          return start_above_vtt_for_spectator();
+        }
+        else if(isDmPage ){
           startup_step("Player joining as DM")
           return start_player_joining_as_dm();
         }else if (is_characters_page()) {
@@ -380,7 +385,7 @@ async function start_above_vtt_common() {
   return true;
 }
 function start_player_joining_as_dm(){
-  if (!is_abovevtt_page() || !is_encounters_page() || !window.DM) {
+  if (!is_abovevtt_page() || !is_encounters_page() || !window.DM ){
     throw new Error(`start_above_vtt_for_dm cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
   //This is not supported at the moment, if supported the DM should have to choose who can be co-dm - judge people trying to cheat
@@ -491,6 +496,60 @@ async function start_above_vtt_for_dm() {
   inject_chat_buttons();
   inject_dm_roll_default_menu();
   
+}
+async function start_above_vtt_for_spectator() {
+  if (!is_spectator_page()) {
+    throw new Error(`start_above_vtt_for_spectoator cannot start on ${window.location.href}; Is Spectator: ${is_spectator_page() }`);
+  }
+
+  //These functions are removed to stop issues with running on the campaign page and loops/extending objects via $.extend. 
+  //We can look at other ways to fix our code so this isn't needed. I've already moved off for...in loops I could find that were targeting arrays.
+  delete Array.prototype.clean
+  delete Array.prototype.distinct
+  delete Array.prototype.each
+  delete Array.prototype.sortBy
+
+  window.document.title = `AVTT Spectator ${window.document.title}`
+  $('meta[name="viewport"]').attr('content', 'width=device-width, initial-scale=1.0, user-scalable=no')
+  const playerId = `spectator-${window.gameId}`;
+  window.PLAYER_ID = playerId;
+  window.PLAYER_IMG = dmAvatarUrl;
+  window.PLAYER_NAME = playerId;
+  window.PLAYER_SHEET = playerId;
+  $(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
+  $(".sidebar__control--lock").closest("button").click(); // lock it open immediately. This is safe to call multiple times
+
+
+  await start_above_vtt_common();
+  window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
+
+ 
+
+  startup_step("Setting up UI");
+  // This brings in the styles that are loaded on the character sheet to support the "send to gamelog" feature.
+  $("body").append(`<link rel="stylesheet" type="text/css" href="https://media.dndbeyond.com/character-tools/styles.bba89e51f2a645f81abb.min.css" >`);
+  $("#site-main").css({ "display": "block", "visibility": "hidden" });
+  $('.page-header, .ddb-campaigns-detail-body, .ddb-campaigns-detail-header').remove();
+  $(".dice-rolling-panel").css({ "visibility": "visible" });
+  $("div.sidebar").parent().css({ "display": "block", "visibility": "visible" });
+  $("#ddbeb-popup-container").css({ "display": "block", "visibility": "visible" });
+  init_ui();
+  remove_loading_overlay();
+  inject_chat_buttons();
+  inject_dm_roll_default_menu();
+  startup_step("Fetching scene from AboveVTT server");
+  const currentSceneData = await AboveApi.getCurrentScene();
+  if (currentSceneData.playerscene) {
+    window.startupSceneId = currentSceneData.playerscene;
+    const activeScene = await AboveApi.getScene(currentSceneData.playerscene);
+    console.log("attempting to handle scene", activeScene);
+    startup_step("Loading Scene");
+    window.MB.handleScene(activeScene);
+    startup_step("Start up complete");
+  } else {
+    console.error("There isn't a player map! we need to display something!");
+    startup_step("Start up complete. Waiting for DM to send us a map");
+  }
 }
 const debounceResizeUI = mydebounce(function(){
   init_character_page_sidebar();
@@ -955,7 +1014,7 @@ function inject_dm_roll_default_menu(){
 }
 
 async function start_above_vtt_for_players() {
-  if (!is_abovevtt_page() || !is_characters_page() || window.DM) {
+  if (!is_spectator_page() && (!is_abovevtt_page() || !is_characters_page() || window.DM)) {
     throw new Error(`start_above_vtt_for_players cannot start on ${window.location.href}; window.DM: ${window.DM}`);
   }
   

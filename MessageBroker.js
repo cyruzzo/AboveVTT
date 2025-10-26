@@ -2179,6 +2179,7 @@ class MessageBroker {
 				if(window.TOKEN_OBJECTS[data.id].isCurrentPlayer() || 
 					window.TOKEN_OBJECTS[data.id].options.share_vision == true || 
 					window.TOKEN_OBJECTS[data.id].options.share_vision == window.myUser || 
+					(window.TOKEN_OBJECTS[data.id].options.share_vision && is_spectator_page()) ||
 					window.TOKEN_OBJECTS[data.id].options.player_owned ||
 					(playerTokenId == undefined && window.TOKEN_OBJECTS[data.id].options.itemType == 'pc')){
 						window.TOKEN_OBJECTS[data.id].highlight();

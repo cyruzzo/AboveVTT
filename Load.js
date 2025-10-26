@@ -166,7 +166,7 @@ if (isPlainCharacterPage) {
 			{ src: "CampaignPage.js" }
 		]
 	}
-	else if(isCampaignPage && !isDM){
+	else if(isCampaignPage && !isVttGamePage){
 
 		window.scripts = [
 			{ src: "environment.js" },
