@@ -3500,6 +3500,7 @@ function drawing_mouseup(e) {
 		return;
 	// ignore this if we're dragging a token
 	if ($(".ui-draggable-dragging:not([data-clone-id])").length > 0){
+		$(".ui-draggable-dragging").toggleClass('.ui-draggable-dragging', false);
 		return
 	}
 	if (window.DRAWSHAPE == "3pointRect" || ((shiftHeld || (!e.touches && e.button != 0))  && ((window.DRAWFUNCTION == "wall" && window.DRAWSHAPE != 'rect')|| window.DRAWFUNCTION == "wall-door" || window.DRAWFUNCTION == 'wall-window'))){
