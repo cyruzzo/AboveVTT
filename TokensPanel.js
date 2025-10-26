@@ -3502,7 +3502,7 @@ function persist_folders_remembered_state(collapsed) {
                 rememberedFolderState[f.id] = f.collapsed;
             });
     }
-    localStorage.setItem("FolderRememberedState", JSON.stringify(rememberedFolderState));
+    localStorage.setItem(`FolderRememberedState-${window.gameId}`, JSON.stringify(rememberedFolderState));
 }
 
 function update_token_folders_remembered_state() {
@@ -3510,9 +3510,9 @@ function update_token_folders_remembered_state() {
 
     let folderItems = window.tokenListItems.filter(item => item.isTypeFolder())
         
-
-    if(localStorage.getItem('FolderRememberedState') != null) {
-        let rememberedStates = JSON.parse(localStorage.getItem('FolderRememberedState'));
+    const state = localStorage.getItem(`FolderRememberedState-${window.gameId}`)
+    if (state != null) {
+        let rememberedStates = JSON.parse(state);
         if (window.tokenListItems) {
             folderItems.forEach(item => {
                 let state = rememberedStates[item.id];
