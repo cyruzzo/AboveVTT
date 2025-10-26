@@ -188,11 +188,6 @@ function inject_dm_join_button() {
   $(".above-vtt-content-div").append(spectatorJoinButton);
   spectatorJoinButton.click(function (e) {
     e.preventDefault();
-    tabCommunicationChannel.postMessage({
-      msgType: 'DMOpenAlready',
-      sendTo: false,
-      url: window.gameId
-    });
     $(e.currentTarget).addClass("button-loading");
 
     try {
