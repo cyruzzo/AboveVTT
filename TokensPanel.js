@@ -3463,16 +3463,45 @@ function persist_my_tokens() {
     localStorage.removeItem("MyTokensFolders");
 }
 
-function persist_folders_remembered_state() {
+function persist_folders_remembered_state(collapsed) {
     if (window.tokenListItems === undefined) return;
     let rememberedFolderState = {};
-    window.tokenListItems
-        .filter(item => item.isTypeFolder())
-        .concat(tokens_rootfolders)
-        .concat(window.sceneListFolders)
-        .forEach(f => {
-            rememberedFolderState[f.id] = f.collapsed;
-        });
+    if(collapsed != undefined){
+        if (collapsed.token === true || collapsed.token === false) {
+            window.sceneListFolders.forEach(f => {
+                rememberedFolderState[f.id] = f.collapsed;
+            });
+            window.tokenListItems
+                .filter(item => item.isTypeFolder()).forEach(f => {
+                    f.collapsed = collapsed.token;
+                    rememberedFolderState[f.id] = collapsed.token;
+                })
+            tokens_rootfolders.forEach(f => {
+                f.collapsed = collapsed.token;
+                rememberedFolderState[f.id] = collapsed.token;
+            });
+
+        }
+        if (collapsed.scene === true || collapsed.scene === false) {
+            window.sceneListFolders.forEach(f => {
+                f.collapsed = collapsed.scene;
+                rememberedFolderState[f.id] = collapsed.scene;
+            });
+            window.tokenListItems
+                .filter(item => item.isTypeFolder())
+                .concat(tokens_rootfolders).forEach(f => {
+                    rememberedFolderState[f.id] = f.collapsed;
+                });
+        }
+    }
+    else{
+        window.tokenListItems
+            .filter(item => item.isTypeFolder())
+            .concat(tokens_rootfolders)
+            .concat(window.sceneListFolders).forEach(f => {
+                rememberedFolderState[f.id] = f.collapsed;
+            });
+    }
     localStorage.setItem("FolderRememberedState", JSON.stringify(rememberedFolderState));
 }
 
