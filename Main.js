@@ -2914,11 +2914,13 @@ function init_zoom_buttons() {
 	zoom_section.append(zoom_plus);
 
 	let hide_interface = $(`<div id='hide_interface_button' class='ddbc-tab-options--layout-pill'><div class='ddbc-tab-options__header-heading hasTooltip button-icon' data-name='Unhide interface (shift+h)'><span class='material-icons md-16 button-icon'>visibility</span></div></div>`);
-	hide_interface.click(unhide_interface);
-	hide_interface.css("display", "none");
-	hide_interface.css("position", "absolute");
-	hide_interface.css("opacity", "50%");
-	hide_interface.css("right", "-136px");
+	hide_interface.css({
+		display: "none",
+		position: "absolute",
+		opacity: 0.5,
+		right: '0px',
+		top: "30px"
+	});;
 	zoom_section.append(hide_interface);
 
 	$(".avtt-sidebar-controls").append(zoom_section);
