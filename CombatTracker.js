@@ -1088,7 +1088,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 		img = $("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	}
 
-	updateImgSrc(token.options.imgsrc, img, video);
+	updateImgSrc(token.options.imgsrc, img, video, true, update_carousel_combat_tracker);
 	img.css('border','3px solid '+token.options.color);
 	if (token.options.hidden == true){
 		img.css('opacity','0.5');

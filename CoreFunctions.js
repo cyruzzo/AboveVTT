@@ -2053,7 +2053,7 @@ async function normalize_scene_urls(scenes) {
 async function getAvttStorageUrl(url, highPriority = false){
   return await getFileFromS3(url.replace('above-bucket-not-a-url/', ''), highPriority);
 }
-async function updateImgSrc(url, container, video, highPriority = true){
+async function updateImgSrc(url, container, video, highPriority = true, callback = () =>{}){
   if(video == true && url?.includes('onedrive')){
     container.attr('src', url.replace('embed?', 'download?'));
   }
@@ -2070,13 +2070,14 @@ async function updateImgSrc(url, container, video, highPriority = true){
   }
   else if(url?.includes('google')){
     throttleImgSrc(() => {
-      container.attr('src', url);
+      container.attr('src', parse_img(url));
     })
   }
   else if(url.startsWith('above-bucket-not-a-url'))
   {
     url = await getAvttStorageUrl(url, highPriority)
     container.attr('src', url);
+    callback();
   }
   else{
     url = parse_img(url);
