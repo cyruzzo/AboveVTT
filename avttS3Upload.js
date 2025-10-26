@@ -1467,6 +1467,178 @@ async function avttDeriveUniqueKey(originalKey) {
   throw new Error("Unable to generate a unique filename for the uploaded file.");
 }
 
+function avttEntryAppearsFolder(entry) {
+  if (!entry || typeof entry !== "object") {
+    return false;
+  }
+  if (entry.isFolder === true) {
+    return true;
+  }
+  const keyCandidate = entry.Key || entry.key;
+  if (typeof keyCandidate === "string" && keyCandidate.endsWith("/")) {
+    return true;
+  }
+  const relativeKey =
+    typeof keyCandidate === "string" ? avttExtractRelativeKey(keyCandidate) : "";
+  return typeof relativeKey === "string" && relativeKey.endsWith("/");
+}
+
+async function avttResolveFolderDescendantConflicts(move, targetRootKey, conflictPolicy) {
+  const skipDescendants = new Set();
+  const additionalMoves = [];
+  let activePolicy = conflictPolicy || null;
+
+  const normalizedFrom = avttNormalizeFolderPath(move?.fromKey);
+  const normalizedTarget = avttNormalizeFolderPath(targetRootKey);
+  if (!normalizedFrom || !normalizedTarget) {
+    return { skipDescendants, additionalMoves, conflictPolicy: activePolicy };
+  }
+
+  let sourceDescendants = [];
+  try {
+    sourceDescendants = await avttCollectDescendantEntries(normalizedFrom, {
+      includeSelf: false,
+    });
+  } catch (error) {
+    console.warn(
+      "Failed to collect source descendants for conflict detection",
+      move?.fromKey,
+      error,
+    );
+    return { skipDescendants, additionalMoves, conflictPolicy: activePolicy };
+  }
+
+  if (!Array.isArray(sourceDescendants) || sourceDescendants.length === 0) {
+    return { skipDescendants, additionalMoves, conflictPolicy: activePolicy };
+  }
+
+  let destinationDescendants = [];
+  try {
+    destinationDescendants = await avttCollectDescendantEntries(normalizedTarget, {
+      includeSelf: true,
+    });
+  } catch (error) {
+    console.warn(
+      "Failed to collect destination descendants for conflict detection",
+      targetRootKey,
+      error,
+    );
+    destinationDescendants = [];
+  }
+
+  const destinationEntryMap = new Map();
+  if (Array.isArray(destinationDescendants)) {
+    for (const entry of destinationDescendants) {
+      if (!entry || entry.synthetic) {
+        continue;
+      }
+      if (avttEntryAppearsFolder(entry)) {
+        continue;
+      }
+      const candidate = entry.key || entry.Key;
+      const normalizedCandidate = avttNormalizeRelativePath(candidate);
+      if (!normalizedCandidate) {
+        continue;
+      }
+      destinationEntryMap.set(normalizedCandidate, entry);
+    }
+  }
+
+  for (const entry of sourceDescendants) {
+    if (!entry || entry.synthetic || entry.isFolder) {
+      continue;
+    }
+    const sourceKey = avttNormalizeRelativePath(entry.key || entry.Key);
+    if (!sourceKey || avttIsHiddenSystemRelativeKey(sourceKey)) {
+      continue;
+    }
+    if (!sourceKey.startsWith(normalizedFrom)) {
+      continue;
+    }
+    const relativeSuffix = sourceKey.slice(normalizedFrom.length);
+    if (!relativeSuffix) {
+      continue;
+    }
+    const targetKey = avttNormalizeRelativePath(`${normalizedTarget}${relativeSuffix}`);
+    if (!targetKey) {
+      continue;
+    }
+
+    let existingEntry = destinationEntryMap.get(targetKey) || null;
+    if (!existingEntry) {
+      try {
+        existingEntry = await avttGetEntryForKey(targetKey);
+      } catch (lookupError) {
+        existingEntry = null;
+      }
+    }
+
+    if (!existingEntry || avttEntryAppearsFolder(existingEntry)) {
+      continue;
+    }
+
+    let action = "overwrite";
+    if (activePolicy?.applyAll) {
+      action = activePolicy.action;
+    } else {
+      const conflictResult = await avttPromptUploadConflict({
+        fileName: targetKey,
+      });
+      if (!conflictResult || !conflictResult.action) {
+        action = "skip";
+      } else {
+        action = conflictResult.action;
+        if (conflictResult.applyAll) {
+          activePolicy = {
+            action,
+            applyAll: true,
+          };
+        }
+      }
+    }
+
+    if (action === "skip") {
+      skipDescendants.add(sourceKey);
+      continue;
+    }
+
+    if (action === "keepBoth") {
+      let uniqueTargetKey = null;
+      try {
+        uniqueTargetKey = await avttDeriveUniqueKey(targetKey);
+      } catch (deriveError) {
+        console.error(
+          "Failed to generate unique destination while resolving descendant conflict",
+          targetKey,
+          deriveError,
+        );
+        alert("Failed to generate a unique name. Skipping this item.");
+        skipDescendants.add(sourceKey);
+        continue;
+      }
+      const sizeValue = Number(entry.size);
+      const normalizedSize = Number.isFinite(sizeValue) ? sizeValue : 0;
+      avttRegisterPendingUploadKey(uniqueTargetKey, normalizedSize);
+      additionalMoves.push({
+        fromKey: sourceKey,
+        toKey: uniqueTargetKey,
+        isFolder: false,
+        size: normalizedSize,
+        overwrite: false,
+      });
+      skipDescendants.add(sourceKey);
+      continue;
+    }
+
+    // overwrite: ensure entry not marked as skipped
+    if (skipDescendants.has(sourceKey)) {
+      skipDescendants.delete(sourceKey);
+    }
+  }
+
+  return { skipDescendants, additionalMoves, conflictPolicy: activePolicy };
+}
+
 async function avttResolveMoveConflicts(moves) {
   const resolved = [];
   let conflictPolicy = null;
@@ -1475,6 +1647,8 @@ async function avttResolveMoveConflicts(moves) {
     let targetKey = move.toKey;
     let action = "overwrite";
     let existingEntry = null;
+    const isFolderMove =
+      Boolean(move?.isFolder) || (typeof targetKey === "string" && /\/$/.test(targetKey));
 
     try {
       existingEntry = await avttGetEntryForKey(targetKey);
@@ -1484,7 +1658,11 @@ async function avttResolveMoveConflicts(moves) {
     }
 
     const exists = Boolean(existingEntry);
-    if (exists) {
+    const existingEntryAppearsFolder = isFolderMove && exists
+      ? avttEntryAppearsFolder(existingEntry)
+      : false;
+
+    if (exists && !existingEntryAppearsFolder) {
       if (conflictPolicy?.applyAll) {
         action = conflictPolicy.action;
       } else {
@@ -1519,12 +1697,61 @@ async function avttResolveMoveConflicts(moves) {
       }
     }
 
+    const skipDescendants = new Set(
+      Array.isArray(move?.skipDescendants)
+        ? move.skipDescendants
+            .map((candidate) => avttNormalizeRelativePath(candidate))
+            .filter(Boolean)
+        : [],
+    );
+    const additionalMoves = [];
+
+    if (isFolderMove) {
+      try {
+        const descendantOutcome = await avttResolveFolderDescendantConflicts(
+          move,
+          targetKey,
+          conflictPolicy,
+        );
+        if (descendantOutcome) {
+          if ("conflictPolicy" in descendantOutcome) {
+            conflictPolicy = descendantOutcome.conflictPolicy;
+          }
+          if (descendantOutcome.skipDescendants instanceof Set) {
+            descendantOutcome.skipDescendants.forEach((key) => {
+              const normalizedKey = avttNormalizeRelativePath(key);
+              if (normalizedKey) {
+                skipDescendants.add(normalizedKey);
+              }
+            });
+          }
+          if (
+            Array.isArray(descendantOutcome.additionalMoves) &&
+            descendantOutcome.additionalMoves.length
+          ) {
+            additionalMoves.push(...descendantOutcome.additionalMoves);
+          }
+        }
+      } catch (descendantError) {
+        console.warn(
+          "Failed to resolve descendant conflicts during move",
+          move?.fromKey,
+          move?.toKey,
+          descendantError,
+        );
+      }
+    }
+
     avttRegisterPendingUploadKey(targetKey, Number(move.size) || 0);
     resolved.push({
       ...move,
       toKey: targetKey,
       overwrite: action === "overwrite" && exists,
+      ...(skipDescendants.size ? { skipDescendants: Array.from(skipDescendants) } : {}),
     });
+    if (additionalMoves.length) {
+      resolved.push(...additionalMoves);
+    }
   }
 
   return resolved;
@@ -3149,25 +3376,116 @@ async function avttMoveEntries(moves, options = {}) {
 
     for (const move of resolvedMoves) {
       ensureNotAborted();
+      const isFolderMove = Boolean(move.isFolder);
       let descendantEntries = null;
-      if (move.isFolder) {
-        descendantEntries = await resolveFolderDescendants(move.fromKey);
+      if (isFolderMove) {
+        const collected = await resolveFolderDescendants(move.fromKey);
         ensureNotAborted();
+        descendantEntries = Array.isArray(collected)
+          ? collected.map((entry) => ({ ...entry }))
+          : [];
       }
       let destinationDescendants = null;
-      if (move.isFolder && move.overwrite) {
+      if (isFolderMove && move.overwrite) {
         try {
-          destinationDescendants = await avttCollectDescendantEntries(move.toKey, {
+          const collectedDestination = await avttCollectDescendantEntries(move.toKey, {
             includeSelf: true,
           });
+          destinationDescendants = Array.isArray(collectedDestination)
+            ? collectedDestination.map((entry) => ({ ...entry }))
+            : [];
         } catch (collectDestinationError) {
           console.warn(
             "Failed to collect destination descendants while preparing move payload",
             move.toKey,
             collectDestinationError,
           );
+          destinationDescendants = [];
         }
         ensureNotAborted();
+      }
+
+      const skipDescendantKeysRaw = Array.isArray(move?.skipDescendants)
+        ? move.skipDescendants
+        : [];
+      if (skipDescendantKeysRaw.length) {
+        const skipSourceSet = new Set(
+          skipDescendantKeysRaw
+            .map((value) => avttNormalizeRelativePath(value))
+            .filter(Boolean),
+        );
+        if (skipSourceSet.size > 0) {
+          if (Array.isArray(descendantEntries) && descendantEntries.length) {
+            descendantEntries = descendantEntries.filter((entry) => {
+              const candidate = avttNormalizeRelativePath(entry?.key || entry?.Key);
+              return candidate ? !skipSourceSet.has(candidate) : true;
+            });
+          }
+          if (Array.isArray(destinationDescendants) && destinationDescendants.length) {
+            const normalizedFromRoot = avttNormalizeFolderPath(move.fromKey);
+            const normalizedToRoot = avttNormalizeFolderPath(move.toKey);
+            const skipDestinationSet = new Set();
+            if (normalizedFromRoot && normalizedToRoot) {
+              skipSourceSet.forEach((sourceKey) => {
+                if (sourceKey.startsWith(normalizedFromRoot)) {
+                  const suffix = sourceKey.slice(normalizedFromRoot.length);
+                  const destCandidate = avttNormalizeRelativePath(
+                    `${normalizedToRoot}${suffix}`,
+                  );
+                  if (destCandidate) {
+                    skipDestinationSet.add(destCandidate);
+                  }
+                }
+              });
+            }
+            destinationDescendants = destinationDescendants.filter((entry) => {
+              const candidate = avttNormalizeRelativePath(entry?.key || entry?.Key);
+              return candidate ? !skipDestinationSet.has(candidate) : true;
+            });
+          }
+        }
+      }
+
+      let descendantRelativeKeySet = null;
+      if (isFolderMove && Array.isArray(descendantEntries)) {
+        const normalizedFromRoot = avttNormalizeFolderPath(move.fromKey);
+        if (normalizedFromRoot) {
+          descendantRelativeKeySet = new Set([""]);
+          descendantEntries.forEach((entry) => {
+            const rawKey = avttNormalizeRelativePath(entry?.key || entry?.Key);
+            if (!rawKey) {
+              return;
+            }
+            if (rawKey === normalizedFromRoot) {
+              descendantRelativeKeySet.add("");
+              return;
+            }
+            if (!rawKey.startsWith(normalizedFromRoot)) {
+              return;
+            }
+            const suffix = rawKey.slice(normalizedFromRoot.length);
+            descendantRelativeKeySet.add(suffix);
+          });
+        }
+      }
+
+      if (
+        isFolderMove &&
+        descendantRelativeKeySet &&
+        Array.isArray(destinationDescendants) &&
+        destinationDescendants.length
+      ) {
+        const normalizedToRoot = avttNormalizeFolderPath(move.toKey);
+        if (normalizedToRoot) {
+          destinationDescendants = destinationDescendants.filter((entry) => {
+            const rawKey = avttNormalizeRelativePath(entry?.key || entry?.Key);
+            if (!rawKey || !rawKey.startsWith(normalizedToRoot)) {
+              return false;
+            }
+            const suffix = rawKey.slice(normalizedToRoot.length);
+            return descendantRelativeKeySet.has(suffix);
+          });
+        }
       }
 
       const moveItem = {
@@ -3184,7 +3502,6 @@ async function avttMoveEntries(moves, options = {}) {
       }
       moveItems.push(moveItem);
 
-      const isFolderMove = Boolean(move.isFolder);
       let fromThumbnailKey = null;
       let toThumbnailKey = null;
       let thumbnailDescendants = null;
@@ -4094,11 +4411,6 @@ const PatreonAuth = (() => {
     clientId:
       "2Pn4arX8GDny2KAhA5HjETX4Ni4M04SzECfN_GTdUmLKcM3ReJso1YA8wyHG1FBi",
     redirectUri: `https://patreon-html.s3.us-east-1.amazonaws.com/patreon-auth-callback.html`,
-    campaignSlug: "azmoria",
-    creatorVanity: "azmoria",
-    creatorName: "Azmoria",
-    avttCampaignSlug: "abovevtt",
-    creatorIds: ["939792"],
     scope:
       "identity identity[email] identity.memberships campaigns campaigns.members",
     popupWidth: 600,
@@ -4571,13 +4883,6 @@ const debounceSearchFiles = (searchTerm, fileTypes) => {
 
 async function launchFilePicker(selectFunction = false, fileTypes = []) {
   $("#avtt-s3-uploader").remove();
-    if (avttUploadController) {
-      try { avttUploadController.abort('User cancelled upload by reopening uploader.'); } catch {}
-    }
-
-    avttUploadQueue = [];
-    avttQueueTotalEnqueued = 0;
-    avttQueueCompleted = 0;
   const draggableWindow = find_or_create_generic_draggable_window(
     "avtt-s3-uploader",
     "AVTT File Uploader",
@@ -4592,16 +4897,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
     "input, li, a, label",
   );
   draggableWindow.toggleClass("prevent-sidebar-modal-close", true);
-  draggableWindow.find(".title_bar_close_button").off("click.cancelUpload").on("click.cancelUpload", () => {
-    if (avttUploadController) {
-      try { avttUploadController.abort('User cancelled upload by closing window.'); } catch {}
-    }
 
-    avttUploadQueue = [];
-    avttQueueTotalEnqueued = 0;
-    avttQueueCompleted = 0;
-    clearGetFileFromS3Queue();
-  });
   
   let membership;
   try {
@@ -5012,8 +5308,23 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 margin:0px !important;
             }
             #avtt-file-picker #file-listing-section .sidebar-panel-loading-indicator {
-                padding: 0px !important;
-                position: sticky !important;
+                position: absolute !important;
+                top: 20px !important;
+                left: 50% !important;
+                background: #d3d3d3d9 !important;
+                width: 200px !important;
+                height: 130px !important;
+                padding: 5px !important;
+                border-radius: 5px;
+                border: 1px solid #000000;
+                transform: translateX(-50%);
+                filter: none;
+            }
+            #avtt-file-picker #file-listing-section #loading-container{
+              pointer-events:none;
+              position:relative;
+              height:0px;
+              width: 100%;
             }
             #patreon-tier a{
               text-decoration: underline 1px dotted color-mix(in srgb, var(--link-color, rgba(39, 150, 203, 1)), transparent 50%);
@@ -5079,6 +5390,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                     </div>
                   </div>
                   <input id='search-files' type='search' placeholder='Search' />
+                  <div style='display:flex'><span id='refresh-files' class="material-symbols-outlined">refresh</span></div>
                   <div style='flex-grow:1'></div>
                   <div id='counter-indicators'>
                     <div id='uploading-file-indicator' class='avtt-operation-indicator' style='display:none'></div>
@@ -5114,6 +5426,7 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
                 </div>
             </div>
             <div id="file-listing-section" style='position: relative;'>
+                <div id='loading-container'></div>
                 <table id="file-listing">
                     <tr>
                         <td colspan="4">Loading...</td>
@@ -5369,7 +5682,6 @@ async function launchFilePicker(selectFunction = false, fileTypes = []) {
   refreshFiles(currentFolder, true, undefined, undefined, fileTypes);
   avttUpdateSelectNonFoldersCheckbox();
   avttUpdateActionsMenuState();
-
 
 
 
@@ -6603,8 +6915,12 @@ function refreshFiles(
   fileTypes,
   options = {},
 ) {
+    $('#refresh-files').off('click.refresh').on('click.refresh', function () {
+      const newOptions = searchTerm != undefined ? options : {...options, useCache: false, revalidate: true};
+      
+      refreshFiles(path, recheckSize, allFiles, searchTerm, fileTypes, newOptions);
+    })
 
-   
     try {
       clearGetFileFromS3Queue();
     } catch (e) {
@@ -6620,7 +6936,8 @@ function refreshFiles(
     let renderIndex = 0;
     const fileListingSection = document.getElementById("file-listing-section");
     if ($('#file-listing-section .sidebar-panel-loading-indicator').length == 0){
-      $(fileListingSection).append(build_combat_tracker_loading_indicator('Loading files...'));
+      const loadingContainer = $(fileListingSection).find('#loading-container');
+      loadingContainer.append(build_combat_tracker_loading_indicator('Loading files...'))
     }
     $(fileListingSection).off('scroll.loadMore')
     currentFolder = typeof path === "string" ? path : "";
