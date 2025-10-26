@@ -152,7 +152,7 @@ function get_token_color_by_index(index) {
 function find_and_set_player_color() {
 	const playerId = my_player_id();
 
-	if (playerId === dm_id) {
+	if (playerId === dm_id || is_spectator_page()) {
 		// DM just uses the default DDB theme
 		const dmPc = generic_pc_object(true);
 		change_player_color(dmPc.decorations.characterTheme.themeColor);
