@@ -560,7 +560,7 @@ const debounceResizeUI = mydebounce(function(){
 }, 100)
 
 function inject_dm_roll_default_menu(){
-  if(!window.DM)
+  if(!window.DM && !is_spectator_page())
     return;
   const gamelogTitle = $('.glc-game-log>[class*="-Container-Flex"]>[class*="-Title"]');
   const flexContainer = $('<div class="tss-ko5p4u-Flex"></div>');
