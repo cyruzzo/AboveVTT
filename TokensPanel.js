@@ -669,7 +669,6 @@ function redraw_token_list(searchTerm, enableDraggable = true, leaveEmpty=false)
 
             $(`#${item.parentId} > .folder-item-list`).append(row);
 
-
             // find_html_row_from_path(item.folderPath, list).find(` > .folder-item-list`).append(row);
         });
 
