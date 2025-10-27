@@ -1914,8 +1914,8 @@ function close_player_sheet()
 		window.character_sheet_observer.disconnect();
 		delete window.character_sheet_observer;
 	}
-	if(!window.DM){
-			observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
+	if(!window.DM && !is_spectator_page()){
+		observe_character_sheet_changes($('#site-main, .ct-sidebar__portal'));
 	}
 }
 /**
@@ -2917,10 +2917,10 @@ function init_zoom_buttons() {
 	hide_interface.css({
 		display: "none",
 		position: "absolute",
-		opacity: 0.5,
+		opacity: 0.1,
 		right: '0px',
 		top: "-30px"
-	});;
+	});
 	zoom_section.append(hide_interface);
 
 	$(".avtt-sidebar-controls").append(zoom_section);
