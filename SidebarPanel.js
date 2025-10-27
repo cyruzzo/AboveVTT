@@ -3319,11 +3319,19 @@ function add_expand_collapse_buttons_to_header(sidebarPanel, addHideButton=false
 
   let expandAll = $(`<button class="token-row-button expand-collapse-button" title="Expand All Folders" style=""><span class="material-icons">expand</span></button>`);
   expandAll.on("click", function (clickEvent) {
-    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
+    const panel = $(clickEvent.target).closest(".sidebar-panel-content")
+    panel.find(".sidebar-panel-body .folder:not(.not-collapsible)").removeClass("collapsed");
+    const panelId = panel.attr('id'); 
+    const options = panelId.includes('tokens') ? { token: false } : panelId.includes('scenes') ? { scene: false } : {};
+    persist_folders_remembered_state(options);
   });
   let collapseAll = $(`<button class="token-row-button expand-collapse-button" title="Collapse All Folders" style=""><span class="material-icons">vertical_align_center</span></button>`);
   collapseAll.on("click", function (clickEvent) {
-    $(clickEvent.target).closest(".sidebar-panel-content").find(".sidebar-panel-body .folder:not(.not-collapsible)").addClass("collapsed");
+    const panel = $(clickEvent.target).closest(".sidebar-panel-content")
+    panel.find(".sidebar-panel-body .folder:not(.not-collapsible)").addClass("collapsed");
+    const panelId = panel.attr('id');
+    const options = panelId.includes('tokens') ? { token: true } : panelId.includes('scenes') ? { scene: true } : {};
+    persist_folders_remembered_state(options);
   });
   let buttonWrapper = $("<div class='expand-collapse-wrapper'></div>");
   sidebarPanel.header.find(".sidebar-panel-header-title").append(buttonWrapper);
