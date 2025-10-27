@@ -58,7 +58,24 @@ button#startScreenShare{
     border-radius: 5px;
 }
 
-
+#hide_interface_button{
+    display: none;
+    position: absolute;
+    opacity: 0.1 !important;
+    right: 0px;
+    top: -30px;
+    scale: 0.5;
+}
+#hide_interface_button:hover {
+    scale: 1;
+    opacity: 1 !important;
+}
+div#hide_interface_button [data-name]:after {
+    position: relative;
+    left: unset;
+    right: 40px;
+    top: 15px;
+}
 canvas.dice-rolling-panel__container{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
 }

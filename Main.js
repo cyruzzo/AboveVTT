@@ -2919,7 +2919,7 @@ function init_zoom_buttons() {
 		position: "absolute",
 		opacity: 0.5,
 		right: '0px',
-		top: "30px"
+		top: "-30px"
 	});;
 	zoom_section.append(hide_interface);
 
