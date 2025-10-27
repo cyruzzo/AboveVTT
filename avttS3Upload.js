@@ -3290,12 +3290,12 @@ async function avttMoveEntries(moves, options = {}) {
         : AVTT_OPERATION_INDICATOR_MODES.MOVE;
     if (indicatorMode === AVTT_OPERATION_INDICATOR_MODES.RENAME) {
       if (avttRenameAbortController && avttRenameAbortController.signal && !avttRenameAbortController.signal.aborted) {
-        try { avttRenameAbortController.abort("Replaced by new rename operation."); } catch { /* no-op */ }
+        try { avttRenameAbortController.abort("Replaced by new rename operation."); } catch {}
       }
       avttRenameAbortController = new AbortController();
     } else {
       if (avttMoveAbortController && avttMoveAbortController.signal && !avttMoveAbortController.signal.aborted) {
-        try { avttMoveAbortController.abort("Replaced by new move operation."); } catch { /* no-op */ }
+        try { avttMoveAbortController.abort("Replaced by new move operation."); } catch {}
       }
       avttMoveAbortController = new AbortController();
     }
@@ -3338,7 +3338,7 @@ async function avttMoveEntries(moves, options = {}) {
           : "Move Cancelled";
     cancelHandler = () => {
       if (!signal?.aborted) {
-        try { abortController.abort(abortReason); } catch { /* no-op */ }
+        try { abortController.abort(abortReason); } catch { }
       }
     };
     ensureNotAborted();
@@ -6246,8 +6246,8 @@ const showUploadingProgress = (index, total) => {
       if (avttUploadController) {
         try {
           avttUploadController.abort("User cancelled upload by clicking the cancel button.");
+          showUploadComplete();
         } catch {
-          /* no-op */
         }
       }
       avttUploadQueue = [];
