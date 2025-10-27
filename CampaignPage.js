@@ -122,7 +122,30 @@ function inject_instructions() {
   instructionsButton.click(function(e) {
     $("#campaign_banner").toggle();
   });
+  let spectatorJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
+  contentDiv.append(spectatorJoinButton);
+  spectatorJoinButton.click(function (e) {
+    e.preventDefault();
+    $(e.currentTarget).addClass("button-loading");
 
+    try {
+      window.open(`${window.document.location.href}?abovevtt=true&spectator=true`, '_blank');
+      // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
+      let oldText = $(".joinspectator").text();
+      $(".joinspectator").removeClass("button-loading");
+      $(".joinspectator").text("Check for blocked pop ups!");
+      // reset our join button text, so it looks normal the next time they're on this tab
+      setTimeout(function () {
+        $(".joinspectator").text(oldText);
+      }, 2000);
+    }
+    catch (error) {
+      showError(error, "Failed to start AboveVTT from spectate join button");
+    }
+
+
+    $(e.currentTarget).removeClass("button-loading");
+  });
   const campaign_banner = $("<div id='campaign_banner'></div>");
   campaign_banner.append(`
     <h4><img class='above-vtt-right-margin-5px' alt='above vtt logo' width='100px' src='${window.EXTENSION_PATH}assets/logo.png'>Basic Instructions!</h4>
@@ -184,30 +207,7 @@ function inject_dm_join_button() {
         
     </div>
   `);
-  let spectatorJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joinspectator btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Spectate</a>");
-  $(".above-vtt-content-div").append(spectatorJoinButton);
-  spectatorJoinButton.click(function (e) {
-    e.preventDefault();
-    $(e.currentTarget).addClass("button-loading");
 
-    try {
-      window.open(`${window.document.location.href}?abovevtt=true&spectator=true`, '_blank');
-      // pop up blockers can prevent us from opening in a new tab. Tell our users in case this happens to them
-      let oldText = $(".joinspectator").text();
-      $(".joinspectator").removeClass("button-loading");
-      $(".joinspectator").text("Check for blocked pop ups!");
-      // reset our join button text, so it looks normal the next time they're on this tab
-      setTimeout(function () {
-        $(".joinspectator").text(oldText);
-      }, 2000);
-    }
-    catch (error) {
-      showError(error, "Failed to start AboveVTT from spectate join button");
-    }
-
-
-    $(e.currentTarget).removeClass("button-loading");
-  });
   let dmJoinButton = $("<a style='padding:10px 25px;' class='above-vtt-campaignscreen-blue-button above-vtt-right-margin-5px button joindm btn modal-link ddb-campaigns-detail-body-listing-campaign-link'>Join as DM</a>");
   $(".above-vtt-content-div").append(dmJoinButton);
   dmJoinButton.click(function(e) {
