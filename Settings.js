@@ -659,6 +659,11 @@ function avtt_settings() {
 				{ value: true, label: "Enabled", description: `` },
 				{ value: false, label: "Disabled", description: `` }
 			], },
+			{   name: "spectatorHideUi", label: "Spectate View Hide UI", defaultValue: false, dmOnly: false, type: 'toggle', options: [
+					{ value: true, label: "Enabled", description: `` },
+					{ value: false, label: "Disabled", description: `` }
+				],
+			},
 		],
 		defaultValue: {},
 		class: 'defaults'

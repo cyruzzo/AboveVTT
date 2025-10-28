@@ -123,7 +123,7 @@ function unhide_interface() {
         $('#hide_interface_button').hide().removeClass('unhidden');
         $('.hideable').show();
         $(".dice-toolbar").css({'visibility': '', 'pointer-events': ''});
-        hide_scrollbar();
+        hide_or_unhide_scrollbar() 
     } else {
         if ($('#hide_rightpanel').hasClass('point-right')) {
             $('#hide_rightpanel').click();
@@ -134,9 +134,7 @@ function unhide_interface() {
         $(".dice-toolbar").css({'visibility': 'hidden', 'pointer-events': 'none'});
         $('#hide_interface_button').show().addClass('unhidden');
         $('.hideable').hide();
-        if (!get_avtt_setting_value("alwaysHideScrollbar")) {        
-            allow_scrollbar();        
-        }
+        hide_scrollbar();
     }
 }
 
