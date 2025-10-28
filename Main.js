@@ -2565,6 +2565,9 @@ function init_zoom_buttons() {
 		return;
 	}
 	let defaultValues = get_avtt_setting_value('quickToggleDefaults') || {};
+	if (is_spectator_page() && defaultValues.spectatorHideUi) {
+		unhide_interface();
+	}
 	// ZOOM BUTTON
 	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);

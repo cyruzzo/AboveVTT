@@ -534,6 +534,9 @@ async function start_above_vtt_for_spectator() {
   $("div.sidebar").parent().css({ "display": "block", "visibility": "visible" });
   $("#ddbeb-popup-container").css({ "display": "block", "visibility": "visible" });
   init_ui();
+  if (get_avtt_setting_value('quickToggleDefaults')?.spectatorHideUi) {
+    unhide_interface();
+  }
   remove_loading_overlay();
   inject_chat_buttons();
   inject_dm_roll_default_menu();
