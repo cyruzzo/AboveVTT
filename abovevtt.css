@@ -78,6 +78,7 @@ div#hide_interface_button [data-name]:after {
 }
 canvas.dice-rolling-panel__container{
     max-width: calc(100% - var(--sidebar-width, 340px)) !important;
+    z-index: 160000 !important;
 }
 
 .abovevttTempMessage{

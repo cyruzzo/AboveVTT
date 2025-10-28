@@ -787,7 +787,13 @@ function update_carousel_combat_tracker(){
 	    }
 
 	    table.find(`tr[data-target='${firstTokenId}']`).toggleClass('first-in-round', true);
+		const images = table.find(`tr td:first-of-type img[data-id^='above-bucket-not-a-url']`);
 
+		for(let image of images){
+			image = $(image);
+			const imageId = image.attr('data-id');
+			updateImgSrc(imageId, image, image.is('video'), true)
+		}
 
 
 	    if(window.DM){
@@ -809,6 +815,8 @@ function update_carousel_combat_tracker(){
 	    	
 	    }
     }
+
+
 
     
 }
@@ -1087,7 +1095,7 @@ function ct_add_token(token,persist=true,disablerolling=false, adv=false, dis=fa
 	else{
 		img = $("<img width=35 height=35 class='Avatar_AvatarPortrait__2dP8u'>");
 	}
-
+	img.attr('data-id', token.options.imgsrc);
 	updateImgSrc(token.options.imgsrc, img, video, true, update_carousel_combat_tracker);
 	img.css('border','3px solid '+token.options.color);
 	if (token.options.hidden == true){

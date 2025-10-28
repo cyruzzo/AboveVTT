@@ -2642,7 +2642,7 @@ class JournalManager{
 			.dm-eyes-only{
 				 border: 1px solid #000;
 				 border-radius: 5px;
-				 background: #f5f5f5;
+				 background: var(--background-color, #f5f5f5);
 				 padding: 0px 5px;
 				 margin: 9px 10px;
 				 display: ${window.DM ? 'block' : 'none'};
@@ -2657,7 +2657,7 @@ class JournalManager{
 				 float:right;
 				 border:1px #000 solid;
 				 border-radius:5px;
-				 background: #f5f5f5;
+				 background: var(--background-color, #f5f5f5);
 				 font-weight: bold;
 				 font-size:10px;
 				 padding:0px 4px;
@@ -2665,7 +2665,7 @@ class JournalManager{
 			.Basic-Text-Frame {
 				 clear: both;
 				 border: 1px solid #d4d0ce;
-				 background: white;
+				 background: var(--background-color, white);
 				 padding: 15px 
 			}
 			@media(min-width: 768px) {
@@ -2680,7 +2680,7 @@ class JournalManager{
 			}
 			.Basic-Text-Frame-2 {
 				 border: 1px solid #d4d0ce;
-				 background: white;
+				 background: var(--background-color, white);
 				 padding: 15px 
 			}
 			.ignore-abovevtt-formating{
@@ -2708,7 +2708,7 @@ class JournalManager{
 			}
 			.Basic-Text-Frame-3 {
 				 border: 1px solid #d4d0ce;
-				 background: white;
+				 background: var(--background-color, white);
 				 padding: 15px 
 			}
 			@media(min-width: 768px) {
@@ -2872,7 +2872,7 @@ class JournalManager{
 			/* START - New rules sidebar implementation */
 			.text--rules-sidebar {
 				 display: block !important;
-				 background-color: var(--compendium-rules-sidebar-color, #DAE4C1) !important;
+				 background-color: var(--background-color, var(--compendium-rules-sidebar-color, #DAE4C1)) !important;
 				/*Fallback: if the variable isn't declared, it'll default to pale-green*/
 				 position: relative !important;
 				 width: auto !important;
@@ -3002,7 +3002,7 @@ class JournalManager{
 				 -moz-box-shadow: 0 5px 8px 0 #aaa;
 				 box-shadow: 0 5px 8px 0 #aaa;
 				 background-position: top!important;
-				 background-image: url(https://media.dndbeyond.com/encounter-builder/static/media/stat-block-top-texture.70eb7c244ee206f35cc0.png),url(https://media.dndbeyond.com/encounter-builder/static/media/paper-texture.88243187e307464c5837.png) !important;
+				 background-image: var(--background-color, url(https://media.dndbeyond.com/encounter-builder/static/media/stat-block-top-texture.70eb7c244ee206f35cc0.png),url(https://media.dndbeyond.com/encounter-builder/static/media/paper-texture.88243187e307464c5837.png)) !important;
 				 background-size: 100%, cover !important;
 			}
 			.stat-block-background:after,.stat-block-background:before {
@@ -3017,7 +3017,7 @@ class JournalManager{
 			}
 			.block-torn-paper,.epigraph,.epigraph--with-author {
 				 overflow: auto;
-				 background: var(--theme-quote-bg-color,#fff);
+				 background: var(--background-color, var(--theme-quote-bg-color,#fff));
 				 color: var(--theme-quote-fg-color,#242527);
 				 margin: 40px 0;
 				 line-height: 1.6;
@@ -3101,13 +3101,13 @@ class JournalManager{
 			.stat-block {
 				 --compendium-p-bottom: 0;
 				 border: 1px solid #a7a3a0;
-				 background-color: #fefcef;
+				 background-color: var(--background-color, #fefcef);
 				 padding: 10px;
 				 position: relative;
 				 background-repeat: no-repeat;
 				 box-shadow: 0 5px 8px 0 var(--stat-block-shadow,#aaa);
 				 background-position: top;
-				 background: var(--stat-block-bg-override,#f6f3ee);
+				 background: var(--background-color, var(--stat-block-bg-override,#f6f3ee));
 				 font-size: 16px;
 				 line-height: 19.6px;
 				 border-radius: 8px;
@@ -3741,7 +3741,9 @@ class JournalManager{
 					const fontColor = $(':root').css('--font-color');
 					body.css({
 						background: backgroundColor,
-						color: fontColor
+						color: fontColor,
+						'--font-color': fontColor,
+						'--background-color': backgroundColor
 					});
 					avttImages.each(async (index, image) => {
 						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
