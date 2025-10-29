@@ -2405,7 +2405,8 @@ function init_ui() {
 		if (curDown) {
 			let scrollOptions = {
 				left: window.scrollX + curXPos - m.pageX,
-				top: window.scrollY + curYPos - m.pageY
+				top: window.scrollY + curYPos - m.pageY,
+				behavior: "instant"
 			}
 			requestAnimationFrame(function(){
 				window.scrollTo(scrollOptions)
