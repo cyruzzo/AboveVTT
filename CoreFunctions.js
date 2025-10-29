@@ -602,7 +602,7 @@ function openDB() {
   );
    
   promises.push(new Promise((resolve, reject) => {
-      const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 3);
+      const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 5);
       DBOpenRequest2.onsuccess = (e) => {
         resolve(DBOpenRequest2.result);
       };
@@ -617,8 +617,8 @@ function openDB() {
           if(!db.objectStoreNames?.contains('journalData')){
             const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
           }
-          if (!db.objectStoreNames?.contains('avttFilePicker')) {
-            const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
+          if (db.objectStoreNames?.contains('avttFilePicker')) {
+            db.deleteObjectStore('avttFilePicker');
           }
       };
     })
@@ -759,7 +759,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
       if(window.top.CURRENTLY_SELECTED_TOKENS.length == 1) {
         window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
       } 
-      else if(window.top.TOKEN_OBJECTS[tokenId] != undefined){
+      else if (window.top.TOKEN_OBJECTS[tokenId] != undefined && !window.top.TOKEN_OBJECTS[tokenId].options.combatGroupToken){
         window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[tokenId]);
       }else {
         window.top.place_aoe_token_in_centre(options)

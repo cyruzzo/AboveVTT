@@ -80,7 +80,7 @@ async function openCampaignDB(startUp = function () { }) {
   };
 
 
-  const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 3);
+  const DBOpenRequest2 = indexedDB.open(`AboveVTT-Global`, 5);
 
   DBOpenRequest2.onsuccess = (e) => {
     window.globalIndexedDB = DBOpenRequest2.result;
@@ -97,8 +97,8 @@ async function openCampaignDB(startUp = function () { }) {
     if (!db.objectStoreNames?.contains('journalData')) {
       const objectStore2 = db.createObjectStore("journalData", { keyPath: "journalId" });
     }
-    if (!db.objectStoreNames?.contains('avttFilePicker')) {
-      const objectStore3 = db.createObjectStore("avttFilePicker", { keyPath: "fileEntry" });
+    if (db.objectStoreNames?.contains('avttFilePicker')){
+      db.deleteObjectStore('avttFilePicker');
     }
   };
 }

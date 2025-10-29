@@ -2405,7 +2405,8 @@ function init_ui() {
 		if (curDown) {
 			let scrollOptions = {
 				left: window.scrollX + curXPos - m.pageX,
-				top: window.scrollY + curYPos - m.pageY
+				top: window.scrollY + curYPos - m.pageY,
+				behavior: "instant"
 			}
 			requestAnimationFrame(function(){
 				window.scrollTo(scrollOptions)
@@ -2565,9 +2566,7 @@ function init_zoom_buttons() {
 		return;
 	}
 	let defaultValues = get_avtt_setting_value('quickToggleDefaults') || {};
-	if (is_spectator_page() && defaultValues.spectatorHideUi) {
-		unhide_interface();
-	}
+
 	// ZOOM BUTTON
 	let zoom_section = $("<div id='zoom_buttons' />");
 	const youtube_controls_button = $(`<div id='youtube_controls_button' class='ddbc-tab-options--layout-pill hasTooltip button-icon hideable' data-name='Quick toggle youtube controls'></div>`);
@@ -2927,7 +2926,7 @@ function init_zoom_buttons() {
 	zoom_section.append(hide_interface);
 
 	$(".avtt-sidebar-controls").append(zoom_section);
-	if (window.DM) {
+	if (window.DM || is_spectator_page()) {
 		zoom_section.css("right","371px");
 	} else {
 		zoom_section.css("right","420px");

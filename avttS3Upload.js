@@ -453,111 +453,7 @@ function avttDelayFilePickerWriteTick() {
   });
 }
 
-function avttRunFilePickerTransaction(mode, executor) {
-  return new Promise((resolve, reject) => {
-    if (!window.globalIndexedDB) {
-      reject(new Error("globalIndexedDB not available"));
-      return;
-    }
-    let completed = false;
-    let tx;
-    try {
-      tx = window.globalIndexedDB.transaction([AVTT_FILE_PICKER_STORE], mode);
-    } catch (err) {
-      reject(err);
-      return;
-    }
-    tx.oncomplete = () => {
-      if (!completed) {
-        completed = true;
-        resolve();
-      }
-    };
-    const fail = (event) => {
-      if (!completed) {
-        completed = true;
-        const error =
-          event?.target?.error || tx?.error || new Error("IndexedDB transaction failed");
-        reject(error);
-      }
-    };
-    tx.onerror = fail;
-    tx.onabort = fail;
-    try {
-      const store = tx.objectStore(AVTT_FILE_PICKER_STORE);
-      executor(store, tx);
-    } catch (err) {
-      fail({ target: { error: err } });
-      try {
-        tx.abort();
-      } catch (abortErr) {
-      }
-    }
-  });
-}
 
-async function avttWriteFilePickerRecords(records = []) {
-  if (!window.globalIndexedDB) {
-    throw new Error("globalIndexedDB not available");
-  }
-  const normalized = Array.isArray(records) ? records.filter((rec) => rec && rec.fileEntry) : [];
-
-  if (normalized.length === 0) {
-    try {
-      await avttRunFilePickerTransaction("readwrite", (store) => {
-        store.clear();
-      });
-    } catch (err) {
-      console.warn("avttWriteFilePickerRecords clear failed", err);
-    }
-    return;
-  }
-
-  for (let offset = 0; offset < normalized.length; offset += AVTT_FILE_PICKER_WRITE_BATCH_SIZE) {
-    const chunk = normalized.slice(offset, offset + AVTT_FILE_PICKER_WRITE_BATCH_SIZE);
-    try {
-      await avttRunFilePickerTransaction("readwrite", (store) => {
-        if (offset === 0) {
-          store.clear();
-        }
-        for (const rec of chunk) {
-          try {
-            store.put(rec);
-          } catch (err) {
-            console.warn("avttWriteFilePickerRecords put failed", err);
-          }
-        }
-      });
-    } catch (err) {
-      console.warn("avttWriteFilePickerRecords transaction failed", err);
-      break;
-    }
-    if (offset + AVTT_FILE_PICKER_WRITE_BATCH_SIZE < normalized.length) {
-      await avttDelayFilePickerWriteTick();
-    }
-  }
-}
-
-
-function avttReadFilePickerRecords() {
-  return new Promise((resolve, reject) => {
-    if (!window.globalIndexedDB) {
-      return reject(new Error('globalIndexedDB not available'));
-    }
-    try {
-      const tx = window.globalIndexedDB.transaction(
-        [AVTT_FILE_PICKER_STORE],
-        'readonly',
-      );
-      const store = tx.objectStore(AVTT_FILE_PICKER_STORE);
-      const req = store.getAll();
-      req.onsuccess = () => resolve(req.result || []);
-      req.onerror = (e) => reject(e);
-    } catch (err) {
-      reject(err);
-    }
-  });
-}
 const persistCacheThrottle = throttle((persistToCloud = true)=>{
   const records = [];
   if (Array.isArray(avttAllFilesCache)) {
@@ -573,9 +469,7 @@ const persistCacheThrottle = throttle((persistToCloud = true)=>{
     records.push({ fileEntry: recordKey, type: "folderListing", payload: clonedListing });
   }
   try {
-    avttWriteFilePickerRecords(records).catch((err) => {
-      console.warn("avttWriteFilePickerRecords failed", err);
-    });
+
     if(persistToCloud){
       uploadCacheFile()
     }
@@ -588,60 +482,7 @@ function avttPersistCachesToIndexedDB(persistToCloud = true) {
   persistCacheThrottle(persistToCloud);
 }
 
-function avttLoadCachesFromIndexedDB() {
-  
-  return avttReadFilePickerRecords().then((results) => {
-  avttFolderListingCache.clear();
-  avttAllFilesCache = [];
-  for (const rec of results) {
-    if (!rec || !rec.fileEntry) continue;
-    if (rec.type === "file" && rec.payload) {
-      const clonedEntry = avttCloneListingEntry(rec.payload);
-      if (
-        clonedEntry?.Key &&
-        !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(clonedEntry.Key))
-      ) {
-        avttAllFilesCache.push(clonedEntry);
-      }
-    } else if (rec.type === "folderListing" && typeof rec.fileEntry === "string") {
-      const folderKey = rec.fileEntry.replace(/^folder:/, "");
-      const listing = Array.isArray(rec.payload)
-        ? rec.payload
-            .map(avttCloneListingEntry)
-            .filter(
-              (entry) =>
-                entry &&
-                entry.Key &&
-                !avttIsHiddenSystemRelativeKey(avttExtractRelativeKey(entry.Key)),
-            )
-        : [];
-      avttFolderListingCache.set(folderKey, listing);
-    }
-  }
-  if (!avttFolderListingCache.has("")) {
-    avttFolderListingCache.set("", []);
-  }
-  });
-}
 
-try {
-  if (window.globalIndexedDB) {
-    avttLoadCachesFromIndexedDB().catch(() => {});
-  } else {
-    let attempts = 0;
-    const poll = setInterval(() => {
-      attempts += 1;
-      if (window.globalIndexedDB) {
-        clearInterval(poll);
-        avttLoadCachesFromIndexedDB().catch(() => {});
-      } else if (attempts > 50) {
-        clearInterval(poll);
-      }
-    }, 100);
-  }
-} catch (e) {
-
-}
 
 function avttExtractRelativeKey(absoluteKey) {
   const prefix = `${window.PATREON_ID}/`;

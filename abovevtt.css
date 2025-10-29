@@ -344,7 +344,8 @@ button .ddbc-tab-options__header-heading .menu-option{
     border: solid black 1px;
 }
 
-.body-rpgcharacter-sheet div.avtt-sidebar-controls {
+.body-rpgcharacter-sheet div.avtt-sidebar-controls,
+.avtt-spectator-sheet div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
 }
 .ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] #chat-text {
@@ -430,7 +431,8 @@ button .ddbc-tab-options__header-heading .menu-option{
 }
 
 .door-button.hiddenDoor,
-.body-rpgcharacter-sheet .door-button.secret{
+.body-rpgcharacter-sheet .door-button.secret,
+.avtt-spectator-sheet .door-button.secret{
     display:none;
 }
 
@@ -884,7 +886,8 @@ select#doorTypeSelectUVTT{
     border: none;
 }
 
-.body-rpgcharacter-sheet #fog_overlay {
+.body-rpgcharacter-sheet #fog_overlay,
+.avtt-spectator-sheet #fog_overlay {
     filter: drop-shadow(0px 0px 2px #000) blur(1px); /*fill in fog gaps on player view*/
   
 }
@@ -915,12 +918,17 @@ select#doorTypeSelectUVTT{
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-s,
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-se,
-.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw{
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-sw,
+.avtt-spectator-sheet #combat_tracker_inside .ui-resizable-s,
+.avtt-spectator-sheet #combat_tracker_inside .ui-resizable-se,
+.avtt-spectator-sheet #combat_tracker_inside .ui-resizable-sw{
     bottom: -35px;
 }
 
 .body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-e,
-.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w  {
+.body-rpgcharacter-sheet #combat_tracker_inside .ui-resizable-w,  
+.avtt-spectator-sheet #combat_tracker_inside .ui-resizable-e,
+.avtt-spectator-sheet #combat_tracker_inside .ui-resizable-w  {
     height: 100%;  
 }
 #combat_tracker_inside #combat_area{
@@ -1011,7 +1019,8 @@ div.top_menu.visible,
     border-bottom-left-radius: 5px; 
 }
 
-.body-rpgcharacter-sheet #combat_tracker_inside{
+.body-rpgcharacter-sheet #combat_tracker_inside,
+.avtt-spectator-sheet #combat_tracker_inside{
     border-radius: 5px;
 }
 
@@ -3062,13 +3071,16 @@ body .note-visibility-toggle-container {
     text-decoration: underline;
 }
 
-.body-rpgcharacter-sheet .note-list button{
+.body-rpgcharacter-sheet .note-list button,
+.avtt-spectator-sheet .note-list button{
     display: none;
 }
-.body-rpgcharacter-sheet #journal-panel .folder-item-list {
+.body-rpgcharacter-sheet #journal-panel .folder-item-list,
+.avtt-spectator-sheet #journal-panel .folder-item-list {
     padding:0px;
 }
-.body-rpgcharacter-sheet #journal-panel .note-list{
+.body-rpgcharacter-sheet #journal-panel .note-list,
+.avtt-spectator-sheet #journal-panel .note-list{
     padding: 0px 2px 0px 2px;
 }
 
@@ -3234,7 +3246,8 @@ body .note-visibility-toggle-container {
     filter: blur(calc(3px / var(--scene-scale)));
 }
 
-.body-rpgcharacter-sheet #raycastingCanvas{
+.body-rpgcharacter-sheet #raycastingCanvas,
+.avtt-spectator-sheet #raycastingCanvas{
     opacity: 1;
 }
 .beyond20-quick-roll-tooltip{
@@ -4303,7 +4316,8 @@ audio::-webkit-media-controls-time-remaining-display{
     z-index: 1000000;
     filter: drop-shadow(1px 2px 1px black);
 }
-.body-rpgcharacter-sheet .note .note-pin{
+.body-rpgcharacter-sheet .note .note-pin,
+.avtt-spectator-sheet .note .note-pin{
     transform: translateY(43px);
 }
 .note .note-pin:after{
@@ -5264,12 +5278,14 @@ button.block-send-to-game-log span {
     width: 100%;
 }
 
-.body-rpgcharacter-sheet .note-text{
+.body-rpgcharacter-sheet .note-text,
+.avtt-spectator-sheet .note-text{
     top: 0px;
 }
 
-.body-rpgcharacter-sheet .note-text>p:first-of-type{
-    margin:0px;
+.body-rpgcharacter-sheet .note-text>p:first-of-type,
+.avtt-spectator-sheet .note-text>p:first-of-type{
+margin:0px;
 }
 .sidebar-list-item-row.player-row {
     height: 120px;
@@ -5914,7 +5930,8 @@ div.sidebar__pane-content div.tooltip::after {
     font-size:10px;
     padding:0px 4px;
 }
-.body-rpgcharacter-sheet .dm-eyes-only{
+.body-rpgcharacter-sheet .dm-eyes-only,
+.avtt-spectator-sheet .dm-eyes-only{
     display:none;
 }
 .elev svg{
@@ -6288,7 +6305,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     border-width: 1px 1px 0px 1px;
     border-radius: 5px 5px 0 0;
 }
-.body-rpgcharacter-sheet #combat_tracker_inside{
+.body-rpgcharacter-sheet #combat_tracker_inside,
+.avtt-spectator-sheet #combat_tracker_inside{
     width: 200px;   
 }
 #combat_tracker_inside #combat_footer button:last-of-type{
@@ -6298,7 +6316,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     border-bottom-left-radius: 5px; 
 }
 
-.body-rpgcharacter-sheet #combat_tracker_inside{
+.body-rpgcharacter-sheet #combat_tracker_inside,
+.avtt-spectator-sheet #combat_tracker_inside{
     border-radius: 5px;
 }
 /* end also used in resize can remove if that goes in*/
@@ -6319,7 +6338,9 @@ div#selectedTokensBorderRotationGrabberConnector,
     width: 13%;
 }
 .body-rpgcharacter-sheet :is(#combat_area, #combat_area_carousel) tr td:nth-of-type(3),
-.body-rpgcharacter-sheet :is(#combat_area, #combat_area_carousel) tr td:nth-of-type(5) {
+.body-rpgcharacter-sheet :is(#combat_area, #combat_area_carousel) tr td:nth-of-type(5), 
+.avtt-spectator-sheet :is(#combat_area, #combat_area_carousel) tr td:nth-of-type(3),
+.avtt-spectator-sheet :is(#combat_area, #combat_area_carousel) tr td:nth-of-type(5) {
     width: 18%;
 }
 
@@ -6660,7 +6681,8 @@ div#selectedTokensBorderRotationGrabberConnector,
 .journal-button svg{
     padding: 2px 1px 2px 0px;
 }
-.body-rpgcharacter-sheet .popout-button.journal-button {
+.body-rpgcharacter-sheet .popout-button.journal-button, 
+.avtt-spectator-sheet .popout-button.journal-button {
     top: 6px;
 }
 
@@ -6671,7 +6693,8 @@ div#selectedTokensBorderRotationGrabberConnector,
     opacity: 0.5;
     padding:0px;
 }
-.body-rpgcharacter-sheet #combat_tracker_inside #combat_footer{
+.body-rpgcharacter-sheet #combat_tracker_inside #combat_footer,
+.avtt-spectator-sheet #combat_tracker_inside #combat_footer{
     padding-top:5px;
 }
 #combat_tracker_inside #endplayerturn.enabled,
@@ -6917,7 +6940,8 @@ div#tokenOptionsContainer .remove-from-ct>button{
 }
 /*End changes for UI*/
 
-.body-rpgcharacter-sheet #combat_tracker_inside{
+.body-rpgcharacter-sheet #combat_tracker_inside,
+.avtt-spectator-sheet #combat_tracker_inside{
     border-radius: 5px;
 }
 
@@ -8577,7 +8601,8 @@ body.color-blind-avtt {
     content: attr(data-name);
     color: #444d;
 }
-body.body-rpgcharacter-sheet #combat_area tr.CTToken:before{
+body.body-rpgcharacter-sheet #combat_area tr.CTToken:before,
+body.avtt-spectator-sheet #combat_area tr.CTToken:before{
     width: calc(100% - 80px);
 }
 
@@ -8795,7 +8820,8 @@ body:not(.body-rpgcampaign) .site-bar{
     opacity: 1 !important;
 }
 
-.body-rpgcharacter-sheet #tokens .inPersonMini {
+.body-rpgcharacter-sheet #tokens .inPersonMini,
+.avtt-spectator-sheet #tokens .inPersonMini {
     display: none !important;
 }
 
@@ -9032,7 +9058,8 @@ body .mce-abs-layout-item,
     float:right;
     width:175px;
 }
-.body-rpgcharacter-sheet #VTT.paused *{
+.body-rpgcharacter-sheet #VTT.paused *,
+.avtt-spectator-sheet #VTT.paused *{
     pointer-events: none !important;
 }
 
@@ -10282,11 +10309,13 @@ button.resistanceButton.qrm_buttons_bar span {
 [class*="glc-game-log"] table#qrm-gamelog td:last-of-type {
     width: 100% !important;
 }
-.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line {
+.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line,
+.avtt-spectator-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line {
     visibility: hidden;
 }
 
-.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line::before {
+.body-rpgcharacter-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line::before,
+.avtt-spectator-sheet [class*="glc-game-log"] table#qrm-gamelog tr.hideQrmRowFromPlayers .qrm_name_line::before {
     content: '???';
     visibility: visible;
 }
