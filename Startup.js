@@ -467,8 +467,9 @@ async function start_above_vtt_for_dm() {
   init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
-  let activeScene = await fetch_sceneList_and_scenes();
   await migrate_to_cloud_if_necessary();
+  let activeScene = await fetch_sceneList_and_scenes();
+
   startup_step("Loading scenes");
   did_update_scenes();
   startup_step("Migrating scene folders");
