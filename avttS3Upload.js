@@ -6186,9 +6186,7 @@ function avttEnqueueUploads(filesOrFileArray, uploadFolder = currentFolder) {
   }
   avttProcessUploadQueue();
 }
-const debounceFlush = mydebounce((callback = () => { }) => {
-  callback();
-}, 5000)
+
 async function avttProcessUploadQueue() {
   if (avttActiveUploads >= AVTT_MAX_CONCURRENT_UPLOADS) {
     return;
@@ -6585,17 +6583,12 @@ async function avttProcessUploadQueue() {
         if (!skipsConcurrencyLimit) {
           avttActiveUploads = Math.max(0, avttActiveUploads - 1);
         }
-        const flush = () => {
-          if (avttUploadQueue.length === 0 && avttActiveUploads === 0) {
-            avttQueueConflictPolicy = null;
-            avttQueueTotalEnqueued = 0;
-            avttQueueCompleted = 0;
-            avttScheduleFlush(skipPersistCache);
-            return;
-          }
-          debounceFlush(flush);
+        if (avttUploadQueue.length === 0 && avttQueueCompleted === Math.max(avttQueueTotalEnqueued, 1)) {
+          avttQueueConflictPolicy = null;
+          avttQueueTotalEnqueued = 0;
+          avttQueueCompleted = 0;
+          avttScheduleFlush(skipPersistCache);
         }
-        debounceFlush(flush);
 
 
         avttProcessUploadQueue();
@@ -6619,19 +6612,20 @@ async function avttFlushUsageAndRefresh(skipPersist = false) {
   avttPendingUsageKeys = [];
 
   try {
-    if (count > 0) {
-      if (document.getElementById("file-listing-section")) {
-        showUploadComplete();
-        refreshFiles(
-          currentFolder,
-          true,
-          undefined,
-          undefined,
-          activeFilePickerFilter,
-          { useCache: true, revalidate: false, selectFiles: keys },
-        );
+    if (document.getElementById("file-listing-section")) {
+      showUploadComplete();
+      refreshFiles(
+        currentFolder,
+        true,
+        undefined,
+        undefined,
+        activeFilePickerFilter,
+        { useCache: true, revalidate: false, selectFiles: keys },
+      );
 
-      }
+    }
+    if (count > 0) {
+
       if (!skipPersist) {
         try { avttSchedulePersist(); } catch { }
       }
