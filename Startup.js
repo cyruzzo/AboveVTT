@@ -467,9 +467,9 @@ async function start_above_vtt_for_dm() {
   init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
-  await migrate_to_cloud_if_necessary();
-  let activeScene = await fetch_sceneList_and_scenes();
 
+  let activeScene = await fetch_sceneList_and_scenes();
+  await migrate_to_cloud_if_necessary();
   startup_step("Loading scenes");
   did_update_scenes();
   startup_step("Migrating scene folders");
@@ -1113,8 +1113,7 @@ async function migrate_to_cloud_if_necessary() {
 
   // this is a fresh campaign so let's push our Tavern Scene
   startup_step("Migrating to AboveVTT cloud");
-  // TODO: replace this with the new tutorial map
-  await AboveApi.migrateScenes(window.gameId, [
+  const tavernData = [
     {
       ...default_scene_data(),
       title: "The Tavern",
@@ -1135,9 +1134,13 @@ async function migrate_to_cloud_if_necessary() {
       offsetx: 29,
       offsety: 54,
     }
-  ]);
-  // now fetch the scenes from the server
-  window.ScenesHandler.scenes = await AboveApi.getSceneList();
+  ];
+  await AboveApi.migrateScenes(window.gameId, tavernData);
+
+  window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: tavernData[0].id });
+  window.PLAYER_SCENE_ID = tavernData[0].id;
+  const activeScene = await fetch_sceneList_and_scenes(); 
+  return activeScene;
 }
 
 // only call this once on startup
@@ -1149,11 +1152,7 @@ async function fetch_sceneList_and_scenes() {
 
   if (currentSceneData.playerscene && window.ScenesHandler.scenes.find(s => s.id === currentSceneData.playerscene)) {
     window.PLAYER_SCENE_ID = currentSceneData.playerscene;
-  } else if (window.ScenesHandler.scenes.length > 0) {
-    window.PLAYER_SCENE_ID = window.ScenesHandler.scenes[0].id;
-    console.log("fetch_sceneList_and_scenes sending custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-    // window.MB.sendMessage("custom/myVTT/switch_scene", { sceneId: window.ScenesHandler.scenes[0].id });
-  }
+  } 
 
   console.log("fetch_sceneList_and_scenes set window.PLAYER_SCENE_ID to", window.PLAYER_SCENE_ID);
 
@@ -1166,7 +1165,8 @@ async function fetch_sceneList_and_scenes() {
     activeScene = await AboveApi.getScene(window.ScenesHandler.scenes[0].id);
     console.log("attempting to handle scene", activeScene);
   }
-  window.MB.handleScene(activeScene);
+  if(activeScene)
+    window.MB.handleScene(activeScene);
   console.log("fetch_sceneList_and_scenes done");
   return activeScene;
 }
