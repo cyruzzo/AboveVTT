@@ -759,7 +759,7 @@ function add_aoe_statblock_click(target, tokenId = undefined){
       if(window.top.CURRENTLY_SELECTED_TOKENS.length == 1) {
         window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[window.top.CURRENTLY_SELECTED_TOKENS[0]]);
       } 
-      else if (window.top.TOKEN_OBJECTS[tokenId] != undefined && !window.top.TOKEN_OBJECTS[tokenId].combatGroupToken){
+      else if (window.top.TOKEN_OBJECTS[tokenId] != undefined && !window.top.TOKEN_OBJECTS[tokenId].options.combatGroupToken){
         window.top.place_aoe_token_at_token(options, window.top.TOKEN_OBJECTS[tokenId]);
       }else {
         window.top.place_aoe_token_in_centre(options)
