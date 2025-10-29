@@ -1511,6 +1511,7 @@ function showError(error, ...extraInfo) {
     .catch(githubError => {
       console.log("look_for_github_issue", "Failed to look for github issues", githubError);
     });
+  remove_loading_overlay();
 }
 
 function build_external_error_message(limited = false) {

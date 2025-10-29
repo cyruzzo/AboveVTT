@@ -416,7 +416,6 @@ function start_player_joining_as_dm(){
     </div>`);
 
   $('body').append(message);
-  remove_loading_overlay();
   $('#splash').remove();
   $(window).one('click.messageRremove', function(){
     message.remove();
@@ -492,7 +491,6 @@ async function start_above_vtt_for_dm() {
     avatar: dmAvatarUrl
   })
   $(window).off('scroll.projectorMode').on("scroll.projectorMode", projector_scroll_event);
-  remove_loading_overlay();
   inject_chat_buttons();
   inject_dm_roll_default_menu();
   
@@ -537,7 +535,6 @@ async function start_above_vtt_for_spectator() {
   if (get_avtt_setting_value('quickToggleDefaults')?.spectatorHideUi) {
     unhide_interface();
   }
-  remove_loading_overlay();
   inject_chat_buttons();
   inject_dm_roll_default_menu();
   startup_step("Fetching scene from AboveVTT server");

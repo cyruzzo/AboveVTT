@@ -1859,9 +1859,9 @@ class MessageBroker {
 							$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
 							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 						}
-						reset_canvas();
-		        		set_default_vttwrapper_size();
-						
+						await reset_canvas();
+		        		await set_default_vttwrapper_size();
+						remove_loading_overlay();
 						console.log("LOADING TOKENS!");
 						
 
@@ -1948,13 +1948,12 @@ class MessageBroker {
 						
 						
 					});
-					
-					remove_loading_overlay();
 				}
 			}
 		}
 		catch (e) {
 			window.MB.loadNextScene();
+			remove_loading_overlay();
 			showError(e);
 		}
 		
