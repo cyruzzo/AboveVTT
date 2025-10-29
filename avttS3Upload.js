@@ -248,6 +248,7 @@ async function avttFetchWithRetry(input, init = {}, options = {}) {
             ? retryStatuses.includes(response.status)
             : false);
       if (!shouldRetryStatus) {
+        alert("Server rejected upload due to being at or above upload limit.")
         return response;
       }
       lastError = new Error(`HTTP ${response.status}`);
