@@ -518,7 +518,7 @@ async function start_above_vtt_for_spectator() {
   window.PLAYER_SHEET = playerId;
   $(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
   $(".sidebar__control--lock").closest("button").click(); // lock it open immediately. This is safe to call multiple times
-
+  $("body").toggleClass("avtt-spectator-sheet", true);
 
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM

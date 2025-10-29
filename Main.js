@@ -2925,7 +2925,7 @@ function init_zoom_buttons() {
 	zoom_section.append(hide_interface);
 
 	$(".avtt-sidebar-controls").append(zoom_section);
-	if (window.DM) {
+	if (window.DM || is_spectator_page()) {
 		zoom_section.css("right","371px");
 	} else {
 		zoom_section.css("right","420px");
