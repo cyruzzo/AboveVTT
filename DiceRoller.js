@@ -819,7 +819,10 @@ class DiceRoller {
                 this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
             else if(critType == 1){
-                let newExpression = `${diceRoll.expression}+${maxRoll}`;
+                // perfect crit damage
+                let newExpression = diceRoll.expression.replaceAll(/(([+-])?([\d]+)d([\d]+).*?)([+-]|$)/gi, function (m, m1, m2, m3, m4, m5) {
+                    return `${m1}${m2 == '-' ? '' : `+${parseInt(m3) * parseInt(m4)}${m5}`}`
+                })
                 this.roll(new DiceRoll(newExpression, diceRoll.action, diceRoll.rollType, diceRoll.name, diceRoll.avatarUrl, diceRoll.entityType, diceRoll.entityId), true, critRange, critType, undefined, damageType);
             }
             else if(critType == 2 || critType == 3){
