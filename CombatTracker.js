@@ -1474,8 +1474,9 @@ function ct_current_turn() {
 function ct_persist(){
 	let data= [];
 	$('#combat_area tr').each( function () {			
-			let optionsClone = $.extend(true, {}, window.all_token_objects[$(this).attr("data-target")].options);
-			optionsClone.alternativeImages = [];
+		let optionsClone = $.extend(true, {}, window.all_token_objects[$(this).attr("data-target")].options);
+		optionsClone.alternativeImages = [];
+		optionsClone.ct_show = $(this).find('.hideFromPlayerCombatButton svg.closedEye[style*="block"]').length == 0;
 
 	  	data.push( {
 			'data-target': $(this).attr("data-target"),
@@ -1579,7 +1580,7 @@ function ct_load(data=null){
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				window.all_token_objects[data[i]['data-target']].options.alternativeImages = currAltImage;
 				
-				if(window.all_token_objects[data[i]['data-target']].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
+				if(data[i].options.ct_show == true || (window.DM && window.all_token_objects[data[i]['data-target']].options.ct_show !== undefined))
 				{
 
 					ct_add_token(window.all_token_objects[data[i]['data-target']],false,true);
