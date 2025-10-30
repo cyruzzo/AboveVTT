@@ -464,6 +464,7 @@ async function start_above_vtt_for_dm() {
   $(".dice-rolling-panel").css({"visibility": "visible"});
   $("div.sidebar").parent().css({"display": "block", "visibility": "visible"});
   $("#ddbeb-popup-container").css({"display": "block", "visibility": "visible"});
+  $('#noty_layout__bottomRight').remove();
   init_ui();
 
   startup_step("Fetching scenes from AboveVTT servers");
@@ -518,7 +519,7 @@ async function start_above_vtt_for_spectator() {
   $(".sidebar__control").click(); // 15/03/2022 .. DDB broke the gamelog button.
   $(".sidebar__control--lock").closest("button").click(); // lock it open immediately. This is safe to call multiple times
   $("body").toggleClass("avtt-spectator-sheet", true);
-
+  $('#noty_layout__bottomRight').remove();
   await start_above_vtt_common();
   window.CONNECTED_PLAYERS['0'] = window.AVTT_VERSION; // ID==0 is DM
 

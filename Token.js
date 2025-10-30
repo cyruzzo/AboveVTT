@@ -2299,7 +2299,7 @@ class Token {
 									}
 									oldImage = tokenImage;
 									old.append(tokenImage);
-		
+									old.find('.token-image ~ .token-image').remove();	
 								}
 								window.videoTokenOld[this.options.id] = this.options.videoToken;
 								let underDarkImage;
@@ -2386,10 +2386,12 @@ class Token {
 							}
 							oldImage = tokenImage;
 							old.append(tokenImage);
+							old.find('.token-image ~ .token-image').remove();
 							const underDarkToken = $(`[data-notatoken='notatoken_${this.options.id}']`)
 							if (underDarkToken.length > 0) {
 								underDarkToken.find('.token-image').remove();
 								const underDarkImage = tokenImage.clone();
+								underDarkImage.find('.token-image ~ .token-image').remove();
 								underDarkToken.append(underDarkImage);
 								updateTokenSrc(this.options.imgsrc, underDarkImage, video)
 							}
@@ -2916,7 +2918,7 @@ class Token {
 				tok.addClass('token');
 				
 			   	tok.append(tokenImage);		    
-
+				tok.find('.token-image ~ .token-image').remove();
 
 				tok.attr("data-id", this.options.id);
 
