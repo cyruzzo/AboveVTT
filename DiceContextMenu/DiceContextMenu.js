@@ -116,8 +116,8 @@ function damage_dice_context_menu(diceExpression, modifierString = "", action = 
             } 
              else if (rollAsIndex === 1) {
                 // perfect crit damage
-                diceExpression = diceExpression.replaceAll(/([+-])?([\d]+)d([\d]+)/gi, function(m, m1, m2, m3){
-                    return `${m}${m1 == '-' ? '' : `+${parseInt(m2)*parseInt(m3)}`}`
+                diceExpression = diceExpression.replaceAll(/(([+-])?([\d]+)d([\d]+).*?)([+-]|$)/gi, function(m, m1, m2, m3, m4, m5){
+                    return `${m1}${m2 == '-' ? '' : `+${parseInt(m3)*parseInt(m4)}${m5}`}`
                 })
                 diceRoll = new DiceRoll(diceExpression)
             } 
