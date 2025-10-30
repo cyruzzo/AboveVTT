@@ -2205,20 +2205,13 @@ class MessageBroker {
 				window.MB.sendMessage('custom/myVTT/token', options);
 			}, 300);
 			if(t.isPlayer()){
-				const pc = find_pc_by_player_id(data.id, false);
-		    let token = window.TOKEN_OBJECTS[data.id]     
-		    if (token && pc) {
-			      let currentImage = token.options.imgsrc;
-			      token.hp = pc.hitPointInfo.current;
-			      token.options = {
-			        ...token.options,
-			        ...pc,
-			        imgsrc: (token.options.alternativeImages?.length == 0) ? pc.image : currentImage,
-			        id: pc.sheet // pc.id is DDB characterId, but we use the sheet as an id for tokens
-			      };
-				}
+				if (!window.PC_TOKENS_NEEDING_UPDATES.includes(data.id)) {
+					window.PC_TOKENS_NEEDING_UPDATES.push(data.id);
+				}	
+				debounce_pc_token_update();
 			}
 			t.place();
+
 
 			let playerTokenId = $(`.token[data-id*='${window.PLAYER_ID}']`).attr("data-id");
 			let playerTokenAuraIsLight = (playerTokenId == undefined) ? true : window.TOKEN_OBJECTS[playerTokenId].options.auraislight;
