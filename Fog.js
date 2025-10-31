@@ -2136,8 +2136,8 @@ function redraw_light_walls(clear=true, editingWallPoints = false){
 		if(lineWidth == undefined || lineWidth == null){
 			lineWidth = 6;
 		}
-		wallBottom = wallBottom || "";
-		wallTop = wallTop || "";
+		wallBottom = wallBottom == null ? "" : wallBottom;
+		wallTop = wallTop == null ? "" : wallTop;
 
 		let currentSceneScale = window.CURRENT_SCENE_DATA.scale_factor ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1;
 		let currentSceneConversion = window.CURRENT_SCENE_DATA.conversion ? parseFloat(window.CURRENT_SCENE_DATA.conversion) : 1;
