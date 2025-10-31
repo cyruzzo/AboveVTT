@@ -3636,7 +3636,11 @@ function build_adjustments_flyout_menu(tokenIds) {
 					}
 				});
 				if(setting.menuPosition != undefined){
-					body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
+					const position = body.find(`>div:nth-of-type(${setting.menuPosition})`)
+					if (position.length > 0)
+						position.before(inputWrapper)
+					else
+						body.append(inputWrapper)
 				}
 				else{
 					body.append(inputWrapper);
@@ -3650,7 +3654,11 @@ function build_adjustments_flyout_menu(tokenIds) {
 					});
 				});
 				if(setting.menuPosition != undefined){
-					body.find(`>div:nth-of-type(${setting.menuPosition})`).before(inputWrapper)
+					const position = body.find(`>div:nth-of-type(${setting.menuPosition})`)
+					if(position.length>0)
+						position.before(inputWrapper)
+					else
+						body.append(inputWrapper)
 				}
 				else{
 					body.append(inputWrapper);
