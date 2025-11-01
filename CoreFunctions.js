@@ -631,12 +631,7 @@ function deleteDB(){
     const objectStore = gameIndexedDb.transaction([`exploredData`], "readwrite").objectStore('exploredData');
     const objectStoreRequest = objectStore.clear();
     objectStoreRequest.onsuccess = function(event) {       
-      exploredCanvas =  document.getElementById("exploredCanvas");
-      if(exploredCanvas != undefined){
-        let exploredCanvasContext = exploredCanvas.getContext('2d');
-        exploredCanvasContext.fillStyle = "black";
-        exploredCanvasContext.fillRect(0,0,exploredCanvas.width,exploredCanvas.height); 
-      }
+      $('#exploredCanvas').remove();
       redraw_light();
       alert('This campaigns local explored vision data has been cleared.')
     };
@@ -657,13 +652,7 @@ function deleteExploredScene(sceneId){
      .delete(`explore${window.gameId}${sceneId}`);
     deleteRequest.onsuccess = function(event) {  
       if(sceneId == window.CURRENT_SCENE_DATA.id){
-        let exploredCanvas = $('#exploredCanvas')
-        if(exploredCanvas.length > 0){
-          let exploredCanvasContext = exploredCanvas[0].getContext('2d');
-          exploredCanvasContext.globalCompositeOperation ='source-over';
-          exploredCanvasContext.fillStyle = "black";
-          exploredCanvasContext.fillRect(0,0,exploredCanvas[0].width,exploredCanvas[0].height); 
-        }
+        $('#exploredCanvas').remove();
         redraw_light();
         alert('Scene Explore Trail Data Cleared')
       }        
