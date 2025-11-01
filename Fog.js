@@ -7038,7 +7038,13 @@ function redraw_light(darknessMoved = false){
 	if(window.offScreenCombine == undefined){
 		window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
 	}
+	else{
+		window.offScreenCombine.width = canvasWidth;
+		window.offScreenCombine.height = canvasHeight;
+	}
+
 	const combineCtx = window.offScreenCombine.getContext("2d");
+	combineCtx.clearRect(0, 0, canvasWidth, canvasHeight)
 
 	const offscreenCanvasMask = window.offscreenCanvasMask;
 	const offscreenContext = window.offscreenContext;
@@ -7058,12 +7064,12 @@ function redraw_light(darknessMoved = false){
 		window.lightInLos = new OffscreenCanvas(canvasWidth, canvasHeight);
 		window.lightInLosContext = window.lightInLos.getContext('2d');
 	}
-
+	window.lightInLosContext.clearRect(0, 0, window.lightInLos.width, window.lightInLos.width.height);
 	window.lightInLos.width = canvasWidth;
 	window.lightInLos.height = canvasHeight;
 
-	const lightInLosContext = window.lightInLosContext;
-	lightInLosContext.clearRect(0, 0, canvasWidth, canvasHeight);
+
+	
 
 	if(window.CURRENT_SCENE_DATA.disableSceneVision == true){
 		context.fillStyle = "white";
@@ -7308,8 +7314,13 @@ function redraw_light(darknessMoved = false){
 			}
 
 			if (window.lightAuraClipPolygon[auraId]?.darkvision !== undefined) {
-				lightInLosContext.globalCompositeOperation = 'lighten';
+				combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+				combineCtx.globalCompositeOperation = 'lighten';
 				drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].darkvision, window.lightAuraClipPolygon[auraId].vision.color);
+				combineCtx.globalCompositeOperation = "destination-in";
+				drawPolygon(combineCtx, lightPolygon, "#FFF", true, 0, null, null, undefined, true, true);
+				lightInLosContext.globalCompositeOperation = "lighten";
+				lightInLosContext.drawImage(offScreenCombine, 0, 0);
 			}
 
 			$(`.aura-element-container-clip[id='${auraId}'] [id*='vision_']`).toggleClass('notVisible', false);
@@ -7397,7 +7408,7 @@ function redraw_light(darknessMoved = false){
 	if(gameIndexedDb !== undefined && window.CURRENT_SCENE_DATA.visionTrail == '1' && window.DM !== true){
 
 		let exploredCanvas = document.getElementById("exploredCanvas");
-		if($('#exploredCanvas').length == 0){
+		if (!exploredCanvas){
 			exploredCanvas =  document.createElement("canvas")
 			exploredCanvas.width = canvasWidth;
 			exploredCanvas.height = canvasHeight;			
@@ -7435,7 +7446,7 @@ function redraw_light(darknessMoved = false){
 				window.exploredCanvasContext.globalCompositeOperation='lighten';
 				window.exploredCanvasContext.drawImage(window.lightInLos, 0, 0);
 			});
-			debounceStoreExplored(exploredCanvas);
+			debounceStoreExplored(exploredCanvas, window.CURRENT_SCENE_DATA.id);
 		}
 	
 	}

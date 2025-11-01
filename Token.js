@@ -42,17 +42,17 @@ const availableToAoe = [
 
 const throttleLight = throttle((darknessMoved = false) => {requestAnimationFrame(()=>{redraw_light(darknessMoved)})}, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
- const debounceStoreExplored = mydebounce((exploredCanvas) => {		
+const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
 
 	let storeImage = gameIndexedDb.transaction([`exploredData`], "readwrite")
 	let objectStore = storeImage.objectStore(`exploredData`)
-	let deleteRequest = objectStore.delete(`explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`);
+	let deleteRequest = objectStore.delete(`explore${window.gameId}${sceneId}`);
 	deleteRequest.onsuccess = (event) => {
-	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+		const objectStoreRequest = objectStore.add({ exploredId: `explore${window.gameId}${sceneId}`, 'exploredData': dataURI});
 	};
 	deleteRequest.onerror = (event) => {
-	  const objectStoreRequest = objectStore.add({exploredId: `explore${window.gameId}${window.CURRENT_SCENE_DATA.id}`, 'exploredData': dataURI});
+		const objectStoreRequest = objectStore.add({ exploredId: `explore${window.gameId}${sceneId}`, 'exploredData': dataURI});
 	};
 }, 5000)
 var debounceLightChecks = mydebounce((darknessMoved = false) => {		
