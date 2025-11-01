@@ -84071,4 +84071,6727 @@ export const get_scene_data_gos = {
 			}
 		}
 	},
+		"dnd/gos/salvage-operation/map41emperorofthewaves": {
+		"vpps": "45.5",
+		"title": "Map 4.1: Emperor of the Waves ",
+		"drawings": [
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2138,
+				2483,
+				2125,
+				2118,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2822,
+				2117,
+				2806,
+				2486,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2806,
+				2486,
+				2138,
+				2483,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3809,
+				2483,
+				3835,
+				1939,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3112,
+				1942,
+				3133,
+				2482,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3133,
+				2482,
+				3809,
+				2483,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3201,
+				2122,
+				3205,
+				1940,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3736,
+				1940,
+				3737,
+				2123,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3737,
+				2123,
+				3201,
+				2122,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3748,
+				1212,
+				3746,
+				1396,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3199,
+				1391,
+				3204,
+				1211,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3204,
+				1211,
+				3748,
+				1212,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3828,
+				1134,
+				3842,
+				1397,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3106,
+				1397,
+				3109,
+				1164,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3109,
+				1164,
+				3134,
+				1024,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3134,
+				1024,
+				3200,
+				888,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3200,
+				888,
+				3357,
+				730,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3357,
+				730,
+				3473,
+				664,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3473,
+				664,
+				3635,
+				769,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3635,
+				769,
+				3749,
+				893,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3749,
+				893,
+				3802,
+				1002,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3802,
+				1002,
+				3828,
+				1134,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3102,
+				1393,
+				3206,
+				1392,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				3742,
+				1392,
+				3846,
+				1392,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2204,
+				2120,
+				2207,
+				1940,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2735,
+				1936,
+				2737,
+				2119,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2107,
+				1680,
+				2123,
+				2120,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2111,
+				1207,
+				2107,
+				1680,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2840,
+				1669,
+				2822,
+				2116,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2835,
+				1207,
+				2840,
+				1669,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2799,
+				993,
+				2834,
+				1211,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2108,
+				1211,
+				2147,
+				1012,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2147,
+				1012,
+				2231,
+				850,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2231,
+				850,
+				2379,
+				725,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2379,
+				725,
+				2473,
+				665,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2473,
+				665,
+				2625,
+				763,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2625,
+				763,
+				2730,
+				867,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2730,
+				867,
+				2799,
+				993,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2198,
+				1212,
+				2201,
+				1395,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2746,
+				1208,
+				2747,
+				1397,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1556,
+				1483,
+				1767,
+				1483,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1379,
+				1483,
+				1379,
+				1751,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1283,
+				1305,
+				1424,
+				1306,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1293,
+				1239,
+				1289,
+				1308,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1337,
+				1030,
+				1311,
+				1139,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1311,
+				1139,
+				1293,
+				1239,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1335,
+				1034,
+				1220,
+				1028,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1175,
+				1766,
+				1211,
+				2493,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1206,
+				2486,
+				1734,
+				2487,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1734,
+				2487,
+				1760,
+				1751,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1760,
+				1751,
+				1761,
+				1300,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1761,
+				1300,
+				1740,
+				1113,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1740,
+				1113,
+				1686,
+				966,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1686,
+				966,
+				1589,
+				841,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1589,
+				841,
+				1469,
+				749,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1469,
+				749,
+				1345,
+				850,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1345,
+				850,
+				1227,
+				1030,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1227,
+				1030,
+				1191,
+				1245,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1191,
+				1245,
+				1175,
+				1766,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				292,
+				2495,
+				830,
+				2491,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				275,
+				1968,
+				298,
+				2497,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				818,
+				2493,
+				847,
+				1985,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				847,
+				1985,
+				852,
+				1384,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				852,
+				1384,
+				843,
+				1198,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				843,
+				1198,
+				804,
+				1078,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				804,
+				1078,
+				732,
+				964,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				732,
+				964,
+				648,
+				885,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				648,
+				885,
+				557,
+				825,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				557,
+				825,
+				402,
+				943,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				402,
+				943,
+				300,
+				1112,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				300,
+				1112,
+				263,
+				1344,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				263,
+				1344,
+				275,
+				1968,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1625,
+				2396,
+				1740,
+				2391,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1623,
+				2212,
+				1625,
+				2396,
+				6,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2121,
+				1303,
+				2195,
+				1302,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2754,
+				1302,
+				2829,
+				1304,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2816,
+				2029,
+				2745,
+				2032,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2129,
+				2027,
+				2199,
+				2027,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2213,
+				1125,
+				2276,
+				1197,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2659,
+				2303,
+				2742,
+				2303,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				3153,
+				1304,
+				3163,
+				1304,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				3788,
+				1304,
+				3798,
+				1304,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				3780,
+				2032,
+				3790,
+				2032,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				3157,
+				2031,
+				3167,
+				2031,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1674,
+				2303,
+				1684,
+				2303,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1256,
+				1161,
+				1266,
+				1161,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				391,
+				2434,
+				456,
+				2434,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1328,
+				2437,
+				1338,
+				2437,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				2447,
+				1455,
+				2512,
+				1455,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				534,
+				1513,
+				591,
+				1513,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1464,
+				1516,
+				1474,
+				1516,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(25, 25, 180, 1)",
+				1467,
+				1463,
+				1477,
+				1463,
+				12,
+				2,
+				false,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1318,
+				1120,
+				1443,
+				1120,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1741,
+				1120,
+				1503,
+				1120,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1443,
+				1120,
+				1503,
+				1120,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1422,
+				1114,
+				1422,
+				1224,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1422,
+				1396,
+				1422,
+				1287,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1422,
+				1287,
+				1422,
+				1224,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1558,
+				1116,
+				1559,
+				1315,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1559,
+				1389,
+				1559,
+				1315,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1184,
+				1486,
+				1300,
+				1486,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1382,
+				1485,
+				1359,
+				1485,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1300,
+				1486,
+				1359,
+				1485,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1559,
+				1389,
+				1560,
+				1668,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1560,
+				1755,
+				1560,
+				1740,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1560,
+				1740,
+				1560,
+				1668,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1176,
+				1755,
+				1438,
+				1756,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1764,
+				1756,
+				1506,
+				1756,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1438,
+				1756,
+				1506,
+				1756,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1190,
+				2123,
+				1437,
+				2122,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1762,
+				2122,
+				1506,
+				2122,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				1437,
+				2122,
+				1506,
+				2122,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2108,
+				2119,
+				2438,
+				2120,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2837,
+				2121,
+				2505,
+				2120,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2438,
+				2120,
+				2505,
+				2120,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2106,
+				1211,
+				2434,
+				1210,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				2843,
+				1209,
+				2502,
+				1210,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(255, 100, 255, 1)",
+				2434,
+				1210,
+				2502,
+				1210,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1169,
+				1393,
+				1292,
+				1392,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(0, 255, 0, 1)",
+				1421,
+				1391,
+				1371,
+				1392,
+				6,
+				2,
+				null,
+				"",
+				""
+			],
+			[
+				"line",
+				"wall",
+				"rgba(50, 255, 255, 1)",
+				1292,
+				1392,
+				1371,
+				1392,
+				12,
+				2,
+				0,
+				"",
+				""
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				1862,
+				1721,
+				0,
+				0,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"rect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				2253,
+				2279,
+				0,
+				0,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"3pointRect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				[
+					{
+						"x": 2109,
+						"y": 1215
+					},
+					{
+						"x": 2839,
+						"y": 1211
+					},
+					{
+						"x": 2833,
+						"y": 2116
+					}
+				],
+				null,
+				null,
+				null,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"3pointRect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				[
+					{
+						"x": 3061,
+						"y": 1897
+					},
+					{
+						"x": 3882,
+						"y": 1890
+					},
+					{
+						"x": 3891,
+						"y": 2664
+					}
+				],
+				null,
+				null,
+				null,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"3pointRect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				[
+					{
+						"x": 3055,
+						"y": 607
+					},
+					{
+						"x": 3888,
+						"y": 608
+					},
+					{
+						"x": 3907,
+						"y": 1449
+					}
+				],
+				null,
+				null,
+				null,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"3pointRect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				[
+					{
+						"x": 1273,
+						"y": 122
+					},
+					{
+						"x": 2845,
+						"y": 131
+					},
+					{
+						"x": 2872,
+						"y": 549
+					}
+				],
+				null,
+				null,
+				null,
+				"91.06666666666668",
+				2,
+				null
+			],
+			[
+				"3pointRect",
+				"light",
+				"rgba(255, 255, 255, 1)",
+				[
+					{
+						"x": 296,
+						"y": 2540
+					},
+					{
+						"x": 3831,
+						"y": 2529
+					},
+					{
+						"x": 3834,
+						"y": 2668
+					}
+				],
+				null,
+				null,
+				null,
+				"91.06666666666668",
+				2,
+				null
+			]
+		],
+		"tokens": {
+			"047c2498-91f0-4c17-b490-fd74965087aa": {
+				"disablestat": false,
+				"gridSquares": 1.9985358711566616,
+				"custom_conditions": [],
+				"hp": 32,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "047c2498-91f0-4c17-b490-fd74965087aa",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/318/636252772537829906.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16978,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 182,
+				"left": "1199px",
+				"name": "Phase Spider",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 32,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Phase Spider",
+				"top": "1759px",
+				"hidehpbar": false,
+				"stat": 16978,
+				"hitPointInfo": {
+					"maximum": 32,
+					"current": 32,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16978,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"052773f4-329a-4e4a-8b12-c4b51d3b3f67": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "052773f4-329a-4e4a-8b12-c4b51d3b3f67",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17235,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1563px",
+				"name": "Maw Demon 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "1031px",
+				"hidehpbar": false,
+				"stat": 17235,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17235,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"06b6ca02-9c00-4180-a5b2-ecc39dcdd5af": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "06b6ca02-9c00-4180-a5b2-ecc39dcdd5af",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/12.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/12.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_12",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "656px",
+				"name": "Cargo Hold",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/12",
+				"top": "1396px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"06c0d4fa-a670-4a1f-b6cf-74dcaf060765": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "06c0d4fa-a670-4a1f-b6cf-74dcaf060765",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Swarm of Insects (Spiders) 10",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#911EB4",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1395px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -43,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"0dd7b207-bc36-420e-8cac-3fe6aae8765e": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "0dd7b207-bc36-420e-8cac-3fe6aae8765e",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/11.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_11",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1291px",
+				"name": "Galley",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/11",
+				"top": "2211px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1256116112661161d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00E0E0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1151,
+					"left": 2245,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1136px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1236px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1256116112661161d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"12c61d3d-b079-433d-9fa2-49fd0cf78cff": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 44,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "12c61d3d-b079-433d-9fa2-49fd0cf78cff",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16859,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2656px",
+				"name": "Ettercap",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 44,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "2123px",
+				"hidehpbar": false,
+				"stat": 16859,
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16859,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"1328243713382437d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#0000A0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2440,
+					"left": 404,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2412px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1308px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1328243713382437d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1422128714221224d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#004040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1230px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1397px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1422128714221224d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1464151614741516d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00A000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1508,
+					"left": 544,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1491px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1444px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1464151614741516d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1467146314771463d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#006060",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1449,
+					"left": 2482,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1438px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1447px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1467146314771463d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"1674230316842303d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00C0C0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2307,
+					"left": 2706,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2278px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "1654px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "1674230316842303d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"210c5d6a-ebe9-437d-8bd4-4ac4b3f08618": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "210c5d6a-ebe9-437d-8bd4-4ac4b3f08618",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/6.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_06",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1423px",
+				"name": "Food Storage",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/06",
+				"top": "803px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2121130321951302d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#5F0404",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1296,
+					"left": 3168,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1277px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2133px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2121130321951302d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2129202721992027d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#00E000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2032,
+					"left": 3172,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2002px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2139px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2129202721992027d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"21904e42-0f35-4ecc-8b00-f91a3d3e9c02": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "21904e42-0f35-4ecc-8b00-f91a3d3e9c02",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_09",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1609px",
+				"name": "Spider Chambers",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/09",
+				"top": "1530px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"22035dd9-6ad1-4dc7-9168-4426d48c0978": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "22035dd9-6ad1-4dc7-9168-4426d48c0978",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1927px",
+				"name": "Swarm of Insects (Spiders) 6",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#EC8AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1031px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -39,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2213112522761197d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1152,
+					"left": 1251,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1136px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2219px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2213112522761197d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"236820eb-224a-4c0d-a82f-06d638410a42": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "236820eb-224a-4c0d-a82f-06d638410a42",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17235,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1290px",
+				"name": "Maw Demon 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "940px",
+				"hidehpbar": false,
+				"stat": 17235,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17235,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2447145525121455d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#E000E0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1457,
+					"left": 1464,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1430px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2454px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2447145525121455d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2520967d-d74f-483c-8a83-c1b4fccdefdb": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Letters",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2520967d-d74f-483c-8a83-c1b4fccdefdb",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/letters/A.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Letters_A",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "382px",
+				"name": "A",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Letters/A",
+				"top": "2122px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2659230327422303d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#A0A0A0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2307,
+					"left": 1673,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2278px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2675px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2659230327422303d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2754130228291304d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#C0C0C0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1296,
+					"left": 3810,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1278px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2766px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2754130228291304d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"2816202927452032d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#404040",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2033,
+					"left": 3802,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2005px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "2755px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "2816202927452032d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"29cd64d7-7780-4013-af97-f42b8211aac2": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "29cd64d7-7780-4013-af97-f42b8211aac2",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/1.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_01",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "2288px",
+				"name": "Main Deck",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/01",
+				"top": "1665px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2b4dd6c3-56f7-48f9-80e8-6ece094af2a4": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2b4dd6c3-56f7-48f9-80e8-6ece094af2a4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2200px",
+				"name": "Swarm of Insects (Spiders) 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2214px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": -35,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"2e8952a2-e0e9-44e4-9af3-fb89b0a41d4d": {
+				"disablestat": false,
+				"gridSquares": 1.9985358711566616,
+				"custom_conditions": [],
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "2e8952a2-e0e9-44e4-9af3-fb89b0a41d4d",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16895,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 182,
+				"left": "1563px",
+				"name": "Giant Spider 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "1759px",
+				"hidehpbar": false,
+				"stat": 16895,
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16895,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"30f07f1f-60c2-43e4-aae6-e323da65ae6d": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "30f07f1f-60c2-43e4-aae6-e323da65ae6d",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/3.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_03",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "2562px",
+				"name": "Navigator’s Room",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/03",
+				"top": "1031px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3153130431631304d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#000000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1294,
+					"left": 2157,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1279px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3133px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3153130431631304d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"3157203131672031d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#FFD433",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2028,
+					"left": 2163,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2006px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3137px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3157203131672031d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"35697e5f-458a-40d3-900f-638dc33d6922": {
+				"disablestat": false,
+				"gridSquares": 1.9985358711566616,
+				"custom_conditions": [],
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "35697e5f-458a-40d3-900f-638dc33d6922",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16895,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 182,
+				"left": "1199px",
+				"name": "Giant Spider 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "1941px",
+				"hidehpbar": false,
+				"stat": 16895,
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16895,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"36467c4e-15a3-4e46-9769-7534d5eed596": {
+				"disablestat": false,
+				"gridSquares": 1.9985358711566616,
+				"custom_conditions": [],
+				"hp": 26,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "36467c4e-15a3-4e46-9769-7534d5eed596",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16895,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 182,
+				"left": "2200px",
+				"name": "Giant Spider",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 26,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "2305px",
+				"hidehpbar": false,
+				"stat": 16895,
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16895,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3780203237902032d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#C000C0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2031,
+					"left": 2787,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2007px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3760px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3780203237902032d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"3788130437981304d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#A0A000",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1295,
+					"left": 2798,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1279px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "3768px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "3788130437981304d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": true,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"39124344562434d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#0000C0",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 2443,
+					"left": 1323,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "2409px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "398px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "39124344562434d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"3cd03855-03d7-4176-b820-c9784e8a44f2": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "3cd03855-03d7-4176-b820-c9784e8a44f2",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/5.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_05",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1444px",
+				"name": "Spider Nest",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/05",
+				"top": "1344px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"3e1367c3-1c31-4ba2-9fcd-e213441caf8a": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "3e1367c3-1c31-4ba2-9fcd-e213441caf8a",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/8.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_08",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1611px",
+				"name": "First Mate’s Cabin",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/08",
+				"top": "1257px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"53415135911513d1f5edf2-824a-46b9-93dd-4246ae7c3d16": {
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"color": "#F032E6",
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"custom_conditions": [],
+				"type": "door",
+				"scaleCreated": 2,
+				"teleporterCoords": {
+					"top": 1511,
+					"left": 1461,
+					"scale": 2
+				},
+				"vision": {
+					"color": "rgba(0, 0, 0, 0)",
+					"feet": 0
+				},
+				"top": "1488px",
+				"size": 50,
+				"armorClass": 0,
+				"left": "537px",
+				"name": "",
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "53415135911513d1f5edf2-824a-46b9-93dd-4246ae7c3d16",
+				"auraislight": false,
+				"conditions": [],
+				"imgsrc": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
+				"light2": {
+					"color": "rgba(142, 142, 142, 1)",
+					"feet": "0"
+				}
+			},
+			"5505e9a7-6199-48ea-beb5-723b3eabbafe": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "5505e9a7-6199-48ea-beb5-723b3eabbafe",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2018px",
+				"name": "Swarm of Insects (Spiders) 8",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#000000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1031px",
+				"hidehpbar": false,
+				"imageSize": 1,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"rotation": 360,
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -41,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"55743632-09c0-4f08-8eba-ac0eb29be1ff": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "55743632-09c0-4f08-8eba-ac0eb29be1ff",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1927px",
+				"name": "Swarm of Insects (Spiders) 7",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#00E5FF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "940px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -40,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"581c3c46-b82f-4195-824d-b51fc479df79": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "581c3c46-b82f-4195-824d-b51fc479df79",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2018px",
+				"name": "Swarm of Insects (Spiders) 5",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#5F0404",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "940px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -38,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"5d5ffa41-2723-4271-9605-c0186d08f4ed": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 11,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "5d5ffa41-2723-4271-9605-c0186d08f4ed",
+				"imgsrc": "https://www.dndbeyond.com/avatars/47138/891/638741964156568682.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16900,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1199px",
+				"name": "Giant Wolf Spider 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 11,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Wolf Spider",
+				"top": "1395px",
+				"hidehpbar": false,
+				"stat": 16900,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/47138/891/638741964156568682.jpeg"
+				],
+				"hitPointInfo": {
+					"maximum": 11,
+					"current": 11,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16900,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"631fd1a7-ed90-4ee1-b886-dd2cb0d57431": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "631fd1a7-ed90-4ee1-b886-dd2cb0d57431",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16870,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "561px",
+				"name": "Ghast 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1759px",
+				"hidehpbar": false,
+				"stat": 16870,
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16870,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"6dfd3b6f-8e92-4c34-a73c-56b1247436e3": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "6dfd3b6f-8e92-4c34-a73c-56b1247436e3",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Swarm of Insects (Spiders) 13",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#000080",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1213px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -46,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"77dcc911-dd89-4f56-ae2a-acdd35391d2e": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "77dcc911-dd89-4f56-ae2a-acdd35391d2e",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Swarm of Insects (Spiders) 11",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#800000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1577px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -44,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7952c5cf-d976-4b33-8582-1657e9d0f327": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7952c5cf-d976-4b33-8582-1657e9d0f327",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/9.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_09",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1244px",
+				"name": "Spider Chambers",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/09",
+				"top": "1529px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7b4d136e-4835-4db9-923d-24e4ad3a42a4": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7b4d136e-4835-4db9-923d-24e4ad3a42a4",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/4.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_04",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1163px",
+				"name": " Webbed Doorway",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/04",
+				"top": "1255px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"7d6cbbbd-ebda-4c3e-bae9-6ea81bbcd1c2": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "7d6cbbbd-ebda-4c3e-bae9-6ea81bbcd1c2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2565px",
+				"name": "Swarm of Insects (Spiders)",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2123px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": -34,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"85cbdb39-9ddd-4a02-8fad-89250151e42a": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "85cbdb39-9ddd-4a02-8fad-89250151e42a",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/7.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_07",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1337px",
+				"name": "Krell’s Cabin",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/07",
+				"top": "1168px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"8aa944c2-7c64-4619-aa88-601e741b55d5": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "8aa944c2-7c64-4619-aa88-601e741b55d5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2565px",
+				"name": "Swarm of Insects (Spiders) 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2305px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": -48,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9b7916ba-070d-4e39-aba0-9e4104e943f2": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 11,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "9b7916ba-070d-4e39-aba0-9e4104e943f2",
+				"imgsrc": "https://www.dndbeyond.com/avatars/47138/891/638741964156568682.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16900,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1381px",
+				"name": "Giant Wolf Spider",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 11,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Wolf Spider",
+				"top": "1395px",
+				"hidehpbar": false,
+				"stat": 16900,
+				"alternativeImages": [
+					"https://www.dndbeyond.com/avatars/47138/891/638741964156568682.jpeg"
+				],
+				"hitPointInfo": {
+					"maximum": 11,
+					"current": 11,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16900,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9e06b5ef-9c23-4ac5-9e6f-21ce1b5e81df": {
+				"disablestat": false,
+				"gridSquares": 1.9985358711566616,
+				"custom_conditions": [],
+				"hp": 26,
+				"armorClass": 14,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "9e06b5ef-9c23-4ac5-9e6f-21ce1b5e81df",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/322/636252775648118279.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16895,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 182,
+				"left": "2292px",
+				"name": "Giant Spider 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 5,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 26,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Giant Spider",
+				"top": "758px",
+				"hidehpbar": false,
+				"stat": 16895,
+				"hitPointInfo": {
+					"maximum": 26,
+					"current": 26,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16895,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 9,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"9ee8cc44-d0b4-445f-8b36-2fb76e571196": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Overlays",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "9ee8cc44-d0b4-445f-8b36-2fb76e571196",
+				"imgsrc": "https://drive.google.com/thumbnail?id=1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA&sz=w3000",
+				"locked": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://drive.google.com/file/d/1of0nmVMh8rnt9pz6iri9gtq-mCQmgCWA",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"square": false,
+				"itemId": "_AboveVTT_Tokens_Overlays_Skull",
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "926px",
+				"name": "Sequence of Events for Octopus",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Overlays/Skull",
+				"top": "485px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ab4c7091-32ac-4bc1-9a70-880d92f2a6bd": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 44,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "ab4c7091-32ac-4bc1-9a70-880d92f2a6bd",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16859,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2565px",
+				"name": "Ettercap 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 44,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "849px",
+				"hidehpbar": false,
+				"stat": 16859,
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16859,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b12b23d5-9884-49d6-a69a-b32010d6bad4": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b12b23d5-9884-49d6-a69a-b32010d6bad4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16870,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "561px",
+				"name": "Ghast",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1122px",
+				"hidehpbar": false,
+				"stat": 16870,
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16870,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"b3c79909-3cf5-46a5-90bd-2a369b7dcdd9": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Overlays",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "b3c79909-3cf5-46a5-90bd-2a369b7dcdd9",
+				"imgsrc": "https://drive.google.com/thumbnail?id=1F868fVhQnzFALTcnEIXUDeAl3UKZccKA&sz=w3000",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://drive.google.com/file/d/1F868fVhQnzFALTcnEIXUDeAl3UKZccKA",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"square": true,
+				"itemId": "_AboveVTT_Tokens_Overlays_Star",
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1017px",
+				"name": "Webs Aboard Ship",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"mapElev": 0,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Overlays/Star",
+				"top": "940px",
+				"hidehpbar": false,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c14fa786-a78f-4ca9-9c6b-20536cc37e68": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "c14fa786-a78f-4ca9-9c6b-20536cc37e68",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Swarm of Insects (Spiders) 14",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#808000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1668px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -47,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c410a216-aefc-4bfc-aa8e-ae9ed9e3ef23": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c410a216-aefc-4bfc-aa8e-ae9ed9e3ef23",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16870,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "652px",
+				"name": "Ghast 2",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FF7433",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "2123px",
+				"hidehpbar": false,
+				"stat": 16870,
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16870,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c5425599-568d-46d0-9901-19341f54e5c5": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c5425599-568d-46d0-9901-19341f54e5c5",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "2292px",
+				"name": "Swarm of Insects (Spiders) 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "2123px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": -36,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"c83062ba-674d-495a-a38d-2c3a42836973": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 44,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "c83062ba-674d-495a-a38d-2c3a42836973",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/338/636252776771218004.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16859,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Ettercap 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 44,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ettercap",
+				"top": "1122px",
+				"hidehpbar": false,
+				"stat": 16859,
+				"hitPointInfo": {
+					"maximum": 44,
+					"current": 44,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16859,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d16c6b49-6398-4c80-aa9b-e86fe8eedbf5": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d16c6b49-6398-4c80-aa9b-e86fe8eedbf5",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/10.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_10",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "1558px",
+				"name": "Unholy Shrine",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/10",
+				"top": "1847px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d54cd741-e5ae-4cac-a1da-ff94195621ff": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "d54cd741-e5ae-4cac-a1da-ff94195621ff",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17235,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1563px",
+				"name": "Maw Demon",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "940px",
+				"hidehpbar": false,
+				"stat": 17235,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17235,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"d56371cb-80fc-4174-a264-5935992cb744": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "d56371cb-80fc-4174-a264-5935992cb744",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1472px",
+				"name": "Swarm of Insects (Spiders) 9",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#F032E6",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1486px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -42,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"dea84a7a-fd09-4996-b57f-235eac876af4": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"armorClass": 11,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "dea84a7a-fd09-4996-b57f-235eac876af4",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/675/636747837794884984.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 319295,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1563px",
+				"name": "Krell Grohlg",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#1A6AFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Krell Grohlg",
+				"top": "1941px",
+				"hidehpbar": false,
+				"stat": 319295,
+				"hitPointInfo": {
+					"maximum": 27,
+					"current": 27,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 319295,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"e1b97987-ea91-42b0-9cbe-793776d36184": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 33,
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "e1b97987-ea91-42b0-9cbe-793776d36184",
+				"imgsrc": "https://www.dndbeyond.com/avatars/9/618/636329621309218199.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 17235,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1381px",
+				"name": "Maw Demon 3",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#FFD433",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 33,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Maw Demon",
+				"top": "849px",
+				"hidehpbar": false,
+				"stat": 17235,
+				"hitPointInfo": {
+					"maximum": 33,
+					"current": 33,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 17235,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"ee190276-8a6c-48ef-8e4b-efa6e154d79f": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"hp": 22,
+				"armorClass": 12,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": "0"
+				},
+				"id": "ee190276-8a6c-48ef-8e4b-efa6e154d79f",
+				"imgsrc": "https://www.dndbeyond.com/avatars/4675/664/636747837303835953.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "0"
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 255, 100, 0.5)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "square",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.9585, 141.9585, 141.9585, 1)",
+					"feet": "10"
+				},
+				"itemId": 301414,
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "1381px",
+				"name": "Swarm of Insects (Spiders) 12",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "monster",
+				"color": "#008000",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"max_hp": 22,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Swarm of Insects (Spiders)",
+				"top": "1577px",
+				"hidehpbar": false,
+				"stat": 301414,
+				"hitPointInfo": {
+					"maximum": 22,
+					"current": 22,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 301414,
+				"scaleCreated": "2",
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": -45,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"f080d75a-3041-42fc-b5e2-383f9ef6c8f5": {
+				"disablestat": true,
+				"gridSquares": 0.999275887038378,
+				"custom_conditions": [],
+				"hp": 0,
+				"folderPath": "/Numbers",
+				"armorClass": 0,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "f080d75a-3041-42fc-b5e2-383f9ef6c8f5",
+				"imgsrc": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"locked": true,
+				"selected": true,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"image": "https://abovevtt-assets.s3.eu-central-1.amazonaws.com/numbers/2.png",
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "labelToken",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 60
+				},
+				"itemId": "_AboveVTT_Tokens_Numbers_02",
+				"square": true,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91.00072411296163,
+				"left": "2426px",
+				"name": "Altar to Lolth",
+				"defaultmaxhptype": "average",
+				"disableborder": true,
+				"auraislight": false,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"itemType": "builtinToken",
+				"color": "#1A6AFF",
+				"hidden": true,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": false,
+				"max_hp": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/AboveVTT Tokens/Numbers/02",
+				"top": "2161px",
+				"hidehpbar": false,
+				"imageSize": 0.8,
+				"hitPointInfo": {
+					"maximum": 0,
+					"current": 0,
+					"temp": 0
+				},
+				"lockRestrictDrop": "lock",
+				"underDarkness": false,
+				"player_owned": false,
+				"scaleCreated": 2,
+				"tokenSize": 1,
+				"maxAge": false,
+				"zindexdiff": 17,
+				"disableaura": false,
+				"revealInFog": false
+			},
+			"fc46174f-43e8-4a6a-8e90-719f82554f5a": {
+				"disablestat": false,
+				"gridSquares": 0.9992679355783308,
+				"custom_conditions": [],
+				"armorClass": 13,
+				"light1": {
+					"color": "rgba(255, 255, 255, 1)",
+					"feet": 0
+				},
+				"id": "fc46174f-43e8-4a6a-8e90-719f82554f5a",
+				"imgsrc": "https://www.dndbeyond.com/avatars/0/410/636252786514280516.jpeg",
+				"locked": false,
+				"light2": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": 0
+				},
+				"aura2": {
+					"color": "rgba(255, 255, 0, 0.1)",
+					"feet": "0"
+				},
+				"aura1": {
+					"color": "rgba(255, 129, 0, 0.3)",
+					"feet": "0"
+				},
+				"offset": {
+					"x": 0,
+					"y": 0
+				},
+				"tokenStyleSelect": "circle",
+				"revealname": false,
+				"tokenBaseStyleSelect": "default",
+				"vision": {
+					"color": "rgba(141.98399999999998, 141.98399999999998, 141.98399999999998, 1)",
+					"feet": "60"
+				},
+				"itemId": 16870,
+				"square": false,
+				"placeType": "count",
+				"healthauratype": "aura",
+				"size": 91,
+				"left": "743px",
+				"name": "Ghast 4",
+				"defaultmaxhptype": "average",
+				"disableborder": false,
+				"auraislight": true,
+				"conditions": [],
+				"enablepercenthpbar": false,
+				"sizeId": 4,
+				"itemType": "monster",
+				"color": "#884DFF",
+				"hidden": false,
+				"hidestat": false,
+				"videoToken": false,
+				"legacyaspectratio": true,
+				"mapElev": 0,
+				"alwaysshowname": false,
+				"restrictPlayerMove": true,
+				"listItemPath": "/Monsters/Ghast",
+				"top": "1577px",
+				"hidehpbar": false,
+				"stat": 16870,
+				"hitPointInfo": {
+					"maximum": 36,
+					"current": 36,
+					"temp": 0
+				},
+				"lockRestrictDrop": "restrict",
+				"underDarkness": false,
+				"player_owned": false,
+				"monster": 16870,
+				"scaleCreated": "2",
+				"maxAge": false,
+				"zindexdiff": 18,
+				"disableaura": false,
+				"revealInFog": false
+			}
+		},
+		"darkness_filter": "100",
+		"scale_factor": "2",
+		"offsetx": "7.199999999999875",
+		"dm_map_usable": "1",
+		"offsety": "15",
+		"grid": "1",
+		"hpps": "45.53333333333334",
+		"grid_color": "rgba(0, 0, 0, 0.7)",
+		"notes": {
+			"06b6ca02-9c00-4180-a5b2-ecc39dcdd5af": {
+				"title": "Cargo Hold",
+				"text": "<h4 id=\"12CargoHold\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"86af1c92-bb82-4db2-8dad-8eddad602fdb\">Cargo Hold</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"82fd8f12-af6b-4d5b-8760-79f0956d9cc7\">This deck runs the length of the ship and features no bulkheads or walls. Dark, murky seawater fills it to a depth of three feet, sloshing against old, moldering crates piled against the ship’s port hull.</p>\n</aside>\n<p data-content-chunk-id=\"43851d73-d4ea-4139-8e34-074b272f89d8\">The water that fills this area is&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#DifficultTerrain\" data-tooltip-href=\"//www.dndbeyond.com/rules/86-tooltip?disable-webm=1&amp;disable-webm=1\">difficult terrain</a>&nbsp;for Medium characters. Small characters must swim while in the cargo hold.</p>\n<p data-content-chunk-id=\"8d433580-78c6-4a70-a105-c8f67a8404c3\">This deck is a prison for four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16870-ghast\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16870-tooltip?disable-webm=1&amp;disable-webm=1\">ghasts</a>&nbsp;— formerly a group of thieves who stowed away in the hold before the&nbsp;<em>Emperor</em>&nbsp;last left port. When the ship was waylaid by the storm, they could not escape from the hold and eventually starved to death. The cultists found the undead when they took control of the ship but viewed them as emissaries of their dark god and fed them with offerings of living sacrifices.</p>\n<p data-content-chunk-id=\"689cf7fd-8927-40b2-973b-73eee49dc71b\">The ghasts currently hide in the bow of the hold, beneath the water. They won’t reveal themselves until characters enter this area and approach their position, whereupon the undead surge out of the water. Any character whose passive&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>&nbsp;score is 11 or lower is&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/combat#Surprise\" data-tooltip-href=\"//www.dndbeyond.com/rules/92-tooltip?disable-webm=1&amp;disable-webm=1\">surprised</a>&nbsp;by the ghasts when they attack. A creature&nbsp;<a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#ParalyzedCondition\" data-tooltip-href=\"//www.dndbeyond.com/conditions/9-tooltip?disable-webm=1&amp;disable-webm=1\">paralyzed</a>&nbsp;by a ghast’s claws holds its breath automatically if it collapses into the water, but is at risk of drowning unless it is pulled out again. See “<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#Suffocating\" data-tooltip-href=\"//www.dndbeyond.com/rules/88-tooltip?disable-webm=1&amp;disable-webm=1\">Suffocating</a>” in&nbsp;<a href=\"https://www.dndbeyond.com/sources/phb/adventuring#Suffocating\" data-content-chunk-id=\"a60196ea-819f-4106-badc-2f284f218400\">chapter 8</a>&nbsp;of the&nbsp;<a class=\"sourcebook\" href=\"https://www.dndbeyond.com/sources/phb\" data-content-chunk-id=\"76d6645f-1b08-496b-84c5-72be06b06770\">Player’s Handbook</a>.</p>\n<p data-content-chunk-id=\"da009dc5-e74c-4a8f-8c45-981e3e26a744\"><strong><em>Treasure.</em></strong>&nbsp;One of the ghasts wears a silver bracelet sculpted to look like a twisted tongue (75 gp), and another one wears a gem-studded belt (400 gp). The crates and boxes are rotted, and the goods in them are worthless — with one exception.</p>\n<p data-content-chunk-id=\"b1cec652-b02b-4639-9c1c-f78bef104ae6\"><strong><em>Aubreck’s Box.</em></strong>&nbsp;As an action, a character can attempt a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check to spot a crate marked with a stylized letter&nbsp;<em>A</em>. Another action is required to open it, revealing the box inside.</p>\n<p data-content-chunk-id=\"fd0a61b7-11cc-4689-ab07-46b63ffd8d87\">The blue metal box is made from magically enhanced iron that is impervious to rust and has invulnerability to all damage. It has no lock or latch, and it can’t be opened by any normal means. See “<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#MovingAubrecksTreasure\" data-content-chunk-id=\"f7c52d7e-a05a-43c7-8fbe-e6b34dc80820\">Moving Aubreck’s Treasure</a>” for details on carrying the box after the elder octopus attacks, and for getting the treasure safely off&nbsp;<em>Emperor of the Waves</em>.</p>",
+				"plain": "Cargo HoldThis deck runs the length of the ship and features no bulkheads or walls. Dark, murky seawater fills it to a depth of three feet, sloshing against old, moldering crates piled against the ship’s port hull.The water that fills this area is difficult terrain for Medium characters. Small characters must swim while in the cargo hold.This deck is a prison for four ghasts — formerly a group of thieves who stowed away in the hold before the Emperor last left port. When the ship was waylaid by the storm, they could not escape from the hold and eventually starved to death. The cultists found the undead when they took control of the ship but viewed them as emissaries of their dark god and fed them with offerings of living sacrifices.The ghasts currently hide in the bow of the hold, beneath the water. They won’t reveal themselves until characters enter this area and approach their position, whereupon the undead surge out of the water. Any character whose passive Perception score is 11 or lower is surprised by the ghasts when they attack. A creature paralyzed by a ghast’s claws holds its breath automatically if it collapses into the water, but is at risk of drowning unless it is pulled out again. See “Suffocating” in chapter 8 of the Player’s Handbook.Treasure. One of the ghasts wears a silver bracelet sculpted to look like a twisted tongue (75 gp), and another one wears a gem-studded belt (400 gp). The crates and boxes are rotted, and the goods in them are worthless — with one exception.Aubreck’s Box. As an action, a character can attempt a DC 15 Wisdom (Perception) check to spot a crate marked with a stylized letter A. Another action is required to open it, revealing the box inside.The blue metal box is made from magically enhanced iron that is impervious to rust and has invulnerability to all damage. It has no lock or latch, and it can’t be opened by any normal means. See “Moving Aubreck’s Treasure” for details on carrying the box after the elder octopus attacks, and for getting the treasure safely off Emperor of the Waves.",
+				"player": false,
+				"statBlock": false
+			},
+			"0dd7b207-bc36-420e-8cac-3fe6aae8765e": {
+				"title": "Galley",
+				"text": "<h4 id=\"11Galley\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"6a691607-5f46-43d9-8680-46b720e17119\">Galley</h4>\n<p data-content-chunk-id=\"66d72ec7-7d74-427f-8782-5c8452a289ee\">The door here is damaged and held shut by rusty iron spikes. It must be forced open with a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check or chopped apart (AC 15, 12 hit points, immunity to psychic and poison damage).</p>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"28f1afa7-7362-44ab-b289-cfa35e16ce4f\">Judging from the stove along one wall of this room, this was once the galley. Now the area is cluttered with bones and debris. Badly damaged metal knives and other cookware hang from hooks in the ceiling, while the choking stench of rotting flesh fills the air. A stairway leads up near the stern. Tiny spiders crawl over everything.</p>\n</aside>\n<p data-content-chunk-id=\"d390e609-9702-4ef1-9d7b-e5b6b362890e\">The cultists kept this area free of webs and used it for food storage. Then, after their supplies ran low, several of them barricaded themselves in this room to seize control of the remaining supplies. In response, the rest of the cultists stormed the area, slew the rebels, and added their corpses to the ship’s larder. All that’s left now of all the rebels are scraps, as the lone survivor (Krell) has consumed the last of them.</p>\n<p data-content-chunk-id=\"b49fda74-b319-44d7-9a9f-f7a4a3f77172\"><strong><em>Trapdoor.</em></strong>&nbsp;A moldy trapdoor in this area leads down into the cargo hold. It can be easily spotted (no check required). A bar has been inserted through a set of rusted brackets to keep it shut. The cultists used this door to deliver sacrifices to the ghasts below, and they kept it barred between those times to prevent the undead from escaping.</p>",
+				"plain": "GalleyThe door here is damaged and held shut by rusty iron spikes. It must be forced open with a successful DC 15 Strength (Athletics) check or chopped apart (AC 15, 12 hit points, immunity to psychic and poison damage).Judging from the stove along one wall of this room, this was once the galley. Now the area is cluttered with bones and debris. Badly damaged metal knives and other cookware hang from hooks in the ceiling, while the choking stench of rotting flesh fills the air. A stairway leads up near the stern. Tiny spiders crawl over everything.The cultists kept this area free of webs and used it for food storage. Then, after their supplies ran low, several of them barricaded themselves in this room to seize control of the remaining supplies. In response, the rest of the cultists stormed the area, slew the rebels, and added their corpses to the ship’s larder. All that’s left now of all the rebels are scraps, as the lone survivor (Krell) has consumed the last of them.Trapdoor. A moldy trapdoor in this area leads down into the cargo hold. It can be easily spotted (no check required). A bar has been inserted through a set of rusted brackets to keep it shut. The cultists used this door to deliver sacrifices to the ghasts below, and they kept it barred between those times to prevent the undead from escaping.",
+				"player": false,
+				"statBlock": false
+			},
+			"210c5d6a-ebe9-437d-8bd4-4ac4b3f08618": {
+				"title": "Food Storage",
+				"text": "<h4 id=\"6FoodStorage\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"fb1e095a-36a6-44b8-891c-b0d0a920ee70\">Food Storage</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"99cc3fb3-9c06-4a51-a616-2c568e5cd95f\">Thick webbing chokes this room, partially covering strung-up bones, shriveled limbs of humanoids and animals, and other gruesome remains. Four human-sized bundles hang within the mass of webbing, a little less than ten feet into the room, while small spiders scurry everywhere.</p>\n</aside>\n<p data-content-chunk-id=\"0589d568-050a-4c84-8379-6c3bda97e84c\">A character who watches the webbed bundles for a few moments and succeeds on a DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check notices that they occasionally shudder and twitch in a way not caused by the motion of the&nbsp;<em>Emperor</em>. Within are four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/17235-maw-demon\" data-tooltip-href=\"//www.dndbeyond.com/monsters/17235-tooltip?disable-webm=1&amp;disable-webm=1\">maw demons</a>&nbsp;(see&nbsp;<a href=\"https://www.dndbeyond.com/sources/gos/monsters-and-npcs\" data-content-chunk-id=\"822b83b3-0a05-494f-965a-ac1148267b00\">appendix C</a>), servitors drawn from the Abyss by the fiendish magic coursing through the webs here. Krell and the other cultists spent many hours here sanctifying the webs and offering rites to Lolth, and the goddess has rewarded them with these servitors. Krell has yet to free them, because he worries he is not currently strong enough to command them.</p>\n<p data-content-chunk-id=\"c4dfaf92-472f-4d3c-816c-6c623c78e40e\">Each cocoon can be torn open with a successful DC 12 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check, or it can be attacked (AC 10; 10 hit points; immunity to bludgeoning, poison, and psychic damage). When the first demon is set loose, the others become agitated and can use an action to tear their way out of the webbing.</p>\n<p data-content-chunk-id=\"9a5cfb75-bf26-4755-92d4-389f6925e149\"><strong><em>Treasure.</em></strong>&nbsp;A few bones and skulls of sacrificial victims are hidden in the webbing. A character who makes a successful DC 10 Intelligence (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/8-tooltip?disable-webm=1&amp;disable-webm=1\">Investigation</a>) check finds a pair of gold earrings (200 gp) and a vine necklace set with an amethyst (250 gp) hidden among the webs.</p>",
+				"plain": "Food StorageThick webbing chokes this room, partially covering strung-up bones, shriveled limbs of humanoids and animals, and other gruesome remains. Four human-sized bundles hang within the mass of webbing, a little less than ten feet into the room, while small spiders scurry everywhere.A character who watches the webbed bundles for a few moments and succeeds on a DC 10 Wisdom (Perception) check notices that they occasionally shudder and twitch in a way not caused by the motion of the Emperor. Within are four maw demons (see appendix C), servitors drawn from the Abyss by the fiendish magic coursing through the webs here. Krell and the other cultists spent many hours here sanctifying the webs and offering rites to Lolth, and the goddess has rewarded them with these servitors. Krell has yet to free them, because he worries he is not currently strong enough to command them.Each cocoon can be torn open with a successful DC 12 Strength (Athletics) check, or it can be attacked (AC 10; 10 hit points; immunity to bludgeoning, poison, and psychic damage). When the first demon is set loose, the others become agitated and can use an action to tear their way out of the webbing.Treasure. A few bones and skulls of sacrificial victims are hidden in the webbing. A character who makes a successful DC 10 Intelligence (Investigation) check finds a pair of gold earrings (200 gp) and a vine necklace set with an amethyst (250 gp) hidden among the webs.",
+				"player": false,
+				"statBlock": false
+			},
+			"21904e42-0f35-4ecc-8b00-f91a3d3e9c02": {
+				"title": "Spider Chambers",
+				"text": "<h4 id=\"9SpiderChambers\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"f6be60c1-3c90-4218-9786-c5fa00e058cf\">Spider Chambers</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"2fc7a40c-5fd5-43f2-80c5-c5f8debfbed0\">This room is filled with smashed furniture, crushed wooden boxes, and other debris, all covered with thick layers of spiderwebs.</p>\n</aside>\n<p data-content-chunk-id=\"f14c226c-f1fe-4390-b373-4a362fd39d2b\">When the door to either of these web-filled rooms is opened, hundreds of tiny spiders scuttle for cover. These areas contain nothing of interest.</p>",
+				"plain": "Spider ChambersThis room is filled with smashed furniture, crushed wooden boxes, and other debris, all covered with thick layers of spiderwebs.When the door to either of these web-filled rooms is opened, hundreds of tiny spiders scuttle for cover. These areas contain nothing of interest.",
+				"player": false,
+				"statBlock": false
+			},
+			"29cd64d7-7780-4013-af97-f42b8211aac2": {
+				"title": "Main Deck",
+				"text": "<h4 id=\"1MainDeck\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"63c61987-c90d-4a5b-8f20-4eefc428dbac\">Main Deck</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"736d903a-e3a8-4a84-a34e-6e2dfe0ff273\">The&nbsp;<em>Emperor</em>’s upper decks slope gently down toward the ship’s port side. The forecastle and quarterdeck are empty, and short wooden stumps are all that remain of the ship’s masts. The double doors leading to cabins fore and aft appear intact, as does the metal grate in the deck that offers access to the lower decks. Aside from the rhythmic creak of the ship’s badly weathered timbers, all seems quiet.</p>\n</aside>\n<p data-content-chunk-id=\"36b87060-57bf-415c-95d8-07ed9cdbbd53\">This area is unoccupied. The doors to fore and aft are not locked (but see&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#3NavigatorsRoom\" data-content-chunk-id=\"34b20abc-fa30-4445-a1cd-382202a0f65d\">area 3</a>), and the ship’s wheel turns easily and freely. A character who makes a successful DC 10 Intelligence check determines that the wheel is no longer connected to the ship’s rudder, and it can’t be used to steer the ship until the vessel undergoes extensive repairs.</p>\n<p data-content-chunk-id=\"03001867-c885-45b2-9cbf-1ade3f951900\">The deck is marred in places by bloodstains, noticeable to someone who makes a successful DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check. A successful DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/13-tooltip?disable-webm=1&amp;disable-webm=1\">Medicine</a>) check thereafter reveals that the stains are about three days old.</p>\n<p data-content-chunk-id=\"d7c7c7c9-57d4-4a55-9c6f-f7454c3f56e1\">Through the grate set into the deck can be seen a ladder extending down to area 5, but the grate is rusted shut. It can be wrenched open with a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check or smashed apart (AC 15; 10 hit points; immunity to fire, poison, and psychic damage). Anyone who peers down into area 5 after the grate is removed and succeeds on a DC 10 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check spots several fist-sized&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/17018-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/17018-tooltip?disable-webm=1&amp;disable-webm=1\">spiders</a>&nbsp;crawling along the walls of the passage below. The spiders immediately scuttle away from any noise or light.</p>",
+				"plain": "Main DeckThe Emperor’s upper decks slope gently down toward the ship’s port side. The forecastle and quarterdeck are empty, and short wooden stumps are all that remain of the ship’s masts. The double doors leading to cabins fore and aft appear intact, as does the metal grate in the deck that offers access to the lower decks. Aside from the rhythmic creak of the ship’s badly weathered timbers, all seems quiet.This area is unoccupied. The doors to fore and aft are not locked (but see area 3), and the ship’s wheel turns easily and freely. A character who makes a successful DC 10 Intelligence check determines that the wheel is no longer connected to the ship’s rudder, and it can’t be used to steer the ship until the vessel undergoes extensive repairs.The deck is marred in places by bloodstains, noticeable to someone who makes a successful DC 15 Wisdom (Perception) check. A successful DC 10 Wisdom (Medicine) check thereafter reveals that the stains are about three days old.Through the grate set into the deck can be seen a ladder extending down to area 5, but the grate is rusted shut. It can be wrenched open with a successful DC 15 Strength (Athletics) check or smashed apart (AC 15; 10 hit points; immunity to fire, poison, and psychic damage). Anyone who peers down into area 5 after the grate is removed and succeeds on a DC 10 Wisdom (Perception) check spots several fist-sized spiders crawling along the walls of the passage below. The spiders immediately scuttle away from any noise or light.",
+				"player": false,
+				"statBlock": false
+			},
+			"30f07f1f-60c2-43e4-aae6-e323da65ae6d": {
+				"title": "Navigator’s Room",
+				"text": "<h4 id=\"3NavigatorsRoom\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"56de946d-d875-4d51-a405-d03a0dbbd5c4\">Navigator’s Room</h4>\n<p data-content-chunk-id=\"8d684803-ea04-4df5-b53a-fb029c008193\">The door into this room from the main deck is held shut by a thick mass of webbing behind it. It can be forced open with a successful DC 15 Strength (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/2-tooltip?disable-webm=1&amp;disable-webm=1\">Athletics</a>) check or broken through (AC 15, 18 hit points, immunity to poison and psychic damage, resistance to piercing and slashing damage).</p>\n<p data-content-chunk-id=\"929a079b-62a0-40dc-9062-ca59ae60b99d\">Sheets of webbing fill this room, such that anything more than 10 feet from the entrance appears as little more than a vague shape. Hidden in the webs are a narrow staircase down and, near the bow, a table and four chairs.</p>\n<p data-content-chunk-id=\"d5b1a7bf-2981-4009-90d7-fc32709c459d\">The weathered furniture here is worthless, but the table is still covered with charts and maps.</p>\n<p data-content-chunk-id=\"de80b316-42e0-4011-a912-78c11d56e767\">A&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16895-giant-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16895-tooltip?disable-webm=1&amp;disable-webm=1\">giant spider</a>&nbsp;and an&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16859-ettercap\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16859-tooltip?disable-webm=1&amp;disable-webm=1\">ettercap</a>&nbsp;lurk near the ceiling above the table, completely hidden in webbing and shadow. They attack the first creature to examine the charts and maps, gaining&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/combat#Surprise\" data-tooltip-href=\"//www.dndbeyond.com/rules/92-tooltip?disable-webm=1&amp;disable-webm=1\">surprise</a>&nbsp;unless the creature has a passive Perception score of 17 or higher.</p>\n<p data-content-chunk-id=\"733cc029-1d0d-478c-b05c-4fcfa9feefca\">Combat in this area arouses the hungry vermin in the decks below. Beginning 1d4 rounds after the giant spider’s initial attack, one&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/301414-swarm-of-insects-spiders\" data-tooltip-href=\"//www.dndbeyond.com/monsters/301414-tooltip?disable-webm=1&amp;disable-webm=1\">swarm of insects (spiders)</a>&nbsp;boils up the stairs from area 4 each round, using the same initiative count as the giant spider. The swarms keep coming until four have entered the fight, unless the passage from area 4 is blocked somehow. Each swarm attacks the nearest creature.</p>",
+				"plain": "Navigator’s RoomThe door into this room from the main deck is held shut by a thick mass of webbing behind it. It can be forced open with a successful DC 15 Strength (Athletics) check or broken through (AC 15, 18 hit points, immunity to poison and psychic damage, resistance to piercing and slashing damage).Sheets of webbing fill this room, such that anything more than 10 feet from the entrance appears as little more than a vague shape. Hidden in the webs are a narrow staircase down and, near the bow, a table and four chairs.The weathered furniture here is worthless, but the table is still covered with charts and maps.A giant spider and an ettercap lurk near the ceiling above the table, completely hidden in webbing and shadow. They attack the first creature to examine the charts and maps, gaining surprise unless the creature has a passive Perception score of 17 or higher.Combat in this area arouses the hungry vermin in the decks below. Beginning 1d4 rounds after the giant spider’s initial attack, one swarm of insects (spiders) boils up the stairs from area 4 each round, using the same initiative count as the giant spider. The swarms keep coming until four have entered the fight, unless the passage from area 4 is blocked somehow. Each swarm attacks the nearest creature.",
+				"player": false,
+				"statBlock": false
+			},
+			"3cd03855-03d7-4176-b820-c9784e8a44f2": {
+				"title": "Spider Nest",
+				"text": "<h4 id=\"5SpiderNest\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"1a977602-ccda-4a11-9392-f327739e9e35\">Spider Nest</h4>\n<p data-content-chunk-id=\"0a363bd7-b56c-4379-8ca7-14e2dc257afa\">The north–south section of this hallway is filled with sheets of webbing (see the sidebar).</p>\n<p data-content-chunk-id=\"fa17e2f9-c37d-4df7-8d08-6fb4da9fd764\">An&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16859-ettercap\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16859-tooltip?disable-webm=1&amp;disable-webm=1\">ettercap</a>&nbsp;lurks in here, latching onto the ceiling over the door to area 6. Two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16900-giant-wolf-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16900-tooltip?disable-webm=1&amp;disable-webm=1\">giant wolf spiders</a>&nbsp;are perched on either side of the doorway from area 4. They attack, gaining surprise over any creature with a passive&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>&nbsp;score of 16 or lower, when any creature is caught by the web in the doorway leading from area 4 or when any creature enters area 5 after that web is removed. Six&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/301414-swarm-of-insects-spiders\" data-tooltip-href=\"//www.dndbeyond.com/monsters/301414-tooltip?disable-webm=1&amp;disable-webm=1\">swarms of insects (spiders)</a>&nbsp;lie elsewhere in this area, with two swarms joining the fight each round.</p>\n<p data-content-chunk-id=\"ee4a374b-98d3-401b-803a-dac76ce868da\">If the characters enter this passageway from&nbsp;<a href=\"https://www.dndbeyond.com/sources/gos/salvage-operation#10UnholyShrine\" data-content-chunk-id=\"e35cac3a-1fe0-42a3-86c3-61628bf99e82\">area 10</a>&nbsp;instead of from area 4, the spiders wait until the characters’ attention is focused on the deck grate (see below) before attacking.</p>\n<p data-content-chunk-id=\"f1037440-e984-450c-9289-8974493439f4\"><strong><em>Cargo Hold Access.</em></strong>&nbsp;A wooden grate covers a hole in the deck that leads down to&nbsp;<a href=\"https://www.dndbeyond.com/sources/gos/salvage-operation#12CargoHold\" data-content-chunk-id=\"0140a164-ebfb-4599-8b0a-9fae9ac38d88\">area 12</a>. The grate is badly rotted and covered in webs, and its unsafe nature can be noticed only by a character who probes the floor ahead with a pole or who has a passive&nbsp;<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>&nbsp;score of 14 or higher. A character who puts their full weight on the grate breaks through and falls into the cargo hold (<a href=\"https://www.dndbeyond.com/sources/gos/salvage-operation#12CargoHold\" data-content-chunk-id=\"bf97c6e3-804e-4825-80d1-6e2559de7bfa\">area 12</a>). The fall into the water filling the hold deals no damage, but it catches the attention of the ghouls in the hold. The grate can be opened or broken through easily by anyone who recognizes its condition before moving onto it.</p>",
+				"plain": "Spider NestThe north–south section of this hallway is filled with sheets of webbing (see the sidebar).An ettercap lurks in here, latching onto the ceiling over the door to area 6. Two giant wolf spiders are perched on either side of the doorway from area 4. They attack, gaining surprise over any creature with a passive Perception score of 16 or lower, when any creature is caught by the web in the doorway leading from area 4 or when any creature enters area 5 after that web is removed. Six swarms of insects (spiders) lie elsewhere in this area, with two swarms joining the fight each round.If the characters enter this passageway from area 10 instead of from area 4, the spiders wait until the characters’ attention is focused on the deck grate (see below) before attacking.Cargo Hold Access. A wooden grate covers a hole in the deck that leads down to area 12. The grate is badly rotted and covered in webs, and its unsafe nature can be noticed only by a character who probes the floor ahead with a pole or who has a passive Perception score of 14 or higher. A character who puts their full weight on the grate breaks through and falls into the cargo hold (area 12). The fall into the water filling the hold deals no damage, but it catches the attention of the ghouls in the hold. The grate can be opened or broken through easily by anyone who recognizes its condition before moving onto it.",
+				"player": false,
+				"statBlock": false
+			},
+			"3e1367c3-1c31-4ba2-9fcd-e213441caf8a": {
+				"title": "First Mate’s Cabin",
+				"text": "<h4 id=\"8FirstMatesCabin\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"3bbf7fcf-b281-4fc9-99f9-cbfd272f345c\">First Mate’s Cabin</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"45669e71-1603-4d34-93b9-f051f7a70803\">The smashed wreckage of a bed, dresser, and desk covers the floor of this room. Thick webs extend from floor to ceiling, making it impossible to clearly see the walls beyond. Hundreds of tiny spiders move through the webs.</p>\n</aside>\n<p data-content-chunk-id=\"b33106cd-be94-484a-8652-1b260f3cf750\">All parts of this room are engulfed in sheets of webs. The cabin contains nothing of interest, and the spiders pose no threat.</p>",
+				"plain": "First Mate’s CabinThe smashed wreckage of a bed, dresser, and desk covers the floor of this room. Thick webs extend from floor to ceiling, making it impossible to clearly see the walls beyond. Hundreds of tiny spiders move through the webs.All parts of this room are engulfed in sheets of webs. The cabin contains nothing of interest, and the spiders pose no threat.",
+				"player": false,
+				"statBlock": false
+			},
+			"7952c5cf-d976-4b33-8582-1657e9d0f327": {
+				"title": "Spider Chambers",
+				"text": "<h4 id=\"9SpiderChambers\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"f6be60c1-3c90-4218-9786-c5fa00e058cf\">Spider Chambers</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"2fc7a40c-5fd5-43f2-80c5-c5f8debfbed0\">This room is filled with smashed furniture, crushed wooden boxes, and other debris, all covered with thick layers of spiderwebs.</p>\n</aside>\n<p data-content-chunk-id=\"f14c226c-f1fe-4390-b373-4a362fd39d2b\">When the door to either of these web-filled rooms is opened, hundreds of tiny spiders scuttle for cover. These areas contain nothing of interest.</p>",
+				"plain": "Spider ChambersThis room is filled with smashed furniture, crushed wooden boxes, and other debris, all covered with thick layers of spiderwebs.When the door to either of these web-filled rooms is opened, hundreds of tiny spiders scuttle for cover. These areas contain nothing of interest.",
+				"player": false,
+				"statBlock": false
+			},
+			"7b4d136e-4835-4db9-923d-24e4ad3a42a4": {
+				"title": " Webbed Doorway",
+				"text": "<h4 id=\"4WebbedDoorway\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"86bf24a1-16c0-4c52-b493-78be5ca86d2b\">&nbsp;Webbed Doorway</h4>\n<p data-content-chunk-id=\"cef5c55d-574a-476d-b36d-6505103cdada\">This area is not shrouded in sheets of webs, unlike most of the lower deck (see the “Webs Aboard Ship” sidebar). A web of a different sort stretches across the doorway between this small chamber and the west end of area 5 (at the point marked with a dotted line). This freshly spun web is difficult to spot. A character who probes ahead with a pole or a weapon, or who has a passive Perception score of 17 or higher, can spot the web. Otherwise, the first character through the doorway blunders into it and is&nbsp;<a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#RestrainedCondition\" data-tooltip-href=\"//www.dndbeyond.com/conditions/13-tooltip?disable-webm=1&amp;disable-webm=1\">restrained</a>, as if they had been hit by a giant spider’s Web attack.</p>\n<p data-content-chunk-id=\"90b38fd1-318d-417e-9c05-fe8e6640234a\">If any creature is caught in the web, the occupants of area 5 are drawn into this area and attack immediately.</p>\n<p data-content-chunk-id=\"902fdfff-6d54-4123-a89d-d00cc985be54\"><strong><em>Treasure.</em></strong>&nbsp;A fine silver bracelet (250 gp) can be found on the floor against the wall in the northeast corner of this area.</p>",
+				"plain": " Webbed DoorwayThis area is not shrouded in sheets of webs, unlike most of the lower deck (see the “Webs Aboard Ship” sidebar). A web of a different sort stretches across the doorway between this small chamber and the west end of area 5 (at the point marked with a dotted line). This freshly spun web is difficult to spot. A character who probes ahead with a pole or a weapon, or who has a passive Perception score of 17 or higher, can spot the web. Otherwise, the first character through the doorway blunders into it and is restrained, as if they had been hit by a giant spider’s Web attack.If any creature is caught in the web, the occupants of area 5 are drawn into this area and attack immediately.Treasure. A fine silver bracelet (250 gp) can be found on the floor against the wall in the northeast corner of this area.",
+				"player": false,
+				"statBlock": false
+			},
+			"85cbdb39-9ddd-4a02-8fad-89250151e42a": {
+				"title": "Krell’s Cabin",
+				"text": "<h4 id=\"7KrellsCabin\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"0cb3824d-8d52-443a-b5f1-e81309e3db47\">Krell’s Cabin</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"877b0cb3-2d45-497a-9d39-df0c0bfa182f\">Palm fronds are piled up in one corner of this room to make a crude bed. Nearby, a stone-tipped wooden spear and an oblong shield lean against the wall. The shield bears the symbol of a humanoid skull with spiders crawling from its eye sockets. Two weathered humanoid skulls hang from wooden pegs on the wall.</p>\n</aside>\n<p data-content-chunk-id=\"f43568bd-1793-42b2-9e71-c95637dba0cb\">This room serves as Krell Grohlg’s personal chamber. Unlike most of the lower deck, it is not covered in sheets of webs. Ever since the attack by the octopus killed the other cultists a few days ago, he has abandoned this room and spends most of his time praying in&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#10UnholyShrine\" data-content-chunk-id=\"56ae4e32-daef-4341-bea8-0dbf7ecda6d0\">area 10</a>.</p>\n<p data-content-chunk-id=\"7293d369-b78f-42b7-8186-496d6771683d\">Any character who inspects the bed finds several well-gnawed humanoid bones mixed in with the palm fronds.</p>",
+				"plain": "Krell’s CabinPalm fronds are piled up in one corner of this room to make a crude bed. Nearby, a stone-tipped wooden spear and an oblong shield lean against the wall. The shield bears the symbol of a humanoid skull with spiders crawling from its eye sockets. Two weathered humanoid skulls hang from wooden pegs on the wall.This room serves as Krell Grohlg’s personal chamber. Unlike most of the lower deck, it is not covered in sheets of webs. Ever since the attack by the octopus killed the other cultists a few days ago, he has abandoned this room and spends most of his time praying in area 10.Any character who inspects the bed finds several well-gnawed humanoid bones mixed in with the palm fronds.",
+				"player": false,
+				"statBlock": false
+			},
+			"9ee8cc44-d0b4-445f-8b36-2fb76e571196": {
+				"title": "Sequence of Events for Octopus",
+				"text": "<h3 id=\"SequenceofEvents\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"47e1aaee-8ba6-47fe-8273-5d3ae2c1d630\">Sequence of Events</h3>\n<p data-content-chunk-id=\"29b1b4ab-4d68-4817-a172-7312f6762a74\">Following is a round-by-round summary of how events progress as the octopus brings down the ship.</p>\n<h4 id=\"Round1\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"e203e05c-af88-4e24-a3be-648be0358333\">Round 1</h4>\n<p data-content-chunk-id=\"8ace92c3-4654-4901-b77a-c5bf0d92d936\">The octopus begins its attack, wrapping itself around the ship and flailing away at the creatures inside with its tentacles, as described above in “<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#ThrashingTentacles\" data-content-chunk-id=\"221a506e-7b98-44c2-ae0a-56b116f34c50\">Thrashing Tentacles</a>.”</p>\n<h4 id=\"Round2\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"4f7a1cce-352d-47ef-99d1-616c3087f6d5\">Round 2</h4>\n<p data-content-chunk-id=\"d045ffd6-6659-4101-9ba2-f40c32873cbc\">The octopus’s weight and writing tentacles cause the ship to list 30 degrees to port. At the start of this round, every character must make a DC 10 Dexterity saving throw, falling&nbsp;<a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#ProneCondition\" data-tooltip-href=\"//www.dndbeyond.com/conditions/12-tooltip?disable-webm=1&amp;disable-webm=1\">prone</a>&nbsp;and sliding 10 feet toward the port side on a failed save. Creatures climbing on the walls or ceiling do not need to make this saving throw.</p>\n<p data-content-chunk-id=\"1f0072c8-77c3-44f9-91f7-40f77402a929\">From this time on, a character who falls&nbsp;<a class=\"tooltip-hover condition-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#ProneCondition\" data-tooltip-href=\"//www.dndbeyond.com/conditions/12-tooltip?disable-webm=1&amp;disable-webm=1\">prone</a>&nbsp;slides 10 feet toward the port side.</p>\n<h4 id=\"Round3\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"7328fa02-4f7f-4b48-9ca5-e70ea5c6e7d9\">Round 3</h4>\n<p data-content-chunk-id=\"77b5feeb-d67f-45ce-9229-b9f6b314af64\">As the octopus crushes the ship, water pours through the hull and fills&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#12CargoHold\" data-content-chunk-id=\"8d0158d5-dfa3-4223-8e5b-004c52cde9dd\">area 12</a>. Monsters found in areas 4 through 11 have fled to&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"ae4949a2-5eb5-4048-a0a1-d4b7ceddcd5c\">area 1</a>&nbsp;by this time, unless stopped by the characters. If engaged in combat, they attempt to disengage and flee.</p>\n<p data-content-chunk-id=\"a408d9d6-83a1-459c-b55a-69a06c9dc218\">Any surviving ghasts in&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#12CargoHold\" data-content-chunk-id=\"2ee7d220-c252-4b47-a475-66d77455b79e\">area 12</a>&nbsp;move to&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"819d2e1d-ccb5-421a-b741-6116f141ce13\">area 1</a>. Unlike the other creatures aboard the ship, they stop to fight any characters they encounter but ignore spiders, Krell, and other creatures found aboard the ship.</p>\n<p data-content-chunk-id=\"bfa3711a-f703-4b59-8b1e-84c9dffb0d43\">Monsters in&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"93c560ce-16da-4bf6-9f96-345f29670496\">area 1</a>&nbsp;attempt to avoid the seawater. In their frenzy, they attack any characters who emerge from below. If Krell is present, he spots the&nbsp;<a class=\"tooltip-hover vehicles-tooltip\" href=\"https://www.dndbeyond.com/vehicles/rowboat\" data-tooltip-href=\"//www.dndbeyond.com/vehicles/4-tooltip?disable-webm=1&amp;disable-webm=1\">rowboat</a>&nbsp;heading for the ship and attempts to seize it once it arrives. He tries to swim beneath it, hide, and then emerge to ambush the sailors aboard it.</p>\n<p><a class=\"ddb-lightbox-outer compendium-image-center\" href=\"https://www.dndbeyond.com/attachments/5/285/04-05-octopus-p95.png\" data-lightbox=\"1\" data-title=\"\"><img class=\"ddb-lightbox-inner compendium-center-banner-img\" src=\"https://www.dndbeyond.com/attachments/thumbnails/5/285/850/584/04-05-octopus-p95.png\" alt=\"\"></a></p>\n<h4 id=\"Round4\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"1c5f7501-ae28-4748-920a-2aa19230c1b1\">Round 4</h4>\n<p data-content-chunk-id=\"9ad974c0-7d03-4328-be46-01a6f87a4d32\">Even if the characters have not yet signaled for the rowboat to pick them up, the sailors start rowing toward the ship to stage a rescue. The&nbsp;<a class=\"tooltip-hover vehicles-tooltip\" href=\"https://www.dndbeyond.com/vehicles/rowboat\" data-tooltip-href=\"//www.dndbeyond.com/vehicles/4-tooltip?disable-webm=1&amp;disable-webm=1\">rowboat</a>&nbsp;approaches on the starboard side of the ship, hoping to avoid the monsters that have gathered in area 1.</p>\n<h4 id=\"Round5\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"b52bc9cf-d9b9-41c2-bcc4-c70d04e2702a\">Round 5</h4>\n<p data-content-chunk-id=\"05eadcd9-1c07-4ee1-b7fd-380cc3b8d6ce\">Areas 4 through 11 fill with water as the ship begins to slide under the waves. The port side of&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"05d4f5ec-c421-4002-9285-b4448b349160\">area 1</a>&nbsp;is level with the water, while the tilted deck keeps the starboard edge 10 feet above it.</p>\n<h4 id=\"Rounds6through13\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"5077d85a-a633-4f43-82da-d65cbcd939ca\">Rounds 6 through 13</h4>\n<p data-content-chunk-id=\"72e50e9f-3ffd-457f-b28b-14bc3c6218f3\">Starting on round 6, the waves begin to break over the ship. The port half of&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"092729bf-73a0-4904-a74a-56f9b8569ee2\">area 1</a>&nbsp;is 3 feet below water, while the starboard edge remains 5 feet above it.</p>\n<h4 id=\"Round14\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"3e5418ab-65a5-4b8e-9db7-fe288bf36e9e\">Round 14</h4>\n<p data-content-chunk-id=\"0a8f03dd-7c02-4d58-83d4-7ef8841bf886\">If the&nbsp;<a class=\"tooltip-hover vehicles-tooltip\" href=\"https://www.dndbeyond.com/vehicles/rowboat\" data-tooltip-href=\"//www.dndbeyond.com/vehicles/4-tooltip?disable-webm=1&amp;disable-webm=1\">rowboat</a>&nbsp;began its approach on round 4, it arrives at the start of this round. If&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/319295-krell-grohlg\" data-tooltip-href=\"//www.dndbeyond.com/monsters/319295-tooltip?disable-webm=1&amp;disable-webm=1\">Krell</a>&nbsp;is present, as detailed above, he attempts to launch his ambush at this point.</p>\n<h4 id=\"Rounds15through19\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"a3a4dd5f-a3e2-4507-a05c-d68c8917b559\">Rounds 15 through 19</h4>\n<p data-content-chunk-id=\"037d7010-dc00-4f98-9a41-b446222059e3\">At the start of round 15, the ship rolls over on its port side. Everyone in&nbsp;<a href=\"https://www.dndbeyond.com/sources/dnd/gos/salvage-operation#1MainDeck\" data-content-chunk-id=\"b3b73785-97f9-4d97-a97e-38ea5490e5e4\">area 1</a>&nbsp;is thrown into the sea, 2d20 feet in a random direction away from the capsized hull. The&nbsp;<a class=\"tooltip-hover vehicles-tooltip\" href=\"https://www.dndbeyond.com/vehicles/rowboat\" data-tooltip-href=\"//www.dndbeyond.com/vehicles/4-tooltip?disable-webm=1&amp;disable-webm=1\">rowboat</a>&nbsp;moves 20 feet away from the hull in a bid to avoid any monsters. Any creature that ends up in the water within 20 feet of the rowboat tries to swim toward it and board, attacking anyone who offers resistance.</p>\n<h4 id=\"Round20\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"1a3abfe8-71b7-4cd2-90e1-5310826c8017\">Round 20</h4>\n<p data-content-chunk-id=\"c5463652-791d-41ee-8e13-e2ddbfe1062f\">At the start of round 20, the ship sinks. Anyone aboard must swim to safety. The ship descends 3d20 feet at the start of each subsequent round until it hits bottom.</p>",
+				"plain": "Sequence of EventsFollowing is a round-by-round summary of how events progress as the octopus brings down the ship.Round 1The octopus begins its attack, wrapping itself around the ship and flailing away at the creatures inside with its tentacles, as described above in “Thrashing Tentacles.”Round 2The octopus’s weight and writing tentacles cause the ship to list 30 degrees to port. At the start of this round, every character must make a DC 10 Dexterity saving throw, falling prone and sliding 10 feet toward the port side on a failed save. Creatures climbing on the walls or ceiling do not need to make this saving throw.From this time on, a character who falls prone slides 10 feet toward the port side.Round 3As the octopus crushes the ship, water pours through the hull and fills area 12. Monsters found in areas 4 through 11 have fled to area 1 by this time, unless stopped by the characters. If engaged in combat, they attempt to disengage and flee.Any surviving ghasts in area 12 move to area 1. Unlike the other creatures aboard the ship, they stop to fight any characters they encounter but ignore spiders, Krell, and other creatures found aboard the ship.Monsters in area 1 attempt to avoid the seawater. In their frenzy, they attack any characters who emerge from below. If Krell is present, he spots the rowboat heading for the ship and attempts to seize it once it arrives. He tries to swim beneath it, hide, and then emerge to ambush the sailors aboard it.Round 4Even if the characters have not yet signaled for the rowboat to pick them up, the sailors start rowing toward the ship to stage a rescue. The rowboat approaches on the starboard side of the ship, hoping to avoid the monsters that have gathered in area 1.Round 5Areas 4 through 11 fill with water as the ship begins to slide under the waves. The port side of area 1 is level with the water, while the tilted deck keeps the starboard edge 10 feet above it.Rounds 6 through 13Starting on round 6, the waves begin to break over the ship. The port half of area 1 is 3 feet below water, while the starboard edge remains 5 feet above it.Round 14If the rowboat began its approach on round 4, it arrives at the start of this round. If Krell is present, as detailed above, he attempts to launch his ambush at this point.Rounds 15 through 19At the start of round 15, the ship rolls over on its port side. Everyone in area 1 is thrown into the sea, 2d20 feet in a random direction away from the capsized hull. The rowboat moves 20 feet away from the hull in a bid to avoid any monsters. Any creature that ends up in the water within 20 feet of the rowboat tries to swim toward it and board, attacking anyone who offers resistance.Round 20At the start of round 20, the ship sinks. Anyone aboard must swim to safety. The ship descends 3d20 feet at the start of each subsequent round until it hits bottom.",
+				"player": false,
+				"statBlock": false
+			},
+			"b3c79909-3cf5-46a5-90bd-2a369b7dcdd9": {
+				"title": "Webs Aboard Ship",
+				"text": "<aside id=\"WebsAboardShip\" class=\"text--rules-sidebar\">\n<p data-content-chunk-id=\"5843e735-9ee0-45e9-892c-f8acfb6ef739\">WEBS ABOARD SHIP</p>\n<p data-content-chunk-id=\"ee074f5d-92ef-4ad5-b8b0-bf0bc39c9c7e\">Except where otherwise noted, the lower deck of the&nbsp;<em>Emperor</em>&nbsp;is filled with sheets of webbing. Areas filled with webbing are&nbsp;<a class=\"tooltip-hover rule-tooltip\" href=\"https://www.dndbeyond.com/sources/basic-rules/adventuring#VisionandLight\" data-tooltip-href=\"//www.dndbeyond.com/rules/89-tooltip?disable-webm=1&amp;disable-webm=1\">lightly obscured</a>. Ranged attacks made against creatures in areas filled with webbing are made with disadvantage. In addition, the creatures found aboard the ship are adept at hiding among the webs. As an action, any such creature can attempt Dexterity (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/5-tooltip?disable-webm=1&amp;disable-webm=1\">Stealth</a>) checks to&nbsp;<a class=\"tooltip-hover action-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#HideAction\" data-tooltip-href=\"//www.dndbeyond.com/actions/8-tooltip?disable-webm=1&amp;disable-webm=1\">hide</a>&nbsp;from any character that it is more than 5 feet away from. Many of these creatures begin encounters having already tried to hide; make checks as appropriate to determine each creature’s success at evading detection.</p>\n</aside>",
+				"plain": "WEBS ABOARD SHIPExcept where otherwise noted, the lower deck of the Emperor is filled with sheets of webbing. Areas filled with webbing are lightly obscured. Ranged attacks made against creatures in areas filled with webbing are made with disadvantage. In addition, the creatures found aboard the ship are adept at hiding among the webs. As an action, any such creature can attempt Dexterity (Stealth) checks to hide from any character that it is more than 5 feet away from. Many of these creatures begin encounters having already tried to hide; make checks as appropriate to determine each creature’s success at evading detection.",
+				"player": false,
+				"statBlock": false
+			},
+			"d16c6b49-6398-4c80-aa9b-e86fe8eedbf5": {
+				"title": "Unholy Shrine",
+				"text": "<h4 id=\"10UnholyShrine\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"cdafe147-9d29-45c4-b4f8-b4cbaef3e6fa\">Unholy Shrine</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"42377ecd-e2a3-444f-85a0-0f561933d1fc\">The floor of this chamber is covered with runes written in blood. A circle has been carved into the floor’s wooden planks and spiderwebs cover the walls and ceiling. Two humanoid-sized bundles attached to the ceiling writhe as hundreds of tiny spiders swarm over them.</p>\n</aside>\n<p data-content-chunk-id=\"5d29ac26-a5db-4142-8282-d122fccf9c2c\"><a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/319295-krell-grohlg\" data-tooltip-href=\"//www.dndbeyond.com/monsters/319295-tooltip?disable-webm=1&amp;disable-webm=1\">Krell Grohlg</a>, the last survivor of the cultists who escaped the island, sequestered himself here after the first octopus attack. He attacks at the first sign of intruders — if dying for Lolth is to be his fate, he seeks to slay as many characters as possible.</p>\n<p data-content-chunk-id=\"6c046cdb-8dec-49b6-9e13-5f03ce1d47f5\"><a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/319295-krell-grohlg\" data-tooltip-href=\"//www.dndbeyond.com/monsters/319295-tooltip?disable-webm=1&amp;disable-webm=1\">Krell</a>&nbsp;is a male half-orc&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16848-druid\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16848-tooltip?disable-webm=1&amp;disable-webm=1\">druid</a>, with these changes:</p>\n<ul data-content-chunk-id=\"e3c1138c-b06f-42df-9f8f-c6922613565f\">\n<li data-content-chunk-id=\"b6bb432e-efad-4a6c-9b18-28b8d1f2b00d\">Krell is chaotic evil.</li>\n<li data-content-chunk-id=\"51f52808-8eac-41c2-a248-9bcbb3ee0485\">He has these racial traits: When reduced to 0 hit points, he drops to 1 hit point instead (but can’t do this again until he finishes a long rest). He has&nbsp;<a class=\"tooltip-hover sense-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary#Darkvision\" data-tooltip-href=\"//www.dndbeyond.com/senses/2-tooltip?disable-webm=1&amp;disable-webm=1\">darkvision</a>&nbsp;out to a range of 60 feet. He speaks Common and Orc.</li>\n<li data-content-chunk-id=\"e8ca0b6d-97e1-467a-b253-51ccdeb54d8b\">He has a Strength score of 18, which gives him a +4 bonus to attack rolls and damage rolls with his quarterstaff.</li>\n<li data-content-chunk-id=\"052263dd-a87c-4ccb-8846-b5d6973fd657\">He has the&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2108-flaming-sphere\" data-tooltip-href=\"//www.dndbeyond.com/spells/2108-tooltip?disable-webm=1&amp;disable-webm=1\">flaming sphere</a>&nbsp;spell prepared rather than&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/1994-animal-messenger\" data-tooltip-href=\"//www.dndbeyond.com/spells/1994-tooltip?disable-webm=1&amp;disable-webm=1\">animal messenger</a>.</li>\n</ul>\n<p data-content-chunk-id=\"5e44606a-2c63-4794-9f4e-77515d371bd0\">In addition to Krell, this cabin also contains two&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16895-giant-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16895-tooltip?disable-webm=1&amp;disable-webm=1\">giant spiders</a>&nbsp;lurking in a far corner, and Krell’s pet&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16978-phase-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16978-tooltip?disable-webm=1&amp;disable-webm=1\">phase spider</a>&nbsp;(named Roil). Unless the characters were unusually quiet while making their way through the ship, Krell has heard them moving and fighting monsters in other areas. Before the fight begins, he has time to cast&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2249-shillelagh\" data-tooltip-href=\"//www.dndbeyond.com/spells/2249-tooltip?disable-webm=1&amp;disable-webm=1\">shillelagh</a>&nbsp;on the quarterstaff he wields,&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2011-barkskin\" data-tooltip-href=\"//www.dndbeyond.com/spells/2011-tooltip?disable-webm=1&amp;disable-webm=1\">barkskin</a>&nbsp;for defense, and&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2217-produce-flame\" data-tooltip-href=\"//www.dndbeyond.com/spells/2217-tooltip?disable-webm=1&amp;disable-webm=1\">produce flame</a>&nbsp;in preparation for a confrontation.</p>\n<p data-content-chunk-id=\"ea99fa83-6353-45ab-84f3-3e13cfe58ba6\">The phase spider spends its time in the Border Ethereal. It attempts to ambush Krell’s foes, moving through walls unnoticed before entering the Material Plane to attack a wizard, sorcerer, or similarly vulnerable character. The two giant spiders try to protect Krell. One fights from the ground, while the other clings to the ceiling and attacks downward, enabling both Large creatures to remain in the fray.</p>\n<p data-content-chunk-id=\"22ac0e07-22d6-4ceb-a15a-d36cc7977941\"><strong><em>Ending Hostilities.</em></strong>&nbsp;Krell knows that the&nbsp;<em>Emperor</em>&nbsp;won’t stay afloat forever. He can be persuaded to leave with the characters instead of fighting them if someone in the party succeeds on a DC 20 Charisma (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/19-tooltip?disable-webm=1&amp;disable-webm=1\">Persuasion</a>) check to win the druid’s confidence. An orc or half-orc character makes this check with advantage. Once Krell is safe he slips away to continue his foul worship.</p>\n<p data-content-chunk-id=\"40adddd8-bc26-4e22-8dd2-ff620a7ccf82\"><strong><em>Treasure.</em></strong>&nbsp;All the cultists’ ceremonial objects and treasure are stored in a wooden box along the port wall. The box contains&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/5418-spell-scroll\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/5418-tooltip?disable-webm=1&amp;disable-webm=1\">spell scrolls</a>&nbsp;of&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2134-gust-of-wind\" data-tooltip-href=\"//www.dndbeyond.com/spells/2134-tooltip?disable-webm=1&amp;disable-webm=1\">gust of wind</a>&nbsp;and&nbsp;<a class=\"tooltip-hover spell-tooltip\" href=\"https://www.dndbeyond.com/spells/2222-protection-from-poison\" data-tooltip-href=\"//www.dndbeyond.com/spells/2222-tooltip?disable-webm=1&amp;disable-webm=1\">protection from poison</a>, a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4709-potion-of-heroism\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4709-tooltip?disable-webm=1&amp;disable-webm=1\">potion of heroism</a>, a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4715-potion-of-water-breathing\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4715-tooltip?disable-webm=1&amp;disable-webm=1\">potion of water breathing</a>, a&nbsp;<a class=\"tooltip-hover magic-item-tooltip\" href=\"https://www.dndbeyond.com/magic-items/4607-cloak-of-protection\" data-tooltip-href=\"//www.dndbeyond.com/magic-items/4607-tooltip?disable-webm=1&amp;disable-webm=1\">cloak of protection</a>, 507 gp, and 199 sp.</p>",
+				"plain": "Unholy ShrineThe floor of this chamber is covered with runes written in blood. A circle has been carved into the floor’s wooden planks and spiderwebs cover the walls and ceiling. Two humanoid-sized bundles attached to the ceiling writhe as hundreds of tiny spiders swarm over them.Krell Grohlg, the last survivor of the cultists who escaped the island, sequestered himself here after the first octopus attack. He attacks at the first sign of intruders — if dying for Lolth is to be his fate, he seeks to slay as many characters as possible.Krell is a male half-orc druid, with these changes:Krell is chaotic evil.He has these racial traits: When reduced to 0 hit points, he drops to 1 hit point instead (but can’t do this again until he finishes a long rest). He has darkvision out to a range of 60 feet. He speaks Common and Orc.He has a Strength score of 18, which gives him a +4 bonus to attack rolls and damage rolls with his quarterstaff.He has the flaming sphere spell prepared rather than animal messenger.In addition to Krell, this cabin also contains two giant spiders lurking in a far corner, and Krell’s pet phase spider (named Roil). Unless the characters were unusually quiet while making their way through the ship, Krell has heard them moving and fighting monsters in other areas. Before the fight begins, he has time to cast shillelagh on the quarterstaff he wields, barkskin for defense, and produce flame in preparation for a confrontation.The phase spider spends its time in the Border Ethereal. It attempts to ambush Krell’s foes, moving through walls unnoticed before entering the Material Plane to attack a wizard, sorcerer, or similarly vulnerable character. The two giant spiders try to protect Krell. One fights from the ground, while the other clings to the ceiling and attacks downward, enabling both Large creatures to remain in the fray.Ending Hostilities. Krell knows that the Emperor won’t stay afloat forever. He can be persuaded to leave with the characters instead of fighting them if someone in the party succeeds on a DC 20 Charisma (Persuasion) check to win the druid’s confidence. An orc or half-orc character makes this check with advantage. Once Krell is safe he slips away to continue his foul worship.Treasure. All the cultists’ ceremonial objects and treasure are stored in a wooden box along the port wall. The box contains spell scrolls of gust of wind and protection from poison, a potion of heroism, a potion of water breathing, a cloak of protection, 507 gp, and 199 sp.",
+				"player": false,
+				"statBlock": false
+			},
+			"f080d75a-3041-42fc-b5e2-383f9ef6c8f5": {
+				"title": "Altar to Lolth",
+				"text": "<h4 id=\"2AltartoLolth\" class=\"compendium-hr heading-anchor\" data-content-chunk-id=\"e4c54d99-6ea0-4ecd-9a9f-e0254026f52b\">Altar to Lolth</h4>\n<aside class=\"text--quote-box\">\n<p data-content-chunk-id=\"f1921bc9-3d8f-40f5-8a58-9fe138439d9a\">A rough stone altar dominates this cabin. Strange markings cover its surface, dried mud cakes the floor around it, and humanoid skulls ring the wall above, each mounted on a wooden spike. The corners of this room are piled with garbage and debris — crudely cut wooden logs, smashed furniture, torn sacks, shattered crates, and small piles of dried palm fronds. A staircase descends from the southeast corner, and an acrid odor fills the air.</p>\n</aside>\n<p data-content-chunk-id=\"d38cb4d8-7bf9-4a06-a854-c724f96c3916\">This chamber was once the captain’s cabin. Now it’s a shrine to Lolth, the demon queen of spiders. The skulls are cracked, weathered, and obviously old.</p>\n<p data-content-chunk-id=\"42c9b5c8-f3ed-4315-988a-36174b028f07\">Lurking under the garbage and debris is a host of vermin held sacred by the cultists of Lolth — spiders of every size and type. If anyone other than the druid Krell spends more than a few moments in this room, one&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16895-giant-spider\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16895-tooltip?disable-webm=1&amp;disable-webm=1\">giant spider</a>&nbsp;bursts from the webs on the port side, while an&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/16859-ettercap\" data-tooltip-href=\"//www.dndbeyond.com/monsters/16859-tooltip?disable-webm=1&amp;disable-webm=1\">ettercap</a>&nbsp;emerges from the starboard side of the room. At the same time, four&nbsp;<a class=\"tooltip-hover monster-tooltip\" href=\"https://www.dndbeyond.com/monsters/301414-swarm-of-insects-spiders\" data-tooltip-href=\"//www.dndbeyond.com/monsters/301414-tooltip?disable-webm=1&amp;disable-webm=1\">swarms of insects (spiders)</a>&nbsp;crawl through the deck from below. Any character who has a passive Perception score of 14 or lower is surprised. (In tight quarters, remember that a swarm can occupy the same space as another creature.)</p>\n<p data-content-chunk-id=\"b20fed3c-018d-4433-a5bd-1fab942ee18c\"><strong><em>Captain’s Log.</em></strong>&nbsp;A character who searches through the debris in the room and succeeds on a DC 15 Wisdom (<a class=\"tooltip-hover skill-tooltip\" href=\"https://www.dndbeyond.com/sources/dnd/free-rules/playing-the-game#Skills\" data-tooltip-href=\"//www.dndbeyond.com/skills/14-tooltip?disable-webm=1&amp;disable-webm=1\">Perception</a>) check finds the ship’s ledger and the captain’s log, both written in Common.</p>\n<p data-content-chunk-id=\"285d1aab-ccdb-40a6-a721-b531e0d4a050\">The log details the ship’s last voyage, including an account of the terrible storm that threw&nbsp;<em>Emperor of the Waves</em>&nbsp;off course and separated it from its escort. Running low on food and drinkable water, the ship was forced to drop anchor off an uncharted island. The last entry describes an attack by orcs that fought alongside goblins and monstrous vermin. Though the crew fended off this initial attack, they suffered heavy casualties. The final entry records the captain’s fear that this attack might have been the precursor to an even larger assault.</p>\n<p data-content-chunk-id=\"f3b7b528-10f3-447e-bfcc-6aa0b124d516\"><strong><em>Treasure.</em></strong>&nbsp;A minor offering to Lolth is concealed by the mud and litter on the deck. A search of the cabin uncovers a small sack containing ten red rubies (100 gp each).</p>",
+				"plain": "Altar to LolthA rough stone altar dominates this cabin. Strange markings cover its surface, dried mud cakes the floor around it, and humanoid skulls ring the wall above, each mounted on a wooden spike. The corners of this room are piled with garbage and debris — crudely cut wooden logs, smashed furniture, torn sacks, shattered crates, and small piles of dried palm fronds. A staircase descends from the southeast corner, and an acrid odor fills the air.This chamber was once the captain’s cabin. Now it’s a shrine to Lolth, the demon queen of spiders. The skulls are cracked, weathered, and obviously old.Lurking under the garbage and debris is a host of vermin held sacred by the cultists of Lolth — spiders of every size and type. If anyone other than the druid Krell spends more than a few moments in this room, one giant spider bursts from the webs on the port side, while an ettercap emerges from the starboard side of the room. At the same time, four swarms of insects (spiders) crawl through the deck from below. Any character who has a passive Perception score of 14 or lower is surprised. (In tight quarters, remember that a swarm can occupy the same space as another creature.)Captain’s Log. A character who searches through the debris in the room and succeeds on a DC 15 Wisdom (Perception) check finds the ship’s ledger and the captain’s log, both written in Common.The log details the ship’s last voyage, including an account of the terrible storm that threw Emperor of the Waves off course and separated it from its escort. Running low on food and drinkable water, the ship was forced to drop anchor off an uncharted island. The last entry describes an attack by orcs that fought alongside goblins and monstrous vermin. Though the crew fended off this initial attack, they suffered heavy casualties. The final entry records the captain’s fear that this attack might have been the precursor to an even larger assault.Treasure. A minor offering to Lolth is concealed by the mud and litter on the deck. A search of the cabin uncovers a small sack containing ten red rubies (100 gp each).",
+				"player": false,
+				"statBlock": false
+			}
+		}
+	}
 }
