@@ -7035,7 +7035,11 @@ function redraw_light(darknessMoved = false){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
-	
+	if(window.offScreenCombine == undefined){
+		window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
+	}
+	const combineCtx = window.offScreenCombine.getContext("2d");
+
 	const offscreenCanvasMask = window.offscreenCanvasMask;
 	const offscreenContext = window.offscreenContext;
     
@@ -7258,9 +7262,14 @@ function redraw_light(darknessMoved = false){
 
 
 		if (window.lightAuraClipPolygon[auraId]?.light !== undefined) {
-			lightInLosContext.globalCompositeOperation = 'lighten';
-			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color)
-			drawCircle(lightInLosContext, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color)
+			combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+			combineCtx.globalCompositeOperation = 'lighten';
+			drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light2.range, window.lightAuraClipPolygon[auraId].light2.color)
+			drawCircle(combineCtx, window.lightAuraClipPolygon[auraId].middle.x, window.lightAuraClipPolygon[auraId].middle.y, window.lightAuraClipPolygon[auraId].light1.range, window.lightAuraClipPolygon[auraId].light1.color)
+			combineCtx.globalCompositeOperation = "destination-in";
+			drawPolygon(combineCtx, window.lineOfSightPolygons[auraId].polygon, "#FFF", true, 0, null, null, undefined, true, true);
+			lightInLosContext.globalCompositeOperation = "lighten";
+			lightInLosContext.drawImage(offScreenCombine, 0, 0);
 		}
 
 		if (selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)) {
