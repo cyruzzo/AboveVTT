@@ -748,7 +748,7 @@ function check_single_token_visibility(id){
 	const playerTokenWithVisionEnabled = aPlayerToken == true && (window.TOKEN_OBJECTS[playerTokenId]?.options?.auraislight === true || (playerTokenId === undefined && tokenObjectValues.some(d => d.options.id.startsWith('/profile') && d.options.auraislight == true)));
 	const sharedVisionToken = tokenObjectValues.some(d => d.options.share_vision !== undefined && (d.options.share_vision === true || d.options.share_vision == window.myUser || (d.options.share_vision != false && is_spectator_page())) && d.options.auraislight == true);
 
-	if ((((playerTokenId === undefined && playerTokenWithVisionEnabled) || sharedVisionToken) && (window.walls.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
+	if ((((playerTokenId === undefined && playerTokenWithVisionEnabled) || sharedVisionToken) && (window.walls?.length > 4 || window.CURRENT_SCENE_DATA.darkness_filter > 0)) || (playerTokenId !== undefined && window.TOKEN_OBJECTS[playerTokenId].options.auraislight === true))
 		playerTokenHasVision = true
 	else
 		playerTokenHasVision = false;
