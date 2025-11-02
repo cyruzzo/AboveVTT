@@ -66,7 +66,7 @@ class ChatObserver {
         if (didSend === false) {
             // it was too complex so try to send it through rpgDiceRoller
             let expression = text.replace(diceRollCommandRegex, "").match(allowedExpressionCharactersRegex)?.[0];
-            didSend = send_rpg_dice_to_ddb(expression, window.pc.name, window.pc.image, rollType, undefined, action);
+            didSend = send_rpg_dice_to_ddb(expression, window.pc?.name, window.pc?.image);
         }
         return didSend;
         
