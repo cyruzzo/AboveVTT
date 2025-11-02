@@ -1854,9 +1854,9 @@ class MessageBroker {
 								$("#scene_map").css('opacity', 1)
 								$("#darkness_layer").show();
 							});
-							
+							const url = data.player_map.startsWith(`above-bucket-not-a-url`) ? await getAvttStorageUrl(data.player_map) : await getGoogleDriveAPILink(data.player_map);
 						
-							$("#scene_map").attr('src', await getGoogleDriveAPILink(data.player_map));
+							$("#scene_map").attr('src', url);
 							$('.import-loading-indicator .percentageLoaded').css('width', `20%`);		
 						}
 						await reset_canvas();
