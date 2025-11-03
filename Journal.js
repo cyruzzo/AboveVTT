@@ -286,10 +286,10 @@ class JournalManager{
 				Object.entries(notes).filter(([key]) => notes[key]?.statBlock === true)
 			);
 			const journal = Object.fromEntries(
-				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true && !journal[key]?.player)
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true && !notes[key]?.player)
 			);
 			const journalPlayersOnly = Object.fromEntries(
-				Object.entries(notes).filter(([key]) => notes[key]?.player)
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true && notes[key]?.player)
 			);
 			
 			const chapters = Array.isArray(this.chapters) ? this.chapters : [];
