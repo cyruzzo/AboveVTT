@@ -2926,12 +2926,19 @@ class Token {
 
 				this.update_health_aura(tok);
 				let currentSceneScale = parseFloat(window.CURRENT_SCENE_DATA.scale_factor) ? parseFloat(window.CURRENT_SCENE_DATA.scale_factor) : 1
-				if(this.options.scaleCreated != undefined && this.options.scaleCreated != currentSceneScale){
-					let difference = this.sizeWidth()/this.options.scaleCreated*currentSceneScale/2 - this.sizeWidth()/2;
-					this.options.top = `${parseFloat(this.options.top)/this.options.scaleCreated*currentSceneScale+difference}px`
-					this.options.left =  `${parseFloat(this.options.left)/this.options.scaleCreated*currentSceneScale+difference}px`
+				if(this.options.scaleCreated){
+					if (window.CURRENT_SCENE_DATA.scale_factor * window.CURRENT_SCENE_DATA.conversion == this.options.scaleCreated)
+						this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
+
+					if (this.options.scaleCreated != currentSceneScale) {
+						let difference = this.sizeWidth() / this.options.scaleCreated * currentSceneScale / 2 - this.sizeWidth() / 2;
+						this.options.top = `${parseFloat(this.options.top) / this.options.scaleCreated * currentSceneScale + difference}px`
+						this.options.left = `${parseFloat(this.options.left) / this.options.scaleCreated * currentSceneScale + difference}px`
+					}
 				}
-				this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;	
+
+				this.options.scaleCreated = window.CURRENT_SCENE_DATA.scale_factor;
+
 				tok.css("position", "absolute");
 				tok.css("--z-index-diff", zindexdiff);
 				tok.css("top", this.options.top);
