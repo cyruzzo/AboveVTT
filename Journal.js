@@ -53,7 +53,13 @@ async function avttSaveChunkedJson(objectStore, baseKey, data, options = {}) {
 	const previousChunkKeys = Array.isArray(existingManifest?.journalData?.chunkKeys)
 		? existingManifest.journalData.chunkKeys
 		: [];
-
+	for (const previousKey of previousChunkKeys) {
+		try {
+			await avttPromisifyIdbRequest(objectStore.delete(previousKey));
+		} catch (error) {
+			console.warn("Failed to delete stale journal chunk", previousKey, error);
+		}
+	}
 	const newChunkKeys = [];
 	for (let offset = 0, index = 0; offset < serialized.length; offset += chunkSize, index += 1) {
 		const chunkValue = serialized.slice(offset, offset + chunkSize);
@@ -66,16 +72,6 @@ async function avttSaveChunkedJson(objectStore, baseKey, data, options = {}) {
 		} catch (error) {
 			console.error("Failed to store journal chunk", chunkKey, error);
 			return;
-		}
-	}
-
-	for (const previousKey of previousChunkKeys) {
-		if (!newChunkKeys.includes(previousKey)) {
-			try {
-				await avttPromisifyIdbRequest(objectStore.delete(previousKey));
-			} catch (error) {
-				console.warn("Failed to delete stale journal chunk", previousKey, error);
-			}
 		}
 	}
 
@@ -168,7 +164,16 @@ class JournalManager{
 			let journalData;
 			try {
 				const objectStore = gameIndexedDb.transaction(["journalData"]).objectStore(`journalData`);
-				journalData = await avttLoadChunkedJson(objectStore, `Journal`, { dataType: "object" });
+				if(window.DM){
+					journalData = {
+						...await avttLoadChunkedJson(objectStore, `Journal`, { dataType: "object" }),
+						...await avttLoadChunkedJson(objectStore, `PlayerJournal`, { dataType: "object" })
+					};
+				}
+				else{
+					journalData = await avttLoadChunkedJson(objectStore, `PlayerJournal`, { dataType: "object" })
+				}
+				
 			} catch (error) {
 				console.warn("Failed to load journal entries", error);
 			}
@@ -276,20 +281,27 @@ class JournalManager{
 			return;
 		}
 		const executePersist = async () => {
-			const notes =
-				this.notes && typeof this.notes === "object" ? this.notes : {};
+			const notes = this.notes && typeof this.notes === "object" ? this.notes : {};
 			const statBlocks = Object.fromEntries(
-				Object.entries(notes).filter(([key]) => notes[key]?.statBlock === true),
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock === true)
 			);
 			const journal = Object.fromEntries(
-				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true),
+				Object.entries(notes).filter(([key]) => notes[key]?.statBlock !== true && !journal[key]?.player)
 			);
+			const journalPlayersOnly = Object.fromEntries(
+				Object.entries(notes).filter(([key]) => notes[key]?.player)
+			);
+			
 			const chapters = Array.isArray(this.chapters) ? this.chapters : [];
 
+			
 			try {
 				const transaction = gameIndexedDb.transaction([`journalData`], "readwrite");
 				const objectStore = transaction.objectStore(`journalData`);
-				await avttSaveChunkedJson(objectStore, `Journal`, journal, { dataType: "object" });
+				if(window.DM){
+					await avttSaveChunkedJson(objectStore, `Journal`, journal, { dataType: "object" });
+				}				
+				await avttSaveChunkedJson(objectStore, `PlayerJournal`, journalPlayersOnly, { dataType: "object" })
 				await avttSaveChunkedJson(objectStore, `JournalChapters`, chapters, {
 					dataType: "array",
 				});
@@ -317,21 +329,6 @@ class JournalManager{
 				console.warn("Failed to persist journal stat blocks", error);
 			}
 
-			if(window.DM){ // old storage kept as backup for now. 
-				try{
-					/*
-					Stop saving this here in 1.30 - remove at later date once confirmed migrated. 
-
-					localStorage.setItem('JournalStatblocks', JSON.stringify(statBlocks));   
-					localStorage.setItem('Journal' + this.gameid, JSON.stringify(journal));
-					localStorage.setItem('JournalChapters' + this.gameid, JSON.stringify(chapters));
-
-					*/ 
-				}
-				catch(e){
-					console.warn('localStorage Journal Storage Failed', e) // prevent errors from stopping code when local storage is full.
-				}
-			}
 		};
 
 		executePersist().catch((error) => {
