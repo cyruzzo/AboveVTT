@@ -31,13 +31,11 @@ function parse_img(url) {
 		} else if (retval.includes("https://drive.google.com") && !retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
 			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.split('/')[5] +'&sz=w3000';
 			retval = parsed;
-			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
 		else if (retval.startsWith("https://drive.google.com") || (retval.includes("https://drive.usercontent.google.com")) && retval.match(/id=([a-zA-Z0-9_-]+)/g)) {
 			const parsed = 'https://drive.google.com/thumbnail?id=' + retval.matchAll(/id=([a-zA-Z0-9_-]+)/g).next().value[1] +'&sz=w3000';
 			retval = parsed;
-			console.log("parse_img is converting", url, "to", retval);
 			return retval;		
 		} 
 		else if(retval.startsWith("https://www.googleapis.com/drive/v3/files/")){ // fix due to 1.5/1.6 beta 
@@ -49,7 +47,6 @@ function parse_img(url) {
 		else if(retval.includes("dropbox.com")){
 			const splitUrl = url.split('dropbox.com');
 			const parsed = `https://dl.dropboxusercontent.com${splitUrl[splitUrl.length-1]}`
-			console.log("parse_img is converting", url, "to", parsed);
 			retval = parsed;
 		}
 		else if(retval.includes("https://1drv.ms/"))
