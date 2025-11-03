@@ -451,6 +451,9 @@ function build_dropdown_input(settingOption, currentValue, changeHandler) {
   let input = $(`<select name="${settingOption.name}"></select>`);
   wrapper.append(input);
   for (const option of settingOption.options) {
+    if(!window.DM && option.dmOnly)
+      continue;
+    
     input.append(`<option value="${option.value}">${option.label}</option>`);
   }
   if (currentValue !== undefined) {
