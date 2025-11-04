@@ -1569,13 +1569,13 @@ function ct_load(data=null){
 				if (window.all_token_objects[data[i]['data-target']] == undefined) {
 					window.all_token_objects[data[i]['data-target']] = new Token(data[i]['options']);
 					if (window.TOKEN_OBJECTS[data[i]['data-target']]) {
-						window.all_token_objects[data[i]['data-target']].options.alternativeImages = window.TOKEN_OBJECTS[data[i]['data-target']].alternativeImages;
+						window.all_token_objects[data[i]['data-target']].options.alternativeImages = window.TOKEN_OBJECTS[data[i]['data-target']].options.alternativeImages;
 					}
 					window.all_token_objects[data[i]['data-target']].sync = mydebounce(function(options) {				
 						window.MB.sendMessage('custom/myVTT/token', options);
 					}, 300);
 				}
-				const currAltImage = window.all_token_objects[data[i]['data-target']].options.alternativeImages;
+				const currAltImage = [...window.all_token_objects[data[i]['data-target']].options.alternativeImages];
 				
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				window.all_token_objects[data[i]['data-target']].options.alternativeImages = currAltImage;
@@ -1647,13 +1647,13 @@ function ct_load(data=null){
 			for (tokenID in window.TOKEN_OBJECTS){
 				if(window.TOKEN_OBJECTS[tokenID].options.current != undefined && tokenID != data.current){
 					delete window.TOKEN_OBJECTS[tokenID].options.current;
-					window.TOKEN_OBJECTS[tokenID].update_and_sync();
+					window.TOKEN_OBJECTS[tokenID].place();
 				}
 			}
 			$("#combat_area tr[data-target='"+data.current+"']").attr("data-current","1");
 			if(window.TOKEN_OBJECTS[data.current] != undefined){
 				window.TOKEN_OBJECTS[data.current].options.current = true;
-				window.TOKEN_OBJECTS[data.current].update_and_sync();
+				window.TOKEN_OBJECTS[tokenID].place();
 			}
 			if(window.all_token_objects[data.current] != undefined){
 				if(window.all_token_objects[data.current].isCurrentPlayer() || window.all_token_objects[data.current].options.player_owned){
@@ -1692,7 +1692,6 @@ function ct_load(data=null){
 				}
 			    if(window.TOKEN_OBJECTS[data[i]['data-target']] != undefined){
 			        window.TOKEN_OBJECTS[data[i]['data-target']].options.init = data[i]['init']
-			        window.TOKEN_OBJECTS[data[i]['data-target']].update_and_sync();
 			        if(window.TOKEN_OBJECTS[data[i]['data-target']].ct_show == undefined){
 			        	window.TOKEN_OBJECTS[data[i]['data-target']].ct_show = data[i]['data-ct-show'];
 			        }

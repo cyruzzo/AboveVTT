@@ -3366,8 +3366,9 @@ class JournalManager{
 			    font-weight: 700;
 			}		
 			.ddbc-creature-block {
-			    background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-block-top-texture.png),url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/paper-texture.png);
-			    background-size: 100% auto;
+				--image-background: url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/stat-block-top-texture.png),url(https://www.dndbeyond.com/Content/Skins/Waterdeep/images/mon-summary/paper-texture.png);
+				background: var(--background-color, var(--image-background));
+			   	background-size: 100% auto;
 			    background-position: top;
 			    background-repeat: no-repeat,repeat;
 			    position: relative;
@@ -3375,7 +3376,8 @@ class JournalManager{
 			    border: 1px solid #d4d0ce;
 			    padding: 15px 10px;
 			    font-family: Scala Sans Offc,Roboto,Helvetica,sans-serif;
-			    font-size: 15px
+			    font-size: 15px;
+
 			}
 
 			.ddbc-creature-block:after,.ddbc-creature-block:before {
@@ -3736,12 +3738,15 @@ class JournalManager{
 					const avttImages = body.find('img[data-src*="above-bucket-not-a-url"]');
 					const backgroundColor = $(':root').css('--background-color'); // support azmoria's dark mode without requiring inverse filters
 					const fontColor = $(':root').css('--font-color');
-					body.css({
-						background: backgroundColor,
-						color: fontColor,
-						'--font-color': fontColor,
-						'--background-color': backgroundColor
-					});
+					if(backgroundColor && fontColor){
+						body.css({
+							background: backgroundColor,
+							color: fontColor,
+							'--font-color': fontColor,
+							'--background-color': backgroundColor
+						});
+					}
+
 					avttImages.each(async (index, image) => {
 						const src = await getAvttStorageUrl(image.getAttribute('data-src'), true);
 						image.src = src;

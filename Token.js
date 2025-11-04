@@ -4035,7 +4035,7 @@ function place_token_at_map_point(tokenObject, x, y, forcePlaceAndSize = false, 
 		if(!(window.all_token_objects[options.id].options.imgsrc in options.alternativeImages)){
 			window.all_token_objects[options.id].options.imgsrc = options.imgsrc;
 		}
-		let alternativeImages = options.alternativeImages;
+		let alternativeImages = [...options.alternativeImages];
 		options = {
 			...options,
 			...window.all_token_objects[options.id].options,
