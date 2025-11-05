@@ -3405,10 +3405,7 @@ class Token {
 									tokenY = offsetTop + parseInt(curr.orig_top);
 									
 
-									$(tok).css('left', tokenX + "px");
-									$(tok).css('top', tokenY + "px");
-									curr.options.left =  tokenX + "px";
-									curr.options.top = tokenY+"px";
+								
 									if(!window.DM && window.playerTokenAuraIsLight){
 										const left = (tokenX + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
 										const top = (tokenY + (parseFloat(curr.sizeWidth()) / 2)) / parseFloat(window.CURRENT_SCENE_DATA.scale_factor);
@@ -3437,13 +3434,15 @@ class Token {
 										}
 										else{
 											window.oldTokenPosition[curr.options.id] = (window.oldTokenPosition[curr.options.id] != undefined) ? window.oldTokenPosition[curr.options.id] : {left: parseInt(curr.orig_left), top: parseInt(curr.orig_top)};
-										
-											$(tok).css('left', window.oldTokenPosition[curr.options.id].left + "px");
-											$(tok).css('top', window.oldTokenPosition[curr.options.id].top + "px");
+											tokenX = window.oldTokenPosition[curr.options.id].left;
+											tokenY = window.oldTokenPosition[curr.options.id].top;
 										}
 									}
 									
-						
+									$(tok).css('left', tokenX + "px");
+									$(tok).css('top', tokenY + "px");
+									curr.options.left = tokenX + "px";
+									curr.options.top = tokenY + "px";
 														
 									//curr.options.top=(parseInt(curr.orig_top)+offsetTop)+"px";
 									//curr.place();
