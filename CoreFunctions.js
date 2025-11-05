@@ -1779,7 +1779,7 @@ const debounce_pc_token_update = mydebounce(() => {
       let currentImage = crossSceneToken.options.imgsrc;
       if (currentImage != undefined) {
         const newImage = (crossSceneToken.options.alternativeImages == undefined || crossSceneToken.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-        const options = $.extend(true, token.options, pc, { imgsrc: newImage });
+        const options = $.extend(true, crossSceneToken.options, pc, { imgsrc: newImage });
         for (let i = 0; i < unusedPlayerData.length; i++) {
           delete options[unusedPlayerData[i]];
         }
