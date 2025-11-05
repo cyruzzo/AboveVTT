@@ -7406,11 +7406,9 @@ function redraw_light(darknessMoved = false){
 		}
 	}
 	if(window.CURRENT_SCENE_DATA.darkness_filter != 0){
-		lightInLosContext.globalCompositeOperation='destination-over';
-		
+		lightInLosContext.globalCompositeOperation='lighten';	
 		lightInLosContext.drawImage($('#light_overlay')[0], 0, 0);
 		
-
 		if(window.DM !== true || window.SelectedTokenVision === true){
 			draw_darkness_aoe_to_canvas(lightInLosContext);
 
