@@ -1575,7 +1575,8 @@ function ct_load(data=null){
 						window.MB.sendMessage('custom/myVTT/token', options);
 					}, 300);
 				}
-				const currAltImage = [...window.all_token_objects[data[i]['data-target']].options.alternativeImages];
+				const altImages = window.all_token_objects[data[i]['data-target']].options.alternativeImages;
+				const currAltImage = altImages ? [...altImages] : [];
 				
 				window.all_token_objects[data[i]['data-target']].options = data[i]['options'];
 				window.all_token_objects[data[i]['data-target']].options.alternativeImages = currAltImage;

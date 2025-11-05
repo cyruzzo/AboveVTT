@@ -40,7 +40,12 @@ const availableToAoe = [
 
 
 
-const throttleLight = throttle((darknessMoved = false) => {requestAnimationFrame(()=>{redraw_light(darknessMoved)})}, 1000/30);
+const throttleLight = throttle((darknessMoved = false) => {
+	if (!window.walls || window.walls?.length < 5) {
+		redraw_light_walls();
+	} 
+	requestAnimationFrame(()=>{redraw_light(darknessMoved)})
+}, 1000/30);
 const throttleTokenCheck = mydebounce(throttle(do_check_token_visibility, 1000/4), 20);
 const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {		
 	let dataURI = exploredCanvas.toDataURL('image/jpg')
@@ -58,7 +63,7 @@ const debounceStoreExplored = mydebounce((exploredCanvas, sceneId) => {
 var debounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
-		if(window.walls?.length < 5){
+	if (!window.walls || window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		
@@ -79,7 +84,7 @@ var debounceAudioChecks = mydebounce(() => {
 var longDebounceLightChecks = mydebounce((darknessMoved = false) => {		
 		if(window.DRAGGING)
 			return;
-		if(window.walls?.length < 5){
+		if (!window.walls || window.walls?.length < 5){
 			redraw_light_walls();	
 		}
 		//let promise = [new Promise (_ => setTimeout(redraw_light(), 1000))];
