@@ -2230,7 +2230,7 @@ function init_ui() {
 	weatherLight.css("position", "absolute");
 	weatherLight.css("top", "0");
 	weatherLight.css("left", "0");
-	weatherLight.css("z-index", "10000000");
+	weatherLight.css("z-index", "25");
 
 	const fog = $("<canvas id='fog_overlay'></canvas>");
 	fog.css("top", "0");
