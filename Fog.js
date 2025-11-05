@@ -7037,7 +7037,7 @@ function redraw_light(darknessMoved = false){
 
 	context.clearRect(0, 0, canvasWidth, canvasHeight)
 
-	if(canvasWidth == 0 || canvasHeight == 0){
+	if(canvasWidth == 0 || canvasHeight == 0 || !window.walls){
 		console.warn("Draw light attempted before map load");
 		return; // prevent error if redraw is called before map initialized
 	}
