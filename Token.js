@@ -4395,7 +4395,7 @@ function checkAudioVolume(){
 
 function setAudioAura (token, options){
 		
-		const auraRadius = parseFloat(options.audioChannel.range) / parseInt(window.CURRENT_SCENE_DATA.fpsq) * window.CURRENT_SCENE_DATA.hpps;
+	const auraRadius = parseFloat(options.audioChannel.range) / parseFloat(window.CURRENT_SCENE_DATA.fpsq) * window.CURRENT_SCENE_DATA.hpps;
 		const auraBg = `radial-gradient(transparent ${auraRadius+(parseInt(options.size)/2)-4}px, #fff ${auraRadius+(parseInt(options.size)/2)-4}px ${auraRadius+(parseInt(options.size)/2)}px);`;
 		const totalSize = parseInt(options.size) + (2 * auraRadius);
 		const absPosOffset = (options.size - totalSize) / 2;
@@ -4414,8 +4414,8 @@ function setAudioAura (token, options){
 function setTokenAuras (token, options) {
 	if (!options.aura1 || options.id.includes('exampleToken')) return;
 
-	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerAuraSize = options.aura1.feet.length > 0 ? (options.aura1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerAuraSize = options.aura2.feet.length > 0 ? (options.aura2.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	if ((innerAuraSize > 0 || outerAuraSize > 0) && options.auraVisible) {
 		// use sizeWidth and sizeHeight???
 		
@@ -4511,9 +4511,9 @@ function setTokenLight (token, options) {
 		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
 		return;
 	} 
-	const innerlightSize = options.light1.feet != undefined? (options.light1.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
-	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseInt(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const innerlightSize = options.light1.feet != undefined ? (options.light1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const outerlightSize = options.light2.feet != undefined ? (options.light2.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
+	const visionSize = options.vision.feet != undefined ? (options.vision.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
 	const tokenId = options.id.replaceAll("/", "").replaceAll('.', '');
 	if (options.auraislight) {
 
