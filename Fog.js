@@ -762,7 +762,8 @@ function check_single_token_visibility(id){
 
 	if ((window.DM || playerTokenHasVision) && window.CURRENT_SCENE_DATA.disableSceneVision != 1) {
 		offScreenCtx.clearRect(0, 0, offScreenCanvas.width, offScreenCanvas.height);
-		offScreenCtx.drawImage(lightCanvas, 0, 0);
+		if(lightCanvas)
+			offScreenCtx.drawImage(lightCanvas, 0, 0);
 	} else if (aPlayerToken == true || window.CURRENT_SCENE_DATA.disableSceneVision == 1) {
 		offScreenCtx.fillStyle = 'rgba(255, 255, 255 , 1)';
 		offScreenCtx.fillRect(0, 0, offScreenCanvas.width, offScreenCanvas.height)
