@@ -344,9 +344,11 @@ button .ddbc-tab-options__header-heading .menu-option{
     border: solid black 1px;
 }
 
-.body-rpgcharacter-sheet div.avtt-sidebar-controls,
-.avtt-spectator-sheet div.avtt-sidebar-controls {
+.body-rpgcharacter-sheet div.avtt-sidebar-controls {
     margin: 4px 0px 0px 0px !important;
+}
+.avtt-spectator-sheet div.avtt-sidebar-controls {
+    margin: 3px 0px 0px 0px !important;
 }
 .ct-character-sheet--dark-mode .ct-sidebar__inner div[class*='styles_content'] #chat-text {
     color: #bfccd6;
@@ -14245,9 +14247,23 @@ button#displayedDiceFormulaExit:hover {
     top:26px;
     left:unset !important;
 }
-.body-rpgcharacter-sheet.mobileAVTTUI #zoom_buttons{
-    top:30px;
+
+.body-rpgcharacter-sheet.mobileAVTTUI #zoom_buttons {
+    top: 30px;
 }
+
+.avtt-spectator-sheet #zoom_buttons {
+    top: 0px;
+}
+.avtt-spectator-sheet.mobileAVTTUI #zoom_buttons {
+    top: 28px;
+}
+
+.avtt-spectator-sheet #hide_rightpanel,
+.avtt-spectator-sheet.mobileAVTTUI #hide_rightpanel {
+    top: 0px !important;
+}
+
 .mobileAVTTUI #zoom_buttons span,
 .mobileAVTTUI #zoom_buttons svg{
     font-size: 22px !important;
