@@ -7249,10 +7249,11 @@ function redraw_light(darknessMoved = false){
 			particleUpdate(tokenPos.x, tokenPos.y); // moves particle
 			particleLook(context, allWalls, 100000, undefined, undefined, undefined, false, false, auraId);  // if the token has moved or walls have changed look for a new vision poly. This function takes a lot of processing time - so keeping this limited is prefered.
 
-			let path = "";
-			for (let i = 0; i < lightPolygon.length; i++) {
-				path += (i && "L" || "M") + lightPolygon[i].x / adjustScale + ',' + lightPolygon[i].y / adjustScale
-			}
+			let pts = lightPolygon
+				.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
+				.join(', ');
+
+		
 
 			window.lineOfSightPolygons[auraId] = {
 				polygon: lightPolygon,
@@ -7261,24 +7262,23 @@ function redraw_light(darknessMoved = false){
 				x: tokenPos.x,
 				y: tokenPos.y,
 				numberofwalls: walls.length + darknessBoundarys.length,
-				clippath: path,
+				clippath: pts,
 				visionType: window.TOKEN_OBJECTS[auraId].options.sight,
 				scaleCreated: window.TOKEN_OBJECTS[auraId].options.scaleCreated
 			}
 
 
-			$(`.aura-element-container-clip[id='${auraId}']:not(.vision)`).css('clip-path', `path('${path}')`)
+			$(`.aura-element-container-clip[id='${auraId}']:not(.vision)`).css('clip-path', `polygon(${pts})`)
 
 
 
 
 			if (window.lineOfSightPolygons[auraId] !== undefined && (window.TOKEN_OBJECTS[auraId].options.sight === 'devilsight' || window.TOKEN_OBJECTS[auraId].options.sight === 'truesight')) {
-				let path = "";
-				for (let i = 0; i < noDarknessPolygon.length; i++) {
-					path += (i && "L" || "M") + noDarknessPolygon[i].x / adjustScale + ',' + noDarknessPolygon[i].y / adjustScale
-				}
-				window.lineOfSightPolygons[auraId].devilsightClip = path;
-				$(`.aura-element-container-clip[id='${auraId}'].vision`).css('clip-path', `path('${path}')`)
+				let pts = noDarknessPolygon
+					.map(p => `${p.x / adjustScale}px ${p.y / adjustScale}px`)
+					.join(', ');
+				window.lineOfSightPolygons[auraId].devilsightClip = pts;
+				$(`.aura-element-container-clip[id='${auraId}'].vision`).css('clip-path', `polygon(${pts})`)
 
 			}
 
