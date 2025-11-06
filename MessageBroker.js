@@ -1714,7 +1714,7 @@ class MessageBroker {
 				console.log("SETTO BACKGROUND A " + msg.data);
 				$("#tokens").children().remove();
 				$(".aura-element[id^='aura_'").remove();
-				$(".aura-element-container-clip").remove();
+				$(".aura-clip-container").remove();
 				$("[data-darkness]").remove();
 				$("[data-notatoken]").remove();
 
