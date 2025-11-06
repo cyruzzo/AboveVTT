@@ -569,7 +569,7 @@ class Token {
 
 		
 		$("#aura_" + id.replaceAll("/", "")).remove();
-		$(`.aura-element-container-clip[id='${id}']`).remove()
+		$(`.aura-element-container-clip[id='${id}']`).parent().remove()
 		$(`[data-darkness='darkness_${id}']`).remove();
 		$(`[data-notatoken='notatoken_${id}']`).remove()
 
@@ -4508,7 +4508,7 @@ function setTokenLight (token, options) {
 			(!window.DM && playerNoVision && !playerNoTokenIsPc && zeroLight) || 
 			window.CURRENT_SCENE_DATA.disableSceneVision == true || 
 			options.id.includes('exampleToken')) {
-		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).parent().remove();
 		return;
 	} 
 	const innerlightSize = options.light1.feet != undefined ? (options.light1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
@@ -4597,13 +4597,13 @@ function setTokenLight (token, options) {
 
 		
 
-		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").remove();
+		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").parent().remove();
 
 
 		const lightElement = options.sight == 'devilsight' || options.sight == 'truesight' ? $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${devilsightClip};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) : $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
-		$("#outer_light_container").prepend(lightElement);
+		$("#light_container").prepend(lightElement);
 		if(clippath == undefined){
 			debounceLightChecks();
 		}
@@ -4649,7 +4649,7 @@ function setTokenLight (token, options) {
 		}
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
 	} else {
-		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).parent().remove();
 	}
 	
 
