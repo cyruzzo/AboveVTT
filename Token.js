@@ -4508,7 +4508,7 @@ function setTokenLight (token, options) {
 			(!window.DM && playerNoVision && !playerNoTokenIsPc && zeroLight) || 
 			window.CURRENT_SCENE_DATA.disableSceneVision == true || 
 			options.id.includes('exampleToken')) {
-		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).parent().remove();
 		return;
 	} 
 	const innerlightSize = options.light1.feet != undefined ? (options.light1.feet / parseFloat(window.CURRENT_SCENE_DATA.fpsq)) * window.CURRENT_SCENE_DATA.hpps/window.CURRENT_SCENE_DATA.scale_factor  : 0;
@@ -4649,7 +4649,7 @@ function setTokenLight (token, options) {
 		}
 		token.parent().parent().find("#light_" + tokenId).toggleClass("islight", true);
 	} else {
-		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).remove();
+		token.parent().parent().find(`.aura-element-container-clip[id='${options.id}']`).parent().remove();
 	}
 	
 
