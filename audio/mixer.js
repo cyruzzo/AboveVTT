@@ -268,9 +268,23 @@ class Mixer extends EventTarget {
 
         // delete players that no longer have a channel associated with them
         Object.entries(this._players).forEach(([id, player]) => {
-            if (!(id in state.channels)) {
-                player.pause();
-                delete this._players[id];
+            if (!(id in state.channels)) {  
+                if (state.fade == true && !player.paused) {
+                    $(player).stop();
+                    $(player).animate({ volume: 0 }, {
+                        duration: 5000,
+                        complete: function () {
+                            player.pause();
+                            delete this._players[id];
+                        }
+                    });
+                }
+                else {
+                    $(player).stop();
+                    player.pause();
+                    delete this._players[id];
+                }
+                
             }
         });
     }
