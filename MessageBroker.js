@@ -1781,7 +1781,7 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
-						if(data.scale_check && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+						if(!data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
 								conversion = 1980 / mapWidth;
