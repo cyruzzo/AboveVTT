@@ -275,7 +275,7 @@ class Mixer extends EventTarget {
                         duration: 5000,
                         complete: function () {
                             player.pause();
-                            delete this._players[id];
+                            delete window.MIXER._players[id];
                         }
                     });
                 }

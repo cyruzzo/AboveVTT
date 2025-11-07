@@ -41,6 +41,9 @@ const availableToAoe = [
 
 
 const throttleLight = throttle((darknessMoved = false) => {
+	if(window.LOADING){
+		return;
+	}
 	if (!window.walls || window.walls?.length < 5) {
 		redraw_light_walls();
 	} 

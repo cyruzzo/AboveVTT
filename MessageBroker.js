@@ -1781,7 +1781,7 @@ class MessageBroker {
 	
 						window.CURRENT_SCENE_DATA.conversion = 1;
 
-						if(data.scale_check && !data.UVTTFile && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
+						if(data.scale_check && !data.is_video && (mapHeight > 2500 || mapWidth > 2500)){
 							let conversion = 2;
 							if(mapWidth >= mapHeight){
 								conversion = 1980 / mapWidth;
@@ -1956,7 +1956,7 @@ class MessageBroker {
 			remove_loading_overlay();
 			showError(e);
 		}
-		
+		remove_loading_overlay();
 		// console.groupEnd()
 	}
 	loadNextScene(){
