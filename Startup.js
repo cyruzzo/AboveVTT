@@ -355,7 +355,7 @@ async function start_above_vtt_common() {
   
   await load_external_script("https://www.youtube.com/iframe_api");
   $("#site").append("<div id='windowContainment'></div>");
-
+  $("body").append(`<style>.ddb-footer{display:none}</style>`);
   startup_step("Gathering player character data");
   await rebuild_window_pcs();
   window.color = color_for_player_id(my_player_id()); // shortcut that we should figure out how to not rely on

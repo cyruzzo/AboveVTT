@@ -6413,7 +6413,7 @@ Ray.prototype.draw = function(ctx) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 }; */
 
-Ray.prototype.cast = function(boundary) {
+Ray.prototype.cast = function(boundary, p1, p2) {
   	if(boundary.radius !== undefined){
 		let u = {
 			x: boundary.a.x - this.pos.x,
@@ -6435,11 +6435,14 @@ Ray.prototype.cast = function(boundary) {
 			return;
 		}
 		else{
-			let p1 = new Vector(this.pos.x + u1.x + m*this.dir.x, this.pos.y + u1.y + m*this.dir.y);
+			p1.x = this.pos.x + u1.x + m*this.dir.x;
+			p1.y = this.pos.y + u1.y + m*this.dir.y;
 					  
 		  	if(d < boundary.radius && Vector.sqDist(this.pos, boundary.a) > boundary.radius**2){
 		  		
-		  		let p2 = new Vector(this.pos.x + u1.x - m*this.dir.x, this.pos.y + u1.y - m*this.dir.y);
+		  		 p2.x = this.pos.x + u1.x - m*this.dir.x;
+				 p2.y = this.pos.y + u1.y - m*this.dir.y;
+
 				let distance1 = Vector.sqDist(this.pos, p1);
 				let distance2 = Vector.sqDist(this.pos, p2);
 			  	if(distance1 >= distance2){
@@ -6486,10 +6489,9 @@ Ray.prototype.cast = function(boundary) {
 		let u = ((ca.x * r.y) - (ca.y * r.x)) / den;
 		
 		if (t >= 0 && t <= 1 && u >= 0) {
-		  const pt = new Vector();
-		  pt.x = x1 + t * r.x;
-		  pt.y = y1 + t * r.y;
-		  return pt;
+		  p1.x = x1 + t * r.x;
+		  p1.y = y1 + t * r.y;
+		  return p1;
 		} else {
 		  return;
 		}
@@ -6659,6 +6661,8 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const activeRays = buildActiveRays(window.PARTICLE, walls);
 	const lastRayIndex = activeRays.length - 1;
 	const squaredRadius = lightRadius ** 2;
+	let castPt1 = new Vector();
+	let castPt2 = new Vector();
 	for (let i = 0; i < activeRays.length; i++) {
 	    const ray = activeRays[i];
 	    let pt;
@@ -6691,7 +6695,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 			if(auraId != undefined && (tokenElev < wallBottom || tokenElev >= wallTop))
 				continue;
 
-			pt = ray.cast(walls[j]);
+			pt = ray.cast(walls[j], castPt1, castPt2);
 
 
 			if (pt) {
