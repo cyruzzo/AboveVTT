@@ -6940,7 +6940,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					combineCtx = window.offScreenCombine.getContext('2d');
 					combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 					combineCtx.globalCompositeOperation = "source-over";
-					drawPolygon(combineCtx, lightPolygon, "#FFF", true);
+					drawPolygon(combineCtx, lightPolygon, fogStyle, true);
 					combineCtx.globalCompositeOperation = "destination-out";
 					drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
 
