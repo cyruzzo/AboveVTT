@@ -1874,7 +1874,8 @@ class JournalManager{
 					    overflow: auto !important;
 					}
 				</stlye>`);
-				
+				if(!window.DM)
+					$(window.childWindows[title].document).find("body").addClass('body-rpgcharacter-sheet');
 				
 				$(this).siblings(".ui-dialog-titlebar").children(".ui-dialog-titlebar-close").click();
 			});
