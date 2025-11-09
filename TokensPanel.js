@@ -2438,11 +2438,12 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
     listItem.rootId = listItem.rootId;
     // close any that are already open just to be safe
     let sidebarPanel;
+    let name = listItem.name;
     if(!selectedTokenImage && !redrawPanel){ // we just want to redraw the panel options not the images since we selected a token image to edit
         close_sidebar_modal();
         sidebarPanel = new SidebarPanel("token-configuration-modal");
+        
         display_sidebar_modal(sidebarPanel);
-        let name = listItem.name;
 
         sidebarPanel.updateHeader(name, "", "When placing tokens, one of these images will be chosen at random. Right-click an image for more options.");
         redraw_token_images_in_modal(sidebarPanel, listItem, placedToken, undefined, selectedTokenImage);
@@ -2461,7 +2462,7 @@ function display_aoe_token_configuration_modal(listItem, placedToken = undefined
         sidebarPanel = redrawPanel;
     }
    
-     let targetOptions = customization.tokenOptions;
+    let targetOptions = customization.tokenOptions;
     if(selectedTokenImage){
         if(customization.tokenOptions.alternativeImagesCustomizations == undefined)
             customization.tokenOptions.alternativeImagesCustomizations = {};

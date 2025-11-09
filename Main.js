@@ -2434,6 +2434,13 @@ function init_ui() {
 			$("#sheet").append($('<div class="iframeResizeCover"></div>'));
 			//return false;
 		}
+		let modal = m.target.closest(".sidebar-modal");
+		if(modal){
+			window.MODALDOWN = true;
+		}
+		else{
+			window.MODALDOWN = false;
+		}
 	}
 
 	// Function separated so it can be dis/enabled
@@ -2445,7 +2452,7 @@ function init_ui() {
 		if (event.target.tagName.toLowerCase() !== 'a') {
 			$("#splash").remove(); // don't remove the splash screen if clicking an anchor tag otherwise the browser won't follow the link
 		}
-		if (sidebar_modal_is_open() && event.which === 1) {
+		if (sidebar_modal_is_open() && event.which === 1 && !window.MODALDOWN) {
 			// check if the click was within the modal or within an element that we specifically don't want to close the modal
 			let modal = event.target.closest(".sidebar-modal");
 			let preventSidebarModalClose = event.target.closest(".prevent-sidebar-modal-close");
