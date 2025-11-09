@@ -3843,7 +3843,7 @@ async function avttHandleMapDrop(event, listItemArray) {
     create_and_place_token(listItemArray[0].listItem, event.shiftKey, listItemArray[0].url, event.pageX, event.pageY, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
   }
   else if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
-    let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * (listItemArray.length / 8); 
+    let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * window.ZOOM * (listItemArray.length / 8); 
     for (let index = 0; index<listItemArray.length; index++) {
       let item = listItemArray[index];
       let radius = index / listItemArray.length;
