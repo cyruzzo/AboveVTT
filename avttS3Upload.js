@@ -3839,14 +3839,19 @@ async function avttHandleFolderDrop(event, destinationPath) {
 }
 
 async function avttHandleMapDrop(event, listItemArray) {
-  if(listItemArray.length>10){
-    alert('Can only drop 10 tokens or less at once')
-    return;
+  if (listItemArray.length == 1){
+    create_and_place_token(listItemArray[0].listItem, event.shiftKey, listItemArray[0].url, event.pageX, event.pageY, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
   }
-  for(item of listItemArray){
-    create_and_place_token(item.listItem, event.shiftKey, item.url, event.pageX, event.pageY, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+  else if (listItemArray.length < 10 || confirm(`This will add ${listItemArray.length} tokens which could lead to unexpected results. Are you sure you want to add all of these tokens?`)) {
+    let distanceFromCenter = window.CURRENT_SCENE_DATA.hpps * (listItemArray.length / 8); 
+    for (let index = 0; index<listItemArray.length; index++) {
+      let item = listItemArray[index];
+      let radius = index / listItemArray.length;
+      let left = event.pageX + (distanceFromCenter * Math.cos(2 * Math.PI * radius));
+      let top = event.pageY + (distanceFromCenter * Math.sin(2 * Math.PI * radius));
+      create_and_place_token(item.listItem, event.shiftKey, item.url, left, top, false, undefined, undefined, { tokenStyleSelect: "definitelyNotAToken" });
+    }
   }
-    
 }
 
 
@@ -7213,6 +7218,13 @@ function refreshFiles(
                 avttDragItems = draggedItems;
                 avttHandleFolderDrop(event, closestFolder.attr('data-path'));
               }
+              const allCheckboxes = avttGetAllCheckboxElements();
+              allCheckboxes.forEach((checkbox) => {
+                checkbox.checked = false;
+              });
+              avttUpdateSelectNonFoldersCheckbox();
+              avttUpdateActionsMenuState();
+              avttApplyClipboardHighlights();
             },
           })
        

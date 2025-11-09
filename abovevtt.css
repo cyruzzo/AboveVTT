@@ -7613,11 +7613,11 @@ button.avttPicker.token-row-button span.avtt-btn-status {
     width: 26px;
     position: relative;
     display: block;
-    height: 20px;
+    height: 30px;
 }
 
 button span.avtt-btn-status {
-background-image: var(--avtt-mask);
+    background-image: var(--avtt-mask);
     -webkit-background-position: 0px 2px;
     background-position: 0px -2px;
     background-size: 100%;
@@ -7638,13 +7638,13 @@ background-image: var(--avtt-mask);
 .sidebar-list-item-row-item button.avttPicker.token-row-button span.avtt-btn-status {
     background-image: none;
     -webkit-mask-image: var(--avtt-mask);
-    -webkit-mask-size: 25px 17px;
-    -webkit-mask-position: 0px 2px;
+    -webkit-mask-size: 30px 30px;
+    -webkit-mask-position: -2px -1px;
     mask-image: var(--avtt-mask);
-    mask-size: 25px 25px;
+    mask-size: 30px 30px;
     mask-repeat: no-repeat;
-    mask-position: 0px 2px;
-    background: #d30000;
+    mask-position: -2px -1px;
+    background: #000000;
 }
 
 button.launchPicker.token-row-button span.onedrive-btn-status{
@@ -7688,9 +7688,12 @@ button span.onedrive-btn-status{
     top: 2px;
 }
 #sounds-panel button span.avtt-btn-status {
-    background-position: -2px -3px;
+    background-position: -2px -2px;
     top: 0px;
     left: 0px;
+    background-size: 24px;
+    width: 100%;
+    height: 100%;
 }
 #sounds-panel .sidebar-panel-body>button{
     vertical-align:top;
