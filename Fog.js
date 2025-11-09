@@ -1796,7 +1796,7 @@ function redraw_drawings() {
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale, location] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, location, lineBlur] = drawing_clone;
 		let isFilled = fill === 'filled';
 		
 		if(drawings[i][1] =='elev'){
@@ -1832,6 +1832,10 @@ function redraw_drawings() {
 		}
 
 
+		if (lineBlur != undefined) {		
+			targetCtx.save();
+			targetCtx.filter = `blur(${lineBlur}px)`;
+		}
 		if (shape == "eraser") {
 			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
 		}
@@ -1863,6 +1867,9 @@ function redraw_drawings() {
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
+		if (lineBlur != undefined) {
+			targetCtx.restore();
 		}
 	}
 
@@ -2020,7 +2027,7 @@ function redraw_drawn_light(){
 
 	for (let i = 0; i < drawings.length; i++) {
 		let drawing_clone = $.extend(true, [], drawings[i]);
-		let [shape, fill, color, x, y, width, height, lineWidth, scale, bucketRaidus] = drawing_clone;
+		let [shape, fill, color, x, y, width, height, lineWidth, scale, bucketRaidus, lineBlur] = drawing_clone;
 		let isFilled = true;
 		
 		let targetCtx = offscreenContext;
@@ -2031,7 +2038,7 @@ function redraw_drawn_light(){
 		scale = (scale == undefined) ? window.CURRENT_SCENE_DATA.scale_factor/window.CURRENT_SCENE_DATA.conversion : scale/window.CURRENT_SCENE_DATA.conversion;
 		let adjustedScale = scale/window.CURRENT_SCENE_DATA.scale_factor;
 
-	if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
+		if(shape == "eraser" || shape =="rect" || shape == "arc" || shape == "cone" || shape == "paint-bucket"){
 			x = x / adjustedScale;
 			y = y / adjustedScale;
 			if(shape != "paint-bucket"){
@@ -2044,7 +2051,11 @@ function redraw_drawn_light(){
 			}
 		}
 		
-		
+
+		if (lineBlur != undefined) {
+			targetCtx.save();
+			targetCtx.filter = `blur(${lineBlur}px)`;
+		}
 
 		if (shape == "eraser") {
 			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
@@ -2074,6 +2085,9 @@ function redraw_drawn_light(){
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
+		}
+		if (lineBlur != undefined) {
+			targetCtx.restore();
 		}
 	}
 
@@ -3571,6 +3585,8 @@ function drawing_mouseup(e) {
 		 window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
 		 window.DRAWLOCATION];
 
+
+
 	if ((window.DRAWFUNCTION !== "select" && window.DRAWFUNCTION !== "measure") &&
 		(window.DRAWFUNCTION === "draw" || window.DRAWFUNCTION === "elev" || window.DRAWFUNCTION === 'wall' || window.DRAWFUNCTION == 'wall-door' || window.DRAWFUNCTION == 'wall-window' )){
 		switch (window.DRAWSHAPE) {
@@ -3647,6 +3663,9 @@ function drawing_mouseup(e) {
 			data[2] = window.mapElev
 		default:
 			break;
+		}
+		if(window.DRAWFUNCTION == 'draw' && window.LINEBLUR != undefined){
+			data[10] = window.LINEBLUR;
 		}
 		if(window.DRAWTYPE == 'light' && window.DRAWSHAPE == 'paint-bucket'){
 			data[5] = $('#bucket_radius1').val() != '' ? parseFloat($('#bucket_radius1').val()) : 10000;
@@ -4577,7 +4596,9 @@ function handle_drawing_button_click() {
 	$(".drawWidthSlider").on("input change blur", function() {
 		window.LINEWIDTH = parseInt($(this).val());
 	});
-
+	$(".drawHardnessSlider").on("input change blur", function () {
+		window.LINEBLUR = parseInt($(this).val());
+	});
 	$(".drawbutton").click(function(e) {
 		const buttonSelectedClasses = "button-enabled ddbc-tab-options__header-heading--is-active"
 		const clicked = this;
@@ -4678,6 +4699,7 @@ function handle_drawing_button_click() {
 		const drawData = get_draw_data(data.clicked,  data.menu)
 
 		window.LINEWIDTH = drawData.draw_line_width
+		window.LINEBLUR = drawData.draw_line_hardness
 		window.DRAWTYPE = (drawData.from == 'vision_menu') ? 'light' : drawData.fill
 		window.DRAWCOLOR = drawData.background_color
 		window.DRAWLOCATION = drawData.location
@@ -5194,7 +5216,8 @@ function save3PointRect(e){
 			null,
 			window.LINEWIDTH,
 			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-			window.DRAWLOCATION
+			window.DRAWLOCATION,
+			window.LINEBLUR
 		];
 		window.DRAWINGS.push(data);	
 		redraw_drawn_light();
@@ -5263,7 +5286,8 @@ function savePolygon(e) {
 			null,
 			window.LINEWIDTH,
 			window.CURRENT_SCENE_DATA.scale_factor*window.CURRENT_SCENE_DATA.conversion,
-			window.DRAWLOCATION
+			window.DRAWLOCATION,
+			window.LINEBLUR
 		];
 		window.DRAWINGS.push(data);
 		redraw_drawn_light();
@@ -5738,7 +5762,13 @@ function init_draw_menu(buttons){
 			value='6' class='drawWidthSlider'>
 		</div>`
 	);
-
+	draw_menu.append("<div class='menu-subtitle'>Blur</div>");
+	draw_menu.append(`
+		<div>
+			<input id='draw_line_hardness' data-required="draw_line_hardness" type='number' style='width:90%' min='0'
+			value='0' max='100' step='1' class='drawHardnessSlider'>
+		</div>`
+	);
 
 	draw_menu.append(`<div class='menu-subtitle'>Controls</div>`);
 	draw_menu.append(
@@ -6260,7 +6290,13 @@ function init_vision_menu(buttons){
 			value='${window.CURRENT_SCENE_DATA.hpps}' class='drawWidthSlider'>
 		</div>`
 	);
-
+	vision_menu.append("<div class='menu-subtitle'>Blur</div>");
+	vision_menu.append(`
+		<div>
+			<input id='draw_line_hardness' data-required="draw_line_hardness" type='number' style='width:90%' min='0'
+			value='0' max='100' step='1' class='drawHardnessSlider'>
+		</div>`
+	);
 
 	vision_menu.append(`<div class='menu-subtitle'>Controls</div>`);
 	vision_menu.append(
