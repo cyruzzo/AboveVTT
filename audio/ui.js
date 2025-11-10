@@ -450,7 +450,14 @@ function init_mixer() {
                 if (channel.paused) {
                     play_svg.css('display', 'block');
                     pause_svg.css('display', 'none');
+                    validIcon.css('display', 'none');
                     channel_play_pause.toggleClass('playing pressed', false);
+                }
+                else if (window.MIXER._players[id].readyState != 0) {
+                    play_svg.css('display', 'none');
+                    validIcon.css('display', 'none');
+                    pause_svg.css('display', 'block');
+                    channel_play_pause.toggleClass('playing pressed', true);
                 }
                 else {
                     play_svg.css('display', 'none');
