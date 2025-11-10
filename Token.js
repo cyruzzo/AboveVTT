@@ -413,6 +413,7 @@ class Token {
 				}        
 	        } else {
 	            this.options.conditions.push({ name: conditionName });
+				window.all_token_objects[this.options.id].options.conditions.push({ name: conditionName });
 	        }
 	    } else {
 	    	let condition = {
@@ -420,6 +421,7 @@ class Token {
 	    		'text': text
 	    	}
 			this.options.custom_conditions.push(condition);
+			window.all_token_objects[this.options.id].options.custom_conditions.push({ name: conditionName });
 	    }
 	}
 	
@@ -430,6 +432,13 @@ class Token {
 					$('body').append(`<style id='condition-click'>.ct-condition-manage-pane{visibility:hidden !important;}</style>`);
 					$('.ct-combat__statuses-group--conditions .ct-combat__summary-label:contains("Conditions"), .ct-combat-tablet__cta-button:contains("Conditions"), .ct-combat-mobile__cta-button:contains("Conditions")').click();
 					this.options.conditions = this.options.conditions.filter(c => {
+						if (typeof c === "string") {
+							return c !== conditionName;
+						} else {
+							return c?.name !== conditionName;
+						}
+					});
+					window.all_token_objects[this.options.id].options.conditions = window.all_token_objects[this.options.id].options.conditions.filter(c => {
 						if (typeof c === "string") {
 							return c !== conditionName;
 						} else {
@@ -455,7 +464,15 @@ class Token {
 					});
 				}
 			} else {
+				
 				this.options.conditions = this.options.conditions.filter(c => {
+					if (typeof c === "string") {
+						return c !== conditionName;
+					} else {
+						return c?.name !== conditionName;
+					}
+				});
+				window.all_token_objects[this.options.id].options.conditions = this.options.conditions.filter(c => {
 					if (typeof c === "string") {
 						return c !== conditionName;
 					} else {
@@ -465,6 +482,7 @@ class Token {
 			}
 		} else {
 			array_remove_index_by_value(this.options.custom_conditions, conditionName);
+			array_remove_index_by_value(window.all_token_objects[this.options.id].options.custom_conditions, conditionName);
 		}
 	}
 	isInCombatTracker() {
