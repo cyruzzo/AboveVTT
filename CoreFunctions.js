@@ -1787,7 +1787,7 @@ const debounce_pc_token_update = mydebounce(() => {
         if(token){
           token.hp = pc.hitPointInfo.current; // triggers concentration checks
           token.options.hitPointInfo = pc.hitPointInfo;
-          token.options = { ...options, left: token.options.left, top: token.options.top};
+          token.options = $.extend(true, options, { left: token.options.left, top: token.options.top });
           if (window.DM) {
             token.place_sync_persist(); // update it on the server
           }
