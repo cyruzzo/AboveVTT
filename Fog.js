@@ -1837,7 +1837,13 @@ function redraw_drawings() {
 			targetCtx.filter = `blur(${lineBlur}px)`;
 		}
 		if (shape == "eraser") {
-			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+			if (lineBlur != undefined) {
+				targetCtx.globalCompositeOperation = 'destination-out';
+				drawRect(targetCtx, x, y, width, height, '#000', true, 0);
+			}
+			else {
+				targetCtx.clearRect(x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, width / window.CURRENT_SCENE_DATA.scale_factor, height / window.CURRENT_SCENE_DATA.scale_factor);
+			}
 		}
 		if (shape == "rect") {
 			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
@@ -2058,7 +2064,13 @@ function redraw_drawn_light(){
 		}
 
 		if (shape == "eraser") {
-			targetCtx.clearRect(x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, width/window.CURRENT_SCENE_DATA.scale_factor, height/window.CURRENT_SCENE_DATA.scale_factor);
+			if (lineBlur != undefined) {
+				targetCtx.globalCompositeOperation = 'destination-out';
+				drawRect(targetCtx, x, y, width, height, '#000', true, 0);
+			}
+			else {
+				targetCtx.clearRect(x / window.CURRENT_SCENE_DATA.scale_factor, y / window.CURRENT_SCENE_DATA.scale_factor, width / window.CURRENT_SCENE_DATA.scale_factor, height / window.CURRENT_SCENE_DATA.scale_factor);
+			}	
 		}
 		if (shape == "rect") {
 			drawRect(targetCtx,x, y, width, height, color, isFilled, lineWidth);
@@ -2767,6 +2779,7 @@ function drawing_mousedown(e) {
 	
 	// these are generic values used by most drawing functionality
 	window.LINEWIDTH = data.draw_line_width
+	window.LINEBLUR = data.draw_line_hardness
 	window.DRAWTYPE = (data.from == 'vision_menu') ? 'light' : data.fill
 	window.DRAWCOLOR = data.background_color
 	window.DRAWLOCATION = data.location
@@ -3121,6 +3134,8 @@ function drawing_mousemove(e) {
 		clientY: (e.touches) ? e.touches[0].clientY : e.clientY,
 		pageY: (e.touches) ? e.touches[0].pageY : e.pageY
 	}
+
+	window.temp_context.filter = window.LINEBLUR != undefined ? `blur(${window.LINEBLUR}px)` : `none`;
 
 	if (window.MOUSEDOWN || window.DRAWSHAPE === "brush") {
 		if(window.DRAWFUNCTION != "measure" && !window.DRAGGING && window.DRAWSHAPE != "grid-brush")
@@ -3501,7 +3516,9 @@ function drawing_mousemove(e) {
 			mouseY
 		);
 	}
+	
 
+	
 	
 }
 
@@ -3786,9 +3803,13 @@ function drawing_mouseup(e) {
 	else if (window.DRAWFUNCTION === "eraser"){
 		if (window.DRAWSHAPE === "rect"){
 			data[0] = "eraser"
+			if (window.LINEBLUR != undefined) {
+				data[10] = window.LINEBLUR;
+			}
 			window.DRAWINGS.push(data);
 			redraw_drawn_light();
 			redraw_drawings();
+
 		}
 		else if (window.DRAWSHAPE === "text_erase"){
 			// text eraser lives on a different overlay and thus can't just be eraser
