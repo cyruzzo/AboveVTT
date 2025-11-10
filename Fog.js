@@ -1832,7 +1832,7 @@ function redraw_drawings() {
 		}
 
 
-		if (lineBlur != undefined) {		
+		if (lineBlur != undefined && shape != "paint-bucket") {		
 			targetCtx.save();
 			targetCtx.filter = `blur(${lineBlur}px)`;
 		}
@@ -1869,7 +1869,7 @@ function redraw_drawings() {
 			drawBrushArrow(targetCtx, x, color, lineWidth, scale, fill);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true);
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, undefined, undefined, lineBlur);
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -2058,7 +2058,7 @@ function redraw_drawn_light(){
 		}
 		
 
-		if (lineBlur != undefined) {
+		if (lineBlur != undefined && shape != "paint-bucket") {
 			targetCtx.save();
 			targetCtx.filter = `blur(${lineBlur}px)`;
 		}
@@ -2093,7 +2093,7 @@ function redraw_drawn_light(){
 			drawBrushstroke(targetCtx, x, color, lineWidth, scale);
 		}
 		if(shape == "paint-bucket"){
-			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height);
+			bucketFill(targetCtx, x/window.CURRENT_SCENE_DATA.scale_factor, y/window.CURRENT_SCENE_DATA.scale_factor, color, 1, true, width, height, lineBlur);
 		}
 		if(shape == "3pointRect"){
 		 	draw3PointRect(targetCtx, x, color, isFilled, lineWidth, undefined, undefined, scale);	
@@ -5113,7 +5113,7 @@ function clear_temp_canvas(playerId=window.PLAYER_ID){
 	window.temp_context.clearRect(0, 0, window.temp_canvas.width, window.temp_canvas.height); 
 }
 
-function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, islight=false, distance1=10000, distance2){
+function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType = 0, islight = false, distance1 = 10000, distance2, blur = 0){
 	if(window.PARTICLE == undefined){
 		initParticle(new Vector(200, 200), 1);
 	}
@@ -5121,7 +5121,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
   	particleUpdate(mouseX, mouseY); // moves particle
   	let darknessBoundarys = getDarknessBoundarys();
   	if(distance1 != 0){
-  		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance1, fog, fogStyle, fogType, true, islight); 
+  		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance1, fog, fogStyle, fogType, true, islight, undefined, blur); 
   	}
 
 	if(distance2 != undefined){
@@ -5141,7 +5141,7 @@ function bucketFill(ctx, mouseX, mouseY, fogStyle = 'rgba(0,0,0,0)', fogType=0, 
 			return `rgba(${r}, ${g}, ${b}, ${a})` 
 		}
 		distance2+=distance1;
-		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance2, fog, halfLuminosity(fogStyle), fogType, true, islight); 
+		particleLook(ctx, [...window.walls, ...darknessBoundarys], distance2, fog, halfLuminosity(fogStyle), fogType, true, islight, undefined, blur); 
 	}
 
 }
@@ -6679,7 +6679,7 @@ function buildActiveRays(particle, walls) {
 	return combined.map(function(entry){ return entry.ray; });
 }
 
-function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined) {
+function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogType=0, draw=true, islight=false, auraId=undefined, blur=0) {
 
 	lightPolygon = [];
 	movePolygon = [];
@@ -6716,6 +6716,7 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 	const activeRays = buildActiveRays(window.PARTICLE, walls);
 	const lastRayIndex = activeRays.length - 1;
 	const squaredRadius = lightRadius ** 2;
+	
 
 	for (let i = 0; i < activeRays.length; i++) {
 	    const ray = activeRays[i];
@@ -6994,13 +6995,24 @@ function particleLook(ctx, walls, lightRadius=100000, fog=false, fogStyle, fogTy
 					if(window.offScreenCombine == undefined){
 						window.offScreenCombine = new OffscreenCanvas(canvasWidth, canvasHeight);
 					}
+					const isBlur = parseInt(blur) > 0;
 					combineCtx = window.offScreenCombine.getContext('2d');
 					combineCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 					combineCtx.globalCompositeOperation = "source-over";
+
+
+					combineCtx.filter = isBlur ? `blur(${parseInt(blur)}px)` : `none`;
 					drawPolygon(combineCtx, lightPolygon, fogStyle, true);
+
+					if (isBlur) {
+						combineCtx.filter = `none`;
+						particleLook(ctx, walls, undefined, undefined, undefined, undefined, false)
+						combineCtx.globalCompositeOperation = "destination-in";
+						drawPolygon(combineCtx, window.lightPolygon, "#000", true);
+					}
+					
 					combineCtx.globalCompositeOperation = "destination-out";
 					drawPolygon(combineCtx, lightPolygon, "#000", false, 10);
-
 					ctx.save();
 					ctx.globalCompositeOperation = 'lighten';
 					ctx.drawImage(window.offScreenCombine, 0, 0);
