@@ -8827,8 +8827,9 @@ body:not(.body-rpgcampaign) .site-bar{
     opacity: 1 !important;
 }
 
-.body-rpgcharacter-sheet #tokens .inPersonMini,
-.avtt-spectator-sheet #tokens .inPersonMini {
+.body-rpgcharacter-sheet :is(#tokens, #token_map_items) .inPersonMini,
+.avtt-spectator-sheet :is(#tokens, #token_map_items) .inPersonMini
+{
     display: none !important;
 }
 
