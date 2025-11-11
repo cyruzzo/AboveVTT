@@ -1793,7 +1793,7 @@ const debounce_pc_token_update = mydebounce(() => {
       }
      
       if (crossSceneToken && pc) {    
-        crossSceneToken = $.extend(true, {}, crossSceneToken, pc, { imgsrc: newImage });
+        crossSceneToken = $.extend(true, {}, options);
       } 
     }
     else if (crossSceneToken && pc) {
