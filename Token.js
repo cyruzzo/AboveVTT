@@ -154,7 +154,7 @@ class Token {
 		return 0;
 	}
 	set baseHp(newValue) {
-		let currentHP = this.options.hitPointInfo ? this.options.hitPointInfo.current : this.options.hp
+		let currentHP = this.hp
 		if (this.options.hitPointInfo) {
 			this.options.hitPointInfo.current = newValue;
 		} else {
@@ -169,7 +169,7 @@ class Token {
 			let msgdata = {
 				player: this.options.name,
 				img: parse_img(this.options.imgsrc),
-				text: `<b>Check for concentration! If damage was from a single source DC ${Math.floor((this.options.hp - newValue)/2) > 10 ? Math.floor((this.options.hp - newValue)/2) : 10}</b>`,
+				text: `<b>Check for concentration! If damage was from a single source DC ${Math.floor((currentHP - newValue) / 2) > 10 ? Math.floor((currentHP - newValue)/2) : 10}</b>`,
 			};
 			window.MB.inject_chat(msgdata);
 		}
