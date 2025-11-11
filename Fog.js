@@ -7380,7 +7380,7 @@ function redraw_light(darknessMoved = false){
 
 		if (selectedIds.length === 0 || found || (window.SelectedTokenVision !== true && !window.DM)) {
 
-			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && window.TOKEN_OBJECTS[auraId].options.share_vision === undefined && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
+			let hideVisionWhenNoPlayerToken = (playerTokenId === undefined && !window.TOKEN_OBJECTS[auraId].options.share_vision && !window.DM && window.TOKEN_OBJECTS[auraId].options.itemType !== 'pc')
 			if (hideVisionWhenNoPlayerToken) //when player token does not exist show vision for all pc tokens and shared vision for other tokens. Mostly used by DM's, streams and tabletop tv games.			
 				continue;//we don't want to draw this tokens vision no need for further checks - go next token.
 
