@@ -1477,7 +1477,7 @@ function ct_persist(){
 		let optionsClone = $.extend(true, {}, window.all_token_objects[$(this).attr("data-target")].options);
 		optionsClone.alternativeImages = [];
 		optionsClone.ct_show = $(this).find('.hideFromPlayerCombatButton svg.closedEye[style*="block"]').length == 0;
-
+		optionsClone.init = $(this).find('input.init').val();
 	  	data.push( {
 			'data-target': $(this).attr("data-target"),
 			'current': ($(this).attr("data-current")=="1"),
