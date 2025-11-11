@@ -3085,6 +3085,14 @@ class Token {
 										darknessMoved = true;
 								}												
 							}
+							if(darknessMoved){
+								redraw_light(darknessMoved);
+								redraw_drawn_light();
+								if(window.EXPERIMENTAL_SETTINGS.dragLight == true)
+									throttleLight();
+								else
+									debounceLightChecks()
+							}
 							//remove cover for smooth drag
 							$('.iframeResizeCover').remove();
 
@@ -4625,7 +4633,7 @@ function setTokenLight (token, options) {
 		token.parent().parent().find(".aura-element-container-clip[id='" + options.id+"']").parent().remove();
 
 
-		const lightElement = options.sight == 'devilsight' || options.sight == 'truesight' ? $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div><div class='aura-element-container-clip vision' style='clip-path: ${devilsightClip};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) : $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) 
+		const lightElement = options.sight == 'devilsight' || options.sight == 'truesight' ? $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div></div></div><div class='aura-clip-container vision'><div class='aura-element-container-clip vision' style='clip-path: ${devilsightClip};' id='${options.id}'><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) : $(`<div class='aura-clip-container'><div class='aura-element-container-clip light' style='clip-path: ${clippath};' id='${options.id}'><div class='aura-element' id="light_${tokenId}" data-id='${options.id}' style='${lightStyles}'></div><div class='aura-element darkvision' id="vision_${tokenId}" data-id='${options.id}' style='${visionStyles}'></div></div></div>`) 
 
 		lightElement.contextmenu(function(){return false;});
 		$("#light_container").prepend(lightElement);
