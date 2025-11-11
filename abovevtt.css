@@ -8798,7 +8798,9 @@ body:not(.body-rpgcampaign) .site-bar{
     z-index: 8;
     mix-blend-mode: lighten;
 }
-
+.aura-clip-container.vision:has(.devilsight){
+    z-index: 20 !important;
+}
 [data-darkness]{
     transform: rotate(var(--token-rotation));
     z-index:16 !important;
