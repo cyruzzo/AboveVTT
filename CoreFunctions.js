@@ -1779,7 +1779,8 @@ const debounce_pc_token_update = mydebounce(() => {
       let currentImage = crossSceneToken.options.imgsrc;
       if (currentImage != undefined) {
         const newImage = (crossSceneToken.options.alternativeImages == undefined || crossSceneToken.options.alternativeImages?.length == 0) ? pc.image : currentImage;
-        const options = $.extend(true, crossSceneToken.options, pc, { imgsrc: newImage });
+        const options = $.extend(true, {}, crossSceneToken.options, pc, { imgsrc: newImage });
+        options.conditions = pc.conditions || [];
         for (let i = 0; i < unusedPlayerData.length; i++) {
           delete options[unusedPlayerData[i]];
         }
@@ -1787,7 +1788,7 @@ const debounce_pc_token_update = mydebounce(() => {
         if(token){
           token.hp = pc.hitPointInfo.current; // triggers concentration checks
           token.options.hitPointInfo = pc.hitPointInfo;
-          token.options = $.extend(true, options, { left: token.options.left, top: token.options.top });
+          token.options = $.extend(true, {}, options, { left: token.options.left, top: token.options.top });
           if (window.DM) {
             token.place_sync_persist(); // update it on the server
           }

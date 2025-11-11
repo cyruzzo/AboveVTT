@@ -7287,21 +7287,21 @@ div#file-listing-section .sidebar-panel-loading-indicator {
     filter: drop-shadow(2px 2px 4px #000)
 }
 /*one button*/
-.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
+.encounter-builder-page:not(.avtt-spectator-sheet) :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(1) {
     margin-right:60px;
 }
 
 /* two buttons */
-.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
+.encounter-builder-page:not(.avtt-spectator-sheet) :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(2) ~ button:last-of-type {
     margin-right:30px;
 }
 
 /* three buttons */
-.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
+.encounter-builder-page:not(.avtt-spectator-sheet) :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(3) ~ button:last-of-type {
     margin-right:0px;
 }
 /* four buttons */
-.encounter-builder-page :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
+.encounter-builder-page:not(.avtt-spectator-sheet) :is(#combat_area, #combat_area_carousel) td button:first-of-type:nth-last-of-type(4) ~ button:last-of-type {
 
     margin-right:0px;
 }
@@ -7613,7 +7613,7 @@ button.avttPicker.token-row-button span.avtt-btn-status {
     width: 26px;
     position: relative;
     display: block;
-    height: 30px;
+    height: 20px;
 }
 
 button span.avtt-btn-status {
