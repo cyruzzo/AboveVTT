@@ -1595,10 +1595,10 @@ function build_sidebar_list_row(listItem) {
   rowItem.append(imgHolder);
   if (listItem.type !== "aoe" && !listItem.isTypeScene()){
     let tokenCustomizations = find_token_customization(listItem.type, listItem.id);
-    let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages[0] != undefined) ? tokenCustomizations.tokenOptions?.alternativeImages[0] : listItem.image; 
+    let listingImage = (tokenCustomizations?.tokenOptions?.alternativeImages && tokenCustomizations.tokenOptions?.alternativeImages?.[0] != undefined) ? tokenCustomizations.tokenOptions.alternativeImages[0] : listItem.image; 
     let img;
     let video = false;
-    let isAvttBucketFile = listingImage.startsWith('above-bucket-not-a-url');
+    let isAvttBucketFile = listingImage?.startsWith('above-bucket-not-a-url');
     if (isAvttBucketFile) {
       listingImage = avttSidebarApplyThumbnailPrefix(listingImage);
     }
