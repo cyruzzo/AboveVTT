@@ -32,8 +32,7 @@ class WeatherOverlay {
         let count;
         if (this.type === 'fog') count = 10;
         else if (this.type === 'rain') count = 120;
-
-        else if (this.type === 'snow') count = 120;
+        else if (this.type === 'snow') count = 220;
         else if (this.type === 'embers') count = 40;
         else if (this.type === 'cherryBlossoms') count = 40;
         else if (this.type === 'lightning') count = 60;
@@ -93,12 +92,12 @@ class WeatherOverlay {
             for (let i = 0; i < count; i++) {
                 const windVar = 0.06 + Math.random() * 0.08;
                 const windAngleVar = windAngle + (-0.18 + Math.random() * 0.36);
-                const r = 8 + Math.random() * this.width/200;
+                const r = 8 + Math.random() * this.width/800;
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
                     r,
-                    alpha: 0.7 + Math.random() * 0.3,
+                    alpha: 1,
                     angle: Math.random() * Math.PI * 2,
                     spin: -0.02 + Math.random() * 0.04,
                     windDx: this._leavesWindDx + Math.cos(windAngleVar) * windVar,
@@ -111,15 +110,17 @@ class WeatherOverlay {
         } else if (this.type === 'snow') {
             for (let i = 0; i < count; i++) {
                 const groundX = Math.random() * this.width;
-                const groundY = Math.random() * this.height;
+                const groundY = (1 + Math.random() * 0.25) * this.height;
+                const startY = Math.random() * 1.25 * this.height;
+                const ratio = startY / groundY;
                 this.particles.push({
                     startX: groundX,
-                    startY: groundY - this.height * 0.5 - Math.random() * this.height * 0.5,
+                    startY: startY,
                     groundX: groundX,
                     groundY: groundY,
-                    z: Math.random(),
-                    r: 3 + Math.random() * 5,
-                    alpha: 0.7 + Math.random() * 0.3,
+                    z: ratio,
+                    r: 4 + Math.random() * 5,
+                    alpha: 0.8 + Math.random() * 0.2,
                     drift: 1 + Math.random() * 100, 
                     speed: 0.0001 + Math.random() * 0.0002, 
                     phase: Math.random() * Math.PI * 2,
@@ -262,8 +263,8 @@ class WeatherOverlay {
             this.particles.push({
                 x,
                 y,
-                r: 8 + Math.random() * this.width / 200,
-                alpha: 0.7 + Math.random() * 0.3,
+                r: 8 + Math.random() * this.width / 800,
+                alpha: 1,
                 angle: Math.random() * Math.PI * 2,
                 spin: -0.02 + Math.random() * 0.04,
                 windDx: this._leavesWindDx + Math.cos(windAngleVar) * windVar,
@@ -276,23 +277,29 @@ class WeatherOverlay {
         let leafTypes;
         if (this.type === 'greenLeaves') {
             leafTypes = [
-                { shape: 'maple', color: () => `rgba(${40+Math.floor(Math.random()*40)},${120+Math.floor(Math.random()*60)},${40+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#185a1c', points: 6 },
+                { shape: 'maple', color: () => `rgba(${40+Math.floor(Math.random()*40)},${120+Math.floor(Math.random()*60)},${40+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#185a1c',},
+                { shape: 'maple', color: () => `rgba(${40 + Math.floor(Math.random() * 40)},${120 + Math.floor(Math.random() * 60)},${40 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#185a1c'},
+                { shape: 'maple', color: () => `rgba(${40 + Math.floor(Math.random() * 40)},${120 + Math.floor(Math.random() * 60)},${40 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#185a1c'},
                 { shape: 'oak', color: () => `rgba(${60+Math.floor(Math.random()*40)},${140+Math.floor(Math.random()*60)},${60+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#1a4a1a' },
                 { shape: 'elm', color: () => `rgba(${70+Math.floor(Math.random()*40)},${160+Math.floor(Math.random()*60)},${70+Math.floor(Math.random()*30)},0.88)`, edgeColor: '#185a1c' }
             ];
         } else {
             leafTypes = [
-                { shape: 'maple', color: () => `rgba(${170+Math.floor(Math.random()*60)},${30+Math.floor(Math.random()*40)},${20+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#a02a1c', points: 5 + Math.floor(Math.random()*2) },
-                { shape: 'maple', color: () => `rgba(${220+Math.floor(Math.random()*25)},${110+Math.floor(Math.random()*60)},${30+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#b93a1a', points: 7 },
-                { shape: 'maple', color: () => `rgba(${230+Math.floor(Math.random()*20)},${180+Math.floor(Math.random()*40)},${40+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#b98c1a', points: 6 },
-                { shape: 'maple', color: () => `rgba(${120+Math.floor(Math.random()*40)},${70+Math.floor(Math.random()*30)},${30+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#6e3b1a', points: 5 },
-                { shape: 'maple', color: () => `rgba(${220+Math.floor(Math.random()*20)},${170+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#157901ff', points: 7 },
-                { shape: 'maple', color: () => `rgba(${90+Math.floor(Math.random()*40)},${120+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*30)},0.82)`, edgeColor: '#4a5a1a', points: 6 },
-                { shape: 'oak', color: () => `rgba(${120+Math.floor(Math.random()*40)},${80+Math.floor(Math.random()*30)},${40+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#6e3b1a' },
-                { shape: 'oak', color: () => `rgba(${220+Math.floor(Math.random()*20)},${180+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#b98c1a' },
-                { shape: 'oak', color: () => `rgba(${90+Math.floor(Math.random()*40)},${120+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*30)},0.82)`, edgeColor: '#4a5a1a' },
-                { shape: 'elm', color: () => `rgba(${200+Math.floor(Math.random()*30)},${180+Math.floor(Math.random()*40)},${60+Math.floor(Math.random()*30)},0.88)`, edgeColor: '#b98c1a' },
-                { shape: 'elm', color: () => `rgba(${120+Math.floor(Math.random()*40)},${90+Math.floor(Math.random()*30)},${50+Math.floor(Math.random()*30)},0.88)`, edgeColor: '#6e3b1a' }
+                { shape: 'maple', color: () => `rgba(${170+Math.floor(Math.random()*60)},${30+Math.floor(Math.random()*40)},${20+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#a02a1c'},
+                { shape: 'maple', color: () => `rgba(${220+Math.floor(Math.random()*25)},${110+Math.floor(Math.random()*60)},${30+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#b93a1a'},
+                { shape: 'maple', color: () => `rgba(${230+Math.floor(Math.random()*20)},${180+Math.floor(Math.random()*40)},${40+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#b98c1a'},
+                { shape: 'maple', color: () => `rgba(${170 + Math.floor(Math.random() * 20)},${220 + Math.floor(Math.random() * 35)},${60+Math.floor(Math.random()*30)},0.92)`, edgeColor: '#157901ff'},
+                { shape: 'maple', color: () => `rgba(${170 + Math.floor(Math.random() * 20)},${220 + Math.floor(Math.random() * 35)},${60 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#157901ff'},
+                { shape: 'maple', color: () => `rgba(${220 + Math.floor(Math.random() * 25)},${110 + Math.floor(Math.random() * 60)},${30 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b93a1a'},
+                { shape: 'maple', color: () => `rgba(${230 + Math.floor(Math.random() * 20)},${180 + Math.floor(Math.random() * 40)},${40 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b98c1a'},
+                { shape: 'oak', color: () => `rgba(${170 + Math.floor(Math.random() * 60)},${30 + Math.floor(Math.random() * 40)},${20 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#a02a1c'},
+                { shape: 'oak', color: () => `rgba(${220 + Math.floor(Math.random() * 25)},${110 + Math.floor(Math.random() * 60)},${30 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b93a1a'},
+                { shape: 'oak', color: () => `rgba(${230 + Math.floor(Math.random() * 20)},${180 + Math.floor(Math.random() * 40)},${40 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b98c1a'},
+                { shape: 'oak', color: () => `rgba(${170 + Math.floor(Math.random() * 20)},${220 + Math.floor(Math.random() * 35)},${60 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#157901ff'},
+                { shape: 'elm', color: () => `rgba(${170 + Math.floor(Math.random() * 60)},${30 + Math.floor(Math.random() * 40)},${20 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#a02a1c'},
+                { shape: 'elm', color: () => `rgba(${220 + Math.floor(Math.random() * 25)},${110 + Math.floor(Math.random() * 60)},${30 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b93a1a'},
+                { shape: 'elm', color: () => `rgba(${230 + Math.floor(Math.random() * 20)},${180 + Math.floor(Math.random() * 40)},${40 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#b98c1a'},
+                { shape: 'elm', color: () => `rgba(${170 + Math.floor(Math.random() * 20)},${220 + Math.floor(Math.random() * 35)},${60 + Math.floor(Math.random() * 30)},0.92)`, edgeColor: '#157901ff'},
             ];
         }
         for (let p of this.particles) {
@@ -301,8 +308,6 @@ class WeatherOverlay {
                 p.leafShape = type.shape;
                 p.edgeColor = type.edgeColor;
                 p.color = typeof type.color === 'function' ? type.color() : type.color;
-                if (type.lobes) p.lobes = type.lobes;
-                if (type.points) p.points = type.points;
             }
             const pathVar = Math.sin(t * 0.7 + p.pathVar) * 1.5 + Math.cos(t * 0.5 + p.pathVar) * 1.5;
             p.angle += p.spin;
@@ -854,10 +859,10 @@ class WeatherOverlay {
             p.x = (1 - p.z) * p.startX + p.z * p.groundX + windOffset;
             p.y = (1 - p.z) * p.startY + p.z * p.groundY;
             this.offscreenCtx.save();
-            this.offscreenCtx.globalAlpha = (p.alpha ?? 1) * fade * (1 - p.z + 0.2);
+            this.offscreenCtx.globalAlpha = (p.alpha ?? 1) * fade;
             this.offscreenCtx.translate(p.x, p.y);
             this.offscreenCtx.rotate(p.angle + Math.sin(t * 0.7 + p.phase) * 0.7);
-            const grad = this.offscreenCtx.createRadialGradient(0, 0, 0, 0, 0, p.r * (1 - p.z + 0.2));
+            const grad = this.offscreenCtx.createRadialGradient(0, 0, 0, 0, 0, p.r);
             grad.addColorStop(0, 'rgba(255,255,255,1)');
             grad.addColorStop(0.7, 'rgba(220,240,255,0.7)');
             grad.addColorStop(1, 'rgba(200,220,255,0.1)');
@@ -865,23 +870,28 @@ class WeatherOverlay {
             this.offscreenCtx.beginPath();
             for (let i = 0; i < 6; i++) {
                 const theta = (Math.PI * 2 / 6) * i;
-                this.offscreenCtx.lineTo(Math.cos(theta) * p.r * (1 - p.z + 0.2), Math.sin(theta) * p.r * (1 - p.z + 0.2));
+                this.offscreenCtx.lineTo(Math.cos(theta) * p.r, Math.sin(theta) * p.r);
             }
             this.offscreenCtx.closePath();
             this.offscreenCtx.fill();
+            this.offscreenCtx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+            this.offscreenCtx.lineWidth = 1;
+            this.offscreenCtx.stroke();
             this.offscreenCtx.restore();
-            if (p.z >= 1) {
+            if (p.y >= p.groundY) {
                 const groundX = Math.random() * this.width;
-                const groundY = Math.random() * this.height;
+                const groundY = (1 + Math.random() * 0.25) * this.height;
+                const startY = groundY - (1.25 * this.height);
+                const ratio = startY / groundY;
                 p.startX = groundX;
-                p.startY = groundY - this.height * 0.5 - Math.random() * this.height * 0.5;
+                p.startY = startY;
                 p.groundX = groundX;
                 p.groundY = groundY;
-                p.z = 0;
-                p.r = 3 + Math.random() * 5;
-                p.alpha = 0.7 + Math.random() * 0.3;
+                p.z = ratio;
+                p.r = 4 + Math.random() * 5;
+                p.alpha = 0.8 + Math.random() * 0.2;
                 p.drift = 1 + Math.random() * 100;
-                p.speed = 0.0001 + Math.random() * 0.0002; 
+                p.speed = 0.0001 + Math.random() * 0.0002;
                 p.phase = Math.random() * Math.PI * 2;
                 p.angle = Math.random() * Math.PI * 2;
                 p.spin = -0.01 + Math.random() * 0.02;
