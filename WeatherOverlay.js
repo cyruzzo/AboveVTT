@@ -92,7 +92,7 @@ class WeatherOverlay {
             for (let i = 0; i < count; i++) {
                 const windVar = 0.06 + Math.random() * 0.08;
                 const windAngleVar = windAngle + (-0.18 + Math.random() * 0.36);
-                const r = 8 + Math.random() * this.width/800;
+                const r = 4 + Math.random() * this.width/500;
                 this.particles.push({
                     x: Math.random() * this.width,
                     y: Math.random() * this.height,
@@ -263,7 +263,7 @@ class WeatherOverlay {
             this.particles.push({
                 x,
                 y,
-                r: 8 + Math.random() * this.width / 800,
+                r: 4 + Math.random() * this.width / 500,
                 alpha: 1,
                 angle: Math.random() * Math.PI * 2,
                 spin: -0.02 + Math.random() * 0.04,
