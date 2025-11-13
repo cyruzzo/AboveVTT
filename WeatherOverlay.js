@@ -32,7 +32,7 @@ class WeatherOverlay {
         let count;
         if (this.type === 'fog') count = 10;
         else if (this.type === 'rain') count = 120;
-        else if (this.type === 'snow') count = 220;
+        else if (this.type === 'snow') count = 320;
         else if (this.type === 'embers') count = 40;
         else if (this.type === 'cherryBlossoms') count = 40;
         else if (this.type === 'lightning') count = 60;
@@ -119,7 +119,7 @@ class WeatherOverlay {
                     groundX: groundX,
                     groundY: groundY,
                     z: ratio,
-                    r: 4 + Math.random() * 5,
+                    r: 2 + Math.random() * 4,
                     alpha: 0.8 + Math.random() * 0.2,
                     drift: 1 + Math.random() * 100, 
                     speed: 0.0001 + Math.random() * 0.0002, 
@@ -888,7 +888,7 @@ class WeatherOverlay {
                 p.groundX = groundX;
                 p.groundY = groundY;
                 p.z = ratio;
-                p.r = 4 + Math.random() * 5;
+                p.r = 2 + Math.random() * 4;
                 p.alpha = 0.8 + Math.random() * 0.2;
                 p.drift = 1 + Math.random() * 100;
                 p.speed = 0.0001 + Math.random() * 0.0002;
