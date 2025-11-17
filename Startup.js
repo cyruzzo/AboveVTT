@@ -48,16 +48,18 @@ $(function() {
       .then((campaignDmId) => {
         const isDmPage = is_encounters_page();
         const userId = $(`#message-broker-client[data-userid]`)?.attr('data-userid') || Cobalt?.User?.ID;
-        
-
-
-        if (isDmPage && campaignDmId == userId) {
+        if ((isDmPage && campaignDmId == userId) || is_spectator_page()) {
           inject_dice();
+        }
+        return {campaignDmId, userId, isDmPage};
+      })
+      .then((options) => {
+        const {campaignDmId, userId, isDmPage} = options;  
+        if (isDmPage && campaignDmId == userId) {
           startup_step("Starting AboveVTT for DM");
           return start_above_vtt_for_dm();
         } 
         else if (is_spectator_page()){
-          inject_dice();
           startup_step("Starting AboveVTT for Spectator");
           return start_above_vtt_for_spectator();
         }

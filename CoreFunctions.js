@@ -1156,7 +1156,6 @@ function inject_dice(){
        
        if(mutationTarget.hasClass(['encounter-details', 'encounter-builder', 'release-indicator'])){
          mutationTarget.remove();
-
        }
        if($(mutation.addedNodes).is('.encounter-builder, .release-indicator')){
          $(mutation.addedNodes).remove();
@@ -1176,7 +1175,7 @@ function inject_dice(){
  setTimeout(function(){
    window.encounterObserver.disconnect();
    delete window.encounterObserver;
- }, 20000);
+ }, 300000);
  
 }
 /**
