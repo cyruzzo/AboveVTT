@@ -1056,7 +1056,7 @@ function update_pc_token_rows() {
  */
 
 
-function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
+async function create_and_place_token(listItem, hidden = undefined, specificImage= undefined, eventPageX = undefined, eventPageY = undefined, disableSnap = false, nameOverride = "", mapPoint=false, extraOptions=undefined) {
 
 
     if (listItem === undefined) {
@@ -1469,11 +1469,38 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.customInit = newInit
         }
 
+        let newAC = $(searchText).find('.custom-ac.custom-stat').text();
 
-        if($(searchText).find('table.abilities-saves, table.stat-table').length>0){
-             let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');
-             let mentalStats = $(searchText).find('table.abilities-saves.mental, table.stat-table.mental');
-             options.customStat = {
+        if(newAC == ''){
+            let match = searchText.matchAll(/(Armor Class|ac)[\s\S]*?[\s>]([0-9]+)[<\.\s]/gi).next()
+            if(match.value != undefined && match.value[2] != undefined){
+                newAC = match.value[2]
+            }
+        }
+
+        options.armorClass = (newAC) ? newAC : options.armorClass;
+
+        let pcURL = $(searchText).find('.custom-pc-sheet.custom-stat').text();
+        if (pcURL) { 
+            try{
+                const charURLparts = pcURL.match(/.*?\/characters\/([0-9]+)(\/.*?)?/i);
+                const charDetails  = await DDBApi.fetchCharacterDetails([charURLparts[1]]);
+                options = $.extend(true, {}, charDetails[0], options);
+                options.customStat = options.abilities;
+                if(!options.customInit){
+                    options.customInit = options.initiativeBonus;
+                }
+                delete options.abilities;
+            }
+            catch{
+                showErrorMessage(`Failed to fetch character data from DDB for url: ${pcURL}; It's possible the url is incorrect or you do not have access to the character`);
+            }
+        }
+        
+        if ($(searchText).find('table.abilities-saves, table.stat-table').length > 0) {
+            let physicalStats = $(searchText).find('table.abilities-saves.physical, table.stat-table.physical');
+            let mentalStats = $(searchText).find('table.abilities-saves.mental, table.stat-table.mental');
+            options.customStat = {
                 '0': {
                     mod: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(2)').text(),
                     save: physicalStats.find('tr:nth-of-type(1) td:nth-of-type(3)').text()
@@ -1501,9 +1528,9 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             }
         }
 
-        if(options.customStat == undefined){
+        if (options.customStat == undefined) {
             let match = searchText.matchAll(/STR[<\s][\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)[\s\S]+?\(([+-][0-9]+)\)/gi).next()
-            if(match.value != undefined){
+            if (match.value != undefined) {
                 const str = match.value[1] != undefined ? match.value[1] : '+0'
                 const dex = match.value[2] != undefined ? match.value[2] : '+0'
                 const con = match.value[3] != undefined ? match.value[3] : '+0'
@@ -1511,7 +1538,7 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
                 const wis = match.value[5] != undefined ? match.value[5] : '+0'
                 const cha = match.value[6] != undefined ? match.value[6] : '+0'
 
-                options.customStat ={
+                options.customStat = {
                     '0': {
                         mod: str
                     },
@@ -1540,8 +1567,8 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             let matchWisSave = searchText.matchAll(/Saving Throw[\s\S]+?wis[\s]?([+-][0-9]+)?/gi).next()
             let matchChaSave = searchText.matchAll(/Saving Throw[\s\S]+?cha[\s]?([+-][0-9]+)?/gi).next()
 
-            
-            if(options.customStat == undefined){
+
+            if (options.customStat == undefined) {
                 options.customStat = {
                     '0': {
                         mod: '+0'
@@ -1570,18 +1597,6 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
             options.customStat[4]['save'] = (matchWisSave.value && matchWisSave.value[1] != undefined) ? matchWisSave.value[1] : options.customStat[4]['mod'];
             options.customStat[5]['save'] = (matchChaSave.value && matchChaSave.value[1] != undefined) ? matchChaSave.value[1] : options.customStat[5]['mod'];
         }
-
-        let newAC = $(searchText).find('.custom-ac.custom-stat').text();
-
-        if(newAC == ''){
-            let match = searchText.matchAll(/(Armor Class|ac)[\s\S]*?[\s>]([0-9]+)[<\.\s]/gi).next()
-            if(match.value != undefined && match.value[2] != undefined){
-                newAC = match.value[2]
-            }
-        }
-
-
-        options.armorClass = (newAC) ? newAC : options.armorClass;
         options.monster = 'customStat'
     }
     if(foundOptions.color != undefined){
@@ -1613,83 +1628,16 @@ function create_and_place_token(listItem, hidden = undefined, specificImage= und
     delete options.undefined;
     delete options[""];
     console.log("create_and_place_token about to place token with options", options, hidden);
-    function place_it(options) {
-        if (eventPageX === undefined || eventPageY === undefined) {
-            place_token_in_center_of_view(options);
-        } else if(mapPoint==false){
-            let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
-            place_token_at_map_point(options, mapPosition.x, mapPosition.y);
-        }
-        else{
-            place_token_at_map_point(options, eventPageX, eventPageY);
-        }
+
+    if (eventPageX === undefined || eventPageY === undefined) {
+        place_token_in_center_of_view(options);
+    } else if(mapPoint==false){
+        let mapPosition = convert_point_from_view_to_map(eventPageX, eventPageY, disableSnap);
+        place_token_at_map_point(options, mapPosition.x, mapPosition.y);
     }
-    // If it's a myToken with character sheet link, the source any missing stats from there
-    if(options.itemType === "myToken" ) {
-        if(options.statBlock && window.JOURNAL.notes[options.statBlock]) { //is there a stat block
-            let customStatBlock = window.JOURNAL.notes[options.statBlock].text;
-	    let pcURL = $(customStatBlock).find('.custom-pc-sheet.custom-stat').text();
-            if(pcURL) { //only if there is a sheet ref
-                const charURLparts = new URL(pcURL).pathname.split("/");
-                if(charURLparts[1] === 'characters') { //it's probably a DDB character
-                    DDBApi.fetchCharacterDetails([charURLparts[2]]).then((dets) => {
-                        function extract_character_details_data(character) {
-                            return {
-                                name: character.name || "",
-                                hitPointInfo: character.hitPointInfo,
-                                armorClass: character.armorClass,
-                                imgsrc : character?.decorations?.avatar?.avatarUrl,
-                                customStat : character.abilities.reduce((a,s) => {
-                                    a[""+["str","dex","con","int","wis","chr",].indexOf(s.name)] = {
-                                        save: s.save,
-                                        mod: s.modifier
-                                    }
-                                    return a},{})
-                            };
-                        }
-                        const character = dets[0];
-                        const chOptions = extract_character_details_data(character);
-                        console.log("Extracting stats from character", chOptions, character);
-                        if(options.hitPointInfo) {
-                            if(chOptions.hitPointInfo) {
-                                if(options.hitPointInfo.temp == undefined) {
-                                    options.hitPointInfo.temp = chOptions.hitPointInfo.temp;
-                                }
-                                if(options.hitPointInfo.current == undefined) {
-                                    options.hitPointInfo.current = chOptions.hitPointInfo.current;
-                                }
-                                if(options.hitPointInfo.maximum == undefined) {
-                                    options.hitPointInfo.temp = chOptions.hitPointInfo.maximum;
-                                }
-                            }
-                        } else {
-                            options.hitPointInfo = chOptions.hitPointInfo;
-                        }
-                        if(options.armorClass == undefined && chOptions.armorClass) {
-                            options.armorClass = chOptions.armorClass;
-                        }
-                        if(!options.imgsrc) {
-                            if(chOptions.imgsrc) {
-                                options.imgsrc = chOptions.imgsrc;
-                            }
-                        } else {
-                            if(chOptions.imgsrc) {                            
-                                options.alternativeImages.push(chOptions.imgsrc);
-                            }
-                        }
-                        if(chOptions.customStat) {
-                            // apparently this is always present ... so need to figure out when to replace
-                            // TODO... not sure what to do here (usually you want this unless you have overriden in the customStat block)
-                            options.customStat = chOptions.customStat;
-                        }
-                        place_it(options);
-                    });
-                    return; //place_it called during completion
-                }
-            }
-        }
+    else{
+        place_token_at_map_point(options, eventPageX, eventPageY);
     }
-    place_it(options);
 }
 
 /**

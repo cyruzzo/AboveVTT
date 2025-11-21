@@ -5007,7 +5007,10 @@ function qrm_fetch_stat(token) {
 		if(token.options.customStat != undefined){
 			roll_bonus = token.options.customStat[save_dropdown_value]['save']
 		}
-		if(roll_bonus == undefined){
+		if (roll_bonus >= 0) {
+			roll_bonus = "+" + parseInt(roll_bonus);
+		}
+		else if(roll_bonus == undefined){
 			roll_bonus = "+"+0;	
 		}
 	}
